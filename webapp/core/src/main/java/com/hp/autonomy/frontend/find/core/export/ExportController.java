@@ -242,9 +242,6 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         return new HttpEntity<>(baos.toByteArray(), headers);
     }
 
-    @Value(value = "classpath:/templates/sunburst.pptx")
-    private Resource sunburstTemplate;
-
     @RequestMapping(value = PPT_SUNBURST_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> sunburst(
             @RequestParam("categories") final String[] categories,
@@ -255,8 +252,15 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             throw new IllegalArgumentException("Number of values should match the number of categories");
         }
 
-        try(final InputStream template = sunburstTemplate.getInputStream()) {
+        try(final InputStream template = pptxTemplate.getInputStream()) {
             final XMLSlideShow ppt = new XMLSlideShow(template);
+
+            // The template should have two slides. The first slide should have a pie chart; the second has a graph.
+            if (ppt.getSlides().size() < 2) {
+                throw new IllegalArgumentException("Invalid template supplied");
+            }
+
+            ppt.removeSlide(1);
 
             final XSLFSlide slide = ppt.getSlides().get(0);
 
@@ -687,8 +691,8 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         return summary;
     }
 
-    @Value(value = "classpath:/templates/dategraph.pptx")
-    private Resource dategraphTemplate;
+    @Value(value = "classpath:/templates/template.pptx")
+    private Resource pptxTemplate;
 
     @RequestMapping(value = PPT_DATEGRAPH_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> graph(
@@ -710,8 +714,15 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
         final XSSFWorkbook wb = writeChart(data);
 
-        try(InputStream inputStream = dategraphTemplate.getInputStream()) {
+        try(InputStream inputStream = pptxTemplate.getInputStream()) {
             final XMLSlideShow ppt = new XMLSlideShow(inputStream);
+
+            // The template should have two slides. The first slide should have a pie chart; the second has a graph.
+            if (ppt.getSlides().size() < 2) {
+                throw new IllegalArgumentException("Invalid template supplied");
+            }
+
+            ppt.removeSlide(0);
 
             final XSLFSlide slide = ppt.getSlides().get(0);
 
