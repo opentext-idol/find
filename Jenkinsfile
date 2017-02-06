@@ -35,10 +35,10 @@ node {
 		archive 'on-prem-dist/target/find.zip'
 
 		// These are the JUnit tests as outputted by the surefire maven plugin
-		//step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+		step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
 
 		// These are the Jasmine tests
-		//step([$class: 'JUnitResultArchiver', testResults: '**/target/jasmine-tests/TEST-*.xml'])
+		step([$class: 'JUnitResultArchiver', testResults: '**/target/jasmine-tests/TEST-*.xml'])
 
 	stage 'Artifactory'
 		try {
