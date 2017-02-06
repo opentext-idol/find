@@ -215,14 +215,14 @@ define([
                 // If width and height are equal to the $mapEl.width()/height(), then Chrome has the same problem as IE11.
                 width: mapSize.x * 2,
                 height: mapSize.y * 2,
-                proxy: '../api/public/map/proxy',
+                proxy: 'api/public/map/proxy',
                 onrendered: function(canvas) {
                     $objs.removeClass('hide')
 
                     // We use a textarea for the title so we can have newlines, and a textarea for the image to work
                     //   around a hard 524288 limit imposed by a WebKit bug (affects Chrome 55).
                     // See https://bugs.webkit.org/show_bug.cgi?id=44883
-                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="../api/bi/export/ppt/map"><textarea name="title"></textarea><textarea name="image"></textarea><input name="markers"><input type="submit"></form>');
+                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/map"><textarea name="title"></textarea><textarea name="image"></textarea><input name="markers"><input type="submit"></form>');
                     $form[0].title.value = title
                     // ask for lossless PNG image
                     $form[0].image.value = canvas.toDataURL('image/png')

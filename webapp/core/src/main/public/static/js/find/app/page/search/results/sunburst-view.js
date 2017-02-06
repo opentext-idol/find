@@ -133,7 +133,7 @@ define([
             this.$el.on('click', '.sunburst-pptx', _.bind(function(evt){
                 evt.preventDefault();
 
-                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="../api/bi/export/ppt/sunburst"><input name="title"><input type="submit"></form>');
+                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/sunburst"><input name="title"><input type="submit"></form>');
                 $form[0].title.value = 'Breakdown by ' + this.fieldsCollection.at(0).get('displayValue')
 
                 this.dependentParametricCollection.each(function(model){

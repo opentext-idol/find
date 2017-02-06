@@ -74,7 +74,7 @@ define([
                     })
                 }
 
-                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="../api/bi/export/ppt/dategraph"><textarea name="data"></textarea><input type="submit"></form>');
+                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/dategraph"><textarea name="data"></textarea><input type="submit"></form>');
                 $form[0].data.value = JSON.stringify(data)
                 $form.appendTo(document.body).submit().remove()
             }

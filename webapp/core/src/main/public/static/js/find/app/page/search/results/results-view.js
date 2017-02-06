@@ -74,7 +74,7 @@ define([
                     evt.preventDefault();
 
                     // TODO: implement all this
-                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="../api/bi/export/ppt/list"><textarea name="sortBy"></textarea><textarea name="results"></textarea><textarea name="docs"></textarea><input type="submit"></form>');
+                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/list"><textarea name="sortBy"></textarea><textarea name="results"></textarea><textarea name="docs"></textarea><input type="submit"></form>');
 
                     $form[0].sortBy.value = this.sortView.getText();
                     $form[0].results.value = this.resultsNumberView.getText();
