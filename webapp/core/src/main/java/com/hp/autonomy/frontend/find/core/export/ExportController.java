@@ -323,13 +323,18 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     @RequestMapping(value = PPT_TABLE_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> table(
             @RequestParam("title") final String title,
-            @RequestParam("rows") final int rows,
-            @RequestParam("cols") final int cols,
-            @RequestParam("d") final String[] data
+            @RequestParam("data") final String dataStr
+
     ) throws IOException {
-        if(data.length != rows * cols) {
-            throw new IllegalArgumentException("Number of data points does not match the number of columns");
+        final TableData tableData = new ObjectMapper().readValue(dataStr, TableData.class);
+
+        if(!tableData.validateInput()) {
+            throw new IllegalArgumentException("Invalid table data supplied");
         }
+
+        final int rows = tableData.getRows(),
+                  cols = tableData.getCols();
+        final String[] data = tableData.getCells();
 
         final XMLSlideShow ppt = loadTemplate(false, false);
         final Dimension pageSize = ppt.getPageSize();
