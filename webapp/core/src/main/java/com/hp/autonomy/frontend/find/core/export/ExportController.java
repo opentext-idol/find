@@ -315,16 +315,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         categoryRef.setF(new CellRangeAddress(1, values.length, 0, 0).formatAsString(sheet.getSheetName(), true));
         numRef.setF(new CellRangeAddress(1, values.length, 1, 1).formatAsString(sheet.getSheetName(), true));
 
-        for(final POIXMLDocumentPart part : chart.getRelations()) {
-            final PackagePart pkg = part.getPackagePart();
-            if("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(pkg.getContentType())) {
-                // We have to rewrite the chart data; OpenOffice doesn't use it but Powerpoint does when you click 'Edit Data'
-                try(final OutputStream xlsOut = pkg.getOutputStream()) {
-                    workbook.write(xlsOut);
-                }
-                break;
-            }
-        }
+        rewriteChartData(workbook, chart);
 
         return writePPT(ppt, "sunburst.pptx");
     }
@@ -796,14 +787,19 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             updateCTLineSer(data, sheet, seriesIdx, curSeries);
         }
 
-        for(final POIXMLDocumentPart rel : chart.getRelations()) {
-            final PackagePart pkg = rel.getPackagePart();
-            if ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(pkg.getContentType())) {
-                wb.write(pkg.getOutputStream());
-            }
-        }
+        rewriteChartData(wb, chart);
 
         return writePPT(ppt, "dategraph.pptx");
+    }
+
+    private void rewriteChartData(final XSSFWorkbook workbook, final XSLFChart chart) throws IOException {
+        for(final POIXMLDocumentPart rel : chart.getRelations()) {
+            final PackagePart pkg = rel.getPackagePart();
+            // We have to rewrite the chart data; OpenOffice doesn't use it but Powerpoint does when you click 'Edit Data'
+            if ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(pkg.getContentType())) {
+                workbook.write(pkg.getOutputStream());
+            }
+        }
     }
 
     private static void updateCTLineSer(final ChartData data, final XSSFSheet sheet, final int seriesIdx, final CTLineSer series) {
