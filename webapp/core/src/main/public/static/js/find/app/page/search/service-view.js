@@ -126,8 +126,8 @@ define([
             });
 
             this.parametricFieldsCollection = new ParametricFieldsCollection([]);
-            this.parametricCollection = new ParametricCollection([], {url: 'api/public/parametric'});
-            this.restrictedParametricCollection = new ParametricCollection([], {url: 'api/public/parametric/restricted'});
+            this.parametricCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
+            this.restrictedParametricCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
             this.numericParametricFieldsCollection = new NumericParametricFieldsCollection([], {dataType: 'numeric'});
             this.dateParametricFieldsCollection = new NumericParametricFieldsCollection([], {dataType: 'date'});
 
@@ -477,6 +477,7 @@ define([
                         minDate: this.queryModel.getIsoDate('minDate'),
                         maxDate: this.queryModel.getIsoDate('maxDate'),
                         minScore: this.queryModel.get('minScore'),
+                        maxValues: 1000000,
                         stateTokens: this.queryModel.get('stateMatchIds')
                     }
                 });

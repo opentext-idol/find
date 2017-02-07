@@ -61,7 +61,8 @@ define([
             if(fieldNames.length > 0) {
                 this.parametricCollection.fetch({
                     data: {
-                        fieldNames: fieldNames
+                        fieldNames: fieldNames,
+                        queryText: '*'
                     }
                 });
             }

@@ -13,39 +13,21 @@ import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricReques
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricValuesService;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
-import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
-import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
-import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 @Controller
-@RequestMapping(ParametricValuesController.PARAMETRIC_VALUES_PATH)
+@RequestMapping(ParametricValuesController.PARAMETRIC_PATH)
 class HodParametricValuesController extends ParametricValuesController<HodQueryRestrictions, HodParametricRequest, ResourceName, HodErrorException> {
     @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
-    public HodParametricValuesController(final HodParametricValuesService parametricValuesService,
-                                         final ObjectFactory<HodQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
-                                         final ObjectFactory<HodParametricRequestBuilder> parametricRequestBuilderFactory) {
+    public HodParametricValuesController(
+            final HodParametricValuesService parametricValuesService,
+            final ObjectFactory<HodQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
+            final ObjectFactory<HodParametricRequestBuilder> parametricRequestBuilderFactory
+    ) {
         super(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
-    }
-
-    @RequestMapping(method = RequestMethod.GET)
-    @ResponseBody
-    public Set<QueryTagInfo> getParametricValues(
-            @RequestParam(FIELD_NAMES_PARAM) final List<TagName> fieldNames,
-            @RequestParam(DATABASES_PARAM) final Collection<ResourceName> databases
-    ) throws HodErrorException {
-        final HodParametricRequest parametricRequest = buildRequest(fieldNames, databases, MAX_VALUES_DEFAULT, SortParam.DocumentCount);
-        return parametricValuesService.getAllParametricValues(parametricRequest);
     }
 }
