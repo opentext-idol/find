@@ -1,7 +1,8 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.autonomy.abc.selenium.find.filters;
 
 import com.autonomy.abc.selenium.find.Container;
@@ -9,7 +10,7 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.DatePickerFilter;
-import com.autonomy.abc.selenium.query.StringDateFilter;
+import com.autonomy.abc.selenium.query.StringDateFilter.Filterable;
 import com.hp.autonomy.frontend.selenium.element.Collapsible;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
@@ -94,10 +95,10 @@ public class FilterPanel {
     }
 
     public int nonZeroParamFieldContainer(final int n) {
-        return nthParametricThatSatisfiedCondition(n,(x) -> 0 != (x));
+        return nthParametricThatSatisfiedCondition(n, (x) -> 0 != (x));
     }
 
-    public int nthParametricThatSatisfiedCondition(final int n, Predicate<Integer> op) {
+    public int nthParametricThatSatisfiedCondition(final int n, final Predicate<Integer> op) {
         int index = 0;
         int nonZeroCount = 0;
         for(final WebElement container : getParametricFilters()) {
@@ -116,8 +117,8 @@ public class FilterPanel {
 
     public String formattedNameOfNonZeroField(final int n) {
         return WordUtils.capitalize(parametricField(nonZeroParamFieldContainer(n))
-                .filterCategoryName()
-                .toLowerCase());
+                                            .filterCategoryName()
+                                            .toLowerCase());
     }
 
     //DATE SPECIFIC
@@ -129,7 +130,7 @@ public class FilterPanel {
         return dateFilterContainer();
     }
 
-    public StringDateFilter.Filterable stringDateFilterable() {
+    public Filterable stringDateFilterable() {
         return dateFilterContainer();
     }
 
@@ -187,7 +188,7 @@ public class FilterPanel {
         final int tooManyFiltersToBother = 600;
 
         final ParametricFieldContainer container = parametricField(index);
-        if(container.getFilterNumber() > tooManyFiltersToBother){
+        if(container.getFilterNumber() > tooManyFiltersToBother) {
             return true;
         }
         container.expand();
@@ -197,8 +198,8 @@ public class FilterPanel {
 
         final List<WebElement> filters = filterModal.activePaneFilterList();
 
-        for(WebElement filter : filters) {
-            String name = filter.findElement(By.cssSelector(".field-value")).getText();
+        for(final WebElement filter : filters) {
+            final String name = filter.findElement(By.cssSelector(".field-value")).getText();
             if(name.contains(target)) {
                 filterModal.cancel();
                 return true;

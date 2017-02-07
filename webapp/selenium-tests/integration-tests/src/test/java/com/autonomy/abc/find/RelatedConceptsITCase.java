@@ -157,6 +157,7 @@ public class RelatedConceptsITCase extends FindTestBase {
 
     @Test
     @ResolvedBug({"CCUK-3566", "FIND-666"})
+    @ActiveBug("FIND-854")
     public void testAdditionalConceptsNotAlsoRelated() {
         searchAndWait(findService, "matt");
         final Collection<String> addedConcepts = new ArrayList<>();

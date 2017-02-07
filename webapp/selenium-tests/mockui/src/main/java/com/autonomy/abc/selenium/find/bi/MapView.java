@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find.bi;
 
 import com.autonomy.abc.selenium.find.Container;
@@ -20,7 +25,7 @@ public class MapView {
 
     public MapView(final WebDriver driver) {
         this.driver = driver;
-        this.container = ElementUtil.ancestor(Container.currentTabContents(driver).findElement(By.className("location-results-map")), 1);
+        container = ElementUtil.ancestor(Container.currentTabContents(driver).findElement(By.className("location-results-map")), 1);
     }
 
     public WebElement map() {
@@ -28,11 +33,11 @@ public class MapView {
     }
 
     public boolean mapPresent() {
-        return container.findElements(mapLocator).size()>0;
+        return container.findElements(mapLocator).size() > 0;
     }
 
     public boolean isLoading() {
-        return container.findElements(cssSelector(".map-loading-spinner > .loading-spinner:not(.hide)")).size()>0;
+        return container.findElements(cssSelector(".map-loading-spinner > .loading-spinner:not(.hide)")).size() > 0;
     }
 
     public void waitForMarkers() {
@@ -41,39 +46,39 @@ public class MapView {
     }
 
     public List<WebElement> markers() {
-        return container.findElements(By.cssSelector(".leaflet-marker-pane .awesome-marker"));
+        return container.findElements(cssSelector(".leaflet-marker-pane .awesome-marker"));
     }
 
     public List<WebElement> markerClusters() {
-        return container.findElements(By.cssSelector(".marker-cluster"));
+        return container.findElements(cssSelector(".marker-cluster"));
     }
 
     public WebElement popover() {
-        return container.findElement(By.cssSelector(".leaflet-popup"));
+        return container.findElement(cssSelector(".leaflet-popup"));
     }
 
-    public void clickMarker(WebElement marker) {
+    public void clickMarker(final WebElement marker) {
         Waits.loadOrFadeWait();
         marker.click();
-        new WebDriverWait(driver,5).until(ExpectedConditions.presenceOfElementLocated(cssSelector(".leaflet-popup")));
+        new WebDriverWait(driver, 5).until(ExpectedConditions.presenceOfElementLocated(cssSelector(".leaflet-popup")));
     }
 
     public boolean noResults() {
         final String message = "'There are no results with the location field selected'";
-        return container.findElements(By.xpath(".//p[contains(text(),"+message+")]")).size()>0;
+        return container.findElements(By.xpath(".//p[contains(text()," + message + ")]")).size() > 0;
     }
 
     public int numberResults() {
-        String number = Container.currentTabContents(driver).findElement(By.cssSelector(".map-results-count > strong:nth-child(3)")).getText();
+        final String number = Container.currentTabContents(driver).findElement(cssSelector(".map-results-count > strong:nth-child(3)")).getText();
         return Integer.parseInt(number);
     }
 
-    private int numberInCluster(WebElement cluster) {
+    private int numberInCluster(final WebElement cluster) {
         return Integer.parseInt(cluster.findElement(By.tagName("span")).getText());
     }
 
     public int countLocationsForComparer() {
-      return countLocationsFor("green", "first");
+        return countLocationsFor("green", "first");
     }
 
     public int countLocationsForComparee() { return countLocationsFor("red", "second"); }
@@ -82,10 +87,10 @@ public class MapView {
 
     private int countLocationsFor(final String colour, final String position) {
         int total = 0;
-        total+=container.findElements(By.cssSelector(".leaflet-marker-pane .awesome-marker-icon-"+colour+"")).size();
-        List<WebElement> markerClusters = container.findElements(By.cssSelector(".leaflet-marker-pane ."+position+"-location-cluster"));
-        for(WebElement clusterMarker : markerClusters) {
-            total+=numberInCluster(clusterMarker);
+        total += container.findElements(cssSelector(".leaflet-marker-pane .awesome-marker-icon-" + colour + "")).size();
+        final List<WebElement> markerClusters = container.findElements(cssSelector(".leaflet-marker-pane ." + position + "-location-cluster"));
+        for(final WebElement clusterMarker : markerClusters) {
+            total += numberInCluster(clusterMarker);
         }
         return total;
     }

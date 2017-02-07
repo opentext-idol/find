@@ -11,7 +11,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
 import com.hp.autonomy.hod.client.api.authentication.EntityType;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.token.TokenProxy;
 import com.hp.autonomy.hod.sso.HodApplicationGrantedAuthority;
 import com.hp.autonomy.hod.sso.HodAuthentication;
@@ -47,22 +47,22 @@ public class HodMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
 
     @Override
     public String[] getDatabases() {
-        return new String[]{ResourceIdentifier.WIKI_ENG.toString()};
+        return new String[]{ResourceName.WIKI_ENG.toString()};
     }
 
     @Override
     public String getDatabasesAsJson() throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(new ResourceIdentifier[]{ResourceIdentifier.WIKI_ENG});
+        return new ObjectMapper().writeValueAsString(new ResourceName[]{ResourceName.WIKI_ENG});
     }
 
     @Override
     public EmbeddableIndex getEmbeddableIndex() {
-        return new EmbeddableIndex(ResourceIdentifier.WIKI_ENG.getName(), ResourceIdentifier.WIKI_ENG.getDomain());
+        return new EmbeddableIndex(ResourceName.WIKI_ENG.getName(), ResourceName.WIKI_ENG.getDomain());
     }
 
     @Override
     protected Authentication createAuthentication(final Collection<GrantedAuthority> baseAuthorities) {
-        final ResourceIdentifier application = new ResourceIdentifier(
+        final ResourceName application = new ResourceName(
                 environment.getProperty(HodTestConfiguration.DOMAIN_PROPERTY),
                 environment.getProperty(HodTestConfiguration.APPLICATION_PROPERTY)
         );

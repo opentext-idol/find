@@ -9,7 +9,7 @@ import com.hp.autonomy.frontend.find.core.view.ViewController;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.hod.view.HodViewRequest;
 import com.hp.autonomy.searchcomponents.hod.view.HodViewRequestBuilder;
@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 @RequestMapping(ViewController.VIEW_PATH)
 @Slf4j
-class HodViewController extends ViewController<HodViewRequest, ResourceIdentifier, HodErrorException> {
+class HodViewController extends ViewController<HodViewRequest, ResourceName, HodErrorException> {
     private static final String HOD_ERROR_MESSAGE_CODE_PREFIX = "error.iodErrorCode.";
     private static final String HOD_ERROR_MESSAGE_CODE_MAIN = "error.iodErrorMain";
     private static final String HOD_ERROR_MESSAGE_CODE_SUB = "error.iodErrorSub";

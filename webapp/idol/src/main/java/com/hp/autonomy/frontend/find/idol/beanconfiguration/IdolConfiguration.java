@@ -11,6 +11,7 @@ import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.aci.AbstractConfigurableAciService;
@@ -53,6 +54,7 @@ public class IdolConfiguration {
                 .mixIn(Authentication.class, IdolAuthenticationMixins.class)
                 .mixIn(QueryRestrictions.class, IdolQueryRestrictionsMixin.class)
                 .mixIn(IdolQueryRestrictions.class, IdolQueryRestrictionsMixin.class)
+                .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
                 .build();
 
         mapper.setInjectableValues(new InjectableValues.Std().addValue(AuthenticationInformationRetriever.class, authenticationInformationRetriever));

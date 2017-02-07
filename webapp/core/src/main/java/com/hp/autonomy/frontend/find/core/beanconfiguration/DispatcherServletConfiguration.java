@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -12,7 +12,6 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.joda.JodaDateTimeFormatAnnotationFormatterFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Component
@@ -31,8 +30,8 @@ public class DispatcherServletConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addFormatters(final FormatterRegistry registry) {
-        if (converters != null) {
-            for (final Converter<?, ?> converter : converters) {
+        if(converters != null) {
+            for(final Converter<?, ?> converter : converters) {
                 registry.addConverter(converter);
             }
         }
@@ -42,7 +41,7 @@ public class DispatcherServletConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/static-" + commit + "/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/static-" + commit + "/**")
+                .addResourceLocations("classpath:/static/");
     }
-
 }

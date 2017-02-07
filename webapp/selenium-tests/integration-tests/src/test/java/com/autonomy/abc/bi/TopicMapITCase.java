@@ -1,5 +1,9 @@
-package com.autonomy.abc.bi;
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
 
+package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.base.Role;
@@ -28,9 +32,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsItems;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.not;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 @Role(UserRole.BIFHI)
@@ -48,7 +62,7 @@ public class TopicMapITCase extends IdolFindTestBase {
 
     @Override
     public BIIdolFindElementFactory getElementFactory() {
-        return (BIIdolFindElementFactory) super.getElementFactory();
+        return (BIIdolFindElementFactory)super.getElementFactory();
     }
 
     @Before
@@ -98,7 +112,7 @@ public class TopicMapITCase extends IdolFindTestBase {
         verifyThat("Same number of text elements as map pieces", textElements.size(), is(numberEntities));
 
         results.waitForMapLoaded();
-        for (final WebElement textElement : textElements) {
+        for(final WebElement textElement : textElements) {
             verifyThat("Text element not empty", textElement.getText(), not(""));
         }
     }
@@ -134,7 +148,7 @@ public class TopicMapITCase extends IdolFindTestBase {
         addedConcepts.add(results.clickConceptAndAddText(results.conceptClusterNames().size()));
         Waits.loadOrFadeWait();
 
-        for(String concept : addedConcepts) {
+        for(final String concept : addedConcepts) {
             verifyThat("Concept " + concept + " was added to the Concepts Panel", selectedConcepts(), hasItem(concept));
         }
     }
@@ -144,7 +158,7 @@ public class TopicMapITCase extends IdolFindTestBase {
     public void testToolTipNotLyingAboutNumberDocsUsed() {
         search("thing");
 
-        Slider slider = results.speedVsAccuracySlider();
+        final Slider slider = results.speedVsAccuracySlider();
         final int originalToolTipValue = sliderToolTipValue(slider);
 
         final List<String> originalParentEntityNames = results.conceptClusterNames();
@@ -152,19 +166,19 @@ public class TopicMapITCase extends IdolFindTestBase {
         slider.dragBy(30);
         results.waitForMapLoaded();
         final List<String> changedParentNames = results.conceptClusterNames();
-        assertThat("Changing the slider has changed the map",changedParentNames,
-                anyOf(not(hasSize(originalParentEntityNames.size())),
-                        not(containsItems(originalParentEntityNames))));
+        assertThat("Changing the slider has changed the map", changedParentNames,
+                   anyOf(not(hasSize(originalParentEntityNames.size())),
+                         not(containsItems(originalParentEntityNames))));
 
         slider.dragBy(-30);
         results.waitForMapLoaded();
 
         //Selenium Actions.moveByOffset takes int -> cannot move by <1%
         //Getting within 1 doc of the original value is permissible
-        assumeThat("Have returned tooltip to original value",sliderToolTipValue(slider),
-                anyOf(greaterThanOrEqualTo(originalToolTipValue - 1),
-                lessThanOrEqualTo(originalToolTipValue + 1)));
-        verifyThat("Same parent concepts as when originally loaded",results.conceptClusterNames(),containsItems(originalParentEntityNames));
+        assumeThat("Have returned tooltip to original value", sliderToolTipValue(slider),
+                   anyOf(greaterThanOrEqualTo(originalToolTipValue - 1),
+                         lessThanOrEqualTo(originalToolTipValue + 1)));
+        verifyThat("Same parent concepts as when originally loaded", results.conceptClusterNames(), containsItems(originalParentEntityNames));
     }
 
     private int sliderToolTipValue(final Slider slider) {
@@ -181,18 +195,18 @@ public class TopicMapITCase extends IdolFindTestBase {
         search("grey");
 
         final SearchTabBar tabBar = getElementFactory().getSearchTabBar();
-        for (int i = 0; i < numberTabs; i++) {
+        for(int i = 0; i < numberTabs; i++) {
             tabBar.newTab();
         }
 
-        tabBar.switchTo(numberTabs/2);
+        tabBar.switchTo(numberTabs / 2);
         results.waitForMapLoaded();
 
-        for (int j = 0; j < numberTabs; j++) {
+        for(int j = 0; j < numberTabs; j++) {
             tabBar.switchTo(j);
             results = getElementFactory().getTopicMap();
             results.waitForMapLoaded();
-            verifyThat("Map has appeared on tab " + (j+1), results.mapEntities(), hasSize(greaterThan(0)));
+            verifyThat("Map has appeared on tab " + (j + 1), results.mapEntities(), hasSize(greaterThan(0)));
         }
     }
 
@@ -206,7 +220,7 @@ public class TopicMapITCase extends IdolFindTestBase {
     }
 
     private String addsQuotes(final String term) {
-        return term.replace("\"","");
+        return term.replace("\"", "");
     }
 
     private List<String> selectedConcepts() {
@@ -215,5 +229,4 @@ public class TopicMapITCase extends IdolFindTestBase {
                 .map(this::addsQuotes)
                 .collect(Collectors.toList());
     }
-
 }

@@ -9,6 +9,8 @@ def repository
 @Field
 def branch
 
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '3', daysToKeepStr: '', numToKeepStr: ''))])
+
 node {
 	stage 'Checkout'
 		checkout scm
@@ -72,14 +74,6 @@ node {
 		} catch (groovy.lang.MissingPropertyException e) {
 		    echo "No Artifactory plugin installed, skipping stage"
 		}
-
-//    stage 'Deploy'
-//        sh '''
-//            source /home/fenkins/ansible/hacking/env-setup
-//            python tools-apothecary/apothecary.py --dir /home/fenkins/app-playbook/roles/ -c /home/fenkins/tools-apothecary/apothecary.yml
-//            cd /home/fenkins/app-playbook
-//            ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook find.yml -vv -i find_hosts
-//        '''
 
 	stage 'Notifications'
 		emailext attachLog: true, body: "Check console output at ${env.BUILD_URL} to view the results.", subject: "Fenkins - ${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - ${currentBuild.result}", to: '$DEFAULT_RECIPIENTS'

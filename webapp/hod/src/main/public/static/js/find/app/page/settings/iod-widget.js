@@ -1,15 +1,18 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'jquery',
     'settings/js/server-widget',
     'find/hod/app/model/hod-indexes-collection',
     'text!find/templates/app/page/settings/server-widget.html',
     'text!find/templates/app/page/settings/iod-widget.html',
-    'text!find/templates/app/page/settings/indexes-list.html'
-], function(ServerWidget, IndexesCollection, serverWidget, template, indexesTemplate) {
+    'text!find/templates/app/page/settings/indexes-list.html',
+    'underscore'
+], function($, ServerWidget, IndexesCollection, serverWidget, template, indexesTemplate, _) {
+    'use strict';
 
     template = _.template(template);
     indexesTemplate = _.template(indexesTemplate);
@@ -36,13 +39,13 @@ define([
 
             var domain = this.$domain.val();
 
-            if ($indexCheckboxes.length) {
-                var selectedIndexes = _.map($indexCheckboxes, function (input) {
+            if($indexCheckboxes.length) {
+                var selectedIndexes = _.map($indexCheckboxes, function(input) {
                     return $(input).val();
                 });
 
                 activeIndexes = _.chain(this.indexes)
-                    .filter(function (index) {
+                    .filter(function(index) {
                         return _.contains(selectedIndexes, index.resource);
                     })
                     .map(function(index) {
@@ -82,20 +85,20 @@ define([
         validateInputs: function() {
             var isValid = true;
 
-            if (this.shouldValidate()) {
+            if(this.shouldValidate()) {
                 var config = this.getConfig();
 
-                if (config.apiKey === '') {
+                if(config.apiKey === '') {
                     isValid = false;
                     this.updateInputValidation(this.$apikey);
                 }
 
-                if (config.application === '') {
+                if(config.application === '') {
                     isValid = false;
                     this.updateInputValidation(this.$application);
                 }
 
-                if (config.domain === '') {
+                if(config.domain === '') {
                     isValid = false;
                     this.updateInputValidation(this.$domain);
                 }
@@ -105,7 +108,7 @@ define([
         },
 
         handleValidation: function(config, response) {
-            if (_.isEqual(config.iod, this.lastValidationConfig.iod)) {
+            if(_.isEqual(config.iod, this.lastValidationConfig.iod)) {
                 this.lastValidation = response.valid;
 
                 if(this.lastValidation && response.data && response.data.indexes) {
@@ -128,7 +131,7 @@ define([
                 this.displayValidationMessage(true, response);
 
                 if(response.data) {
-                    _.each(response.data.activeIndexes, function(activeIndex){
+                    _.each(response.data.activeIndexes, function(activeIndex) {
                         this.$('[value="' + activeIndex.index + '"]').prop('checked', true);
                     })
                 }
@@ -136,7 +139,7 @@ define([
         },
 
         setValidationFormatting: function(state) {
-            if (state === 'clear') {
+            if(state === 'clear') {
                 this.$apiKeyControlGroup.removeClass('success error');
             } else {
                 this.$apiKeyControlGroup.addClass(state)
@@ -156,5 +159,4 @@ define([
             }
         }
     });
-
 });

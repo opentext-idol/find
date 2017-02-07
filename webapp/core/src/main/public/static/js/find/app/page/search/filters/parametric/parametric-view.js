@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -8,13 +8,15 @@ define([
     'jquery',
     'underscore',
     'js-whatever/js/list-view',
+    'find/app/metrics',
     'find/app/page/search/filters/parametric/parametric-field-view',
     'find/app/page/search/filters/parametric/proxy-view',
     'find/app/page/search/filters/parametric/numeric-parametric-field-collapsible-view',
     'parametric-refinement/display-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/parametric-view.html'
-], function (Backbone, $, _, ListView, FieldView, ProxyView, CollapsibleNumericFieldView, DisplayCollection, i18n, template) {
+], function(Backbone, $, _, ListView, metrics, FieldView, ProxyView, CollapsibleNumericFieldView,
+            DisplayCollection, i18n, template) {
     'use strict';
 
     const TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
@@ -78,6 +80,11 @@ define([
             //noinspection JSUnresolvedFunction
             this.listenTo(this.restrictedParametricCollection, 'sync', function() {
                 this.model.set({processing: false});
+
+                if (!this.restrictedParametricCollection.isEmpty() && !this.parametricValuesLoaded) {
+                    this.parametricValuesLoaded = true;
+                    metrics.addTimeSincePageLoad('parametric-values-first-loaded');
+                }
             });
 
             //noinspection JSUnresolvedFunction
@@ -90,10 +97,9 @@ define([
             var isCollapsed = function (model) {
                 if (this.filterModel && this.filterModel.get('text')) {
                     return false;
-                }
-                else {
+                } else {
                     //noinspection JSUnresolvedFunction
-                    return _.isUndefined(collapsed[model.id]) ? true : collapsed[model.id];
+                    return _.isUndefined(collapsed[model.id]) || collapsed[model.id];
                 }
             }.bind(this);
 
@@ -145,12 +151,11 @@ define([
             });
 
             //noinspection JSUnresolvedFunction
-            // Would ideally use model.cid but on refresh display Collection creates new models with different cids
+            // Would ideally use model.cid but on refresh the display Collection creates new models with different cids
             this.listenTo(this.fieldNamesListView, 'item:toggle', function (model, newState) {
                 collapsed[model.id] = newState;
             });
         },
-
 
         render: function() {
             //noinspection JSUnresolvedVariable

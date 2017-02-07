@@ -1,3 +1,8 @@
+/*
+ * Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.idol.web;
 
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
@@ -6,7 +11,9 @@ import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfi
 import com.hp.autonomy.frontend.find.core.export.MetadataNode;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.FindController;
+import com.hp.autonomy.frontend.find.core.web.MvcConstants;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
 import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
 import com.hp.autonomy.frontend.find.idol.export.IdolMetadataNode;
@@ -23,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class IdolFindController extends FindController<IdolFindConfig, IdolFindConfig.IdolFindConfigBuilder> {
+public class IdolFindController extends FindController<IdolFindConfig, IdolFindConfigBuilder> {
 
     private enum IdolMvcConstants{
         MMAP_BASE_URL("mmapBaseUrl"),
@@ -64,6 +71,7 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
 
         publicConfig.put(IdolMvcConstants.VIEW_HIGHLIGHTING.getName(), config.getViewConfig().getHighlighting());
         publicConfig.put(IdolMvcConstants.DASHBOARDS.getName(), dashConfig.getConfig().getDashboards());
+        publicConfig.put(MvcConstants.ANSWER_SERVER_ENABLED.value(), config.getAnswerServer().getEnabled());
 
         return publicConfig;
     }

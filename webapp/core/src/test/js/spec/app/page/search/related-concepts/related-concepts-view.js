@@ -1,14 +1,17 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'jquery',
     'backbone',
     'find/app/page/search/related-concepts/related-concepts-view',
     'find/app/model/entity-collection',
+    'underscore',
     'jasmine-jquery'
-], function(Backbone, RelatedConceptsView, EntityCollection) {
+], function($, Backbone, RelatedConceptsView, EntityCollection, _) {
+    'use strict';
 
     describe('Related concepts view', function() {
         function createView() {
@@ -35,7 +38,7 @@ define([
                 {concepts: ['orange']},
                 {concepts: ['blood']}
             ]);
-            
+
             this.entityCollection = new EntityCollection([], {
                 getSelectedRelatedConcepts: _.constant([])
             });
@@ -75,7 +78,7 @@ define([
                     {cluster: 1, text: 'red'},
                     {cluster: 1, text: 'blood'},
                     {cluster: 2, text: 'orange'}
-                ], { parse: true });
+                ], {parse: true});
 
                 createView.call(this);
             });
@@ -143,7 +146,7 @@ define([
                         {cluster: 0, text: 'juice'},
                         {cluster: 1, text: 'red'},
                         {cluster: 0, text: 'squeeze'}
-                    ], { parse: true });
+                    ], {parse: true});
                 });
 
                 it('displays the related concepts list', function() {
@@ -223,5 +226,4 @@ define([
             });
         });
     });
-
 });

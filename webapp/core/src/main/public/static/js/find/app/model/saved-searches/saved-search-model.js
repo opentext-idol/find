@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'moment',
@@ -8,7 +13,7 @@ define([
     'find/app/util/database-name-resolver',
     'find/app/model/dates-filter-model'
 ], function(Backbone, moment, _, arraysEqual, QueryModel, SelectedParametricValuesCollection, databaseNameResolver, DatesFilterModel) {
-    "use strict";
+    'use strict';
 
     /**
      * Models representing the state of a search.
@@ -56,13 +61,13 @@ define([
         var parametricValues = [];
         var parametricRanges = [];
 
-        models.forEach(function (model) {
-            if (model.has('value')) {
+        models.forEach(function(model) {
+            if(model.has('value')) {
                 parametricValues.push({
                     field: model.get('field'),
                     value: model.get('value')
                 });
-            } else if (model.has('range')) {
+            } else if(model.has('range')) {
                 parametricRanges.push({
                     field: model.get('field'),
                     min: model.get('range')[0],
@@ -93,9 +98,9 @@ define([
     // Treat as equal if they are both either null or undefined, or pass a regular equality test
     function optionalEqual(equalityTest) {
         return function(optionalItem1, optionalItem2) {
-            if (nullOrUndefined(optionalItem1)) {
+            if(nullOrUndefined(optionalItem1)) {
                 return nullOrUndefined(optionalItem2);
-            } else if (nullOrUndefined(optionalItem2)) {
+            } else if(nullOrUndefined(optionalItem2)) {
                 return false;
             } else {
                 return equalityTest(optionalItem1, optionalItem2);
@@ -149,7 +154,7 @@ define([
                         .value();
                 })
                 .value();
-            
+
             // group token strings by type
             var tokensByType = _.chain(response.stateTokens)
                 .groupBy('type')
@@ -157,7 +162,7 @@ define([
                     return _.pluck(arr, 'stateToken');
                 })
                 .value();
-            
+
             return _.defaults(dateAttributes, {queryStateTokens: tokensByType.QUERY}, {promotionsStateTokens: tokensByType.PROMOTIONS}, {relatedConcepts: relatedConcepts}, response);
         },
 
@@ -185,11 +190,11 @@ define([
 
             var parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
             return this.equalsQueryStateDateFilters(queryState)
-                    && arraysEqual(this.get('relatedConcepts'), queryState.conceptGroups.pluck('concepts'), arrayEqualityPredicate)
-                    && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
-                    && this.get('minScore') === queryState.minScoreModel.get('minScore')
-                    && arraysEqual(this.get('parametricValues'), parametricRestrictions.parametricValues, _.isEqual)
-                    && arraysEqual(this.get('parametricRanges'), parametricRestrictions.parametricRanges, _.isEqual);
+                && arraysEqual(this.get('relatedConcepts'), queryState.conceptGroups.pluck('concepts'), arrayEqualityPredicate)
+                && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
+                && this.get('minScore') === queryState.minScoreModel.get('minScore')
+                && arraysEqual(this.get('parametricValues'), parametricRestrictions.parametricValues, _.isEqual)
+                && arraysEqual(this.get('parametricRanges'), parametricRestrictions.parametricRanges, _.isEqual);
         },
 
         equalsQueryStateDateFilters: function(queryState) {
@@ -227,7 +232,7 @@ define([
         },
 
         toSelectedParametricValues: function() {
-            return this.get('parametricValues').concat(this.get('parametricRanges').map(function (range) {
+            return this.get('parametricValues').concat(this.get('parametricRanges').map(function(range) {
                 return {
                     field: range.field,
                     range: [range.min, range.max],
@@ -286,5 +291,4 @@ define([
             );
         }
     });
-
 });

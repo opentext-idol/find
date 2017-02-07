@@ -1,14 +1,21 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.filters.*;
+import com.autonomy.abc.selenium.find.filters.AppliedFiltersPanel;
+import com.autonomy.abc.selenium.find.filters.DateOption;
+import com.autonomy.abc.selenium.find.filters.FilterContainer;
+import com.autonomy.abc.selenium.find.filters.FilterPanel;
+import com.autonomy.abc.selenium.find.filters.FindParametricFilter;
+import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
+import com.autonomy.abc.selenium.find.filters.ParametricFilterModal;
 import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
@@ -24,11 +31,25 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.fail;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -58,7 +79,7 @@ public class FilterITCase extends FindTestBase {
     public void testAllFiltersDefaultCollapsed() {
         searchAndWait("knee");
 
-        for(FilterContainer container : filters().allFilterContainers()) {
+        for(final FilterContainer container : filters().allFilterContainers()) {
             verifyThat("Container is collapsed", container.isCollapsed());
         }
     }
@@ -74,12 +95,12 @@ public class FilterITCase extends FindTestBase {
     @Test
     @ActiveBug("FIND-638")
     public void testParametricFiltersResults() {
-        ListView results = searchAndWait("*");
+        final ListView results = searchAndWait("*");
         final FilterPanel filterPanel = filters();
 
-        List<ParametricFieldContainer> containers = filterPanel.parametricFieldContainers();
-        for(ParametricFieldContainer container : containers) {
-            int numberFields = container.getFilters().size();
+        final List<ParametricFieldContainer> containers = filterPanel.parametricFieldContainers();
+        for(final ParametricFieldContainer container : containers) {
+            final int numberFields = container.getFilters().size();
             verifyThat("Field values: " + numberFields + " - less than or equal to 5", numberFields, lessThanOrEqualTo(5));
         }
 
@@ -101,7 +122,7 @@ public class FilterITCase extends FindTestBase {
         try {
             firstContainer.getFilters();
             fail("Filter panel did not reload after filter selection");
-        } catch(Exception e) {
+        } catch(final Exception e) {
             LOGGER.info("Correctly threw exception as filter panel has reloaded");
         }
 
@@ -117,13 +138,13 @@ public class FilterITCase extends FindTestBase {
 
         filterPanel.checkboxForParametricValue(WordUtils.capitalize(filterCategory.toLowerCase()), filterName).uncheck();
         findPage.waitForParametricValuesToLoad();
-        int totalParametricFields = filterPanel.parametricFieldContainers().size();
+        final int totalParametricFields = filterPanel.parametricFieldContainers().size();
 
         searchAndWait("shouldhavenoresultsprobably");
         findPage.ensureTermNotAutoCorrected();
 
         findPage.waitForParametricValuesToLoad();
-        int noResultsParametricFields = filterPanel.parametricFieldContainers().size();
+        final int noResultsParametricFields = filterPanel.parametricFieldContainers().size();
 
         verifyThat("Filters changed: no results -> parametric fields remain", noResultsParametricFields, is(totalParametricFields));
     }
@@ -137,7 +158,7 @@ public class FilterITCase extends FindTestBase {
         ParametricFieldContainer container = filterPanel.parametricField(1);
         final String filterCategory = container.filterCategoryName();
 
-        FindParametricFilter checkbox = filterPanel.checkboxForParametricValue(1, 1);
+        final FindParametricFilter checkbox = filterPanel.checkboxForParametricValue(1, 1);
         final List<String> selectedFilter = Arrays.asList(checkbox.getName());
         checkbox.check();
 
@@ -168,9 +189,9 @@ public class FilterITCase extends FindTestBase {
         searchAndWait("*");
         final FilterPanel filterPanel = filters();
 
-        List<String> allFilterCategories = new ArrayList<>();
+        final List<String> allFilterCategories = new ArrayList<>();
         findPage.waitForParametricValuesToLoad();
-        for(ParametricFieldContainer container : filterPanel.parametricFieldContainers()) {
+        for(final ParametricFieldContainer container : filterPanel.parametricFieldContainers()) {
             allFilterCategories.add(container.filterCategoryName());
         }
 
@@ -240,7 +261,7 @@ public class FilterITCase extends FindTestBase {
     public void testUnselectingContentTypeQuicklyDoesNotLeadToError() {
         final ListView results = findService.search("wolf");
 
-        FindParametricFilter filter = filters().checkBoxesForParametricFieldContainer(0).get(0);
+        final FindParametricFilter filter = filters().checkBoxesForParametricFieldContainer(0).get(0);
         filter.check();
         filter.uncheck();
 
@@ -402,7 +423,7 @@ public class FilterITCase extends FindTestBase {
 
         final int initialLabelsSize = getFilterLabels().size();
 
-        FilterPanel filterPanel = filters();
+        final FilterPanel filterPanel = filters();
         filterPanel.toggleFilter(DateOption.WEEK);
         results.waitForResultsToLoad();
 
@@ -449,7 +470,7 @@ public class FilterITCase extends FindTestBase {
         results.waitForResultsToLoad();
 
         appliedFilters = appliedFiltersPanel.getAppliedFilters();
-        assertThat("A filter label appears", appliedFilters, hasSize(initialLabelsSize+1));
+        assertThat("A filter label appears", appliedFilters, hasSize(initialLabelsSize + 1));
 
         String headerText = appliedFiltersPanel.appliedFilterCounter().getText();
         assertThat("The header reports the number of filter labels", headerText, containsString("(" + appliedFilters.size() + ")"));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -34,9 +34,8 @@ import java.util.stream.Stream;
 public abstract class FieldsController<R extends FieldsRequest, E extends Exception, Q extends QueryRestrictions<?>, P extends ParametricRequest<Q>> {
     public static final String FIELDS_PATH = "/api/public/fields";
     public static final String GET_PARAMETRIC_FIELDS_PATH = "/parametric";
-    protected static final String GET_PARAMETRIC_NUMERIC_FIELDS_PATH = "/parametric-numeric";
     public static final String GET_PARAMETRIC_DATE_FIELDS_PATH = "/parametric-date";
-
+    protected static final String GET_PARAMETRIC_NUMERIC_FIELDS_PATH = "/parametric-numeric";
     private final FieldsService<R, E> fieldsService;
     private final ParametricValuesService<P, Q, E> parametricValuesService;
     private final ObjectFactory<? extends ParametricRequestBuilder<P, Q, ?>> parametricRequestBuilderFactory;
@@ -122,7 +121,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
 
                     final ValueDetails valueDetails = valueDetailsResponse.get(tagName);
 
-                    if (valueDetails != null) {
+                    if(valueDetails != null) {
                         builder
                                 .setMax(valueDetails.getMax())
                                 .setMin(valueDetails.getMin())

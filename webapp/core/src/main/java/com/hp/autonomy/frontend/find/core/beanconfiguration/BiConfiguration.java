@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -16,15 +16,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @Import({
-    DataSourceAutoConfiguration.class,
-    HibernateJpaAutoConfiguration.class
+        DataSourceAutoConfiguration.class,
+        HibernateJpaAutoConfiguration.class
 })
 @EnableJpaAuditing
 @EnableJpaRepositories(basePackages = "com.hp.autonomy.frontend.find")
 @EnableTransactionManagement
 @ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
 public class BiConfiguration {
-
     public final static String BI_PROPERTY = "hp.find.enableBi";
-
 }

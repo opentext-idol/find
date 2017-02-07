@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'js-whatever/js/modal',
     'jquery',
@@ -7,14 +12,17 @@ define([
     'text!find/idol/templates/comparison/compare-modal-footer.html',
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/idol/nls/comparisons',
-    'i18n!find/nls/bundle'
-], function(Modal, $, SearchToCompare, ComparisonModel, SavedSearchModel, compareModalFooter, loadingSpinnerTemplate, comparisonsI18n, i18n) {
+    'i18n!find/nls/bundle',
+    'underscore'
+], function(Modal, $, SearchToCompare, ComparisonModel, SavedSearchModel, compareModalFooter,
+            loadingSpinnerTemplate, comparisonsI18n, i18n, _) {
+    'use strict';
 
     function getSearchModelWithDefault(savedSearchCollection, queryStates) {
         return function(cid) {
             var search = savedSearchCollection.get(cid);
 
-            if (search.isNew()) {
+            if(search.isNew()) {
                 search = new SavedSearchModel(_.extend({title: search.get('title')}, SavedSearchModel.attributesFromQueryState(queryStates.get(cid))));
             }
 
@@ -54,7 +62,7 @@ define([
                     this.$confirmButton.prop('disabled', true);
 
                     var secondSearch = getSearchModel(this.selectedId);
-                    
+
                     var searchModels = {
                         first: initialSearch,
                         second: secondSearch
@@ -76,7 +84,7 @@ define([
                 }, this)
             });
 
-            this.listenTo(this.searchToCompare, 'selected', function(selectedId){
+            this.listenTo(this.searchToCompare, 'selected', function(selectedId) {
                 this.selectedId = selectedId;
                 this.$('.modal-action-button').toggleClass('disabled not-clickable', !this.selectedId);
             });
@@ -96,13 +104,12 @@ define([
                 .appendTo(this.$loadingSpinner);
         },
 
-        remove: function () {
+        remove: function() {
             Modal.prototype.remove.call(this);
 
-            if (this.xhr) {
+            if(this.xhr) {
                 this.xhr.abort();
             }
         }
     });
-
 });

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find;
 
 import com.autonomy.abc.selenium.find.bi.MapView;
@@ -10,7 +15,6 @@ import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 import com.autonomy.abc.selenium.find.numericWidgets.MainNumericWidget;
 import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.indexes.IdolDatabaseTree;
-import com.google.common.collect.Table;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -40,9 +44,8 @@ public class IdolFindPage extends FindPage {
     }
 
     public void goBackToSearch() {
-        List<WebElement> backButtons = findElements(By.cssSelector(".comparison-view-back-button"));
-        if(backButtons.size() > 0) { backButtons.get(0).click(); }
-        else {
+        final List<WebElement> backButtons = findElements(By.cssSelector(".comparison-view-back-button"));
+        if(backButtons.size() > 0) { backButtons.get(0).click(); } else {
             LOGGER.info("Could not locate back button; maybe already on main view.");
         }
         waitForLoad();
@@ -58,21 +61,26 @@ public class IdolFindPage extends FindPage {
 
     //WAITS
     public void waitUntilSearchTabsLoaded() {
-        new WebDriverWait(getDriver(),10).until(ExpectedConditions.elementToBeClickable(compareButton()));
+        new WebDriverWait(getDriver(), 10)
+                .until(ExpectedConditions.elementToBeClickable(compareButton()));
     }
 
     public void waitUntilSaveButtonsActive() {
-        new WebDriverWait(getDriver(), 30L).withMessage("Buttons should become active").until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".service-view-container:not(.hide) .save-button:not(.disabled)")));
+        new WebDriverWait(getDriver(), 30L).withMessage("Buttons should become active")
+                .until(ExpectedConditions.presenceOfElementLocated(
+                        By.cssSelector(".service-view-container:not(.hide) .save-button:not(.disabled)")));
     }
 
     public void waitUntilSavePossible() {
-        new WebDriverWait(getDriver(), 30L).withMessage("Buttons should become active").until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".service-view-container:not(.hide) .save-button:not(.disabled)")));
+        new WebDriverWait(getDriver(), 30L).withMessage("Buttons should become active")
+                .until(ExpectedConditions.presenceOfElementLocated(
+                        By.cssSelector(".service-view-container:not(.hide) .save-button:not(.disabled)")));
     }
 
     //NUMERIC GRAPH
     public MainNumericWidget mainGraph() {return new MainNumericWidget(getDriver());}
 
-    public boolean mainGraphDisplayed(){
+    public boolean mainGraphDisplayed() {
         return !findElements(By.className("middle-container-time-bar")).isEmpty();
     }
 
@@ -82,9 +90,11 @@ public class IdolFindPage extends FindPage {
 
     //VIEW TABS
     private void goToTab(final ViewTab tab) {
-        Container.currentTabContents(getDriver()).findElement(By.cssSelector("li a[data-tab-id='" + tab.css() +"']")).click();
+        Container.currentTabContents(getDriver()).findElement(
+                By.cssSelector("li a[data-tab-id='" + tab.css() + "']")).click();
     }
 
+    @Override
     public ListView goToListView() {
         goToTab(ViewTab.LIST);
         return new ListView(getDriver());
@@ -100,12 +110,12 @@ public class IdolFindPage extends FindPage {
         return new MapView(getDriver());
     }
 
-    public SunburstView goToSunburst(){
+    public SunburstView goToSunburst() {
         goToTab(ViewTab.SUNBURST);
         return new SunburstView(getDriver());
     }
 
-    public TableView goToTable(){
+    public TableView goToTable() {
         goToTab(ViewTab.TABLE);
 
         new WebDriverWait(getDriver(), 15)
@@ -114,7 +124,8 @@ public class IdolFindPage extends FindPage {
                     @Override
                     public Boolean apply(final WebDriver driver) {
                         return !findElements(By.cssSelector("table.dataTable")).isEmpty() ||
-                                currentView().findElement(By.cssSelector(".parametric-view-message .well div")).isDisplayed();
+                                currentView().findElement(
+                                        By.cssSelector(".parametric-view-message .well div")).isDisplayed();
                     }
                 });
 

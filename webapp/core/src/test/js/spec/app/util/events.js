@@ -1,13 +1,15 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-   'find/app/util/events',
-   'jasmine-ajax'
-], function(events) {
-    "use strict";
+    'jquery',
+    'find/app/util/events',
+    'underscore',
+    'jasmine-ajax'
+], function($, events, _) {
+    'use strict';
 
     describe('Events', function() {
         beforeEach(function() {
@@ -48,7 +50,7 @@ define([
             });
 
             describe('click through tracking', function() {
-                beforeEach(function () {
+                beforeEach(function() {
                     this.events.reset('dog man', false);
                 });
 
@@ -58,7 +60,12 @@ define([
                     expect(this.requests.count()).toBe(1);
 
                     var params = JSON.parse(this.requests.mostRecent().params);
-                    expect(params).toEqual({'click-type': 'preview', type: 'clickthrough', search: 'dog man', position: 5});
+                    expect(params).toEqual({
+                        'click-type': 'preview',
+                        type: 'clickthrough',
+                        search: 'dog man',
+                        position: 5
+                    });
                 });
 
                 it('should track a preview leading to a full preview', function() {
@@ -68,10 +75,20 @@ define([
                     expect(this.requests.count()).toBe(2);
 
                     var params0 = JSON.parse(this.requests.at(0).params);
-                    expect(params0).toEqual({'click-type': 'preview', type: 'clickthrough', search: 'dog man', position: 5});
+                    expect(params0).toEqual({
+                        'click-type': 'preview',
+                        type: 'clickthrough',
+                        search: 'dog man',
+                        position: 5
+                    });
 
                     var params1 = JSON.parse(this.requests.at(1).params);
-                    expect(params1).toEqual({'click-type': 'full_preview', type: 'clickthrough', search: 'dog man', position: 5});
+                    expect(params1).toEqual({
+                        'click-type': 'full_preview',
+                        type: 'clickthrough',
+                        search: 'dog man',
+                        position: 5
+                    });
                 });
 
                 it('should track a preview leading to a full preview leading to an original', function() {
@@ -82,18 +99,33 @@ define([
                     expect(this.requests.count()).toBe(3);
 
                     var params0 = JSON.parse(this.requests.at(0).params);
-                    expect(params0).toEqual({'click-type': 'preview', type: 'clickthrough', search: 'dog man', position: 5});
+                    expect(params0).toEqual({
+                        'click-type': 'preview',
+                        type: 'clickthrough',
+                        search: 'dog man',
+                        position: 5
+                    });
 
                     var params1 = JSON.parse(this.requests.at(1).params);
-                    expect(params1).toEqual({'click-type': 'full_preview', type: 'clickthrough', search: 'dog man', position: 5});
+                    expect(params1).toEqual({
+                        'click-type': 'full_preview',
+                        type: 'clickthrough',
+                        search: 'dog man',
+                        position: 5
+                    });
 
                     var params2 = JSON.parse(this.requests.at(2).params);
-                    expect(params2).toEqual({'click-type': 'original', type: 'clickthrough', search: 'dog man', position: 5});
+                    expect(params2).toEqual({
+                        'click-type': 'original',
+                        type: 'clickthrough',
+                        search: 'dog man',
+                        position: 5
+                    });
                 });
             });
 
             describe('abandonments', function() {
-                beforeEach(function () {
+                beforeEach(function() {
                     this.events.reset('batman', false);
                 });
 
@@ -118,7 +150,12 @@ define([
 
                     var params = _.chain(this.requests.filter(/.*?\/stats/)).pluck('params').map(JSON.parse).value();
 
-                    expect(params).toContain({'click-type': 'preview', type: 'clickthrough', search: 'batman', position: 7});
+                    expect(params).toContain({
+                        'click-type': 'preview',
+                        type: 'clickthrough',
+                        search: 'batman',
+                        position: 7
+                    });
 
                     expect(params).toContain({'click-type': 'full_preview', type: 'abandonment', search: 'batman'});
                     expect(params).toContain({'click-type': 'original', type: 'abandonment', search: 'batman'});
@@ -134,8 +171,18 @@ define([
 
                     var params = _.chain(this.requests.filter(/.*?\/stats/)).pluck('params').map(JSON.parse).value();
 
-                    expect(params).toContain({'click-type': 'preview', type: 'clickthrough', search: 'batman', position: 7});
-                    expect(params).toContain({'click-type': 'full_preview', type: 'clickthrough', search: 'batman', position: 7});
+                    expect(params).toContain({
+                        'click-type': 'preview',
+                        type: 'clickthrough',
+                        search: 'batman',
+                        position: 7
+                    });
+                    expect(params).toContain({
+                        'click-type': 'full_preview',
+                        type: 'clickthrough',
+                        search: 'batman',
+                        position: 7
+                    });
 
                     expect(params).toContain({'click-type': 'original', type: 'abandonment', search: 'batman'});
                 });
@@ -151,9 +198,24 @@ define([
 
                     var params = _.chain(this.requests.filter(/.*?\/stats/)).pluck('params').map(JSON.parse).value();
 
-                    expect(params).toContain({'click-type': 'preview', type: 'clickthrough', search: 'batman', position: 7});
-                    expect(params).toContain({'click-type': 'full_preview', type: 'clickthrough', search: 'batman', position: 7});
-                    expect(params).toContain({'click-type': 'original', type: 'clickthrough', search: 'batman', position: 7});
+                    expect(params).toContain({
+                        'click-type': 'preview',
+                        type: 'clickthrough',
+                        search: 'batman',
+                        position: 7
+                    });
+                    expect(params).toContain({
+                        'click-type': 'full_preview',
+                        type: 'clickthrough',
+                        search: 'batman',
+                        position: 7
+                    });
+                    expect(params).toContain({
+                        'click-type': 'original',
+                        type: 'clickthrough',
+                        search: 'batman',
+                        position: 7
+                    });
                 });
 
                 it('should track abandonments if no results are clicked regardless of pagination', function() {
@@ -230,12 +292,37 @@ define([
 
                 var params = _.chain(this.requests.filter(/.*?\/stats/)).pluck('params').map(JSON.parse).value();
 
-                expect(params).toContain({position: 6, type: 'clickthrough', search: 'bear man', 'click-type': 'preview'});
-                expect(params).toContain({position: 6, type: 'clickthrough', search: 'bear man', 'click-type': 'full_preview'});
-                expect(params).toContain({position: 6, type: 'clickthrough', search: 'bear man', 'click-type': 'original'});
+                expect(params).toContain({
+                    position: 6,
+                    type: 'clickthrough',
+                    search: 'bear man',
+                    'click-type': 'preview'
+                });
+                expect(params).toContain({
+                    position: 6,
+                    type: 'clickthrough',
+                    search: 'bear man',
+                    'click-type': 'full_preview'
+                });
+                expect(params).toContain({
+                    position: 6,
+                    type: 'clickthrough',
+                    search: 'bear man',
+                    'click-type': 'original'
+                });
 
-                expect(params).toContain({position: 7, type: 'clickthrough', search: 'horse man', 'click-type': 'preview'});
-                expect(params).toContain({position: 7, type: 'clickthrough', search: 'horse man', 'click-type': 'full_preview'});
+                expect(params).toContain({
+                    position: 7,
+                    type: 'clickthrough',
+                    search: 'horse man',
+                    'click-type': 'preview'
+                });
+                expect(params).toContain({
+                    position: 7,
+                    type: 'clickthrough',
+                    search: 'horse man',
+                    'click-type': 'full_preview'
+                });
             });
 
             it('should track abandonments independently', function() {
@@ -253,11 +340,26 @@ define([
 
                 var params = _.chain(this.requests.filter(/.*?\/stats/)).pluck('params').map(JSON.parse).value();
 
-                expect(params).toContain({position: 6, type: 'clickthrough', search: 'batman', 'click-type': 'preview'});
-                expect(params).toContain({position: 6, type: 'clickthrough', search: 'batman', 'click-type': 'full_preview'});
+                expect(params).toContain({
+                    position: 6,
+                    type: 'clickthrough',
+                    search: 'batman',
+                    'click-type': 'preview'
+                });
+                expect(params).toContain({
+                    position: 6,
+                    type: 'clickthrough',
+                    search: 'batman',
+                    'click-type': 'full_preview'
+                });
                 expect(params).toContain({type: 'abandonment', search: 'batman', 'click-type': 'original'});
 
-                expect(params).toContain({position: 7, type: 'clickthrough', search: 'goose man', 'click-type': 'preview'});
+                expect(params).toContain({
+                    position: 7,
+                    type: 'clickthrough',
+                    search: 'goose man',
+                    'click-type': 'preview'
+                });
                 expect(params).toContain({type: 'abandonment', search: 'goose man', 'click-type': 'full_preview'});
                 expect(params).toContain({type: 'abandonment', search: 'goose man', 'click-type': 'original'});
             });
@@ -311,5 +413,4 @@ define([
             });
         });
     });
-
 });

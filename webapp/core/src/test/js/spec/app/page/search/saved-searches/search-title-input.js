@@ -1,14 +1,16 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'jquery',
     'find/app/page/search/saved-searches/search-title-input',
     'find/app/model/saved-searches/saved-search-model',
     'i18n!find/nls/bundle',
     'backbone'
-], function(SearchTitleInput, SavedSearchModel, i18n, Backbone) {
+], function($, SearchTitleInput, SavedSearchModel, i18n, Backbone) {
+    'use strict';
 
     describe('Search title input', function() {
         var INITIAL_TITLE = 'Initial Title';
@@ -38,12 +40,12 @@ define([
                 expect(this.view.$('.search-title-input')).toHaveValue('');
             });
 
-            describe('if the save button is clicked', function () {
+            describe('if the save button is clicked', function() {
                 beforeEach(function() {
                     this.view.$('.save-title-confirm-button').click();
                 });
 
-                it('should not be possible to save without a title', function () {
+                it('should not be possible to save without a title', function() {
                     expect(this.saveCallback).not.toHaveBeenCalled();
                 });
             });
@@ -138,7 +140,7 @@ define([
             describe('when there is a new title', function() {
                 var NEW_TITLE = 'My Search';
 
-                beforeEach(function () {
+                beforeEach(function() {
                     this.view.$('.search-title-input').val('  ' + NEW_TITLE).trigger('input');
                 });
 
@@ -146,16 +148,16 @@ define([
                     expect(this.view.$('.save-title-confirm-button')).not.toHaveClass('disabled');
                 });
 
-                describe('and the save button is clicked', function () {
+                describe('and the save button is clicked', function() {
                     beforeEach(function() {
                         this.view.$('.save-title-confirm-button').click();
                     });
 
-                    it('should not fire a "remove" event', function () {
+                    it('should not fire a "remove" event', function() {
                         expect(this.listener).not.toHaveBeenCalled();
                     });
 
-                    it('should call the save callback with the trimmed title, a success and an error callback', function () {
+                    it('should call the save callback with the trimmed title, a success and an error callback', function() {
                         expect(this.saveCallback).toHaveBeenCalled();
 
                         expect(this.saveCallback.calls.argsFor(0)).toEqual([{
@@ -163,52 +165,52 @@ define([
                         }, jasmine.any(Function), jasmine.any(Function)]);
                     });
 
-                    it('should disable the input', function () {
+                    it('should disable the input', function() {
                         expect(this.view.$('.search-title-input')).toHaveProp('disabled', true);
                     });
 
-                    it('should disable the save button', function () {
+                    it('should disable the save button', function() {
                         expect(this.view.$('.save-title-confirm-button')).toHaveProp('disabled', true);
                     });
 
-                    it('should disable the cancel button', function () {
+                    it('should disable the cancel button', function() {
                         expect(this.view.$('.save-title-cancel-button')).toHaveProp('disabled', true);
                     });
 
-                    describe('then the save fails', function () {
-                        beforeEach(function () {
+                    describe('then the save fails', function() {
+                        beforeEach(function() {
                             this.saveCallback.calls.argsFor(0)[2]({status: 404}, {statusText: ''});
                         });
 
-                        it('enables the input', function () {
+                        it('enables the input', function() {
                             expect(this.view.$('.search-title-input')).toHaveProp('disabled', false);
                         });
 
-                        it('enables the save button', function () {
+                        it('enables the save button', function() {
                             expect(this.view.$('.save-title-confirm-button')).toHaveProp('disabled', false);
                         });
 
-                        it('enables the cancel button', function () {
+                        it('enables the cancel button', function() {
                             expect(this.view.$('.save-title-cancel-button')).toHaveProp('disabled', false);
                         });
 
-                        it('displays an error message', function () {
+                        it('displays an error message', function() {
                             var $errorMessage = this.view.$('.search-title-error-message');
                             expect($errorMessage).toHaveText(i18n['search.savedSearchControl.error']);
                             expect($errorMessage).not.toHaveClass('hide');
                         });
 
-                        it('does not fire a "remove" event', function () {
+                        it('does not fire a "remove" event', function() {
                             expect(this.listener).not.toHaveBeenCalled();
                         });
                     });
 
-                    describe('then the save succeeds', function () {
-                        beforeEach(function () {
+                    describe('then the save succeeds', function() {
+                        beforeEach(function() {
                             this.saveCallback.calls.argsFor(0)[1]();
                         });
 
-                        it('fires a "remove" event', function () {
+                        it('fires a "remove" event', function() {
                             expect(this.listener).toHaveBeenCalled();
                         });
                     });
@@ -216,5 +218,4 @@ define([
             });
         });
     });
-
 });
