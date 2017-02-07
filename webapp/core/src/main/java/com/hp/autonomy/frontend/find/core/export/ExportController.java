@@ -169,7 +169,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     ) throws IOException {
         final Path[] paths = new ObjectMapper().readValue(pathStr, Path[].class);
 
-        final XMLSlideShow ppt = new XMLSlideShow();
+        final XMLSlideShow ppt = loadTemplate(false, false);
         final Dimension pageSize = ppt.getPageSize();
         final double pageWidth = pageSize.getWidth(), pageHeight = pageSize.getHeight();
         final XSLFSlide sl = ppt.createSlide();
@@ -252,83 +252,74 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             throw new IllegalArgumentException("Number of values should match the number of categories");
         }
 
-        try(final InputStream template = pptxTemplate.getInputStream()) {
-            final XMLSlideShow ppt = new XMLSlideShow(template);
+        final XMLSlideShow ppt = loadTemplate(true, false);
 
-            // The template should have two slides. The first slide should have a pie chart; the second has a graph.
-            if (ppt.getSlides().size() < 2) {
-                throw new IllegalArgumentException("Invalid template supplied");
+        final XSLFSlide slide = ppt.getSlides().get(0);
+
+        XSLFChart chart = null;
+        for(POIXMLDocumentPart part : slide.getRelations()) {
+            if(part instanceof XSLFChart) {
+                chart = (XSLFChart) part;
+                break;
             }
-
-            ppt.removeSlide(1);
-
-            final XSLFSlide slide = ppt.getSlides().get(0);
-
-            XSLFChart chart = null;
-            for(POIXMLDocumentPart part : slide.getRelations()) {
-                if(part instanceof XSLFChart) {
-                    chart = (XSLFChart) part;
-                    break;
-                }
-            }
-
-            if(chart == null) throw new IllegalStateException("Chart required in template");
-
-            final XSSFWorkbook workbook = new XSSFWorkbook();
-            final XSSFSheet sheet = workbook.createSheet();
-
-            final CTChart ctChart = chart.getCTChart();
-            final CTPlotArea plotArea = ctChart.getPlotArea();
-
-            final CTDoughnutChart donutChart = plotArea.getDoughnutChartArray(0);
-
-            final CTPieSer series = donutChart.getSerArray(0);
-
-            final CTStrRef strRef = series.getTx().getStrRef();
-            strRef.getStrCache().getPtArray(0).setV(title);
-            sheet.createRow(0).createCell(1).setCellValue(title);
-            strRef.setF(new CellReference(sheet.getSheetName(), 0, 1, true, true).formatAsString());
-
-            final CTStrRef categoryRef = series.getCat().getStrRef();
-            final CTStrData categoryData = categoryRef.getStrCache();
-            final CTNumRef numRef = series.getVal().getNumRef();
-            final CTNumData numericData = numRef.getNumCache();
-
-            categoryData.setPtArray(null);
-            numericData.setPtArray(null);
-
-            for(int idx = 0; idx < values.length; ++idx) {
-                final CTStrVal categoryPoint = categoryData.addNewPt();
-                categoryPoint.setIdx(idx);
-                categoryPoint.setV(categories[idx]);
-
-                final CTNumVal numericPoint = numericData.addNewPt();
-                numericPoint.setIdx(idx);
-                numericPoint.setV(Double.toString(values[idx]));
-
-                XSSFRow row = sheet.createRow(idx + 1);
-                row.createCell(0).setCellValue(categories[idx]);
-                row.createCell(1).setCellValue(values[idx]);
-            }
-            categoryData.getPtCount().setVal(categories.length);
-            numericData.getPtCount().setVal(values.length);
-
-            categoryRef.setF(new CellRangeAddress(1, values.length, 0, 0).formatAsString(sheet.getSheetName(), true));
-            numRef.setF(new CellRangeAddress(1, values.length, 1, 1).formatAsString(sheet.getSheetName(), true));
-
-            for(final POIXMLDocumentPart part : chart.getRelations()) {
-                final PackagePart pkg = part.getPackagePart();
-                if("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(pkg.getContentType())) {
-                    // We have to rewrite the chart data; OpenOffice doesn't use it but Powerpoint does when you click 'Edit Data'
-                    try(final OutputStream xlsOut = pkg.getOutputStream()) {
-                        workbook.write(xlsOut);
-                    }
-                    break;
-                }
-            }
-
-            return writePPT(ppt, "sunburst.pptx");
         }
+
+        if(chart == null) throw new IllegalStateException("Chart required in template");
+
+        final XSSFWorkbook workbook = new XSSFWorkbook();
+        final XSSFSheet sheet = workbook.createSheet();
+
+        final CTChart ctChart = chart.getCTChart();
+        final CTPlotArea plotArea = ctChart.getPlotArea();
+
+        final CTDoughnutChart donutChart = plotArea.getDoughnutChartArray(0);
+
+        final CTPieSer series = donutChart.getSerArray(0);
+
+        final CTStrRef strRef = series.getTx().getStrRef();
+        strRef.getStrCache().getPtArray(0).setV(title);
+        sheet.createRow(0).createCell(1).setCellValue(title);
+        strRef.setF(new CellReference(sheet.getSheetName(), 0, 1, true, true).formatAsString());
+
+        final CTStrRef categoryRef = series.getCat().getStrRef();
+        final CTStrData categoryData = categoryRef.getStrCache();
+        final CTNumRef numRef = series.getVal().getNumRef();
+        final CTNumData numericData = numRef.getNumCache();
+
+        categoryData.setPtArray(null);
+        numericData.setPtArray(null);
+
+        for(int idx = 0; idx < values.length; ++idx) {
+            final CTStrVal categoryPoint = categoryData.addNewPt();
+            categoryPoint.setIdx(idx);
+            categoryPoint.setV(categories[idx]);
+
+            final CTNumVal numericPoint = numericData.addNewPt();
+            numericPoint.setIdx(idx);
+            numericPoint.setV(Double.toString(values[idx]));
+
+            XSSFRow row = sheet.createRow(idx + 1);
+            row.createCell(0).setCellValue(categories[idx]);
+            row.createCell(1).setCellValue(values[idx]);
+        }
+        categoryData.getPtCount().setVal(categories.length);
+        numericData.getPtCount().setVal(values.length);
+
+        categoryRef.setF(new CellRangeAddress(1, values.length, 0, 0).formatAsString(sheet.getSheetName(), true));
+        numRef.setF(new CellRangeAddress(1, values.length, 1, 1).formatAsString(sheet.getSheetName(), true));
+
+        for(final POIXMLDocumentPart part : chart.getRelations()) {
+            final PackagePart pkg = part.getPackagePart();
+            if("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(pkg.getContentType())) {
+                // We have to rewrite the chart data; OpenOffice doesn't use it but Powerpoint does when you click 'Edit Data'
+                try(final OutputStream xlsOut = pkg.getOutputStream()) {
+                    workbook.write(xlsOut);
+                }
+                break;
+            }
+        }
+
+        return writePPT(ppt, "sunburst.pptx");
     }
 
     @RequestMapping(value = PPT_TABLE_PATH, method = RequestMethod.POST)
@@ -342,7 +333,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             throw new IllegalArgumentException("Number of data points does not match the number of columns");
         }
 
-        final XMLSlideShow ppt = new XMLSlideShow();
+        final XMLSlideShow ppt = loadTemplate(false, false);
         final Dimension pageSize = ppt.getPageSize();
         final double pageWidth = pageSize.getWidth(), pageHeight = pageSize.getHeight();
         final XSLFSlide sl = ppt.createSlide();
@@ -393,7 +384,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     ) throws IOException {
         final Marker[] markers = new ObjectMapper().readValue(markerStr, Marker[].class);
 
-        final XMLSlideShow ppt = new XMLSlideShow();
+        final XMLSlideShow ppt = loadTemplate(false, false);
         final Dimension pageSize = ppt.getPageSize();
         final double pageWidth = pageSize.getWidth(), pageHeight = pageSize.getHeight();
         final XSLFSlide sl = ppt.createSlide();
@@ -527,7 +518,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     ) throws IOException {
         final Document[] docs = new ObjectMapper().readValue(docsStr, Document[].class);
 
-        final XMLSlideShow ppt = new XMLSlideShow();
+        final XMLSlideShow ppt = loadTemplate(false, false);
         final Dimension pageSize = ppt.getPageSize();
         final double
                 pageWidth = pageSize.getWidth(), pageHeight = pageSize.getHeight(),
@@ -694,6 +685,27 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     @Value(value = "classpath:/templates/template.pptx")
     private Resource pptxTemplate;
 
+    private XMLSlideShow loadTemplate(final boolean keepPieChart, final boolean keepGraph) throws IOException {
+        try(InputStream inputStream = pptxTemplate.getInputStream()) {
+            final XMLSlideShow ppt = new XMLSlideShow(inputStream);
+
+            // The template should have two slides. The first slide should have a pie chart; the second has a graph.
+            if (ppt.getSlides().size() != 2) {
+                throw new IllegalArgumentException("Invalid template supplied");
+            }
+
+            if (!keepGraph) {
+                ppt.removeSlide(1);
+            }
+
+            if (!keepPieChart) {
+                ppt.removeSlide(0);
+            }
+
+            return ppt;
+        }
+    }
+
     @RequestMapping(value = PPT_DATEGRAPH_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> graph(
             @RequestParam("data") final String dataStr
@@ -714,82 +726,73 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
         final XSSFWorkbook wb = writeChart(data);
 
-        try(InputStream inputStream = pptxTemplate.getInputStream()) {
-            final XMLSlideShow ppt = new XMLSlideShow(inputStream);
+        final XMLSlideShow ppt = loadTemplate(false, true);
 
-            // The template should have two slides. The first slide should have a pie chart; the second has a graph.
-            if (ppt.getSlides().size() < 2) {
-                throw new IllegalArgumentException("Invalid template supplied");
+        final XSLFSlide slide = ppt.getSlides().get(0);
+
+        XSLFChart chart = null;
+
+        for(POIXMLDocumentPart part : slide.getRelations()) {
+            if (part instanceof XSLFChart) {
+                chart = (XSLFChart) part;
+                break;
             }
-
-            ppt.removeSlide(0);
-
-            final XSLFSlide slide = ppt.getSlides().get(0);
-
-            XSLFChart chart = null;
-
-            for(POIXMLDocumentPart part : slide.getRelations()) {
-                if (part instanceof XSLFChart) {
-                    chart = (XSLFChart) part;
-                    break;
-                }
-            }
-
-            if (chart == null) {
-                throw new IllegalArgumentException("Invalid template supplied");
-            }
-
-            final CTChart ctChart = chart.getCTChart();
-            final CTPlotArea plotArea = ctChart.getPlotArea();
-            final XSSFSheet sheet = wb.getSheetAt(0);
-
-            // In the template, we have two <c:lineChart> objects, one for the primary axis, one for the secondary.
-            if (!useSecondaryAxis) {
-                // Discard the extra axes
-                // OpenOffice is happy enough if you remove the line chart, but PowerPoint will complain it's a corrupt
-                //   file and unhelpfully delete the entire chart when you choose 'repair' if any orphan axes remain.
-                plotArea.removeLineChart(1);
-                plotArea.removeValAx(1);
-                plotArea.removeDateAx(1);
-            }
-
-            final CTLineChart primaryChart = plotArea.getLineChartArray()[0];
-            final CTLineSer[] primarySeries = primaryChart.getSerArray();
-            primarySeries[0].getDPtList().clear();
-
-            int primarySeriesCount = 0;
-            int secondarySeriesCount = 0;
-
-            for (int seriesIdx = 0; seriesIdx < data.rows.size(); ++seriesIdx) {
-                final ChartData.Row row = data.rows.get(seriesIdx);
-
-                final CTLineChart tgtChart = plotArea.getLineChartArray(row.isSecondaryAxis() ? 1 : 0);
-
-                final CTLineSer[] serArray = tgtChart.getSerArray();
-                final int createdSeriesIdx = row.isSecondaryAxis() ? secondarySeriesCount++ : primarySeriesCount++;
-
-                final CTLineSer curSeries;
-
-                if (createdSeriesIdx < serArray.length) {
-                    curSeries = serArray[createdSeriesIdx];
-                }
-                else {
-                    curSeries = tgtChart.addNewSer();
-                    curSeries.set(serArray[0].copy());
-                }
-
-                updateCTLineSer(data, sheet, seriesIdx, curSeries);
-            }
-
-            for(final POIXMLDocumentPart rel : chart.getRelations()) {
-                final PackagePart pkg = rel.getPackagePart();
-                if ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(pkg.getContentType())) {
-                    wb.write(pkg.getOutputStream());
-                }
-            }
-
-            return writePPT(ppt, "dategraph.pptx");
         }
+
+        if (chart == null) {
+            throw new IllegalArgumentException("Invalid template supplied");
+        }
+
+        final CTChart ctChart = chart.getCTChart();
+        final CTPlotArea plotArea = ctChart.getPlotArea();
+        final XSSFSheet sheet = wb.getSheetAt(0);
+
+        // In the template, we have two <c:lineChart> objects, one for the primary axis, one for the secondary.
+        if (!useSecondaryAxis) {
+            // Discard the extra axes
+            // OpenOffice is happy enough if you remove the line chart, but PowerPoint will complain it's a corrupt
+            //   file and unhelpfully delete the entire chart when you choose 'repair' if any orphan axes remain.
+            plotArea.removeLineChart(1);
+            plotArea.removeValAx(1);
+            plotArea.removeDateAx(1);
+        }
+
+        final CTLineChart primaryChart = plotArea.getLineChartArray()[0];
+        final CTLineSer[] primarySeries = primaryChart.getSerArray();
+        primarySeries[0].getDPtList().clear();
+
+        int primarySeriesCount = 0;
+        int secondarySeriesCount = 0;
+
+        for (int seriesIdx = 0; seriesIdx < data.rows.size(); ++seriesIdx) {
+            final ChartData.Row row = data.rows.get(seriesIdx);
+
+            final CTLineChart tgtChart = plotArea.getLineChartArray(row.isSecondaryAxis() ? 1 : 0);
+
+            final CTLineSer[] serArray = tgtChart.getSerArray();
+            final int createdSeriesIdx = row.isSecondaryAxis() ? secondarySeriesCount++ : primarySeriesCount++;
+
+            final CTLineSer curSeries;
+
+            if (createdSeriesIdx < serArray.length) {
+                curSeries = serArray[createdSeriesIdx];
+            }
+            else {
+                curSeries = tgtChart.addNewSer();
+                curSeries.set(serArray[0].copy());
+            }
+
+            updateCTLineSer(data, sheet, seriesIdx, curSeries);
+        }
+
+        for(final POIXMLDocumentPart rel : chart.getRelations()) {
+            final PackagePart pkg = rel.getPackagePart();
+            if ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(pkg.getContentType())) {
+                wb.write(pkg.getOutputStream());
+            }
+        }
+
+        return writePPT(ppt, "dategraph.pptx");
     }
 
     private static void updateCTLineSer(final ChartData data, final XSSFSheet sheet, final int seriesIdx, final CTLineSer series) {
