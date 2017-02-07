@@ -88,9 +88,6 @@ define([
             });
 
             describe('with parametric values and the filter set to the empty string', function () {
-                beforeEach(function () {
-                });
-
                 it('should display when the displayCollection is not empty', function () {
                     this.parametricInfo.collection.add({fakeAttribute: true});
 

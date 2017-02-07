@@ -28,7 +28,7 @@ define([
                 emptyDependentMessage: DEPENDENT_EMPTY_MESSAGE,
                 emptyMessage: EMPTY_MESSAGE,
                 errorMessageArguments: {messageToUser: ERROR_MESSAGE},
-                restrictedParametricCollection: this.parametricCollection,
+                parametricCollection: this.parametricCollection,
                 queryModel: this.queryModel,
                 queryState: this.queryState,
                 savedSearchModel: this.savedSearchModel

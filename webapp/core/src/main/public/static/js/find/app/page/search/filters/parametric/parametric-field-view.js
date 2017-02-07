@@ -14,30 +14,29 @@ define([
 ], function(Backbone, _, i18n, ListView, Collapsible, ParametricModal, ValueView) {
     'use strict';
 
-    var MAX_SIZE = 5;
+    const MAX_SIZE = 5;
 
-    var ValuesView = Backbone.View.extend({
+    const ValuesView = Backbone.View.extend({
         className: 'table parametric-fields-table',
         tagName: 'table',
         seeAllButtonTemplate: _.template('<tr class="show-all clickable"><td></td>' +
             '<td> <span class="toggle-more-text text-muted"><%-i18n["app.seeAll"]%></span></td></tr>'),
 
         events: {
-            'click .show-all': function() {
+            'click .show-all': function () {
                 new ParametricModal({
-                    collection: this.model.fieldValues,
                     currentFieldGroup: this.model.id,
-                    parametricCollection: this.parametricCollection,
-                    parametricDisplayCollection: this.parametricDisplayCollection,
+                    queryModel: this.queryModel,
+                    parametricFieldsCollection: this.parametricFieldsCollection,
                     selectedParametricValues: this.selectedParametricValues
                 });
             }
         },
 
-        initialize: function(options) {
-            this.parametricDisplayCollection = options.parametricDisplayCollection;
+        initialize: function (options) {
             this.selectedParametricValues = options.selectedParametricValues;
-            this.parametricCollection = options.parametricCollection;
+            this.parametricFieldsCollection = options.parametricFieldsCollection;
+            this.queryModel = options.queryModel;
 
             this.listView = new ListView({
                 collection: this.collection,
@@ -52,13 +51,12 @@ define([
             });
         },
 
-        render: function() {
+        render: function () {
             this.$el.empty().append(this.listView.render().$el);
         },
 
-        remove: function() {
+        remove: function () {
             this.listView.remove();
-
             Backbone.View.prototype.remove.call(this);
         }
     });
@@ -67,9 +65,9 @@ define([
         className: 'animated fadeIn',
 
         initialize: function(options) {
-            this.parametricDisplayCollection = options.parametricDisplayCollection;
+            this.parametricFieldsCollection = options.parametricFieldsCollection;
             this.selectedParametricValues = options.selectedParametricValues;
-            this.parametricCollection = options.parametricCollection;
+            this.queryModel = options.queryModel;
 
             this.collapseModel = new Backbone.Model({
                 collapsed: Boolean(_.isFunction(options.collapsed)
@@ -84,8 +82,7 @@ define([
                 view: new ValuesView({
                     collection: this.model.fieldValues,
                     model: this.model,
-                    parametricCollection: this.parametricCollection,
-                    parametricDisplayCollection: this.parametricDisplayCollection,
+                    parametricFieldsCollection: this.parametricFieldsCollection,
                     selectedParametricValues: this.selectedParametricValues
                 })
             });
@@ -112,7 +109,7 @@ define([
         },
 
         calculateSelectedCount: function() {
-            var selectedCount = this.getFieldSelectedValuesLength();
+            const selectedCount = this.getFieldSelectedValuesLength();
             return selectedCount
                 ? selectedCount + ' / ' + this.model.fieldValues.length
                 : this.model.fieldValues.length;

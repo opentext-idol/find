@@ -12,11 +12,9 @@ define([
     'find/app/page/search/filters/parametric/parametric-field-view',
     'find/app/page/search/filters/parametric/proxy-view',
     'find/app/page/search/filters/parametric/numeric-parametric-field-collapsible-view',
-    'parametric-refinement/display-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/parametric-view.html'
-], function(Backbone, $, _, ListView, metrics, FieldView, ProxyView, CollapsibleNumericFieldView,
-            DisplayCollection, i18n, template) {
+], function(Backbone, $, _, ListView, metrics, FieldView, ProxyView, CollapsibleNumericFieldView, i18n, template) {
     'use strict';
 
     const TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
@@ -26,10 +24,10 @@ define([
 
         events: {
             'click [data-field] [data-value]': function (e) {
-                var $target = $(e.currentTarget);
-                var $field = $target.closest('[data-field]');
+                const $target = $(e.currentTarget);
+                const $field = $target.closest('[data-field]');
 
-                var attributes = {
+                const attributes = {
                     field: $field.attr('data-field'),
                     value: $target.attr('data-value')
                 };
@@ -43,62 +41,55 @@ define([
         },
 
         initialize: function (options) {
-            this.restrictedParametricCollection = options.restrictedParametricCollection;
+            this.parametricFieldsCollection = options.parametricFieldsCollection;
+            this.parametricCollection = options.parametricCollection;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.displayCollection = options.displayCollection;
             this.filterModel = options.filterModel;
 
-            //ToDo : We are currently only monitoring restrictedParametricCollection for loading and error. Need to fix as part of FIND-618.
+            //ToDo : We are currently only monitoring parametricCollection for loading and error. Need to fix as part of FIND-618.
             this.model = new Backbone.Model({
-                processing: Boolean(this.restrictedParametricCollection.currentRequest),
+                processing: Boolean(this.parametricCollection.currentRequest),
                 error: false,
                 empty: this.collection.isEmpty()
             });
 
-            //noinspection JSUnresolvedFunction
             this.listenTo(this.model, 'change:processing', this.updateProcessing);
-            //noinspection JSUnresolvedFunction
             this.listenTo(this.model, 'change:error', this.updateError);
-            //noinspection JSUnresolvedFunction
             this.listenTo(this.model, 'change', this.updateEmpty);
 
-            //noinspection JSUnresolvedFunction
-            this.listenTo(this.restrictedParametricCollection, 'request', function() {
+            this.listenTo(this.parametricCollection, 'request', function() {
                 this.model.set({processing: true, error: false});
             });
 
-            //noinspection JSUnresolvedFunction
-            this.listenTo(this.restrictedParametricCollection, 'error', function(collection, xhr) {
+            this.listenTo(this.parametricCollection, 'error', function(collection, xhr) {
                 if (xhr.status === 0) {
-                    this.model.set({processing: Boolean(this.restrictedParametricCollection.currentRequest)});
+                    this.model.set({processing: Boolean(this.parametricCollection.currentRequest)});
                 } else {
                     // The request was not aborted, so there isn't another request in flight
                     this.model.set({error: true, processing: false});
                 }
             });
 
-            //noinspection JSUnresolvedFunction
-            this.listenTo(this.restrictedParametricCollection, 'sync', function() {
+            this.listenTo(this.parametricCollection, 'sync', function() {
                 this.model.set({processing: false});
 
-                if (!this.restrictedParametricCollection.isEmpty() && !this.parametricValuesLoaded) {
+                if (!this.parametricCollection.isEmpty() && !this.parametricValuesLoaded) {
                     this.parametricValuesLoaded = true;
                     metrics.addTimeSincePageLoad('parametric-values-first-loaded');
                 }
             });
 
-            //noinspection JSUnresolvedFunction
             this.listenTo(this.collection, 'update reset', function() {
                 this.model.set('empty', this.collection.isEmpty());
             });
 
-            var collapsed = {};
+            const collapsed = {};
 
-            var isCollapsed = function (model) {
+            const isCollapsed = function (model) {
                 if (this.filterModel && this.filterModel.get('text')) {
                     return false;
                 } else {
-                    //noinspection JSUnresolvedFunction
                     return _.isUndefined(collapsed[model.id]) || collapsed[model.id];
                 }
             }.bind(this);
@@ -126,11 +117,9 @@ define([
                     },
                     parametricViewItemOptions: {
                         collapsed: isCollapsed,
-                        parametricCollection: options.parametricCollection,
-                        // collection is not passed to the individual views
-                        parametricDisplayCollection: this.displayCollection,
-                        selectedParametricValues: this.selectedParametricValues,
-                        timeBarModel: options.timeBarModel
+                        queryModel: options.queryModel,
+                        parametricFieldsCollection: this.parametricFieldsCollection,
+                        selectedParametricValues: this.selectedParametricValues
                     },
                     numericViewItemOptions: {
                         inputTemplate: options.inputTemplate,
@@ -150,7 +139,6 @@ define([
                 }
             });
 
-            //noinspection JSUnresolvedFunction
             // Would ideally use model.cid but on refresh the display Collection creates new models with different cids
             this.listenTo(this.fieldNamesListView, 'item:toggle', function (model, newState) {
                 collapsed[model.id] = newState;
@@ -158,15 +146,11 @@ define([
         },
 
         render: function() {
-            //noinspection JSUnresolvedVariable
             this.$el.html(this.template).prepend(this.fieldNamesListView.$el);
             this.fieldNamesListView.render();
 
-            //noinspection JSUnresolvedFunction
             this.$emptyMessage = this.$('.parametric-empty');
-            //noinspection JSUnresolvedFunction
             this.$errorMessage = this.$('.parametric-error');
-            //noinspection JSUnresolvedFunction
             this.$processing = this.$('.parametric-processing-indicator');
 
             this.updateProcessing();
@@ -181,7 +165,7 @@ define([
 
         updateEmpty: function () {
             if (this.$emptyMessage) {
-                var showEmptyMessage = this.model.get('empty') && this.collection.isEmpty() && !(this.model.get('error') || this.model.get('processing'));
+                const showEmptyMessage = this.model.get('empty') && this.collection.isEmpty() && !(this.model.get('error') || this.model.get('processing'));
                 this.$emptyMessage.toggleClass('hide', !showEmptyMessage);
             }
         },

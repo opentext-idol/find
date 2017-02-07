@@ -11,6 +11,8 @@ define([
 
     describe('Parametric field view', function() {
         beforeEach(function() {
+            this.queryModel = new Backbone.Model({queryText: '*'});
+
             this.model = new Backbone.Model({
                 displayName: 'Primary Author',
                 id: 'primary_author'
@@ -26,6 +28,7 @@ define([
         describe('with a collapse boolean', function() {
             beforeEach(function() {
                 this.fieldView = new FieldView({
+                    queryModel: this.queryModel,
                     model: this.model,
                     selectedParametricValues: new Backbone.Collection(),
                     collapsed: false
@@ -55,6 +58,7 @@ define([
         describe('with a collapse function', function() {
             beforeEach(function() {
                 this.fieldView = new FieldView({
+                    queryModel: this.queryModel,
                     model: this.model,
                     selectedParametricValues: new Backbone.Collection(),
                     collapsed: function(model) {
@@ -86,6 +90,7 @@ define([
         describe('with a header', function() {
             beforeEach(function() {
                 this.fieldView = new FieldView({
+                    queryModel: this.queryModel,
                     model: this.model,
                     selectedParametricValues: new Backbone.Collection(
                         this.model.fieldValues.where({selected: true}).map(function(valueModel) {

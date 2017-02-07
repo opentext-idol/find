@@ -31,15 +31,6 @@ define([
                     dataType: 'parametric'
                 }];
 
-                var restrictedModels = [{
-                    id: '/DOCUMENT/WIKIPEDIA_CATEGORY',
-                    name: 'WIKIPEDIA_CATEGORY',
-                    values: [
-                        {value: 'food', count: 2},
-                        {value: 'person', count: 5}
-                    ]
-                }];
-
                 var numericParametricModels = [{
                     id: '/DOCUMENT/PLACE_ELEVATION',
                     attributes: {
@@ -57,14 +48,12 @@ define([
                 }];
 
                 this.parametricCollection = new Backbone.Collection(models);
-                this.restrictedParametricCollection = new Backbone.Collection(restrictedModels);
                 this.numericParametricCollection = new Backbone.Collection(numericParametricModels);
 
                 this.selectedParametricValues = new SelectedValuesCollection();
 
                 this.displayCollection = new DisplayCollection([], {
                     parametricCollection: this.parametricCollection,
-                    restrictedParametricCollection: this.restrictedParametricCollection,
                     selectedParametricValues: this.selectedParametricValues
                 });
 
@@ -77,7 +66,6 @@ define([
                     filterModel: new Backbone.Model(),
                     collection: this.mergedCollection,
                     parametricCollection: this.parametricCollection,
-                    restrictedParametricCollection: this.restrictedParametricCollection,
                     displayCollection: this.displayCollection,
                     queryState: {
                         selectedParametricValues: this.selectedParametricValues
@@ -107,8 +95,8 @@ define([
 
                 describe('then the parametric collection is fetched', function () {
                     beforeEach(function () {
-                        this.restrictedParametricCollection.reset();
-                        this.restrictedParametricCollection.trigger('request');
+                        this.parametricCollection.reset();
+                        this.parametricCollection.trigger('request');
                     });
 
                     it('displays the loading spinner', function () {
@@ -121,7 +109,7 @@ define([
 
                     describe('then the request fails', function () {
                         beforeEach(function () {
-                            this.restrictedParametricCollection.trigger('error', this.restrictedParametricCollection, {status: 500});
+                            this.parametricCollection.trigger('error', this.parametricCollection, {status: 500});
                         });
 
                         it('hides the loading spinner', function () {
@@ -135,7 +123,7 @@ define([
 
                     describe('then the request is aborted', function () {
                         beforeEach(function () {
-                            this.restrictedParametricCollection.trigger('error', this.restrictedParametricCollection, {status: 0});
+                            this.parametricCollection.trigger('error', this.parametricCollection, {status: 0});
                         });
 
                         it('hides the error message', function () {
@@ -145,12 +133,12 @@ define([
 
                     describe('then the request succeeds', function () {
                         beforeEach(function () {
-                            this.restrictedParametricCollection.reset([{
+                            this.parametricCollection.reset([{
                                 id: '/DOCUMENT/PERSON_SEX',
                                 name: 'PERSON_SEX',
                                 values: [{value: 'male', count: 1}]
                             }]);
-                            this.restrictedParametricCollection.trigger('sync');
+                            this.parametricCollection.trigger('sync');
                         });
 
                         it('hides the loading spinner', function () {
@@ -176,7 +164,7 @@ define([
                     typeAttribute: 'dataType'
                 });
 
-                this.restrictedParametricCollection = new Backbone.Collection();
+                this.parametricCollection = new Backbone.Collection();
                 this.displayCollection = new Backbone.Collection();
                 this.parametricCollection = new Backbone.Collection();
 
@@ -184,7 +172,6 @@ define([
                     filterModel: new Backbone.Model(),
                     collection: this.mergedCollection,
                     parametricCollection: this.parametricCollection,
-                    restrictedParametricCollection: this.restrictedParametricCollection,
                     displayCollection: this.displayCollection,
                     queryState: {
                         selectedParametricValues: this.selectedParametricValues

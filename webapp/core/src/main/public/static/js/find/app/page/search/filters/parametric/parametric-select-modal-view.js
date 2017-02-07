@@ -14,15 +14,27 @@ define([
 
     return Backbone.View.extend({
         template: _.template(template),
-        loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
+        loadingHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
         className: 'full-height',
 
         initialize: function(options) {
-            _.bindAll(this, 'renderFields');
-            this.parametricDisplayCollection = options.parametricDisplayCollection;              
             this.selectCollection = options.selectCollection;
+            this.parametricFieldsCollection = options.parametricFieldsCollection;
             this.currentFieldGroup = options.currentFieldGroup;
-            this.parametricCollection = options.parametricCollection;
+        },
+
+        render: function() {
+            const $ul = $('<ul></ul>');
+
+            this.parametricFieldsCollection.forEach(function(field) {
+                $ul.append('<li>' + field.get('name') + '</li>');
+            });
+
+            const $div = $('<div></div>')
+                .append('<p>' + this.currentFieldGroup + '</p>')
+                .append($ul);
+
+            this.$el.html($div);
         },
 
         renderFields: function () {
@@ -30,7 +42,6 @@ define([
                 parametricDisplayCollection: this.parametricDisplayCollection,
                 currentFieldGroup: this.currentFieldGroup
             }));
-
 
             var $fragment = $(document.createDocumentFragment());
 
@@ -56,10 +67,6 @@ define([
             this.$el.html(viewHtml);
 
             this.$('.tab-content').html($fragment);
-        },
-
-        render: function() {
-            this.$el.html(this.loadingTemplate);
         }
     });
 });
