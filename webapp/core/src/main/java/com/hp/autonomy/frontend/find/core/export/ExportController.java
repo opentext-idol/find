@@ -418,16 +418,21 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         }
 
         final byte[] bytes = Base64.decodeBase64(image.split(",")[1]);
-
         final XSLFPictureData picture = ppt.addPicture(bytes, type);
+        final double offsetY = textBounds.getMaxY();
+        addMap(sl, new Rectangle2D.Double(0, offsetY, pageWidth, pageHeight - textBounds.getMaxY()), picture, markers);
 
-        final XSLFPictureShape canvas = sl.createPicture(picture);
+        return writePPT(ppt, "map.pptx");
+    }
+
+    private XSLFPictureShape addMap(final XSLFSlide slide, final Rectangle2D.Double anchor, final XSLFPictureData picture, final Marker[] markers) {
+        double tgtW = anchor.getWidth(),
+               tgtH = anchor.getHeight(),
+               offsetX = anchor.getMinX(),
+               offsetY = anchor.getMinY();
 
         final Dimension size = picture.getImageDimension();
         final double ratio = size.getWidth() / size.getHeight();
-
-        double tgtW = pageWidth;
-        double tgtH = pageHeight - textBounds.getMaxY();
 
         if(ratio > tgtW / tgtH) {
             // source image is wider than target, clip fixed width variable height
@@ -437,10 +442,9 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             tgtW = tgtH * ratio;
         }
 
-        final double offsetX = 0.5 * (pageWidth - tgtW);
-        final double offsetY = textBounds.getMaxY();
-
-        canvas.setAnchor(new Rectangle2D.Double(offsetX, offsetY, tgtW, tgtH));
+        final XSLFPictureShape canvas = slide.createPicture(picture);
+        // Vertically align top, horizontally-align center
+        canvas.setAnchor(new Rectangle2D.Double(offsetX + 0.5 * (anchor.getWidth() - tgtW), offsetY, tgtW, tgtH));
 
         for(Marker marker : markers) {
             final Color color = Color.decode(marker.color);
@@ -448,16 +452,16 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             final double centerY = offsetY + marker.y * tgtH;
 
             if(marker.isCluster()) {
-                final XSLFGroupShape group = sl.createGroup();
+                final XSLFGroupShape group = slide.createGroup();
                 double halfMark = 10;
                 double mark = halfMark * 2;
                 double innerHalfMark = 7;
                 double innerMark = innerHalfMark * 2;
                 // align these so the middle is the latlng position
-                final Rectangle2D.Double anchor = new Rectangle2D.Double(centerX - halfMark, centerY - halfMark, mark, mark);
+                final Rectangle2D.Double groupAnchor = new Rectangle2D.Double(centerX - halfMark, centerY - halfMark, mark, mark);
 
-                group.setAnchor(anchor);
-                group.setInteriorAnchor(anchor);
+                group.setAnchor(groupAnchor);
+                group.setInteriorAnchor(groupAnchor);
 
                 final XSLFAutoShape shape = group.createAutoShape();
                 shape.setShapeType(ShapeType.ELLIPSE);
@@ -465,7 +469,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 // There's a 0.3 alpha transparency (255 * 0.3 is 76) when a marker is faded out
                 final int FADE_ALPHA = 76;
                 shape.setFillColor(transparentColor(color, fade ? 47 : 154));
-                shape.setAnchor(anchor);
+                shape.setAnchor(groupAnchor);
 
                 final XSLFAutoShape inner = group.createAutoShape();
                 inner.setFillColor(fade ? transparentColor(color, FADE_ALPHA) : color);
@@ -486,7 +490,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 inner.setAnchor(new Rectangle2D.Double(centerX - innerHalfMark, centerY - innerHalfMark, innerMark, innerMark));
             }
             else {
-                final XSLFAutoShape shape = sl.createAutoShape();
+                final XSLFAutoShape shape = slide.createAutoShape();
                 shape.setHorizontalCentered(true);
                 shape.setWordWrap(false);
                 shape.setShapeType(ShapeType.TEARDROP);
@@ -503,14 +507,14 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 // We create a hyperlink which links back to this slide; so we get hover-over-detail-text on the marker
                 final CTHyperlink link = ((CTShape) shape.getXmlObject()).getNvSpPr().getCNvPr().addNewHlinkClick();
                 link.setTooltip(marker.getText());
-                final PackageRelationship rel = shape.getSheet().getPackagePart().addRelationship(sl.getPackagePart().getPartName(),
+                final PackageRelationship rel = shape.getSheet().getPackagePart().addRelationship(slide.getPackagePart().getPartName(),
                         TargetMode.INTERNAL, XSLFRelation.SLIDE.getRelation());
                 link.setId(rel.getId());
                 link.setAction("ppaction://hlinksldjump");
             }
         }
 
-        return writePPT(ppt, "map.pptx");
+        return canvas;
     }
 
     private static Color transparentColor(final Color color, final int a) {
