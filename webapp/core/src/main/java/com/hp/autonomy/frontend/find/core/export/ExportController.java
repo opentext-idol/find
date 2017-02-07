@@ -171,18 +171,23 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
         final XMLSlideShow ppt = loadTemplate(false, false);
         final Dimension pageSize = ppt.getPageSize();
-        final double pageWidth = pageSize.getWidth(), pageHeight = pageSize.getHeight();
-        final XSLFSlide sl = ppt.createSlide();
+        final XSLFSlide slide = ppt.createSlide();
 
+        drawTopicMap(slide, new Rectangle2D.Double(0, 0, pageSize.getWidth(), pageSize.getHeight()), paths);
+
+        return writePPT(ppt, "topicmap.pptx");
+    }
+
+    private void drawTopicMap(final XSLFSlide slide, final Rectangle2D.Double anchor, final Path[] paths) {
         for(final Path reqPath : paths) {
-            final XSLFFreeformShape shape = sl.createFreeform();
+            final XSLFFreeformShape shape = slide.createFreeform();
             final Path2D.Double path = new Path2D.Double();
 
             boolean first = true;
 
             for(double[] point : reqPath.getPoints()) {
-                final double x = point[0] * pageWidth;
-                final double y = point[1] * pageHeight;
+                final double x = point[0] * anchor.getWidth() + anchor.getMinX();
+                final double y = point[1] * anchor.getHeight() + anchor.getMinY();
                 if(first) {
                     path.moveTo(x, y);
                     first = false;
@@ -227,8 +232,6 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             color2.setVal(new byte[]{(byte) c2.getRed(), (byte) c2.getGreen(), (byte) c2.getBlue()});
             color2.addNewAlpha().setVal(opacity);
         }
-
-        return writePPT(ppt, "topicmap.pptx");
     }
 
     private HttpEntity<byte[]> writePPT(final XMLSlideShow ppt, final String filename) throws IOException {
