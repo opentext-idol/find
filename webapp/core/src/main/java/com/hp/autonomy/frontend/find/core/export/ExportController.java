@@ -244,13 +244,17 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
     @RequestMapping(value = PPT_SUNBURST_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> sunburst(
-            @RequestParam("categories") final String[] categories,
-            @RequestParam("values") final double[] values,
-            @RequestParam("title") final String title
+            @RequestParam("title") final String title,
+            @RequestParam("data") final String dataStr
     ) throws IOException {
-        if(values.length != categories.length) {
+        final SunburstData data = new ObjectMapper().readValue(dataStr, SunburstData.class);
+
+        if(!data.validateInput()) {
             throw new IllegalArgumentException("Number of values should match the number of categories");
         }
+
+        final String[] categories = data.getCategories();
+        final double[] values = data.getValues();
 
         final XMLSlideShow ppt = loadTemplate(true, false);
 

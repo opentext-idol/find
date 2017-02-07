@@ -133,15 +133,24 @@ define([
             this.$el.on('click', '.sunburst-pptx', _.bind(function(evt){
                 evt.preventDefault();
 
-                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/sunburst"><input name="title"><input type="submit"></form>');
-                $form[0].title.value = 'Breakdown by ' + this.fieldsCollection.at(0).get('displayValue')
+                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/sunburst"><input name="title"><textarea name="data"></textarea><input type="submit"></form>');
+
+                $form[0].title.value = i18n['search.resultsView.sunburst.breakdown.by'](this.fieldsCollection.at(0).get('displayValue'));
+
+                var categories = [];
+                var values = [];
 
                 this.dependentParametricCollection.each(function(model){
-                    $('<input name="categories">').attr('value', model.get('text') || 'Others').appendTo($form)
-                    $('<input name="values">').attr('value', model.get('count')).appendTo($form)
-                })
+                    categories.push(model.get('text') || i18n['search.resultsView.sunburst.others']);
+                    values.push(model.get('count'));
+                });
 
-                $form.appendTo(document.body).submit().remove()
+                $form[0].data.value = JSON.stringify({
+                    categories: categories,
+                    values: values
+                });
+
+                $form.appendTo(document.body).submit().remove();
             }, this))
 
             $(window).resize(_.bind(function() {
