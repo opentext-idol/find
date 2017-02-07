@@ -427,9 +427,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
     private XSLFPictureShape addMap(final XSLFSlide slide, final Rectangle2D.Double anchor, final XSLFPictureData picture, final Marker[] markers) {
         double tgtW = anchor.getWidth(),
-               tgtH = anchor.getHeight(),
-               offsetX = anchor.getMinX(),
-               offsetY = anchor.getMinY();
+               tgtH = anchor.getHeight();
 
         final Dimension size = picture.getImageDimension();
         final double ratio = size.getWidth() / size.getHeight();
@@ -444,7 +442,9 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
         final XSLFPictureShape canvas = slide.createPicture(picture);
         // Vertically align top, horizontally-align center
-        canvas.setAnchor(new Rectangle2D.Double(offsetX + 0.5 * (anchor.getWidth() - tgtW), offsetY, tgtW, tgtH));
+        final double offsetX = anchor.getMinX() + 0.5 * (anchor.getWidth() - tgtW),
+                     offsetY = anchor.getMinY();
+        canvas.setAnchor(new Rectangle2D.Double(offsetX, offsetY, tgtW, tgtH));
 
         for(Marker marker : markers) {
             final Color color = Color.decode(marker.color);
