@@ -365,9 +365,18 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
         double tableW = 0;
 
-        for(int col = 0; col < cols; ++col) {
-            table.setColumnWidth(col, anchor.getWidth() / cols * 0.8);
-            tableW += table.getColumnWidth(col);
+        if (cols == 2) {
+            // In the most common situation, there's a count column which should be relatively smaller
+            table.setColumnWidth(0, anchor.getWidth() * 0.8);
+            table.setColumnWidth(1, anchor.getWidth() * 0.2);
+            tableW += table.getColumnWidth(0);
+            tableW += table.getColumnWidth(1);
+        }
+        else {
+            for(int col = 0; col < cols; ++col) {
+                table.setColumnWidth(col, anchor.getWidth() / cols);
+                tableW += table.getColumnWidth(col);
+            }
         }
 
         // PowerPoint won't auto-shrink the table for you; and the POI API can't calculate the heights, so we just
