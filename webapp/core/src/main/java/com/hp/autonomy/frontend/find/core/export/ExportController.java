@@ -353,15 +353,26 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         final Rectangle2D.Double textBounds = new Rectangle2D.Double(0, 0.05 * pageHeight, pageWidth, 0.1 * pageHeight);
         textBox.setAnchor(textBounds);
 
-        addTable(sl, new Rectangle2D.Double(0, textBounds.getMaxY(), pageWidth, pageHeight), rows, cols, data);
+        addTable(sl, new Rectangle2D.Double(0, textBounds.getMaxY(), pageWidth, pageHeight), rows, cols, data, false);
 
         return writePPT(ppt, "table.pptx");
     }
 
-    private void addTable(final XSLFSlide slide, final Rectangle2D.Double anchor, final int rows, final int cols, final String[] data) {
+    private void addTable(final XSLFSlide slide, final Rectangle2D.Double anchor, final int rows, final int cols, final String[] data, final boolean crop) {
         final XSLFTable table = slide.createTable(rows, cols);
 
         int idx = 0;
+
+        double tableW = 0;
+
+        for(int col = 0; col < cols; ++col) {
+            table.setColumnWidth(col, anchor.getWidth() / cols * 0.8);
+            tableW += table.getColumnWidth(col);
+        }
+
+        // PowerPoint won't auto-shrink the table for you; and the POI API can't calculate the heights, so we just
+        //   have to assume the total row heights add up to be the table height.
+        double tableH = 0;
 
         for(int row = 0; row < rows; ++row) {
             for(int col = 0; col < cols; ++col) {
@@ -372,17 +383,18 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                     cell.setBorderColor(edge, Color.BLACK);
                 }
             }
-        }
 
-        double tableW = 0, tableH = 0;
+            final double nextH = tableH + table.getRowHeight(row);
 
-        for(int col = 0; col < cols; ++col) {
-            table.setColumnWidth(col, anchor.getWidth() / cols * 0.8);
-            tableW += table.getColumnWidth(col);
-        }
-
-        for(int row = 0; row < rows; ++row) {
-            tableH += table.getRowHeight(row);
+            if (crop && nextH > anchor.getHeight() && row < rows - 1) {
+                table.mergeCells(row, row, 0, cols - 1);
+                // ellipsis
+                table.getCell(row, 0).setText("\u2026");
+                break;
+            }
+            else {
+                tableH = nextH;
+            }
         }
 
         final double width = Math.min(tableW, anchor.getWidth());
@@ -996,7 +1008,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             }
             else if (data instanceof TableData) {
                 final TableData tableData = (TableData) data;
-                addTable(slide, anchor, tableData.getRows(), tableData.getCols(), tableData.getCells());
+                addTable(slide, anchor, tableData.getRows(), tableData.getCols(), tableData.getCells(), true);
             }
             else if (data instanceof TopicMapData) {
                 addTopicMap(slide, anchor, (TopicMapData) data);
