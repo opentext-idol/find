@@ -61,7 +61,7 @@ public class SavedSearchService {
 
     }
 
-    //STILL NOT DELETING THE TABS
+    //TODO: Still not deleting the tabs but really a problem with the app's slow deletion
     public void deleteAll() {
         final SearchTabBar tabBar = elementFactory.getSearchTabBar();
 

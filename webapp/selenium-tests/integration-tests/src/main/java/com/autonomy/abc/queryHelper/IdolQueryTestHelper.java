@@ -27,7 +27,7 @@ public class IdolQueryTestHelper<T> extends QueryTestHelper {
             if(result.errorWellExists() && result.errorContainer().isDisplayed()) {
                 verifyThat("Query auto-corrected so sees the Boolean",
                            result.getErrorMessage(),
-                           stringContainingAnyOf(Arrays.asList(Search.CLOSING_BOOL, Search.OPENING_BOOL)));
+                           stringContainingAnyOf(Arrays.asList(Search.GENERAL_BOOLEAN)));
             } else {
                 LOGGER.info("The error message is not displayed.");
             }
