@@ -9,7 +9,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class ChartData extends ComposableElement {
+public class ChartData implements ComposableElement {
 
     List<Row> rows;
 

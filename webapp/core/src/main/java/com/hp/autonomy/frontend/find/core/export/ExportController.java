@@ -104,6 +104,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     static final String PPT_MAP_PATH = "/ppt/map";
     static final String PPT_LIST_PATH = "/ppt/list";
     static final String PPT_DATEGRAPH_PATH = "/ppt/dategraph";
+    static final String PPT_REPORT_PATH = "/ppt/report";
     static final String SELECTED_EXPORT_FIELDS_PARAM = "selectedFieldIds";
     static final String QUERY_REQUEST_PARAM = "queryRequest";
     private static final String EXPORT_FILE_NAME = "query-results";
@@ -175,12 +176,12 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         final Dimension pageSize = ppt.getPageSize();
         final XSLFSlide slide = ppt.createSlide();
 
-        drawTopicMap(slide, new Rectangle2D.Double(0, 0, pageSize.getWidth(), pageSize.getHeight()), data);
+        addTopicMap(slide, new Rectangle2D.Double(0, 0, pageSize.getWidth(), pageSize.getHeight()), data);
 
         return writePPT(ppt, "topicmap.pptx");
     }
 
-    private void drawTopicMap(final XSLFSlide slide, final Rectangle2D.Double anchor, final TopicMapData data) {
+    private void addTopicMap(final XSLFSlide slide, final Rectangle2D.Double anchor, final TopicMapData data) {
         for(final TopicMapData.Path reqPath : data.getPaths()) {
             final XSLFFreeformShape shape = slide.createFreeform();
             final Path2D.Double path = new Path2D.Double();
@@ -410,6 +411,14 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         final Rectangle2D.Double textBounds = new Rectangle2D.Double(0, 0.05 * pageHeight, pageWidth, 0.1 * pageHeight);
         textBox.setAnchor(textBounds);
 
+        final XSLFPictureData picture = addPictureData(ppt, image);
+        final double offsetY = textBounds.getMaxY();
+        addMap(sl, new Rectangle2D.Double(0, offsetY, pageWidth, pageHeight - textBounds.getMaxY()), picture, map.getMarkers());
+
+        return writePPT(ppt, "map.pptx");
+    }
+
+    private XSLFPictureData addPictureData(final XMLSlideShow ppt, final String image) {
         final PictureData.PictureType type;
         if(image.startsWith("data:image/png;base64,")) {
             type = PictureData.PictureType.PNG;
@@ -422,11 +431,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         }
 
         final byte[] bytes = Base64.decodeBase64(image.split(",")[1]);
-        final XSLFPictureData picture = ppt.addPicture(bytes, type);
-        final double offsetY = textBounds.getMaxY();
-        addMap(sl, new Rectangle2D.Double(0, offsetY, pageWidth, pageHeight - textBounds.getMaxY()), picture, map.getMarkers());
-
-        return writePPT(ppt, "map.pptx");
+        return ppt.addPicture(bytes, type);
     }
 
     private XSLFPictureShape addMap(final XSLFSlide slide, final Rectangle2D.Double anchor, final XSLFPictureData picture, final Marker[] markers) {
@@ -923,6 +928,48 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         }
 
         return wb;
+    }
+
+    @RequestMapping(value = PPT_REPORT_PATH, method = RequestMethod.POST)
+    public HttpEntity<byte[]> report(
+            @RequestParam("data") final String dataStr
+    ) throws IOException {
+        final ReportData report = new ObjectMapper().readValue(dataStr, ReportData.class);
+
+        final XMLSlideShow ppt = loadTemplate(false, false);
+        final Dimension pageSize = ppt.getPageSize();
+        double width = pageSize.getWidth();
+        double height = pageSize.getHeight();
+
+        final XSLFSlide slide = ppt.createSlide();
+
+        for(final ReportData.Child child : report.getChildren()) {
+            final ComposableElement data = child.getData();
+            final Rectangle2D.Double anchor = new Rectangle2D.Double(width * child.getX(), height * child.getY(), width * child.getWidth(), height * child.getHeight());
+
+            if (data instanceof ChartData) {
+                throw new UnsupportedOperationException("Not implemented yet");
+            }
+            else if (data instanceof ListData) {
+                throw new UnsupportedOperationException("Not implemented yet");
+            }
+            else if (data instanceof MapData) {
+                final MapData mapData = (MapData) data;
+                addMap(slide, anchor, addPictureData(ppt, mapData.getImage()), mapData.getMarkers());
+            }
+            else if (data instanceof SunburstData) {
+                throw new UnsupportedOperationException("Not implemented yet");
+            }
+            else if (data instanceof TableData) {
+                final TableData tableData = (TableData) data;
+                addTable(slide, anchor, tableData.getRows(), tableData.getCols(), tableData.getCells());
+            }
+            else if (data instanceof TopicMapData) {
+                addTopicMap(slide, anchor, (TopicMapData) data);
+            }
+        }
+
+        return writePPT(ppt, "report.pptx");
     }
 
 }

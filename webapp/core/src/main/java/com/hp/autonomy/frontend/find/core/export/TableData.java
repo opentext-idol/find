@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.core.export;
 import lombok.Data;
 
 @Data
-public class TableData extends ComposableElement {
+public class TableData implements ComposableElement {
 
     String[] cells;
 

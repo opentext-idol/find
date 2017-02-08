@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.core.export;
 import lombok.Data;
 
 @Data
-public class SunburstData extends ComposableElement {
+public class SunburstData implements ComposableElement {
     private String[] categories;
     private double[] values;
 

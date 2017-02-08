@@ -5,5 +5,5 @@
 
 package com.hp.autonomy.frontend.find.core.export;
 
-public abstract class ComposableElement {
+interface ComposableElement {
 }
