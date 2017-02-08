@@ -74,19 +74,23 @@ define([
                     evt.preventDefault();
 
                     // TODO: implement all this
-                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/list"><textarea name="sortBy"></textarea><textarea name="results"></textarea><textarea name="docs"></textarea><input type="submit"></form>');
+                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/list"><textarea name="sortBy"></textarea><textarea name="results"></textarea><textarea name="data"></textarea><input type="submit"></form>');
 
                     $form[0].sortBy.value = this.sortView.getText();
                     $form[0].results.value = this.resultsNumberView.getText();
-                    $form[0].docs.value = JSON.stringify(this.documentsCollection.map(function(model){
-                        return {
-                            title: model.get('title'),
-                            date: model.has('date') ? model.get('date').fromNow() : '',
-                            ref: model.get('reference'),
-                            summary: model.get('summary'),
-                            thumbnail: model.get('thumbnail')
-                        }
-                    }))
+
+                    $form[0].data.value = JSON.stringify({
+                        docs: this.documentsCollection.map(function(model){
+                            return {
+                                title: model.get('title'),
+                                date: model.has('date') ? model.get('date').fromNow() : '',
+                                ref: model.get('reference'),
+                                summary: model.get('summary'),
+                                thumbnail: model.get('thumbnail')
+                            }
+                        })
+                    })
+
                     $form.appendTo(document.body).submit().remove()
                 }
             };

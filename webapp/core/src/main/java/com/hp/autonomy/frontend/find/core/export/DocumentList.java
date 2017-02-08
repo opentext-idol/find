@@ -8,10 +8,16 @@ package com.hp.autonomy.frontend.find.core.export;
 import lombok.Data;
 
 @Data
-public class Document {
-    String title;
-    String date;
-    String ref;
-    String summary;
-    String thumbnail;
+public class DocumentList {
+
+    private Document[] docs;
+
+    @Data
+    public static class Document {
+        private String title;
+        private String date;
+        private String ref;
+        private String summary;
+        private String thumbnail;
+    }
 }

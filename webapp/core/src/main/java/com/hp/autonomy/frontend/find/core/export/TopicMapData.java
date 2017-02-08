@@ -9,10 +9,17 @@ import java.util.ArrayList;
 import lombok.Data;
 
 @Data
-public class Path {
-    public String name;
-    public String color;
-    public String color2;
-    public double opacity;
-    public ArrayList<double[]> points;
+public class TopicMapData {
+
+    private Path[] paths;
+
+    @Data
+    public static class Path {
+        public String name;
+        public String color;
+        public String color2;
+        public double opacity;
+        public ArrayList<double[]> points;
+    }
 }
+

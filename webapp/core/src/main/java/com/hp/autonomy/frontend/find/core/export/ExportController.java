@@ -92,6 +92,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import static com.hp.autonomy.frontend.find.core.export.DocumentList.Document;
+import static com.hp.autonomy.frontend.find.core.export.Map.Marker;
+
 @RequestMapping(ExportController.EXPORT_PATH)
 public abstract class ExportController<R extends QueryRequest<?>, E extends Exception> {
     static final String EXPORT_PATH = "/api/bi/export";
@@ -165,21 +168,21 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
     @RequestMapping(value = PPT_TOPICMAP_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> topicmap(
-            @RequestParam("paths") final String pathStr
+            @RequestParam("data") final String topicMapStr
     ) throws IOException {
-        final Path[] paths = new ObjectMapper().readValue(pathStr, Path[].class);
+        final TopicMapData data = new ObjectMapper().readValue(topicMapStr, TopicMapData.class);
 
         final XMLSlideShow ppt = loadTemplate(false, false);
         final Dimension pageSize = ppt.getPageSize();
         final XSLFSlide slide = ppt.createSlide();
 
-        drawTopicMap(slide, new Rectangle2D.Double(0, 0, pageSize.getWidth(), pageSize.getHeight()), paths);
+        drawTopicMap(slide, new Rectangle2D.Double(0, 0, pageSize.getWidth(), pageSize.getHeight()), data);
 
         return writePPT(ppt, "topicmap.pptx");
     }
 
-    private void drawTopicMap(final XSLFSlide slide, final Rectangle2D.Double anchor, final Path[] paths) {
-        for(final Path reqPath : paths) {
+    private void drawTopicMap(final XSLFSlide slide, final Rectangle2D.Double anchor, final TopicMapData data) {
+        for(final TopicMapData.Path reqPath : data.getPaths()) {
             final XSLFFreeformShape shape = slide.createFreeform();
             final Path2D.Double path = new Path2D.Double();
 
@@ -388,10 +391,10 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     @RequestMapping(value = PPT_MAP_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> map(
             @RequestParam("title") final String title,
-            @RequestParam("image") final String image,
-            @RequestParam(value = "markers", defaultValue = "[]") final String markerStr
+            @RequestParam(value = "data", defaultValue = "[]") final String markerStr
     ) throws IOException {
-        final Marker[] markers = new ObjectMapper().readValue(markerStr, Marker[].class);
+        final Map map = new ObjectMapper().readValue(markerStr, Map.class);
+        final String image = map.getImage();
 
         final XMLSlideShow ppt = loadTemplate(false, false);
         final Dimension pageSize = ppt.getPageSize();
@@ -422,7 +425,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         final byte[] bytes = Base64.decodeBase64(image.split(",")[1]);
         final XSLFPictureData picture = ppt.addPicture(bytes, type);
         final double offsetY = textBounds.getMaxY();
-        addMap(sl, new Rectangle2D.Double(0, offsetY, pageWidth, pageHeight - textBounds.getMaxY()), picture, markers);
+        addMap(sl, new Rectangle2D.Double(0, offsetY, pageWidth, pageHeight - textBounds.getMaxY()), picture, map.getMarkers());
 
         return writePPT(ppt, "map.pptx");
     }
@@ -449,9 +452,9 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         canvas.setAnchor(new Rectangle2D.Double(offsetX, offsetY, tgtW, tgtH));
 
         for(Marker marker : markers) {
-            final Color color = Color.decode(marker.color);
-            final double centerX = offsetX + marker.x * tgtW;
-            final double centerY = offsetY + marker.y * tgtH;
+            final Color color = Color.decode(marker.getColor());
+            final double centerX = offsetX + marker.getX() * tgtW;
+            final double centerY = offsetY + marker.getY() * tgtH;
 
             if(marker.isCluster()) {
                 final XSLFGroupShape group = slide.createGroup();
@@ -527,9 +530,10 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     public HttpEntity<byte[]> list(
             @RequestParam("results") final String results,
             @RequestParam("sortBy") final String sortBy,
-            @RequestParam(value = "docs", defaultValue = "[]") final String docsStr
+            @RequestParam(value = "data", defaultValue = "[]") final String docsStr
     ) throws IOException {
-        final Document[] docs = new ObjectMapper().readValue(docsStr, Document[].class);
+        final DocumentList documentList = new ObjectMapper().readValue(docsStr, DocumentList.class);
+        final DocumentList.Document[] docs = documentList.getDocs();
 
         final XMLSlideShow ppt = loadTemplate(false, false);
         final Dimension pageSize = ppt.getPageSize();
