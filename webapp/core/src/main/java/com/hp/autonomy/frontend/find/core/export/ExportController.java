@@ -16,7 +16,9 @@ import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -541,10 +543,17 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
         final XMLSlideShow ppt = loadTemplate(false, false);
         final Dimension pageSize = ppt.getPageSize();
+        addList(ppt, null, new Rectangle2D.Double(0, 0, pageSize.getWidth(), pageSize.getHeight()), true, docs, results, sortBy);
+
+        return writePPT(ppt, "list.pptx");
+    }
+
+    private void addList(final XMLSlideShow ppt, XSLFSlide sl, final Rectangle2D.Double anchor, final boolean paginate, final Document[] docs, final String results, final String sortBy) {
         final double
-                pageWidth = pageSize.getWidth(), pageHeight = pageSize.getHeight(),
                 // How much space to leave at the left and right edge of the slide
                 xMargin = 20,
+                // How much space to leave at the top
+                yMargin = 5,
                 // Size of the icon
                 iconWidth = 20, iconHeight = 24,
                 // Find's thumbnail height is 97px by 55px, hardcoded in the CSS in .document-thumbnail
@@ -557,8 +566,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
         final Pattern highlightPattern = Pattern.compile("<HavenSearch-QueryText-Placeholder>(.*?)</HavenSearch-QueryText-Placeholder>");
 
-        XSLFSlide sl = null;
-        double yCursor = 0, xCursor = 0;
+        double yCursor = yMargin + anchor.getMinY(), xCursor = xMargin + anchor.getMinX();
 
         int docsOnPage = 0;
 
@@ -567,29 +575,39 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
             if(sl == null) {
                 sl = ppt.createSlide();
-                yCursor = 5;
-                xCursor = xMargin;
+                yCursor = yMargin + anchor.getMinY();
+                xCursor = xMargin + anchor.getMinX();
                 docsOnPage = 0;
 
-                final XSLFTextBox textBox = sl.createTextBox();
-                textBox.clearText();
-                final Rectangle2D.Double textBounds = new Rectangle2D.Double(xMargin, yCursor, pageWidth - xMargin, 20);
-                textBox.setAnchor(textBounds);
+                double yStep = 0;
 
-                addTextRun(textBox.addNewTextParagraph(), results, 12., Color.LIGHT_GRAY);
+                if (StringUtils.isNotBlank(results)) {
+                    final XSLFTextBox textBox = sl.createTextBox();
+                    textBox.clearText();
+                    final Rectangle2D.Double textBounds = new Rectangle2D.Double(xCursor, yCursor, Math.max(0, anchor.getMaxX() - xCursor - xMargin), 20);
+                    textBox.setAnchor(textBounds);
 
-                final XSLFTextBox sortByEl = sl.createTextBox();
-                sortByEl.clearText();
-                final XSLFTextParagraph sortByText = sortByEl.addNewTextParagraph();
-                sortByText.setTextAlign(TextParagraph.TextAlign.RIGHT);
+                    addTextRun(textBox.addNewTextParagraph(), results, 12., Color.LIGHT_GRAY);
 
-                addTextRun(sortByText, sortBy, 12., Color.LIGHT_GRAY);
+                    yStep = textBox.getTextHeight();
+                }
 
-                sortByEl.setAnchor(new Rectangle2D.Double(xMargin, yCursor, pageWidth - xMargin, 20));
+                if (StringUtils.isNotBlank(sortBy)) {
+                    final XSLFTextBox sortByEl = sl.createTextBox();
+                    sortByEl.clearText();
+                    final XSLFTextParagraph sortByText = sortByEl.addNewTextParagraph();
+                    sortByText.setTextAlign(TextParagraph.TextAlign.RIGHT);
 
-                yCursor += listItemMargin + Math.max(
-                        textBox.getTextHeight() + textBox.getAnchor().getY(),
-                        sortByEl.getTextHeight() + sortByEl.getAnchor().getY());
+                    addTextRun(sortByText, sortBy, 12., Color.LIGHT_GRAY);
+
+                    sortByEl.setAnchor(new Rectangle2D.Double(xCursor, yCursor, Math.max(0, anchor.getMaxX() - xCursor - xMargin), 20));
+
+                    yStep = Math.max(sortByEl.getTextHeight(), yStep);
+                }
+
+                if (yStep > 0) {
+                    yCursor += listItemMargin + yStep;
+                }
             }
 
             final XSLFAutoShape icon = sl.createAutoShape();
@@ -602,7 +620,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
             final XSLFTextBox listEl = sl.createTextBox();
             listEl.clearText();
-            listEl.setAnchor(new Rectangle2D.Double(xCursor, yCursor, pageWidth - xCursor - xMargin, pageHeight - yCursor));
+            listEl.setAnchor(new Rectangle2D.Double(xCursor, yCursor, Math.max(0, anchor.getMaxX() - xCursor - xMargin), Math.max(0, anchor.getMaxY() - yCursor)));
 
             final XSLFTextParagraph titlePara = listEl.addNewTextParagraph();
             addTextRun(titlePara, doc.getTitle(), 14.0, Color.BLACK).setBold(true);
@@ -629,7 +647,16 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                     // Picture reuse is automatic
                     picture = sl.createPicture(ppt.addPicture(imageData, PictureData.PictureType.JPEG));
                     picture.setAnchor(new Rectangle2D.Double(xCursor, yCursor + thumbnailOffset + thumbMargin, thumbW, thumbH));
-                    contentPara.setLeftMargin(thumbW);
+
+                    // If there is enough horizontal space, put the text summary to the right of the thumbnail image,
+                    //    otherwise put it under the thumbnail,
+                    if (listEl.getAnchor().getWidth() > 2.5 * thumbW) {
+                        contentPara.setLeftMargin(thumbW);
+                    }
+                    else {
+                        contentPara.addLineBreak().setFontSize(thumbH);
+                    }
+
                 }
                 catch(RuntimeException e) {
                     // if there's any errors, we'll just ignore the image
@@ -665,11 +692,11 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             }
 
             yCursor += elHeight;
-            xCursor = xMargin;
+            xCursor = xMargin + anchor.getMinX();
 
             docsOnPage++;
 
-            if (yCursor > pageHeight) {
+            if (yCursor > anchor.getMaxY()) {
                 if (docsOnPage > 1) {
                     // If we drew more than one list element on this page; and we exceeded the available space,
                     //   delete the last element's shapes and redraw it on the next page.
@@ -680,19 +707,21 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                         // Technically we want to remove the shape, but that also removes the related image data,
                         //   which will be shared with other images; causing problems when trying to render them.
                         // Workaround is to just hide the image out of view.
-                        picture.setAnchor(new Rectangle2D.Double(pageWidth, pageHeight, 0.1, 0.1));
+                        picture.setAnchor(new Rectangle2D.Double(-1, -1, 0.1, 0.1));
                     }
                     --docIdx;
                 }
 
                 sl = null;
+
+                if (!paginate) {
+                    break;
+                }
             }
             else {
                 yCursor += listItemMargin;
             }
         }
-
-        return writePPT(ppt, "list.pptx");
     }
 
     private static XSLFTextRun addTextRun(final XSLFTextParagraph paragraph, final String text, final double fontSize, final Color color) {
@@ -943,6 +972,10 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
         final XSLFSlide slide = ppt.createSlide();
 
+        // We need to add charts first, since calling slide.getShapes() or indirectly createShape() etc.
+        //   before adding chart objects directly via XML will break things.
+        Arrays.sort(report.getChildren(), Comparator.comparingInt(this::prioritizeCharts));
+
         for(final ReportData.Child child : report.getChildren()) {
             final ComposableElement data = child.getData();
             final Rectangle2D.Double anchor = new Rectangle2D.Double(width * child.getX(), height * child.getY(), width * child.getWidth(), height * child.getHeight());
@@ -951,7 +984,8 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 throw new UnsupportedOperationException("Not implemented yet");
             }
             else if (data instanceof ListData) {
-                throw new UnsupportedOperationException("Not implemented yet");
+                final ListData listData = (ListData) data;
+                addList(ppt, slide, anchor, false, listData.getDocs(), null, null);
             }
             else if (data instanceof MapData) {
                 final MapData mapData = (MapData) data;
@@ -970,6 +1004,11 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         }
 
         return writePPT(ppt, "report.pptx");
+    }
+
+    private int prioritizeCharts(final ReportData.Child child) {
+        final ComposableElement d = child.getData();
+        return d instanceof ChartData || d instanceof SunburstData ? -1 : 0;
     }
 
 }
