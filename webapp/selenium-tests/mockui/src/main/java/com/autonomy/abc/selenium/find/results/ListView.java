@@ -76,7 +76,7 @@ public class ListView extends AppElement implements QueryResultsPage {
     }
 
     public FindResult getResult(final int i) {
-        return new FindResult(findElement(By.cssSelector(".main-results-container:nth-of-type(" + i + ')')), getDriver());
+        return new FindResult(findElement(By.cssSelector(".main-results-list.results .main-results-container:nth-of-type(" + i + ')')), getDriver());
     }
 
     public List<String> getDisplayedDocumentsDocumentTypes() {
