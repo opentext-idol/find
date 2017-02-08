@@ -348,7 +348,13 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         final Rectangle2D.Double textBounds = new Rectangle2D.Double(0, 0.05 * pageHeight, pageWidth, 0.1 * pageHeight);
         textBox.setAnchor(textBounds);
 
-        final XSLFTable table = sl.createTable(rows, cols);
+        addTable(sl, new Rectangle2D.Double(0, textBounds.getMaxY(), pageWidth, pageHeight), rows, cols, data);
+
+        return writePPT(ppt, "table.pptx");
+    }
+
+    private void addTable(final XSLFSlide slide, final Rectangle2D.Double anchor, final int rows, final int cols, final String[] data) {
+        final XSLFTable table = slide.createTable(rows, cols);
 
         int idx = 0;
 
@@ -366,7 +372,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         double tableW = 0, tableH = 0;
 
         for(int col = 0; col < cols; ++col) {
-            table.setColumnWidth(col, pageWidth / cols * 0.8);
+            table.setColumnWidth(col, anchor.getWidth() / cols * 0.8);
             tableW += table.getColumnWidth(col);
         }
 
@@ -374,9 +380,9 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             tableH += table.getRowHeight(row);
         }
 
-        table.setAnchor(new Rectangle2D.Double(0.5 * (pageWidth - tableW), textBounds.getMaxY(), tableW, Math.min(tableH, pageHeight - textBounds.getMaxY())));
+        final double width = Math.min(tableW, anchor.getWidth());
 
-        return writePPT(ppt, "table.pptx");
+        table.setAnchor(new Rectangle2D.Double(anchor.getMinX() + 0.5 * (anchor.getWidth() - width), anchor.getMinY(), width, Math.min(tableH, anchor.getHeight())));
     }
 
     @RequestMapping(value = PPT_MAP_PATH, method = RequestMethod.POST)
