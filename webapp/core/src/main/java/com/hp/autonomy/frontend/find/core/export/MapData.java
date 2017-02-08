@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.core.export;
 import lombok.Data;
 
 @Data
-public class Map {
+public class MapData extends ComposableElement {
 
     private String image;
     private Marker[] markers;

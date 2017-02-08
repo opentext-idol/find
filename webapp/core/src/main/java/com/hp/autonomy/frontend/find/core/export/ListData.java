@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.core.export;
 import lombok.Data;
 
 @Data
-public class DocumentList {
+public class ListData extends ComposableElement {
 
     private Document[] docs;
 

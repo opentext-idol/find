@@ -16,7 +16,6 @@ import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -92,8 +91,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import static com.hp.autonomy.frontend.find.core.export.DocumentList.Document;
-import static com.hp.autonomy.frontend.find.core.export.Map.Marker;
+import static com.hp.autonomy.frontend.find.core.export.ListData.Document;
+import static com.hp.autonomy.frontend.find.core.export.MapData.Marker;
 
 @RequestMapping(ExportController.EXPORT_PATH)
 public abstract class ExportController<R extends QueryRequest<?>, E extends Exception> {
@@ -391,9 +390,9 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     @RequestMapping(value = PPT_MAP_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> map(
             @RequestParam("title") final String title,
-            @RequestParam(value = "data", defaultValue = "[]") final String markerStr
+            @RequestParam("data") final String markerStr
     ) throws IOException {
-        final Map map = new ObjectMapper().readValue(markerStr, Map.class);
+        final MapData map = new ObjectMapper().readValue(markerStr, MapData.class);
         final String image = map.getImage();
 
         final XMLSlideShow ppt = loadTemplate(false, false);
@@ -530,10 +529,10 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     public HttpEntity<byte[]> list(
             @RequestParam("results") final String results,
             @RequestParam("sortBy") final String sortBy,
-            @RequestParam(value = "data", defaultValue = "[]") final String docsStr
+            @RequestParam("data") final String docsStr
     ) throws IOException {
-        final DocumentList documentList = new ObjectMapper().readValue(docsStr, DocumentList.class);
-        final DocumentList.Document[] docs = documentList.getDocs();
+        final ListData documentList = new ObjectMapper().readValue(docsStr, ListData.class);
+        final ListData.Document[] docs = documentList.getDocs();
 
         final XMLSlideShow ppt = loadTemplate(false, false);
         final Dimension pageSize = ppt.getPageSize();

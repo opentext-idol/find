@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import lombok.Data;
 
 @Data
-public class TopicMapData {
+public class TopicMapData extends ComposableElement {
 
     private Path[] paths;
 
