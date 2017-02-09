@@ -183,8 +183,7 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-406")
-    @ResolvedBug("FIND-242")
+    @ResolvedBug({"FIND-242", "FIND-406"})
     public void testModalShowsALLFiltersRegardlessOfQuery() {
         searchAndWait("*");
         final FilterPanel filterPanel = filters();

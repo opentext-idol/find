@@ -137,7 +137,7 @@ public class ListResultsComparisonITCase extends IdolFindTestBase {
         findPage.goBackToSearch();
     }
 
-    //TODO also not tearing down properly
+    //TODO also not tearing down properly + not catching bug
     @Test
     @ActiveBug("FIND-240")
     public void testSubSearch() {
