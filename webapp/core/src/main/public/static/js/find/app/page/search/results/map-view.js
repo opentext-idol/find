@@ -157,7 +157,9 @@ define([
             }
         },
 
-        exportPPT: function(title) {
+        exportPPTData: function() {
+            var deferred = $.Deferred();
+
             var map = this.map,
                 mapSize = map.getSize(),
                 $mapEl = $(map.getContainer()),
@@ -196,23 +198,30 @@ define([
                         var fontColor = '#000000',
                             color = '#37a8da',
                             match,
-                            fade = false;
+                            fade = false,
+                            text = '';
 
                         var $iconEl = $(layer._icon);
                         if (isCluster) {
                             color = hexColor($iconEl.css('background-color'));
                             fontColor = hexColor($iconEl.children('div').css('color'))
                             fade = +$iconEl.css('opacity') < 1
+                            text = layer.getChildCount();
                         } else if (match=/awesome-marker-icon-(\w+)/.exec(layer._icon.classList)) {
                             if (leafletMarkerColorMap.hasOwnProperty(match[1])) {
                                 color = leafletMarkerColorMap[match[1]]
+                            }
+
+                            var popup = layer.getPopup();
+                            if (popup && popup._content) {
+                                text = $(popup._content).find('.map-popup-title').text()
                             }
                         }
 
                         var marker = {
                             x: xFraction,
                             y: yFraction,
-                            text: isCluster ? layer.getChildCount() :  $(layer.getPopup()._content).find('.map-popup-title').text(),
+                            text: text,
                             cluster: !!isCluster,
                             color: color,
                             fontColor: fontColor,
@@ -237,15 +246,7 @@ define([
                 onrendered: function(canvas) {
                     $objs.removeClass('hide')
 
-                    // We use a textarea for the title so we can have newlines, and a textarea for the image to work
-                    //   around a hard 524288 limit imposed by a WebKit bug (affects Chrome 55).
-                    // See https://bugs.webkit.org/show_bug.cgi?id=44883
-                    // We open in _self (despite the chance of having errors) since otherwise the popup blocker
-                    ///  will block it, since it's a javascript object which doesn't originate directly from a user event.
-                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_self" action="api/bi/export/ppt/map"><textarea name="title"></textarea><textarea name="data"></textarea><input type="submit"></form>');
-                    $form[0].title.value = title
-
-                    $form[0].data.value = JSON.stringify({
+                    deferred.resolve({
                         // ask for lossless PNG image
                         image: canvas.toDataURL('image/png'),
                         markers: markers.sort(function(a, b){
@@ -253,11 +254,27 @@ define([
                         }).map(function(a){
                             return _.omit(a, 'z')
                         })
-                    })
-
-                    $form.appendTo(document.body).submit().remove()
+                    });
                 }
             });
+
+            return deferred.promise();
+        },
+
+        exportPPT: function(title){
+            this.exportPPTData().done(function(data){
+                // We use a textarea for the title so we can have newlines, and a textarea for the image to work
+                //   around a hard 524288 limit imposed by a WebKit bug (affects Chrome 55).
+                // See https://bugs.webkit.org/show_bug.cgi?id=44883
+                // We open in _self (despite the chance of having errors) since otherwise the popup blocker
+                ///  will block it, since it's a javascript object which doesn't originate directly from a user event.
+                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_self" action="api/bi/export/ppt/map"><textarea name="title"></textarea><textarea name="data"></textarea><input type="submit"></form>');
+                $form[0].title.value = title
+
+                $form[0].data.value = JSON.stringify(data)
+
+                $form.appendTo(document.body).submit().remove()
+            })
         }
     });
 });

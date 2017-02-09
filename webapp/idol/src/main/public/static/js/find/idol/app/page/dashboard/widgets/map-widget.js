@@ -117,6 +117,15 @@ define([
             if (this.updatePromise && this.updatePromise.abort) {
                 this.updatePromise.abort();
             }
+        },
+
+        exportPPTData: function(){
+            return this.mapView.exportPPTData().then(function(data){
+                return {
+                    data: data,
+                    type: 'map'
+                }
+            });
         }
     });
 });

@@ -34,27 +34,34 @@ define([
                     if (widget.view.exportPPTData) {
                         var data = widget.view.exportPPTData();
 
+                        // this may be a promise, or an actual object
                         if (data) {
-                            var pos = widget.position;
+                            reports.push($.when(data).then(function(data){
+                                var pos = widget.position;
 
-                            reports.push(_.defaults(data, {
-                                x: pos.x * scaleX,
-                                y: pos.y * scaleY,
-                                width: pos.width * scaleX,
-                                height: pos.height * scaleY
-                            }))
+                                return _.defaults(data, {
+                                    x: pos.x * scaleX,
+                                    y: pos.y * scaleY,
+                                    width: pos.width * scaleX,
+                                    height: pos.height * scaleY
+                                })
+                            }));
                         }
                     }
                 }, this);
 
                 if (reports.length) {
-                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/report"><textarea name="data"></textarea><input type="submit"></form>');
+                    $.when.apply($, reports).done(function(){
+                        var children = [].slice.call(arguments, 0);
 
-                    $form[0].data.value = JSON.stringify({
-                        children: reports
+                        var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/report"><textarea name="data"></textarea><input type="submit"></form>');
+
+                        $form[0].data.value = JSON.stringify({
+                            children: children
+                        })
+
+                        $form.appendTo(document.body).submit().remove()
                     })
-
-                    $form.appendTo(document.body).submit().remove()
                 }
             }
         },
