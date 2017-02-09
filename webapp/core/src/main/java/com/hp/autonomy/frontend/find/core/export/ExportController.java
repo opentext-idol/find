@@ -363,18 +363,22 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
         int idx = 0;
 
+        double availWidth = anchor.getWidth();
         double tableW = 0;
 
         if (cols == 2) {
-            // In the most common situation, there's a count column which should be relatively smaller
-            table.setColumnWidth(0, anchor.getWidth() * 0.9);
-            table.setColumnWidth(1, anchor.getWidth() * 0.1);
+            // In the most common situation, there's a count column which should be relatively smaller.
+            // Make it take 10%, or 70 pixels, whichever is bigger, unless that's more than 50% of the overall space.
+            final double minCountWidth = 70;
+            final double countColWidth = Math.min(0.5 * availWidth, Math.max(minCountWidth, availWidth * 0.1));
+            table.setColumnWidth(0, availWidth - countColWidth);
+            table.setColumnWidth(1, countColWidth);
             tableW += table.getColumnWidth(0);
             tableW += table.getColumnWidth(1);
         }
         else {
             for(int col = 0; col < cols; ++col) {
-                table.setColumnWidth(col, anchor.getWidth() / cols);
+                table.setColumnWidth(col, availWidth / cols);
                 tableW += table.getColumnWidth(col);
             }
         }
@@ -406,9 +410,9 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             }
         }
 
-        final double width = Math.min(tableW, anchor.getWidth());
+        final double width = Math.min(tableW, availWidth);
 
-        table.setAnchor(new Rectangle2D.Double(anchor.getMinX() + 0.5 * (anchor.getWidth() - width), anchor.getMinY(), width, Math.min(tableH, anchor.getHeight())));
+        table.setAnchor(new Rectangle2D.Double(anchor.getMinX() + 0.5 * (availWidth - width), anchor.getMinY(), width, Math.min(tableH, anchor.getHeight())));
     }
 
     @RequestMapping(value = PPT_MAP_PATH, method = RequestMethod.POST)
