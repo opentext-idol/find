@@ -260,27 +260,6 @@
       ],
       "type": "NUMBER",
       "advanced": true
-    },
-    "valid": {
-      "names": [
-        "VALID"
-      ],
-      "type": "STRING",
-      "editable": [ "unvalidated", "validated", "invalidated" ]
-    },
-    "workflow": {
-      "names": [
-        "WORKFLOW"
-      ],
-      "type": "STRING",
-      "editable": [ "unspecified", "escalate", "ignore", "manager" ]
-    },
-    "comment": {
-      "names": [
-        "COMMENT"
-      ],
-      "type": "STRING",
-      "editable": ["*"]
     }
   }
 }
