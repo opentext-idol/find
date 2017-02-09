@@ -49,20 +49,25 @@ define([
             },
             'click .entity-topic-map-pptx': function(evt){
                 evt.preventDefault()
-                var paths = this.topicMap.exportPaths();
 
-                if (paths) {
+                var data = this.exportPPTData();
+
+                if (data) {
                     // We need to append the temporary form to the document.body or Firefox and IE11 won't download the file.
                     // Previously used GET; but IE11 has a limited GET url length and loses data.
                     var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/topicmap"><textarea name="data"></textarea><input type="submit"></form>');
-
-                    $form[0].data.value = JSON.stringify({
-                        paths: _.flatten(paths.slice(1).reverse())
-                    })
-
+                    $form[0].data.value = JSON.stringify(data)
                     $form.appendTo(document.body).submit().remove()
                 }
             }
+        },
+
+        exportPPTData: function(){
+            var paths = this.topicMap.exportPaths();
+
+            return paths ? {
+                paths: _.flatten(paths.slice(1).reverse())
+            } : null
         },
 
         initialize: function(options) {

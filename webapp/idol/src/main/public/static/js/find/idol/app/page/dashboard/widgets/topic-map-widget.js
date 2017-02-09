@@ -77,6 +77,19 @@ define([
             if (this.updatePromise && this.updatePromise.abort) {
                 this.updatePromise.abort();
             }
+        },
+
+        exportPPTData: function() {
+            if (this.entityTopicMap) {
+                var data = this.entityTopicMap.exportPPTData();
+
+                if (data) {
+                    return {
+                        data: data,
+                        type: 'topicmap'
+                    }
+                }
+            }
         }
 
     });

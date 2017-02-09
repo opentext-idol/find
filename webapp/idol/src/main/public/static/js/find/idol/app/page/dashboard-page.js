@@ -21,6 +21,44 @@ define([
 
         template: _.template(template),
 
+        events: {
+            'click .report-pptx': function(evt){
+                evt.preventDefault();
+                evt.stopPropagation();
+
+                var reports = [],
+                    scaleX = 0.01 * this.widthPerUnit,
+                    scaleY = 0.01 * this.heightPerUnit
+
+                _.each(this.widgetViews, function(widget) {
+                    if (widget.view.exportPPTData) {
+                        var data = widget.view.exportPPTData();
+
+                        if (data) {
+                            var pos = widget.position;
+
+                            reports.push(_.defaults(data, {
+                                x: pos.x * scaleX,
+                                y: pos.y * scaleY,
+                                width: pos.width * scaleX,
+                                height: pos.height * scaleY
+                            }))
+                        }
+                    }
+                }, this);
+
+                if (reports.length) {
+                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/report"><textarea name="data"></textarea><input type="submit"></form>');
+
+                    $form[0].data.value = JSON.stringify({
+                        children: reports
+                    })
+
+                    $form.appendTo(document.body).submit().remove()
+                }
+            }
+        },
+
         initialize: function (options) {
             _.bindAll(this, 'update');
 
