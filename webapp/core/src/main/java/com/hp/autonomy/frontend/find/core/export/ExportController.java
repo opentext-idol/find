@@ -16,6 +16,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -24,13 +25,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.namespace.QName;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.POIXMLDocumentPart;
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.ShapeType;
@@ -41,6 +48,7 @@ import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFAutoShape;
 import org.apache.poi.xslf.usermodel.XSLFChart;
@@ -59,7 +67,9 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTDoughnutChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
@@ -254,7 +264,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     public HttpEntity<byte[]> sunburst(
             @RequestParam("title") final String title,
             @RequestParam("data") final String dataStr
-    ) throws IOException {
+    ) throws IOException, SlideShowTemplate.LoadException, InvalidFormatException {
         final SunburstData data = new ObjectMapper().readValue(dataStr, SunburstData.class);
 
         if(!data.validateInput()) {
@@ -264,24 +274,23 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         final String[] categories = data.getCategories();
         final double[] values = data.getValues();
 
-        final XMLSlideShow ppt = loadTemplate(true, false);
+        final SlideShowTemplate template = loadTemplate();
 
-        final XSLFSlide slide = ppt.getSlides().get(0);
+        final XMLSlideShow ppt = template.getSlideShow();
 
-        XSLFChart chart = null;
-        for(POIXMLDocumentPart part : slide.getRelations()) {
-            if(part instanceof XSLFChart) {
-                chart = (XSLFChart) part;
-                break;
-            }
-        }
+        final XSLFSlide slide = ppt.createSlide();
 
-        if(chart == null) throw new IllegalStateException("Chart required in template");
+        final String relId = "relId1";
+
+        slide.getXmlObject().getCSld().getSpTree().addNewGraphicFrame().set(template.getDoughnutChartShapeXML(relId, 1, "chart", null));
 
         final XSSFWorkbook workbook = new XSSFWorkbook();
         final XSSFSheet sheet = workbook.createSheet();
 
-        final CTChart ctChart = chart.getCTChart();
+        final XSLFChart baseChart = template.getDoughnutChart();
+
+        final CTChartSpace chartSpace = (CTChartSpace) baseChart.getCTChartSpace().copy();
+        final CTChart ctChart = chartSpace.getChart();
         final CTPlotArea plotArea = ctChart.getPlotArea();
 
         final CTDoughnutChart donutChart = plotArea.getDoughnutChartArray(0);
@@ -320,7 +329,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         categoryRef.setF(new CellRangeAddress(1, values.length, 0, 0).formatAsString(sheet.getSheetName(), true));
         numRef.setF(new CellRangeAddress(1, values.length, 1, 1).formatAsString(sheet.getSheetName(), true));
 
-        rewriteChartData(workbook, chart);
+        writeChart(ppt, slide, baseChart, chartSpace, workbook, relId);
 
         return writePPT(ppt, "sunburst.pptx");
     }
@@ -781,6 +790,12 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         }
     }
 
+    private SlideShowTemplate loadTemplate() throws IOException, SlideShowTemplate.LoadException {
+        try(InputStream inputStream = pptxTemplate.getInputStream()) {
+            return new SlideShowTemplate(inputStream);
+        }
+    }
+
     @RequestMapping(value = PPT_DATEGRAPH_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> graph(
             @RequestParam("data") final String dataStr
@@ -1036,4 +1051,57 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         return d instanceof ChartData || d instanceof SunburstData ? -1 : 0;
     }
 
+    private static PackagePartName generateNewName(final OPCPackage opcPackage, final String baseName) throws InvalidFormatException {
+        final Pattern pattern = Pattern.compile("(.*?)(\\d+)(\\.\\w+)?$");
+
+        final Matcher matcher = pattern.matcher(baseName);
+
+        if (matcher.find()) {
+            int num = Integer.parseInt(matcher.group(2));
+
+            for (int ii = num + 1; ii < Integer.MAX_VALUE; ++ii) {
+                final PackagePartName testName = PackagingURIHelper.createPartName(matcher.group(1) + ii + matcher.group(3));
+
+                if (opcPackage.getPart(testName) == null) {
+                    return testName;
+                }
+            }
+        }
+
+        // If the document doesn't have a numeric extension, just return it
+        return PackagingURIHelper.createPartName(baseName);
+    }
+
+    public static void writeChart(final XMLSlideShow pptx, final XSLFSlide slide, final XSLFChart templateChart, final CTChartSpace modifiedChart, final XSSFWorkbook workbook, final String relId) throws IOException, InvalidFormatException {
+        final OPCPackage opcPackage = pptx.getPackage();
+        final PackagePartName chartName = generateNewName(opcPackage, templateChart.getPackagePart().getPartName().getURI().getPath());
+
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
+        xmlOptions.setSaveSyntheticDocumentElement(new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
+        modifiedChart.save(baos, xmlOptions);
+
+        final PackagePart chartPart = opcPackage.createPart(chartName, XSLFRelation.CHART.getContentType(), baos);
+
+        slide.getPackagePart().addRelationship(chartName, TargetMode.INTERNAL, XSLFRelation.CHART.getRelation(), relId);
+
+        for(final POIXMLDocumentPart.RelationPart part : templateChart.getRelationParts()) {
+            final ByteArrayOutputStream partCopy = new ByteArrayOutputStream();
+            final URI targetURI = part.getRelationship().getTargetURI();
+
+            final PackagePartName name = generateNewName(opcPackage, targetURI.getPath());
+
+            final String contentType = part.getDocumentPart().getPackagePart().getContentType();
+
+            if("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(contentType)) {
+                workbook.write(partCopy);
+            }
+            else {
+                IOUtils.copy(part.getDocumentPart().getPackagePart().getInputStream(), partCopy);
+            }
+
+            opcPackage.createPart(name, contentType, partCopy);
+            chartPart.addRelationship(name, TargetMode.INTERNAL, part.getRelationship().getRelationshipType());
+        }
+    }
 }
