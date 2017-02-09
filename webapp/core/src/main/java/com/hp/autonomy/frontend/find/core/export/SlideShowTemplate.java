@@ -19,6 +19,7 @@ import org.apache.poi.xslf.usermodel.XSLFChart;
 import org.apache.poi.xslf.usermodel.XSLFGraphicFrame;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
@@ -27,9 +28,11 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
 
 public class SlideShowTemplate {
 
+    private static final String RELATION_NAMESPACE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+
     private final XMLSlideShow pptx;
-    private ImmutablePair<XSLFChart, CTGraphicalObjectFrame> doughnutChart;
-    private ImmutablePair<XSLFChart, CTGraphicalObjectFrame> graphChart;
+    private final ImmutablePair<XSLFChart, CTGraphicalObjectFrame> doughnutChart;
+    private final ImmutablePair<XSLFChart, CTGraphicalObjectFrame> graphChart;
 
 
     public SlideShowTemplate(final InputStream inputStream) throws LoadException {
@@ -94,10 +97,10 @@ public class SlideShowTemplate {
                 for(XSLFShape shape : slide.getShapes()) {
                     if (shape instanceof XSLFGraphicFrame) {
                         final CTGraphicalObjectFrame frameXML = (CTGraphicalObjectFrame) shape.getXmlObject();
-                        final XmlObject[] children = frameXML.getGraphic().getGraphicData().selectChildren(new QName("http://schemas.openxmlformats.org/drawingml/2006/chart", "chart"));
+                        final XmlObject[] children = frameXML.getGraphic().getGraphicData().selectChildren(new QName(XSSFRelation.NS_CHART, "chart"));
 
                         for(final XmlObject child : children) {
-                            final String imageRel = child.getDomNode().getAttributes().getNamedItemNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id").getNodeValue();
+                            final String imageRel = child.getDomNode().getAttributes().getNamedItemNS(RELATION_NAMESPACE, "id").getNodeValue();
 
                             if (relId.equals(imageRel)) {
                                 return new ImmutablePair<>(part.getDocumentPart(), frameXML);
@@ -143,7 +146,7 @@ public class SlideShowTemplate {
         cNvPr.setName(shapeName);
         cNvPr.setId(shapeId);
 
-        final XmlObject[] children = copy.getGraphic().getGraphicData().selectChildren(new QName("http://schemas.openxmlformats.org/drawingml/2006/chart", "chart"));
+        final XmlObject[] children = copy.getGraphic().getGraphicData().selectChildren(new QName(XSSFRelation.NS_CHART, "chart"));
 
         if (anchor != null) {
             final CTPoint2D off = copy.getXfrm().getOff();
@@ -156,7 +159,7 @@ public class SlideShowTemplate {
         }
 
         for(final XmlObject child : children) {
-            child.getDomNode().getAttributes().getNamedItemNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id").setNodeValue(relId);
+            child.getDomNode().getAttributes().getNamedItemNS(RELATION_NAMESPACE, "id").setNodeValue(relId);
         }
 
         return copy;
