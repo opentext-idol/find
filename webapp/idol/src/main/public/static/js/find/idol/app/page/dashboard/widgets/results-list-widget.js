@@ -100,6 +100,22 @@ define([
                 const boundingClientRect = element.getBoundingClientRect();
                 $(element).toggleClass('out-of-view', this.columnLayout ? boundingClientRect.right > containerBounds.right : boundingClientRect.bottom > containerBounds.bottom);
             }.bind(this));
+        },
+
+        exportPPTData: function(){
+            var docs = this.documentsCollection.map(function(model){
+                return {
+                    title: model.get('title'),
+                    summary: model.get('summary')
+                }
+            });
+
+            return {
+                data: {
+                    docs: docs
+                },
+                type: 'list'
+            };
         }
     });
 });
