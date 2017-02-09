@@ -121,7 +121,7 @@
           "bi": false
         },
         "resultViewOrder": {
-          "bi": ["topic-map", "list", "sunburst", "table", "map"],
+          "bi": ["topic-map", "list", "sunburst", "table", "map", "dategraph"],
           "user": ["list"]
         }
       },
@@ -260,6 +260,27 @@
       ],
       "type": "NUMBER",
       "advanced": true
+    },
+    "valid": {
+      "names": [
+        "VALID"
+      ],
+      "type": "STRING",
+      "editable": [ "unvalidated", "validated", "invalidated" ]
+    },
+    "workflow": {
+      "names": [
+        "WORKFLOW"
+      ],
+      "type": "STRING",
+      "editable": [ "unspecified", "escalate", "ignore", "manager" ]
+    },
+    "comment": {
+      "names": [
+        "COMMENT"
+      ],
+      "type": "STRING",
+      "editable": ["*"]
     }
   }
 }

@@ -32,6 +32,11 @@ define([
             var topicMapOptions = {
                 hideLegend: false,
                 skipAnimation: false,
+                textFadeStartDelay: 0,
+                textFadeMaxDelay: 100,
+                textFadeDuration: 100,
+                animationDelay: 5,
+                animationStepIncrement: 3,
                 i18n: {
                     'autn.vis.topicmap.noResultsAvailable': i18n['search.topicMap.noResults']
                 }
@@ -69,6 +74,10 @@ define([
                 size: 1.0,
                 children: this.data
             });
+        },
+
+        exportPaths: function(){
+            return this.$el.topicmap('exportPaths');
         }
     });
 });

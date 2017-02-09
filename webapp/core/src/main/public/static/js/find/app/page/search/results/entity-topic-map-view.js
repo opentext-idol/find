@@ -46,6 +46,22 @@ define([
                 var maxResults = event.value;
 
                 this.model.set('maxResults', maxResults);
+            },
+            'click .entity-topic-map-pptx': function(evt){
+                evt.preventDefault()
+                var paths = this.topicMap.exportPaths();
+
+                if (paths) {
+                    // We need to append the temporary form to the document.body or Firefox and IE11 won't download the file.
+                    // Previously used GET; but IE11 has a limited GET url length and loses data.
+                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/topicmap"><textarea name="data"></textarea><input type="submit"></form>');
+
+                    $form[0].data.value = JSON.stringify({
+                        paths: _.flatten(paths.slice(1).reverse())
+                    })
+
+                    $form.appendTo(document.body).submit().remove()
+                }
             }
         },
 

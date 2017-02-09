@@ -29,7 +29,8 @@ define([
                 currentFieldGroup: options.currentFieldGroup,
                 parametricCollection: options.parametricCollection,
                 parametricDisplayCollection: this.parametricDisplayCollection,
-                selectCollection: this.selectCollection
+                selectCollection: this.selectCollection,
+                showGraphButtons: options.showGraphButtons
             });
 
             Modal.prototype.initialize.call(this, {
@@ -47,6 +48,10 @@ define([
             });
 
             this.$el.on('shown.bs.modal', _.bind(this.parametricSelectView.renderFields, this));
+            this.$el.on('click', '.parametric-value-graph', _.bind(function(e){
+                var $checkboxEl = $(e.currentTarget).prev()
+                this.selectedParametricValues.trigger('graph', $checkboxEl.data().fieldId, $checkboxEl.find('.field-value').text());
+            }, this));
         }
     });
 });

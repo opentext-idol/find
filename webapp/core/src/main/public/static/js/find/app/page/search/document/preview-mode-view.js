@@ -44,7 +44,8 @@ define([
             'click .preview-mode-mmap-button': function () {
                 this.mmapTab.open(this.model.attributes);
             },
-            'click .close-preview-mode': 'triggerClose'
+            'click .close-preview-mode': 'triggerClose',
+            'change .editable-field': 'updateDocument'
         },
 
         initialize: function(options) {
@@ -88,6 +89,15 @@ define([
 
             this.$('.preview-mode-document-title').text(this.model.get('title'));
 
+            var flattened = _.reduce(this.model.get('fields'), function(acc, field){ acc[field.id] = field.values && field.values[0]; return acc }, {})
+
+            var config = configuration()
+            console.log(config)
+            // config.fieldsInfo
+            var editableFields = _.filter(config.fieldsInfo, function(field){
+                return field.editable.length
+            })
+
             var referenceKey = this.model.get('url') ? 'url' : 'reference';
             //noinspection JSUnresolvedFunction
             this.$('.preview-mode-metadata').html(this.metaDataTemplate({
@@ -100,7 +110,13 @@ define([
                 }, {
                     key: referenceKey,
                     value: this.model.get(referenceKey)
-                }]
+                }].concat(_.map(editableFields, function(field){
+                    return {
+                        key: field.id,
+                        editable: field.editable,
+                        value: flattened[field.id]
+                    }
+                }))
             }));
 
             var $preview = this.$('.preview-mode-document');
@@ -170,6 +186,38 @@ define([
 
         updateHighlighting: function() {
             this.$contentDocumentBody.toggleClass('haven-search-view-document-highlighting-on', this.highlightingModel.get('highlighting'));
+        },
+
+        updateDocument: function(evt) {
+            var tgt = $(evt.currentTarget);
+            var isParametric = tgt.is('.editable-parametric-field')
+            var val = tgt.val()
+            var field = tgt.attr('name')
+            var ref = this.model.get('reference')
+
+            var fields = this.model.get('fields')
+
+            $.post('api/public/search/edit-document', {
+                reference: ref,
+                database: this.model.get('index'),
+                field: field,
+                value: val
+            }).done(_.bind(function(success){
+                if (success) {
+                    var existing = _.find(fields, {id: field});
+
+                    if (existing) {
+                        existing.values = [val]
+                    }
+                    else {
+                        fields.push({ id: field, values: [val] })
+                    }
+
+                    if (isParametric) {
+                        this.previewModeModel.trigger('parametric-edit', field)
+                    }
+                }
+            }, this))
         }
     });
 

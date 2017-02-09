@@ -1,8 +1,14 @@
 <% _.each(fields, function(field) { %>
-    <% if (field.value) { %>
+    <% if (field.value || field.editable) { %>
         <tr>
-            <th class="font-bold"><%-i18n['search.document.' + field.key] || i18nIndexes['search.document.' + field.key]%></th>
-            <td class="break-all"><%-field.value%></td>
+            <th class="font-bold"><%-i18n['search.document.' + field.key] || i18nIndexes['search.document.' + field.key] || field.key.replace(/\b\w/, function(a){return a.toUpperCase() }) %></th>
+            <td class="break-all"><% if (field.editable && field.editable[0] === '*') { %><input class="editable-field" name="<%=field.key%>" value="<%-field.value || '' %>"><%
+                } else if (field.editable) { %><select class="editable-field editable-parametric-field" name="<%=field.key%>"><%
+                    _.each(field.editable, function(value, idx){
+                    %><option value="<%-(idx ? value : '') %>" <%= value.toLowerCase() === (field.value||'').toLowerCase() ? 'selected': ''%>><%-value%></option><%
+                    })
+                %></select><%
+                } else { %><%-field.value%><% }%></td>
         </tr>
     <% } %>
 <% }); %>

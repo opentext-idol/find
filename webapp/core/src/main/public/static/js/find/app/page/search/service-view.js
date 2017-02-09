@@ -26,6 +26,7 @@ define([
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/page/search/results/sunburst-view',
     'find/app/page/search/results/map-results-view',
+    'find/app/page/search/results/dategraph/dategraph-view',
     'find/app/page/search/results/table/table-view',
     'find/app/page/search/time-bar-view',
     'find/app/configuration',
@@ -36,7 +37,7 @@ define([
             ParametricCollection, ParametricFieldsCollection, NumericParametricFieldsCollection,
             queryStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
             RelatedConceptsView, addChangeListener, SavedSearchControlView, TopicMapView,
-            SunburstView, MapResultsView, TableView, TimeBarView, configuration, prettifyFieldName,
+            SunburstView, MapResultsView, DateGraphView, TableView, TimeBarView, configuration, prettifyFieldName,
             i18n, templateString) {
     'use strict';
 
@@ -267,6 +268,17 @@ define([
                         displayNameKey: 'table',
                         icon: 'hp-table'
                     }
+                },
+                dategraph: {
+                    Constructor: DateGraphView,
+                    constructorArguments: _.extend({
+                        timeBarModel: this.timeBarModel
+                    }, subViewArguments),
+                    shown: hasBiRole && this.displayDependentParametricViews,
+                    selector: {
+                        displayNameKey: 'dategraph',
+                        icon: 'hp-analytics'
+                    }
                 }
             };
 
@@ -318,6 +330,8 @@ define([
             $window
                 .scroll(this.updateScrollParameters)
                 .resize(this.updateScrollParameters);
+
+            this.listenTo(this.previewModeModel, 'parametric-edit', _.throttle(this.fetchRestrictedParametricCollection, 5000, {leading: false}), this)
         },
 
         render: function() {
