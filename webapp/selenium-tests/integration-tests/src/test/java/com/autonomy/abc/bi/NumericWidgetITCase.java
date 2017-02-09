@@ -23,6 +23,7 @@ import com.autonomy.abc.selenium.find.save.SavedSearchService;
 import com.autonomy.abc.selenium.find.save.SearchTabBar;
 import com.autonomy.abc.selenium.find.save.SearchType;
 import com.autonomy.abc.selenium.query.IndexFilter;
+import com.hp.autonomy.frontend.selenium.config.Browser;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
@@ -72,8 +73,6 @@ public class NumericWidgetITCase extends IdolFindTestBase {
 
     /*##########ANY NUMERIC GRAPH###########*/
     @Test
-    //TODO: test not actually for this
-    @ActiveBug("FIND-417")
     public void testClickingOnFilterPanelGraphOpensMain() {
         findService.searchAnyView("book");
         filters().waitForParametricFields();
@@ -349,7 +348,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-768")
+    @ActiveBug(value = "FIND-768", browsers = Browser.IE)
     public void testInputNumericBoundsAsText() {
         MainNumericWidget mainGraph = numericService.searchAndSelectFirstNumericGraph("red", getDriver());
 

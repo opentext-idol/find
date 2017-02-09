@@ -194,7 +194,6 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug("FIND-853")
     public void testSearchParentheses() {
         ensureOnCorrectView();
         //noinspection AnonymousInnerClassWithTooManyMethods

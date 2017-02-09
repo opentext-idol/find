@@ -271,7 +271,7 @@ public class ResultsITCase extends FindTestBase {
     @Role(UserRole.BIFHI)
     @ActiveBug("FIND-703")
     public void testBIUserCannotRouteToSplashPage() {
-        final String splashURL = getAppUrl() + "/public/search/splash";
+        final String splashURL = getAppUrl() + "public/search/splash";
         getDriver().get(splashURL);
         Waits.loadOrFadeWait();
 

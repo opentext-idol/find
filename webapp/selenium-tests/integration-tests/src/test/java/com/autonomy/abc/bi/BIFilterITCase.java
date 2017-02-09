@@ -129,7 +129,6 @@ public class BIFilterITCase extends IdolFindTestBase {
     }
 
     @Test
-    @Role(UserRole.BOTH)
     public void testNumericWidgetsDefaultCollapsed() {
         findService.search("swim");
 

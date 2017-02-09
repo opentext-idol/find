@@ -18,6 +18,7 @@ import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
+import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import org.apache.commons.lang3.text.WordUtils;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -110,7 +111,7 @@ public class TableITCase extends IdolFindTestBase {
         final String categoryName = filters.parametricField(goodCategory).filterCategoryName();
         final Map<String, Integer> filterCounts = getHighestResultCountForOtherFilters(goodCategory, categoryName);
         tableView.waitForTable();
-
+        DriverUtil.scrollIntoView(getDriver(), tableView.parametricSelectionDropdown(1).getElement());
         tableView.parametricSelectionDropdown(1).select(WordUtils.capitalize(categoryName.toLowerCase()));
         tableView.waitForTable();
 
