@@ -1026,9 +1026,33 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             else if (data instanceof TopicMapData) {
                 addTopicMap(slide, anchor, (TopicMapData) data);
             }
+            else if (data instanceof TextData) {
+                addTextData(slide, anchor, (TextData) data);
+            }
         }
 
         return writePPT(ppt, "report.pptx");
+    }
+
+    private void addTextData(final XSLFSlide slide, final Rectangle2D.Double anchor, final TextData data) {
+        final XSLFTextBox textBox = slide.createTextBox();
+        textBox.setAnchor(anchor);
+        textBox.clearText();
+
+        final XSLFTextParagraph para = textBox.addNewTextParagraph();
+
+        for(final TextData.Paragraph runData : data.getText()) {
+            final XSLFTextRun run = para.addNewTextRun();
+            run.setText(runData.getText());
+            run.setFontSize(runData.getFontSize());
+            run.setBold(runData.isBold());
+            run.setItalic(runData.isItalic());
+            run.setFontColor(Color.decode(runData.getColor()));
+
+            if (textBox.getTextHeight() > anchor.getHeight()) {
+                break;
+            }
+        }
     }
 
     private int prioritizeCharts(final ReportData.Child child) {

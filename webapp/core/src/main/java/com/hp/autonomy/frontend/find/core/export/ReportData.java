@@ -25,6 +25,7 @@ public class ReportData {
                 @JsonSubTypes.Type(name = "map", value = MapData.class),
                 @JsonSubTypes.Type(name = "sunburst", value = SunburstData.class),
                 @JsonSubTypes.Type(name = "table", value = TableData.class),
+                @JsonSubTypes.Type(name = "text", value = TextData.class),
                 @JsonSubTypes.Type(name = "topicmap", value = TopicMapData.class)
         })
         private ComposableElement data;

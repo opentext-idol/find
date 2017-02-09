@@ -20,6 +20,20 @@ define([
             Widget.prototype.render.apply(this, arguments);
 
             this.$content.html(this.html);
+        },
+
+        exportPPTData: function(){
+            var text = this.$content.text();
+
+            // Depending on how complicated we need to make this parser, we could also handle font, italics, etc.
+            return {
+                data: {
+                    text: [ {
+                        text: text
+                    } ]
+                },
+                type: 'text'
+            };
         }
     });
 
