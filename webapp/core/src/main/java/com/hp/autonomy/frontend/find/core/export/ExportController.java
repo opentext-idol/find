@@ -271,18 +271,22 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             throw new IllegalArgumentException("Number of values should match the number of categories");
         }
 
+        final SlideShowTemplate template = loadTemplate();
+        final XMLSlideShow ppt = template.getSlideShow();
+        final XSLFSlide slide = ppt.createSlide();
+
+        final int shapeId = 1;
+
+        addSunburst(template, slide, null, data, shapeId, "relId" + shapeId, title);
+
+        return writePPT(ppt, "sunburst.pptx");
+    }
+
+    private void addSunburst(final SlideShowTemplate template, final XSLFSlide slide, final Rectangle2D.Double anchor, final SunburstData data, final int shapeId, final String relId, final String title) throws IOException, InvalidFormatException {
         final String[] categories = data.getCategories();
         final double[] values = data.getValues();
 
-        final SlideShowTemplate template = loadTemplate();
-
-        final XMLSlideShow ppt = template.getSlideShow();
-
-        final XSLFSlide slide = ppt.createSlide();
-
-        final String relId = "relId1";
-
-        slide.getXmlObject().getCSld().getSpTree().addNewGraphicFrame().set(template.getDoughnutChartShapeXML(relId, 1, "chart", null));
+        slide.getXmlObject().getCSld().getSpTree().addNewGraphicFrame().set(template.getDoughnutChartShapeXML(relId, shapeId, "chart" + shapeId, anchor));
 
         final XSSFWorkbook workbook = new XSSFWorkbook();
         final XSSFSheet sheet = workbook.createSheet();
@@ -292,6 +296,14 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         final CTChartSpace chartSpace = (CTChartSpace) baseChart.getCTChartSpace().copy();
         final CTChart ctChart = chartSpace.getChart();
         final CTPlotArea plotArea = ctChart.getPlotArea();
+
+        if (StringUtils.isEmpty(title)) {
+            if (ctChart.getAutoTitleDeleted() != null) {
+                ctChart.getAutoTitleDeleted().setVal(true);
+            }
+
+            ctChart.unsetTitle();
+        }
 
         final CTDoughnutChart donutChart = plotArea.getDoughnutChartArray(0);
 
@@ -329,9 +341,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         categoryRef.setF(new CellRangeAddress(1, values.length, 0, 0).formatAsString(sheet.getSheetName(), true));
         numRef.setF(new CellRangeAddress(1, values.length, 1, 1).formatAsString(sheet.getSheetName(), true));
 
-        writeChart(ppt, slide, baseChart, chartSpace, workbook, relId);
-
-        return writePPT(ppt, "sunburst.pptx");
+        writeChart(template.getSlideShow(), slide, baseChart, chartSpace, workbook, relId);
     }
 
     @RequestMapping(value = PPT_TABLE_PATH, method = RequestMethod.POST)
@@ -1002,10 +1012,11 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     @RequestMapping(value = PPT_REPORT_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> report(
             @RequestParam("data") final String dataStr
-    ) throws IOException {
+    ) throws IOException, SlideShowTemplate.LoadException, InvalidFormatException {
         final ReportData report = new ObjectMapper().readValue(dataStr, ReportData.class);
 
-        final XMLSlideShow ppt = loadTemplate(false, false);
+        final SlideShowTemplate template = loadTemplate();
+        final XMLSlideShow ppt = template.getSlideShow();
         final Dimension pageSize = ppt.getPageSize();
         double width = pageSize.getWidth();
         double height = pageSize.getHeight();
@@ -1015,6 +1026,8 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         // We need to add charts first, since calling slide.getShapes() or indirectly createShape() etc.
         //   before adding chart objects directly via XML will break things.
         Arrays.sort(report.getChildren(), Comparator.comparingInt(this::prioritizeCharts));
+
+        int shapeId = 1;
 
         for(final ReportData.Child child : report.getChildren()) {
             final ComposableElement data = child.getData();
@@ -1032,7 +1045,8 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 addMap(slide, anchor, addPictureData(ppt, mapData.getImage()), mapData.getMarkers());
             }
             else if (data instanceof SunburstData) {
-                throw new UnsupportedOperationException("Not implemented yet");
+                addSunburst(template, slide, anchor, (SunburstData) data, shapeId, "relId" + shapeId, null);
+                shapeId++;
             }
             else if (data instanceof TableData) {
                 final TableData tableData = (TableData) data;
