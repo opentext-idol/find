@@ -133,9 +133,7 @@ define([
             this.$el.on('click', '.sunburst-pptx', _.bind(function(evt){
                 evt.preventDefault();
 
-                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/sunburst"><input name="title"><textarea name="data"></textarea><input type="submit"></form>');
-
-                $form[0].title.value = i18n['search.resultsView.sunburst.breakdown.by'](this.fieldsCollection.at(0).get('displayValue'));
+                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/sunburst"><textarea name="data"></textarea><input type="submit"></form>');
 
                 var categories = [];
                 var values = [];
@@ -147,7 +145,8 @@ define([
 
                 $form[0].data.value = JSON.stringify({
                     categories: categories,
-                    values: values
+                    values: values,
+                    title: i18n['search.resultsView.sunburst.breakdown.by'](this.fieldsCollection.at(0).get('displayValue'))
                 });
 
                 $form.appendTo(document.body).submit().remove();

@@ -11,6 +11,7 @@ import lombok.Data;
 public class SunburstData implements ComposableElement {
     private String[] categories;
     private double[] values;
+    private String title;
 
     public boolean validateInput() {
         return categories != null && values != null && categories.length == values.length;

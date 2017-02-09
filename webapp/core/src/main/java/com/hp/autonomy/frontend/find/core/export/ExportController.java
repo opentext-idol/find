@@ -262,7 +262,6 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
     @RequestMapping(value = PPT_SUNBURST_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> sunburst(
-            @RequestParam("title") final String title,
             @RequestParam("data") final String dataStr
     ) throws IOException, SlideShowTemplate.LoadException, InvalidFormatException {
         final SunburstData data = new ObjectMapper().readValue(dataStr, SunburstData.class);
@@ -277,14 +276,15 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
         final int shapeId = 1;
 
-        addSunburst(template, slide, null, data, shapeId, "relId" + shapeId, title);
+        addSunburst(template, slide, null, data, shapeId, "relId" + shapeId);
 
         return writePPT(ppt, "sunburst.pptx");
     }
 
-    private void addSunburst(final SlideShowTemplate template, final XSLFSlide slide, final Rectangle2D.Double anchor, final SunburstData data, final int shapeId, final String relId, final String title) throws IOException, InvalidFormatException {
+    private void addSunburst(final SlideShowTemplate template, final XSLFSlide slide, final Rectangle2D.Double anchor, final SunburstData data, final int shapeId, final String relId) throws IOException, InvalidFormatException {
         final String[] categories = data.getCategories();
         final double[] values = data.getValues();
+        final String title = data.getTitle();
 
         slide.getXmlObject().getCSld().getSpTree().addNewGraphicFrame().set(template.getDoughnutChartShapeXML(relId, shapeId, "chart" + shapeId, anchor));
 
@@ -1014,7 +1014,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 addMap(slide, anchor, addPictureData(ppt, mapData.getImage()), mapData.getMarkers());
             }
             else if (data instanceof SunburstData) {
-                addSunburst(template, slide, anchor, (SunburstData) data, shapeId, "relId" + shapeId, null);
+                addSunburst(template, slide, anchor, (SunburstData) data, shapeId, "relId" + shapeId);
                 shapeId++;
             }
             else if (data instanceof TableData) {
