@@ -41,6 +41,7 @@
     "leaflet": "0.7.7",
     "Leaflet.awesome-markers": "2.0.2",
     "leaflet.markercluster": "leaflet-0.7",
+    "metisMenu": "2.5.2",
     "requirejs": "2.1.22",
     "requirejs-text": "2.0.15",
     "requirejs-i18n": "2.0.4",
@@ -53,6 +54,7 @@
     "datatables.net-fixedcolumns-bs": "3.2.2",
     "hp-autonomy-about-page": "0.3.0",
     "bootstrap": "3.3.7",
+    "moment-timezone": "0.5.11",
     "Flot": "flot#~0.8.3",
     "html2canvas": "~0.4.1"
   },

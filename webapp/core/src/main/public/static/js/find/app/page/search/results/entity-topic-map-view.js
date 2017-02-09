@@ -74,8 +74,10 @@ define([
                     return this.queryState ? _.flatten(this.queryState.conceptGroups.pluck('concepts')) : [];
                 }.bind(this)
             });
+
             this.queryModel = options.queryModel;
             this.type = options.type;
+            this.showSlider = !_.isUndefined(options.showSlider) ? options.showSlider : true;
 
             this.topicMap = new TopicMapView({
                 clickHandler: options.clickHandler
@@ -89,7 +91,7 @@ define([
 
             this.model = new Backbone.Model({
                 maxCount: 10,
-                maxResults: 300
+                maxResults: options.maxResults || 300
             });
 
             this.listenTo(this.model, 'change:maxResults', this.fetchRelatedConcepts);
@@ -218,25 +220,28 @@ define([
             }
 
             if(data) {
-                this.entityCollection.fetch({data: data});
+                return this.entityCollection.fetch({data: data});
             }
         },
 
         render: function() {
             this.$el.html(this.template({
-                i18n: i18n,
+                cid: this.cid,
                 errorTemplate: this.errorTemplate,
+                i18n: i18n,
                 loadingHtml: loadingHtml,
-                cid: this.cid
+                showSlider: this.showSlider
             }));
 
-            this.$('.speed-slider')
-                .slider({
-                    id: this.cid + '-speed-slider',
-                    min: 50,
-                    max: configuration().topicMapMaxResults,
-                    value: this.model.get('maxResults')
-                });
+            if (this.showSlider) {
+                this.$('.speed-slider')
+                    .slider({
+                        id: this.cid + '-speed-slider',
+                        min: 50,
+                        max: configuration().topicMapMaxResults,
+                        value: this.model.get('maxResults')
+                    });
+            }
 
             this.topicMap.setElement(this.$('.entity-topic-map')).render();
             this.update();

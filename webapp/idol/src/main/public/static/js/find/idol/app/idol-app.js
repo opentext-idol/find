@@ -11,10 +11,11 @@ define([
     'find/idol/app/idol-navigation',
     'find/idol/app/page/idol-find-search',
     'find/idol/app/page/find-about-page',
+    'find/idol/app/page/dashboard-page',
     'find/app/page/find-settings-page',
     'i18n!find/nls/bundle'
 ], function(BaseApp, _, configuration, IndexesCollection, SavedSnapshotCollection, Navigation, FindSearch, AboutPage,
-            SettingsPage, i18n) {
+            DashboardPage, SettingsPage, i18n) {
     'use strict';
 
     return BaseApp.extend({
@@ -22,7 +23,7 @@ define([
         IndexesCollection: IndexesCollection,
 
         getModelData: function() {
-            var modelData = BaseApp.prototype.getModelData.call(this);
+            let modelData = BaseApp.prototype.getModelData.call(this);
 
             if(configuration().hasBiRole) {
                 modelData = _.extend({
@@ -37,28 +38,45 @@ define([
         },
 
         getPageData: function() {
-            var pageData = {
+            const dashboards = _.where(configuration().dashboards, {enabled: true});
+
+            const pageData = _.reduce(dashboards, function(acc, dash, index) {
+                acc['dashboards/' + dash.dashboardName] =  {
+                    Constructor: DashboardPage,
+                    icon: 'hp-icon hp-fw hp-dashboard',
+                    models: ['sidebarModel'],
+                    title: i18n[dash.dashboardName] || dash.dashboardName,
+                    order: index,
+                    constructorArguments: dash
+                };
+
+                return acc;
+            }, {});
+
+            const dashboardCount = dashboards ? dashboards.length : 0;
+
+            _.extend(pageData, {
                 search: {
                     Constructor: FindSearch,
                     icon: 'hp-icon hp-fw hp-search',
                     models: ['indexesCollection', 'savedQueryCollection', 'windowScrollModel'].concat(configuration().hasBiRole ? ['savedSnapshotCollection'] : []),
                     title: i18n['app.search'],
-                    order: 0
+                    order: dashboardCount
                 },
                 about: {
                     Constructor: AboutPage,
                     icon: 'hp-icon hp-fw hp-info',
                     title: i18n['app.about'],
-                    order: 1
+                    order: dashboardCount + 1
                 }
-            };
+            });
 
             if(_.contains(configuration().roles, 'ROLE_ADMIN')) {
                 pageData.settings = {
                     Constructor: SettingsPage,
                     icon: 'hp-icon hp-fw hp-settings',
                     title: i18n['app.settings'],
-                    order: 2
+                    order: dashboardCount + 2
                 };
             }
 

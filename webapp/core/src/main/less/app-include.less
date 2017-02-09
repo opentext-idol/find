@@ -39,6 +39,7 @@
 @color44: rgba(255, 192, 35, 0.6);
 @color45: rgba(132, 197, 55, 0.6);
 @color46: rgba(225, 97, 85, 0.6);
+@hpeNavBarColour: #333333;
 
 // Colours for side panel labels (eg concepts and selected filters)
 @sidePanelLabelColour: #435663;
@@ -742,9 +743,18 @@ fieldset.radio-fieldset > label {
 }
 
 .find-logo-small {
-  background: url('../img/Find_Logo_sml.png') no-repeat 0 0/100px 20px;
+  background: url('../img/Find_Logo_sml.png') no-repeat 0 50%/100px 20px;
   height: 20px;
   width: 100px;
+  &.side-nav {
+    float: none;
+    padding-right: 165px;
+    margin-top: 0;
+  }
+}
+
+.nav-menu-btn-container a.nav-menu-toggle-btn {
+    color: @white;
 }
 
 .hp-logo-footer {
@@ -1295,7 +1305,7 @@ input.find-input {
   &:extend(.m-b-nil);
 
   -webkit-transition: @transitAllFast;
-  background-color: @color1;
+  background-color: @hpeNavBarColour;
   color: @white;
   height: @navBarHeight;
   transition: @transitAllFast;
@@ -1324,14 +1334,14 @@ input.find-input {
 
 .navbar .navbar-nav .open .dropdown-menu > .active > a,
 .navbar .navbar-nav .open .dropdown-menu > .active > a:hover {
-  background-color: @color1;
+  background-color: @hpeNavBarColour;
   background-image: none;
 }
 
 .dropdown-menu > .active > a,
 .dropdown-menu > .active > a:hover,
 .dropdown-menu > .active > a:focus {
-  background-color: @color1;
+  background-color: @hpeNavBarColour;
   background-image: none;
 }
 
@@ -1985,6 +1995,70 @@ h4.similar-dates-message {
   }
 }
 
+.dashboard {
+  height: calc(100vh - @navBarHeight);
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.widget {
+  box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
+  padding: 0.5em;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  &:hover {
+    transform: scale(1.05);
+    transition: 0.3s;
+  }
+
+  .title {
+    &:extend(.m-t-nil);
+    flex: 0 0 auto;
+  }
+
+  .widget-content {
+    flex: 1 0 80%;
+    overflow: hidden;
+
+    .results-list {
+      display: flex;
+      &.results-list-row {
+        flex-direction: column;
+        max-height: 100%;
+      }
+
+      &.results-list-column {
+        display: flex;
+        flex-direction: row;
+
+        .search-result {
+          margin: 5px;
+        }
+      }
+      .search-result {
+        flex: 1 1 auto;
+        &.out-of-view {
+          visibility: hidden;
+        }
+      }
+    }
+
+    div.video-container {
+      background-color: transparent;
+      height: 100%;
+      position: relative;
+
+      video {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}
+
 /*------Media queries------*/
 @xxsmWidthScreen: ~"only screen and (max-width: 767px)";
 @xsmWidthScreen: ~"only screen and (max-width: 991px)";
@@ -2004,7 +2078,7 @@ h4.similar-dates-message {
 
   .navbar .navbar-nav .open .dropdown-menu > .active > a,
   .navbar .navbar-nav .open .dropdown-menu > .active > a:hover {
-    background-color: @color1;
+    background-color: @hpeNavBarColour;
     background-image: none;
   }
 }

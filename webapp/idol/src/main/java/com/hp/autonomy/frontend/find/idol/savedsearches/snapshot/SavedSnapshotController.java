@@ -1,11 +1,14 @@
 package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
+import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
+import com.hp.autonomy.frontend.find.idol.dashboards.WidgetSearchId;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
@@ -39,16 +42,23 @@ class SavedSnapshotController {
     private final SavedSearchService<SavedSnapshot> service;
     private final FieldTextParser fieldTextParser;
     private final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
+    private final Set<Long> validIds;
 
     @Autowired
     public SavedSnapshotController(final IdolDocumentsService documentsService,
                                    final SavedSearchService<SavedSnapshot> service,
                                    final FieldTextParser fieldTextParser,
-                                   final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory) {
+                                   final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
+                                   final ConfigService<IdolDashboardConfig> dashConfig) {
         this.documentsService = documentsService;
         this.service = service;
         this.fieldTextParser = fieldTextParser;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
+        validIds = dashConfig.getConfig().getDashboards().stream()
+                .flatMap(dashboard -> dashboard.getWidgets().stream()
+                        .filter(widget -> widget.getSavedSearch() != null && widget.getSavedSearch().getType() == WidgetSearchId.Type.SNAPSHOT)
+                        .map(widget -> widget.getSavedSearch().getId()))
+                .collect(Collectors.toSet());
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -125,5 +135,14 @@ class SavedSnapshotController {
                 .build();
 
         return documentsService.getStateTokenAndResultCount(restrictions, STATE_TOKEN_MAX_RESULTS, promotions);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
+    public SavedSnapshot get(@PathVariable("id") final long id) {
+        if (validIds.contains(id)) {
+            return service.getDashboardSearch(id);
+        } else {
+            throw new IllegalArgumentException("Saved Search Id is not in the dashboards configuration file");
+        }
     }
 }

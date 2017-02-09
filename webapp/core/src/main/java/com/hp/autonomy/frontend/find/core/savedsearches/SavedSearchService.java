@@ -17,6 +17,8 @@ public interface SavedSearchService<T extends SavedSearch<T>> {
 
     T update(T search);
 
+    T getDashboardSearch(long id);
+
     void deleteById(long id);
 
 }
