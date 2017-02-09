@@ -20,7 +20,7 @@ public class ReportData {
 
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "type")
         @JsonSubTypes({
-                @JsonSubTypes.Type(name = "chart", value = ChartData.class),
+                @JsonSubTypes.Type(name = "dategraph", value = DategraphData.class),
                 @JsonSubTypes.Type(name = "list", value = ListData.class),
                 @JsonSubTypes.Type(name = "map", value = MapData.class),
                 @JsonSubTypes.Type(name = "sunburst", value = SunburstData.class),

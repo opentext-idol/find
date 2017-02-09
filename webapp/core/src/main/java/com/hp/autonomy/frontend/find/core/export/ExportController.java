@@ -181,10 +181,10 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     @RequestMapping(value = PPT_TOPICMAP_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> topicmap(
             @RequestParam("data") final String topicMapStr
-    ) throws IOException {
+    ) throws IOException, SlideShowTemplate.LoadException {
         final TopicMapData data = new ObjectMapper().readValue(topicMapStr, TopicMapData.class);
 
-        final XMLSlideShow ppt = loadTemplate(false, false);
+        final XMLSlideShow ppt = loadTemplate().getSlideShow();
         final Dimension pageSize = ppt.getPageSize();
         final XSLFSlide slide = ppt.createSlide();
 
@@ -349,7 +349,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             @RequestParam("title") final String title,
             @RequestParam("data") final String dataStr
 
-    ) throws IOException {
+    ) throws IOException, SlideShowTemplate.LoadException {
         final TableData tableData = new ObjectMapper().readValue(dataStr, TableData.class);
 
         if(!tableData.validateInput()) {
@@ -360,7 +360,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                   cols = tableData.getCols();
         final String[] data = tableData.getCells();
 
-        final XMLSlideShow ppt = loadTemplate(false, false);
+        final XMLSlideShow ppt = loadTemplate().getSlideShow();
         final Dimension pageSize = ppt.getPageSize();
         final double pageWidth = pageSize.getWidth(), pageHeight = pageSize.getHeight();
         final XSLFSlide sl = ppt.createSlide();
@@ -438,11 +438,11 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     public HttpEntity<byte[]> map(
             @RequestParam("title") final String title,
             @RequestParam("data") final String markerStr
-    ) throws IOException {
+    ) throws IOException, SlideShowTemplate.LoadException {
         final MapData map = new ObjectMapper().readValue(markerStr, MapData.class);
         final String image = map.getImage();
 
-        final XMLSlideShow ppt = loadTemplate(false, false);
+        final XMLSlideShow ppt = loadTemplate().getSlideShow();
         final Dimension pageSize = ppt.getPageSize();
         final double pageWidth = pageSize.getWidth(), pageHeight = pageSize.getHeight();
         final XSLFSlide sl = ppt.createSlide();
@@ -581,11 +581,11 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             @RequestParam("results") final String results,
             @RequestParam("sortBy") final String sortBy,
             @RequestParam("data") final String docsStr
-    ) throws IOException {
+    ) throws IOException, SlideShowTemplate.LoadException {
         final ListData documentList = new ObjectMapper().readValue(docsStr, ListData.class);
         final ListData.Document[] docs = documentList.getDocs();
 
-        final XMLSlideShow ppt = loadTemplate(false, false);
+        final XMLSlideShow ppt = loadTemplate().getSlideShow();
         final Dimension pageSize = ppt.getPageSize();
         addList(ppt, null, new Rectangle2D.Double(0, 0, pageSize.getWidth(), pageSize.getHeight()), true, docs, results, sortBy);
 
@@ -779,27 +779,6 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     @Value(value = "classpath:/templates/template.pptx")
     private Resource pptxTemplate;
 
-    private XMLSlideShow loadTemplate(final boolean keepPieChart, final boolean keepGraph) throws IOException {
-        try(InputStream inputStream = pptxTemplate.getInputStream()) {
-            final XMLSlideShow ppt = new XMLSlideShow(inputStream);
-
-            // The template should have two slides. The first slide should have a pie chart; the second has a graph.
-            if (ppt.getSlides().size() != 2) {
-                throw new IllegalArgumentException("Invalid template supplied");
-            }
-
-            if (!keepGraph) {
-                ppt.removeSlide(1);
-            }
-
-            if (!keepPieChart) {
-                ppt.removeSlide(0);
-            }
-
-            return ppt;
-        }
-    }
-
     private SlideShowTemplate loadTemplate() throws IOException, SlideShowTemplate.LoadException {
         try(InputStream inputStream = pptxTemplate.getInputStream()) {
             return new SlideShowTemplate(inputStream);
@@ -809,16 +788,27 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     @RequestMapping(value = PPT_DATEGRAPH_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> graph(
             @RequestParam("data") final String dataStr
-    ) throws IOException {
-        final ChartData data = new ObjectMapper().readValue(dataStr, ChartData.class);
+    ) throws IOException, SlideShowTemplate.LoadException, InvalidFormatException {
+        final DategraphData data = new ObjectMapper().readValue(dataStr, DategraphData.class);
 
+        final SlideShowTemplate template = loadTemplate();
+        final XMLSlideShow ppt = template.getSlideShow();
+        final int shapeId = 1;
+        final String relId = "relId" + shapeId;
+
+        addDategraph(template, ppt.createSlide(), null, data, shapeId, relId);
+
+        return writePPT(ppt, "dategraph.pptx");
+    }
+
+    private void addDategraph(final SlideShowTemplate template, final XSLFSlide slide, final Rectangle2D.Double anchor, final DategraphData data, final int shapeId, final String relId) throws IOException, InvalidFormatException {
         if (!data.validateInput()) {
             throw new IllegalArgumentException("Invalid data provided");
         }
 
-        boolean useSecondaryAxis = data.rows.stream().anyMatch(ChartData.Row::isSecondaryAxis);
+        boolean useSecondaryAxis = data.rows.stream().anyMatch(DategraphData.Row::isSecondaryAxis);
 
-        if (data.rows.stream().allMatch(ChartData.Row::isSecondaryAxis)) {
+        if (data.rows.stream().allMatch(DategraphData.Row::isSecondaryAxis)) {
             // If everything is on the secondary axis; just use the primary axis
             data.rows.forEach(row -> row.setSecondaryAxis(false));
             useSecondaryAxis = false;
@@ -826,24 +816,14 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
         final XSSFWorkbook wb = writeChart(data);
 
-        final XMLSlideShow ppt = loadTemplate(false, true);
+        final XMLSlideShow ppt = template.getSlideShow();
 
-        final XSLFSlide slide = ppt.getSlides().get(0);
+        slide.getXmlObject().getCSld().getSpTree().addNewGraphicFrame().set(template.getGraphChartShapeXML(relId, shapeId, "chart" + shapeId, anchor));
 
-        XSLFChart chart = null;
+        XSLFChart baseChart = template.getGraphChart();
+        final CTChartSpace chartSpace = (CTChartSpace) baseChart.getCTChartSpace().copy();
 
-        for(POIXMLDocumentPart part : slide.getRelations()) {
-            if (part instanceof XSLFChart) {
-                chart = (XSLFChart) part;
-                break;
-            }
-        }
-
-        if (chart == null) {
-            throw new IllegalArgumentException("Invalid template supplied");
-        }
-
-        final CTChart ctChart = chart.getCTChart();
+        final CTChart ctChart = chartSpace.getChart();
         final CTPlotArea plotArea = ctChart.getPlotArea();
         final XSSFSheet sheet = wb.getSheetAt(0);
 
@@ -865,7 +845,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         int secondarySeriesCount = 0;
 
         for (int seriesIdx = 0; seriesIdx < data.rows.size(); ++seriesIdx) {
-            final ChartData.Row row = data.rows.get(seriesIdx);
+            final DategraphData.Row row = data.rows.get(seriesIdx);
 
             final CTLineChart tgtChart = plotArea.getLineChartArray(row.isSecondaryAxis() ? 1 : 0);
 
@@ -885,26 +865,14 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             updateCTLineSer(data, sheet, seriesIdx, curSeries);
         }
 
-        rewriteChartData(wb, chart);
-
-        return writePPT(ppt, "dategraph.pptx");
+        writeChart(ppt, slide, baseChart, chartSpace, wb, relId);
     }
 
-    private void rewriteChartData(final XSSFWorkbook workbook, final XSLFChart chart) throws IOException {
-        for(final POIXMLDocumentPart rel : chart.getRelations()) {
-            final PackagePart pkg = rel.getPackagePart();
-            // We have to rewrite the chart data; OpenOffice doesn't use it but Powerpoint does when you click 'Edit Data'
-            if ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(pkg.getContentType())) {
-                workbook.write(pkg.getOutputStream());
-            }
-        }
-    }
-
-    private static void updateCTLineSer(final ChartData data, final XSSFSheet sheet, final int seriesIdx, final CTLineSer series) {
+    private static void updateCTLineSer(final DategraphData data, final XSSFSheet sheet, final int seriesIdx, final CTLineSer series) {
         final String sheetName = sheet.getSheetName();
 
         // the series idx starts from 0
-        final ChartData.Row row = data.getRows().get(seriesIdx);
+        final DategraphData.Row row = data.getRows().get(seriesIdx);
         final String title = row.getLabel();
         final Color color = Color.decode(row.getColor());
 
@@ -981,7 +949,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         }
     }
 
-    private static XSSFWorkbook writeChart(final ChartData data) {
+    private static XSSFWorkbook writeChart(final DategraphData data) {
         final XSSFWorkbook wb = new XSSFWorkbook();
         final XSSFSheet sheet = wb.createSheet("Sheet1");
 
@@ -1033,8 +1001,9 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             final ComposableElement data = child.getData();
             final Rectangle2D.Double anchor = new Rectangle2D.Double(width * child.getX(), height * child.getY(), width * child.getWidth(), height * child.getHeight());
 
-            if (data instanceof ChartData) {
-                throw new UnsupportedOperationException("Not implemented yet");
+            if (data instanceof DategraphData) {
+                addDategraph(template, slide, anchor, (DategraphData) data, shapeId, "relId" + shapeId);
+                shapeId++;
             }
             else if (data instanceof ListData) {
                 final ListData listData = (ListData) data;
@@ -1062,7 +1031,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
     private int prioritizeCharts(final ReportData.Child child) {
         final ComposableElement d = child.getData();
-        return d instanceof ChartData || d instanceof SunburstData ? -1 : 0;
+        return d instanceof DategraphData || d instanceof SunburstData ? -1 : 0;
     }
 
     private static PackagePartName generateNewName(final OPCPackage opcPackage, final String baseName) throws InvalidFormatException {
@@ -1086,7 +1055,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         return PackagingURIHelper.createPartName(baseName);
     }
 
-    public static void writeChart(final XMLSlideShow pptx, final XSLFSlide slide, final XSLFChart templateChart, final CTChartSpace modifiedChart, final XSSFWorkbook workbook, final String relId) throws IOException, InvalidFormatException {
+    private static void writeChart(final XMLSlideShow pptx, final XSLFSlide slide, final XSLFChart templateChart, final CTChartSpace modifiedChart, final XSSFWorkbook workbook, final String relId) throws IOException, InvalidFormatException {
         final OPCPackage opcPackage = pptx.getPackage();
         final PackagePartName chartName = generateNewName(opcPackage, templateChart.getPackagePart().getPartName().getURI().getPath());
 
