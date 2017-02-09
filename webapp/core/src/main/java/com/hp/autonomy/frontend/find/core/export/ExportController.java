@@ -367,8 +367,8 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
         if (cols == 2) {
             // In the most common situation, there's a count column which should be relatively smaller
-            table.setColumnWidth(0, anchor.getWidth() * 0.8);
-            table.setColumnWidth(1, anchor.getWidth() * 0.2);
+            table.setColumnWidth(0, anchor.getWidth() * 0.9);
+            table.setColumnWidth(1, anchor.getWidth() * 0.1);
             tableW += table.getColumnWidth(0);
             tableW += table.getColumnWidth(1);
         }
