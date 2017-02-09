@@ -2015,11 +2015,29 @@ h4.similar-dates-message {
 
   .widget-content {
     flex: 1 0 80%;
+    overflow: hidden;
 
-    div.static-image {
-      background-size: contain;
-      background: no-repeat center;
-      height: 100%;
+    .results-list {
+      display: flex;
+      &.results-list-row {
+        flex-direction: column;
+        max-height: 100%;
+      }
+
+      &.results-list-column {
+        display: flex;
+        flex-direction: row;
+
+        .search-result {
+          margin: 5px;
+        }
+      }
+      .search-result {
+        flex: 1 1 auto;
+        &.out-of-view {
+          visibility: hidden;
+        }
+      }
     }
 
     div.video-container {

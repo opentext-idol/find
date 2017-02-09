@@ -48,7 +48,9 @@ define([
         },
 
         onResize: function() {
-            this.entityTopicMap.update();
+            if (this.entityTopicMap) {
+                this.entityTopicMap.update();
+            }
         },
 
         doUpdate: function(done) {
