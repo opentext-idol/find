@@ -1105,6 +1105,22 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             run.setFontColor(Color.decode(runData.getColor()));
 
             if (textBox.getTextHeight() > anchor.getHeight()) {
+                // Try removing words from the last box until we find something that fits, or we run out of words
+                final String trimmedText = runData.getText().trim();
+                run.setText(trimmedText);
+
+                for (final StringBuilder text = new StringBuilder(trimmedText); textBox.getTextHeight() > anchor.getHeight() && text.length() > 0 ; ) {
+                    final int lastSpaceIdx = Math.max(text.lastIndexOf(" "), text.lastIndexOf("\n"));
+
+                    if (lastSpaceIdx < 0) {
+                        break;
+                    }
+
+                    text.delete(lastSpaceIdx, text.length());
+                    // Add a trailing ellipsis unless it's empty or already contained a trailing ellipsis or "..." at the final truncated position.
+                    run.setText(text.length() > 0 ? text.toString().replaceFirst("(\\s*(\\.{3}|\u2026))?$", "\u2026") : "");
+                }
+
                 break;
             }
         }
