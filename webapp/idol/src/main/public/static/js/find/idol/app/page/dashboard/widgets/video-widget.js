@@ -107,10 +107,17 @@ define([
 
             try {
                 var canvas = document.createElement('canvas');
-                canvas.width = videoEl.width();
-                canvas.height = videoEl.height();
+                var videoDom = videoEl[0];
+                // Compensate for the video element's auto-crop to preserve aspect ratio, jQuery doesn't include this.
+                var aspectRatio = videoDom.videoWidth / videoDom.videoHeight;
+                var width = videoEl.width();
+                var height = videoEl.height();
+                var actualWidth = Math.min(width, height * aspectRatio);
+                var actualHeight = Math.min(height, width / aspectRatio);
+                canvas.width = actualWidth;
+                canvas.height = actualHeight;
                 var ctx = canvas.getContext('2d');
-                ctx.drawImage(videoEl[0], 0, 0, canvas.width, canvas.height);
+                ctx.drawImage(videoDom, 0, 0, canvas.width, canvas.height);
 
                 return {
                     data: {
