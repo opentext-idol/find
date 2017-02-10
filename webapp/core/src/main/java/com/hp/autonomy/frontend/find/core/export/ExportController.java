@@ -1019,7 +1019,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                     XSLFTextBox sizingBox = null;
 
                     final String title = child.getTitle();
-                    if (StringUtils.isNotEmpty(title)) {
+                    if (StringUtils.isNotEmpty(title) && yHeightAvail > 0) {
                         sizingBox = sizingSlide.createTextBox();
                         final Rectangle2D.Double sizingAnchor = new Rectangle2D.Double(
                                 xCursor,

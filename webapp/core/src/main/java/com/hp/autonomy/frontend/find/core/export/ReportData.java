@@ -21,7 +21,7 @@ public class ReportData {
         private String title;
 
         private double margin = 3;
-        private double textMargin = 2;
+        private double textMargin = 5;
         private double fontSize = 12;
         private String fontFamily = "Metric-Light";
 
