@@ -91,7 +91,10 @@ define([
             return {
                 data: {
                     text: _.map([this.$lastRefresh, this.$nextRefresh], function($el){
-                        return { text: $el.text() + '\n' }
+                        return {
+                            text: $el.text() + '\n',
+                            fontSize: 10
+                        }
                     })
                 },
                 type: 'text'

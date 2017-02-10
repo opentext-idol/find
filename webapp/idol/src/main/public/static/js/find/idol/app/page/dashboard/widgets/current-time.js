@@ -49,7 +49,10 @@ define([
             return {
                 data: {
                     text: _.map([this.$time, this.$day, this.$date], function($el){
-                        return { text: $el.text() + '\n' }
+                        return {
+                            text: $el.text() + '\n',
+                            fontSize: 10
+                        }
                     })
                 },
                 type: 'text'

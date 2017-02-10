@@ -29,7 +29,8 @@ define([
             return {
                 data: {
                     text: [ {
-                        text: text
+                        text: text,
+                        fontSize: 10
                     } ]
                 },
                 type: 'text'
