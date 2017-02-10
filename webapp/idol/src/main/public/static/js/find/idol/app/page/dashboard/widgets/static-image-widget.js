@@ -4,7 +4,8 @@
  */
 
 define([
-    './widget'
+    './widget',
+    'html2canvas'
 ], function(Widget) {
     'use strict';
 
@@ -22,6 +23,32 @@ define([
             const html = $('<div class="static-image" style=\'background-image: url("' + this.url + '")\'></div>');
 
             this.$content.html(html);
+        },
+
+        exportPPTData: function(){
+            var $imageEl = this.$('.static-image');
+
+            if (!$imageEl.length) {
+                return
+            }
+
+            var deferred = $.Deferred();
+            html2canvas($imageEl[0], {
+                useCORS: true,
+                onrendered: function(canvas) {
+                    deferred.resolve({
+                        image: canvas.toDataURL('image/jpeg'),
+                        markers: []
+                    });
+                }
+            });
+
+            return deferred.promise().then(function(data){
+                return {
+                    data: data,
+                    type: 'map'
+                }
+            });
         }
     });
 
