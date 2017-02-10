@@ -1121,6 +1121,9 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                     run.setText(text.length() > 0 ? text.toString().replaceFirst("(\\s*(\\.{3}|\u2026))?$", "\u2026") : "");
                 }
 
+                // The font metrics aren't going to be perfect (due to unavailability of fonts etc.) so we force the truncated text to fit.
+                textBox.setTextAutofit(TextShape.TextAutofit.NORMAL);
+
                 break;
             }
         }
