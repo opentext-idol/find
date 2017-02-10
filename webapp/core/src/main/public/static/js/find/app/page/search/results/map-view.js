@@ -243,6 +243,7 @@ define([
                 width: mapSize.x * 2,
                 height: mapSize.y * 2,
                 proxy: 'api/public/map/proxy',
+                useCORS: true,
                 onrendered: function(canvas) {
                     $objs.removeClass('hide')
 
