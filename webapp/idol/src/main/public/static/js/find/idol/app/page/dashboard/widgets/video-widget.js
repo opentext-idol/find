@@ -96,6 +96,33 @@ define([
             if (this.updatePromise && this.updatePromise.abort) {
                 this.updatePromise.abort();
             }
+        },
+
+        exportPPTData: function(){
+            var videoEl = this.$('video');
+
+            if (!videoEl.length) {
+                return
+            }
+
+            try {
+                var canvas = document.createElement('canvas');
+                canvas.width = videoEl.width();
+                canvas.height = videoEl.height();
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(videoEl[0], 0, 0, canvas.width, canvas.height);
+
+                return {
+                    data: {
+                        // Note: this might not work if the video is hosted elsewhere
+                        image: canvas.toDataURL('image/jpeg'),
+                        markers: []
+                    },
+                    type: 'map'
+                }
+            } catch (e) {
+                // If there's an error, e.g. if the video is external and we're not allowed access, just skip it
+            }
         }
     });
 });
