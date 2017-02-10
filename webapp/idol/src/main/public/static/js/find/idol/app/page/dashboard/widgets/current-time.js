@@ -42,6 +42,18 @@ define([
             this.$time.text(time.format(this.timeFormat));
             this.$day.text(time.format('dddd'));
             this.$date.text(time.format(this.dateFormat));
+        },
+
+        exportPPTData: function(){
+            // Depending on how complicated we need to make this parser, we could also handle font, italics, etc.
+            return {
+                data: {
+                    text: _.map([this.$time, this.$day, this.$date], function($el){
+                        return { text: $el.text() + '\n' }
+                    })
+                },
+                type: 'text'
+            };
         }
 
     });
