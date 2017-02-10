@@ -23,15 +23,49 @@ define([
         },
 
         exportPPTData: function(){
-            var text = this.$content.text();
+            var nodes = [];
 
-            // Depending on how complicated we need to make this parser, we could also handle font, italics, etc.
+            var fontScale = 10 / 16;
+
+            // Try to traverse the content in a similar way that HTML would parse it, making bold text etc.
+            // We can't just use $el.text() since that loses all the formatting.
+            function traverse($el) {
+                _.each(_.filter($el.contents(), function(dom){
+                    return dom.nodeType === Node.TEXT_NODE || dom.nodeType === Node.ELEMENT_NODE
+                }), function(dom, idx, all){
+                    if (dom.nodeType === Node.TEXT_NODE) {
+                        var last = _.last(nodes);
+                        if (last && last.text.slice(-1) !== '\n' && $el.css('display') !== 'inline') {
+                            last.text += '\n';
+                        }
+
+                        var trimmedText = dom.nodeValue.trim();
+
+                        if (trimmedText) {
+                            // text node, add with the current CSS
+                            var fontFamily = $el.css('font-family');
+                            var fontWeight = $el.css('font-weight');
+                            nodes.push({
+                                text: dom.nodeValue.replace(/\s+/, ' '),
+                                fontSize: Math.round(parseInt($el.css('font-size')) * fontScale),
+                                // font weight might be a number > 400, bold/bolder etc. or built into font family
+                                bold: fontWeight > 400 || /bold/.test(fontWeight) || /Bold/i.test(fontFamily),
+                                // italic may be a property of the font style, font weight or font-family
+                                italic: /italic/.test($el.css('font-style')) || /Italic/i.test(fontFamily)
+                            })
+                        }
+                    }
+                    else if (dom.nodeType === Node.ELEMENT_NODE) {
+                        traverse($(dom))
+                    }
+                })
+            }
+
+            traverse(this.$content)
+
             return {
                 data: {
-                    text: [ {
-                        text: text,
-                        fontSize: 10
-                    } ]
+                    text: nodes
                 },
                 type: 'text'
             };
