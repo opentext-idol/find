@@ -1008,15 +1008,15 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
             final String title = child.getTitle();
             if (StringUtils.isNotEmpty(title)) {
-                final int margin = 3;
-                final int marginX2 = margin * 2;
-                final int textMargin = 3;
+                final double margin = child.getMargin();
+                final double marginX2 = margin * 2;
+                final double textMargin = child.getTextMargin();
 
                 if (anchor.getWidth() > marginX2) {
                     final XSLFTextBox sizingBox = sizingSlide.createTextBox();
                     final Rectangle2D.Double sizingAnchor = new Rectangle2D.Double(
                             anchor.getMinX() + margin,
-                            anchor.getMinY() + margin,
+                            anchor.getMinY() + textMargin,
                             anchor.getWidth() - marginX2,
                             anchor.getHeight() - marginX2);
                     sizingBox.setAnchor(sizingAnchor);

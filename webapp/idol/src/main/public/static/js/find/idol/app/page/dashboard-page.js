@@ -44,7 +44,8 @@ define([
                                     x: pos.x * scaleX,
                                     y: pos.y * scaleY,
                                     width: pos.width * scaleX,
-                                    height: pos.height * scaleY
+                                    height: pos.height * scaleY,
+                                    margin: 3
                                 })
                             }));
                         }

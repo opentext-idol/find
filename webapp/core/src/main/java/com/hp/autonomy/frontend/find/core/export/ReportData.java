@@ -20,6 +20,9 @@ public class ReportData {
 
         private String title;
 
+        private double margin = 3;
+        private double textMargin = 2;
+
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "type")
         @JsonSubTypes({
                 @JsonSubTypes.Type(name = "dategraph", value = DategraphData.class),
