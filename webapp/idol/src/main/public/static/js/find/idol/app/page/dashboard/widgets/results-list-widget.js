@@ -103,19 +103,25 @@ define([
         },
 
         exportPPTData: function(){
-            var docs = this.documentsCollection.map(function(model){
-                return {
-                    title: model.get('title'),
-                    summary: model.get('summary')
-                }
+            var text = [];
+
+            this.documentsCollection.each(function(model){
+                text.push({
+                    text: model.get('title') + '\n',
+                    fontSize: 11,
+                    bold: true
+                }, {
+                    text: (model.get('title') || '') + '\n\n',
+                    fontSize: 10
+                })
             });
 
             return {
                 data: {
-                    docs: docs
+                    text: text
                 },
-                type: 'list'
-            };
+                type: 'text'
+            }
         }
     });
 });
