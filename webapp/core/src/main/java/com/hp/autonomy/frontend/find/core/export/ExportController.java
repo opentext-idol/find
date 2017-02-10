@@ -1006,28 +1006,39 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             final ComposableElement data = child.getData();
             final Rectangle2D.Double anchor = new Rectangle2D.Double(width * child.getX(), height * child.getY(), width * child.getWidth(), height * child.getHeight());
 
-            final String title = child.getTitle();
-            if (StringUtils.isNotEmpty(title)) {
+            if (child.getMargin() >= 0) {
                 final double margin = child.getMargin();
                 final double marginX2 = margin * 2;
                 final double textMargin = child.getTextMargin();
 
                 if (anchor.getWidth() > marginX2) {
-                    final XSLFTextBox sizingBox = sizingSlide.createTextBox();
-                    final Rectangle2D.Double sizingAnchor = new Rectangle2D.Double(
-                            anchor.getMinX() + margin,
-                            anchor.getMinY() + textMargin,
-                            anchor.getWidth() - marginX2,
-                            anchor.getHeight() - marginX2);
-                    sizingBox.setAnchor(sizingAnchor);
-                    sizingBox.clearText();
-                    addTextRun(sizingBox.addNewTextParagraph(), title, 12, Color.BLACK).setFontFamily("Metric-Light");
-                    final double textHeight = sizingBox.getTextHeight() + textMargin;
+                    double xCursor = anchor.getMinX() + margin,
+                           xWidthAvail = anchor.getWidth() - marginX2,
+                           yCursor = anchor.getMinY() + margin,
+                           yHeightAvail = anchor.getHeight() - marginX2;
+                    XSLFTextBox sizingBox = null;
 
-                    if (anchor.getHeight() >= marginX2 + textHeight) {
-                        anchor.setRect(sizingAnchor.getMinX(), sizingAnchor.getMinY() + textHeight + margin, sizingAnchor.getWidth(), anchor.getHeight() - marginX2 - textHeight);
+                    final String title = child.getTitle();
+                    if (StringUtils.isNotEmpty(title)) {
+                        sizingBox = sizingSlide.createTextBox();
+                        final Rectangle2D.Double sizingAnchor = new Rectangle2D.Double(
+                                xCursor,
+                                yCursor,
+                                xWidthAvail,
+                                yHeightAvail);
+                        sizingBox.setAnchor(sizingAnchor);
+                        sizingBox.clearText();
+                        addTextRun(sizingBox.addNewTextParagraph(), title, child.getFontSize(), Color.BLACK).setFontFamily(child.getFontFamily());
+
+                        final double textHeight = sizingBox.getTextHeight() + textMargin;
+                        yCursor += textHeight;
+                        yHeightAvail -= textHeight;
                     }
-                    else {
+
+                    if (yHeightAvail > 0) {
+                        anchor.setRect(xCursor, yCursor, xWidthAvail, yHeightAvail);
+                    }
+                    else if (sizingBox != null) {
                         sizingSlide.removeShape(sizingBox);
                     }
                 }

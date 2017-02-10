@@ -22,6 +22,8 @@ public class ReportData {
 
         private double margin = 3;
         private double textMargin = 2;
+        private double fontSize = 12;
+        private String fontFamily = "Metric-Light";
 
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "type")
         @JsonSubTypes({
