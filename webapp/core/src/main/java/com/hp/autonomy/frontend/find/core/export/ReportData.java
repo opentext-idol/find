@@ -18,6 +18,8 @@ public class ReportData {
     public static class Child {
         private double x, y, width = 1, height = 1;
 
+        private String title;
+
         @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "type")
         @JsonSubTypes({
                 @JsonSubTypes.Type(name = "dategraph", value = DategraphData.class),

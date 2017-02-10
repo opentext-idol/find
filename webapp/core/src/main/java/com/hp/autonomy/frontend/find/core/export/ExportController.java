@@ -57,6 +57,7 @@ import org.apache.poi.xslf.usermodel.XSLFGroupShape;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTable;
 import org.apache.poi.xslf.usermodel.XSLFTableCell;
@@ -997,11 +998,40 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         //   before adding chart objects directly via XML will break things.
         Arrays.sort(report.getChildren(), Comparator.comparingInt(this::prioritizeCharts));
 
+        // For the same reason, we need to have a separate slide to place our sizing textbox for calculations.
+        final XSLFSlide sizingSlide = ppt.createSlide();
         int shapeId = 1;
 
         for(final ReportData.Child child : report.getChildren()) {
             final ComposableElement data = child.getData();
             final Rectangle2D.Double anchor = new Rectangle2D.Double(width * child.getX(), height * child.getY(), width * child.getWidth(), height * child.getHeight());
+
+            final String title = child.getTitle();
+            if (StringUtils.isNotEmpty(title)) {
+                final int margin = 3;
+                final int marginX2 = margin * 2;
+                final int textMargin = 3;
+
+                if (anchor.getWidth() > marginX2) {
+                    final XSLFTextBox sizingBox = sizingSlide.createTextBox();
+                    final Rectangle2D.Double sizingAnchor = new Rectangle2D.Double(
+                            anchor.getMinX() + margin,
+                            anchor.getMinY() + margin,
+                            anchor.getWidth() - marginX2,
+                            anchor.getHeight() - marginX2);
+                    sizingBox.setAnchor(sizingAnchor);
+                    sizingBox.clearText();
+                    addTextRun(sizingBox.addNewTextParagraph(), title, 12, Color.BLACK).setFontFamily("Metric-Light");
+                    final double textHeight = sizingBox.getTextHeight() + textMargin;
+
+                    if (anchor.getHeight() >= marginX2 + textHeight) {
+                        anchor.setRect(sizingAnchor.getMinX(), sizingAnchor.getMinY() + textHeight + margin, sizingAnchor.getWidth(), anchor.getHeight() - marginX2 - textHeight);
+                    }
+                    else {
+                        sizingSlide.removeShape(sizingBox);
+                    }
+                }
+            }
 
             if (data instanceof DategraphData) {
                 addDategraph(template, slide, anchor, (DategraphData) data, shapeId, "relId" + shapeId);
@@ -1030,6 +1060,20 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                 addTextData(slide, anchor, (TextData) data);
             }
         }
+
+        // Clone all text boxes to the original slide afterward, and remove the sizing slide
+        for(XSLFShape shape : sizingSlide.getShapes()) {
+            if (shape instanceof XSLFTextBox) {
+                final XSLFTextBox src = (XSLFTextBox) shape;
+                final XSLFTextBox textBox = slide.createTextBox();
+                textBox.setAnchor(src.getAnchor());
+                textBox.clearText();
+                src.forEach(srcPara -> {
+                    textBox.addNewTextParagraph().getXmlObject().set(srcPara.getXmlObject().copy());
+                });
+            }
+        }
+        ppt.removeSlide(1);
 
         return writePPT(ppt, "report.pptx");
     }

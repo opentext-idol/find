@@ -40,6 +40,7 @@ define([
                                 var pos = widget.position;
 
                                 return _.defaults(data, {
+                                    title: widget.view.name,
                                     x: pos.x * scaleX,
                                     y: pos.y * scaleY,
                                     width: pos.width * scaleX,
