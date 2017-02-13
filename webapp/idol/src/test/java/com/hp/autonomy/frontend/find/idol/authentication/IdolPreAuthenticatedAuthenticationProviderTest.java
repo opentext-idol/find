@@ -21,9 +21,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
+import static com.hp.autonomy.frontend.find.idol.authentication.IdolPreAuthenticatedAuthenticationProvider.PRE_AUTHENTICATED_ROLES_PROPERTY_KEY;
+import static com.hp.autonomy.frontend.find.idol.authentication.IdolPreAuthenticatedAuthenticationProvider.REVERSE_PROXY_PROPERTY_KEY;
 import static com.hp.autonomy.frontend.find.idol.authentication.IdolPreAuthenticatedAuthenticationProvider.USER_NOT_FOUND_ERROR_ID;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
@@ -33,7 +34,13 @@ import static org.mockito.Mockito.when;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = IdolPreAuthenticatedAuthenticationProvider.class, properties = "server.reverseProxy=true", webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(
+        classes = IdolPreAuthenticatedAuthenticationProvider.class,
+        properties = {
+                REVERSE_PROXY_PROPERTY_KEY + "=true",
+                PRE_AUTHENTICATED_ROLES_PROPERTY_KEY + "=FindUser,FindBI"
+        },
+        webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class IdolPreAuthenticatedAuthenticationProviderTest {
     private static final String SAMPLE_USER = "some_user";
 
@@ -48,9 +55,6 @@ public class IdolPreAuthenticatedAuthenticationProviderTest {
     @Mock
     private Principal principal;
 
-    public IdolPreAuthenticatedAuthenticationProviderTest() {
-    }
-
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
@@ -64,10 +68,10 @@ public class IdolPreAuthenticatedAuthenticationProviderTest {
 
     @Test
     public void authenticateWithExistingUser() {
-        when(userService.getUser(SAMPLE_USER)).thenReturn(new UserRoles(SAMPLE_USER, 123L, null, Collections.singletonList(FindCommunityRole.USER.value())));
+        when(userService.getUser(SAMPLE_USER)).thenReturn(new UserRoles(SAMPLE_USER));
         final Authentication communityAuthentication = authenticationProvider.authenticate(authentication);
         assertTrue(communityAuthentication.isAuthenticated());
-        assertThat(communityAuthentication.getAuthorities(), hasSize(1));
+        assertThat(communityAuthentication.getAuthorities(), hasSize(2));
     }
 
     @Test
@@ -76,10 +80,10 @@ public class IdolPreAuthenticatedAuthenticationProviderTest {
         aciErrorException.setErrorId(USER_NOT_FOUND_ERROR_ID);
         when(userService.getUser(SAMPLE_USER))
                 .thenThrow(aciErrorException)
-                .thenReturn(new UserRoles(SAMPLE_USER, 123L, null, Collections.singletonList(FindCommunityRole.USER.value())));
+                .thenReturn(new UserRoles(SAMPLE_USER));
         final Authentication communityAuthentication = authenticationProvider.authenticate(authentication);
         assertTrue(communityAuthentication.isAuthenticated());
-        assertThat(communityAuthentication.getAuthorities(), hasSize(1));
+        assertThat(communityAuthentication.getAuthorities(), hasSize(2));
     }
 
     @Test(expected = BadCredentialsException.class)
