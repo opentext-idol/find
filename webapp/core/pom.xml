@@ -152,6 +152,11 @@
             <artifactId>haven-search-components-core</artifactId>
             <version>${haven.search.components.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.reports.powerpoint</groupId>
+            <artifactId>powerpoint-report</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -228,6 +233,9 @@
             <version>1.4</version>
         </dependency>
 
+        <!-- Although these are specified in the powerpoint-report, Spring Boot doesn't seem to follow them,
+                so we're explicitly including them
+        -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-scratchpad</artifactId>
