@@ -106,15 +106,18 @@ public class PowerPointServiceImpl {
 
     private InputStreamSource pptxTemplate;
 
-    private SlideShowTemplate loadTemplate() throws IOException, SlideShowTemplate.LoadException {
+    private SlideShowTemplate loadTemplate() throws SlideShowTemplate.LoadException {
         try(InputStream inputStream = pptxTemplate.getInputStream()) {
             return new SlideShowTemplate(inputStream);
+        }
+        catch(IOException e) {
+            throw new SlideShowTemplate.LoadException("Error while loading template", e);
         }
     }
 
     public XMLSlideShow topicmap(
             final TopicMapData data
-    ) throws IOException, SlideShowTemplate.LoadException {
+    ) throws SlideShowTemplate.LoadException {
         final XMLSlideShow ppt = loadTemplate().getSlideShow();
         final Dimension pageSize = ppt.getPageSize();
         final XSLFSlide slide = ppt.createSlide();
@@ -182,7 +185,7 @@ public class PowerPointServiceImpl {
 
     public XMLSlideShow sunburst(
         final SunburstData data
-    ) throws IOException, SlideShowTemplate.LoadException, InvalidFormatException {
+    ) throws SlideShowTemplate.LoadException {
         if(!data.validateInput()) {
             throw new IllegalArgumentException("Number of values should match the number of categories");
         }
@@ -198,7 +201,7 @@ public class PowerPointServiceImpl {
         return ppt;
     }
 
-    private static void addSunburst(final SlideShowTemplate template, final XSLFSlide slide, final Rectangle2D.Double anchor, final SunburstData data, final int shapeId, final String relId) throws IOException, InvalidFormatException {
+    private static void addSunburst(final SlideShowTemplate template, final XSLFSlide slide, final Rectangle2D.Double anchor, final SunburstData data, final int shapeId, final String relId) throws SlideShowTemplate.LoadException {
         final String[] categories = data.getCategories();
         final double[] values = data.getValues();
         final String title = data.getTitle();
@@ -258,14 +261,19 @@ public class PowerPointServiceImpl {
         categoryRef.setF(new CellRangeAddress(1, values.length, 0, 0).formatAsString(sheet.getSheetName(), true));
         numRef.setF(new CellRangeAddress(1, values.length, 1, 1).formatAsString(sheet.getSheetName(), true));
 
-        writeChart(template.getSlideShow(), slide, baseChart, chartSpace, workbook, relId);
+        try {
+            writeChart(template.getSlideShow(), slide, baseChart, chartSpace, workbook, relId);
+        }
+        catch(IOException|InvalidFormatException e) {
+            throw new SlideShowTemplate.LoadException("Error writing chart in loaded template", e);
+        }
     }
 
     public XMLSlideShow table(
             final String title,
             final TableData tableData
 
-    ) throws IOException, SlideShowTemplate.LoadException {
+    ) throws SlideShowTemplate.LoadException {
         final int rows = tableData.getRows(),
                   cols = tableData.getCols();
         final String[] data = tableData.getCells();
@@ -347,7 +355,7 @@ public class PowerPointServiceImpl {
     public XMLSlideShow map(
             final String title,
             final MapData map
-    ) throws IOException, SlideShowTemplate.LoadException {
+    ) throws SlideShowTemplate.LoadException {
         final String image = map.getImage();
 
         final XMLSlideShow ppt = loadTemplate().getSlideShow();
@@ -488,7 +496,7 @@ public class PowerPointServiceImpl {
             final String results,
             final String sortBy,
             final ListData documentList
-    ) throws IOException, SlideShowTemplate.LoadException {
+    ) throws SlideShowTemplate.LoadException {
         final Document[] docs = documentList.getDocs();
 
         final XMLSlideShow ppt = loadTemplate().getSlideShow();
@@ -684,7 +692,7 @@ public class PowerPointServiceImpl {
 
     public XMLSlideShow graph(
         final DategraphData data
-    ) throws IOException, SlideShowTemplate.LoadException, InvalidFormatException {
+    ) throws SlideShowTemplate.LoadException {
         final SlideShowTemplate template = loadTemplate();
         final XMLSlideShow ppt = template.getSlideShow();
         final int shapeId = 1;
@@ -695,7 +703,7 @@ public class PowerPointServiceImpl {
         return ppt;
     }
 
-    private static void addDategraph(final SlideShowTemplate template, final XSLFSlide slide, final Rectangle2D.Double anchor, final DategraphData data, final int shapeId, final String relId) throws IOException, InvalidFormatException {
+    private static void addDategraph(final SlideShowTemplate template, final XSLFSlide slide, final Rectangle2D.Double anchor, final DategraphData data, final int shapeId, final String relId) throws SlideShowTemplate.LoadException {
         if (!data.validateInput()) {
             throw new IllegalArgumentException("Invalid data provided");
         }
@@ -760,7 +768,12 @@ public class PowerPointServiceImpl {
             updateCTLineSer(data, sheet, seriesIdx, curSeries);
         }
 
-        writeChart(ppt, slide, baseChart, chartSpace, wb, relId);
+        try {
+            writeChart(ppt, slide, baseChart, chartSpace, wb, relId);
+        }
+        catch(IOException|InvalidFormatException e) {
+            throw new SlideShowTemplate.LoadException("Unexpected error writing files from loaded template", e);
+        }
     }
 
     private static void updateCTLineSer(final DategraphData data, final XSSFSheet sheet, final int seriesIdx, final CTLineSer series) {
@@ -878,7 +891,7 @@ public class PowerPointServiceImpl {
 
     public XMLSlideShow report(
             final ReportData report
-    ) throws IOException, SlideShowTemplate.LoadException, InvalidFormatException {
+    ) throws SlideShowTemplate.LoadException {
         final SlideShowTemplate template = loadTemplate();
         final XMLSlideShow ppt = template.getSlideShow();
         final Dimension pageSize = ppt.getPageSize();

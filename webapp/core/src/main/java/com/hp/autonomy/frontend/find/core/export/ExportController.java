@@ -25,7 +25,6 @@ import java.util.Collection;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -146,7 +145,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     @RequestMapping(value = PPT_SUNBURST_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> sunburst(
             @RequestParam("data") final String dataStr
-    ) throws IOException, SlideShowTemplate.LoadException, InvalidFormatException {
+    ) throws IOException, SlideShowTemplate.LoadException {
         final SunburstData data = new ObjectMapper().readValue(dataStr, SunburstData.class);
 
         final XMLSlideShow ppt = pptService.sunburst(data);
@@ -195,7 +194,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     @RequestMapping(value = PPT_DATEGRAPH_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> graph(
             @RequestParam("data") final String dataStr
-    ) throws IOException, SlideShowTemplate.LoadException, InvalidFormatException {
+    ) throws IOException, SlideShowTemplate.LoadException {
         final DategraphData data = new ObjectMapper().readValue(dataStr, DategraphData.class);
 
         final XMLSlideShow ppt = pptService.graph(data);
@@ -206,7 +205,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     @RequestMapping(value = PPT_REPORT_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> report(
             @RequestParam("data") final String dataStr
-    ) throws IOException, SlideShowTemplate.LoadException, InvalidFormatException {
+    ) throws IOException, SlideShowTemplate.LoadException {
         final ReportData report = new ObjectMapper().readValue(dataStr, ReportData.class);
 
         final XMLSlideShow ppt = pptService.report(report);
