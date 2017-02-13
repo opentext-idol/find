@@ -21,7 +21,6 @@ import com.hp.autonomy.frontend.reports.powerpoint.dto.TopicMapData;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;

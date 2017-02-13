@@ -124,7 +124,7 @@ public class PowerPointServiceImpl {
         return ppt;
     }
 
-    private void addTopicMap(final XSLFSlide slide, final Rectangle2D.Double anchor, final TopicMapData data) {
+    private static void addTopicMap(final XSLFSlide slide, final Rectangle2D.Double anchor, final TopicMapData data) {
         for(final TopicMapData.Path reqPath : data.getPaths()) {
             final XSLFFreeformShape shape = slide.createFreeform();
             final Path2D.Double path = new Path2D.Double();
@@ -198,7 +198,7 @@ public class PowerPointServiceImpl {
         return ppt;
     }
 
-    private void addSunburst(final SlideShowTemplate template, final XSLFSlide slide, final Rectangle2D.Double anchor, final SunburstData data, final int shapeId, final String relId) throws IOException, InvalidFormatException {
+    private static void addSunburst(final SlideShowTemplate template, final XSLFSlide slide, final Rectangle2D.Double anchor, final SunburstData data, final int shapeId, final String relId) throws IOException, InvalidFormatException {
         final String[] categories = data.getCategories();
         final double[] values = data.getValues();
         final String title = data.getTitle();
@@ -287,7 +287,7 @@ public class PowerPointServiceImpl {
         return ppt;
     }
 
-    private void addTable(final XSLFSlide slide, final Rectangle2D.Double anchor, final int rows, final int cols, final String[] data, final boolean crop) {
+    private static void addTable(final XSLFSlide slide, final Rectangle2D.Double anchor, final int rows, final int cols, final String[] data, final boolean crop) {
         final XSLFTable table = slide.createTable(rows, cols);
 
         int idx = 0;
@@ -372,7 +372,7 @@ public class PowerPointServiceImpl {
         return ppt;
     }
 
-    private XSLFPictureData addPictureData(final XMLSlideShow ppt, final String image) {
+    private static XSLFPictureData addPictureData(final XMLSlideShow ppt, final String image) {
         final PictureData.PictureType type;
         if(image.startsWith("data:image/png;base64,")) {
             type = PictureData.PictureType.PNG;
@@ -388,7 +388,7 @@ public class PowerPointServiceImpl {
         return ppt.addPicture(bytes, type);
     }
 
-    private XSLFPictureShape addMap(final XSLFSlide slide, final Rectangle2D.Double anchor, final XSLFPictureData picture, final Marker[] markers) {
+    private static XSLFPictureShape addMap(final XSLFSlide slide, final Rectangle2D.Double anchor, final XSLFPictureData picture, final Marker[] markers) {
         double tgtW = anchor.getWidth(),
                tgtH = anchor.getHeight();
 
@@ -498,7 +498,7 @@ public class PowerPointServiceImpl {
         return ppt;
     }
 
-    private void addList(final XMLSlideShow ppt, XSLFSlide sl, final Rectangle2D.Double anchor, final boolean paginate, final Document[] docs, final String results, final String sortBy) {
+    private static void addList(final XMLSlideShow ppt, XSLFSlide sl, final Rectangle2D.Double anchor, final boolean paginate, final Document[] docs, final String results, final String sortBy) {
         final double
                 // How much space to leave at the left and right edge of the slide
                 xMargin = 20,
@@ -695,7 +695,7 @@ public class PowerPointServiceImpl {
         return ppt;
     }
 
-    private void addDategraph(final SlideShowTemplate template, final XSLFSlide slide, final Rectangle2D.Double anchor, final DategraphData data, final int shapeId, final String relId) throws IOException, InvalidFormatException {
+    private static void addDategraph(final SlideShowTemplate template, final XSLFSlide slide, final Rectangle2D.Double anchor, final DategraphData data, final int shapeId, final String relId) throws IOException, InvalidFormatException {
         if (!data.validateInput()) {
             throw new IllegalArgumentException("Invalid data provided");
         }
@@ -889,7 +889,7 @@ public class PowerPointServiceImpl {
 
         // We need to add charts first, since calling slide.getShapes() or indirectly createShape() etc.
         //   before adding chart objects directly via XML will break things.
-        Arrays.sort(report.getChildren(), Comparator.comparingInt(this::prioritizeCharts));
+        Arrays.sort(report.getChildren(), Comparator.comparingInt(PowerPointServiceImpl::prioritizeCharts));
 
         // For the same reason, we need to have a separate slide to place our sizing textbox for calculations.
         final XSLFSlide sizingSlide = ppt.createSlide();
@@ -1020,7 +1020,7 @@ public class PowerPointServiceImpl {
         }
     }
 
-    private int prioritizeCharts(final ReportData.Child child) {
+    private static int prioritizeCharts(final ReportData.Child child) {
         final ComposableElement d = child.getData();
         return d instanceof DategraphData || d instanceof SunburstData ? -1 : 0;
     }
