@@ -43,6 +43,9 @@ require.config({
         },
         'find/app/page/search/results/entity-topic-map-view': {
             'find/app/model/entity-collection': 'mock/model/entity-collection'
+        },
+        'find/app/page/search/filters/parametric/parametric-select-modal-view': {
+            'find/app/page/search/filters/parametric/parametric-paginator': 'mock/page/search/filters/parametric/parametric-paginator'
         }
     }
 });

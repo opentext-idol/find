@@ -25,7 +25,7 @@ define([
         events: {
             'click .show-all': function () {
                 new ParametricModal({
-                    currentFieldGroup: this.model.id,
+                    initialField: this.model.id,
                     queryModel: this.queryModel,
                     parametricFieldsCollection: this.parametricFieldsCollection,
                     selectedParametricValues: this.selectedParametricValues
@@ -83,6 +83,7 @@ define([
                     collection: this.model.fieldValues,
                     model: this.model,
                     parametricFieldsCollection: this.parametricFieldsCollection,
+                    queryModel: this.queryModel,
                     selectedParametricValues: this.selectedParametricValues
                 })
             });

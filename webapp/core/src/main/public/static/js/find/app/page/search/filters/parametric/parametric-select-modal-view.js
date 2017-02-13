@@ -3,70 +3,105 @@ define([
     'jquery',
     'underscore',
     'find/app/page/search/filters/parametric/parametric-select-modal-list-view',
+    './parametric-paginator',
+    'parametric-refinement/prettify-field-name',
     'text!find/templates/app/page/search/filters/parametric/parametric-select-modal-view.html',
-    'text!find/templates/app/page/loading-spinner.html',
-    'i18n!find/nls/bundle',
     'iCheck'
-], function(Backbone, $, _, ParametricSelectModalListView, template, loadingSpinnerTemplate, i18n) {
+], function (Backbone, $, _, ParametricSelectModalListView, ParametricPaginator, prettifyFieldName, template) {
     'use strict';
-
-    var fieldTemplate = _.template('<div id="<%-field.id.replace(/[/]/g, \'_\')%>" class="tab-pane <%- currentFieldGroup === field.id ? \'active\' : \'\'%>" role="tabpanel"></div>');
 
     return Backbone.View.extend({
         template: _.template(template),
-        loadingHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
         className: 'full-height',
 
-        initialize: function(options) {
-            this.selectCollection = options.selectCollection;
-            this.parametricFieldsCollection = options.parametricFieldsCollection;
-            this.currentFieldGroup = options.currentFieldGroup;
+        events: {
+            'click .fields-list a': function (e) {
+                e.preventDefault();
+                this.fieldSelectionModel.set('field', $(e.currentTarget).closest('[data-field]').attr('data-field'));
+            }
         },
 
-        render: function() {
-            const $ul = $('<ul></ul>');
+        initialize: function (options) {
+            const fetchData = {
+                databases: options.queryModel.get('indexes'),
+                queryText: options.queryModel.get('autoCorrect') && options.queryModel.get('correctedQuery') ? options.queryModel.get('correctedQuery') : options.queryModel.get('queryText'),
+                fieldText: options.queryModel.get('fieldText'),
+                minDate: options.queryModel.getIsoDate('minDate'),
+                maxDate: options.queryModel.getIsoDate('maxDate'),
+                minScore: options.queryModel.get('minScore'),
+                stateTokens: options.queryModel.get('stateMatchIds')
+            };
 
-            this.parametricFieldsCollection.forEach(function(field) {
-                $ul.append('<li>' + field.get('name') + '</li>');
-            });
-
-            const $div = $('<div></div>')
-                .append('<p>' + this.currentFieldGroup + '</p>')
-                .append($ul);
-
-            this.$el.html($div);
-        },
-
-        renderFields: function () {
-            var viewHtml = $(this.template({
-                parametricDisplayCollection: this.parametricDisplayCollection,
-                currentFieldGroup: this.currentFieldGroup
-            }));
-
-            var $fragment = $(document.createDocumentFragment());
-
-            this.parametricDisplayCollection.each(function (field) {
-                var $field = $(fieldTemplate({currentFieldGroup: this.currentFieldGroup, field: field}));
-
-                var listView = new ParametricSelectModalListView({
-                    field: field,
-                    parametricDisplayCollection: this.parametricDisplayCollection,
-                    selectCollection: this.selectCollection,
-                    allValues: _.map(this.parametricCollection.get(field.id).get('values'), function(attributes) {
-                        return {
-                            id: attributes.value
-                        }
-                    })
+            this.fieldData = options.parametricFieldsCollection.map(function (fieldModel) {
+                const paginator = new ParametricPaginator({
+                    fieldName: fieldModel.id,
+                    selectedValues: options.selectedParametricValues,
+                    fetchData: fetchData,
+                    fetchFunction: function (data) {
+                        return $.ajax({url: 'api/public/parametric/values', traditional: true, data: data})
+                            .then(function (response) {
+                                return {
+                                    totalValues: response[0] ? response[0].totalValues : 0,
+                                    values: response[0] ? response[0].values : []
+                                };
+                            });
+                    }
                 });
 
-                $field.append(listView.render().$el);
+                return {
+                    id: fieldModel.id,
+                    displayName: fieldModel.get('displayName') || prettifyFieldName(fieldModel.id),
+                    view: new ParametricSelectModalListView({paginator: paginator})
+                };
+            }.bind(this));
 
-                $fragment.append($field);
-            }, this);
+            this.fieldSelectionModel = new Backbone.Model({field: options.initialField});
+            this.listenTo(this.fieldSelectionModel, 'change', this.updateSelectedField);
+        },
 
-            this.$el.html(viewHtml);
+        render: function () {
+            this.$el.html(this.template({
+                initialField: this.initialField,
+                fields: _.sortBy(this.fieldData, 'id')
+            }));
 
-            this.$('.tab-content').html($fragment);
+            const $tabContent = this.$('.tab-content');
+
+            this.fieldData.forEach(function (data) {
+                $tabContent.append(data.view.$el);
+                data.view.render();
+            });
+
+            this.updateSelectedField();
+        },
+
+        checkScroll: function() {
+            _.findWhere(this.fieldData, {id: this.fieldSelectionModel.get('field')}).view.checkScroll();
+        },
+
+        updateSelectedField: function () {
+            const currentField = this.fieldSelectionModel.get('field');
+
+            this.$('.fields-list li:not([data-field="' + currentField + '"])').removeClass('active');
+            this.$('.fields-list li[data-field="' + currentField + '"]').addClass('active');
+
+            this.fieldData.forEach(function (data) {
+                const isCurrentField = data.id === currentField;
+                data.view.$el.toggleClass('active', isCurrentField);
+
+                if (isCurrentField) {
+                    // Check scroll after showing the view so it can check if more values need to be fetched
+                    data.view.checkScroll();
+                }
+            });
+        },
+
+        remove: function () {
+            this.fieldData.forEach(function (data) {
+                data.view.remove();
+            });
+
+            Backbone.View.prototype.remove.call(this);
         }
     });
 });

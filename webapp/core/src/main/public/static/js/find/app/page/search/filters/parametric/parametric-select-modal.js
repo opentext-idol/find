@@ -22,16 +22,22 @@ define([
     return Modal.extend({
         className: Modal.prototype.className + ' fixed-height-modal',
 
+        events: _.defaults({
+            'shown.bs.modal': function() {
+                // The content view will be visible now, so check if we need to load parametric values
+                this.parametricSelectView.checkScroll();
+            }
+        }, Modal.prototype.events),
+
         initialize: function(options) {
-            this.parametricFieldsCollection = options.parametricFieldsCollection;
             this.externalSelectedValues = options.selectedParametricValues;
-            this.queryModel = options.queryModel;
 
             // Track values selected in the modal, but only apply them when the user closes it
             this.selectedParametricValues = new SelectedValuesCollection(this.externalSelectedValues.map(toAttributes));
 
             this.parametricSelectView = new ParametricSelectView({
-                currentFieldGroup: options.currentFieldGroup,
+                initialField: options.initialField,
+                queryModel: options.queryModel,
                 parametricFieldsCollection: options.parametricFieldsCollection,
                 selectedParametricValues: this.selectedParametricValues
             });
@@ -52,7 +58,7 @@ define([
         },
 
         remove: function() {
-            this.selectedParametricValues.remove();
+            this.parametricSelectView.remove();
             Modal.prototype.remove.call(this);
         }
     });

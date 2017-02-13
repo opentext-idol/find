@@ -152,6 +152,7 @@ define([
         'search.numericParametricFields.tooltip': 'Range: {0} \u2013 {1}\nCount: {2}',
         'search.noResults': 'No results found',
         'search.noMoreResults': 'No more results found',
+        'search.parametricFilters.modal.empty': 'No parametric values',
         'search.parametricFilters.modal.title': 'Select parametric filters',
         'search.parametricFields': 'Parametric Fields',
         'search.parametric.empty': 'No parametric fields found',
