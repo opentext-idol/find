@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
+import com.hp.autonomy.frontend.reports.powerpoint.PowerPointService;
 import com.hp.autonomy.frontend.reports.powerpoint.PowerPointServiceImpl;
 import com.hp.autonomy.frontend.reports.powerpoint.SlideShowTemplate;
 import com.hp.autonomy.frontend.reports.powerpoint.dto.DategraphData;
@@ -58,7 +59,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     private final RequestMapper<R> requestMapper;
     private final ControllerUtils controllerUtils;
 
-    private final PowerPointServiceImpl pptService;
+    private final PowerPointService pptService;
 
     protected ExportController(final ExportService<R, E> exportService, final RequestMapper<R> requestMapper, final ControllerUtils controllerUtils) {
         this.exportService = exportService;
