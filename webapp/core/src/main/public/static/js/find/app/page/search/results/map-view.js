@@ -240,8 +240,8 @@ define([
                 // This seems to avoid issues with IE11 only rendering a small portion of the map the size of the window
                 // If width and height are undefined, Firefox sometimes renders black areas.
                 // If width and height are equal to the $mapEl.width()/height(), then Chrome has the same problem as IE11.
-                width: mapSize.x * 2,
-                height: mapSize.y * 2,
+                width: $(document).width(),
+                height: $(document).height(),
                 proxy: 'api/public/map/proxy',
                 useCORS: true,
                 onrendered: function(canvas) {
