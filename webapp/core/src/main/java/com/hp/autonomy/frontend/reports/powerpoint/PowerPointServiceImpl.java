@@ -793,8 +793,8 @@ public class PowerPointServiceImpl {
         if (fill.getScrgbClr() != null) {
             fill.unsetScrgbClr();
         }
-        if (fill.getPrstClr() != null) {
-            fill.unsetPrstClr();
+        if (fill.getSysClr() != null) {
+            fill.unsetSysClr();
         }
 
         final CTSRgbColor fillClr = fill.addNewSrgbClr();
