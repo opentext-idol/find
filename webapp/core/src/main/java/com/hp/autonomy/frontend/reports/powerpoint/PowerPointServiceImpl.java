@@ -89,7 +89,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
-import org.springframework.core.io.Resource;
+import org.springframework.core.io.InputStreamSource;
 
 import static com.hp.autonomy.frontend.reports.powerpoint.dto.ListData.Document;
 import static com.hp.autonomy.frontend.reports.powerpoint.dto.MapData.Marker;
@@ -100,11 +100,11 @@ public class PowerPointServiceImpl {
     public PowerPointServiceImpl() {
     }
 
-    public void setPptxTemplate(final Resource pptxTemplate) {
+    public void setPptxTemplate(final InputStreamSource pptxTemplate) {
         this.pptxTemplate = pptxTemplate;
     }
 
-    private Resource pptxTemplate;
+    private InputStreamSource pptxTemplate;
 
     private SlideShowTemplate loadTemplate() throws IOException, SlideShowTemplate.LoadException {
         try(InputStream inputStream = pptxTemplate.getInputStream()) {
