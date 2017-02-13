@@ -26,8 +26,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -67,11 +65,6 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         this.requestMapper = requestMapper;
         this.controllerUtils = controllerUtils;
         this.pptService = new PowerPointServiceImpl();
-    }
-
-    @Value(value = "classpath:/templates/template.pptx")
-    public void setPptxTemplate(Resource pptxTemplate) {
-        this.pptService.setPptxTemplate(pptxTemplate);
     }
 
     @RequestMapping(value = CSV_PATH, method = RequestMethod.POST)

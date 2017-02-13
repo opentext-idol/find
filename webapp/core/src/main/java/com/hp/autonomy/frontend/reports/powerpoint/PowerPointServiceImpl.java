@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -89,7 +89,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
-import org.springframework.core.io.InputStreamSource;
 
 import static com.hp.autonomy.frontend.reports.powerpoint.dto.ListData.Document;
 import static com.hp.autonomy.frontend.reports.powerpoint.dto.MapData.Marker;
@@ -97,14 +96,15 @@ import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 public class PowerPointServiceImpl {
 
-    public PowerPointServiceImpl() {
-    }
+    private final TemplateSource pptxTemplate;
 
-    public void setPptxTemplate(final InputStreamSource pptxTemplate) {
+    public PowerPointServiceImpl(final TemplateSource pptxTemplate) {
         this.pptxTemplate = pptxTemplate;
     }
 
-    private InputStreamSource pptxTemplate;
+    public PowerPointServiceImpl() {
+        this(TemplateSource.DEFAULT);
+    }
 
     private SlideShowTemplate loadTemplate() throws SlideShowTemplate.LoadException {
         try(InputStream inputStream = pptxTemplate.getInputStream()) {
