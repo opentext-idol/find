@@ -1,7 +1,6 @@
 package com.hp.autonomy.frontend.find.idol.authentication;
 
 import com.autonomy.aci.client.services.AciErrorException;
-import com.hp.autonomy.frontend.find.idol.beanconfiguration.UserConfiguration;
 import com.hp.autonomy.user.UserRoles;
 import com.hp.autonomy.user.UserService;
 import org.junit.Before;
@@ -65,7 +64,7 @@ public class IdolPreAuthenticatedAuthenticationProviderTest {
 
     @Test
     public void authenticateWithExistingUser() {
-        when(userService.getUser(SAMPLE_USER)).thenReturn(new UserRoles(SAMPLE_USER, 123L, null, Collections.singletonList(UserConfiguration.IDOL_USER_ROLE)));
+        when(userService.getUser(SAMPLE_USER)).thenReturn(new UserRoles(SAMPLE_USER, 123L, null, Collections.singletonList(FindCommunityRole.USER.value())));
         final Authentication communityAuthentication = authenticationProvider.authenticate(authentication);
         assertTrue(communityAuthentication.isAuthenticated());
         assertThat(communityAuthentication.getAuthorities(), hasSize(1));
@@ -77,7 +76,7 @@ public class IdolPreAuthenticatedAuthenticationProviderTest {
         aciErrorException.setErrorId(USER_NOT_FOUND_ERROR_ID);
         when(userService.getUser(SAMPLE_USER))
                 .thenThrow(aciErrorException)
-                .thenReturn(new UserRoles(SAMPLE_USER, 123L, null, Collections.singletonList(UserConfiguration.IDOL_USER_ROLE)));
+                .thenReturn(new UserRoles(SAMPLE_USER, 123L, null, Collections.singletonList(FindCommunityRole.USER.value())));
         final Authentication communityAuthentication = authenticationProvider.authenticate(authentication);
         assertTrue(communityAuthentication.isAuthenticated());
         assertThat(communityAuthentication.getAuthorities(), hasSize(1));
