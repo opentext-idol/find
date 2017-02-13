@@ -2006,6 +2006,7 @@ h4.similar-dates-message {
   &:hover {
     transform: scale(1.05);
     transition: 0.3s;
+    z-index: 1;
   }
 
   .title {
@@ -2038,6 +2039,12 @@ h4.similar-dates-message {
           visibility: hidden;
         }
       }
+    }
+
+    div.static-image {
+      background-size: contain;
+      background: no-repeat center;
+      height: 100%;
     }
 
     div.video-container {
