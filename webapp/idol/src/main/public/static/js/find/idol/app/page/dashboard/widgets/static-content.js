@@ -46,6 +46,7 @@ define([
                             var fontFamily = $el.css('font-family');
                             var fontWeight = $el.css('font-weight');
                             nodes.push({
+                                // we want to coalesce all whitespace into a single whitespace (to match HTML)
                                 text: dom.nodeValue.replace(/\s+/, ' '),
                                 fontSize: Math.round(parseInt($el.css('font-size')) * fontScale),
                                 // font weight might be a number > 400, bold/bolder etc. or built into font family
