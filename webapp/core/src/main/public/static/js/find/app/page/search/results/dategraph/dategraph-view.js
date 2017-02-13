@@ -126,8 +126,8 @@ define([
             this.$('.dategraph-view-error-message').toggleClass('hide', !hadError);
             this.$('.dategraph-view-empty-text').toggleClass('hide', hadError || !noValues);
 
-            var showLoadingIndicator = !hadError && !noValues && (fetching && modelBuckets.length === 0);
-            this.$('.dategraph-loading').toggleClass('hide', !showLoadingIndicator);
+            var hideLoadingIndicator = hadError || !fetching;
+            this.$('.dategraph-loading').toggleClass('hide', hideLoadingIndicator);
 
 
             var $contentEl = this.$('.dategraph-content');
@@ -139,7 +139,7 @@ define([
                 })
             }
 
-            if(!hadError && !noValues && !showLoadingIndicator && width > 0) {
+            if(!hadError && !noValues && hideLoadingIndicator && width > 0) {
                 var multiAxes = !this.hideMainPlot && this.plots.length > 1;
 
                 var data = (this.hideMainPlot ? [] : [{
@@ -161,6 +161,9 @@ define([
                     xaxis: {mode: 'time'},
                     yaxes: multiAxes ? [ {}, { position: 'right' } ] : {}
                 })
+            }
+            else {
+                $contentEl.empty();
             }
         },
 
