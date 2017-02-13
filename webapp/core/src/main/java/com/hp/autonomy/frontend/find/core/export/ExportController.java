@@ -10,6 +10,16 @@ import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
+import com.hp.autonomy.frontend.reports.powerpoint.SlideShowTemplate;
+import com.hp.autonomy.frontend.reports.powerpoint.dto.ComposableElement;
+import com.hp.autonomy.frontend.reports.powerpoint.dto.DategraphData;
+import com.hp.autonomy.frontend.reports.powerpoint.dto.ListData;
+import com.hp.autonomy.frontend.reports.powerpoint.dto.MapData;
+import com.hp.autonomy.frontend.reports.powerpoint.dto.ReportData;
+import com.hp.autonomy.frontend.reports.powerpoint.dto.SunburstData;
+import com.hp.autonomy.frontend.reports.powerpoint.dto.TableData;
+import com.hp.autonomy.frontend.reports.powerpoint.dto.TextData;
+import com.hp.autonomy.frontend.reports.powerpoint.dto.TopicMapData;
 import java.awt.*;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
@@ -21,6 +31,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.ServletResponse;
@@ -30,7 +41,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.POIXMLDocumentPart;
-import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -104,8 +114,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import static com.hp.autonomy.frontend.find.core.export.ListData.Document;
-import static com.hp.autonomy.frontend.find.core.export.MapData.Marker;
+import static com.hp.autonomy.frontend.reports.powerpoint.dto.ListData.Document;
+import static com.hp.autonomy.frontend.reports.powerpoint.dto.MapData.Marker;
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 @RequestMapping(ExportController.EXPORT_PATH)
 public abstract class ExportController<R extends QueryRequest<?>, E extends Exception> {
@@ -809,11 +820,12 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             throw new IllegalArgumentException("Invalid data provided");
         }
 
-        boolean useSecondaryAxis = data.rows.stream().anyMatch(DategraphData.Row::isSecondaryAxis);
+        final java.util.List<DategraphData.Row> rows = data.getRows();
+        boolean useSecondaryAxis = rows.stream().anyMatch(DategraphData.Row::isSecondaryAxis);
 
-        if (data.rows.stream().allMatch(DategraphData.Row::isSecondaryAxis)) {
+        if (rows.stream().allMatch(DategraphData.Row::isSecondaryAxis)) {
             // If everything is on the secondary axis; just use the primary axis
-            data.rows.forEach(row -> row.setSecondaryAxis(false));
+            rows.forEach(row -> row.setSecondaryAxis(false));
             useSecondaryAxis = false;
         }
 
@@ -847,8 +859,8 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         int primarySeriesCount = 0;
         int secondarySeriesCount = 0;
 
-        for (int seriesIdx = 0; seriesIdx < data.rows.size(); ++seriesIdx) {
-            final DategraphData.Row row = data.rows.get(seriesIdx);
+        for (int seriesIdx = 0; seriesIdx < rows.size(); ++seriesIdx) {
+            final DategraphData.Row row = rows.get(seriesIdx);
 
             final CTLineChart tgtChart = plotArea.getLineChartArray(row.isSecondaryAxis() ? 1 : 0);
 
@@ -913,18 +925,19 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
         strRef.setF(new CellReference(sheetName, 0, seriesIdx + 1, true, true).formatAsString());
 
+        final long[] timestamps = data.getTimestamps();
         {
             final CTNumRef timestampCatNumRef = series.getCat().getNumRef();
             timestampCatNumRef.setF(new AreaReference(
                 new CellReference(sheetName, 1, 0, true, true),
-                new CellReference(sheetName, 1 + data.timestamps.length, 0, true, true)
+                new CellReference(sheetName, 1 + timestamps.length, 0, true, true)
             ).formatAsString());
 
             final CTNumData timeStampCatNumCache = timestampCatNumRef.getNumCache();
-            timeStampCatNumCache.getPtCount().setVal(data.timestamps.length);
+            timeStampCatNumCache.getPtCount().setVal(timestamps.length);
             timeStampCatNumCache.setPtArray(null);
 
-            for(int ii = 0; ii < data.timestamps.length; ++ii) {
+            for(int ii = 0; ii < timestamps.length; ++ii) {
                 final CTNumVal pt = timeStampCatNumCache.addNewPt();
                 pt.setIdx(ii);
                 pt.setV(sheet.getRow(1 + ii).getCell(0).getRawValue());
@@ -937,14 +950,14 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             final CTNumRef valuesNumRef = series.getVal().getNumRef();
             valuesNumRef.setF(new AreaReference(
                 new CellReference(sheetName, 1, seriesIdx + 1, true, true),
-                new CellReference(sheetName, 1 + data.timestamps.length, seriesIdx + 1, true, true)
+                new CellReference(sheetName, 1 + timestamps.length, seriesIdx + 1, true, true)
             ).formatAsString());
 
             final CTNumData valuesNumCache = valuesNumRef.getNumCache();
-            valuesNumCache.getPtCount().setVal(data.timestamps.length);
+            valuesNumCache.getPtCount().setVal(timestamps.length);
             valuesNumCache.setPtArray(null);
 
-            for(int ii = 0; ii < data.timestamps.length; ++ii) {
+            for(int ii = 0; ii < timestamps.length; ++ii) {
                 final CTNumVal pt = valuesNumCache.addNewPt();
                 pt.setIdx(ii);
                 pt.setV(Double.toString(seriesData[ii]));
@@ -959,21 +972,24 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         final CellStyle cellStyle = wb.createCellStyle();
         cellStyle.setDataFormat((short) 14);
 
+        final List<DategraphData.Row> rows = data.getRows();
+        final long[] timestamps = data.getTimestamps();
+
         final XSSFRow header = sheet.createRow(0);
         header.createCell(0).setCellValue("Timestamp");
-        for (int ii = 0; ii < data.rows.size(); ++ii) {
-            header.createCell(ii + 1).setCellValue(data.rows.get(ii).getLabel());
+        for (int ii = 0; ii < rows.size(); ++ii) {
+            header.createCell(ii + 1).setCellValue(rows.get(ii).getLabel());
         }
 
-        for (int rowIdx = 0; rowIdx < data.timestamps.length; ++rowIdx) {
+        for (int rowIdx = 0; rowIdx < timestamps.length; ++rowIdx) {
             final XSSFRow row = sheet.createRow(rowIdx + 1);
 
             final XSSFCell cell = row.createCell(0);
             cell.setCellStyle(cellStyle);
-            cell.setCellValue(new Date(data.timestamps[rowIdx] * 1000));
+            cell.setCellValue(new Date(timestamps[rowIdx] * 1000));
 
-            for (int ii = 0; ii < data.rows.size(); ++ii) {
-                row.createCell(ii + 1).setCellValue(data.rows.get(ii).getValues()[rowIdx]);
+            for (int ii = 0; ii < rows.size(); ++ii) {
+                row.createCell(ii + 1).setCellValue(rows.get(ii).getValues()[rowIdx]);
             }
         }
 
