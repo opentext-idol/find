@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty("server.reverseProxy")
 public class IdolPreAuthenticatedAuthenticationProvider implements AuthenticationProvider {
 
-    private static final String USER_NOT_FOUND_ERROR_ID = "UASERVERUSERREAD-2147438053";
+    static final String USER_NOT_FOUND_ERROR_ID = "UASERVERUSERREAD-2147438053";
 
     private final UserService userService;
     private final GrantedAuthoritiesMapper authoritiesMapper;
