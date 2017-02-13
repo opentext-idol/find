@@ -123,6 +123,11 @@
             <artifactId>haven-search-components-idol</artifactId>
             <version>${haven.search.components.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.reports.powerpoint</groupId>
+            <artifactId>powerpoint-report</artifactId>
+            <version>${powerpoint.report.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>commons-io</groupId>
