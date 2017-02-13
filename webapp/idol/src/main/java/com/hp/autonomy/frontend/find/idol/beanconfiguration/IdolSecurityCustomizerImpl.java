@@ -12,6 +12,7 @@ import com.hp.autonomy.frontend.configuration.authentication.Role;
 import com.hp.autonomy.frontend.configuration.authentication.Roles;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.web.FindController;
+import com.hp.autonomy.frontend.find.idol.authentication.FindCommunityRole;
 import com.hp.autonomy.user.UserService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Collections;
 
+@SuppressWarnings("SpringAutowiredFieldsWarningInspection")
 @Component
 @ConditionalOnProperty(value = "server.reverseProxy", havingValue = "false", matchIfMissing = true)
 public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
@@ -65,7 +67,7 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
 
     private AuthenticationProvider communityAuthenticationProvider() {
         final Role user = new Role.Builder()
-                .setName(UserConfiguration.IDOL_USER_ROLE)
+                .setName(FindCommunityRole.USER.value())
                 .setPrivileges(Collections.singleton("login"))
                 .build();
 
