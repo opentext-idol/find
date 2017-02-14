@@ -19,6 +19,7 @@ import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.ParametricDisplayValues;
+import com.hp.autonomy.frontend.find.core.configuration.PowerPointConfig;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
@@ -59,6 +60,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final Integer minScore;
     private final StatsServerConfig statsServer;
     private final Integer topicMapMaxResults;
+    private final PowerPointConfig powerPoint;
     @Singular
     private final Collection<ParametricDisplayValues> parametricDisplayValues;
 
@@ -80,6 +82,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                         .statsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
                         .parametricDisplayValues(CollectionUtils.isEmpty(parametricDisplayValues) ? other.parametricDisplayValues : parametricDisplayValues)
                         .topicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
+                        .powerPoint(powerPoint == null ? other.powerPoint : powerPoint.merge(other.powerPoint))
                         .build())
                 .orElse(this);
     }
@@ -121,6 +124,10 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         login.basicValidate(SECTION);
         content.basicValidate("content");
         savedSearchConfig.basicValidate(SECTION);
+
+        if(powerPoint != null) {
+            powerPoint.basicValidate("powerPoint");
+        }
 
         if(map != null) {
             map.basicValidate("map");

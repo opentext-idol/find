@@ -6,12 +6,16 @@
 package com.hp.autonomy.frontend.find.core.export;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.core.configuration.PowerPointConfig;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
 import com.hp.autonomy.frontend.reports.powerpoint.PowerPointService;
 import com.hp.autonomy.frontend.reports.powerpoint.PowerPointServiceImpl;
 import com.hp.autonomy.frontend.reports.powerpoint.SlideShowTemplate;
+import com.hp.autonomy.frontend.reports.powerpoint.TemplateSource;
 import com.hp.autonomy.frontend.reports.powerpoint.dto.DategraphData;
 import com.hp.autonomy.frontend.reports.powerpoint.dto.ListData;
 import com.hp.autonomy.frontend.reports.powerpoint.dto.MapData;
@@ -21,11 +25,13 @@ import com.hp.autonomy.frontend.reports.powerpoint.dto.TableData;
 import com.hp.autonomy.frontend.reports.powerpoint.dto.TopicMapData;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collection;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -62,12 +68,25 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
     private final PowerPointService pptService;
 
-    protected ExportController(final ExportService<R, E> exportService, final RequestMapper<R> requestMapper, final ControllerUtils controllerUtils, final ObjectMapper objectMapper) {
+    protected ExportController(final ExportService<R, E> exportService, final RequestMapper<R> requestMapper, final ControllerUtils controllerUtils, final ObjectMapper objectMapper, final ConfigService<? extends FindConfig> configService) {
         this.exportService = exportService;
         this.requestMapper = requestMapper;
         this.controllerUtils = controllerUtils;
         this.objectMapper = objectMapper;
-        this.pptService = new PowerPointServiceImpl();
+
+        this.pptService = new PowerPointServiceImpl(() -> {
+            final PowerPointConfig powerPoint = configService.getConfig().getPowerPoint();
+
+            if (powerPoint != null) {
+                final String template = powerPoint.getTemplateFile();
+
+                if (StringUtils.isNotBlank(template)) {
+                    return new FileInputStream(template);
+                }
+            }
+
+            return TemplateSource.DEFAULT.getInputStream();
+        });
     }
 
     @RequestMapping(value = CSV_PATH, method = RequestMethod.POST)

@@ -7,10 +7,12 @@ package com.hp.autonomy.frontend.find.idol.export;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.export.ExportController;
 import com.hp.autonomy.frontend.find.core.export.ExportService;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,7 +24,8 @@ class IdolExportController extends ExportController<IdolQueryRequest, AciErrorEx
     public IdolExportController(final ExportService<IdolQueryRequest, AciErrorException> exportService,
                                 final RequestMapper<IdolQueryRequest> requestMapper,
                                 final ControllerUtils controllerUtils,
-                                final ObjectMapper objectMapper) {
-        super(exportService, requestMapper, controllerUtils, objectMapper);
+                                final ObjectMapper objectMapper,
+                                final ConfigService<IdolFindConfig> configService) {
+        super(exportService, requestMapper, controllerUtils, objectMapper, configService);
     }
 }

@@ -107,6 +107,9 @@
     "enabled": false,
     "baseUrl": ""
   },
+  "powerpoint": {
+    "templateFile": ""
+  },
   "uiCustomization": {
     "options": {
         "directAccessLink": {

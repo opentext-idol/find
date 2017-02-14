@@ -18,6 +18,7 @@ import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.ParametricDisplayValues;
+import com.hp.autonomy.frontend.find.core.configuration.PowerPointConfig;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
@@ -56,6 +57,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodS
     @Singular
     private final Collection<ParametricDisplayValues> parametricDisplayValues;
     private final Integer topicMapMaxResults;
+    private final PowerPointConfig powerPoint;
 
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
@@ -77,6 +79,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodS
                 .minScore(minScore == null ? config.minScore : minScore)
                 .parametricDisplayValues(parametricDisplayValues == null ? config.parametricDisplayValues : parametricDisplayValues)
                 .topicMapMaxResults(topicMapMaxResults == null ? config.topicMapMaxResults : topicMapMaxResults)
+                .powerPoint(powerPoint == null ? config.powerPoint : powerPoint.merge(config.powerPoint))
                 .build() : this;
     }
 
@@ -106,6 +109,10 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodS
         redis.basicValidate(SECTION);
         queryManipulation.basicValidate(SECTION);
         savedSearchConfig.basicValidate(SECTION);
+
+        if (powerPoint != null) {
+            powerPoint.basicValidate("powerPoint");
+        }
 
         if (map != null) {
             map.basicValidate("map");
