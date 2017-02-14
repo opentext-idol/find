@@ -274,7 +274,7 @@ define([
                     constructorArguments: _.extend({
                         timeBarModel: this.timeBarModel
                     }, subViewArguments),
-                    shown: hasBiRole && this.displayDependentParametricViews,
+                    shown: hasBiRole,
                     selector: {
                         displayNameKey: 'dategraph',
                         icon: 'hp-analytics'
