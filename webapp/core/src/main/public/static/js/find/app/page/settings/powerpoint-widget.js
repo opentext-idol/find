@@ -38,10 +38,20 @@ define([
             }));
 
             this.$templateFile = this.$('.template-file-input');
+            this.$validity = this.$('.settings-client-validation');
         },
 
         handleValidation: function(config, response) {
-            this.setValidationFormatting(response.valid ? this.successClass : this.errorClass);
+            if (response.valid) {
+                this.setValidationFormatting(this.successClass);
+                this.hideValidationInfo();
+            } else {
+                this.setValidationFormatting(this.errorClass);
+                this.$validity.text(this.strings[response.data])
+                    .stop()
+                    .animate({opacity: 1})
+                    .removeClass('hide');
+            }
         },
 
         triggerValidation: function() {
