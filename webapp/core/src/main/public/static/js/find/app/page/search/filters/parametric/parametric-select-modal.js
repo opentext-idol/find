@@ -37,6 +37,7 @@ define([
 
             this.parametricSelectView = new ParametricSelectView({
                 initialField: options.initialField,
+                indexesCollection: options.indexesCollection,
                 queryModel: options.queryModel,
                 parametricFieldsCollection: options.parametricFieldsCollection,
                 selectedParametricValues: this.selectedParametricValues

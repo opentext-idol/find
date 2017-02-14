@@ -28,13 +28,15 @@ define([
                     initialField: this.model.id,
                     queryModel: this.queryModel,
                     parametricFieldsCollection: this.parametricFieldsCollection,
-                    selectedParametricValues: this.selectedParametricValues
+                    selectedParametricValues: this.selectedParametricValues,
+                    indexesCollection: this.indexesCollection
                 });
             }
         },
 
         initialize: function (options) {
             this.selectedParametricValues = options.selectedParametricValues;
+            this.indexesCollection = options.indexesCollection;
             this.parametricFieldsCollection = options.parametricFieldsCollection;
             this.queryModel = options.queryModel;
 
@@ -67,6 +69,7 @@ define([
         initialize: function(options) {
             this.parametricFieldsCollection = options.parametricFieldsCollection;
             this.selectedParametricValues = options.selectedParametricValues;
+            this.indexesCollection = options.indexesCollection;
             this.queryModel = options.queryModel;
 
             this.collapseModel = new Backbone.Model({
@@ -84,7 +87,8 @@ define([
                     model: this.model,
                     parametricFieldsCollection: this.parametricFieldsCollection,
                     queryModel: this.queryModel,
-                    selectedParametricValues: this.selectedParametricValues
+                    selectedParametricValues: this.selectedParametricValues,
+                    indexesCollection: this.indexesCollection
                 })
             });
 

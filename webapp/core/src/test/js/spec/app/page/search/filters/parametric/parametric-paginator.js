@@ -10,6 +10,8 @@ define([
 ], function($, Backbone, ParametricPaginator) {
     'use strict';
 
+    const ALL_INDEXES = ['Broadcast', 'Generic'];
+
     function checkState(partialExpectedState) {
         const expectedState = _.extend({
             empty: false,
@@ -25,6 +27,16 @@ define([
     function checkModels(expectedAttributes) {
         return function() {
             expect(this.paginator.valuesCollection.map(_.property('attributes'))).toEqual(expectedAttributes);
+        };
+    }
+
+    function fetchNext() {
+        this.paginator.fetchNext();
+    }
+
+    function respond(requestIndex, response) {
+        return function() {
+            this.fetchPromises[requestIndex].resolve(response);
         };
     }
 
@@ -45,9 +57,10 @@ define([
             }.bind(this));
 
             this.paginator = new ParametricPaginator({
-                fetchData: {queryText: 'cat'},
+                fetchRestrictions: {queryText: 'cat', databases: ['Generic']},
                 fetchFunction: this.fetchFunction,
                 fieldName: 'CATEGORY',
+                indexes: ALL_INDEXES,
                 pageSize: 2,
                 selectedValues: this.selectedValues
             });
@@ -64,24 +77,20 @@ define([
         });
 
         describe('when fetchNext is called', function() {
-            beforeEach(function() {
-                this.paginator.fetchNext();
-            });
+            beforeEach(fetchNext);
 
-            it('calls the fetchFunction for page 1', function() {
+            it('calls the fetchFunction for page 1 with the query restrictions', function() {
                 expect(this.fetchPromises.length).toBe(1);
 
                 expect(this.fetchFunction.calls.argsFor(0)).toEqual([
-                    {start: 1, maxValues: 2, fieldNames: ['CATEGORY'], queryText: 'cat'}
+                    {start: 1, maxValues: 2, fieldNames: ['CATEGORY'], queryText: 'cat', databases: ['Generic']}
                 ]);
             });
 
             it('is loading and has no error', checkState({loading: true}));
 
             describe('when fetchNext is called before the request succeeds', function() {
-                beforeEach(function() {
-                    this.paginator.fetchNext();
-                });
+                beforeEach(fetchNext);
 
                 it('does not call the fetchFunction again', function() {
                     expect(this.fetchPromises.length).toBe(1);
@@ -91,68 +100,143 @@ define([
             });
 
             describe('then the fetch succeeds with no values', function() {
-                beforeEach(function() {
-                    this.fetchPromises[0].resolve({
-                        totalValues: 0,
-                        values: []
-                    });
-                });
+                beforeEach(respond(0, {totalValues: 0, values: []}));
 
-                it('has no error and is not loading but is empty', checkState({
-                    empty: true
+                it('has no error and is still loading', checkState({
+                    loading: true
                 }));
 
-                describe('then fetchNext is called again', function() {
-                    beforeEach(function() {
-                        this.paginator.fetchNext();
-                    });
+                it('calls the fetchFunction for page 1 without the query restrictions', function() {
+                    expect(this.fetchPromises.length).toBe(2);
 
-                    it('has no error and is not loading because there are no more parametric values', checkState({
+                    expect(this.fetchFunction.calls.argsFor(1)).toEqual([
+                        {start: 1, maxValues: 2, fieldNames: ['CATEGORY'], databases: ALL_INDEXES}
+                    ]);
+                });
+
+                describe('then the fetch succeeds with no values', function() {
+                    beforeEach(respond(1, {totalValues: 0, values: []}));
+
+                    it('has no error and is not loading but is empty', checkState({
                         empty: true
                     }));
 
-                    it('does not call the fetchFunction', function() {
-                        expect(this.fetchPromises.length).toBe(1);
+                    it('makes no further requests', function() {
+                        expect(this.fetchPromises.length).toBe(2);
                     });
+                });
+
+                describe('then the fetch succeeds with 2 values and a total values of 4', function() {
+                    beforeEach(respond(1, {
+                        totalValues: 4,
+                        values: [
+                            {value: 'PLANTS', count: 10},
+                            {value: 'ANIMALS', count: 7}
+                        ]
+                    }));
+
+                    it('is not loading or empty and has no error', checkState({}));
+
+                    it('adds new models to the values collection with count 0, setting the selected flag as appropriate', checkModels([
+                        {value: 'PLANTS', count: 0, selected: false},
+                        {value: 'ANIMALS', count: 0, selected: true}
+                    ]));
                 });
             });
 
-            describe('then the fetch succeeds with 2 values and a total values of 2', function() {
-                beforeEach(function() {
-                    this.fetchPromises[0].resolve({
-                        totalValues: 2,
+            describe('then the fetch succeeds with 1 value and a total values of 1', function() {
+                beforeEach(respond(0, {
+                    totalValues: 1,
+                    values: [
+                        {value: 'PLANTS', count: 5}
+                    ]
+                }));
+
+                it('has no error and is still loading', checkState({
+                    loading: true
+                }));
+
+                it('adds new models to the values collection, setting the selected flag as appropriate', checkModels([
+                    {value: 'PLANTS', count: 5, selected: false}
+                ]));
+
+                it('calls the fetchFunction for page 1 without the query restrictions', function() {
+                    expect(this.fetchPromises.length).toBe(2);
+
+                    expect(this.fetchFunction.calls.argsFor(1)).toEqual([
+                        {start: 1, maxValues: 2, fieldNames: ['CATEGORY'], databases: ALL_INDEXES}
+                    ]);
+                });
+
+                describe('then the fetch succeeds with 2 values, one of which was returned before, and a total values of 4', function() {
+                    beforeEach(respond(1, {
+                        totalValues: 4,
                         values: [
-                            {value: 'PLANTS', count: 5},
-                            {value: 'ANIMALS', count: 3}
+                            {value: 'PLANTS', count: 10},
+                            {value: 'ANIMALS', count: 7}
                         ]
+                    }));
+
+                    it('has no error and is not empty or loading', checkState());
+
+                    it('adds the correct model to the values collection with count 0, setting the selected flag as appropriate', checkModels([
+                        {value: 'PLANTS', count: 5, selected: false},
+                        {value: 'ANIMALS', count: 0, selected: true}
+                    ]));
+
+                    it('makes no further requests', function() {
+                        expect(this.fetchPromises.length).toBe(2);
                     });
                 });
 
-                it('has no error and is not loading', checkState());
-
-                describe('then fetchNext is called again', function() {
+                describe('then the fetch succeeds with 2 new values and a total values of 4, then fetchNext is called again and an old value is returned', function() {
                     beforeEach(function() {
-                        this.paginator.fetchNext();
+                        respond(1, {
+                            totalValues: 4,
+                            values: [
+                                {value: 'FUNGI', count: 9},
+                                {value: 'ANIMALS', count: 7}
+                            ]
+                        }).call(this);
+
+                        fetchNext.call(this);
+
+                        respond(2, {
+                            totalValues: 4,
+                            values: [
+                                {value: 'PLANTS', count: 4},
+                                {value: 'PEOPLE', count: 1}
+                            ]
+                        }).call(this);
                     });
 
-                    it('has no error and is not loading because there are no more parametric values', checkState());
+                    it('queried for page 2', function() {
+                        expect(this.fetchPromises.length).toBe(3);
 
-                    it('does not call the fetchFunction', function() {
-                        expect(this.fetchPromises.length).toBe(1);
+                        expect(this.fetchFunction.calls.argsFor(2)).toEqual([
+                            {start: 3, maxValues: 4, fieldNames: ['CATEGORY'], databases: ALL_INDEXES}
+                        ]);
                     });
+
+                    it('has no error and is not empty or loading', checkState());
+
+                    it('adds the correct model to the values collection, setting the selected flag as appropriate', checkModels([
+                        {value: 'PLANTS', count: 5, selected: false},
+                        {value: 'FUNGI', count: 0, selected: false},
+                        {value: 'ANIMALS', count: 0, selected: true},
+                        {value: 'PEOPLE', count: 0, selected: false}
+                    ]));
                 });
             });
 
             describe('then the fetch succeeds with 2 values and a total values of 10', function() {
-                beforeEach(function() {
-                    this.fetchPromises[0].resolve({
-                        totalValues: 10,
-                        values: [
-                            {value: 'PLANTS', count: 5},
-                            {value: 'ANIMALS', count: 3}
-                        ]
-                    });
-                });
+                beforeEach(respond(0, {
+                    totalValues: 10,
+                    values: [
+                        {value: 'PLANTS', count: 5},
+                        {value: 'ANIMALS', count: 3}
+                    ]
+                }));
 
                 it('has no error and is not loading', checkState());
 
@@ -179,30 +263,26 @@ define([
                     ]));
 
                     describe('then fetchNext is called again', function() {
-                        beforeEach(function() {
-                            this.paginator.fetchNext();
-                        });
+                        beforeEach(fetchNext);
 
-                        it('calls the fetchFunction for page 1', function() {
+                        it('calls the fetchFunction for page 2', function() {
                             expect(this.fetchPromises.length).toBe(2);
 
                             expect(this.fetchFunction.calls.argsFor(1)).toEqual([
-                                {start: 3, maxValues: 4, fieldNames: ['CATEGORY'], queryText: 'cat'}
+                                {start: 3, maxValues: 4, fieldNames: ['CATEGORY'], queryText: 'cat', databases: ['Generic']}
                             ]);
                         });
 
                         it('is loading and has no error', checkState({loading: true}));
 
                         describe('then the fetch succeeds with another 2 values', function() {
-                            beforeEach(function() {
-                                this.fetchPromises[1].resolve({
-                                    totalValues: 10,
-                                    values: [
-                                        {count: 1, value: 'INSECTS'},
-                                        {count: 1, value: 'FUNGI'}
-                                    ]
-                                });
-                            });
+                            beforeEach(respond(1, {
+                                totalValues: 10,
+                                values: [
+                                    {count: 1, value: 'INSECTS'},
+                                    {count: 1, value: 'FUNGI'}
+                                ]
+                            }));
 
                             it('has no error and is not loading', checkState());
 
@@ -229,9 +309,7 @@ define([
                 }));
 
                 describe('then fetchNext is called again', function() {
-                    beforeEach(function() {
-                        this.paginator.fetchNext()
-                    });
+                    beforeEach(fetchNext);
 
                     it('is not loading and has an error', checkState({
                         error: {message: 'These are not the values you are looking for'}

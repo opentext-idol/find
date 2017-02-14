@@ -118,6 +118,7 @@ define([
                     parametricViewItemOptions: {
                         collapsed: isCollapsed,
                         queryModel: options.queryModel,
+                        indexesCollection: options.indexesCollection,
                         parametricFieldsCollection: this.parametricFieldsCollection,
                         selectedParametricValues: this.selectedParametricValues
                     },

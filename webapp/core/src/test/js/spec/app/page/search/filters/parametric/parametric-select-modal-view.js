@@ -24,6 +24,10 @@ define([
                 queryModel: queryModel,
                 initialField: 'CATEGORY',
                 selectedParametricValues: this.selectedParametricValues,
+                indexesCollection: new Backbone.Collection([
+                    {name: 'BROADCAST'},
+                    {name: 'WIKIPEDIA'}
+                ]),
                 parametricFieldsCollection: new Backbone.Collection([
                     {id: 'AUTHOR', displayName: 'Author'},
                     {id: 'PLACE'},

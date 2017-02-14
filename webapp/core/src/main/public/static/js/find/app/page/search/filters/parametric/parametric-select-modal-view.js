@@ -2,12 +2,13 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'find/app/util/search-data-util',
     'find/app/page/search/filters/parametric/parametric-select-modal-list-view',
     './parametric-paginator',
     'parametric-refinement/prettify-field-name',
     'text!find/templates/app/page/search/filters/parametric/parametric-select-modal-view.html',
     'iCheck'
-], function (Backbone, $, _, ParametricSelectModalListView, ParametricPaginator, prettifyFieldName, template) {
+], function (Backbone, $, _, searchDataUtil, ParametricSelectModalListView, ParametricPaginator, prettifyFieldName, template) {
     'use strict';
 
     return Backbone.View.extend({
@@ -22,7 +23,7 @@ define([
         },
 
         initialize: function (options) {
-            const fetchData = {
+            const fetchRestrictions = {
                 databases: options.queryModel.get('indexes'),
                 queryText: options.queryModel.get('autoCorrect') && options.queryModel.get('correctedQuery') ? options.queryModel.get('correctedQuery') : options.queryModel.get('queryText'),
                 fieldText: options.queryModel.get('fieldText'),
@@ -32,11 +33,16 @@ define([
                 stateTokens: options.queryModel.get('stateMatchIds')
             };
 
+            const indexes = searchDataUtil.buildIndexes(options.indexesCollection.map(function(model) {
+                return model.pick('domain', 'name');
+            }));
+
             this.fieldData = options.parametricFieldsCollection.map(function (fieldModel) {
                 const paginator = new ParametricPaginator({
                     fieldName: fieldModel.id,
+                    indexes: indexes,
                     selectedValues: options.selectedParametricValues,
-                    fetchData: fetchData,
+                    fetchRestrictions: fetchRestrictions,
                     fetchFunction: function (data) {
                         return $.ajax({url: 'api/public/parametric/values', traditional: true, data: data})
                             .then(function (response) {
