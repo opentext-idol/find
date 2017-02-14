@@ -74,7 +74,6 @@ define([
                 'click .results-view-pptx': function(evt) {
                     evt.preventDefault();
 
-                    // TODO: implement all this
                     var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/list"><textarea name="sortBy"></textarea><textarea name="results"></textarea><textarea name="data"></textarea><input type="submit"></form>');
 
                     $form[0].sortBy.value = this.sortView.getText();
@@ -172,8 +171,7 @@ define([
 
             this.$el.find('.results').after(this.$loadingSpinner);
 
-            var $sortEl = this.$('.sort-container');
-            this.sortView.setElement($sortEl).render();
+            this.sortView.setElement(this.$('.sort-container')).render();
             this.resultsNumberView.setElement(this.$('.results-number-container')).render();
 
             if (!_.contains(configuration().roles, 'ROLE_BI')) {
