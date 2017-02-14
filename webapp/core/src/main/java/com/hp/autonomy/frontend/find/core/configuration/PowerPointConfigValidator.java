@@ -13,17 +13,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PowerPointConfigValidator implements Validator<PowerPointConfig> {
     @Override
-    public ValidationResult<Void> validate(final PowerPointConfig config) {
-        boolean valid = true;
-
-        try {
-            config.basicValidate("powerPoint");
-        }
-        catch(ConfigException e) {
-            valid = false;
-        }
-
-        return new ValidationResult<>(valid);
+    public ValidationResult<PowerPointConfig.Validation> validate(final PowerPointConfig config) {
+        return config.validate();
     }
 
     @Override

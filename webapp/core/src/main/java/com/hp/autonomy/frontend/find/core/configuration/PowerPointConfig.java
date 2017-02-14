@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
+import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
 import com.hp.autonomy.frontend.reports.powerpoint.PowerPointServiceImpl;
 import com.hp.autonomy.frontend.reports.powerpoint.SlideShowTemplate;
 import java.io.File;
@@ -38,11 +39,19 @@ public class PowerPointConfig implements OptionalConfigurationComponent<PowerPoi
 
     @Override
     public void basicValidate(final String section) throws ConfigException {
+        final ValidationResult<?> result = validate();
+
+        if (!result.isValid()) {
+            throw new ConfigException(section, String.valueOf(result.getData()));
+        }
+    }
+
+    public ValidationResult<Validation> validate() {
         if(StringUtils.isNotBlank(templateFile)) {
             final File file = new File(templateFile);
 
             if (!file.exists()) {
-                throw new ConfigException(section, "Template file does not exist");
+                return new ValidationResult<>(false, Validation.TEMPLATE_FILE_NOT_FOUND);
             }
 
             final PowerPointServiceImpl service = new PowerPointServiceImpl(() -> new FileInputStream(file));
@@ -51,9 +60,11 @@ public class PowerPointConfig implements OptionalConfigurationComponent<PowerPoi
                 service.validateTemplate();
             }
             catch(SlideShowTemplate.LoadException e) {
-                throw new ConfigException(section, e.getMessage());
+                return new ValidationResult<>(false, Validation.TEMPLATE_INVALID);
             }
         }
+
+        return new ValidationResult<>(true, null);
     }
 
     @Override
@@ -69,6 +80,14 @@ public class PowerPointConfig implements OptionalConfigurationComponent<PowerPoi
 
         public PowerPointConfig build() {
             return new PowerPointConfig(this);
+        }
+    }
+
+    public enum Validation {
+        TEMPLATE_FILE_NOT_FOUND,
+        TEMPLATE_INVALID;
+
+        private Validation() {
         }
     }
 }

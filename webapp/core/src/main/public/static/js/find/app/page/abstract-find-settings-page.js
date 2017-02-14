@@ -87,7 +87,9 @@ define([
                 REQUIRED_FIELD_MISSING: i18n['settings.REQUIRED_FIELD_MISSING'],
                 REGULAR_EXPRESSION_MATCH_ERROR: i18n['settings.REGULAR_EXPRESSION_MATCH_ERROR'],
                 SERVICE_AND_INDEX_PORT_ERROR: i18n['settings.SERVICE_AND_INDEX_PORT_ERROR'],
-                SERVICE_PORT_ERROR: i18n['settings.SERVICE_PORT_ERROR']
+                SERVICE_PORT_ERROR: i18n['settings.SERVICE_PORT_ERROR'],
+                TEMPLATE_FILE_NOT_FOUND: i18n['settings.powerpoint.template.error.TEMPLATE_FILE_NOT_FOUND'],
+                TEMPLATE_INVALID: i18n['settings.powerpoint.template.error.TEMPLATE_INVALID']
             };
         },
 
