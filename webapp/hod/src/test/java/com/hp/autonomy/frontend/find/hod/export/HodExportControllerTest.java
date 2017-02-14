@@ -13,6 +13,6 @@ import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
 public class HodExportControllerTest extends ExportControllerTest<HodQueryRequest, HodErrorException> {
     @Override
     protected ExportController<HodQueryRequest, HodErrorException> constructController() {
-        return new HodExportController(exportService, requestMapper, controllerUtils);
+        return new HodExportController(exportService, requestMapper, controllerUtils, objectMapper);
     }
 }

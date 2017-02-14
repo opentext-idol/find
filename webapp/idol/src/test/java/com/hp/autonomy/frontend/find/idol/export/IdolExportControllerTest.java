@@ -13,6 +13,6 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 public class IdolExportControllerTest extends ExportControllerTest<IdolQueryRequest, AciErrorException> {
     @Override
     protected ExportController<IdolQueryRequest, AciErrorException> constructController() {
-        return new IdolExportController(exportService, requestMapper, controllerUtils);
+        return new IdolExportController(exportService, requestMapper, controllerUtils, objectMapper);
     }
 }
