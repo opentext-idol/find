@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.core.configuration;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
-import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
+import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
 import com.hp.autonomy.frontend.reports.powerpoint.PowerPointServiceImpl;
 import com.hp.autonomy.frontend.reports.powerpoint.SlideShowTemplate;
 import java.io.File;
@@ -20,7 +20,7 @@ import org.apache.commons.lang.StringUtils;
 
 @JsonDeserialize(builder = PowerPointConfig.Builder.class)
 @Data
-public class PowerPointConfig implements ConfigurationComponent<PowerPointConfig> {
+public class PowerPointConfig implements OptionalConfigurationComponent<PowerPointConfig> {
     private final String templateFile;
 
     private PowerPointConfig(final Builder builder) {
@@ -54,6 +54,11 @@ public class PowerPointConfig implements ConfigurationComponent<PowerPointConfig
                 throw new ConfigException(section, e.getMessage());
             }
         }
+    }
+
+    @Override
+    public Boolean getEnabled() {
+        return true;
     }
 
     @Setter
