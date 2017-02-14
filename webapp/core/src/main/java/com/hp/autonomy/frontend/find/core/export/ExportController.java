@@ -58,13 +58,15 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     private final ExportService<R, E> exportService;
     private final RequestMapper<R> requestMapper;
     private final ControllerUtils controllerUtils;
+    private final ObjectMapper objectMapper;
 
     private final PowerPointService pptService;
 
-    protected ExportController(final ExportService<R, E> exportService, final RequestMapper<R> requestMapper, final ControllerUtils controllerUtils) {
+    protected ExportController(final ExportService<R, E> exportService, final RequestMapper<R> requestMapper, final ControllerUtils controllerUtils, final ObjectMapper objectMapper) {
         this.exportService = exportService;
         this.requestMapper = requestMapper;
         this.controllerUtils = controllerUtils;
+        this.objectMapper = objectMapper;
         this.pptService = new PowerPointServiceImpl();
     }
 
@@ -121,7 +123,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     public HttpEntity<byte[]> topicmap(
             @RequestParam("data") final String topicMapStr
     ) throws IOException, SlideShowTemplate.LoadException {
-        final TopicMapData data = new ObjectMapper().readValue(topicMapStr, TopicMapData.class);
+        final TopicMapData data = objectMapper.readValue(topicMapStr, TopicMapData.class);
         return writePPT(pptService.topicmap(data), "topicmap.pptx");
     }
 
@@ -140,7 +142,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     public HttpEntity<byte[]> sunburst(
             @RequestParam("data") final String dataStr
     ) throws IOException, SlideShowTemplate.LoadException {
-        final SunburstData data = new ObjectMapper().readValue(dataStr, SunburstData.class);
+        final SunburstData data = objectMapper.readValue(dataStr, SunburstData.class);
 
         final XMLSlideShow ppt = pptService.sunburst(data);
 
@@ -153,7 +155,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             @RequestParam("data") final String dataStr
 
     ) throws IOException, SlideShowTemplate.LoadException {
-        final TableData tableData = new ObjectMapper().readValue(dataStr, TableData.class);
+        final TableData tableData = objectMapper.readValue(dataStr, TableData.class);
 
         final XMLSlideShow ppt = pptService.table(title, tableData);
 
@@ -165,7 +167,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             @RequestParam("title") final String title,
             @RequestParam("data") final String markerStr
     ) throws IOException, SlideShowTemplate.LoadException {
-        final MapData map = new ObjectMapper().readValue(markerStr, MapData.class);
+        final MapData map = objectMapper.readValue(markerStr, MapData.class);
 
         final XMLSlideShow ppt = pptService.map(title, map);
 
@@ -178,7 +180,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             @RequestParam("sortBy") final String sortBy,
             @RequestParam("data") final String docsStr
     ) throws IOException, SlideShowTemplate.LoadException {
-        final ListData documentList = new ObjectMapper().readValue(docsStr, ListData.class);
+        final ListData documentList = objectMapper.readValue(docsStr, ListData.class);
 
         final XMLSlideShow ppt = pptService.list(results, sortBy, documentList);
 
@@ -189,7 +191,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     public HttpEntity<byte[]> graph(
             @RequestParam("data") final String dataStr
     ) throws IOException, SlideShowTemplate.LoadException {
-        final DategraphData data = new ObjectMapper().readValue(dataStr, DategraphData.class);
+        final DategraphData data = objectMapper.readValue(dataStr, DategraphData.class);
 
         final XMLSlideShow ppt = pptService.graph(data);
 
@@ -200,7 +202,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     public HttpEntity<byte[]> report(
             @RequestParam("data") final String dataStr
     ) throws IOException, SlideShowTemplate.LoadException {
-        final ReportData report = new ObjectMapper().readValue(dataStr, ReportData.class);
+        final ReportData report = objectMapper.readValue(dataStr, ReportData.class);
 
         final XMLSlideShow ppt = pptService.report(report);
 

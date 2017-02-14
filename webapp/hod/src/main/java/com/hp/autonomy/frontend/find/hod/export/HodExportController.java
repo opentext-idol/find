@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.export;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.export.ExportController;
 import com.hp.autonomy.frontend.find.core.export.ExportService;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
@@ -20,7 +21,8 @@ class HodExportController extends ExportController<HodQueryRequest, HodErrorExce
     @Autowired
     public HodExportController(final ExportService<HodQueryRequest, HodErrorException> exportService,
                                final RequestMapper<HodQueryRequest> requestMapper,
-                               final ControllerUtils controllerUtils) {
-        super(exportService, requestMapper, controllerUtils);
+                               final ControllerUtils controllerUtils,
+                               final ObjectMapper objectMapper) {
+        super(exportService, requestMapper, controllerUtils, objectMapper);
     }
 }
