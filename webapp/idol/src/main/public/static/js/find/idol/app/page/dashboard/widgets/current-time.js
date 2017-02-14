@@ -18,7 +18,7 @@ define([
             Widget.prototype.initialize.apply(this, arguments);
 
             this.dateFormat = options.widgetSettings.dateFormat || 'll';
-            this.timeFormat = options.widgetSettings.timeFormat || 'hh:mma z';
+            this.timeFormat = options.widgetSettings.timeFormat || 'HH:mm z';
             this.timeZone = options.widgetSettings.timeZone || moment.tz.guess();
         },
 

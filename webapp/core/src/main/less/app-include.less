@@ -1998,24 +1998,29 @@ h4.similar-dates-message {
 }
 
 .widget {
-  box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
+  background-color: @white;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.2);
   padding: 0.5em;
   position: absolute;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
+
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.015);
     transition: 0.3s;
   }
 
   .title {
     &:extend(.m-t-nil);
     flex: 0 0 auto;
+    font-size: @fontSizeLarge;
   }
 
   .widget-content {
     flex: 1 0 80%;
     overflow: hidden;
+    cursor: pointer;
 
     .results-list {
       display: flex;

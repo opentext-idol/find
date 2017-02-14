@@ -73,10 +73,10 @@ define([
         generateWidgetDiv: function (position) {
             const widgetElement = $('<div class="widget"></div>');
             widgetElement.css({
-                'left': position.x * this.widthPerUnit + '%',
-                'top': position.y * this.heightPerUnit + '%',
-                'width': position.width * this.widthPerUnit + '%',
-                'height': position.height * this.heightPerUnit + '%'
+                'left': 'calc(' + position.x * this.widthPerUnit + '% + 20px)',
+                'top': 'calc(' + position.y * this.heightPerUnit + '% + 20px)',
+                'width': 'calc(' + position.width * this.widthPerUnit + '% - 10px)',
+                'height': 'calc(' +position.height * this.heightPerUnit + '% - 10px)'
             });
 
             return widgetElement;

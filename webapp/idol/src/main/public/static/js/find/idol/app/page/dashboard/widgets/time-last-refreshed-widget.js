@@ -18,7 +18,7 @@ define([
         initialize: function(options) {
             UpdatingWidget.prototype.initialize.apply(this, arguments);
 
-            this.dateFormat = options.widgetSettings.dateFormat || 'hh:mma z';
+            this.dateFormat = options.widgetSettings.dateFormat || 'HH:mm z';
             this.timeZone = options.widgetSettings.timeZone || moment.tz.guess();
             this.updateInterval = options.updateInterval;
 
@@ -30,12 +30,13 @@ define([
             UpdatingWidget.prototype.render.apply(this, arguments);
 
             this.$content.html(this.lastRefreshTemplate({
-                lastUpdated: i18n['dashboards.widget.lastRefresh.timeLastUpdated'](this.formatDate(this.lastUpdated)),
-                nextRefresh: i18n['dashboards.widget.lastRefresh.nextRefresh'](this.formatDate(this.nextRefresh))
+                lastUpdated: this.formatDate(this.lastUpdated),
+                nextRefresh: this.formatDate(this.nextRefresh),
+                i18n: i18n
             }));
 
-            this.$lastRefresh = this.$('.last-refresh');
-            this.$nextRefresh = this.$('.next-refresh');
+            this.$lastRefresh = this.$('.last-refresh-time');
+            this.$nextRefresh = this.$('.next-refresh-time');
             this.$updating = this.$('.updating');
             this.$updateProgress = this.$('.update-progress');
 
@@ -67,8 +68,8 @@ define([
                 this.$updating.addClass('hide');
                 this.$updateProgress.addClass('hide');
 
-                this.$lastRefresh.text(i18n['dashboards.widget.lastRefresh.timeLastUpdated'](this.formatDate(this.lastUpdated)));
-                this.$nextRefresh.text(i18n['dashboards.widget.lastRefresh.nextRefresh'](this.formatDate(this.nextRefresh)));
+                this.$lastRefresh.text(this.formatDate(this.lastUpdated));
+                this.$nextRefresh.text(this.formatDate(this.nextRefresh));
             }
         },
 
