@@ -79,6 +79,8 @@ define([
                 validatePortInvalid: i18n['settings.test.portInvalid'],
                 validateUsernameBlank: i18n['settings.test.usernameBlank'],
                 validateSuccess: i18n['settings.test.ok'],
+                templateFile: i18n['settings.powerpoint.template.file'],
+                templateFileDefault: i18n['settings.powerpoint.template.file.default'],
                 CONNECTION_ERROR: i18n['settings.CONNECTION_ERROR'],
                 FETCH_PORT_ERROR: i18n['settings.FETCH_PORT_ERROR'],
                 FETCH_SERVICE_PORT_ERROR: i18n['settings.FETCH_SERVICE_PORT_ERROR'],

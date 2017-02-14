@@ -16,6 +16,12 @@ define([
         widgetTemplate: _.template(widgetTemplate),
         template: _.template(template),
 
+        className: 'panel-group',
+        controlGroupClass: 'form-group',
+        formControlClass: 'form-control',
+        errorClass: 'has-error',
+        successClass: 'has-success',
+
         initialize: function() {
             Widget.prototype.initialize.apply(this, arguments);
         },
@@ -28,6 +34,10 @@ define([
             }));
 
             this.$templateFile = this.$('.template-file-input');
+        },
+
+        handleValidation: function(config, response) {
+            this.setValidationFormatting(response.valid ? this.successClass : this.errorClass);
         },
 
         getConfig: function() {

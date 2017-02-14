@@ -57,10 +57,7 @@ define([
                         description: i18n['settings.powerpoint.description'],
                         isOpened: true,
                         title: i18n['settings.powerpoint'],
-                        strings: _.extend(this.serverStrings(), {
-                            templateFile: i18n['settings.powerpoint.template.file'],
-                            templateFileDefault: i18n['settings.powerpoint.template.file.default']
-                        })
+                        strings: this.serverStrings()
                     })
                 ]
             ];
