@@ -308,6 +308,7 @@ define([
         'settings.powerpoint.description': 'A custom two-slide PowerPoint .pptx file can be optionally provided; with a doughnut chart on the first slide and a line chart with a date x-axis and two numeric y-axes on the second slide.',
         'settings.powerpoint.template.file': 'Template File',
         'settings.powerpoint.template.file.default': 'default',
+        'settings.powerpoint.template.file.validate': 'Test Template',
         'settings.powerpoint.template.error.TEMPLATE_FILE_NOT_FOUND': 'PowerPoint template file not found',
         'settings.powerpoint.template.error.TEMPLATE_INVALID': 'PowerPoint template file has invalid format',
         'settings.queryManipulation': 'Query Manipulation',

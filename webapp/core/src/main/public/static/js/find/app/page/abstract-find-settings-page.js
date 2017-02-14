@@ -81,6 +81,7 @@ define([
                 validateSuccess: i18n['settings.test.ok'],
                 templateFile: i18n['settings.powerpoint.template.file'],
                 templateFileDefault: i18n['settings.powerpoint.template.file.default'],
+                templateValidate: i18n['settings.powerpoint.template.file.validate'],
                 CONNECTION_ERROR: i18n['settings.CONNECTION_ERROR'],
                 FETCH_PORT_ERROR: i18n['settings.FETCH_PORT_ERROR'],
                 FETCH_SERVICE_PORT_ERROR: i18n['settings.FETCH_SERVICE_PORT_ERROR'],

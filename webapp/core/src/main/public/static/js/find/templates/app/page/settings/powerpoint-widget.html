@@ -1,6 +1,10 @@
 <% var uid = _.uniqueId('powerpoint') %>
 
-<div class="form-group col-sm-12">
+<div class="form-group">
     <label for="<%-uid%>-template-file" class="control-label"><%-strings.templateFile%>: </label>
     <input id="<%-uid%>-template-file" class="form-control template-file-input" placeholder="<%-strings.templateFileDefault%>">
+</div>
+
+<div class="m-t-sm">
+    <button type="button" name="validate" class="btn btn-primary"><i class="hp-icon hp-fw hp-check"></i> <%-strings.templateValidate%></button> <span class="settings-client-validation settings-info"></span>
 </div>

@@ -22,6 +22,10 @@ define([
         errorClass: 'has-error',
         successClass: 'has-success',
 
+        events: _.extend({
+            'click button[name=validate]': 'triggerValidation'
+        }, Widget.prototype.events),
+
         initialize: function() {
             Widget.prototype.initialize.apply(this, arguments);
         },
@@ -38,6 +42,15 @@ define([
 
         handleValidation: function(config, response) {
             this.setValidationFormatting(response.valid ? this.successClass : this.errorClass);
+        },
+
+        triggerValidation: function() {
+            this.setValidationFormatting('clear');
+            this.hideValidationInfo();
+
+            if (this.validateInputs()) {
+                this.trigger('validate');
+            }
         },
 
         getConfig: function() {
