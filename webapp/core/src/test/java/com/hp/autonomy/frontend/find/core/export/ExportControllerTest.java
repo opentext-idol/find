@@ -21,8 +21,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 
+import static com.hp.autonomy.frontend.find.core.export.ExportController.PAGINATION_SIZE;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,17 +39,34 @@ public abstract class ExportControllerTest<R extends QueryRequest<?>, E extends 
 
     private ExportController<R, E> controller;
 
-    protected abstract ExportController<R, E> constructController();
+    protected abstract ExportController<R, E> constructController() throws IOException;
+
+    protected abstract void mockNumberOfResults(int numberOfResults) throws E;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         controller = constructController();
     }
 
     @Test
     public void exportToCsv() throws IOException, E {
+        mockNumberOfResults(PAGINATION_SIZE);
         controller.exportToCsv("{}", Collections.emptyList());
         verify(exportService).export(any(OutputStream.class), any(), eq(ExportFormat.CSV), eq(Collections.emptyList()));
+    }
+
+    @Test
+    public void exportToCsvNoResults() throws IOException, E {
+        mockNumberOfResults(0);
+        controller.exportToCsv("{}", Collections.emptyList());
+        verify(exportService, never()).export(any(), any(), any(), any());
+    }
+
+    @Test
+    public void exportToCsvMultipleResults() throws IOException, E {
+        mockNumberOfResults(2 * PAGINATION_SIZE + 1);
+        controller.exportToCsv("{}", Collections.emptyList());
+        verify(exportService, times(3)).export(any(OutputStream.class), any(), eq(ExportFormat.CSV), eq(Collections.emptyList()));
     }
 
     @Test
