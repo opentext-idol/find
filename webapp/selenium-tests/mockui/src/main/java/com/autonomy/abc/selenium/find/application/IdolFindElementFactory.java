@@ -1,5 +1,6 @@
 package com.autonomy.abc.selenium.find.application;
 
+import com.autonomy.abc.selenium.find.DashboardPage;
 import com.autonomy.abc.selenium.find.OnPremNavBarSettings;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
 import com.autonomy.abc.selenium.find.login.IdolFindLoginPage;
@@ -30,5 +31,9 @@ public abstract class IdolFindElementFactory extends FindElementFactory {
 
     public SettingsPage getSettingsPage() {
         return new SettingsPage.Factory().create(getDriver());
+    }
+
+    public DashboardPage getDashboard() {
+        return new DashboardPage.Factory().create(getDriver());
     }
 }
