@@ -26,15 +26,17 @@ define([
             'click button[name=validate]': 'triggerValidation'
         }, Widget.prototype.events),
 
-        initialize: function() {
+        initialize: function(options) {
             Widget.prototype.initialize.apply(this, arguments);
+            this.pptxTemplateUrl = options.pptxTemplateUrl;
         },
 
         render: function() {
             Widget.prototype.render.apply(this, arguments);
 
             this.$content.html(this.template({
-                strings: this.strings
+                strings: this.strings,
+                pptxTemplateUrl: this.pptxTemplateUrl
             }));
 
             this.$templateFile = this.$('.template-file-input');

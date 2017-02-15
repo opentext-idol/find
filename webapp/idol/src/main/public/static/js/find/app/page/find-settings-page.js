@@ -52,7 +52,8 @@ define([
                         description: i18n['settings.powerpoint.description'],
                         isOpened: true,
                         title: i18n['settings.powerpoint'],
-                        strings: this.serverStrings()
+                        strings: this.serverStrings(),
+                        pptxTemplateUrl: this.pptxTemplateUrl
                     })
                 ], [
                     new QueryManipulationWidget({

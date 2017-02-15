@@ -30,6 +30,7 @@ define([
         urlRoot: urlRoot,
         vent: vent,
         validateUrl: urlRoot + 'config-validation',
+        pptxTemplateUrl: urlRoot + 'template.pptx',
         widgetGroupParent: 'form .row',
 
         strings: {
@@ -81,6 +82,7 @@ define([
                 validateSuccess: i18n['settings.test.ok'],
                 templateFile: i18n['settings.powerpoint.template.file'],
                 templateFileDefault: i18n['settings.powerpoint.template.file.default'],
+                templateSampleDownload: i18n['settings.powerpoint.template.sample.download'],
                 templateValidate: i18n['settings.powerpoint.template.file.validate'],
                 templateMargins: i18n['settings.powerpoint.template.margins'],
                 CONNECTION_ERROR: i18n['settings.CONNECTION_ERROR'],
