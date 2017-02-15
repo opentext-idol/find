@@ -17,7 +17,7 @@ define([
      * @property {String} fieldName The parametric field name
      * @property {Backbone.Collection} selectedValues The selected values collection, kept up to date by this object, but
      * changes made in the collection will not be reflected here
-     * @property {Array<*>} indexes All indexes which should be queried for parametric values
+     * @property {Array<*>} allIndexes All indexes which should be queried for unrestricted parametric values
      * @property {number} [pageSize=20] How many values to fetch in one request
      */
     /**
@@ -37,7 +37,7 @@ define([
         this.fetchOptions = {
             fetchRestrictions: options.fetchRestrictions,
             fieldName: options.fieldName,
-            indexes: options.indexes,
+            allIndexes: options.allIndexes,
             pageSize: options.pageSize || 20
         };
 
@@ -120,7 +120,7 @@ define([
                 totalKey: 'totalValues',
                 useCount: false,
                 parameters: {
-                    databases: this.fetchOptions.indexes,
+                    databases: this.fetchOptions.allIndexes,
                     fieldNames: [this.fetchOptions.fieldName],
                     start: unrestrictedStart,
                     maxValues: this.fetchOptions.pageSize * this.paginationState.nextPage

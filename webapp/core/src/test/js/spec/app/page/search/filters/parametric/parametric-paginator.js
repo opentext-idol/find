@@ -60,7 +60,7 @@ define([
                 fetchRestrictions: {queryText: 'cat', databases: ['Generic']},
                 fetchFunction: this.fetchFunction,
                 fieldName: 'CATEGORY',
-                indexes: ALL_INDEXES,
+                allIndexes: ALL_INDEXES,
                 pageSize: 2,
                 selectedValues: this.selectedValues
             });

@@ -33,14 +33,14 @@ define([
                 stateTokens: options.queryModel.get('stateMatchIds')
             };
 
-            const indexes = searchDataUtil.buildIndexes(options.indexesCollection.map(function(model) {
+            const allIndexes = searchDataUtil.buildIndexes(options.indexesCollection.map(function(model) {
                 return model.pick('domain', 'name');
             }));
 
             this.fieldData = options.parametricFieldsCollection.map(function (fieldModel) {
                 const paginator = new ParametricPaginator({
                     fieldName: fieldModel.id,
-                    indexes: indexes,
+                    allIndexes: allIndexes,
                     selectedValues: options.selectedParametricValues,
                     fetchRestrictions: fetchRestrictions,
                     fetchFunction: function (data) {
