@@ -15,6 +15,8 @@ import com.hp.autonomy.frontend.find.core.web.RequestMapper;
 import com.hp.autonomy.frontend.reports.powerpoint.PowerPointService;
 import com.hp.autonomy.frontend.reports.powerpoint.PowerPointServiceImpl;
 import com.hp.autonomy.frontend.reports.powerpoint.SlideShowTemplate;
+import com.hp.autonomy.frontend.reports.powerpoint.TemplateSettings;
+import com.hp.autonomy.frontend.reports.powerpoint.TemplateSettingsSource;
 import com.hp.autonomy.frontend.reports.powerpoint.TemplateSource;
 import com.hp.autonomy.frontend.reports.powerpoint.dto.DategraphData;
 import com.hp.autonomy.frontend.reports.powerpoint.dto.ListData;
@@ -86,6 +88,10 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             }
 
             return TemplateSource.DEFAULT.getInputStream();
+        }, () -> {
+            final PowerPointConfig powerPoint = configService.getConfig().getPowerPoint();
+
+            return powerPoint == null ? TemplateSettingsSource.DEFAULT.getSettings() : new TemplateSettings(powerPoint.getAnchor());
         });
     }
 

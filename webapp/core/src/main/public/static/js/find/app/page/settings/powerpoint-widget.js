@@ -39,6 +39,11 @@ define([
 
             this.$templateFile = this.$('.template-file-input');
             this.$validity = this.$('.settings-client-validation');
+
+            this.$marginLeft = this.$('.template-input-marginLeft');
+            this.$marginTop = this.$('.template-input-marginTop');
+            this.$marginRight = this.$('.template-input-marginRight');
+            this.$marginBottom = this.$('.template-input-marginBottom');
         },
 
         handleValidation: function(config, response) {
@@ -65,12 +70,22 @@ define([
 
         getConfig: function() {
             return {
-                templateFile: this.$templateFile.val()
+                templateFile: this.$templateFile.val(),
+                marginLeft: this.$marginLeft.val(),
+                marginTop: this.$marginTop.val(),
+                marginRight: this.$marginRight.val(),
+                marginBottom: this.$marginBottom.val()
             }
         },
 
         updateConfig: function(config) {
-            this.$templateFile.val(config ? config.templateFile : '');
+            if (config) {
+                this.$templateFile.val(config.templateFile);
+                this.$marginLeft.val(config.marginLeft);
+                this.$marginTop.val(config.marginTop);
+                this.$marginRight.val(config.marginRight);
+                this.$marginBottom.val(config.marginBottom);
+            }
         }
     });
 });

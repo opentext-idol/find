@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
@@ -12,6 +13,8 @@ import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationCo
 import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
 import com.hp.autonomy.frontend.reports.powerpoint.PowerPointServiceImpl;
 import com.hp.autonomy.frontend.reports.powerpoint.SlideShowTemplate;
+import com.hp.autonomy.frontend.reports.powerpoint.TemplateSettingsSource;
+import com.hp.autonomy.frontend.reports.powerpoint.dto.Anchor;
 import java.io.File;
 import java.io.FileInputStream;
 import lombok.Data;
@@ -19,13 +22,21 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang.StringUtils;
 
+import static com.hp.autonomy.frontend.find.core.configuration.PowerPointConfig.Validation.INVALID_MARGINS;
+
 @JsonDeserialize(builder = PowerPointConfig.Builder.class)
 @Data
 public class PowerPointConfig implements OptionalConfigurationComponent<PowerPointConfig> {
     private final String templateFile;
 
+    private final Double marginTop, marginLeft, marginRight, marginBottom;
+
     private PowerPointConfig(final Builder builder) {
         templateFile = builder.templateFile;
+        marginTop = builder.marginTop;
+        marginLeft = builder.marginLeft;
+        marginRight = builder.marginRight;
+        marginBottom = builder.marginBottom;
     }
 
     @Override
@@ -33,6 +44,10 @@ public class PowerPointConfig implements OptionalConfigurationComponent<PowerPoi
         return savedSearchConfig != null ?
                 new PowerPointConfig.Builder()
                         .setTemplateFile(templateFile == null ? savedSearchConfig.templateFile : templateFile)
+                        .setMarginTop(marginTop == null ? savedSearchConfig.marginTop : marginTop)
+                        .setMarginLeft(marginLeft == null ? savedSearchConfig.marginLeft : marginLeft)
+                        .setMarginRight(marginRight == null ? savedSearchConfig.marginRight : marginRight)
+                        .setMarginBottom(marginBottom == null ? savedSearchConfig.marginBottom : marginBottom)
                         .build()
                 : this;
     }
@@ -46,7 +61,51 @@ public class PowerPointConfig implements OptionalConfigurationComponent<PowerPoi
         }
     }
 
+    @JsonIgnore
+    public Anchor getAnchor() {
+        final Anchor anchor = new Anchor();
+        if (marginLeft != null && marginLeft > 0) {
+            anchor.setX(marginLeft);
+        }
+        if (marginTop != null && marginTop > 0) {
+            anchor.setY(marginTop);
+        }
+        if (marginRight != null) {
+            double avail = 1 - marginRight - anchor.getX();
+            if (avail > 0) {
+                anchor.setWidth(avail);
+            }
+        }
+        if (marginBottom != null) {
+            double avail = 1 - marginBottom - anchor.getY();
+            if (avail > 0) {
+                anchor.setHeight(avail);
+            }
+        }
+
+        return anchor;
+    }
+
     public ValidationResult<Validation> validate() {
+        if(rangeIsInvalid(marginTop)) {
+            return new ValidationResult<>(false, INVALID_MARGINS);
+        }
+        if(rangeIsInvalid(marginLeft)) {
+            return new ValidationResult<>(false, INVALID_MARGINS);
+        }
+        if(rangeIsInvalid(marginRight)) {
+            return new ValidationResult<>(false, INVALID_MARGINS);
+        }
+        if(rangeIsInvalid(marginBottom)) {
+            return new ValidationResult<>(false, INVALID_MARGINS);
+        }
+        if(differenceIsInvalid(marginLeft, marginRight)) {
+            return new ValidationResult<>(false, INVALID_MARGINS);
+        }
+        if(differenceIsInvalid(marginTop, marginBottom)) {
+            return new ValidationResult<>(false, INVALID_MARGINS);
+        }
+
         if(StringUtils.isNotBlank(templateFile)) {
             final File file = new File(templateFile);
 
@@ -54,7 +113,7 @@ public class PowerPointConfig implements OptionalConfigurationComponent<PowerPoi
                 return new ValidationResult<>(false, Validation.TEMPLATE_FILE_NOT_FOUND);
             }
 
-            final PowerPointServiceImpl service = new PowerPointServiceImpl(() -> new FileInputStream(file));
+            final PowerPointServiceImpl service = new PowerPointServiceImpl(() -> new FileInputStream(file), TemplateSettingsSource.DEFAULT);
 
             try {
                 service.validateTemplate();
@@ -67,6 +126,19 @@ public class PowerPointConfig implements OptionalConfigurationComponent<PowerPoi
         return new ValidationResult<>(true, null);
     }
 
+    private boolean differenceIsInvalid(final Double min, final Double max) {
+        double realMin = min == null ? 0 : min;
+        double realMax = max == null ? 0 : max;
+        if (1 - realMin - realMax <= 0) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean rangeIsInvalid(final Double value) {
+        return value != null && (value > 1 || value < 0);
+    }
+
     @Override
     public Boolean getEnabled() {
         return true;
@@ -77,6 +149,7 @@ public class PowerPointConfig implements OptionalConfigurationComponent<PowerPoi
     @JsonPOJOBuilder(withPrefix = "set")
     public static class Builder {
         private String templateFile;
+        private Double marginTop, marginLeft, marginRight, marginBottom;
 
         public PowerPointConfig build() {
             return new PowerPointConfig(this);
@@ -85,7 +158,8 @@ public class PowerPointConfig implements OptionalConfigurationComponent<PowerPoi
 
     public enum Validation {
         TEMPLATE_FILE_NOT_FOUND,
-        TEMPLATE_INVALID;
+        TEMPLATE_INVALID,
+        INVALID_MARGINS;
 
         private Validation() {
         }
