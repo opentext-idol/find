@@ -51,6 +51,7 @@ define([
         IndexesCollection: null,
 
         // Abstract
+        ajaxErrorHandler: null,
         getPageData: null,
 
         events: {
@@ -74,6 +75,7 @@ define([
 
         initialize: function() {
             $.ajaxSetup({cache: false});
+            $(document).ajaxError(this.ajaxErrorHandler.bind(this));
 
             // disable Datatables alerting behaviour
             if ($.fn.dataTableExt) {
