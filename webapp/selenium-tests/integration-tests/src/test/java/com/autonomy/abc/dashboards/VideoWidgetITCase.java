@@ -10,7 +10,7 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 public class VideoWidgetITCase extends ClickableDashboardITCase {
 
     public VideoWidgetITCase(final TestConfig config) {
-        super(config, 1, "Video Dashboard", "List", "rabbit");
+        super(config, 1, "Video Dashboard", "List", "VideoSearch");
     }
 
     @Test

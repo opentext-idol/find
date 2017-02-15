@@ -10,7 +10,7 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 public class TopicMapWidgetITCase extends ClickableDashboardITCase {
 
     public TopicMapWidgetITCase(final TestConfig config) {
-        super(config, 1, "TopicMap Dashboard", "Topic Map", "heretic");
+        super(config, 1, "TopicMap Dashboard", "Topic Map", "ListSearch");
     }
 
     //this needs more robust testing when possible

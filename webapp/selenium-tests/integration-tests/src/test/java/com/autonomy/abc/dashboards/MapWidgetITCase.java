@@ -13,7 +13,7 @@ import static org.openqa.selenium.By.cssSelector;
 public class MapWidgetITCase extends ClickableDashboardITCase {
 
     public MapWidgetITCase(final TestConfig config) {
-        super(config, 1, "Map Dashboard", "Map", "cities");
+        super(config, 1, "Map Dashboard", "Map", "MapSearch");
     }
 
     @Test

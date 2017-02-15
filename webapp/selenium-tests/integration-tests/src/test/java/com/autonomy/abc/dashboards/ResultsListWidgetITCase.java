@@ -11,7 +11,7 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 public class ResultsListWidgetITCase extends ClickableDashboardITCase {
 
     public ResultsListWidgetITCase(final TestConfig config) {
-        super(config, 1, "List Dashboard", "List", "heretic");
+        super(config, 1, "List Dashboard", "List", "ListSearch");
     }
 
     @Test
