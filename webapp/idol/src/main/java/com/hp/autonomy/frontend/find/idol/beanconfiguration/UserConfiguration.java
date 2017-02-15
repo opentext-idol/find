@@ -9,6 +9,9 @@ import com.hp.autonomy.frontend.configuration.authentication.OneToOneOrZeroSimpl
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import java.util.Collections;
+import java.util.Map;
+
+import com.hp.autonomy.frontend.find.idol.authentication.FindCommunityRole;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -17,22 +20,18 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 
 @Configuration
 public class UserConfiguration {
-    public static final String IDOL_USER_ROLE = "FindUser";
-    public static final String IDOL_ADMIN_ROLE = "FindAdmin";
-    public static final String IDOL_BI_ROLE = "FindBI";
-
     @Value("${" + BiConfiguration.BI_PROPERTY + '}')
     private boolean enableBi;
 
     @Bean
     public GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
-        final CaseInsensitiveMap<String, String> rolesMap = new CaseInsensitiveMap<>();
+        final Map<String, String> rolesMap = new CaseInsensitiveMap<>();
 
-        rolesMap.put(IDOL_USER_ROLE, FindRole.USER.toString());
-        rolesMap.put(IDOL_ADMIN_ROLE, FindRole.ADMIN.toString());
+        rolesMap.put(FindCommunityRole.USER.value(), FindRole.USER.toString());
+        rolesMap.put(FindCommunityRole.ADMIN.value(), FindRole.ADMIN.toString());
 
         if (enableBi) {
-            rolesMap.put(IDOL_BI_ROLE, FindRole.BI.toString());
+            rolesMap.put(FindCommunityRole.BI.value(), FindRole.BI.toString());
         }
 
         return new OneToOneOrZeroSimpleAuthorityMapper(Collections.unmodifiableMap(rolesMap));

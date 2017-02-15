@@ -26,12 +26,7 @@ import com.hp.autonomy.frontend.reports.powerpoint.dto.SunburstData;
 import com.hp.autonomy.frontend.reports.powerpoint.dto.TableData;
 import com.hp.autonomy.frontend.reports.powerpoint.dto.TopicMapData;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Collection;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -48,8 +43,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Collection;
+
 @RequestMapping(ExportController.EXPORT_PATH)
 public abstract class ExportController<R extends QueryRequest<?>, E extends Exception> {
+    protected static final int PAGINATION_SIZE = 1000;
     static final String EXPORT_PATH = "/api/bi/export";
     static final String CSV_PATH = "/csv";
     static final String PPT_TOPICMAP_PATH = "/ppt/topicmap";
@@ -62,16 +65,16 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     static final String SELECTED_EXPORT_FIELDS_PARAM = "selectedFieldIds";
     static final String QUERY_REQUEST_PARAM = "queryRequest";
     private static final String EXPORT_FILE_NAME = "query-results";
-
-    private final ExportService<R, E> exportService;
     private final RequestMapper<R> requestMapper;
     private final ControllerUtils controllerUtils;
     private final ObjectMapper objectMapper;
 
     private final PowerPointService pptService;
 
-    protected ExportController(final ExportService<R, E> exportService, final RequestMapper<R> requestMapper, final ControllerUtils controllerUtils, final ObjectMapper objectMapper, final ConfigService<? extends FindConfig> configService) {
-        this.exportService = exportService;
+    protected ExportController(final RequestMapper<R> requestMapper,
+                               final ControllerUtils controllerUtils,
+                               final ObjectMapper objectMapper,
+                               final ConfigService<? extends FindConfig> configService) {
         this.requestMapper = requestMapper;
         this.controllerUtils = controllerUtils;
         this.objectMapper = objectMapper;
@@ -103,23 +106,17 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
             // The UI should not allow the User to send a request for a CSV with nothing in it.
             @RequestParam(value = SELECTED_EXPORT_FIELDS_PARAM, required = false) final Collection<String> selectedFieldNames
     ) throws IOException, E {
-        return export(queryRequestJSON, ExportFormat.CSV, selectedFieldNames);
-    }
-
-    private ResponseEntity<byte[]> export(final String queryRequestJSON, final ExportFormat exportFormat, final Collection<String> selectedFieldNames) throws IOException, E {
+        final ExportFormat exportFormat = ExportFormat.CSV;
         final R queryRequest = requestMapper.parseQueryRequest(queryRequestJSON);
-
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        exportService.export(outputStream, queryRequest, exportFormat, selectedFieldNames);
-        final byte[] output = outputStream.toByteArray();
-
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType(exportFormat.getMimeType()));
-        final String fileName = EXPORT_FILE_NAME + FilenameUtils.EXTENSION_SEPARATOR + exportFormat.getExtension();
-        headers.setContentDispositionFormData(fileName, fileName);
-
-        return new ResponseEntity<>(output, headers, HttpStatus.OK);
+        export(outputStream, queryRequest, exportFormat, selectedFieldNames);
+        return outputStreamToResponseEntity(exportFormat, outputStream);
     }
+
+    protected abstract void export(final OutputStream outputStream,
+                                   final R queryRequest,
+                                   final ExportFormat exportFormat,
+                                   final Collection<String> selectedFieldNames) throws E;
 
     //TODO improve to inform what went wrong with export, rather than generic just error 500.
     @ExceptionHandler
@@ -142,6 +139,17 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
                         .setException(e)
                         .build()
         );
+    }
+
+    private ResponseEntity<byte[]> outputStreamToResponseEntity(final ExportFormat exportFormat, final ByteArrayOutputStream outputStream) {
+        final byte[] output = outputStream.toByteArray();
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(exportFormat.getMimeType()));
+        final String fileName = EXPORT_FILE_NAME + FilenameUtils.EXTENSION_SEPARATOR + exportFormat.getExtension();
+        headers.setContentDispositionFormData(fileName, fileName);
+
+        return new ResponseEntity<>(output, headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = PPT_TOPICMAP_PATH, method = RequestMethod.POST)
