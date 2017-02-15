@@ -15,7 +15,7 @@ define([
 
     return UpdatingWidget.extend({
 
-        viewType: 'map',
+        viewType: 'list',
 
         clickable: true,
 
