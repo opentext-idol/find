@@ -168,6 +168,8 @@ define([
                     var lastModel = this.savedQueryCollection.last();
 
                     if(lastModel) {
+                        const route = lastModel.get('id') ? 'search/tab/' + lastModel.get('type') + ':' + lastModel.get('id') : 'search/query';
+                        vent.navigate(route, {trigger: false});
                         this.selectedTabModel.set('selectedSearchCid', lastModel.cid);
                     } else {
                         // If the user closes their last tab, run a search for *
@@ -232,6 +234,26 @@ define([
                 if(this.isExpanded()) {
                     this.$('.service-view-container').addClass('hide');
                     this.$('.query-service-view-container').removeClass('hide');
+                }
+            }, this);
+
+            this.listenTo(router, 'route:savedSearch', function(tab, resultsView) {
+
+                if (this.savedSearchCollection.get(tab)) {
+                    this.selectedTabModel.set({
+                        'selectedSearchCid': this.savedSearchCollection.get(tab).cid,
+                        'selectedResultsView': resultsView || ''
+                    });
+                }
+                else {
+                    this.listenToOnce(options.savedQueryCollection, 'update', function() {
+                        if (this.savedSearchCollection.get(tab)) {
+                            this.selectedTabModel.set({
+                                'selectedSearchCid': this.savedSearchCollection.get(tab).cid,
+                                'selectedResultsView': resultsView || ''
+                            });
+                        }
+                    });
                 }
             }, this);
 
@@ -389,6 +411,7 @@ define([
 
                 events(cid);
 
+                const modelId = this.savedSearchCollection.modelId(savedSearchModel.attributes);
                 if(this.serviceViews[cid]) {
                     viewData = this.serviceViews[cid];
                 } else {
@@ -441,6 +464,8 @@ define([
 
                     this.$('.query-service-view-container').append(viewData.view.$el);
                     viewData.view.render();
+
+                    this.listenTo(viewData.view, 'updateRouting', _.bind(this.updateRouting, this, modelId));
                 }
 
                 if(this.searchModel) {
@@ -462,6 +487,13 @@ define([
                 if (viewData.view.update) {
                     viewData.view.update();
                 }
+
+                if (this.selectedTabModel.get('selectedResultsView')) {
+                    viewData.view.changeTab(this.selectedTabModel.get('selectedResultsView'));
+                    this.selectedTabModel.set('selectedResultsView', '');
+                }
+
+                this.updateRouting(modelId, viewData.view.getSelectedTab());
             }
         },
 
@@ -550,6 +582,21 @@ define([
             this.savedQueryResultPoller.destroy();
             this.removeDocumentDetailView();
             Backbone.View.prototype.remove.call(this);
+        },
+
+        updateRouting: function(savedSearch, selectedTab) {
+            if (savedSearch) {
+                vent.navigate('/search/tab/' + savedSearch + (selectedTab ? '/view/' + selectedTab : ''), {trigger: false});
+            }
+            else {
+                vent.navigate('/search/query', {trigger: false});
+            }
+
+            this.currentRoute = Backbone.history.getFragment();
+        },
+
+        getSelectedRoute: function() {
+            return this.currentRoute;
         }
     });
 });

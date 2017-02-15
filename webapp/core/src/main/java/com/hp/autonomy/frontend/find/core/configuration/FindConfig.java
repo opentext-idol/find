@@ -33,4 +33,6 @@ public interface FindConfig<C extends FindConfig<C, B>, B extends FindConfigBuil
     Integer getTopicMapMaxResults();
 
     B toBuilder();
+
+    PowerPointConfig getPowerPoint();
 }

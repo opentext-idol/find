@@ -23,14 +23,17 @@ require.config({
         'parametric-refinement': '../bower_components/hp-autonomy-js-parametric-refinement/src',
         iCheck: '../bower_components/iCheck/icheck',
         chosen: '../bower_components/chosen/chosen.jquery',
+        metisMenu: '../bower_components/metisMenu/dist/metisMenu',
         jquery: '../bower_components/jquery/jquery',
         'js-whatever': '../bower_components/hp-autonomy-js-whatever/src',
         json2: '../bower_components/json/json2',
         'login-page': '../bower_components/hp-autonomy-login-page/src',
         leaflet: '../bower_components/leaflet/dist/leaflet-src',
+        'leaflet.notransform': 'leaflet.notransform/leaflet.notransform',
         'Leaflet.awesome-markers': '../bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers',
         'leaflet.markercluster': '../bower_components/leaflet.markercluster/dist/leaflet.markercluster-src',
         moment: '../bower_components/moment/moment',
+        'moment-timezone-with-data': '../bower_components/moment-timezone/builds/moment-timezone-with-data',
         Raphael: '../bower_components/raphael/raphael',
         settings: '../bower_components/hp-autonomy-settings-page/src',
         slider: '../bower_components/seiyria-bootstrap-slider/dist',
@@ -38,7 +41,10 @@ require.config({
         sunburst: '../bower_components/hp-autonomy-sunburst/src',
         topicmap: '../bower_components/hp-autonomy-topic-map/src',
         underscore: '../bower_components/underscore/underscore',
-        typeahead: '../bower_components/corejs-typeahead/dist/typeahead.jquery'
+        typeahead: '../bower_components/corejs-typeahead/dist/typeahead.jquery',
+        'flot': '../bower_components/Flot/jquery.flot',
+        'flot.time': '../bower_components/Flot/jquery.flot.time',
+        'html2canvas': '../bower_components/html2canvas/build/html2canvas'
     },
     shim: {
         'backbone-base': {
@@ -58,6 +64,9 @@ require.config({
             exports: '_'
         },
         'Leaflet.awesome-markers': ['leaflet'],
-        'leaflet.markercluster': ['leaflet']
+        'leaflet.markercluster': ['leaflet'],
+        'leaflet': ['leaflet.notransform'],
+        'flot': ['jquery'],
+        'flot.time': ['flot']
     }
 });

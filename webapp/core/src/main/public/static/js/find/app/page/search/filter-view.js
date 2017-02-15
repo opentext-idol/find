@@ -52,8 +52,10 @@ define([
             const IndexesView = options.IndexesView;
             this.collapsed = {};
 
+            var config = configuration();
+
             var views = [{
-                shown: configuration().enableMetaFilter,
+                shown: config.enableMetaFilter,
                 initialize: function() {
                     //Initializing the text with empty string to stop IE11 issue with triggering input event on render
                     this.filterModel = new Backbone.Model({text: ''});
@@ -221,7 +223,8 @@ define([
                         indexesCollection: options.indexesCollection,
                         parametricCollection: options.parametricCollection,
                         restrictedParametricCollection: options.restrictedParametricCollection,
-                        displayCollection: this.parametricDisplayCollection
+                        displayCollection: this.parametricDisplayCollection,
+                        showGraphButtons: _.contains(config.resultViewOrder, 'dategraph')
                     });
                 }.bind(this),
                 get$els: function() {

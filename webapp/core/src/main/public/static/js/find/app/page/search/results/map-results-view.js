@@ -12,7 +12,6 @@ define([
     'text!find/templates/app/page/search/results/map-popover.html',
     'text!find/templates/app/page/loading-spinner.html',
     'find/app/vent'
-
 ], function (Backbone, _, $, configuration, FieldSelectionView, MapView, i18n, DocumentsCollection, addLinksToSummary, template, popoverTemplate, loadingSpinnerTemplate, vent) {
 
     'use strict';
@@ -29,6 +28,10 @@ define([
             },
             'click .map-popup-title': function (e) {
                 vent.navigateToDetailRoute(this.documentsCollection.get(e.currentTarget.getAttribute('cid')));
+            },
+            'click .map-pptx': function(e){
+                e.preventDefault();
+                this.mapResultsView.exportPPT('Showing field ' + this.fieldSelectionView.model.get('displayValue'))
             }
         },
 

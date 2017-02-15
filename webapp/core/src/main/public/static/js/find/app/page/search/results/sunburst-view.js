@@ -128,7 +128,31 @@ define([
         render: function() {
             ParametricResultsView.prototype.render.apply(this, arguments);
 
+            this.$('.col-md-12').prepend('<a class="btn btn-default pull-right sunburst-pptx" href="#"><i class="hp-icon hp-document-download"></i> PPTX</a>');
+
             this.$content.addClass('sunburst');
+
+            this.$el.on('click', '.sunburst-pptx', _.bind(function(evt){
+                evt.preventDefault();
+
+                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/sunburst"><textarea name="data"></textarea><input type="submit"></form>');
+
+                var categories = [];
+                var values = [];
+
+                this.dependentParametricCollection.each(function(model){
+                    categories.push(model.get('text') || i18n['search.resultsView.sunburst.others']);
+                    values.push(model.get('count'));
+                });
+
+                $form[0].data.value = JSON.stringify({
+                    categories: categories,
+                    values: values,
+                    title: i18n['search.resultsView.sunburst.breakdown.by'](this.fieldsCollection.at(0).get('displayValue'))
+                });
+
+                $form.appendTo(document.body).submit().remove();
+            }, this))
 
             $(window).resize(_.bind(function() {
                 if(this.sunburst) {

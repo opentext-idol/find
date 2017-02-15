@@ -6,9 +6,10 @@
 define([
     'find/app/page/abstract-find-settings-page',
     'find/app/page/settings/iod-widget',
+    'find/app/page/settings/powerpoint-widget',
     'settings/js/widgets/single-user-widget',
     'underscore'
-], function(SettingsPage, IodWidget, SingleUserWidget, _) {
+], function(SettingsPage, IodWidget, PowerPointWidget, SingleUserWidget, _) {
     'use strict';
 
     return SettingsPage.extend({
@@ -49,6 +50,15 @@ define([
                             validateFailed: i18n['settings.test.failed']
                         },
                         title: i18n['settings.adminUser']
+                    })
+                ], [
+                    new PowerPointWidget({
+                        configItem: 'powerPoint',
+                        description: i18n['settings.powerpoint.description'],
+                        isOpened: true,
+                        title: i18n['settings.powerpoint'],
+                        strings: this.serverStrings(),
+                        pptxTemplateUrl: this.pptxTemplateUrl
                     })
                 ]
             ];

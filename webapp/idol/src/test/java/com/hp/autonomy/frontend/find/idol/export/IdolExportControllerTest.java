@@ -6,8 +6,10 @@
 package com.hp.autonomy.frontend.find.idol.export;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.export.ExportController;
 import com.hp.autonomy.frontend.find.core.export.ExportControllerTest;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
@@ -33,6 +35,8 @@ public class IdolExportControllerTest extends ExportControllerTest<IdolQueryRequ
     private IdolQueryRestrictions queryRestrictions;
     @Mock
     private IdolQueryRestrictionsBuilder queryRestrictionsBuilder;
+    @Mock
+    private ConfigService<IdolFindConfig> idolFindConfig;
 
     @Override
     protected ExportController<IdolQueryRequest, AciErrorException> constructController() throws IOException {
@@ -49,7 +53,7 @@ public class IdolExportControllerTest extends ExportControllerTest<IdolQueryRequ
         when(queryRestrictionsBuilder.stateMatchId(anyString())).thenReturn(queryRestrictionsBuilder);
         when(queryRestrictionsBuilder.build()).thenReturn(queryRestrictions);
 
-        return new IdolExportController(requestMapper, controllerUtils, documentsService, exportService);
+        return new IdolExportController(requestMapper, controllerUtils, documentsService, exportService, objectMapper, idolFindConfig);
     }
 
     @Override

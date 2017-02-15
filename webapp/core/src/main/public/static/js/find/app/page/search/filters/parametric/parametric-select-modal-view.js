@@ -23,6 +23,7 @@ define([
             this.selectCollection = options.selectCollection;
             this.currentFieldGroup = options.currentFieldGroup;
             this.parametricCollection = options.parametricCollection;
+            this.showGraphButtons = options.showGraphButtons;
         },
 
         renderFields: function () {
@@ -41,6 +42,7 @@ define([
                     field: field,
                     parametricDisplayCollection: this.parametricDisplayCollection,
                     selectCollection: this.selectCollection,
+                    showGraphButtons: this.showGraphButtons,
                     allValues: _.map(this.parametricCollection.get(field.id).get('values'), function(attributes) {
                         return {
                             id: attributes.value

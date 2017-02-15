@@ -46,7 +46,28 @@ define([
                 var maxResults = event.value;
 
                 this.model.set('maxResults', maxResults);
+            },
+            'click .entity-topic-map-pptx': function(evt){
+                evt.preventDefault()
+
+                var data = this.exportPPTData();
+
+                if (data) {
+                    // We need to append the temporary form to the document.body or Firefox and IE11 won't download the file.
+                    // Previously used GET; but IE11 has a limited GET url length and loses data.
+                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/topicmap"><textarea name="data"></textarea><input type="submit"></form>');
+                    $form[0].data.value = JSON.stringify(data)
+                    $form.appendTo(document.body).submit().remove()
+                }
             }
+        },
+
+        exportPPTData: function(){
+            var paths = this.topicMap.exportPaths();
+
+            return paths ? {
+                paths: _.flatten(paths.slice(1).reverse())
+            } : null
         },
 
         initialize: function(options) {
@@ -58,8 +79,10 @@ define([
                     return this.queryState ? _.flatten(this.queryState.conceptGroups.pluck('concepts')) : [];
                 }.bind(this)
             });
+
             this.queryModel = options.queryModel;
             this.type = options.type;
+            this.showSlider = !_.isUndefined(options.showSlider) ? options.showSlider : true;
 
             this.topicMap = new TopicMapView({
                 clickHandler: options.clickHandler
@@ -73,7 +96,7 @@ define([
 
             this.model = new Backbone.Model({
                 maxCount: 10,
-                maxResults: 300
+                maxResults: options.maxResults || 300
             });
 
             this.listenTo(this.model, 'change:maxResults', this.fetchRelatedConcepts);
@@ -202,25 +225,28 @@ define([
             }
 
             if(data) {
-                this.entityCollection.fetch({data: data});
+                return this.entityCollection.fetch({data: data});
             }
         },
 
         render: function() {
             this.$el.html(this.template({
-                i18n: i18n,
+                cid: this.cid,
                 errorTemplate: this.errorTemplate,
+                i18n: i18n,
                 loadingHtml: loadingHtml,
-                cid: this.cid
+                showSlider: this.showSlider
             }));
 
-            this.$('.speed-slider')
-                .slider({
-                    id: this.cid + '-speed-slider',
-                    min: 50,
-                    max: configuration().topicMapMaxResults,
-                    value: this.model.get('maxResults')
-                });
+            if (this.showSlider) {
+                this.$('.speed-slider')
+                    .slider({
+                        id: this.cid + '-speed-slider',
+                        min: 50,
+                        max: configuration().topicMapMaxResults,
+                        value: this.model.get('maxResults')
+                    });
+            }
 
             this.topicMap.setElement(this.$('.entity-topic-map')).render();
             this.update();

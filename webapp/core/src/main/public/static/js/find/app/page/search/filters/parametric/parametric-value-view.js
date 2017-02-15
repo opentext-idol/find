@@ -9,12 +9,17 @@ define([
         className: 'parametric-value-element selectable-table-item clickable',
         tagName: 'tr',
 
-        initialize: function() {
+        initialize: function(options) {
             this.$el.attr('data-value', this.model.id);
+            this.showGraphButtons = options.showGraphButtons;
         },
 
         render: function() {
             this.$el.html(template);
+
+            if (!this.showGraphButtons) {
+                this.$('.parametric-value-graph-cell').addClass('hide');
+            }
 
             this.$text = this.$('.parametric-value-text');
             this.$name = this.$('.parametric-value-name');

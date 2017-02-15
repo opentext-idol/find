@@ -34,7 +34,9 @@ define([
                     value: $target.attr('data-value')
                 };
 
-                if (this.selectedParametricValues.get(attributes)) {
+                if ($(e.target).closest('.parametric-value-graph-cell').length) {
+                    this.selectedParametricValues.trigger('graph', attributes.field, attributes.value);
+                } else if (this.selectedParametricValues.get(attributes)) {
                     this.selectedParametricValues.remove(attributes);
                 } else {
                     this.selectedParametricValues.add(attributes);
@@ -47,6 +49,7 @@ define([
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.displayCollection = options.displayCollection;
             this.filterModel = options.filterModel;
+            this.showGraphButtons = options.showGraphButtons;
 
             //ToDo : We are currently only monitoring restrictedParametricCollection for loading and error. Need to fix as part of FIND-618.
             this.model = new Backbone.Model({
@@ -130,7 +133,8 @@ define([
                         // collection is not passed to the individual views
                         parametricDisplayCollection: this.displayCollection,
                         selectedParametricValues: this.selectedParametricValues,
-                        timeBarModel: options.timeBarModel
+                        timeBarModel: options.timeBarModel,
+                        showGraphButtons: options.showGraphButtons
                     },
                     numericViewItemOptions: {
                         inputTemplate: options.inputTemplate,
@@ -145,7 +149,8 @@ define([
                         zoomEnabled: options.zoomEnabled,
                         buttonsEnabled: options.buttonsEnabled,
                         coordinatesEnabled: options.coordinatesEnabled,
-                        collapsed: isCollapsed
+                        collapsed: isCollapsed,
+                        showGraphButtons: options.showGraphButtons
                     }
                 }
             });

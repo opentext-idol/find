@@ -6,10 +6,12 @@
 package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
+import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
@@ -49,6 +51,12 @@ public class SavedSnapshotControllerTest {
     @Mock
     private IdolQueryRestrictionsBuilder queryRestrictionsBuilder;
 
+    @Mock
+    private ConfigService<IdolDashboardConfig> idolDashboardConfigService;
+
+    @Mock
+    private IdolDashboardConfig idolDashboardConfig;
+
     private SavedSnapshotController savedSnapshotController;
 
     private final SavedSnapshot savedSnapshot = new SavedSnapshot.Builder()
@@ -68,8 +76,10 @@ public class SavedSnapshotControllerTest {
         when(queryRestrictionsBuilder.minScore(anyInt())).thenReturn(queryRestrictionsBuilder);
         when(queryRestrictionsBuilder.stateMatchIds(any())).thenReturn(queryRestrictionsBuilder);
         when(queryRestrictionsBuilder.stateDontMatchIds(any())).thenReturn(queryRestrictionsBuilder);
+        when(idolDashboardConfigService.getConfig()).thenReturn(idolDashboardConfig);
+        when(idolDashboardConfig.getDashboards()).thenReturn(Collections.emptyList());
 
-        savedSnapshotController = new SavedSnapshotController(documentsService, savedSnapshotService, fieldTextParser, queryRestrictionsBuilderFactory);
+        savedSnapshotController = new SavedSnapshotController(documentsService, savedSnapshotService, fieldTextParser, queryRestrictionsBuilderFactory, idolDashboardConfigService);
     }
 
     @Test

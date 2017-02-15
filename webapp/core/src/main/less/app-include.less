@@ -39,6 +39,7 @@
 @color44: rgba(255, 192, 35, 0.6);
 @color45: rgba(132, 197, 55, 0.6);
 @color46: rgba(225, 97, 85, 0.6);
+@hpeNavBarColour: #333333;
 
 // Colours for side panel labels (eg concepts and selected filters)
 @sidePanelLabelColour: #435663;
@@ -742,9 +743,18 @@ fieldset.radio-fieldset > label {
 }
 
 .find-logo-small {
-  background: url('../img/Find_Logo_sml.png') no-repeat 0 0/100px 20px;
+  background: url('../img/Find_Logo_sml.png') no-repeat 0 50%/100px 20px;
   height: 20px;
   width: 100px;
+  &.side-nav {
+    float: none;
+    padding-right: 165px;
+    margin-top: 0;
+  }
+}
+
+.nav-menu-btn-container a.nav-menu-toggle-btn {
+    color: @white;
 }
 
 .hp-logo-footer {
@@ -1295,7 +1305,7 @@ input.find-input {
   &:extend(.m-b-nil);
 
   -webkit-transition: @transitAllFast;
-  background-color: @color1;
+  background-color: @hpeNavBarColour;
   color: @white;
   height: @navBarHeight;
   transition: @transitAllFast;
@@ -1324,14 +1334,14 @@ input.find-input {
 
 .navbar .navbar-nav .open .dropdown-menu > .active > a,
 .navbar .navbar-nav .open .dropdown-menu > .active > a:hover {
-  background-color: @color1;
+  background-color: @hpeNavBarColour;
   background-image: none;
 }
 
 .dropdown-menu > .active > a,
 .dropdown-menu > .active > a:hover,
 .dropdown-menu > .active > a:focus {
-  background-color: @color1;
+  background-color: @hpeNavBarColour;
   background-image: none;
 }
 
@@ -1580,12 +1590,17 @@ input.find-input {
   width: @custom3;
 }
 
-.parametric-value-count {
+.parametric-value-graph-cell {
+  width: @custom3;
+}
+
+.parametric-value-count,.parametric-value-graph {
   &:extend(.text-right);
 }
 
 .parametric-value-name,
-.parametric-value-count {
+.parametric-value-count,
+.parametric-value-graph{
   white-space: nowrap;
 }
 
@@ -1980,6 +1995,77 @@ h4.similar-dates-message {
   }
 }
 
+.dashboard {
+  height: calc(100vh - @navBarHeight);
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.widget {
+  box-shadow: 0 5px 20px 0 rgba(0,0,0,0.3);
+  padding: 0.5em;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  &:hover {
+    transform: scale(1.05);
+    transition: 0.3s;
+    z-index: 1;
+  }
+
+  .title {
+    &:extend(.m-t-nil);
+    flex: 0 0 auto;
+  }
+
+  .widget-content {
+    flex: 1 0 80%;
+    overflow: hidden;
+
+    .results-list {
+      display: flex;
+      &.results-list-row {
+        flex-direction: column;
+        max-height: 100%;
+      }
+
+      &.results-list-column {
+        display: flex;
+        flex-direction: row;
+
+        .search-result {
+          margin: 5px;
+        }
+      }
+      .search-result {
+        flex: 1 1 auto;
+        &.out-of-view {
+          visibility: hidden;
+        }
+      }
+    }
+
+    div.static-image {
+      background-size: contain;
+      background: no-repeat center;
+      height: 100%;
+    }
+
+    div.video-container {
+      background-color: transparent;
+      height: 100%;
+      position: relative;
+
+      video {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}
+
 /*------Media queries------*/
 @xxsmWidthScreen: ~"only screen and (max-width: 767px)";
 @xsmWidthScreen: ~"only screen and (max-width: 991px)";
@@ -1999,7 +2085,7 @@ h4.similar-dates-message {
 
   .navbar .navbar-nav .open .dropdown-menu > .active > a,
   .navbar .navbar-nav .open .dropdown-menu > .active > a:hover {
-    background-color: @color1;
+    background-color: @hpeNavBarColour;
     background-image: none;
   }
 }
@@ -2047,19 +2133,93 @@ h4.similar-dates-message {
 }
 
 @media @smHeightScreen {
-  .entity-topic-map {
+  .entity-topic-map, .dategraph-content {
     height: @custom4;
   }
 }
 
 @media @mHeightScreen {
-  .entity-topic-map {
+  .entity-topic-map, .dategraph-content {
     height: 500px;
   }
 }
 
 @media @lgHeightScreen {
-  .entity-topic-map {
+  .entity-topic-map, .dategraph-content {
     height: @lgHeightScreenTopicMapHeight;
   }
+}
+
+.dategraph-content {
+  clear: both;
+}
+
+input.editable-field {
+  min-width: 100%;
+}
+
+.results-view-pptx {
+  margin-left: 5px;
+}
+
+.report-pptx {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  opacity: 0.1;
+  transition: 0.5s opacity;
+}
+
+.report-pptx:hover {
+  opacity: 1;
+}
+
+.powerpoint-margins {
+  position: relative;
+  border: 1px lightgray solid;
+  width: 250px;
+  height: 140px;
+  margin-bottom: 5px;
+}
+
+.powerpoint-margins-docbox {
+  font-size: 54px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 25%;
+  bottom: 0;
+  text-align: center;
+}
+
+.powerpoint-margins > .template-input-margin {
+  position: absolute;
+  width: 70px;
+}
+
+.template-input-marginTop {
+  left: 50%;
+  top: 2px;
+  text-align: center;
+  margin-left: -35px;
+}
+
+.template-input-marginBottom {
+  left: 50%;
+  bottom: 2px;
+  text-align: center;
+  margin-left: -35px;
+}
+
+.template-input-marginLeft {
+  left: 2px;
+  top: 36%;
+  text-align: right;
+}
+
+.template-input-marginRight {
+  right: 2px;
+  top: 36%;
+  text-align: left;
 }

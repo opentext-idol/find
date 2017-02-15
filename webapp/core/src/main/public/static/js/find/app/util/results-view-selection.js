@@ -24,8 +24,8 @@ define([
         render: function() {
             this.$el.html('<ul class="nav nav-tabs minimal-tab selector-list" role="tablist"></ul>');
 
-            var $selectorList = this.$('.selector-list');
-            var selectedTab = this.model.get('selectedTab');
+            const $selectorList = this.$('.selector-list');
+            const selectedTab = this.model.get('selectedTab');
 
             _.each(this.views, function(viewData) {
                 $(this.selectorTemplate({
@@ -36,6 +36,13 @@ define([
                 })).toggleClass('active', viewData.id === selectedTab)
                     .appendTo($selectorList);
             }, this);
+        },
+
+        switchTab: function(tab) {
+            const $tab = this.$('[data-tab-id = "' + tab + '"]');
+            if ($tab) {
+                $tab.tab('show');
+            }
         }
     });
 

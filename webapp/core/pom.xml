@@ -115,6 +115,20 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <delimiters>
+                        <delimiter>${resource.delimiter}</delimiter>
+                    </delimiters>
+                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>pptx</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
+                </configuration>
+            </plugin>
         </plugins>
         <resources>
             <resource>
@@ -137,6 +151,11 @@
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>haven-search-components-core</artifactId>
             <version>${haven.search.components.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.reports.powerpoint</groupId>
+            <artifactId>powerpoint-report</artifactId>
+            <version>${powerpoint.report.version}</version>
         </dependency>
 
         <dependency>

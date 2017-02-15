@@ -9,8 +9,10 @@ define([
 ], function(_, RouterConstructor) {
 
     //noinspection LocalVariableNamingConventionJS
-    var Router = RouterConstructor.extend({
+    const Router = RouterConstructor.extend({
         routes: _.extend({
+            'dashboards/:dashboardName': 'dashboards',
+            'search/tab/:id(/view/:view)': 'savedSearch',
             'search/document/:database/:reference': 'documentDetail',
             'search/suggest/:database/:reference': 'suggest'
         }, RouterConstructor.prototype.routes)

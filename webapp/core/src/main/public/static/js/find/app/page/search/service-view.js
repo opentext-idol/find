@@ -26,6 +26,7 @@ define([
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/page/search/results/sunburst-view',
     'find/app/page/search/results/map-results-view',
+    'find/app/page/search/results/dategraph/dategraph-view',
     'find/app/page/search/results/table/table-view',
     'find/app/page/search/time-bar-view',
     'find/app/configuration',
@@ -36,7 +37,7 @@ define([
             ParametricCollection, ParametricFieldsCollection, NumericParametricFieldsCollection,
             queryStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
             RelatedConceptsView, addChangeListener, SavedSearchControlView, TopicMapView,
-            SunburstView, MapResultsView, TableView, TimeBarView, configuration, prettifyFieldName,
+            SunburstView, MapResultsView, DateGraphView, TableView, TimeBarView, configuration, prettifyFieldName,
             i18n, templateString) {
     'use strict';
 
@@ -267,6 +268,17 @@ define([
                         displayNameKey: 'table',
                         icon: 'hp-table'
                     }
+                },
+                dategraph: {
+                    Constructor: DateGraphView,
+                    constructorArguments: _.extend({
+                        timeBarModel: this.timeBarModel
+                    }, subViewArguments),
+                    shown: hasBiRole,
+                    selector: {
+                        displayNameKey: 'dategraph',
+                        icon: 'hp-analytics'
+                    }
                 }
             };
 
@@ -281,7 +293,7 @@ define([
                     }, resultsViewsMap[viewId]);
                 });
 
-            var resultsViewSelectionModel = new Backbone.Model({
+            this.resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab
                 selectedTab: this.resultsViews[0].id
             });
@@ -290,13 +302,17 @@ define([
             if(this.resultsViews.length > 1) {
                 this.resultsViewSelection = new ResultsViewSelection({
                     views: this.resultsViews,
-                    model: resultsViewSelectionModel
+                    model: this.resultsViewSelectionModel
                 });
             }
 
             this.resultsViewContainer = new ResultsViewContainer({
                 views: this.resultsViews,
-                model: resultsViewSelectionModel
+                model: this.resultsViewSelectionModel
+            });
+
+            this.listenTo(this.resultsViewSelectionModel, 'change:selectedTab', function(model, selectedTab) {
+                this.trigger('updateRouting', selectedTab);
             });
 
             this.listenTo(this.queryModel, 'refresh', this.fetchData);
@@ -318,6 +334,8 @@ define([
             $window
                 .scroll(this.updateScrollParameters)
                 .resize(this.updateScrollParameters);
+
+            this.listenTo(this.previewModeModel, 'parametric-edit', _.throttle(this.fetchRestrictedParametricCollection, 5000, {leading: false}), this)
         },
 
         render: function() {
@@ -485,6 +503,14 @@ define([
 
         rightSideContainerHideToggle: function(toggle) {
             this.$('.right-side-container').toggle(toggle);
+        },
+
+        changeTab: function(tab) {
+            this.resultsViewSelection.switchTab(tab);
+        },
+
+        getSelectedTab: function() {
+            return this.resultsViewSelectionModel.get('selectedTab');
         },
 
         remove: function() {

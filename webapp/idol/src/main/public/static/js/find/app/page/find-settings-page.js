@@ -15,10 +15,11 @@ define([
     'find/app/page/settings/saved-search-widget',
     'find/app/page/settings/stats-server-widget',
     'find/app/page/settings/view-widget',
+    'find/app/page/settings/powerpoint-widget',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/settings/community-widget.html'
 ], function (_, SettingsPage, AciWidget, AnswerServerWidget, CommunityWidget, MapWidget, MmapWidget, QueryManipulationWidget,
-             SavedSearchWidget, StatsServerWidget, ViewWidget, i18n, dropdownTemplate) {
+             SavedSearchWidget, StatsServerWidget, ViewWidget, PowerPointWidget, i18n, dropdownTemplate) {
 
     return SettingsPage.extend({
         initializeWidgets: function () {
@@ -45,6 +46,14 @@ define([
                             loginTypeLabel: i18n['settings.community.login.type'],
                             validateFailed: i18n['settings.test.failed']
                         })
+                    }),
+                    new PowerPointWidget({
+                        configItem: 'powerPoint',
+                        description: i18n['settings.powerpoint.description'],
+                        isOpened: true,
+                        title: i18n['settings.powerpoint'],
+                        strings: this.serverStrings(),
+                        pptxTemplateUrl: this.pptxTemplateUrl
                     })
                 ], [
                     new QueryManipulationWidget({
