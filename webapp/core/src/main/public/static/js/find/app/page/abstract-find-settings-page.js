@@ -95,7 +95,8 @@ define([
                 SERVICE_AND_INDEX_PORT_ERROR: i18n['settings.SERVICE_AND_INDEX_PORT_ERROR'],
                 SERVICE_PORT_ERROR: i18n['settings.SERVICE_PORT_ERROR'],
                 TEMPLATE_FILE_NOT_FOUND: i18n['settings.powerpoint.template.error.TEMPLATE_FILE_NOT_FOUND'],
-                TEMPLATE_INVALID: i18n['settings.powerpoint.template.error.TEMPLATE_INVALID']
+                TEMPLATE_INVALID: i18n['settings.powerpoint.template.error.TEMPLATE_INVALID'],
+                INVALID_MARGINS: i18n['settings.powerpoint.template.error.INVALID_MARGINS']
             };
         },
 

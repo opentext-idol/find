@@ -312,6 +312,7 @@ define([
         'settings.powerpoint.template.file.validate': 'Test Template',
         'settings.powerpoint.template.error.TEMPLATE_FILE_NOT_FOUND': 'PowerPoint template file not found',
         'settings.powerpoint.template.error.TEMPLATE_INVALID': 'PowerPoint template file has invalid format',
+        'settings.powerpoint.template.error.INVALID_MARGINS': 'Invalid margins supplied',
         'settings.powerpoint.template.margins': 'Margins',
         'settings.queryManipulation': 'Query Manipulation',
         'settings.queryManipulation.blacklist': 'Blacklist Name',
