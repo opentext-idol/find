@@ -100,7 +100,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
 
     public List<WebElement> activePaneFilterList() {
         scrollDownInsideModal();
-        return activePane().findElements(By.cssSelector(".checkbox.parametric-field-label"));
+        return activePane().findElements(By.cssSelector(".checkbox.parametric-value-label"));
     }
 
     private void scrollDownInsideModal() {
@@ -118,7 +118,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
             DriverUtil.scrollToBottom(driver);
             twicePreviousNumber = previousNumber;
             previousNumber = numberOfCategories;
-            numberOfCategories = pane.findElements(By.cssSelector(".checkbox.parametric-field-label")).size();
+            numberOfCategories = pane.findElements(By.cssSelector(".checkbox.parametric-value-label")).size();
             i++;
         }
         if(i >= limit) {
@@ -131,12 +131,12 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
         return pane.findElements(
                 By.xpath(
                         ".//*[contains(@class, 'checkbox') and " +
-                                "contains(@class, 'parametric-field-label') and contains(.,'(0)')]"
+                                "contains(@class, 'parametric-value-label') and contains(.,'(0)')]"
                 )).size();
     }
 
     public List<WebElement> allFilters() {
-        return findElements(By.cssSelector(".checkbox.parametric-field-label"));
+        return findElements(By.cssSelector(".checkbox.parametric-value-label"));
     }
 
     public String checkCheckBoxInActivePane(final int i) {

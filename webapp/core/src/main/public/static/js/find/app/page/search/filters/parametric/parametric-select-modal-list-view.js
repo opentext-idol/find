@@ -29,7 +29,7 @@ define([
 
         events: {
             'scroll': 'checkScroll',
-            'ifClicked .parametric-field-label': function (e) {
+            'ifClicked .parametric-value-label': function (e) {
                 this.paginator.toggleSelection($(e.currentTarget).attr('data-value'));
             }
         },
