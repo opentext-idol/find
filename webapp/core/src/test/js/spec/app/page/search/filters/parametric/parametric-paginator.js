@@ -66,7 +66,7 @@ define([
             });
         });
 
-        it('constructs with no error and not loading or empty', checkState());
+        it('constructs with no error and loading but not empty', checkState({loading: true}));
 
         it('does not fetch on construction', function() {
             expect(this.fetchPromises.length).toBe(0);

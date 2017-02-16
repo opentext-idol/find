@@ -42,7 +42,7 @@ define([
         };
 
         this.stateModel = new Backbone.Model({
-            loading: false,
+            loading: true,
             error: null,
             empty: false
         });
