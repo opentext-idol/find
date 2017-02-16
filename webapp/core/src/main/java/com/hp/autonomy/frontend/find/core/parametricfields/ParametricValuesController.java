@@ -15,6 +15,8 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
 import com.hp.autonomy.types.requests.idol.actions.tags.RangeInfo;
+import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
+import com.hp.autonomy.types.requests.idol.actions.tags.ValueDetails;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import org.apache.commons.collections4.ListUtils;
 import org.joda.time.DateTime;
@@ -39,6 +41,9 @@ import java.util.Set;
 public abstract class ParametricValuesController<Q extends QueryRestrictions<S>, R extends ParametricRequest<Q>, S extends Serializable, E extends Exception> {
     @SuppressWarnings("WeakerAccess")
     public static final String PARAMETRIC_PATH = "/api/public/parametric";
+    static final String VALUES_PATH = "/values";
+    private static final String VALUE_DETAILS_PATH = "/value-details";
+    static final String BUCKET_PARAMETRIC_PATH = "/buckets";
     public static final String DEPENDENT_VALUES_PATH = "/dependent-values";
     public static final String FIELD_NAMES_PARAM = "fieldNames";
     public static final String QUERY_TEXT_PARAM = "queryText";
@@ -152,6 +157,35 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         final BucketingParams bucketingParams = new BucketingParams(targetNumberOfBuckets, bucketMin, bucketMax);
         final Map<FieldPath, BucketingParams> bucketingParamsPerField = Collections.singletonMap(fieldName, bucketingParams);
         return parametricValuesService.getNumericParametricValuesInBuckets(parametricRequest, bucketingParamsPerField).get(0);
+    }
+
+    @SuppressWarnings("MethodWithTooManyParameters")
+    @RequestMapping(method = RequestMethod.GET, value = VALUE_DETAILS_PATH)
+    @ResponseBody
+    public Map<TagName, ValueDetails> getValueDetails(
+            @RequestParam(FIELD_NAMES_PARAM) final List<TagName> fieldNames,
+            @RequestParam(QUERY_TEXT_PARAM) final String queryText,
+            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+            @RequestParam(DATABASES_PARAM) final Collection<S> databases,
+            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
+            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
+            @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
+            @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
+    ) throws E {
+        final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
+                .queryText(queryText)
+                .fieldText(fieldText)
+                .databases(databases)
+                .minDate(minDate)
+                .maxDate(maxDate)
+                .minScore(minScore)
+                .build();
+        final R parametricRequest = parametricRequestBuilderFactory.getObject()
+                .fieldNames(ListUtils.emptyIfNull(fieldNames))
+                .maxValues(null)
+                .queryRestrictions(queryRestrictions)
+                .build();
+        return parametricValuesService.getValueDetails(parametricRequest);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
