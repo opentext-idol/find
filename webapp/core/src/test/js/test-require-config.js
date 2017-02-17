@@ -21,7 +21,6 @@ require.config({
             'find/app/router': 'mock/router',
             'find/app/vent': 'mock/vent',
             'find/app/util/database-name-resolver': 'mock/database-name-resolver',
-            'find/lib/backbone/backbone-extensions': 'backbone',
             'find/app/util/confirm-view': 'mock/util/confirm-view',
             'find/app/page/search/document/location-tab': 'mock/page/search/document/location-tab',
             'find/app/util/topic-map-view': 'mock/util/topic-map-view',
@@ -43,6 +42,9 @@ require.config({
         },
         'find/app/page/search/results/entity-topic-map-view': {
             'find/app/model/entity-collection': 'mock/model/entity-collection'
+        },
+        'find/app/page/search/filters/parametric/parametric-select-modal-view': {
+            'find/app/page/search/filters/parametric/parametric-paginator': 'mock/page/search/filters/parametric/parametric-paginator'
         }
     }
 });

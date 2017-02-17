@@ -40,7 +40,7 @@ define([
         initialize: function(options) {
             this.queryModel = options.queryModel;
             this.savedSearchModel = options.savedSearchModel;
-            this.parametricCollection = options.restrictedParametricCollection;
+            this.parametricCollection = options.parametricCollection;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
 
             this.emptyDependentMessage = options.emptyDependentMessage;

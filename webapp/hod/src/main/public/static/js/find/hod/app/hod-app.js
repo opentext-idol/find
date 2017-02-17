@@ -26,6 +26,14 @@ define([
                     Constructor: DefaultPage
                 }
             };
+        },
+
+        ajaxErrorHandler: function(event, xhr) {
+            if (xhr.status === 401) {
+                location.assign('sso');
+            } else if (xhr.status === 403) {
+                window.location.reload();
+            }
         }
     });
 

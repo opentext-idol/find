@@ -52,19 +52,6 @@ define([
             return {
                 comparisonModalCallback: this.comparisonModalCallback
             };
-        },
-
-        fetchParametricValues: function() {
-            this.parametricCollection.reset();
-
-            var fieldNames = this.parametricFieldsCollection.pluck('id');
-            if(fieldNames.length > 0) {
-                this.parametricCollection.fetch({
-                    data: {
-                        fieldNames: fieldNames
-                    }
-                });
-            }
         }
     });
 });

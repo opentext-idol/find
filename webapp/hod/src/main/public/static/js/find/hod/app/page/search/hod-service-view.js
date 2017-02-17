@@ -17,7 +17,6 @@ define([
         ResultsViewAugmentation: ResultsViewAugmentation,
 
         // TODO: Enable sunburst in HOD when IOD-9173 is complete
-        // TODO: When sunburst is enabled make this.fetchParametricFields also fetch the restrictedParametricCollection
         displayDependentParametricViews: false,
         mapViewResultsStep: 2500,
         mapViewAllowIncrement: false,
@@ -37,8 +36,7 @@ define([
                 this.dateParametricFieldsCollection.reset();
 
                 if(this.queryModel.get('indexes').length !== 0) {
-                    this.fetchParametricFields(this.parametricFieldsCollection,
-                        _.bind(this.fetchParametricValueCollections, this));
+                    this.fetchParametricFields(this.parametricFieldsCollection, this.fetchParametricCollection.bind(this));
                     this.fetchParametricFields(this.numericParametricFieldsCollection);
                     this.fetchParametricFields(this.dateParametricFieldsCollection);
                 }
@@ -61,22 +59,6 @@ define([
                         }
                     }, this)
                 });
-            }
-        },
-
-        fetchParametricValues: function() {
-            this.parametricCollection.reset();
-
-            if(this.queryModel.get('indexes').length !== 0) {
-                var fieldNames = this.parametricFieldsCollection.pluck('id');
-                if(fieldNames.length > 0) {
-                    this.parametricCollection.fetch({
-                        data: {
-                            databases: this.queryModel.get('indexes'),
-                            fieldNames: fieldNames
-                        }
-                    });
-                }
             }
         }
     });

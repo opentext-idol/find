@@ -18,10 +18,11 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@SuppressWarnings("ProhibitedExceptionDeclared")
 public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
     @Test
     public void getParametricValues() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_VALUES_PATH)
+        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_PATH + ParametricValuesController.VALUES_PATH)
                 .param(ParametricValuesController.FIELD_NAMES_PARAM, mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_FIELDS_PATH))
                 .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
                 .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
@@ -36,7 +37,7 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
 
     @Test
     public void getDateParametricValues() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_VALUES_PATH + ParametricValuesController.BUCKET_PARAMETRIC_PATH + '/' + ParametricValuesService.AUTN_DATE_FIELD)
+        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_PATH + ParametricValuesController.BUCKET_PARAMETRIC_PATH + '/' + ParametricValuesService.AUTN_DATE_FIELD)
                 .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
                 .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
                 .param(ParametricValuesController.TARGET_NUMBER_OF_BUCKETS_PARAM, "35")
@@ -52,7 +53,7 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
 
     @Test
     public void getDateParametricValuesForField() throws Exception {
-        final String url = ParametricValuesController.PARAMETRIC_VALUES_PATH + ParametricValuesController.BUCKET_PARAMETRIC_PATH + '/' + ParametricValuesService.AUTN_DATE_FIELD;
+        final String url = ParametricValuesController.PARAMETRIC_PATH + ParametricValuesController.BUCKET_PARAMETRIC_PATH + '/' + ParametricValuesService.AUTN_DATE_FIELD;
 
         final MockHttpServletRequestBuilder requestBuilder = get(url)
                 .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
@@ -71,7 +72,7 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
 
     @Test
     public void getDependentParametricValues() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_VALUES_PATH + ParametricValuesController.DEPENDENT_VALUES_PATH)
+        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_PATH + ParametricValuesController.DEPENDENT_VALUES_PATH)
                 .param(ParametricValuesController.FIELD_NAMES_PARAM, mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_FIELDS_PATH))
                 .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
                 .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")

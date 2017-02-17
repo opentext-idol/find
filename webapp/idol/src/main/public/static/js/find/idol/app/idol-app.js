@@ -5,6 +5,7 @@
 define([
     'find/app/app',
     'underscore',
+    'find/app/util/logout',
     'find/app/configuration',
     'find/idol/app/model/idol-indexes-collection',
     'find/idol/app/model/saved-searches/saved-snapshot-collection',
@@ -13,7 +14,7 @@ define([
     'find/idol/app/page/find-about-page',
     'find/app/page/find-settings-page',
     'i18n!find/nls/bundle'
-], function(BaseApp, _, configuration, IndexesCollection, SavedSnapshotCollection, Navigation, FindSearch, AboutPage,
+], function(BaseApp, _, logout, configuration, IndexesCollection, SavedSnapshotCollection, Navigation, FindSearch, AboutPage,
             SettingsPage, i18n) {
     'use strict';
 
@@ -63,6 +64,15 @@ define([
             }
 
             return pageData;
+        },
+
+        ajaxErrorHandler: function(event, xhr) {
+            if (xhr.status === 401) {
+                logout('../logout');
+            } else if (xhr.status === 403) {
+                // refresh the page - the filters should then redirect to the login screen
+                window.location.reload();
+            }
         }
     });
 });

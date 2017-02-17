@@ -7,8 +7,7 @@ require.config({
     paths: {
         css: '../css',
         'about-page': '../bower_components/hp-autonomy-about-page/src',
-        backbone: 'find/lib/backbone/backbone-extensions',
-        'backbone-base': '../bower_components/backbone/backbone',
+        backbone: '../bower_components/backbone/backbone',
         bootstrap: '../bower_components/bootstrap/dist/js/bootstrap',
         bowser: '../bower_components/bjoska.bowser/bowser',
         'bootstrap-datetimepicker': '../bower_components/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
@@ -41,7 +40,7 @@ require.config({
         typeahead: '../bower_components/corejs-typeahead/dist/typeahead.jquery'
     },
     shim: {
-        'backbone-base': {
+        'backbone': {
             exports: 'Backbone'
         },
         bootstrap: ['jquery'],

@@ -5,92 +5,72 @@ define([
 
     describe('Parametric Select Modal View', function() {
         beforeEach(function() {
-            this.selectCollection = new Backbone.Collection();
-
-            var field = new Backbone.Model({
-                displayName: 'Teenage Mutant Ninja Turtles',
-                id: 'TMNT'
-            });
-
-            field.fieldValues = new Backbone.Collection([
-                {
-                    count: 100,
-                    id: 'Leonardo',
-                    selected: true
-                },
-                {
-                    count: 75,
-                    id: 'Michelangelo',
-                    selected: false
-                },
-                {
-                    count: 50,
-                    id: 'Raphael',
-                    selected: true
-                },
-                {
-                    count: 1,
-                    id: 'Donatello',
-                    selected: false
-                }
+            this.selectedParametricValues = new Backbone.Collection([
+                {field: 'AUTHOR', value: 'Matthew'}
             ]);
 
-            var parametricCollectionModel = new Backbone.Model({
-                id: 'TMNT',
-                values: [
-                    {
-                        count: 2000,
-                        value: 'Leonardo'
-                    },
-                    {
-                        count: 1000,
-                        value: 'Michelangelo'
-                    },
-                    {
-                        count: 500,
-                        value: 'Raphael'
-                    },
-                    {
-                        count: 200,
-                        value: 'Donatello'
-                    }
-                ]
+            const queryModel = new Backbone.Model({
+                indexes: ['WIKIPEDIA'],
+                autoCorrect: false,
+                queryText: 'cat',
+                fieldText: null,
+                minScore: 50,
+                stateTokens: []
             });
 
-            this.parametricDisplayCollection = new Backbone.Collection([field]);
+            queryModel.getIsoDate = jasmine.createSpy('getIsoDate').and.returnValue(null);
 
             this.view = new ParametricSelectModalView({
-                parametricCollection: new Backbone.Collection([parametricCollectionModel]),
-                parametricDisplayCollection: this.parametricDisplayCollection,
-                selectCollection: this.selectCollection,
-                currentFieldGroup: 'TMNT'
+                queryModel: queryModel,
+                initialField: 'CATEGORY',
+                selectedParametricValues: this.selectedParametricValues,
+                indexesCollection: new Backbone.Collection([
+                    {name: 'BROADCAST'},
+                    {name: 'WIKIPEDIA'}
+                ]),
+                parametricFieldsCollection: new Backbone.Collection([
+                    {id: 'AUTHOR', displayName: 'Author'},
+                    {id: 'PLACE'},
+                    {id: 'CATEGORY'}
+                ])
             });
 
             this.view.render();
-            this.view.$el.appendTo($('body'));
         });
 
         afterEach(function() {
             this.view.remove();
         });
 
-        it('should display a loading spinner', function() {
-            expect(this.view.$('.loading-spinner')).toBeVisible();
+        it('renders each field as a tab, sorted by display name', function() {
+            const $tabs = this.view.$('.fields-list a');
+            expect($tabs).toHaveLength(3);
+            expect($tabs.eq(0)).toContainText('Author');
+            expect($tabs.eq(1)).toContainText('Category');
+            expect($tabs.eq(2)).toContainText('Place');
         });
 
-        describe('after the renderFields callback is executed', function () {
-            beforeEach(function () {
-                this.view.renderFields();
+        it('selects the initialField', function() {
+            expect(this.view.$('.fields-list [data-field="CATEGORY"]')).toHaveClass('active');
+
+            expect(this.view.$('.fields-list [data-field="AUTHOR"]')).not.toHaveClass('active');
+            expect(this.view.$('.fields-list [data-field="PLACE"]')).not.toHaveClass('active');
+        });
+
+        it('creates a list view for each field', function() {
+            expect(this.view.$('.values-list .tab-pane')).toHaveLength(3);
+        });
+
+        describe('when a different field tab is clicked', function() {
+            beforeEach(function() {
+                this.view.$('.fields-list [data-field="AUTHOR"] a').click();
             });
 
-            it('should no longer display a loading spinner', function() {
-                expect(this.view.$('.loading-spinner')).not.toExist();
-            });
+            it('selects the new field', function() {
+                expect(this.view.$('.fields-list [data-field="AUTHOR"]')).toHaveClass('active');
 
-            it('should only show one field', function () {
-                expect(this.view.$('.category-title')).toExist();
-                expect(this.view.$('.category-title').length).toBe(1);
-                expect(this.view.$('.category-title')).toHaveText('Teenage Mutant Ninja Turtles');
+                expect(this.view.$('.fields-list [data-field="CATEGORY"]')).not.toHaveClass('active');
+                expect(this.view.$('.fields-list [data-field="PLACE"]')).not.toHaveClass('active');
             });
         });
     });

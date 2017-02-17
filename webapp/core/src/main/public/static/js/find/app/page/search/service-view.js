@@ -67,7 +67,6 @@ define([
         ResultsView: null,
         ResultsViewAugmentation: null,
         fetchParametricFields: null,
-        fetchParametricValues: null,
 
         timeBarView: null,
 
@@ -126,8 +125,7 @@ define([
             });
 
             this.parametricFieldsCollection = new ParametricFieldsCollection([]);
-            this.parametricCollection = new ParametricCollection([], {url: 'api/public/parametric'});
-            this.restrictedParametricCollection = new ParametricCollection([], {url: 'api/public/parametric/restricted'});
+            this.parametricCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
             this.numericParametricFieldsCollection = new NumericParametricFieldsCollection([], {dataType: 'numeric'});
             this.dateParametricFieldsCollection = new NumericParametricFieldsCollection([], {dataType: 'date'});
 
@@ -147,7 +145,6 @@ define([
                 parametricCollection: this.parametricCollection,
                 parametricFieldsCollection: this.parametricFieldsCollection,
                 previewModeModel: this.previewModeModel,
-                restrictedParametricCollection: this.restrictedParametricCollection,
                 savedSearchCollection: this.savedSearchCollection,
                 savedSearchModel: this.savedSearchModel,
                 searchCollections: this.searchCollections,
@@ -309,7 +306,7 @@ define([
 
             this.listenForParametricFieldMetrics();
 
-            this.fetchParametricFields(this.parametricFieldsCollection, _.bind(this.fetchParametricValueCollections, this));
+            this.fetchParametricFields(this.parametricFieldsCollection, this.fetchParametricCollection.bind(this));
             this.fetchParametricFields(this.numericParametricFieldsCollection);
             this.fetchParametricFields(this.dateParametricFieldsCollection);
 
@@ -405,7 +402,8 @@ define([
             if(this.entityCollection) {
                 this.fetchEntities();
             }
-            this.fetchRestrictedParametricCollection();
+
+            this.fetchParametricCollection();
         },
 
         fetchEntities: function() {
@@ -435,11 +433,6 @@ define([
             this.resultsViewContainer.updateTab();
         },
 
-        fetchParametricValueCollections: function() {
-            this.fetchParametricValues();
-            this.fetchRestrictedParametricCollection();
-        },
-
         listenForParametricFieldMetrics: function() {
             [{
                 type: 'parametric',
@@ -462,13 +455,13 @@ define([
             }.bind(this));
         },
 
-        fetchRestrictedParametricCollection: function() {
-            this.restrictedParametricCollection.reset();
+        fetchParametricCollection: function() {
+            this.parametricCollection.reset();
 
             var fieldNames = this.parametricFieldsCollection.pluck('id');
 
             if(fieldNames.length > 0 && this.queryModel.get('indexes').length !== 0) {
-                this.restrictedParametricCollection.fetch({
+                this.parametricCollection.fetch({
                     data: {
                         fieldNames: fieldNames,
                         databases: this.queryModel.get('indexes'),
@@ -477,6 +470,7 @@ define([
                         minDate: this.queryModel.getIsoDate('minDate'),
                         maxDate: this.queryModel.getIsoDate('maxDate'),
                         minScore: this.queryModel.get('minScore'),
+                        maxValues: 1000000,
                         stateTokens: this.queryModel.get('stateMatchIds')
                     }
                 });

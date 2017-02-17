@@ -4,30 +4,57 @@ define([
 ], function(SelectModalItemView, Backbone) {
 
     describe('Select field modal item view', function() {
-        beforeEach(function() {
-            this.model = new Backbone.Model({
-                selected: false,
-                id: 41,
-                count: 42
+        describe('with an initially unselected value', function() {
+            beforeEach(function() {
+                this.model = new Backbone.Model({
+                    selected: false,
+                    value: 'CAT',
+                    count: 42
+                });
+
+                this.view = new SelectModalItemView({model: this.model});
+                this.view.render();
             });
 
-            this.view = new SelectModalItemView({
-                model: this.model,
-                field: {id: 42}
+            it('sets a data-value attribute', function() {
+                expect(this.view.$('label')).toHaveAttr('data-value', 'CAT');
             });
-            this.view.render();
+
+            it('displays the count', function() {
+                expect(this.view.$('label')).toContainText('42');
+            });
+
+            it('is not selected', function() {
+                expect(this.view.$('.icheckbox-hp')).toHaveAttr('aria-checked', 'false');
+            });
+
+            describe('then the value is selected', function() {
+                beforeEach(function() {
+                    this.model.set('selected', true);
+                    this.view.updateSelected();
+                });
+
+                it('is selected', function() {
+                    expect(this.view.$('.icheckbox-hp')).toHaveAttr('aria-checked', 'true');
+                });
+            });
         });
 
-        it('sets a data-field attribute', function() {
-            expect(this.view.$el).toHaveAttr('data-id', '41');
-        });
+        describe('with an initially selected value', function() {
+            beforeEach(function() {
+                this.model = new Backbone.Model({
+                    selected: true,
+                    value: 'CAT',
+                    count: 42
+                });
 
-        it('displays the count to be 42', function() {
-            expect(this.view.$('label')).toContainText(42);
-        });
+                this.view = new SelectModalItemView({model: this.model});
+                this.view.render();
+            });
 
-        it('should be unselected', function() {
-            expect(this.view.$('.icheckbox-hp')).toHaveAttr('aria-checked', 'false');
+            it('is selected', function() {
+                expect(this.view.$('.icheckbox-hp')).toHaveAttr('aria-checked', 'true');
+            });
         });
     });
 
