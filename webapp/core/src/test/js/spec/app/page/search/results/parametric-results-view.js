@@ -154,8 +154,45 @@ define([
                         expect(this.view.$parametricSelections).not.toHaveClass('hide');
                         expect(this.view.$content).not.toHaveClass('invisible');
                     });
-                })
+
+                    describe('then the selectors are populated', function () {
+                        beforeEach(function() {
+                             this.view.fieldsCollection.at(0).set({field: '/DOCUMENT/SOURCE', displayValue:'SOURCE'});
+                             this.view.fieldsCollection.at(1).set({field: '/DOCUMENT/CATEGORY', displayValue:'CATEGORY'});
+                        });
+
+
+                        it('should enable the swap fields button', function() {
+                            expect(this.view.$parametricSwapButton).not.toHaveClass('disabled');
+                            expect(this.view.$parametricSwapButton).not.toBeDisabled();
+                        });
+
+                        describe('then the swap button is clicked', function(){
+                            beforeEach(function(){
+                                this.view.$parametricSwapButton.click();
+                            });
+
+                            it('should have swapped the fields', function() {
+                                expect(this.view.fieldsCollection.at(0).get('field')).toBe('/DOCUMENT/CATEGORY');
+                                expect(this.view.fieldsCollection.at(1).get('field')).toBe('/DOCUMENT/SOURCE');
+                            });
+                        });
+
+                        describe('then the second field is removed', function(){
+                            beforeEach(function () {
+                                const second = this.view.fieldsCollection.at(1);
+                                second.set('field', '');
+                                this.view.fieldsCollection.set([second]);
+                            });
+
+                            it('should disable the swap fields button', function() {
+                                expect(this.view.$parametricSwapButton).toHaveClass('disabled');
+                                expect(this.view.$parametricSwapButton).toBeDisabled();
+                            });
+                        });
+                    });
+                });
             });
         });
-    })
+    });
 });

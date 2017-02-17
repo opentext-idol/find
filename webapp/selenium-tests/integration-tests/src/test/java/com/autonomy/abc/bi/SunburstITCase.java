@@ -81,10 +81,10 @@ public class SunburstITCase extends IdolFindTestBase {
 
         final int index = filters().nonZeroParamFieldContainer(0);
         final String firstParametric = filters().parametricField(index).filterCategoryName();
-        verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(results.getSelectedFieldName(1).toUpperCase()));
+        verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(results.getFirstSelectedFieldName().toUpperCase()));
 
-        results.parametricSelectionDropdown(2).open();
-        verifyThat("1st selected parametric does not appear as choice in 2nd", results.getParametricDropdownItems(2), not(contains(firstParametric)));
+        results.secondParametricSelectionDropdown().open();
+        verifyThat("1st selected parametric does not appear as choice in 2nd", results.getParametricDropdownItems(results.secondParametricSelectionDropdown()), not(contains(firstParametric)));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class SunburstITCase extends IdolFindTestBase {
         results = search("cricket");
 
         final String filterCategory = filters().formattedNameOfNonZeroField(1);
-        results.parametricSelectionDropdown(1).select(filterCategory);
+        results.firstParametricSelectionDropdown().select(filterCategory);
         Waits.loadOrFadeWait();
 
         final int correctNumberSegments = getFilterResultsBigEnoughToDisplay(filterCategory).size();
@@ -108,7 +108,7 @@ public class SunburstITCase extends IdolFindTestBase {
 
         final String filterCategory = filters().formattedNameOfNonZeroField(indexOfFilterCategory);
         final List<String> bigEnough = getFilterResultsBigEnoughToDisplay(filterCategory);
-        results.parametricSelectionDropdown(1).select(filterCategory);
+        results.firstParametricSelectionDropdown().select(filterCategory);
         results.waitForSunburst();
         Waits.loadOrFadeWait();
 
@@ -149,11 +149,11 @@ public class SunburstITCase extends IdolFindTestBase {
         results = search("general");
 
         LOGGER.info("Test only works if filtering by the clicked filter leaves other filters in different categories clickable");
-        results.parametricSelectionDropdown(1).selectItem(1);
+        results.firstParametricSelectionDropdown().selectItem(1);
         results.waitForSunburst();
 
         final String fieldValue = results.hoverOnSegmentGetCentre(1);
-        final String fieldName = results.getSelectedFieldName(1);
+        final String fieldName = results.getFirstSelectedFieldName();
         LOGGER.info("Filtering by " + fieldName + " = " + fieldValue);
         results.getIthSunburstSegment(1).click();
         results.waitForSunburst();
@@ -161,7 +161,7 @@ public class SunburstITCase extends IdolFindTestBase {
         verifyThat(findPage.filterLabelsText(), hasItem(containsString(fieldValue)));
 
         verifyThat(filters().checkboxForParametricValue(fieldName, fieldValue), checked());
-        verifyThat("Parametric selection name has changed to another type of filter", results.getSelectedFieldName(1), not(fieldName));
+        verifyThat("Parametric selection name has changed to another type of filter", results.getFirstSelectedFieldName(), not(fieldName));
     }
 
     @Test
@@ -170,12 +170,12 @@ public class SunburstITCase extends IdolFindTestBase {
         results = search("lashing");
 
         final FilterPanel filters = filters();
-        final String parametricSelectionFirst = results.getSelectedFieldName(1);
+        final String parametricSelectionFirst = results.getFirstSelectedFieldName();
 
         filters.parametricContainer(parametricSelectionFirst).getFilters().get(0).check();
 
         results.waitForSunburst();
-        assertThat("Parametric selection changed", results.getSelectedFieldName(1), not(is(parametricSelectionFirst)));
+        assertThat("Parametric selection changed", results.getFirstSelectedFieldName(), not(is(parametricSelectionFirst)));
     }
 
     //will probably fail if your databases are different to the testing ones
@@ -183,15 +183,35 @@ public class SunburstITCase extends IdolFindTestBase {
     public void testTwoParametricSelectorSunburst() {
         results = search("cameron");
 
-        results.parametricSelectionDropdown(1).select("Overall Vibe");
+        results.firstParametricSelectionDropdown().select("Overall Vibe");
         results.waitForSunburst();
         final int segNumberBefore = results.numberOfSunburstSegments();
 
-        results.parametricSelectionDropdown(2).select("Source");
+        results.secondParametricSelectionDropdown().select("Source");
         results.waitForSunburst();
         final int segNumberAfter = results.numberOfSunburstSegments();
 
         assertThat("More segments with second parametric selector", segNumberAfter, greaterThan(segNumberBefore));
+    }
+
+    @Test
+    public void testTwoParametricSelectorSwapButton() {
+        results = search("pony");
+
+        final String firstField = "Source";
+
+        results.firstParametricSelectionDropdown().select(firstField);
+        results.waitForSunburst();
+        final String secondField = "Overall Vibe";
+        results.secondParametricSelectionDropdown().select(secondField);
+        results.waitForSunburst();
+
+        results.clickSwapButton();
+        results.waitForSunburst();
+        final String newFirstField = results.getFirstSelectedFieldName();
+        final String newSecondField = results.getSecondSelectedFieldName();
+
+        assertThat("Fields have not swapped", firstField.equals(newSecondField) && secondField.equals(newFirstField));
     }
 
     //v data dependent -> needs these categories to be mutually exclusive
@@ -199,11 +219,11 @@ public class SunburstITCase extends IdolFindTestBase {
     @ResolvedBug("FIND-267")
     public void testNoOverlapParametricFields() {
         results = search("*");
-        results.parametricSelectionDropdown(1).select("Category");
+        results.firstParametricSelectionDropdown().select("Category");
         results.waitForSunburst();
         final int segNumberBefore = results.numberOfSunburstSegments();
 
-        results.parametricSelectionDropdown(2).select("Place");
+        results.secondParametricSelectionDropdown().select("Place");
         results.waitForSunburst();
         final int segNumberAfter = results.numberOfSunburstSegments();
 

@@ -80,6 +80,18 @@ define([
             this.listenTo(this.dependentParametricCollection, 'sync', this.updateData);
             this.listenTo(this.dependentParametricCollection, 'error', this.errorHandler);
             this.listenTo(this.selectedParametricValues, 'add remove reset', this.updateSelections);
+            this.$parametricSwapButton = this.$('.parametric-swap');
+            this.$parametricSwapButton.click(function () {
+                this.swapFields();
+            }.bind(this));
+
+            this.listenTo(this.fieldsCollection, 'change:field', function() {
+                const fieldsPopulated = this.fieldsCollection.every(function(model) {
+                    return model.get('field');
+                });
+                this.$parametricSwapButton.toggleClass('disabled', !fieldsPopulated);
+                this.$parametricSwapButton.prop('disabled', !fieldsPopulated);
+            });
 
             this.setLoadingListeners([this.parametricCollection, this.dependentParametricCollection]);
             this.makeSelectionsIfData();
@@ -92,6 +104,17 @@ define([
             this.$content.toggleClass('invisible', this.model.get('loading'));
             this.$parametricSelections.toggleClass('hide', this.noMoreParametricFields());
             this.updateMessage();
+        },
+
+        swapFields: function() {
+            const first = this.fieldsCollection.at(0);
+            const second = this.fieldsCollection.at(1);
+            first.set(second.attributes, {silent : true});
+            second.set(first.previousAttributes(), {silent : true});
+
+            this.updateSelections();
+
+            this.fetchDependentFields();
         },
 
         errorHandler: function(collection, xhr) {
