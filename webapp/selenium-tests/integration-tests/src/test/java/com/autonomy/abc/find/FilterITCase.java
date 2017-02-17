@@ -9,13 +9,7 @@ import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.filters.AppliedFiltersPanel;
-import com.autonomy.abc.selenium.find.filters.DateOption;
-import com.autonomy.abc.selenium.find.filters.FilterContainer;
-import com.autonomy.abc.selenium.find.filters.FilterPanel;
-import com.autonomy.abc.selenium.find.filters.FindParametricFilter;
-import com.autonomy.abc.selenium.find.filters.ParametricFieldContainer;
-import com.autonomy.abc.selenium.find.filters.ParametricFilterModal;
+import com.autonomy.abc.selenium.find.filters.*;
 import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.query.IndexFilter;
 import com.autonomy.abc.selenium.query.Query;
@@ -31,25 +25,11 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.equalToIgnoringCase;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -167,10 +147,11 @@ public class FilterITCase extends FindTestBase {
         container = filterPanel.parametricContainer(WordUtils.capitalize(filterCategory.toLowerCase()));
         container.expand();
         container.seeAll();
-        final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
 
+        final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
         filterModal.waitForLoad();
-        verifyThat("Modal not loading forever", !filterModal.loadingIndicatorPresent());
+
+        verifyThat("Modal not loading forever", !filterModal.isCurrentTabLoading());
         verifyThat("Correct tab is active", filterModal.activeTabName(), equalToIgnoringCase(filterCategory));
         verifyThat("Same fields selected in modal as panel", filterModal.checkedFiltersAllPanes(), is(selectedFilter));
 
