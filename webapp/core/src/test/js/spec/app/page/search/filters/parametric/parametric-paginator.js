@@ -187,45 +187,50 @@ define([
                     it('makes no further requests', function() {
                         expect(this.fetchPromises.length).toBe(2);
                     });
+
+                    describe('then fetchNext is called', function() {
+                        beforeEach(fetchNext);
+
+                        it('has no error and is loading', checkState({
+                            loading: true
+                        }));
+
+                        it('makes a request for page 2', function() {
+                            expect(this.fetchPromises.length).toBe(3);
+
+                            expect(this.fetchFunction.calls.argsFor(2)).toEqual([
+                                {start: 3, maxValues: 4, fieldNames: ['CATEGORY'], databases: ALL_INDEXES}
+                            ]);
+                        });
+                    });
                 });
 
-                describe('then the fetch succeeds with 2 new values and a total values of 4, then fetchNext is called again and an old value is returned', function() {
-                    beforeEach(function() {
-                        respond(1, {
-                            totalValues: 4,
-                            values: [
-                                {value: 'FUNGI', count: 9},
-                                {value: 'ANIMALS', count: 7}
-                            ]
-                        }).call(this);
+                describe('then the fetch succeeds with 2 new values and a total values of 3', function() {
+                    beforeEach(respond(1, {
+                        totalValues: 3,
+                        values: [
+                            {value: 'FUNGI', count: 9},
+                            {value: 'ANIMALS', count: 7}
+                        ]
+                    }));
 
-                        fetchNext.call(this);
-
-                        respond(2, {
-                            totalValues: 4,
-                            values: [
-                                {value: 'PLANTS', count: 4},
-                                {value: 'PEOPLE', count: 1}
-                            ]
-                        }).call(this);
-                    });
-
-                    it('queried for page 2', function() {
-                        expect(this.fetchPromises.length).toBe(3);
-
-                        expect(this.fetchFunction.calls.argsFor(2)).toEqual([
-                            {start: 3, maxValues: 4, fieldNames: ['CATEGORY'], databases: ALL_INDEXES}
-                        ]);
-                    });
+                    it('adds the correct model to the values collection with count 0, setting the selected flag as appropriate', checkModels([
+                        {value: 'PLANTS', count: 5, selected: false},
+                        {value: 'FUNGI', count: 0, selected: false},
+                        {value: 'ANIMALS', count: 0, selected: true}
+                    ]));
 
                     it('has no error and is not empty or loading', checkState());
 
-                    it('adds the correct model to the values collection, setting the selected flag as appropriate', checkModels([
-                        {value: 'PLANTS', count: 5, selected: false},
-                        {value: 'FUNGI', count: 0, selected: false},
-                        {value: 'ANIMALS', count: 0, selected: true},
-                        {value: 'PEOPLE', count: 0, selected: false}
-                    ]));
+                    describe('then fetchNext is called', function() {
+                        beforeEach(fetchNext);
+
+                        it('has no error and is not empty or loading', checkState());
+
+                        it('makes no request because the remaining value has already been fetched', function() {
+                            expect(this.fetchPromises.length).toBe(2);
+                        });
+                    });
                 });
             });
 

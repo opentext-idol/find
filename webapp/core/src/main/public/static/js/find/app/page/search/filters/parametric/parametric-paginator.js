@@ -53,6 +53,7 @@ define([
         this.error = null;
 
         this.paginationState = {
+            duplicatesFound: 0,
             nextRestrictedPage: 1,
             nextPage: 1,
             totalRestrictedValues: null,
@@ -93,11 +94,11 @@ define([
     });
 
     /*
-     * Loads at least the given number of values, one page of size pageSize at a time.
+     * Loads at least the given number of values, one page of size pageSize at a time, but only if we know there are
+     * values to fetch. Called recursively if there are not enough questions after the first page.
      */
     function loadPage(valuesRequired) {
         const restrictedStart = 1 + this.fetchOptions.pageSize * (this.paginationState.nextRestrictedPage - 1);
-        const unrestrictedStart = 1 + this.fetchOptions.pageSize * (this.paginationState.nextPage - 1);
 
         let nextFetch;
 
@@ -114,30 +115,39 @@ define([
             };
 
             this.paginationState = _.defaults({nextRestrictedPage: this.paginationState.nextRestrictedPage + 1}, this.paginationState);
-        } else if (this.paginationState.totalValues === null || unrestrictedStart <= this.paginationState.totalValues) {
-            // Fetch unrestricted values because we either have not fetched them before or we know there are more to fetch
-            nextFetch = {
-                totalKey: 'totalValues',
-                useCount: false,
-                parameters: {
-                    databases: this.fetchOptions.allIndexes,
-                    fieldNames: [this.fetchOptions.fieldName],
-                    start: unrestrictedStart,
-                    maxValues: this.fetchOptions.pageSize * this.paginationState.nextPage
-                }
-            };
-
-            this.paginationState = _.defaults({nextPage: this.paginationState.nextPage + 1}, this.paginationState);
         } else {
-            // We have exhausted restricted and unrestricted values
-            nextFetch = null;
+            const totalValues = this.paginationState.totalValues;
+            const unrestrictedStart = 1 + this.fetchOptions.pageSize * (this.paginationState.nextPage - 1);
+
+            // Used to check if all remaining values were already fetched in the restricted phase
+            const duplicatesNotFound = this.paginationState.totalRestrictedValues - this.paginationState.duplicatesFound;
+
+            if (
+                totalValues === null ||
+                (unrestrictedStart <= totalValues && duplicatesNotFound < totalValues - unrestrictedStart + 1)
+            ) {
+                // Fetch unrestricted values because we either have not fetched them before or we know there are more to fetch
+                nextFetch = {
+                    totalKey: 'totalValues',
+                    useCount: false,
+                    parameters: {
+                        databases: this.fetchOptions.allIndexes,
+                        fieldNames: [this.fetchOptions.fieldName],
+                        start: unrestrictedStart,
+                        maxValues: this.fetchOptions.pageSize * this.paginationState.nextPage
+                    }
+                };
+
+                this.paginationState = _.defaults({nextPage: this.paginationState.nextPage + 1}, this.paginationState);
+            } else {
+                // We have exhausted restricted and unrestricted values
+                nextFetch = null;
+            }
         }
 
         if (nextFetch) {
             this.fetchFunction(nextFetch.parameters)
                 .done(function(output) {
-                    this.paginationState[nextFetch.totalKey] = output.totalValues;
-
                     const newValueData = output.values
                         .filter(function(data) {
                             return !this.valuesCollection.some(function(model) {
@@ -156,6 +166,9 @@ define([
                         }.bind(this));
 
                     this.valuesCollection.add(newValueData);
+
+                    this.paginationState[nextFetch.totalKey] = output.totalValues;
+                    this.paginationState.duplicatesFound += output.values.length - newValueData.length;
 
                     if (newValueData.length >= valuesRequired) {
                         this.fetching = false;
