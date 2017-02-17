@@ -115,9 +115,10 @@ define([
 
         calculateSelectedCount: function() {
             const selectedCount = this.getFieldSelectedValuesLength();
+            const totalCount = this.model.get('totalValues');
             return selectedCount
-                ? selectedCount + ' / ' + this.model.fieldValues.length
-                : this.model.fieldValues.length;
+                ? selectedCount + ' / ' + totalCount
+                : totalCount;
         },
 
         getFieldSelectedValuesLength: function() {
