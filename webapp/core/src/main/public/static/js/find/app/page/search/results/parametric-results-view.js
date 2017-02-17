@@ -1,21 +1,23 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
+    'underscore',
     'backbone',
     'find/app/model/dependent-parametric-collection',
-    'underscore',
     'i18n!find/nls/bundle',
     'find/app/page/search/results/field-selection-view',
     'text!find/templates/app/page/search/results/parametric-results-view.html',
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/loading-spinner.html'
-], function(Backbone, DependentParametricCollection, _, i18n, FieldSelectionView, template, generateErrorHtml, loadingSpinnerTemplate) {
+], function(_, Backbone, DependentParametricCollection, i18n, FieldSelectionView, template,
+            generateErrorHtml, loadingSpinnerTemplate) {
     'use strict';
 
-    var fieldInvalid = function(field, fields) {
-        return !field || !_.contains(fields, field);
+    var fieldIsValid = function(field, fields) {
+        return field && _.contains(fields, field);
     };
 
     function getClickedParameters(data, fields, selectedParameters) {
@@ -50,7 +52,9 @@ define([
             this.dependentParametricCollection = options.dependentParametricCollection || new DependentParametricCollection();
             this.fieldsCollection = new Backbone.Collection([{field: ''}, {field: ''}]);
 
-            this.onClick = this.savedSearchModel.get('type') === SNAPSHOT ? _.noop : this.onSavedSearchClick;
+            this.onClick = this.savedSearchModel.get('type') === SNAPSHOT
+                ? _.noop
+                : this.onSavedSearchClick;
 
             this.model = new Backbone.Model({
                 loading: this.parametricCollection.fetching
@@ -81,7 +85,7 @@ define([
             this.listenTo(this.dependentParametricCollection, 'error', this.errorHandler);
             this.listenTo(this.selectedParametricValues, 'add remove reset', this.updateSelections);
             this.$parametricSwapButton = this.$('.parametric-swap');
-            this.$parametricSwapButton.click(function () {
+            this.$parametricSwapButton.click(function() {
                 this.swapFields();
             }.bind(this));
 
@@ -100,8 +104,10 @@ define([
         },
 
         toggleLoading: function() {
-            this.$loadingSpinner.toggleClass('hide', !this.model.get('loading'));
-            this.$content.toggleClass('invisible', this.model.get('loading'));
+            const loading = this.model.get('loading');
+
+            this.$loadingSpinner.toggleClass('hide', !loading);
+            this.$content.toggleClass('invisible', loading);
             this.$parametricSelections.toggleClass('hide', this.noMoreParametricFields());
             this.updateMessage();
         },
@@ -109,11 +115,10 @@ define([
         swapFields: function() {
             const first = this.fieldsCollection.at(0);
             const second = this.fieldsCollection.at(1);
-            first.set(second.attributes, {silent : true});
-            second.set(first.previousAttributes(), {silent : true});
 
+            first.set(second.attributes, {silent: true});
+            second.set(first.previousAttributes(), {silent: true});
             this.updateSelections();
-
             this.fetchDependentFields();
         },
 
@@ -146,18 +151,20 @@ define([
             var selectedParameters = getClickedParameters(data, this.fieldsCollection.pluck('field'), []);
 
             // empty value means padding element was clicked on
-            if (!_.findWhere(selectedParameters, {value: ''})) {
+            if(!_.findWhere(selectedParameters, {value: ''})) {
                 this.selectedParametricValues.add(selectedParameters);
             }
         },
 
         updateParametricCollection: function() {
-            if (this.noMoreParametricFields()) {
+            const noMoreParametricFields = this.noMoreParametricFields();
+
+            this.$parametricSelections.toggleClass('hide', noMoreParametricFields);
+
+            if(noMoreParametricFields) {
                 this.model.set('loading', false);
-                this.$parametricSelections.addClass('hide');
                 this.updateMessage(this.emptyMessage);
             } else {
-                this.$parametricSelections.removeClass('hide');
                 this.makeSelectionsIfData();
             }
         },
@@ -165,7 +172,7 @@ define([
         updateData: function() {
             this.model.set('loading', false);
 
-            if(!this.parametricCollection.fetching && !this.dependentParametricCollection.isEmpty()) {
+            if(!(this.parametricCollection.fetching || this.dependentParametricCollection.isEmpty())) {
                 this.update();
             } else if(this.dependentParametricCollection.isEmpty()) {
                 this.model.set('loading', false);
@@ -188,7 +195,10 @@ define([
             this.firstChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(0),
                 name: 'first',
-                fields: _.difference(this.parametricCollection.pluck('id'), this.selectedParametricValues.pluck('field')).sort(),
+                fields: _.difference(
+                    this.parametricCollection.pluck('id'),
+                    this.selectedParametricValues.pluck('field')
+                ).sort(),
                 allowEmpty: false
             });
 
@@ -204,7 +214,10 @@ define([
             this.secondChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(1),
                 name: 'second',
-                fields: _.difference(this.parametricCollection.pluck('id'), _.union([this.fieldsCollection.at(0).get('field')], this.selectedParametricValues.pluck('field'))).sort(),
+                fields: _.difference(
+                    this.parametricCollection.pluck('id'),
+                    _.union([this.fieldsCollection.at(0).get('field')], this.selectedParametricValues.pluck('field'))
+                ).sort(),
                 allowEmpty: true
             });
 
@@ -221,16 +234,20 @@ define([
         },
 
         resolveFieldSelections: function() {
-            var fields = _.difference(this.parametricCollection.pluck('name'), this.selectedParametricValues.pluck('field'));
+            var fields = _.difference(
+                this.parametricCollection.pluck('name'),
+                this.selectedParametricValues.pluck('field')
+            );
 
             var primaryModel = this.fieldsCollection.at(0);
             var secondaryModel = this.fieldsCollection.at(1);
 
-            if(fieldInvalid(primaryModel.get('field'), fields)) {
+            const primaryField = primaryModel.get('field');
+
+            if(!fieldIsValid(primaryField, fields)) {
                 primaryModel.set('field', fields.sort()[0]);
                 secondaryModel.set('field', '');
-            }
-            else if(fieldInvalid(secondaryModel.get('field'))) {
+            } else if(!fieldIsValid(secondaryModel.get('field'), _.without(fields, primaryField))) {
                 secondaryModel.set('field', '');
             }
         },
@@ -244,16 +261,19 @@ define([
                     data: {
                         databases: this.queryModel.get('indexes'),
                         queryText: this.queryModel.get('queryText'),
-                        fieldText: this.queryModel.get('fieldText') ? this.queryModel.get('fieldText').toString() : '',
+                        fieldText: this.queryModel.get('fieldText')
+                            ? this.queryModel.get('fieldText').toString()
+                            : '',
                         minDate: this.queryModel.getIsoDate('minDate'),
                         maxDate: this.queryModel.getIsoDate('maxDate'),
                         minScore: this.queryModel.get('minScore'),
-                        fieldNames: second ? [first, second] : [first],
+                        fieldNames: second
+                            ? [first, second]
+                            : [first],
                         stateTokens: this.queryModel.get('stateMatchIds')
                     }
                 });
-            }
-            else {
+            } else {
                 this.dependentParametricCollection.reset();
             }
         },
@@ -262,7 +282,7 @@ define([
             this.$errorMessage.empty();
             if(message) {
                 this.$content.addClass('invisible');
-                this.$message.empty().append(message);
+                this.$message.html(message);
             } else {
                 this.$message.empty();
             }
@@ -272,14 +292,17 @@ define([
             this.$message.empty();
             if(message) {
                 this.$content.addClass('invisible');
-                this.$errorMessage.empty().append(message);
+                this.$errorMessage.html(message);
             } else {
                 this.$errorMessage.empty();
             }
         },
 
         toggleContentDisplay: function() {
-            this.$content.toggleClass('invisible', this.parametricCollection.isEmpty() || this.dependentParametricCollection.isEmpty() || this.noMoreParametricFields());
+            this.$content.toggleClass('invisible',
+                this.parametricCollection.isEmpty() ||
+                this.dependentParametricCollection.isEmpty() ||
+                this.noMoreParametricFields());
         },
 
         noMoreParametricFields: function() {

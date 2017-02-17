@@ -1,18 +1,18 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'find/app/page/search/results/parametric-results-view',
     'underscore',
     'jquery',
+    'd3',
+    'find/app/page/search/results/parametric-results-view',
     'i18n!find/nls/bundle',
     'sunburst/js/sunburst',
     'find/app/util/generate-error-support-message',
-    'text!find/templates/app/page/search/results/sunburst/sunburst-label.html',
-    'd3'
-], function(ParametricResultsView, _, $, i18n, Sunburst, generateErrorHtml, labelTemplate, d3) {
+    'text!find/templates/app/page/search/results/sunburst/sunburst-label.html'
+], function(_, $, d3, ParametricResultsView, i18n, Sunburst, generateErrorHtml, labelTemplate) {
     'use strict';
 
     var SUNBURST_NAME_ATTR = 'text';
@@ -54,29 +54,30 @@ define([
                 }
 
                 if(!data.parent.parent) {
-                    return data.color = data[SUNBURST_SIZE_ATTR] ? color(data.parent.children.indexOf(data)) : 'black';
+                    return data.color = data[SUNBURST_SIZE_ATTR]
+                        ? color(data.parent.children.indexOf(data))
+                        : 'black';
                 }
 
                 return data.color = color(data[SUNBURST_NAME_ATTR]);
             },
             labelFormatter: function(data, prevClicked) {
                 var zoomedOnRoot = !prevClicked || prevClicked.depth === 0;
-                var hoveringCenter = prevClicked ? data === prevClicked.parent : data.depth === 0;
+                var hoveringCenter = prevClicked
+                    ? data === prevClicked.parent
+                    : data.depth === 0;
+
+                const nameIsEmpty = data[SUNBURST_NAME_ATTR] === '';
 
                 var templateArguments = {
                     size: data[SUNBURST_SIZE_ATTR],
                     icon: !zoomedOnRoot && hoveringCenter ? sunburstLabelIcon : '',
-                    noVal: false
+                    noVal: nameIsEmpty,
+                    name: nameIsEmpty
+                        ? i18n['search.sunburst.noValue'](data[SUNBURST_FILTER_NUMBER])
+                        : data[SUNBURST_NAME_ATTR],
+                    italic: nameIsEmpty
                 };
-
-                if(data[SUNBURST_NAME_ATTR] === '') {
-                    templateArguments.name = i18n['search.sunburst.noValue'](data[SUNBURST_FILTER_NUMBER]);
-                    templateArguments.italic = true;
-                    templateArguments.noVal = true;
-                } else {
-                    templateArguments.name = data[SUNBURST_NAME_ATTR];
-                    templateArguments.italic = false;
-                }
 
                 return sunburstLabelTemplate(templateArguments);
             },
@@ -109,11 +110,14 @@ define([
 
         update: function() {
             if(!this.parametricCollection.isEmpty()) {
-                drawSunburst.call(this, this.$content, this.dependentParametricCollection.toJSON(), _.bind(this.onClick, this));
+                drawSunburst.call(this,
+                    this.$content,
+                    this.dependentParametricCollection.toJSON(),
+                    _.bind(this.onClick, this));
 
                 var noValidChildren = _.chain(this.dependentParametricCollection.pluck('children'))
-                    .compact()
                     .flatten()
+                    .compact()
                     .isEmpty()
                     .value();
 
