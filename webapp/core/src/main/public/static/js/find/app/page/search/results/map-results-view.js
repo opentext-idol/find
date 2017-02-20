@@ -29,6 +29,10 @@ define([
             },
             'click .map-popup-title': function (e) {
                 vent.navigateToDetailRoute(this.documentsCollection.get(e.currentTarget.getAttribute('cid')));
+            },
+            'click .map-pptx': function(e){
+                e.preventDefault();
+                this.mapResultsView.exportPPT('Showing field ' + this.fieldSelectionView.model.get('displayValue'))
             }
         },
 

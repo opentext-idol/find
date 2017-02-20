@@ -6,11 +6,14 @@
 package com.hp.autonomy.frontend.find.idol.export;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.export.ExportController;
 import com.hp.autonomy.frontend.find.core.export.ExportFormat;
 import com.hp.autonomy.frontend.find.core.export.ExportService;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
@@ -31,8 +34,10 @@ class IdolExportController extends ExportController<IdolQueryRequest, AciErrorEx
     public IdolExportController(final RequestMapper<IdolQueryRequest> requestMapper,
                                 final ControllerUtils controllerUtils,
                                 final IdolDocumentsService documentsService,
-                                final ExportService<IdolQueryRequest, AciErrorException> exportService) {
-        super(requestMapper, controllerUtils);
+                                final ExportService<IdolQueryRequest, AciErrorException> exportService,
+                                final ObjectMapper objectMapper,
+                                final ConfigService<IdolFindConfig> configService) {
+        super(requestMapper, controllerUtils, objectMapper, configService);
         this.documentsService = documentsService;
         this.exportService = exportService;
     }

@@ -118,6 +118,11 @@
             <classifier>full</classifier>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.reports.powerpoint</groupId>
+            <artifactId>powerpoint-report</artifactId>
+            <version>${powerpoint.report.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.hp.autonomy.hod.redis</groupId>

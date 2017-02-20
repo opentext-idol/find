@@ -30,6 +30,7 @@ define([
         urlRoot: urlRoot,
         vent: vent,
         validateUrl: urlRoot + 'config-validation',
+        pptxTemplateUrl: urlRoot + 'template.pptx',
         widgetGroupParent: 'form .row',
 
         strings: {
@@ -79,6 +80,11 @@ define([
                 validatePortInvalid: i18n['settings.test.portInvalid'],
                 validateUsernameBlank: i18n['settings.test.usernameBlank'],
                 validateSuccess: i18n['settings.test.ok'],
+                templateFile: i18n['settings.powerpoint.template.file'],
+                templateFileDefault: i18n['settings.powerpoint.template.file.default'],
+                templateSampleDownload: i18n['settings.powerpoint.template.sample.download'],
+                templateValidate: i18n['settings.powerpoint.template.file.validate'],
+                templateMargins: i18n['settings.powerpoint.template.margins'],
                 CONNECTION_ERROR: i18n['settings.CONNECTION_ERROR'],
                 FETCH_PORT_ERROR: i18n['settings.FETCH_PORT_ERROR'],
                 FETCH_SERVICE_PORT_ERROR: i18n['settings.FETCH_SERVICE_PORT_ERROR'],
@@ -87,7 +93,10 @@ define([
                 REQUIRED_FIELD_MISSING: i18n['settings.REQUIRED_FIELD_MISSING'],
                 REGULAR_EXPRESSION_MATCH_ERROR: i18n['settings.REGULAR_EXPRESSION_MATCH_ERROR'],
                 SERVICE_AND_INDEX_PORT_ERROR: i18n['settings.SERVICE_AND_INDEX_PORT_ERROR'],
-                SERVICE_PORT_ERROR: i18n['settings.SERVICE_PORT_ERROR']
+                SERVICE_PORT_ERROR: i18n['settings.SERVICE_PORT_ERROR'],
+                TEMPLATE_FILE_NOT_FOUND: i18n['settings.powerpoint.template.error.TEMPLATE_FILE_NOT_FOUND'],
+                TEMPLATE_INVALID: i18n['settings.powerpoint.template.error.TEMPLATE_INVALID'],
+                INVALID_MARGINS: i18n['settings.powerpoint.template.error.INVALID_MARGINS']
             };
         },
 

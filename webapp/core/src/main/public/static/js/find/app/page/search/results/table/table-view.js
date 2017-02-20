@@ -43,6 +43,36 @@ define([
         render: function() {
             ParametricResultsView.prototype.render.apply(this);
 
+            this.$('.col-md-12').prepend('<a class="btn btn-default pull-right table-pptx" href="#"><i class="hp-icon hp-document-download"></i> PPTX</a>');
+
+            this.$el.on('click', '.table-pptx', _.bind(function(evt){
+                evt.preventDefault();
+
+                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/table"><input name="title"><textarea name="data"></textarea><input type="submit"></form>');
+                $form[0].title.value = i18n['search.resultsView.table.breakdown.by'](this.fieldsCollection.at(0).get('displayValue'));
+
+                var rows = this.$table.find('tr'), nCols = 0;
+
+                var cells = [];
+
+                rows.each(function(idx, el){
+                    var tds = $(el).find('th,td');
+                    nCols = tds.length;
+
+                    tds.each(function (idx, el) {
+                        cells.push($(el).text());
+                    })
+                });
+
+                $form[0].data.value = JSON.stringify({
+                    rows: rows.length,
+                    cols: nCols,
+                    cells: cells
+                });
+
+                $form.appendTo(document.body).submit().remove();
+            }, this))
+
             this.$content.html(this.tableTemplate());
 
             this.$table = this.$('table');

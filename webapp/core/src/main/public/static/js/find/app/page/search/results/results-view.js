@@ -70,6 +70,28 @@ define([
                         documentModel = this.promotionsCollection.get(cid);
                     }
                     vent.navigateToSuggestRoute(documentModel);
+                },
+                'click .results-view-pptx': function(evt) {
+                    evt.preventDefault();
+
+                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/list"><textarea name="sortBy"></textarea><textarea name="results"></textarea><textarea name="data"></textarea><input type="submit"></form>');
+
+                    $form[0].sortBy.value = this.sortView.getText();
+                    $form[0].results.value = this.resultsNumberView.getText();
+
+                    $form[0].data.value = JSON.stringify({
+                        docs: this.documentsCollection.map(function(model){
+                            return {
+                                title: model.get('title'),
+                                date: model.has('date') ? model.get('date').fromNow() : '',
+                                ref: model.get('reference'),
+                                summary: model.get('summary'),
+                                thumbnail: model.get('thumbnail')
+                            }
+                        })
+                    })
+
+                    $form.appendTo(document.body).submit().remove()
                 }
             };
 
@@ -151,6 +173,10 @@ define([
 
             this.sortView.setElement(this.$('.sort-container')).render();
             this.resultsNumberView.setElement(this.$('.results-number-container')).render();
+
+            if (!_.contains(configuration().roles, 'ROLE_BI')) {
+                this.$('.results-view-pptx').addClass('hide');
+            }
 
             if(this.questionsView) {
                 this.questionsView.setElement(this.$('.main-results-content .answered-questions')).render();

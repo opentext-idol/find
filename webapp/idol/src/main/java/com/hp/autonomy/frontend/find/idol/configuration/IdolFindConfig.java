@@ -19,6 +19,7 @@ import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.PowerPointConfig;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
@@ -61,6 +62,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final Integer minScore;
     private final StatsServerConfig statsServer;
     private final Integer topicMapMaxResults;
+    private final PowerPointConfig powerPoint;
 
     @JsonIgnore
     private volatile Map<String, Map<Integer, String>> productMap;
@@ -82,6 +84,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                         .minScore(minScore == null ? other.minScore : minScore)
                         .statsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
                         .topicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
+                        .powerPoint(powerPoint == null ? other.powerPoint : powerPoint.merge(other.powerPoint))
                         .build())
                 .orElse(this);
     }
@@ -123,6 +126,10 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         login.basicValidate(SECTION);
         content.basicValidate("content");
         savedSearchConfig.basicValidate(SECTION);
+
+        if (powerPoint != null) {
+            powerPoint.basicValidate("powerPoint");
+        }
 
         if (map != null) {
             map.basicValidate("map");
