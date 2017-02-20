@@ -8,7 +8,7 @@ define([
     'find/hod/app/page/search/results/hod-results-view-augmentation',
     'find/hod/app/page/search/results/hod-results-view',
     'js-whatever/js/model-any-changed-attribute-listener'
-], function(_, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener) {
+], function (_, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener) {
     'use strict';
 
     //noinspection JSUnusedGlobalSymbols
@@ -21,13 +21,13 @@ define([
         mapViewResultsStep: 2500,
         mapViewAllowIncrement: false,
 
-        initialize: function(options) {
+        initialize: function (options) {
             ServiceView.prototype.initialize.call(this, options);
 
             addChangeListener(this, this.queryModel, ['queryText', 'fieldText', 'minDate', 'maxDate', 'minScore', 'stateMatchIds'], this.fetchData);
 
-            addChangeListener(this, this.queryModel, ['indexes'], function() {
-                if(this.entityCollection) {
+            addChangeListener(this, this.queryModel, ['indexes'], function () {
+                if (this.entityCollection) {
                     this.fetchEntities();
                 }
 
@@ -35,7 +35,8 @@ define([
                 this.numericParametricFieldsCollection.reset();
                 this.dateParametricFieldsCollection.reset();
 
-                if(this.queryModel.get('indexes').length !== 0) {
+                //noinspection JSPotentiallyInvalidUsageOfThis
+                if (this.queryModel.get('indexes').length !== 0) {
                     this.fetchParametricFields(this.parametricFieldsCollection, this.fetchParametricCollection.bind(this));
                     this.fetchParametricFields(this.numericParametricFieldsCollection);
                     this.fetchParametricFields(this.dateParametricFieldsCollection);
@@ -47,17 +48,17 @@ define([
             });
         },
 
-        fetchParametricFields: function(fieldsCollection, callback) {
+        fetchParametricFields: function (fieldsCollection, callback) {
             if (this.queryModel.get('indexes').length > 0) {
                 fieldsCollection.fetch({
                     data: {
                         databases: this.queryModel.get('indexes')
                     },
-                    success: _.bind(function() {
-                        if(callback) {
+                    success: function () {
+                        if (callback) {
                             callback();
                         }
-                    }, this)
+                    }.bind(this)
                 });
             }
         }
