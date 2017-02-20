@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -116,6 +117,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
 
         final Map<TagName, ValueDetails> valueDetailsResponse = valueDetailsFetch.fetch(tagNames);
 
+        final Comparator<FieldAndValueDetails> comparator = parametricFieldComparator();
         return tagNames.stream()
                 .map(tagName -> {
                     final FieldAndValueDetails.FieldAndValueDetailsBuilder builder = FieldAndValueDetails.builder()
@@ -134,6 +136,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
 
                     return builder.build();
                 })
+                .sorted(comparator)
                 .collect(Collectors.toList());
     }
 
@@ -150,6 +153,16 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
                 .orElse(Collections.emptyList());
 
         return tagName -> (parametricAlwaysShow.isEmpty() || parametricAlwaysShow.contains(tagName)) && !parametricNeverShow.contains(tagName);
+    }
+
+    private Comparator<FieldAndValueDetails> parametricFieldComparator() {
+        final UiCustomization maybeUiCustomization = configService.getConfig().getUiCustomization();
+        final int[] counter = new int[]{0};
+        final Map<TagName, Integer> orderMap = Optional.ofNullable(maybeUiCustomization)
+                .map(uiCustomization -> uiCustomization.getParametricOrder().stream().collect(Collectors.toMap(x -> x, x -> counter[0]++)))
+                .orElse(Collections.emptyMap());
+        return Comparator.<FieldAndValueDetails, Integer>comparing(x -> orderMap.getOrDefault(tagNameFactory.buildTagName(x.getId()), Integer.MAX_VALUE))
+                .thenComparing(FieldAndValueDetails::getName);
     }
 
     @FunctionalInterface

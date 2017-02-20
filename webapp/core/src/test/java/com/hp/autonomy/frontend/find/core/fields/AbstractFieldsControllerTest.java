@@ -225,6 +225,46 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.buildTagName("ParametricField2").getId()))));
     }
 
+    @Test
+    public void getParametricFieldsWithDefaultSorting() throws E {
+        mockSimpleParametricResponse();
+
+        final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
+        assertThat(fields.get(0), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField1").getId())));
+        assertThat(fields.get(1), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField2").getId())));
+        assertThat(fields.get(2), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField3").getId())));
+    }
+
+    @Test
+    public void getParametricFieldsWithExplicitOrder() throws E {
+        mockSimpleParametricResponse();
+
+        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
+                .parametricOrderItem(tagNameFactory.buildTagName("ParametricField3"))
+                .parametricOrderItem(tagNameFactory.buildTagName("ParametricField2"))
+                .parametricOrderItem(tagNameFactory.buildTagName("ParametricField1"))
+                .build());
+
+        final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
+        assertThat(fields.get(0), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField3").getId())));
+        assertThat(fields.get(1), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField2").getId())));
+        assertThat(fields.get(2), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField1").getId())));
+    }
+
+    @Test
+    public void getParametricFieldsWithSomeExplicitOrdering() throws E {
+        mockSimpleParametricResponse();
+
+        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
+                .parametricOrderItem(tagNameFactory.buildTagName("ParametricField3"))
+                .build());
+
+        final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
+        assertThat(fields.get(0), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField3").getId())));
+        assertThat(fields.get(1), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField1").getId())));
+        assertThat(fields.get(2), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField2").getId())));
+    }
+
     private void mockSimpleParametricResponse() throws E {
         final Map<FieldTypeParam, Set<TagName>> response = new EnumMap<>(FieldTypeParam.class);
         response.put(FieldTypeParam.Numeric, Collections.emptySet());
