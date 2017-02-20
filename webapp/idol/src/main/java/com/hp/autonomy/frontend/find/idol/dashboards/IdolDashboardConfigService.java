@@ -26,7 +26,7 @@ public class IdolDashboardConfigService extends BaseConfigFileService<IdolDashbo
 
         setMapper(objectMapper);
         setConfigFileLocation(FindConfigFileService.CONFIG_FILE_LOCATION);
-        setConfigFileName("configs/dashboards.json");
+        setConfigFileName("customization/dashboards.json");
         setDefaultConfigFile("/defaultDashboardsConfigFile.json");
     }
 
