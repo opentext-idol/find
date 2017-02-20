@@ -71,7 +71,7 @@ define([
         },
 
         generateWidgetDiv: function (position) {
-            const widgetElement = $('<div class="widget"></div>');
+            const widgetElement = $('<div class="widget p-xs"></div>');
             widgetElement.css({
                 'left': 'calc(' + position.x * this.widthPerUnit + '% + 20px)',
                 'top': 'calc(' + position.y * this.heightPerUnit + '% + 20px)',
