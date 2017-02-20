@@ -4,22 +4,22 @@
  */
 
 define([
-    './updating-widget',
+    'jquery',
+    './saved-search-widget',
     'find/app/configuration',
     'find/app/page/search/results/map-view',
-    'find/app/model/documents-collection',
-    'find/idol/app/model/idol-indexes-collection'
-], function(UpdatingWidget, configuration, MapView, DocumentsCollection, IdolIndexesCollection) {
+    'find/app/model/documents-collection'
+], function($, SavedSearchWidget, configuration, MapView, DocumentsCollection) {
     'use strict';
 
-    return UpdatingWidget.extend({
+    return SavedSearchWidget.extend({
 
         viewType: 'map',
 
         clickable: true,
 
         initialize: function(options) {
-            UpdatingWidget.prototype.initialize.apply(this, arguments);
+            SavedSearchWidget.prototype.initialize.apply(this, arguments);
             this.markers = [];
             this.locationFieldPair = options.widgetSettings.locationFieldPair;
             this.maxResults = options.widgetSettings.maxResults || 1000;
@@ -33,46 +33,12 @@ define([
                 removeZoomControl: true,
                 disableInteraction: true
             });
-
-            this.listenTo(this.documentsCollection, 'add', function (model) {
-                const locations = model.get('locations');
-                const location = _.findWhere(locations, {displayName: this.locationFieldPair});
-                if (location) {
-                    const longitude = location.longitude;
-                    const latitude = location.latitude;
-                    const title = model.get('title');
-                    const marker = this.mapView.getMarker(latitude, longitude, this.getIcon(), title);
-                    this.markers.push(marker);
-                }
-            });
-
-            this.listenTo(this.documentsCollection, 'sync', _.bind(function () {
-                if (!_.isEmpty(this.markers)) {
-                    this.mapView.clearMarkers(true);
-                    this.mapView.addMarkers(this.markers, this.clusterMarkers);
-                    if(this.updateCallback) {
-                        this.updateCallback();
-                        delete this.updateCallback;
-                    }
-                }
-            }, this));
         },
 
         render: function() {
-            UpdatingWidget.prototype.render.apply(this, arguments);
+            SavedSearchWidget.prototype.render.apply(this, arguments);
             this.mapView.setElement(this.$content).render();
-
-            this.fetchPromise.done(function() {
-                this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                this.getData();
-            }.bind(this));
-        },
-
-        doUpdate: function(done) {
-            if (this.queryModel) {
-                this.getData();
-                this.updateCallback = done;
-            }
+            this.hasRendered = true;
         },
 
         getIcon: function () {
@@ -81,6 +47,10 @@ define([
         },
 
         getData: function() {
+            if (!this.hasRendered) {
+                return $.when();
+            }
+
             this.markers = [];
             this.mapView.clearMarkers(this.clusterMarkers);
             const locationField = _.findWhere(configuration().map.locationFields, {displayName: this.locationFieldPair});
@@ -95,7 +65,7 @@ define([
 
             const newFieldText = this.queryModel.get('fieldText') ? this.queryModel.get('fieldText') + ' AND ' + exists : exists;
 
-            this.updatePromise = this.documentsCollection.fetch({
+            return this.documentsCollection.fetch({
                 data: {
                     text: this.queryModel.get('queryText'),
                     max_results: this.maxResults,
@@ -108,15 +78,22 @@ define([
                     queryType: 'MODIFIED'
                 },
                 reset: false
-            }).done(function() {
-                delete this.updatePromise;
+            }).done(function () {
+                this.documentsCollection.each(function (model) {
+                    const locations = model.get('locations');
+                    const location = _.findWhere(locations, {displayName: this.locationFieldPair});
+                    if (location) {
+                        const longitude = location.longitude;
+                        const latitude = location.latitude;
+                        const title = model.get('title');
+                        const marker = this.mapView.getMarker(latitude, longitude, this.getIcon(), title);
+                        this.markers.push(marker);
+                    }
+                }.bind(this));
+                if (!_.isEmpty(this.markers)) {
+                    this.mapView.addMarkers(this.markers, this.clusterMarkers);
+                }
             }.bind(this));
-        },
-
-        onCancelled: function() {
-            if (this.updatePromise && this.updatePromise.abort) {
-                this.updatePromise.abort();
-            }
         }
     });
 });

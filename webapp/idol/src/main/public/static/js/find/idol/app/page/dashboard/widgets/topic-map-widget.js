@@ -4,47 +4,41 @@
  */
 
 define([
-    './updating-widget',
+    './saved-search-widget',
     'find/app/page/search/results/entity-topic-map-view',
     'find/idol/app/model/idol-indexes-collection',
     'find/app/vent'
-], function(UpdatingWidget, EntityTopicMapView, IndexesCollection, vent) {
+], function(SavedSearchWidget, EntityTopicMapView, IndexesCollection, vent) {
     'use strict';
 
-    return UpdatingWidget.extend({
-
-        clickable: true,
+    return SavedSearchWidget.extend({
 
         viewType: 'topic-map',
 
         initialize: function(options) {
-            UpdatingWidget.prototype.initialize.apply(this, arguments);
+            SavedSearchWidget.prototype.initialize.apply(this, arguments);
 
             this.maxResults = options.widgetSettings.maxResults;
+        },
 
-            this.fetchPromise.done(function() {
-                const queryModel = this.savedSearchModel.toQueryModel(IndexesCollection, false);
+        postInitialize: function () {
+            this.entityTopicMap = new EntityTopicMapView({
+                maxResults: this.maxResults,
+                queryModel: this.queryModel,
+                queryState: this.queryModel.queryState,
+                showSlider: false,
+                type: 'QUERY'
+            });
 
-                this.entityTopicMap = new EntityTopicMapView({
-                    maxResults: this.maxResults,
-                    queryModel: queryModel,
-                    queryState: queryModel.queryState,
-                    showSlider: false,
-                    type: 'QUERY'
-                });
-
-                // use the dashboard resize handler instead of the built in one
-                this.entityTopicMap.topicMap.stopListening('vent:resize');
-            }.bind(this))
+            // use the dashboard resize handler instead of the built in one
+            this.entityTopicMap.topicMap.stopListening('vent:resize');
         },
 
         render: function() {
-            UpdatingWidget.prototype.render.apply(this, arguments);
+            SavedSearchWidget.prototype.render.apply(this, arguments);
 
-            this.fetchPromise.done(function() {
-                this.entityTopicMap.setElement(this.$content);
-                this.entityTopicMap.render();
-            }.bind(this))
+            this.entityTopicMap.setElement(this.$content);
+            this.entityTopicMap.render();
         },
 
         onResize: function() {
@@ -53,30 +47,8 @@ define([
             }
         },
 
-        doUpdate: function(done) {
-            if (this.entityTopicMap) {
-                this.updatePromise = this.entityTopicMap.fetchRelatedConcepts();
-
-                // fetchRelatedConcepts doesn't return anything if the required parameters are not set
-                if (this.updatePromise) {
-                    this.updatePromise.done(function() {
-                        delete this.updatePromise;
-                        done();
-                    }.bind(this));
-                }
-                else {
-                    done();
-                }
-            }
-            else {
-                done();
-            }
-        },
-
-        onCancelled: function() {
-            if (this.updatePromise && this.updatePromise.abort) {
-                this.updatePromise.abort();
-            }
+        getData: function() {
+            return this.entityTopicMap.fetchRelatedConcepts();
         }
 
     });

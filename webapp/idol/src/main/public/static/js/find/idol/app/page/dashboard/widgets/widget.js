@@ -7,18 +7,9 @@ define([
     'backbone',
     'underscore',
     'jquery',
-    'find/app/vent',
-    'find/app/model/saved-searches/saved-search-model',
     'text!find/idol/templates/page/dashboards/widget.html'
-], function(Backbone, _, $, vent, SavedSearchModel, template) {
+], function(Backbone, _, $, template) {
     'use strict';
-
-    const DashboardSearchModel = SavedSearchModel.extend({
-        urlRoot: function() {
-            return 'api/bi/' + (this.get('type') === 'QUERY' ? 'saved-query': 'saved-snapshot');
-        }
-    });
-
 
     return Backbone.View.extend({
 
@@ -30,19 +21,6 @@ define([
 
         initialize: function(options) {
             this.name = options.name;
-
-            if (options.savedSearch) {
-                this.savedSearch = options.savedSearch;
-                if (this.clickable) {
-                    this.savedSearchRoute = '/search/tab/' + options.savedSearch.type + ':' + options.savedSearch.id + (this.viewType ? '/view/' + this.viewType : '');
-                }
-                this.savedSearchModel = new DashboardSearchModel({
-                    id: options.savedSearch.id,
-                    type: options.savedSearch.type
-                });
-
-                this.fetchPromise = this.savedSearchModel.fetch().promise();
-            }
         },
 
         render: function() {
@@ -51,11 +29,7 @@ define([
             }));
 
             if (this.clickable) {
-                this.$el.click(function () {
-                    if (this.savedSearchRoute) {
-                        vent.navigate(this.savedSearchRoute);
-                    }
-                }.bind(this));
+                this.$el.click(this.onClick);
             }
 
             this.$content = this.$('.widget-content');
@@ -68,6 +42,8 @@ define([
         contentWidth: function() {
             return this.$content.width();
         },
+
+        onClick: $.noop,
 
         isUpdating: _.constant(false),
 

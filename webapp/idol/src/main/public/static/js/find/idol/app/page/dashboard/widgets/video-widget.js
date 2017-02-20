@@ -5,22 +5,22 @@
 
 define([
     'underscore',
-    './updating-widget',
+    './saved-search-widget',
     'find/app/configuration',
     'find/app/model/documents-collection',
     'find/idol/app/model/idol-indexes-collection',
     'text!find/idol/templates/page/dashboards/widgets/video-widget.html'
-], function(_, UpdatingWidget, configuration, DocumentsCollection, IdolIndexesCollection, template) {
+], function(_, SavedSearchWidget, configuration, DocumentsCollection, IdolIndexesCollection, template) {
     'use strict';
 
-    return UpdatingWidget.extend({
+    return SavedSearchWidget.extend({
 
         viewType: 'list',
 
         clickable: true,
 
         initialize: function(options) {
-            UpdatingWidget.prototype.initialize.apply(this, arguments);
+            SavedSearchWidget.prototype.initialize.apply(this, arguments);
 
             this.videoTemplate = _.template(template);
             this.loop = options.widgetSettings.loop !== false;
@@ -32,7 +32,7 @@ define([
         },
 
         render: function() {
-            UpdatingWidget.prototype.render.apply(this, arguments);
+            SavedSearchWidget.prototype.render.apply(this, arguments);
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
                 if (model.get('media') === 'video') {
@@ -52,17 +52,8 @@ define([
                 }
             });
 
-            this.fetchPromise.done(function() {
-                this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                this.getData();
-            }.bind(this));
-        },
 
-        doUpdate: function(done) {
-            if (this.queryModel) {
-                this.getData();
-                this.updateCallback = done;
-            }
+            this.getData();
         },
 
         getData: function() {
@@ -73,7 +64,7 @@ define([
                 fieldText = fieldText ? fieldText + ' AND ' + restrictToVideo : restrictToVideo;
             }
 
-            this.updatePromise = this.documentsCollection.fetch({
+            return this.documentsCollection.fetch({
                 data: {
                     start: this.searchResultNumber,
                     text: this.queryModel.get('queryText'),
@@ -87,15 +78,7 @@ define([
                     queryType: 'MODIFIED'
                 },
                 reset: false
-            }).done(function() {
-                delete this.updatePromise;
-            }.bind(this));
-        },
-
-        onCancelled: function() {
-            if (this.updatePromise && this.updatePromise.abort) {
-                this.updatePromise.abort();
-            }
+            });
         }
     });
 });
