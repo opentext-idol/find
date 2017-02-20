@@ -18,11 +18,12 @@ import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequ
 import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricValuesService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
-import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
+import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import org.mockito.Mock;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
@@ -60,6 +61,7 @@ public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolF
         when(parametricRequestBuilder.queryRestrictions(any())).thenReturn(parametricRequestBuilder);
 
         when(fieldsRequestBuilderFactory.getObject()).thenReturn(fieldsRequestBuilder);
+        when(fieldsRequestBuilder.fieldTypes(any())).thenReturn(fieldsRequestBuilder);
         when(fieldsRequestBuilder.build()).thenReturn(fieldsRequest);
 
         when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
@@ -85,17 +87,8 @@ public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolF
     }
 
     @Override
-    protected List<TagName> getParametricFields() {
-        return controller.getParametricFields();
-    }
-
-    @Override
-    protected List<FieldAndValueDetails> getParametricDateFields() {
-        return controller.getParametricDateFields();
-    }
-
-    @Override
-    protected List<FieldAndValueDetails> getParametricNumericFields() {
-        return controller.getParametricNumericFields();
+    protected List<FieldAndValueDetails> getParametricFields(final FieldTypeParam... fieldTypes) {
+        when(fieldsRequest.getFieldTypes()).thenReturn(Arrays.asList(fieldTypes));
+        return controller.getParametricFields(Arrays.asList(fieldTypes));
     }
 }
