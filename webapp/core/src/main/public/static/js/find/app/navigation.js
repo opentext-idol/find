@@ -1,19 +1,20 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
     'underscore',
-    'backbone',
     'jquery',
+    'backbone',
     'find/app/vent',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/navigation.html',
     'metisMenu'
-], function(_, Backbone, $, vent, configuration, i18n, template) {
-    "use strict";
+], function(_, $, Backbone, vent, configuration, i18n, template) {
+    'use strict';
+
     return Backbone.View.extend({
         events: {
             'click .side-nav-menu-button': function(event) {
@@ -35,19 +36,19 @@ define([
             this.sideBarModel = new Backbone.Model({collapsed: false});
             this.listenTo(options.router, 'route:page', this.selectPage);
 
-            this.listenTo(vent, 'vent:resize', function () {
-                if ($(window).width() <= 785 && !this.sideBarModel.get('collapsed')) {
+            this.listenTo(vent, 'vent:resize', function() {
+                if($(window).width() <= 785 && !this.sideBarModel.get('collapsed')) {
                     this.sideBarModel.set('collapsed', true);
                     this.sideBarModel.set('collapsedFromResize', true);
                 }
-                else if (this.sideBarModel.get('collapsedFromResize')) {
+                else if(this.sideBarModel.get('collapsedFromResize')) {
                     this.sideBarModel.set('collapsed', false);
                     this.sideBarModel.set('collapsedFromResize', false);
                 }
             });
         },
 
-        toggleSideBar: function (collapsed) { // side is for when not collapsed
+        toggleSideBar: function(collapsed) { // side is for when not collapsed
             $(document.body).toggleClass('hide-navbar', collapsed);
         },
 
@@ -79,5 +80,4 @@ define([
             this.$('li[data-pagename="' + pageName + '"]').addClass('active');
         }
     });
-
 });

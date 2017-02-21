@@ -1,10 +1,11 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
-    'find/app/app',
     'underscore',
+    'find/app/app',
     'find/app/configuration',
     'find/idol/app/model/idol-indexes-collection',
     'find/idol/app/model/saved-searches/saved-snapshot-collection',
@@ -14,7 +15,7 @@ define([
     'find/idol/app/page/dashboard-page',
     'find/app/page/find-settings-page',
     'i18n!find/nls/bundle'
-], function(BaseApp, _, configuration, IndexesCollection, SavedSnapshotCollection, Navigation, FindSearch, AboutPage,
+], function(_, BaseApp, configuration, IndexesCollection, SavedSnapshotCollection, Navigation, FindSearch, AboutPage,
             DashboardPage, SettingsPage, i18n) {
     'use strict';
 
@@ -41,7 +42,7 @@ define([
             const dashboards = _.where(configuration().dashboards, {enabled: true});
 
             const pageData = _.reduce(dashboards, function(acc, dash, index) {
-                acc['dashboards/' + dash.dashboardName] =  {
+                acc['dashboards/' + dash.dashboardName] = {
                     Constructor: DashboardPage,
                     icon: 'hp-icon hp-fw hp-dashboard',
                     models: ['sidebarModel'],
@@ -59,7 +60,15 @@ define([
                 search: {
                     Constructor: FindSearch,
                     icon: 'hp-icon hp-fw hp-search',
-                    models: ['indexesCollection', 'savedQueryCollection', 'windowScrollModel'].concat(configuration().hasBiRole ? ['savedSnapshotCollection'] : []),
+                    models: [
+                        'indexesCollection',
+                        'savedQueryCollection',
+                        'windowScrollModel'
+                    ].concat(
+                        configuration().hasBiRole
+                            ? ['savedSnapshotCollection']
+                            : []
+                    ),
                     title: i18n['app.search'],
                     order: dashboardCount
                 },

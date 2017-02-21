@@ -89,47 +89,53 @@ define([
         },
 
         onResize: function() {
-            _.each(this.widgetViews, function(widget) {
-                widget.view.onResize();
-            });
+            if(this.isVisible()) {
+                _.each(this.widgetViews, function(widget) {
+                    widget.view.onResize();
+                });
+            }
         },
 
         update: function() {
-            // cancel pending update
-            if(this.updateTracker && !this.updateTracker.get('complete')) {
-                this.updateTracker.set('cancelled', true);
-                this.stopListening(this.updateTracker);
-            }
+            if(this.isVisible()) {
+                // cancel pending update
+                if(this.updateTracker && !this.updateTracker.get('complete')) {
+                    this.updateTracker.set('cancelled', true);
+                    this.stopListening(this.updateTracker);
+                }
 
-            // set up tracker
-            this.updateTracker = new UpdateTrackerModel();
+                // set up tracker
+                this.updateTracker = new UpdateTrackerModel();
 
-            // update views
-            const updatingViews = _.chain(this.widgetViews)
-                .pluck('view')
-                .filter(function(view) {
-                    return view.savedSearch
-                        ? view.isUpdating() && view.savedSearch.type === 'QUERY'
-                        : view.isUpdating();
-                })
-                .value();
+                // update views
+                const updatingViews = _.chain(this.widgetViews)
+                    .pluck('view')
+                    .filter(function(view) {
+                        return view.savedSearch
+                            ? view.isUpdating() && view.savedSearch.type === 'QUERY'
+                            : view.isUpdating();
+                    })
+                    .value();
 
-            // don't set up this listener if no work to do
-            if(updatingViews.length > 0) {
-                this.updateTracker.set('total', updatingViews.length);
+                // don't set up this listener if no work to do
+                if(updatingViews.length > 0) {
+                    this.updateTracker.set('total', updatingViews.length);
 
-                _.each(updatingViews, function(view) {
-                    view.update(this.updateTracker)
-                }, this);
+                    _.each(updatingViews, function(view) {
+                        view.update(this.updateTracker)
+                    }, this);
 
-                // handle completion
-                this.listenTo(this.updateTracker, 'change:count', function(model, count) {
-                    if(count === updatingViews.length) {
-                        // publish completion
-                        this.updateTracker.set('complete', true);
-                        this.stopListening(this.updateTracker);
-                    }
-                });
+                    // handle completion
+                    this.listenTo(this.updateTracker, 'change:count', function(model, count) {
+                        if(count === updatingViews.length) {
+                            // publish completion
+                            this.updateTracker.set('complete', true);
+                            this.stopListening(this.updateTracker);
+                        }
+                    });
+                }
+
+                this.onResize();
             }
         }
     });
