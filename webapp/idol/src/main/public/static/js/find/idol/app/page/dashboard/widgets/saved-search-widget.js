@@ -40,7 +40,7 @@ define([
                 type: options.savedSearch.type
             });
 
-            this.savedSearchModel.fetch().done(function() {
+            this.savedSearchPromise = this.savedSearchModel.fetch().done(function() {
                 this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
                 this.postInitialize();
                 this.getData();
