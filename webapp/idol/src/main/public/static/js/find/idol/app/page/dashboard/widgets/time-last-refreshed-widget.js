@@ -1,18 +1,18 @@
 /*
- * Copyright 2014-2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
     './updating-widget',
     'i18n!find/nls/bundle',
     'text!find/idol/templates/page/dashboards/widgets/time-last-refreshed-widget.html',
     'moment-timezone-with-data'
-], function(UpdatingWidget, i18n, template, moment) {
+], function(_, UpdatingWidget, i18n, template, moment) {
     'use strict';
 
     return UpdatingWidget.extend({
-
         lastRefreshTemplate: _.template(template),
 
         initialize: function(options) {
@@ -27,7 +27,7 @@ define([
         },
 
         render: function() {
-            UpdatingWidget.prototype.render.apply(this, arguments);
+            UpdatingWidget.prototype.render.apply(this);
 
             this.$content.html(this.lastRefreshTemplate({
                 lastUpdated: this.formatDate(this.lastUpdated),
@@ -44,7 +44,7 @@ define([
         },
 
         doUpdate: function(done, updateTracker) {
-            if (this.hasRendered) { // set up progress bar
+            if(this.hasRendered) { // set up progress bar
                 this.$updating.removeClass('hide');
                 this.$updateProgress.text(i18n['dashboards.widget.lastRefresh.refreshing'](0, updateTracker.get('total') - 1));
                 this.$updateProgress.removeClass('hide');
@@ -54,7 +54,7 @@ define([
         },
 
         onCancelled: function() {
-            if (this.hasRendered) {
+            if(this.hasRendered) {
                 this.$updating.addClass('hide');
                 this.$updateProgress.addClass('hide');
             }
@@ -64,7 +64,7 @@ define([
             this.lastUpdated = moment().tz(this.timeZone);
             this.nextRefresh = this.lastUpdated.clone().add(this.updateInterval);
 
-            if (this.hasRendered) {
+            if(this.hasRendered) {
                 this.$updating.addClass('hide');
                 this.$updateProgress.addClass('hide');
 
@@ -78,7 +78,7 @@ define([
             const completedWidgets = updateTracker.get('count') - 1;
             const totalWidgets = updateTracker.get('total') - 1;
 
-            if (this.hasRendered) {
+            if(this.hasRendered) {
                 this.$updateProgress.text(i18n['dashboards.widget.lastRefresh.refreshing'](completedWidgets, totalWidgets));
             }
         },
@@ -86,7 +86,5 @@ define([
         formatDate: function(date) {
             return date.format(this.dateFormat);
         }
-
     });
-
 });

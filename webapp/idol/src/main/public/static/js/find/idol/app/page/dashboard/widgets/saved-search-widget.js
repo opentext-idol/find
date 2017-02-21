@@ -1,33 +1,39 @@
 /*
- * Copyright 2014-2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'jquery',
+    'underscore',
     './updating-widget',
-    'find/app/configuration',
-    'find/app/model/documents-collection',
     'find/idol/app/model/idol-indexes-collection',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/vent'
-], function($, UpdatingWidget, configuration, DocumentsCollection, IdolIndexesCollection, SavedSearchModel, vent) {
+], function(_, UpdatingWidget, IdolIndexesCollection, SavedSearchModel, vent) {
     'use strict';
 
     const DashboardSearchModel = SavedSearchModel.extend({
         urlRoot: function() {
-            return 'api/bi/' + (this.get('type') === 'QUERY' ? 'saved-query': 'saved-snapshot');
+            return 'api/bi/' +
+                (this.get('type') === 'QUERY'
+                    ? 'saved-query'
+                    : 'saved-snapshot');
         }
     });
 
     return UpdatingWidget.extend({
-
         clickable: true,
+        postInitialize: _.noop,
+        getData: _.noop,
 
         initialize: function(options) {
             UpdatingWidget.prototype.initialize.apply(this, arguments);
 
-            this.savedSearchRoute = '/search/tab/' + options.savedSearch.type + ':' + options.savedSearch.id + (this.viewType ? '/view/' + this.viewType : '');
+            this.savedSearchRoute = '/search/tab/' +
+                options.savedSearch.type +
+                ':' +
+                options.savedSearch.id +
+                (this.viewType ? '/view/' + this.viewType : '');
 
             this.savedSearchModel = new DashboardSearchModel({
                 id: options.savedSearch.id,
@@ -41,8 +47,6 @@ define([
             }.bind(this));
         },
 
-        postInitialize: $.noop,
-
         doUpdate: function(done) {
             this.savedSearchModel.fetch().done(function() {
                 this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
@@ -50,14 +54,12 @@ define([
             }.bind(this));
         },
 
-        onClick: function () {
+        onClick: function() {
             vent.navigate(this.savedSearchRoute);
         },
 
-        getData: $.noop,
-
         onCancelled: function() {
-            if (this.updatePromise && this.updatePromise.abort) {
+            if(this.updatePromise && this.updatePromise.abort) {
                 this.updatePromise.abort();
             }
         }

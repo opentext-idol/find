@@ -1,23 +1,23 @@
 /*
- * Copyright 2014-2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
     'underscore',
-    'jquery',
+    'backbone',
     'text!find/idol/templates/page/dashboards/widget.html'
-], function(Backbone, _, $, template) {
+], function(_, Backbone, template) {
     'use strict';
 
     return Backbone.View.extend({
-
         viewType: '',
-
         clickable: false,
-
         template: _.template(template),
+
+        isUpdating: _.constant(false),
+        onResize: _.noop,
+        onClick: _.noop,
 
         initialize: function(options) {
             this.name = options.name;
@@ -28,7 +28,7 @@ define([
                 name: this.name
             }));
 
-            if (this.clickable) {
+            if(this.clickable) {
                 this.$el.click(this.onClick);
             }
 
@@ -41,14 +41,6 @@ define([
 
         contentWidth: function() {
             return this.$content.width();
-        },
-
-        onClick: $.noop,
-
-        isUpdating: _.constant(false),
-
-        onResize: $.noop
-
+        }
     });
-
 });

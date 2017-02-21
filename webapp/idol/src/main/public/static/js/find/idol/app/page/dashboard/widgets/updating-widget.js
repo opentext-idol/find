@@ -1,27 +1,24 @@
 /*
- * Copyright 2014-2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
-    './widget',
-    'underscore'
-], function(Widget, _) {
+    'underscore',
+    './widget'
+], function(_, Widget) {
     'use strict';
 
     const loadingTemplate = '<i class="widget-loading-spinner fa fa-spinner fa-spin pull-right hide"></i>';
 
     return Widget.extend({
-
         isUpdating: _.constant(true),
-
-        onComplete: $.noop,
-
-        onIncrement: $.noop,
-
-        onCancelled: $.noop,
+        onComplete: _.noop,
+        onIncrement: _.noop,
+        onCancelled: _.noop,
 
         render: function() {
-            Widget.prototype.render.apply(this, arguments);
+            Widget.prototype.render.apply(this);
 
             this.$('.title').append(loadingTemplate);
         },
@@ -34,7 +31,6 @@ define([
             this.toggleSpinner(true);
 
             const listener = function(callback) {
-                //noinspection JSPotentiallyInvalidUsageOfThis
                 this.toggleSpinner(false);
 
                 callback.call(this, updateTracker);
@@ -60,7 +56,5 @@ define([
         doUpdate: function(done, updateTracker) {
             done();
         }
-
     });
-
 });

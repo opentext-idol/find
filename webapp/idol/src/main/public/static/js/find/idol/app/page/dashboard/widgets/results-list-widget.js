@@ -1,24 +1,22 @@
 /*
- * Copyright 2014-2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
+    'jquery',
     './saved-search-widget',
-    'find/app/configuration',
     'find/app/model/documents-collection',
-    'find/idol/app/model/idol-indexes-collection',
     'js-whatever/js/list-view',
     'js-whatever/js/list-item-view',
     'text!find/idol/templates/page/dashboards/widgets/results-list-widget-item-view.html'
-], function(SavedSearchWidget, configuration, DocumentsCollection, IdolIndexesCollection, ListView, ListItemView, resultsListTemplateItemView) {
+], function(_, $, SavedSearchWidget, DocumentsCollection, ListView,
+            ListItemView, resultsListTemplateItemView) {
     'use strict';
 
     return SavedSearchWidget.extend({
-
         viewType: 'list',
-
-        clickable: true,
 
         initialize: function(options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
@@ -43,7 +41,7 @@ define([
         },
 
         render: function() {
-            SavedSearchWidget.prototype.render.apply(this, arguments);
+            SavedSearchWidget.prototype.render.apply(this);
 
             this.listView.render();
             this.$content.html(this.listView.$el);
@@ -71,12 +69,15 @@ define([
             });
         },
 
-        hideOverflow: function () {
+        hideOverflow: function() {
             const containerBounds = this.listView.el.getBoundingClientRect();
 
             this.$('.search-result').each(function(index, element) {
                 const boundingClientRect = element.getBoundingClientRect();
-                $(element).toggleClass('out-of-view', this.columnLayout ? boundingClientRect.right > containerBounds.right : boundingClientRect.bottom > containerBounds.bottom);
+                $(element).toggleClass('out-of-view',
+                    this.columnLayout
+                        ? boundingClientRect.right > containerBounds.right
+                        : boundingClientRect.bottom > containerBounds.bottom);
             }.bind(this));
         }
     });

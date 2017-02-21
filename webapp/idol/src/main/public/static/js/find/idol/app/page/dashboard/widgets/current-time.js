@@ -1,17 +1,17 @@
 /*
- * Copyright 2014-2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
     './widget',
     'text!find/idol/templates/page/dashboards/widgets/current-time-widget.html',
     'moment-timezone-with-data'
-], function(Widget, template, moment) {
+], function(_, Widget, template, moment) {
     'use strict';
 
     return Widget.extend({
-
         currentTimeTemplate: _.template(template),
 
         initialize: function(options) {
@@ -23,7 +23,7 @@ define([
         },
 
         render: function() {
-            Widget.prototype.render.apply(this, arguments);
+            Widget.prototype.render.apply(this);
 
             this.$content.html(this.currentTimeTemplate());
 
@@ -43,7 +43,5 @@ define([
             this.$day.text(time.format('dddd'));
             this.$date.text(time.format(this.dateFormat));
         }
-
     });
-
 });
