@@ -59,6 +59,8 @@ define([
             _.each(this.widgetViews, function(widget) {
                 const $div = this.generateWidgetDiv(widget.position);
 
+                // Need $.when() because not every widget has a savedSearchPromise.
+                // $.when(undefined) returns a resolved promise
                 $.when(widget.view.savedSearchPromise)
                     .done(function() {
                         this.$el.append($div);
