@@ -12,7 +12,7 @@
                     </li>
                     <li class="divider"></li>
                 <% } %>
-                <%= data.menuItems(data) %>
+                <%= data.menuItems({pages: data.pages.filter(function(data) {return data.dropdownMenu;})}) %>
                 <li>
                     <a class="clickable navigation-logout"><i class="hp-icon hp-steps hp-fw text-muted"></i> <%-data.i18n['app.logout']%></a>
                 </li>
@@ -29,12 +29,14 @@
         <nav class="navbar-default navbar-static-side navbar-static-side-dark" role="navigation">
             <ul class="nav side-menu" side-navigation="">
                 <li></li><% /*this is added to allow for the logo elements expects which we don't use. (logo goes here when implemented)*/ %>
-                <% _.each(data.pages, function(page, index) { %>
-                <li data-pagename="<%-page.pageName%>" <%if (index === 0) {%> class="active" <%}%>>
-                    <a href="public/<%-page.pageName%>" data-pagename="<%-page.pageName%>">
-                        <i class="<%-page.icon%>"></i> <%-page.title%>
-                    </a>
-                </li>
+                <% _.each(data.pages.reverse(), function(page, index) { %>
+                    <% if(page.sideMenu) { %>
+                        <li data-pagename="<%-page.pageName%>" <%if (index === 0) {%> class="active" <%}%>>
+                            <a href="public/<%-page.pageName%>" data-pagename="<%-page.pageName%>">
+                                <i class="<%-page.icon%>"></i> <%-page.title%>
+                            </a>
+                        </li>
+                    <% } %>
                 <% }); %>
             </ul>
         </nav>
