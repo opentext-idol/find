@@ -5,8 +5,9 @@
 
 define([
     './saved-search-widget',
-    'find/app/page/search/results/entity-topic-map-view'
-], function(SavedSearchWidget, EntityTopicMapView) {
+    'find/app/page/search/results/entity-topic-map-view',
+    'find/app/vent'
+], function(SavedSearchWidget, EntityTopicMapView, vent) {
     'use strict';
 
     return SavedSearchWidget.extend({
@@ -28,7 +29,8 @@ define([
             });
 
             // use the dashboard resize handler instead of the built in one
-            this.entityTopicMap.topicMap.stopListening('vent:resize');
+            // contrary to the Backbone docs we do need to specify vent here
+            this.entityTopicMap.topicMap.stopListening(vent, 'vent:resize');
         },
 
         render: function() {
