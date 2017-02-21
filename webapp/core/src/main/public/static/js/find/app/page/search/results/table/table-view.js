@@ -43,9 +43,7 @@ define([
         render: function() {
             ParametricResultsView.prototype.render.apply(this);
 
-            this.$('.col-md-12').prepend('<a class="btn btn-default pull-right table-pptx" href="#"><i class="hp-icon hp-document-download"></i> PPTX</a>');
-
-            this.$el.on('click', '.table-pptx', _.bind(function(evt){
+            this.$el.on('click', '.parametric-pptx', _.bind(function(evt){
                 evt.preventDefault();
 
                 var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/table"><input name="title"><textarea name="data"></textarea><input type="submit"></form>');

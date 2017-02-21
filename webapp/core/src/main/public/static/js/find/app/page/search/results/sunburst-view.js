@@ -158,8 +158,6 @@ define([
         render: function() {
             ParametricResultsView.prototype.render.apply(this);
 
-            this.$('.col-md-12').prepend('<a class="btn btn-default pull-right sunburst-pptx" href="#"><i class="hp-icon hp-document-download"></i> PPTX</a>');
-
             this.$content.addClass('sunburst');
         }
     });
