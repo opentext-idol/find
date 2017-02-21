@@ -1,11 +1,12 @@
 /*
- * Copyright 2014-2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
     'find/idol/app/page/dashboard-page'
-], function(DashboardPage) {
+], function(_, DashboardPage) {
     'use strict';
 
     const getUpdatingWidgets = function(dashboardPage) {
@@ -18,7 +19,6 @@ define([
     };
 
     describe('Dashboard Page', function() {
-
         beforeEach(function() {
             jasmine.clock().install();
 
@@ -134,5 +134,4 @@ define([
             })
         });
     })
-
 });

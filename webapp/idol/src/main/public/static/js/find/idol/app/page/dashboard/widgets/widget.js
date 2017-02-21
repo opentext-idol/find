@@ -29,7 +29,7 @@ define([
             }));
 
             if(this.clickable) {
-                this.$el.click(this.onClick);
+                this.$el.click(this.onClick.bind(this));
             }
 
             this.$content = this.$('.widget-content');
