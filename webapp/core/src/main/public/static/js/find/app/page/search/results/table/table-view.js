@@ -31,19 +31,8 @@ define([
 
         tableTemplate: _.template(tableTemplate),
 
-        initialize: function(options) {
-            ParametricResultsView.prototype.initialize.call(this, _.defaults({
-                dependentParametricCollection: new TableCollection(),
-                emptyDependentMessage: i18n['search.resultsView.table.error.noDependentParametricValues'],
-                emptyMessage: generateErrorHtml({errorLookup: 'emptyTableView'}),
-                errorMessageArguments: {messageToUser: i18n['search.resultsView.table.error.query']}
-            }, options))
-        },
-
-        render: function() {
-            ParametricResultsView.prototype.render.apply(this);
-
-            this.$el.on('click', '.parametric-pptx', _.bind(function(evt){
+        events: _.extend({
+            'click .parametric-pptx': function(evt) {
                 evt.preventDefault();
 
                 var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/table"><input name="title"><textarea name="data"></textarea><input type="submit"></form>');
@@ -69,7 +58,21 @@ define([
                 });
 
                 $form.appendTo(document.body).submit().remove();
-            }, this))
+            },
+
+        }, ParametricResultsView.prototype.events),
+
+        initialize: function(options) {
+            ParametricResultsView.prototype.initialize.call(this, _.defaults({
+                dependentParametricCollection: new TableCollection(),
+                emptyDependentMessage: i18n['search.resultsView.table.error.noDependentParametricValues'],
+                emptyMessage: generateErrorHtml({errorLookup: 'emptyTableView'}),
+                errorMessageArguments: {messageToUser: i18n['search.resultsView.table.error.query']}
+            }, options))
+        },
+
+        render: function() {
+            ParametricResultsView.prototype.render.apply(this, arguments);
 
             this.$content.html(this.tableTemplate());
 

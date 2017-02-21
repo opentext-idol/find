@@ -111,6 +111,31 @@ define([
     }
 
     return ParametricResultsView.extend({
+
+        events: _.extend({
+            'click .parametric-pptx': function(evt) {
+                evt.preventDefault();
+
+                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/sunburst"><textarea name="data"></textarea><input type="submit"></form>');
+
+                var categories = [];
+                var values = [];
+
+                this.dependentParametricCollection.each(function(model){
+                    categories.push(model.get('text') || i18n['search.resultsView.sunburst.others']);
+                    values.push(model.get('count'));
+                });
+
+                $form[0].data.value = JSON.stringify({
+                    categories: categories,
+                    values: values,
+                    title: i18n['search.resultsView.sunburst.breakdown.by'](this.fieldsCollection.at(0).get('displayValue'))
+                });
+
+                $form.appendTo(document.body).submit().remove();
+            }
+        }, ParametricResultsView.prototype.events),
+
         initialize: function(options) {
             ParametricResultsView.prototype.initialize.call(this, _.defaults({
                 emptyDependentMessage: i18n['search.resultsView.sunburst.error.noDependentParametricValues'],
