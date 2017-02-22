@@ -25,6 +25,7 @@ define([
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/page/search/results/sunburst-view',
     'find/app/page/search/results/map-results-view',
+    'find/app/page/search/results/dategraph/dategraph-view',
     'find/app/page/search/results/table/table-view',
     'find/app/page/search/time-bar-view',
     'find/app/configuration',
@@ -34,7 +35,7 @@ define([
              ParametricCollection, ParametricFieldsCollection,
              queryStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
              RelatedConceptsView, addChangeListener, SavedSearchControlView, TopicMapView,
-             SunburstView, MapResultsView, TableView, TimeBarView, configuration, i18n, templateString) {
+             SunburstView, MapResultsView, DateGraphView, TableView, TimeBarView, configuration, i18n, templateString) {
     'use strict';
 
     const $window = $(window);
@@ -256,6 +257,17 @@ define([
                     selector: {
                         displayNameKey: 'table',
                         icon: 'hp-table'
+                    }
+                },
+                dategraph: {
+                    Constructor: DateGraphView,
+                    constructorArguments: _.extend({
+                        timeBarModel: this.timeBarModel
+                    }, subViewArguments),
+                    shown: hasBiRole,
+                    selector: {
+                        displayNameKey: 'dategraph',
+                        icon: 'hp-analytics'
                     }
                 }
             };

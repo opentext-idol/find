@@ -15,12 +15,17 @@ define([
         tagName: 'li',
         template: _.template(template),
 
+        initialize: function(options) {
+            this.showGraphButtons = options.showGraphButtons;
+        },
+
         render: function() {
             this.$el
                 .html(this.template({
                     count: this.model.get('count') || 0,
                     value: this.model.get('value'),
-                    displayValue: this.model.get('displayValue')
+                    displayValue: this.model.get('displayValue'),
+                    showGraphButtons: this.showGraphButtons
                 }))
                 .iCheck({checkboxClass: 'icheckbox-hp'});
 

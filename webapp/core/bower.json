@@ -54,6 +54,7 @@
     "datatables.net-fixedcolumns-bs": "3.2.2",
     "hp-autonomy-about-page": "0.3.0",
     "bootstrap": "3.3.7",
+    "Flot": "flot#~0.8.3",
     "moment-timezone": "0.5.11"
   },
   "devDependencies": {

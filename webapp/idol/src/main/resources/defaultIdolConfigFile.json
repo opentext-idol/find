@@ -126,7 +126,8 @@
           "list",
           "sunburst",
           "table",
-          "map"
+          "map",
+          "dategraph"
         ],
         "user": [
           "list"

@@ -1599,12 +1599,17 @@ input.find-input {
   width: @custom3;
 }
 
-.parametric-value-count {
+.parametric-value-graph-cell {
+  width: @custom3;
+}
+
+.parametric-value-count,.parametric-value-graph {
   &:extend(.text-right);
 }
 
 .parametric-value-name,
-.parametric-value-count {
+.parametric-value-count,
+.parametric-value-graph{
   white-space: nowrap;
 }
 
@@ -2238,19 +2243,23 @@ h4.similar-dates-message {
 }
 
 @media @smHeightScreen {
-  .entity-topic-map {
+  .entity-topic-map, .dategraph-content {
     height: @custom4;
   }
 }
 
 @media @mHeightScreen {
-  .entity-topic-map {
+  .entity-topic-map, .dategraph-content {
     height: 500px;
   }
 }
 
 @media @lgHeightScreen {
-  .entity-topic-map {
+  .entity-topic-map, .dategraph-content {
     height: @lgHeightScreenTopicMapHeight;
   }
+}
+
+.dategraph-content {
+  clear: both;
 }
