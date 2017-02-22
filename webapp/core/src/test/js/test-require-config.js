@@ -45,6 +45,9 @@ require.config({
         },
         'find/app/page/search/filters/parametric/parametric-select-modal-view': {
             'find/app/page/search/filters/parametric/parametric-paginator': 'mock/page/search/filters/parametric/parametric-paginator'
+        },
+        'find/app/page/search/filters/parametric/parametric-select-modal': {
+            'find/app/page/search/filters/parametric/parametric-paginator': 'mock/page/search/filters/parametric/parametric-paginator'
         }
     }
 });
