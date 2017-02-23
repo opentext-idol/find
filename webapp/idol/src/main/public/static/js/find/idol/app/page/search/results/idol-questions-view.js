@@ -70,6 +70,7 @@ define([
 
         fetchData: function() {
             this.loadingTracker.questionsFinished = false;
+            this.$el.empty();
 
             let questionsRequestData = {
                 text: this.queryModel.get('queryText'),
