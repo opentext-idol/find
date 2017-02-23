@@ -25,7 +25,7 @@ define([
         events: _.extend({
             'click button[name=validate]': 'triggerValidation',
             'change .template-input-margin': 'updateMarginIndicator',
-            'keyup .template-input-margin': 'updateMarginIndicator'
+            'input .template-input-margin': 'updateMarginIndicator'
         }, Widget.prototype.events),
 
         initialize: function(options) {
