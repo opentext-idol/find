@@ -36,13 +36,13 @@ class SavedSnapshotController {
     private static final Integer STATE_TOKEN_MAX_RESULTS = Integer.MAX_VALUE;
 
     private final IdolDocumentsService documentsService;
-    private final SavedSearchService<SavedSnapshot> service;
+    private final SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> service;
     private final FieldTextParser fieldTextParser;
     private final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
 
     @Autowired
     public SavedSnapshotController(final IdolDocumentsService documentsService,
-                                   final SavedSearchService<SavedSnapshot> service,
+                                   final SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> service,
                                    final FieldTextParser fieldTextParser,
                                    final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory) {
         this.documentsService = documentsService;

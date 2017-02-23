@@ -6,10 +6,12 @@
 package com.hp.autonomy.frontend.find.core.configuration;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.ConfigFileConfiguration;
+import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import com.hp.autonomy.searchcomponents.core.test.CoreTestContext;
-import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
+import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
 import org.apache.commons.io.FileUtils;
 import org.jasypt.util.text.TextEncryptor;
 import org.junit.After;
@@ -42,25 +44,24 @@ import static org.junit.Assert.*;
 public abstract class FindConfigFileServiceTest<C extends FindConfig<C, B>, B extends FindConfigBuilder<C, B>> {
     @ClassRule
     public static final SpringClassRule SCR = new SpringClassRule();
+    private static final String TEST_DIR = "./target/test";
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    private static final String TEST_DIR = "./target/test";
+    @Autowired
+    protected FieldPathNormaliser fieldPathNormaliser;
+    @Autowired
+    protected JsonSerializer<FieldPath> fieldPathSerializer;
+    @Autowired
+    protected JsonDeserializer<FieldPath> fieldPathDeserializer;
+    @Mock
+    protected TextEncryptor textEncryptor;
+    protected FilterProvider filterProvider;
+    private FindConfigFileService<C, B> findConfigFileService;
 
     @BeforeClass
     public static void init() {
         System.setProperty("hp.find.home", TEST_DIR);
     }
-
-    @Autowired
-    protected JsonDeserializer<TagName> tagNameDeserializer;
-
-    @Mock
-    protected TextEncryptor textEncryptor;
-
-    protected FilterProvider filterProvider;
-
-    private FindConfigFileService<C, B> findConfigFileService;
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Before

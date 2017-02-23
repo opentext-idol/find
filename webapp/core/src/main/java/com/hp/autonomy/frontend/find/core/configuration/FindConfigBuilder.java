@@ -7,8 +7,6 @@ package com.hp.autonomy.frontend.find.core.configuration;
 
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 
-import java.util.Collection;
-
 /**
  * Builder for configuration common to both HoD and Idol implementations of Find
  *
@@ -26,12 +24,6 @@ public interface FindConfigBuilder<C extends FindConfig<C, B>, B extends FindCon
     B fieldsInfo(FieldsInfo fieldsInfo);
 
     B uiCustomization(UiCustomization uiCustomization);
-
-    B parametricDisplayValues(Collection<? extends ParametricDisplayValues> parametricDisplayValues);
-
-    B parametricDisplayValue(ParametricDisplayValues parametricDisplayValue);
-
-    B clearParametricDisplayValues();
 
     B topicMapMaxResults(Integer topicMapMaxResults);
 

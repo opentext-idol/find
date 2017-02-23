@@ -12,12 +12,16 @@ import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
 import com.hp.autonomy.frontend.find.core.export.MetadataNode;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
+import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
+import com.hp.autonomy.searchcomponents.core.test.CoreTestContext;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,11 +30,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CLASSES_PROPERTY;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = CoreTestContext.class, properties = CORE_CLASSES_PROPERTY, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class ExportQueryResponseProcessorTest {
+    @Autowired
+    private FieldPathNormaliser fieldPathNormaliser;
     @Mock
     private ExportStrategy exportStrategy;
 
@@ -46,7 +55,7 @@ public class ExportQueryResponseProcessorTest {
         when(exportStrategy.getFieldNames(any(MetadataNode[].class), eq(Collections.emptyList()))).thenReturn(fieldNames);
         when(exportStrategy.getConfiguredFieldsById()).thenReturn(ImmutableMap.of("CATEGORY", FieldInfo.<String>builder()
                 .id("categories")
-                .name("CATEGORY")
+                .name(fieldPathNormaliser.normaliseFieldPath("CATEGORY"))
                 .build()));
 
     }

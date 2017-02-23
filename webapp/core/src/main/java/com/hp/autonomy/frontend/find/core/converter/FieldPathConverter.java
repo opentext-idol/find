@@ -5,8 +5,8 @@
 
 package com.hp.autonomy.frontend.find.core.converter;
 
-import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
-import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
+import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
+import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
@@ -18,23 +18,23 @@ import java.net.URLDecoder;
  * Converts field names sent from the client to normalised tag names
  */
 @Component
-public class TagNameConverter implements Converter<String, TagName> {
-    private final TagNameFactory tagNameFactory;
+public class FieldPathConverter implements Converter<String, FieldPath> {
+    private final FieldPathNormaliser fieldPathNormaliser;
 
     @Autowired
-    public TagNameConverter(final TagNameFactory tagNameFactory) {
-        this.tagNameFactory = tagNameFactory;
+    public FieldPathConverter(final FieldPathNormaliser fieldPathNormaliser) {
+        this.fieldPathNormaliser = fieldPathNormaliser;
     }
 
     @Override
-    public TagName convert(final String source) {
-        return tagNameFactory.buildTagName(decodeUriComponent(source));
+    public FieldPath convert(final String source) {
+        return fieldPathNormaliser.normaliseFieldPath(decodeUriComponent(source));
     }
 
     private String decodeUriComponent(final String part) {
         try {
             return URLDecoder.decode(part, "UTF-8");
-        } catch(final UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException e) {
             throw new AssertionError("All JVMs must support UTF-8", e);
         }
     }

@@ -15,6 +15,7 @@ import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import com.hp.autonomy.types.requests.idol.actions.tags.ValueDetails;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
 public abstract class FieldsController<R extends FieldsRequest, E extends Exception, Q extends QueryRestrictions<?>, P extends ParametricRequest<Q>> {
     public static final String FIELDS_PATH = "/api/public/fields";
     public static final String GET_PARAMETRIC_FIELDS_PATH = "/parametric";
-    protected static final String FIELD_TYPES_PARAM = "fieldTypes";
+    public static final String FIELD_TYPES_PARAM = "fieldTypes";
     private final FieldsService<R, E> fieldsService;
     private final ParametricValuesService<P, Q, E> parametricValuesService;
     private final ObjectFactory<? extends ParametricRequestBuilder<P, Q, ?>> parametricRequestBuilderFactory;
@@ -91,7 +92,9 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
         return fetchParametricFieldAndValueDetails(fieldType, response, tagNames -> {
             // Fetch the value details for the fields
             final P parametricRequest = parametricRequestBuilderFactory.getObject()
-                    .fieldNames(tagNames)
+                    .fieldNames(tagNames.stream()
+                            .map(TagName::getId)
+                            .collect(Collectors.toList()))
                     .queryRestrictions(createValueDetailsQueryRestrictions(request))
                     .build();
 
@@ -121,8 +124,8 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
         return tagNames.stream()
                 .map(tagName -> {
                     final FieldAndValueDetails.FieldAndValueDetailsBuilder builder = FieldAndValueDetails.builder()
-                            .id(tagName.getId())
-                            .name(tagName.getName())
+                            .id(tagName.getId().getNormalisedPath())
+                            .name(tagName.getDisplayName())
                             .type(fieldType);
 
                     final ValueDetails valueDetails = valueDetailsResponse.get(tagName);
@@ -145,23 +148,23 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
      */
     private Predicate<TagName> alwaysAndNeverShowFilter() {
         final UiCustomization maybeUiCustomization = configService.getConfig().getUiCustomization();
-        final Collection<TagName> parametricAlwaysShow = Optional.ofNullable(maybeUiCustomization)
+        final Collection<FieldPath> parametricAlwaysShow = Optional.ofNullable(maybeUiCustomization)
                 .map(UiCustomization::getParametricAlwaysShow)
                 .orElse(Collections.emptyList());
-        final Collection<TagName> parametricNeverShow = Optional.ofNullable(maybeUiCustomization)
+        final Collection<FieldPath> parametricNeverShow = Optional.ofNullable(maybeUiCustomization)
                 .map(UiCustomization::getParametricNeverShow)
                 .orElse(Collections.emptyList());
 
-        return tagName -> (parametricAlwaysShow.isEmpty() || parametricAlwaysShow.contains(tagName)) && !parametricNeverShow.contains(tagName);
+        return tagName -> (parametricAlwaysShow.isEmpty() || parametricAlwaysShow.contains(tagName.getId())) && !parametricNeverShow.contains(tagName.getId());
     }
 
     private Comparator<FieldAndValueDetails> parametricFieldComparator() {
         final UiCustomization maybeUiCustomization = configService.getConfig().getUiCustomization();
         final int[] counter = new int[]{0};
-        final Map<TagName, Integer> orderMap = Optional.ofNullable(maybeUiCustomization)
+        final Map<FieldPath, Integer> orderMap = Optional.ofNullable(maybeUiCustomization)
                 .map(uiCustomization -> uiCustomization.getParametricOrder().stream().collect(Collectors.toMap(x -> x, x -> counter[0]++)))
                 .orElse(Collections.emptyMap());
-        return Comparator.<FieldAndValueDetails, Integer>comparing(x -> orderMap.getOrDefault(tagNameFactory.buildTagName(x.getId()), Integer.MAX_VALUE))
+        return Comparator.<FieldAndValueDetails, Integer>comparing(x -> orderMap.getOrDefault(tagNameFactory.getFieldPath(x.getId()), Integer.MAX_VALUE))
                 .thenComparing(FieldAndValueDetails::getName);
     }
 

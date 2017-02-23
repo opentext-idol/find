@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
     @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
-    public IdolSavedQueryController(final SavedSearchService<SavedQuery> service,
+    public IdolSavedQueryController(final SavedSearchService<SavedQuery, SavedQuery.Builder> service,
                                     final IdolDocumentsService documentsService,
                                     final FieldTextParser fieldTextParser,
                                     final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,

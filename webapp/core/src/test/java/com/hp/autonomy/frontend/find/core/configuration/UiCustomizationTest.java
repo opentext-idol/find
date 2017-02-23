@@ -6,7 +6,6 @@
 package com.hp.autonomy.frontend.find.core.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
@@ -42,9 +41,6 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
 
     @Override
     public void setUp() {
-        final SimpleModule module = new SimpleModule();
-        module.addSerializer(new FindConfigFileService.TagNameSerializer());
-        objectMapper.registerModule(module);
         json = new JacksonTester<>(getClass(), ResolvableType.forClass(getType()), objectMapper);
     }
 
@@ -64,8 +60,8 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
 
         return UiCustomization.builder()
                 .options(uiCustomizationOptions)
-                .parametricOrderItem(tagNameFactory.buildTagName("FIELD_Y"))
-                .parametricOrderItem(tagNameFactory.buildTagName("FIELD_X"))
+                .parametricOrderItem(tagNameFactory.getFieldPath("FIELD_Y"))
+                .parametricOrderItem(tagNameFactory.getFieldPath("FIELD_X"))
                 .specialUrlPrefixes(ImmutableMap.of("application/vnd.visio", "ms-visio:ofv|u|"))
                 .errorCallSupportString("Custom technical support message")
                 .build();
@@ -98,8 +94,8 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
         assertThat(objectContent.getObject().getOptions().any(), hasKey("option1"));
         assertThat(objectContent.getObject().getOptions().any(), hasKey("option2"));
         assertThat(objectContent.getObject().getOptions().any(), hasKey("option3"));
-        assertThat(objectContent.getObject().getParametricNeverShow(), hasItem(hasProperty("id", is("A_CLEAN_NUMERIC_FIELD"))));
-        assertThat(objectContent.getObject().getParametricAlwaysShow(), hasItem(hasProperty("id", is("AUTN_DATE"))));
+        assertThat(objectContent.getObject().getParametricNeverShow(), hasItem(tagNameFactory.getFieldPath("A_CLEAN_NUMERIC_FIELD")));
+        assertThat(objectContent.getObject().getParametricAlwaysShow(), hasItem(tagNameFactory.getFieldPath("AUTN_DATE")));
         assertThat(objectContent.getObject().getSpecialUrlPrefixes(), hasKey("application/msword"));
         assertThat(objectContent.getObject().getSpecialUrlPrefixes(), hasKey("application/vnd.visio"));
     }

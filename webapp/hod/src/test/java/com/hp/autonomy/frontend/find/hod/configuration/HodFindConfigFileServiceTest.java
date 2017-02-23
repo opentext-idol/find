@@ -11,7 +11,7 @@ import com.hp.autonomy.frontend.find.core.configuration.FindConfigFileServiceTes
 public class HodFindConfigFileServiceTest extends FindConfigFileServiceTest<HodFindConfig, HodFindConfig.HodFindConfigBuilder> {
     @Override
     protected FindConfigFileService<HodFindConfig, HodFindConfig.HodFindConfigBuilder> constructConfigFileService() {
-        return new HodFindConfigFileService(filterProvider, textEncryptor, tagNameDeserializer);
+        return new HodFindConfigFileService(filterProvider, textEncryptor, fieldPathSerializer, fieldPathDeserializer);
     }
 
     @Override

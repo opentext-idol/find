@@ -32,7 +32,7 @@ import javax.persistence.Entity;
 @JsonDeserialize(builder = SavedQuery.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @TypeDefs(@TypeDef(name = SavedSearch.JADIRA_TYPE_NAME, typeClass = PersistentDateTime.class))
-public class SavedQuery extends SavedSearch<SavedQuery> {
+public class SavedQuery extends SavedSearch<SavedQuery, SavedQuery.Builder> {
     @Column(name = "last_fetched_new_date")
     @Type(type = JADIRA_TYPE_NAME)
     private DateTime dateNewDocsLastFetched;
@@ -48,16 +48,21 @@ public class SavedQuery extends SavedSearch<SavedQuery> {
     }
 
     @Override
+    public Builder toBuilder() {
+        return new Builder(this);
+    }
+
+    @Override
     protected void mergeInternal(final SavedQuery other) {
-        dateNewDocsLastFetched = other.getDateNewDocsLastFetched() == null ? dateNewDocsLastFetched : other.getDateNewDocsLastFetched();
-        dateDocsLastFetched = other.getDateDocsLastFetched() == null ? dateDocsLastFetched : other.getDateDocsLastFetched();
+        dateNewDocsLastFetched = other.dateNewDocsLastFetched == null ? dateNewDocsLastFetched : other.dateNewDocsLastFetched;
+        dateDocsLastFetched = other.dateDocsLastFetched == null ? dateDocsLastFetched : other.dateDocsLastFetched;
     }
 
     @NoArgsConstructor
     @Setter
     @Accessors(chain = true)
     @JsonPOJOBuilder(withPrefix = "set")
-    public static class Builder extends SavedSearch.Builder<SavedQuery> {
+    public static class Builder extends SavedSearch.Builder<SavedQuery, Builder> {
         private DateTime dateNewDocsLastFetched;
         private DateTime dateDocsLastFetched;
 

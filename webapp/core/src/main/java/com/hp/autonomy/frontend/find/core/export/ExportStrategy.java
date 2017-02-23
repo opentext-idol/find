@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Export implementation for a particular {@link ExportFormat}
@@ -41,11 +42,12 @@ public interface ExportStrategy {
     Map<String, FieldInfo<?>> getConfiguredFieldsById();
 
     /**
-     * Returns the fields configured for export in the config file. Inverse lookup of getConfiguredFieldsById().
+     * Returns field information retrieved from configuration.
      *
-     * @return a map of field name as it appears in the server response to field information
+     * @param nodeName response field node being parsed
+     * @return field information retrieved from config
      */
-    Map<String, FieldInfo<?>> getConfiguredFieldsByName();
+    Optional<FieldInfo<?>> getFieldInfoForNode(final String nodeName);
 
     /**
      * Exports all the data corresponding to an individual document to the given {@link OutputStream}
@@ -74,7 +76,8 @@ public interface ExportStrategy {
     /**
      * Retrieve the output prefix controlled by prependOutput()
      *
-     * @return byte of sequence to write to output stream before commencing the file export (e.g. UTF-8 BOM)
+     * @param outputStream byte of sequence to write to output stream before commencing the file export (e.g. UTF-8 BOM)
      */
-    default void prependOutput(final OutputStream outputStream) throws IOException {}
+    default void prependOutput(final OutputStream outputStream) throws IOException {
+    }
 }

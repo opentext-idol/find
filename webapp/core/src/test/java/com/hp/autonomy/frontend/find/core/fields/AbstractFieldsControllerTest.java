@@ -96,12 +96,12 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
 
         final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric, FieldTypeParam.Numeric, FieldTypeParam.NumericDate);
         assertThat(fields, hasSize(6));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.buildTagName("parametric_field").getId(), "Parametric Field", 0d, 0d, 0L, FieldTypeParam.Parametric))));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.buildTagName("numeric_field").getId(), "Numeric Field", 0d, 0d, 0L, FieldTypeParam.Numeric))));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.buildTagName("parametric_numeric_field").getId(), "Parametric Numeric Field", 0d, 0d, 0L, FieldTypeParam.Numeric))));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.buildTagName("date_field").getId(), "Date Field", 0d, 0d, 0L, FieldTypeParam.NumericDate))));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.buildTagName("parametric_date_field").getId(), "Parametric Date Field", 0d, 0d, 0L, FieldTypeParam.NumericDate))));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.buildTagName(ParametricValuesService.AUTN_DATE_FIELD).getId(), "Autn Date", 0d, 0d, 0L, FieldTypeParam.NumericDate))));
+        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath("parametric_field").getNormalisedPath(), "Parametric Field", 0d, 0d, 0L, FieldTypeParam.Parametric))));
+        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath("numeric_field").getNormalisedPath(), "Numeric Field", 0d, 0d, 0L, FieldTypeParam.Numeric))));
+        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath("parametric_numeric_field").getNormalisedPath(), "Parametric Numeric Field", 0d, 0d, 0L, FieldTypeParam.Numeric))));
+        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath("date_field").getNormalisedPath(), "Date Field", 0d, 0d, 0L, FieldTypeParam.NumericDate))));
+        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath("parametric_date_field").getNormalisedPath(), "Parametric Date Field", 0d, 0d, 0L, FieldTypeParam.NumericDate))));
+        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATE_FIELD).getNormalisedPath(), "Autn Date", 0d, 0d, 0L, FieldTypeParam.NumericDate))));
     }
 
     @Test
@@ -112,7 +112,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         when(service.getFields(any())).thenReturn(response);
 
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .parametricNeverShowItem(tagNameFactory.buildTagName(ParametricValuesService.AUTN_DATE_FIELD))
+                .parametricNeverShowItem(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
                 .build());
 
         final List<FieldAndValueDetails> output = getParametricFields(FieldTypeParam.NumericDate);
@@ -143,7 +143,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
 
         final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Numeric);
         assertThat(fields, hasSize(1));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.buildTagName("parametric_numeric_field").getId(), "Parametric Numeric Field", 1.4, 2.5, 25, FieldTypeParam.Numeric))));
+        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath("parametric_numeric_field").getNormalisedPath(), "Parametric Numeric Field", 1.4, 2.5, 25, FieldTypeParam.Numeric))));
     }
 
     @Test
@@ -177,8 +177,8 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
 
         final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.NumericDate);
         assertThat(fields, hasSize(2));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.buildTagName("parametric_date_field").getId(), "Parametric Date Field", 146840000d, 146860000d, 1000, FieldTypeParam.NumericDate))));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.buildTagName(ParametricValuesService.AUTN_DATE_FIELD).getId(), "Autn Date", 100000000d, 150000000d, 15000, FieldTypeParam.NumericDate))));
+        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath("parametric_date_field").getNormalisedPath(), "Parametric Date Field", 146840000d, 146860000d, 1000, FieldTypeParam.NumericDate))));
+        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATE_FIELD).getNormalisedPath(), "Autn Date", 100000000d, 150000000d, 15000, FieldTypeParam.NumericDate))));
     }
 
     @Test
@@ -186,14 +186,14 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         mockSimpleParametricResponse();
 
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .parametricAlwaysShowItem(tagNameFactory.buildTagName("ParametricField1"))
-                .parametricAlwaysShowItem(tagNameFactory.buildTagName("ParametricField2"))
+                .parametricAlwaysShowItem(tagNameFactory.getFieldPath("ParametricField1"))
+                .parametricAlwaysShowItem(tagNameFactory.getFieldPath("ParametricField2"))
                 .build());
 
         final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
         assertThat(fields, hasSize(2));
-        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.buildTagName("ParametricField1").getId()))));
-        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.buildTagName("ParametricField2").getId()))));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField1").getNormalisedPath()))));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField2").getNormalisedPath()))));
     }
 
     @Test
@@ -201,13 +201,13 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         mockSimpleParametricResponse();
 
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .parametricNeverShowItem(tagNameFactory.buildTagName("ParametricField1"))
-                .parametricNeverShowItem(tagNameFactory.buildTagName("ParametricField2"))
+                .parametricNeverShowItem(tagNameFactory.getFieldPath("ParametricField1"))
+                .parametricNeverShowItem(tagNameFactory.getFieldPath("ParametricField2"))
                 .build());
 
         final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
         assertThat(fields, hasSize(1));
-        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.buildTagName("ParametricField3").getId()))));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField3").getNormalisedPath()))));
     }
 
     @Test
@@ -215,14 +215,14 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         mockSimpleParametricResponse();
 
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .parametricAlwaysShowItem(tagNameFactory.buildTagName("ParametricField1"))
-                .parametricAlwaysShowItem(tagNameFactory.buildTagName("ParametricField2"))
-                .parametricNeverShowItem(tagNameFactory.buildTagName("ParametricField1"))
+                .parametricAlwaysShowItem(tagNameFactory.getFieldPath("ParametricField1"))
+                .parametricAlwaysShowItem(tagNameFactory.getFieldPath("ParametricField2"))
+                .parametricNeverShowItem(tagNameFactory.getFieldPath("ParametricField1"))
                 .build());
 
         final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
         assertThat(fields, hasSize(1));
-        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.buildTagName("ParametricField2").getId()))));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField2").getNormalisedPath()))));
     }
 
     @Test
@@ -230,9 +230,9 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         mockSimpleParametricResponse();
 
         final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
-        assertThat(fields.get(0), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField1").getId())));
-        assertThat(fields.get(1), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField2").getId())));
-        assertThat(fields.get(2), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField3").getId())));
+        assertThat(fields.get(0), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField1").getNormalisedPath())));
+        assertThat(fields.get(1), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField2").getNormalisedPath())));
+        assertThat(fields.get(2), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField3").getNormalisedPath())));
     }
 
     @Test
@@ -240,15 +240,15 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         mockSimpleParametricResponse();
 
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .parametricOrderItem(tagNameFactory.buildTagName("ParametricField3"))
-                .parametricOrderItem(tagNameFactory.buildTagName("ParametricField2"))
-                .parametricOrderItem(tagNameFactory.buildTagName("ParametricField1"))
+                .parametricOrderItem(tagNameFactory.getFieldPath("ParametricField3"))
+                .parametricOrderItem(tagNameFactory.getFieldPath("ParametricField2"))
+                .parametricOrderItem(tagNameFactory.getFieldPath("ParametricField1"))
                 .build());
 
         final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
-        assertThat(fields.get(0), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField3").getId())));
-        assertThat(fields.get(1), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField2").getId())));
-        assertThat(fields.get(2), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField1").getId())));
+        assertThat(fields.get(0), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField3").getNormalisedPath())));
+        assertThat(fields.get(1), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField2").getNormalisedPath())));
+        assertThat(fields.get(2), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField1").getNormalisedPath())));
     }
 
     @Test
@@ -256,13 +256,13 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         mockSimpleParametricResponse();
 
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .parametricOrderItem(tagNameFactory.buildTagName("ParametricField3"))
+                .parametricOrderItem(tagNameFactory.getFieldPath("ParametricField3"))
                 .build());
 
         final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
-        assertThat(fields.get(0), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField3").getId())));
-        assertThat(fields.get(1), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField1").getId())));
-        assertThat(fields.get(2), hasProperty("id", is(tagNameFactory.buildTagName("ParametricField2").getId())));
+        assertThat(fields.get(0), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField3").getNormalisedPath())));
+        assertThat(fields.get(1), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField1").getNormalisedPath())));
+        assertThat(fields.get(2), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField2").getNormalisedPath())));
     }
 
     private void mockSimpleParametricResponse() throws E {

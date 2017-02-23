@@ -15,7 +15,7 @@ import static org.junit.Assert.assertThat;
 public class IdolFindConfigFileServiceTest extends FindConfigFileServiceTest<IdolFindConfig, IdolFindConfig.IdolFindConfigBuilder> {
     @Override
     protected FindConfigFileService<IdolFindConfig, IdolFindConfig.IdolFindConfigBuilder> constructConfigFileService() {
-        return new IdolFindConfigFileService(filterProvider, textEncryptor, tagNameDeserializer);
+        return new IdolFindConfigFileService(filterProvider, textEncryptor, fieldPathSerializer, fieldPathDeserializer);
     }
 
     @Override

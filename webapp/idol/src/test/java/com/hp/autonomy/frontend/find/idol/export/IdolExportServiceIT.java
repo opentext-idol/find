@@ -11,6 +11,7 @@ import com.hp.autonomy.frontend.find.core.export.CsvExportStrategy;
 import com.hp.autonomy.frontend.find.core.export.ExportService;
 import com.hp.autonomy.frontend.find.core.export.ExportServiceIT;
 import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
+import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import com.hp.autonomy.searchcomponents.idol.beanconfiguration.HavenSearchIdolConfiguration;
 import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
@@ -36,8 +37,8 @@ public class IdolExportServiceIT extends ExportServiceIT<IdolQueryRequest, IdolQ
         }
 
         @Bean
-        public ExportStrategy csvExportStrategy(final ConfigService<IdolSearchCapable> configService) {
-            return new CsvExportStrategy(configService);
+        public ExportStrategy csvExportStrategy(final ConfigService<IdolSearchCapable> configService, final FieldPathNormaliser fieldPathNormaliser) {
+            return new CsvExportStrategy(configService, fieldPathNormaliser);
         }
     }
 }

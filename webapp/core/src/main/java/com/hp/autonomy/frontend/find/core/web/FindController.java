@@ -101,7 +101,6 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
         config.put(MvcConstants.SAVED_SEARCH_CONFIG.value(), findConfig.getSavedSearchConfig());
         config.put(MvcConstants.MIN_SCORE.value(), findConfig.getMinScore());
         config.put(MvcConstants.FIELDS_INFO.value(), findConfig.getFieldsInfo().getFieldConfig());
-        config.put(MvcConstants.PARAMETRIC_DISPLAY_VALUES.value(), findConfig.getParametricDisplayValues());
         config.put(MvcConstants.TOPIC_MAP_MAX_RESULTS.value(), findConfig.getTopicMapMaxResults());
         config.put(MvcConstants.METADATA_FIELD_IDS.value(), getMetadataNodes());
         config.putAll(getPublicConfig());

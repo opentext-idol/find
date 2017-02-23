@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
+@FunctionalInterface
 public interface FieldTextParser {
-    String toFieldText(SavedSearch<?> savedSearch);
+    String toFieldText(SavedSearch<?, ?> savedSearch);
 }

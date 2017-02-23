@@ -17,7 +17,6 @@ import com.hp.autonomy.frontend.configuration.redis.RedisConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
-import com.hp.autonomy.frontend.find.core.configuration.ParametricDisplayValues;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
@@ -28,11 +27,9 @@ import com.hp.autonomy.searchcomponents.hod.configuration.QueryManipulationConfi
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Singular;
 import org.jasypt.util.text.TextEncryptor;
 
 import java.net.URL;
-import java.util.Collection;
 import java.util.Set;
 
 @SuppressWarnings({"InstanceVariableOfConcreteClass", "DefaultAnnotationParam"})
@@ -53,8 +50,6 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodS
     private final MapConfiguration map;
     private final UiCustomization uiCustomization;
     private final Integer minScore;
-    @Singular
-    private final Collection<ParametricDisplayValues> parametricDisplayValues;
     private final Integer topicMapMaxResults;
 
     @JsonProperty("savedSearches")
@@ -75,7 +70,6 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodS
                 .uiCustomization(uiCustomization == null ? config.uiCustomization : uiCustomization.merge(config.uiCustomization))
                 .savedSearchConfig(savedSearchConfig == null ? config.savedSearchConfig : savedSearchConfig.merge(config.savedSearchConfig))
                 .minScore(minScore == null ? config.minScore : minScore)
-                .parametricDisplayValues(parametricDisplayValues == null ? config.parametricDisplayValues : parametricDisplayValues)
                 .topicMapMaxResults(topicMapMaxResults == null ? config.topicMapMaxResults : topicMapMaxResults)
                 .build() : this;
     }

@@ -12,6 +12,9 @@ import com.hp.autonomy.frontend.find.core.export.MetadataNode;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldType;
+import com.hp.autonomy.searchcomponents.core.config.FieldValue;
+import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
+import com.hp.autonomy.searchcomponents.core.test.CoreTestContext;
 import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
@@ -23,19 +26,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CLASSES_PROPERTY;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = CoreTestContext.class, properties = CORE_CLASSES_PROPERTY, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class HodExportServiceTest {
     @Mock
     private HodDocumentsService documentsService;
@@ -47,6 +56,8 @@ public class HodExportServiceTest {
     private ExportStrategy exportStrategy;
     @Mock
     private OutputStream outputStream;
+    @Autowired
+    private FieldPathNormaliser fieldPathNormaliser;
 
     private List<String> fieldNames;
     private HodExportService hodExportService;
@@ -102,8 +113,10 @@ public class HodExportServiceTest {
                 .date(DateTime.now())
                 .fieldMap(ImmutableMap.of("categories", FieldInfo.builder()
                         .id("categories")
-                        .name("category")
-                        .values(Arrays.asList("Epic Literature", "Philosophy", "Cosmogony"))
+                        .name(fieldPathNormaliser.normaliseFieldPath("category"))
+                        .value(new FieldValue<>("Epic Literature", "Epic Literature"))
+                        .value(new FieldValue<>("Philosophy", "Philosophy"))
+                        .value(new FieldValue<>("Cosmogony", "Cosmogony"))
                         .build()))
                 .build();
         final Documents<HodSearchResult> results = new Documents<>(Arrays.asList(result1, result2), 2, null, null, null, null);
@@ -113,13 +126,13 @@ public class HodExportServiceTest {
         verify(exportStrategy, times(3)).exportRecord(eq(outputStream), anyListOf(String.class));
     }
 
-    private FieldInfo<?> fieldInfo(final String id, final String name, final FieldType type, final Object value) {
+    private FieldInfo<?> fieldInfo(final String id, final String name, final FieldType type, final Serializable value) {
         return FieldInfo.builder()
                 .id(id)
-                .name(name)
+                .name(fieldPathNormaliser.normaliseFieldPath(name))
                 .type(type)
                 .advanced(true)
-                .value(value)
+                .value(new FieldValue<>(value, String.valueOf(value)))
                 .build();
     }
 
