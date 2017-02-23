@@ -6,19 +6,16 @@
 define([
     'underscore',
     'jquery',
+    'd3',
+    'sunburst/js/sunburst',
     './saved-search-widget',
     'find/app/model/dependent-parametric-collection',
-    'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend.html',
-    'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend-item.html',
     'i18n!find/nls/bundle'
-], function(_, $, SavedSearchWidget, DependentParametricCollection,
-            legendTemplate, legendItemTemplate, i18n) {
+], function(_, $, d3, Sunburst, SavedSearchWidget, DependentParametricCollection, i18n) {
     'use strict';
 
     return SavedSearchWidget.extend({
         viewType: 'sunburst',
-        legendTemplate: _.template(legendTemplate),
-        legendItemTemplate: _.template(legendItemTemplate),
 
         initialize: function(options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
@@ -31,6 +28,22 @@ define([
             });
         },
 
+        render: function() {
+            SavedSearchWidget.prototype.render.apply(this);
+
+            var data = this.dependentParametricCollection.toJSON();
+
+            if(data.length > 0) {
+                this.$legendContainer = $('<div class="sunburst-legend"></div>');
+                this.$visualizerContainer = $('<div class="sunburst-visualizer-container"></div>');
+
+                this.$content.append(this.$visualizerContainer.add(this.$legendContainer));
+                this.sunburst = this.drawSunburst(data);
+            } else {
+                this.$content.text(i18n['dashboards.widget.sunburst.noResults']);
+            }
+        },
+
         postInitialize: function() {
             return this.updateParametricDistribution();
         },
@@ -40,6 +53,54 @@ define([
 
         getData: function() {
             return this.updateParametricDistribution();
+        },
+
+        drawSunburst: function(data, colors) {
+            if(this.$content && this.$visualizerContainer) {
+                var colorScheme = _.defaults(colors || {}, {
+                    centre: 'white',
+                    hidden: 'white',
+                    palette: d3.scale.category20c()
+                });
+
+                this.$visualizerContainer.empty();
+
+                var sunburst = new Sunburst(this.$visualizerContainer, {
+                    animate: false,
+                    sizeAttr: 'count',
+                    nameAttr: 'text',
+                    comparator: function(datumA, datumB) {
+                        return d3.ascending(datumA.text, datumB.text);
+                    },
+                    outerRingAnimateSize: 15,
+                    data: {
+                        children: data
+                    },
+                    fillColorFn: function(datum) {
+                        if(datum.parent) {
+                            if(datum.hidden || datum.parent.hidden) {
+                                return colorScheme.hidden;
+                            } else if(datum.parent.parent) {
+                                // Outer tier sector
+                                datum.color = colorScheme.palette(datum.text);
+                            } else {
+                                // Inner tier sector
+                                datum.color = (datum.count && datum.text
+                                    ? colorScheme.palette(datum.text)
+                                    : colorScheme.hidden);
+                            }
+                        } else {
+                            // assigns a fixed colour to the Sunburst's centre
+                            return colorScheme.centre;
+                        }
+
+                        return datum.color;
+                    },
+                    labelFormatter: null// no labels on hover
+                });
+
+                return sunburst;
+            }
         },
 
         updateParametricDistribution: function() {
