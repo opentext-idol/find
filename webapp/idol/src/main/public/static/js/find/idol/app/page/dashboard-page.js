@@ -57,11 +57,12 @@ define([
 
                 // Need $.when() because not every widget has a savedSearchPromise.
                 // $.when(undefined) returns a resolved promise
-                $.when(widget.view.savedSearchPromise)
-                    .done(function() {
+                $.when(widget.view.savedSearchPromise).always(function() {
+                    $.when(widget.view.initialiseWidgetPromise).always(function() {
                         this.$el.append($div);
                         widget.view.setElement($div).render();
                     }.bind(this));// TODO handle failure
+                }.bind(this));// TODO handle failure
             }.bind(this));
 
             this.listenTo(vent, 'vent:resize', this.onResize);

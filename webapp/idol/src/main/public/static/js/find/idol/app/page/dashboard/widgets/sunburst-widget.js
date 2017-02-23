@@ -8,12 +8,11 @@ define([
     'jquery',
     './saved-search-widget',
     'find/app/model/dependent-parametric-collection',
-    'parametric-refinement/prettify-field-name',
     'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend.html',
     'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend-item.html',
     'i18n!find/nls/bundle'
-], function(_, $, d3, Sunburst, SavedSearchWidget, DependentParametricCollection,
-            prettifyFieldName, legendTemplate, legendItemTemplate, i18n) {
+], function(_, $, SavedSearchWidget, DependentParametricCollection,
+            legendTemplate, legendItemTemplate, i18n) {
     'use strict';
 
     return SavedSearchWidget.extend({
@@ -33,19 +32,19 @@ define([
         },
 
         postInitialize: function() {
+            return this.updateParametricDistribution();
         },
 
         onResize: function() {
         },
 
         getData: function() {
-            var promise;
-            if(this.firstField) {
-                promise = this.dependentParametricCollection
-                    .fetchDependentFields(this.queryModel, this.firstField, this.secondField);
-            }
+            return this.updateParametricDistribution();
+        },
 
-            return promise;
+        updateParametricDistribution: function() {
+            return this.dependentParametricCollection
+                .fetchDependentFields(this.queryModel, this.firstField, this.secondField);
         }
     });
 });

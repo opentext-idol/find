@@ -5,11 +5,12 @@
 
 define([
     'underscore',
+    'jquery',
     './updating-widget',
     'find/idol/app/model/idol-indexes-collection',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/vent'
-], function(_, UpdatingWidget, IdolIndexesCollection, SavedSearchModel, vent) {
+], function(_, $, UpdatingWidget, IdolIndexesCollection, SavedSearchModel, vent) {
     'use strict';
 
     const DashboardSearchModel = SavedSearchModel.extend({
@@ -40,17 +41,24 @@ define([
                 type: options.savedSearch.type
             });
 
-            this.savedSearchPromise = this.savedSearchModel.fetch().done(function() {
-                this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                this.postInitialize();
-                this.getData();
-            }.bind(this));
+            this.savedSearchPromise = this.savedSearchModel.fetch()
+                .always(function() {// TODO handle failure
+                    this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
+                    this.initialiseWidgetPromise = $.when(this.postInitialize());
+                }.bind(this));
         },
 
         doUpdate: function(done) {
-            this.savedSearchModel.fetch().done(function() {
-                this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                this.updatePromise = this.getData().done(done);
+            this.savedSearchModel.fetch().done(function() {// TODO handle failure
+                $.when(this.initialiseWidgetPromise)
+                    .done(function() {// TODO handle failure
+                        this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
+                        this.updatePromise = this.getData()
+                            .done(function() {// TODO handle failure
+                                this.render();
+                                done();
+                            }.bind(this));
+                    }.bind(this));
             }.bind(this));
         },
 
