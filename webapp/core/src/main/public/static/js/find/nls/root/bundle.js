@@ -196,6 +196,7 @@ define([
         'search.resultsView.amount.shown.no.increment': 'Showing the top <strong>{0}</strong> results of <strong>{1}</strong>',
         'search.resultsView.amount.shown.no.results': 'There are no results with the location field selected',
         'search.answeredQuestion': 'Answered question',
+        'search.answeredQuestion.systemName': 'Answered by {0}',
         'search.promoted': 'Promoted',
         'search.savedSearchControl.save': 'Save',
         'search.savedSearchControl.openEdit.create': 'Save query',

@@ -54,7 +54,8 @@ define([
                 beforeEach(function() {
                     this.collection.add(new Backbone.Model({
                         question: 'Is this the question?',
-                        answer: 'Yes it is'
+                        answer: 'Yes it is',
+                        systemName: 'answerbank0'
                     }));
                     this.collection.fetch.calls.mostRecent().args[0].success();
                 });
@@ -64,6 +65,11 @@ define([
                         .toEqual(i18n['search.answeredQuestion.question'] + 'Is this the question?');
                     expect(this.view.$('.summary-text').text().trim())
                         .toEqual(i18n['search.answeredQuestion.answer'] + 'Yes it is');
+                });
+
+                it('the title attribute should contain the system name', function() {
+                    expect(this.view.$('.answered-question').attr('data-original-title'))
+                        .toEqual(i18n['search.answeredQuestion.systemName']('answerbank0'));
                 });
             });
         });

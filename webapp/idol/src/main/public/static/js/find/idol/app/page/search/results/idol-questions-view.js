@@ -61,6 +61,10 @@ define([
             }, this).join('');
 
             this.$el.html(html);
+            this.$('[data-toggle="tooltip"]').tooltip({
+                container: 'body',
+                placement: 'top'
+            });
             return this;
         },
 
@@ -85,6 +89,11 @@ define([
                     this.clearLoadingSpinner();
                 }, this)
             }, this);
+        },
+
+        remove: function() {
+            this.$('[data-toggle="tooltip"]').tooltip('destroy');
+            Backbone.View.prototype.remove.call(this);
         }
     });
 });
