@@ -106,6 +106,13 @@ define([
         },
 
         onResize: function() {
+            this.determineLayout();
+
+            if(this.sunburst) {
+                //TODO recalculate font sizes here?
+                this.sunburst.resize();
+                this.sunburst.redraw();
+            }
         },
 
         getData: function() {
