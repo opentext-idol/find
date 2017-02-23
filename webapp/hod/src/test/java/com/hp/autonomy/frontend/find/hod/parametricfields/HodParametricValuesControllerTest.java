@@ -78,6 +78,6 @@ public class HodParametricValuesControllerTest extends AbstractParametricValuesC
     @Test
     public void getParametricValues() throws HodErrorException {
         parametricValuesController.getParametricValues(Collections.singletonList(tagNameFactory.buildTagName("SomeParametricField")), Collections.emptyList());
-        verify(hodParametricValuesService).getAllParametricValues(any());
+        verify(hodParametricValuesService).getParametricValues(any());
     }
 }

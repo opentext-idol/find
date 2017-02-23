@@ -79,6 +79,6 @@ public class IdolParametricValuesControllerTest extends AbstractParametricValues
     @Test
     public void getParametricValues() throws AciErrorException {
         parametricValuesController.getParametricValues(Collections.singletonList(tagNameFactory.buildTagName("SomeParametricField")));
-        verify(idolParametricValuesService).getAllParametricValues(any());
+        verify(idolParametricValuesService).getParametricValues(any());
     }
 }

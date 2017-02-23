@@ -44,6 +44,6 @@ class IdolParametricValuesController extends ParametricValuesController<IdolQuer
             @RequestParam(FIELD_NAMES_PARAM) final List<TagName> fieldNames
     ) throws AciErrorException {
         final IdolParametricRequest parametricRequest = buildRequest(fieldNames, Collections.emptyList(), MAX_VALUES_DEFAULT, SortParam.DocumentCount);
-        return parametricValuesService.getAllParametricValues(parametricRequest);
+        return parametricValuesService.getParametricValues(parametricRequest);
     }
 }

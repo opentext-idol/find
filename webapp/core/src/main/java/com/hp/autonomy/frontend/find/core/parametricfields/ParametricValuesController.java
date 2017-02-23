@@ -83,7 +83,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
     ) throws E {
         final R parametricRequest = buildRequest(fieldNames, queryText, fieldText, databases, minDate, maxDate, minScore, stateTokens, MAX_VALUES_DEFAULT, SortParam.DocumentCount);
-        return parametricValuesService.getAllParametricValues(parametricRequest);
+        return parametricValuesService.getParametricValues(parametricRequest);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")

@@ -46,6 +46,6 @@ class HodParametricValuesController extends ParametricValuesController<HodQueryR
             @RequestParam(DATABASES_PARAM) final Collection<ResourceName> databases
     ) throws HodErrorException {
         final HodParametricRequest parametricRequest = buildRequest(fieldNames, databases, MAX_VALUES_DEFAULT, SortParam.DocumentCount);
-        return parametricValuesService.getAllParametricValues(parametricRequest);
+        return parametricValuesService.getParametricValues(parametricRequest);
     }
 }
