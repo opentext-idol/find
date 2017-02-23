@@ -1,12 +1,12 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
-    'jquery',
     'underscore',
+    'jquery',
+    'backbone',
     'find/app/page/search/abstract-section-view',
     'find/app/page/search/filters/date/dates-filter-view',
     'find/app/page/search/filters/parametric/parametric-view',
@@ -20,7 +20,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'find/app/util/merge-collection'
-], function(Backbone, $, _, AbstractSectionView, DateView, ParametricView, NumericParametricFieldView,
+], function(_, $, Backbone, AbstractSectionView, DateView, ParametricView, NumericParametricFieldView,
             TextInput, Collapsible, FilteringCollection, prettifyFieldName, ParametricDisplayCollection,
             configuration, i18n, i18nIndexes, MergeCollection) {
     'use strict';
@@ -198,7 +198,11 @@ define([
                             var bDisplayName = bModel.get('displayName').toLowerCase();
                             return aDisplayName < bDisplayName ? -1 : aDisplayName > bDisplayName ? 1 : 0;
                         },
-                        collections: [this.filteredNumericParametricFieldsCollection, this.filteredDateParametricFieldsCollection, this.parametricDisplayCollection],
+                        collections: [
+                            this.filteredNumericParametricFieldsCollection,
+                            this.filteredDateParametricFieldsCollection,
+                            this.parametricDisplayCollection
+                        ],
                         typeAttribute: 'dataType'
                     });
 
@@ -244,7 +248,7 @@ define([
         },
 
         render: function() {
-            AbstractSectionView.prototype.render.apply(this, arguments);
+            AbstractSectionView.prototype.render.apply(this);
 
             this.getViewContainer().empty();
             this.views.forEach(function(view) {

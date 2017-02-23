@@ -1,12 +1,13 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
-    'find/app/page/search/filter-display/applied-filters-view',
     'backbone',
+    'find/app/page/search/filter-display/applied-filters-view',
     'i18n!find/nls/bundle'
-], function(AppliedFiltersView, Backbone, i18n) {
+], function(Backbone, AppliedFiltersView, i18n) {
     'use strict';
 
     describe('Applied Filters View', function() {

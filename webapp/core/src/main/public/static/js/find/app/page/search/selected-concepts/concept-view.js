@@ -1,11 +1,12 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
-    'find/app/page/search/abstract-section-view',
-    'jquery',
     'underscore',
+    'jquery',
+    'find/app/page/search/abstract-section-view',
     './concept-cluster-view',
     'find/app/page/search/input-view',
     'find/app/page/search/input-view-concept-strategy',
@@ -13,8 +14,8 @@ define([
     'i18n!find/nls/bundle',
     'js-whatever/js/list-view',
     'text!find/templates/app/page/search/concept-view.html'
-], function(AbstractSectionView, $, _, ConceptClusterView, InputView, conceptStrategy, FilteringCollection, i18n,
-            ListView, template) {
+], function(_, $, AbstractSectionView, ConceptClusterView, InputView, conceptStrategy, FilteringCollection,
+            i18n, ListView, template) {
     'use strict';
 
     /**
@@ -48,10 +49,9 @@ define([
                     view.focus();
                 }
             }];
-            //noinspection JSUnresolvedFunction
+
             this.optionalViews = _.where(optionalViews, {enabled: true});
 
-            //noinspection JSUnresolvedFunction
             this.optionalViews.forEach(function(view) {
                 view.instance = view.construct();
             });
@@ -74,7 +74,7 @@ define([
         },
 
         render: function() {
-            AbstractSectionView.prototype.render.apply(this, arguments);
+            AbstractSectionView.prototype.render.apply(this);
 
             this.getViewContainer().html(this.html);
 
@@ -94,7 +94,6 @@ define([
         },
 
         remove: function() {
-            //noinspection JSUnresolvedFunction
             _.chain(this.optionalViews).pluck('instance').invoke('remove');
 
             this.listView.remove();
