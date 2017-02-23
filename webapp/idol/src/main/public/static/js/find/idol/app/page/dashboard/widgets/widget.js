@@ -32,7 +32,7 @@ define([
                 this.$el.click(this.onClick.bind(this));
             }
 
-            this.$content = this.$('.widget-content');
+            this.$content = this.$('.widget-content').addClass(this.viewType);
         },
 
         contentHeight: function() {
