@@ -10,14 +10,12 @@ define([
     'find/app/vent',
     'find/idol/app/page/dashboard/widget-registry',
     './dashboard/widgets/widget-not-found',
-    './dashboard/update-tracker-model',
-    'text!find/idol/templates/page/dashboard-page.html'
-], function(_, $, BasePage, vent, widgetRegistry, WidgetNotFoundWidget, UpdateTrackerModel, template) {
+    './dashboard/update-tracker-model'
+], function(_, $, BasePage, vent, widgetRegistry, WidgetNotFoundWidget, UpdateTrackerModel) {
     'use strict';
 
     return BasePage.extend({
         className: 'dashboard',
-        template: _.template(template),
 
         initialize: function(options) {
             _.bindAll(this, 'update');
@@ -52,9 +50,7 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template({
-                dashboardName: this.dashboardName
-            }));
+            this.$el.empty();
 
             _.each(this.widgetViews, function(widget) {
                 const $div = this.generateWidgetDiv(widget.position);
