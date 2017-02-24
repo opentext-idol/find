@@ -52,6 +52,7 @@ define([
                 }]
             });
 
+            spyOn(this.dashboardPage, 'isVisible').and.returnValue(true);
             spyOn(this.dashboardPage, 'update').and.callThrough();
             spyOn(this.dashboardPage, 'stopListening').and.callThrough();
 
