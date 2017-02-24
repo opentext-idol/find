@@ -1,12 +1,10 @@
 define([
     'js-whatever/js/list-item-view',
     'underscore',
-    'parametric-refinement/prettify-field-name',
     'text!find/templates/app/util/csv-field-selection-list-item.html',
     'i18n!find/nls/bundle',
     'iCheck'
-], function(ListItemView, _, prettifyFieldName, template, i18n) {
-
+], function(ListItemView, _, template, i18n) {
     'use strict';
 
     return ListItemView.extend({
@@ -17,7 +15,7 @@ define([
                 template: this.template,
                 templateOptions: {
                     fieldDataId: options.model.id,
-                    fieldPrintedLabel: i18n['search.document.' + options.model.id] || prettifyFieldName(options.model.id)
+                    fieldPrintedLabel: i18n['search.document.' + options.model.id] || options.model.displayName || options.model.id
                 }
             }, options));
         },

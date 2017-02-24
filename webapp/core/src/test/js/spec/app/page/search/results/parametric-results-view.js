@@ -7,24 +7,25 @@ define([
     'find/app/page/search/results/parametric-results-view',
     'backbone',
     'find/app/configuration',
+    'parametric-refinement/selected-values-collection',
     'jasmine-ajax'
-], function(ParametricResultsView, Backbone, configuration) {
+], function(ParametricResultsView, Backbone, configuration, SelectedParametricValues) {
     'use strict';
 
-    var DEPENDENT_EMPTY_MESSAGE = 'No dependent fields';
-    var EMPTY_MESSAGE = 'No fields';
-    var ERROR_MESSAGE = 'Error';
+    const DEPENDENT_EMPTY_MESSAGE = 'No dependent fields';
+    const EMPTY_MESSAGE = 'No fields';
+    const ERROR_MESSAGE = 'Error';
 
     describe('Parametric Results View', function() {
         beforeEach(function() {
             this.parametricCollection = new Backbone.Collection();
-            this.selectedParametricValues = new Backbone.Collection();
+            this.selectedParametricValues = new SelectedParametricValues();
             this.queryModel = new Backbone.Model();
             this.queryModel.getIsoDate = jasmine.createSpy('getIsoDate');
             this.queryState = {selectedParametricValues: this.selectedParametricValues};
             this.savedSearchModel = new Backbone.Model();
 
-            var viewConstructorArguments = {
+            const viewConstructorArguments = {
                 emptyDependentMessage: DEPENDENT_EMPTY_MESSAGE,
                 emptyMessage: EMPTY_MESSAGE,
                 errorMessageArguments: {messageToUser: ERROR_MESSAGE},
@@ -104,7 +105,7 @@ define([
                     beforeEach(function() {
                         this.parametricCollection.fetching = false;
 
-                        var sources = {
+                        const sources = {
                             id: '/DOCUMENT/SOURCE',
                             field: 'SOURCE',
                             values: [
@@ -119,7 +120,7 @@ define([
                             ]
                         };
 
-                        var category = {
+                        const category = {
                             id: '/DOCUMENT/CATEGORY',
                             field: 'CATEGORY',
                             values: [
@@ -136,7 +137,7 @@ define([
                             ]
                         };
 
-                        var collectionContents = [sources, category];
+                        const collectionContents = [sources, category];
 
                         this.parametricCollection.add(collectionContents);
                         this.parametricCollection.trigger('sync');

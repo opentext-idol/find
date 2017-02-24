@@ -15,7 +15,7 @@ define([
 
             this.view = new NumericParametricFieldCollapsibleView({
                 selectedParametricValues: new Backbone.Collection(),
-                dataType: 'numeric',
+                type: 'Numeric',
                 filterModel: this.filterModel,
                 model: new Backbone.Model({id: 'the-model'})
             });

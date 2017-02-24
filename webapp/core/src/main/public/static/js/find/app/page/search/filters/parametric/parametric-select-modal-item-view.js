@@ -13,7 +13,8 @@ define([
             this.$el
                 .html(this.template({
                     count: this.model.get('count') || 0,
-                    value: this.model.get('value')
+                    value: this.model.get('value'),
+                    displayValue: this.model.get('displayValue')
                 }))
                 .iCheck({checkboxClass: 'icheckbox-hp'});
 

@@ -11,7 +11,7 @@ define([
 
     function getArrayTotal(array) {
         return _.reduce(array, function (mem, val) {
-            return mem + Number(val.count)
+            return mem + val.count
         }, 0);
     }
 
@@ -25,10 +25,11 @@ define([
             .map(function (entry) {
                 const entryHash = {
                     hidden: false,
-                    text: entry.value,
-                    count: Number(entry.count)
+                    text: entry.displayValue,
+                    underlyingValue: entry.value,
+                    count: entry.count
                 };
-                return _.isEmpty(entry.field) ? entryHash : _.extend(entryHash, {children: parseResult(entry.field, entry.count)}); // recurse for children
+                return _.isEmpty(entry.subFields) ? entryHash : _.extend(entryHash, {children: parseResult(entry.subFields, entry.count)}); // recurse for children
             })
             .sortBy('id')
             .sortBy(function (x) {
@@ -55,6 +56,7 @@ define([
             if (remaining > 0) {
                 sunburstData.push({
                     text: '',
+                    underlyingValue: '',
                     hidden: true,
                     count: remaining,
                     hiddenFilterCount: hiddenFilterCount

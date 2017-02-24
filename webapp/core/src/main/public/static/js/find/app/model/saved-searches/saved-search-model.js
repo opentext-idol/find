@@ -37,8 +37,7 @@ define([
      * @property {Moment} dateCreated
      * @property {DateRange} dateRange
      */
-
-    var DATE_FIELDS = [
+    const DATE_FIELDS = [
         'minDate',
         'maxDate',
         'dateCreated',
@@ -50,14 +49,14 @@ define([
      * @readonly
      * @enum {String}
      */
-    var Type = {
+    const Type = {
         QUERY: 'QUERY',
         SNAPSHOT: 'SNAPSHOT'
     };
 
     function parseParametricRestrictions(models) {
-        var parametricValues = [];
-        var parametricRanges = [];
+        const parametricValues = [];
+        const parametricRanges = [];
 
         models.forEach(function(model) {
             if(model.has('value')) {
@@ -70,7 +69,7 @@ define([
                     field: model.get('field'),
                     min: model.get('range')[0],
                     max: model.get('range')[1],
-                    type: model.get('dataType') === 'numeric' ? 'Numeric' : 'Date'
+                    type: model.get('type') === 'Numeric' ? 'Numeric' : 'Date'
                 });
             }
         });
@@ -85,11 +84,11 @@ define([
         return input === null || input === undefined;
     }
 
-    var optionalMomentsEqual = optionalEqual(function(optionalMoment1, optionalMoment2) {
+    const optionalMomentsEqual = optionalEqual(function (optionalMoment1, optionalMoment2) {
         return optionalMoment1.isSame(optionalMoment2);
     });
 
-    var optionalExactlyEqual = optionalEqual(function(optionalItem1, optionalItem2) {
+    const optionalExactlyEqual = optionalEqual(function (optionalItem1, optionalItem2) {
         return optionalItem1 === optionalItem2;
     });
 
@@ -106,7 +105,7 @@ define([
         };
     }
 
-    var arrayEqualityPredicate = _.partial(arraysEqual, _, _, _.isEqual);
+    const arrayEqualityPredicate = _.partial(arraysEqual, _, _, _.isEqual);
 
     function relatedConceptsToClusterModel(relatedConcepts, clusterId) {
         if(!relatedConcepts.length) {
@@ -138,13 +137,13 @@ define([
         },
 
         parse: function(response) {
-            var dateAttributes = _.mapObject(_.pick(response, DATE_FIELDS), function(value) {
+            const dateAttributes = _.mapObject(_.pick(response, DATE_FIELDS), function (value) {
                 return value && moment(value);
             });
 
-            var relatedConcepts = _.chain(response.conceptClusterPhrases)
+            const relatedConcepts = _.chain(response.conceptClusterPhrases)
                 .groupBy('clusterId')
-                .map(function(clusterPhrases) {
+                .map(function (clusterPhrases) {
                     return _.chain(clusterPhrases)
                         .sortBy('primary')
                         .reverse()
@@ -154,9 +153,9 @@ define([
                 .value();
 
             // group token strings by type
-            var tokensByType = _.chain(response.stateTokens)
+            const tokensByType = _.chain(response.stateTokens)
                 .groupBy('type')
-                .mapObject(function(arr) {
+                .mapObject(function (arr) {
                     return _.pluck(arr, 'stateToken');
                 })
                 .value();
@@ -174,7 +173,7 @@ define([
             return Backbone.Model.prototype.destroy.call(this, _.extend(options || options, {
                 // The server returns an empty body (ie: not JSON)
                 // TODO: check for collision of names
-                dataType: 'text'
+                type: 'text'
             }));
         },
 
@@ -184,9 +183,9 @@ define([
          * @return {Boolean}
          */
         equalsQueryState: function(queryState) {
-            var selectedIndexes = databaseNameResolver.getDatabaseInfoFromCollection(queryState.selectedIndexes);
+            const selectedIndexes = databaseNameResolver.getDatabaseInfoFromCollection(queryState.selectedIndexes);
 
-            var parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
+            const parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
             return this.equalsQueryStateDateFilters(queryState)
                 && arraysEqual(this.get('relatedConcepts'), queryState.conceptGroups.pluck('concepts'), arrayEqualityPredicate)
                 && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
@@ -196,7 +195,7 @@ define([
         },
 
         equalsQueryStateDateFilters: function(queryState) {
-            var datesAttributes = queryState.datesFilterModel.toQueryModelAttributes();
+            const datesAttributes = queryState.datesFilterModel.toQueryModelAttributes();
 
             if(this.get('dateRange') === DatesFilterModel.DateRange.CUSTOM) {
                 return this.get('dateRange') === datesAttributes.dateRange
@@ -208,8 +207,8 @@ define([
         },
 
         toDatesFilterModelAttributes: function() {
-            var minDate = this.get('minDate');
-            var maxDate = this.get('maxDate');
+            const minDate = this.get('minDate');
+            const maxDate = this.get('maxDate');
 
             return {
                 dateRange: this.get('dateRange'),
@@ -233,9 +232,10 @@ define([
             return this.get('parametricValues').concat(this.get('parametricRanges').map(function(range) {
                 return {
                     field: range.field,
+                    displayName: range.displayName,
                     range: [range.min, range.max],
-                    dataType: range.type === 'Numeric' ? 'numeric' : 'date',
-                    // TODO: Replace numeric with the more expressive dataType
+                    type: range.type === 'Numeric' ? 'Numeric' : 'NumericDate',
+                    // TODO: Replace numeric with the more expressive 'type'
                     numeric: range.type === 'Numeric'
                 };
             }));
@@ -253,8 +253,8 @@ define([
          * @return {SavedSearchModelAttributes}
          */
         attributesFromQueryState: function(queryState) {
-            var indexes = databaseNameResolver.getDatabaseInfoFromCollection(queryState.selectedIndexes);
-            var parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
+            const indexes = databaseNameResolver.getDatabaseInfoFromCollection(queryState.selectedIndexes);
+            const parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
 
             return _.extend(
                 {

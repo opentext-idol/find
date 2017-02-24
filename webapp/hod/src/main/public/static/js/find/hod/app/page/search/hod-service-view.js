@@ -32,14 +32,10 @@ define([
                 }
 
                 this.parametricFieldsCollection.reset();
-                this.numericParametricFieldsCollection.reset();
-                this.dateParametricFieldsCollection.reset();
 
                 //noinspection JSPotentiallyInvalidUsageOfThis
                 if (this.queryModel.get('indexes').length !== 0) {
                     this.fetchParametricFields(this.parametricFieldsCollection, this.fetchParametricCollection.bind(this));
-                    this.fetchParametricFields(this.numericParametricFieldsCollection);
-                    this.fetchParametricFields(this.dateParametricFieldsCollection);
                 }
             });
 
@@ -52,13 +48,10 @@ define([
             if (this.queryModel.get('indexes').length > 0) {
                 fieldsCollection.fetch({
                     data: {
+                        fieldTypes: ['Parametric', 'Numeric', 'NumericDate'],
                         databases: this.queryModel.get('indexes')
                     },
-                    success: function () {
-                        if (callback) {
-                            callback();
-                        }
-                    }.bind(this)
+                    success: callback.bind(this)
                 });
             }
         }

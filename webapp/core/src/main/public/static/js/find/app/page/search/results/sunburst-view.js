@@ -15,16 +15,16 @@ define([
 ], function(ParametricResultsView, _, $, i18n, Sunburst, generateErrorHtml, labelTemplate, d3) {
     'use strict';
 
-    var SUNBURST_NAME_ATTR = 'text';
-    var SUNBURST_SIZE_ATTR = 'count';
-    var SUNBURST_FILTER_NUMBER = 'hiddenFilterCount';
-    var STROKE_COLOUR = '#f0f0f0';
+    const SUNBURST_NAME_ATTR = 'text';
+    const SUNBURST_SIZE_ATTR = 'count';
+    const SUNBURST_FILTER_NUMBER = 'hiddenFilterCount';
+    const STROKE_COLOUR = '#f0f0f0';
 
-    var sunburstLabelIcon = '<i class="icon-zoom-out"></i>';
-    var sunburstLabelTemplate = _.template(labelTemplate);
+    const sunburstLabelIcon = '<i class="icon-zoom-out"></i>';
+    const sunburstLabelTemplate = _.template(labelTemplate);
 
     function drawSunburst($el, data, onClick) {
-        var color = d3.scale.category20c();
+        const color = d3.scale.category20c();
         $el.empty();
 
         this.sunburst = new Sunburst($el, {
@@ -60,10 +60,10 @@ define([
                 return data.color = color(data[SUNBURST_NAME_ATTR]);
             },
             labelFormatter: function(data, prevClicked) {
-                var zoomedOnRoot = !prevClicked || prevClicked.depth === 0;
-                var hoveringCenter = prevClicked ? data === prevClicked.parent : data.depth === 0;
+                const zoomedOnRoot = !prevClicked || prevClicked.depth === 0;
+                const hoveringCenter = prevClicked ? data === prevClicked.parent : data.depth === 0;
 
-                var templateArguments = {
+                const templateArguments = {
                     size: data[SUNBURST_SIZE_ATTR],
                     icon: !zoomedOnRoot && hoveringCenter ? sunburstLabelIcon : '',
                     noVal: false
@@ -83,13 +83,13 @@ define([
             hoverAnimation: function(d, arc, outerRingAnimateSize, arcEls, arcData, paper) {
                 _.chain(_.zip(arcData, arcEls))
                     .filter(function(dataEl) {
-                        var data = dataEl[0];
+                        const data = dataEl[0];
 
                         // TODO Assumes depth=2 is the outer ring - will need to change if this changes
                         return data.text !== '' && data.depth === 2 && data.text === d.text;
                     })
                     .each(function(dataEl) {
-                        var el = dataEl[1];
+                        const el = dataEl[1];
                         paper.set(el).animate({path: arc(outerRingAnimateSize)(dataEl[0])}, 100);
                     });
             }
@@ -111,7 +111,7 @@ define([
             if(!this.parametricCollection.isEmpty()) {
                 drawSunburst.call(this, this.$content, this.dependentParametricCollection.toJSON(), _.bind(this.onClick, this));
 
-                var noValidChildren = _.chain(this.dependentParametricCollection.pluck('children'))
+                const noValidChildren = _.chain(this.dependentParametricCollection.pluck('children'))
                     .compact()
                     .flatten()
                     .isEmpty()

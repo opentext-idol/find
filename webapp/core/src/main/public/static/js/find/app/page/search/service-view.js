@@ -15,7 +15,6 @@ define([
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/parametric-collection',
     'find/app/model/parametric-fields-collection',
-    'find/app/model/numeric-parametric-fields-collection',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/state-token-strategy',
     'find/app/util/results-view-container',
@@ -29,15 +28,13 @@ define([
     'find/app/page/search/results/table/table-view',
     'find/app/page/search/time-bar-view',
     'find/app/configuration',
-    'parametric-refinement/prettify-field-name',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
 ], function (Backbone, $, _, moment, metrics, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel,
-             ParametricCollection, ParametricFieldsCollection, NumericParametricFieldsCollection,
+             ParametricCollection, ParametricFieldsCollection,
              queryStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
              RelatedConceptsView, addChangeListener, SavedSearchControlView, TopicMapView,
-             SunburstView, MapResultsView, TableView, TimeBarView, configuration, prettifyFieldName,
-             i18n, templateString) {
+             SunburstView, MapResultsView, TableView, TimeBarView, configuration, i18n, templateString) {
     'use strict';
 
     const $window = $(window);
@@ -126,8 +123,6 @@ define([
 
             this.parametricFieldsCollection = new ParametricFieldsCollection([]);
             this.parametricCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
-            this.numericParametricFieldsCollection = new NumericParametricFieldsCollection([], {dataType: 'numeric'});
-            this.dateParametricFieldsCollection = new NumericParametricFieldsCollection([], {dataType: 'date'});
 
             // Tracks the document model which is currently shown in the preview
             this.previewModeModel = new Backbone.Model({document: null});
@@ -163,12 +158,9 @@ define([
                 this.savedSearchControlView = new SavedSearchControlView(_.extend(this.getSavedSearchControlViewOptions(), subViewArguments));
 
                 if (this.searchTypes[searchType].showTimeBar) {
-                    this.timeBarModel = new Backbone.Model({
-                        graphedFieldName: null,
-                        graphedDataType: null
-                    });
+                    this.timeBarModel = new Backbone.Model({});
 
-                    this.listenTo(this.timeBarModel, 'change:graphedFieldName', this.updateTimeBar);
+                    this.listenTo(this.timeBarModel, 'change:graphedFieldId', this.updateTimeBar);
                 }
             }
 
@@ -308,8 +300,6 @@ define([
             this.listenForParametricFieldMetrics();
 
             this.fetchParametricFields(this.parametricFieldsCollection, this.fetchParametricCollection.bind(this));
-            this.fetchParametricFields(this.numericParametricFieldsCollection);
-            this.fetchParametricFields(this.dateParametricFieldsCollection);
 
             this.updateScrollParameters = updateScrollParameters.bind(this);
 
@@ -372,9 +362,8 @@ define([
         },
 
         updateTimeBar: function () {
-            const graphedFieldName = this.timeBarModel.get('graphedFieldName');
-            const graphedDataType = this.timeBarModel.get('graphedDataType');
-            const collapsed = graphedFieldName === null;
+            const graphedFieldId = this.timeBarModel.get('graphedFieldId');
+            const collapsed = graphedFieldId === null;
 
             if (this.$middleContainer) {
                 this.$middleContainer.toggleClass('middle-container-with-time-bar', !collapsed);
@@ -391,8 +380,6 @@ define([
                     queryState: this.queryState,
                     previewModeModel: this.previewModeModel,
                     timeBarModel: this.timeBarModel,
-                    numericParametricFieldsCollection: this.numericParametricFieldsCollection,
-                    dateParametricFieldsCollection: this.dateParametricFieldsCollection
                 });
 
                 this.renderTimeBar();
@@ -435,25 +422,13 @@ define([
         },
 
         listenForParametricFieldMetrics: function () {
-            [{
-                type: 'parametric',
-                collection: this.parametricFieldsCollection
-            }, {
-                type: 'numeric',
-                collection: this.numericParametricFieldsCollection
-            }, {
-                type: 'date',
-                collection: this.dateParametricFieldsCollection
-            }].forEach(function (data) {
-                //noinspection JSUnresolvedFunction
-                this.listenTo(data.collection, 'sync', function () {
-                    const flagName = data.type + 'FieldsLoaded';
-                    if (!data.collection.isEmpty() && !this[flagName]) {
-                        this[flagName] = true;
-                        metrics.addTimeSincePageLoad(data.type + '-fields-first-loaded');
-                    }
-                });
-            }.bind(this));
+            //noinspection JSUnresolvedFunction
+            this.listenTo(this.parametricFieldsCollection, 'sync', function () {
+                if (!this.parametricFieldsCollection.isEmpty() && !this.parametricFieldsLoaded) {
+                    this.parametricFieldsLoaded = true;
+                    metrics.addTimeSincePageLoad('parametric-fields-first-loaded');
+                }
+            });
         },
 
         fetchParametricCollection: function () {

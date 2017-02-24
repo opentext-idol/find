@@ -6,67 +6,58 @@
 define([
     'backbone',
     'find/app/page/search/filters/parametric/parametric-view',
-    'find/app/util/merge-collection',
-    'parametric-refinement/display-collection',
     'parametric-refinement/selected-values-collection'
-], function(Backbone, ParametricView, MergeCollection, DisplayCollection, SelectedValuesCollection) {
+], function (Backbone, ParametricView, SelectedValuesCollection) {
 
-    describe('Parametric view', function() {
+    describe('Parametric view', function () {
         describe('when fields are returned', function () {
             beforeEach(function () {
-                var models = [{
+                this.parametricFieldsCollection = new Backbone.Collection([{
                     id: '/DOCUMENT/WIKIPEDIA_CATEGORY',
-                    name: 'WIKIPEDIA_CATEGORY',
-                    values: [
-                        {value: 'food', count: 3},
-                        {value: 'person', count: 5}
-                    ],
-                    dataType: 'parametric'
+                    displayName: 'Wikipedia Category',
+                    type: 'Parametric',
+                    totalValues: 121
                 }, {
                     id: '/DOCUMENT/PERSON_SEX',
-                    name: 'PERSON_SEX',
-                    values: [
-                        {value: 'female', count: 2}
-                    ],
-                    dataType: 'parametric'
-                }];
-
-                var numericParametricModels = [{
+                    displayName: 'Person Sex',
+                    type: 'Parametric',
+                    totalValues: 131
+                }, {
                     id: '/DOCUMENT/PLACE_ELEVATION',
-                    attributes: {
-                        currentMax: 1024,
-                        currentMin: 8,
-                        dataType: 'numeric',
-                        displayName: 'Place Elevation (ft)',
-                        id: '/DOCUMENT/PLACE_ELEVATION',
-                        max: 1084,
-                        min: 5,
-                        name: 'PLACE_ELEVATION',
-                        totalValues: 141
-                    },
-                    dataType: 'numeric'
-                }];
+                    displayName: 'Place Elevation (ft)',
+                    max: 1084,
+                    min: 5,
+                    totalValues: 141,
+                    currentMax: 1024,
+                    currentMin: 8,
+                    type: 'Numeric'
+                }]);
 
-                this.parametricCollection = new Backbone.Collection(models);
-                this.numericParametricCollection = new Backbone.Collection(numericParametricModels);
+                this.parametricCollection = new Backbone.Collection([{
+                    id: '/DOCUMENT/WIKIPEDIA_CATEGORY',
+                    displayName: 'Wikipedia Category',
+                    totalValues: 121,
+                    values: [
+                        {value: 'food', displayValue: 'food', count: 3},
+                        {value: 'person', displayValue: 'person', count: 5}
+                    ],
+                    type: 'Parametric'
+                }, {
+                    id: '/DOCUMENT/PERSON_SEX',
+                    displayName: 'Person Sex',
+                    totalValues: 131,
+                    values: [
+                        {value: 'female', displayValue: 'female', count: 2}
+                    ],
+                    type: 'Parametric'
+                }]);
 
                 this.selectedParametricValues = new SelectedValuesCollection();
 
-                this.displayCollection = new DisplayCollection([], {
-                    parametricCollection: this.parametricCollection,
-                    selectedParametricValues: this.selectedParametricValues
-                });
-
-                this.mergedCollection = new MergeCollection([], {
-                    collections: [this.numericParametricCollection, this.displayCollection],
-                    typeAttribute: 'dataType'
-                });
-
                 this.view = new ParametricView({
                     filterModel: new Backbone.Model(),
-                    collection: this.mergedCollection,
+                    collection: this.parametricFieldsCollection,
                     parametricCollection: this.parametricCollection,
-                    displayCollection: this.displayCollection,
                     queryState: {
                         selectedParametricValues: this.selectedParametricValues
                     }
@@ -135,8 +126,11 @@ define([
                         beforeEach(function () {
                             this.parametricCollection.reset([{
                                 id: '/DOCUMENT/PERSON_SEX',
-                                name: 'PERSON_SEX',
-                                values: [{value: 'male', count: 1}]
+                                displayName: 'Person Sex',
+                                totalValues: 131,
+                                values: [
+                                    {value: 'male', displayValue: 'male', count: 1}
+                                ]
                             }]);
                             this.parametricCollection.trigger('sync');
                         });
@@ -157,29 +151,21 @@ define([
             });
         });
 
-        describe('when no fields are returned', function(){
-            beforeEach(function(){
-                this.mergedCollection = new MergeCollection([], {
-                    collections: [],
-                    typeAttribute: 'dataType'
-                });
-
-                this.parametricCollection = new Backbone.Collection();
-                this.displayCollection = new Backbone.Collection();
+        describe('when no fields are returned', function () {
+            beforeEach(function () {
                 this.parametricCollection = new Backbone.Collection();
 
                 this.view = new ParametricView({
                     filterModel: new Backbone.Model(),
-                    collection: this.mergedCollection,
+                    collection: new Backbone.Collection([]),
                     parametricCollection: this.parametricCollection,
-                    displayCollection: this.displayCollection,
                     queryState: {
                         selectedParametricValues: this.selectedParametricValues
                     }
                 });
             });
 
-            it('shows the empty message', function() {
+            it('shows the empty message', function () {
                 expect(this.view.$('.parametric-empty')).not.toHaveClass('hide');
             });
         })

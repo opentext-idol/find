@@ -9,12 +9,9 @@ define([
     'find/app/model/dates-filter-model',
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/util/database-name-resolver',
-    'parametric-refinement/prettify-field-name',
-    'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
-], function (Backbone, _, moment, DatesFilterModel, rounder, databaseNameResolver, prettifyFieldName,
-             configuration, i18n, i18nIndexes) {
+], function (Backbone, _, moment, DatesFilterModel, rounder, databaseNameResolver, i18n, i18nIndexes) {
     'use strict';
 
     const DATE_FORMAT = 'YYYY-MM-DD HH:mm';
@@ -49,12 +46,10 @@ define([
     }
 
     // Get the display text for the given parametric field name and array of selected parametric values
-    function parametricFilterText(field, values, ranges, numeric) {
-        const fieldMap = _.findWhere(configuration().parametricDisplayValues, {name: field});
-
+    function parametricFilterText(displayValues, ranges, numeric) {
         let valueText;
 
-        if (_.isEmpty(values)) {
+        if (_.isEmpty(displayValues)) {
             valueText = ranges.map(function (range) {
                 //Discard time of day if range greater than 1 week
                 if (numeric) {
@@ -67,15 +62,7 @@ define([
                 }
             }).join(', ');
         } else {
-            valueText = _.map(values, function (value) {
-                if (fieldMap) {
-                    const param = _.findWhere(fieldMap.values, {name: value});
-                    return param ? param.displayName : value;
-                }
-                else {
-                    return value;
-                }
-            }).join(', ');
+            valueText = displayValues.join(', ');
         }
 
         return valueText;
@@ -87,8 +74,8 @@ define([
             return {
                 id: parametricFilterId(field),
                 field: field,
-                heading: prettifyFieldName(field),
-                text: parametricFilterText(field, data.values, data.range ? [data.range] : [], data.dataType),
+                heading: data.displayName,
+                text: parametricFilterText(data.displayValues, data.range ? [data.range] : [], data.type),
                 type: FilterType.PARAMETRIC
             };
         });
@@ -208,15 +195,15 @@ define([
             const modelsForField = this.selectedParametricValues.where({field: field});
 
             if (modelsForField.length) {
-                const values = _.chain(modelsForField).invoke('get', 'value').compact().value();
+                const displayValues = _.chain(modelsForField).invoke('get', 'displayValue').compact().value();
                 const ranges = _.chain(modelsForField).invoke('get', 'range').compact().value();
 
                 this.add({
                     id: id,
                     field: field,
-                    text: parametricFilterText(field, values, ranges, selectionModel.get('numeric')),
+                    text: parametricFilterText(displayValues, ranges, selectionModel.get('numeric')),
                     type: FilterType.PARAMETRIC,
-                    heading: prettifyFieldName(field)
+                    heading: selectionModel.get('displayName')
                 }, {
                     // Merge true to overwrite the text for any existing model for this field name
                     merge: true

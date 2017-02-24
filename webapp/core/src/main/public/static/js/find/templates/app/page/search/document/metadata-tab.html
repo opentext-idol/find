@@ -23,7 +23,7 @@
     <% } %>
     <% basicFields.forEach(function(field) { %>
     <tr>
-        <th class="break-all"><%-field.id%></th>
+        <th class="break-all"><%-field.displayName%></th>
         <td>
             <ul class="list-unstyled m-b-nil">
                 <% _.each(field.values, function(value) { %>
@@ -35,7 +35,7 @@
     <% }); %>
     <% advancedFields.forEach(function(field) { %>
     <tr class="advanced-field hide">
-        <th class="break-all"><%-field.id%></th>
+        <th class="break-all"><%-field.displayName%></th>
         <td>
             <ul class="list-unstyled m-b-nil">
                 <% _.each(field.values, function(value) { %>

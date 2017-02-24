@@ -40,11 +40,10 @@ define([
 
         fetchParametricFields: function (fieldsCollection, callback) {
             fieldsCollection.fetch({
-                success: _.bind(function () {
-                    if (callback) {
-                        callback();
-                    }
-                }, this)
+                data: {
+                    fieldTypes: ['Parametric', 'Numeric', 'NumericDate']
+                },
+                success: callback.bind(this)
             });
         },
 

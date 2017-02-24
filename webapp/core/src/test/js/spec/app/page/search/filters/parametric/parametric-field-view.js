@@ -5,8 +5,9 @@
 
 define([
     'find/app/page/search/filters/parametric/parametric-field-view',
-    'backbone'
-], function(FieldView, Backbone) {
+    'backbone',
+    'parametric-refinement/selected-values-collection'
+], function(FieldView, Backbone, SelectedParametricValues) {
     'use strict';
 
     describe('Parametric field view', function() {
@@ -18,10 +19,17 @@ define([
                 id: 'primary_author'
             });
 
-            this.model.fieldValues = new Backbone.Collection([
-                {id: 'bob', count: 100, selected: true},
-                {id: 'penny', count: 96, selected: true},
-                {id: 'fred', count: 25, selected: false}
+            this.parametricCollection = new Backbone.Collection([
+                {id: 'primary_author', displayName: 'Primary Author', totalValues: 1500, values: [
+                    {value: 'bob', displayValue: 'bob', count: 100},
+                    {value: 'penny', displayValue: 'penny', count: 96},
+                    {value: 'fred', displayValue: 'fred', count: 25}
+                ]}
+            ]);
+
+            this.selectedParametricValues = new SelectedParametricValues([
+                {field: 'primary_author', displayName: 'Primary Author', value: 'bob', displayValue: 'bob'},
+                {field: 'primary_author', displayName: 'Primary Author', value: 'penny', displayValue: 'penny'},
             ]);
         });
 
@@ -30,7 +38,8 @@ define([
                 this.fieldView = new FieldView({
                     queryModel: this.queryModel,
                     model: this.model,
-                    selectedParametricValues: new Backbone.Collection(),
+                    parametricCollection: this.parametricCollection,
+                    selectedParametricValues: this.selectedParametricValues,
                     collapsed: false
                 });
                 this.fieldView.render();
@@ -60,7 +69,8 @@ define([
                 this.fieldView = new FieldView({
                     queryModel: this.queryModel,
                     model: this.model,
-                    selectedParametricValues: new Backbone.Collection(),
+                    parametricCollection: this.parametricCollection,
+                    selectedParametricValues: this.selectedParametricValues,
                     collapsed: function(model) {
                         return model.id === 'primary_author'
                     }
@@ -92,24 +102,20 @@ define([
                 this.fieldView = new FieldView({
                     queryModel: this.queryModel,
                     model: this.model,
-                    selectedParametricValues: new Backbone.Collection(
-                        this.model.fieldValues.where({selected: true}).map(function(valueModel) {
-                        return {field: this.model.id, value: valueModel.id};
-                    }.bind(this))),
+                    parametricCollection: this.parametricCollection,
+                    selectedParametricValues: this.selectedParametricValues,
                     collapsed: false
                 });
                 this.fieldView.render();
             });
 
             it('that counts selected fields', function() {
-                expect(this.fieldView.$el).toContainText('(2 / 3)');
+                expect(this.fieldView.$el).toContainText('(2 / 1500)');
             });
 
             it('that displays (X) and not (0 / X) when no fields are selected', function() {
-                this.model.fieldValues.each(function(model) {
-                    model.set('selected', false);
-                });
-                expect(this.fieldView.$el).toContainText('(3)');
+                this.selectedParametricValues.reset();
+                expect(this.fieldView.$el).toContainText('(1500)');
             });
         });
     });

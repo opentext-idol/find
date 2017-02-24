@@ -41,7 +41,7 @@ define([
 
         render: function() {
             //noinspection JSUnresolvedFunction
-            var importantFields = [{
+            const importantFields = [{
                 key: 'title',
                 value: this.model.get('title')
             }, {
@@ -62,18 +62,18 @@ define([
             }];
 
             //noinspection JSUnresolvedFunction
-            var ignoreFields = ['thumbnail', 'DRECONTENT', 'DREDATE', 'DRETITLE', 'DREREFERENCE'].concat(_.pluck(importantFields, 'key'));
-            var fields = this.model.get('fields').filter(function(field) {
+            const ignoreFields = ['thumbnail', 'DRECONTENT', 'DREDATE', 'DRETITLE', 'DREREFERENCE'].concat(_.pluck(importantFields, 'key'));
+            const fields = this.model.get('fields').filter(function (field) {
                 //noinspection JSUnresolvedFunction
                 return !_.contains(ignoreFields, field.id);
             });
             //noinspection JSUnresolvedFunction
-            var partitionedFields = _.partition(fields, function(field) {
+            const partitionedFields = _.partition(fields, function (field) {
                 //noinspection JSUnresolvedVariable
                 return field.advanced;
             });
-            var basicFields = partitionedFields[1];
-            var advancedFields = partitionedFields[0];
+            const basicFields = partitionedFields[1];
+            const advancedFields = partitionedFields[0];
             //noinspection JSUnresolvedFunction
             this.$el.html(this.template({
                 i18n: i18n,

@@ -5,10 +5,9 @@ define([
     'find/app/util/search-data-util',
     'find/app/page/search/filters/parametric/parametric-select-modal-list-view',
     './parametric-paginator',
-    'parametric-refinement/prettify-field-name',
     'text!find/templates/app/page/search/filters/parametric/parametric-select-modal-view.html',
     'iCheck'
-], function (Backbone, $, _, searchDataUtil, ParametricSelectModalListView, ParametricPaginator, prettifyFieldName, template) {
+], function (Backbone, $, _, searchDataUtil, ParametricSelectModalListView, ParametricPaginator, template) {
     'use strict';
 
     return Backbone.View.extend({
@@ -40,6 +39,7 @@ define([
             this.fieldData = options.parametricFieldsCollection.map(function (fieldModel) {
                 const paginator = new ParametricPaginator({
                     fieldName: fieldModel.id,
+                    fieldDisplayName: fieldModel.get('displayName'),
                     allIndexes: allIndexes,
                     selectedValues: options.selectedParametricValues,
                     fetchRestrictions: fetchRestrictions,
@@ -56,7 +56,7 @@ define([
 
                 return {
                     id: fieldModel.id,
-                    displayName: fieldModel.get('displayName') || prettifyFieldName(fieldModel.id),
+                    displayName: fieldModel.get('displayName'),
                     view: new ParametricSelectModalListView({paginator: paginator})
                 };
             }.bind(this));

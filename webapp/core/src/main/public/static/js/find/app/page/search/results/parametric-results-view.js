@@ -14,13 +14,18 @@ define([
 ], function(Backbone, DependentParametricCollection, _, i18n, FieldSelectionView, template, generateErrorHtml, loadingSpinnerTemplate) {
     'use strict';
 
-    var fieldInvalid = function(field, fields) {
+    const fieldInvalid = function (field, fields) {
         return !field || !_.contains(fields, field);
     };
 
     function getClickedParameters(data, fields, selectedParameters) {
         if(data.depth !== 0) {
-            var parameter = {field: fields[data.depth - 1], value: data.text};
+            const parameter = {
+                field: fields[data.depth - 1].field,
+                displayName: fields[data.depth - 1].displayName,
+                value: data.underlyingValue,
+                displayValue: data.text
+            };
             selectedParameters.push(parameter);
 
             if(data.parent && data.parent.depth !== 0) {
@@ -31,7 +36,7 @@ define([
         return selectedParameters;
     }
 
-    var SNAPSHOT = 'SNAPSHOT';
+    const SNAPSHOT = 'SNAPSHOT';
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -48,7 +53,7 @@ define([
             this.errorMessageArguments = options.errorMessageArguments;
 
             this.dependentParametricCollection = options.dependentParametricCollection || new DependentParametricCollection();
-            this.fieldsCollection = new Backbone.Collection([{field: ''}, {field: ''}]);
+            this.fieldsCollection = new Backbone.Collection([{field: '', displayName: ''}, {field: '', displayName: ''}]);
 
             this.onClick = this.savedSearchModel.get('type') === SNAPSHOT ? _.noop : this.onSavedSearchClick;
 
@@ -98,7 +103,7 @@ define([
             if(xhr.status !== 0) {
                 this.model.set('loading', false);
                 if(xhr.responseJSON) {
-                    var messageArguments = _.extend({
+                    const messageArguments = _.extend({
                         errorDetails: xhr.responseJSON.message,
                         errorLookup: xhr.responseJSON.backendErrorCode,
                         errorUUID: xhr.responseJSON.uuid
@@ -120,7 +125,7 @@ define([
         },
 
         onSavedSearchClick: function(data) {
-            var selectedParameters = getClickedParameters(data, this.fieldsCollection.pluck('field'), []);
+            const selectedParameters = getClickedParameters(data, this.fieldsCollection.invoke('pick', 'field', 'displayName'), []);
 
             // empty value means padding element was clicked on
             if (!_.findWhere(selectedParameters, {value: ''})) {
@@ -162,10 +167,13 @@ define([
                 this.firstChosen.remove();
             }
 
+            const selectedFieldsAndValues = this.selectedParametricValues.toFieldsAndValues();
             this.firstChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(0),
                 name: 'first',
-                fields: _.difference(this.parametricCollection.pluck('id'), this.selectedParametricValues.pluck('field')).sort(),
+                fields: this.parametricCollection.invoke('pick', 'id', 'displayName').filter(function (data) {
+                    return !selectedFieldsAndValues[data.id];
+                }.bind(this)).sort(),
                 allowEmpty: false
             });
 
@@ -178,10 +186,13 @@ define([
                 this.secondChosen.remove();
             }
 
+            const selectedFieldsAndValues = this.selectedParametricValues.toFieldsAndValues();
             this.secondChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(1),
                 name: 'second',
-                fields: _.difference(this.parametricCollection.pluck('id'), _.union([this.fieldsCollection.at(0).get('field')], this.selectedParametricValues.pluck('field'))).sort(),
+                fields: this.parametricCollection.invoke('pick', 'id', 'displayName').filter(function (data) {
+                    return data.id !== this.fieldsCollection.at(0).get('field') && !selectedFieldsAndValues[data.id];
+                }.bind(this)).sort(),
                 allowEmpty: true
             });
 
@@ -198,10 +209,10 @@ define([
         },
 
         resolveFieldSelections: function() {
-            var fields = _.difference(this.parametricCollection.pluck('name'), this.selectedParametricValues.pluck('field'));
+            const fields = _.difference(this.parametricCollection.pluck('name'), this.selectedParametricValues.pluck('field'));
 
-            var primaryModel = this.fieldsCollection.at(0);
-            var secondaryModel = this.fieldsCollection.at(1);
+            const primaryModel = this.fieldsCollection.at(0);
+            const secondaryModel = this.fieldsCollection.at(1);
 
             if(fieldInvalid(primaryModel.get('field'), fields)) {
                 primaryModel.set('field', fields.sort()[0]);
@@ -213,8 +224,8 @@ define([
         },
 
         fetchDependentFields: function() {
-            var first = this.fieldsCollection.at(0).get('field');
-            var second = this.fieldsCollection.at(1).get('field');
+            const first = this.fieldsCollection.at(0).get('field');
+            const second = this.fieldsCollection.at(1).get('field');
 
             if(first) {
                 this.dependentParametricCollection.fetch({

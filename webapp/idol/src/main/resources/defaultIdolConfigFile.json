@@ -109,39 +109,47 @@
   },
   "uiCustomization": {
     "options": {
-        "directAccessLink": {
-          "user": false
-        },
-        "enableMetaFilter": {
-          "user": false,
-          "bi": true
-        },
-        "enableRelatedConcepts": {
-          "user": true,
-          "bi": false
-        },
-        "resultViewOrder": {
-          "bi": ["topic-map", "list", "sunburst", "table", "map"],
-          "user": ["list"]
-        }
+      "directAccessLink": {
+        "user": false
       },
-      "parametricNeverShow": [],
-      "parametricAlwaysShow": [],
-      "parametricOrder": [],
-      "specialUrlPrefixes": {
-        "application/msword": "ms-word:ofv|u|",
-        "application/mspowerpoint": "ms-powerpoint:ofv|u|",
-        "application/vnd.ms-powerpoint": "ms-powerpoint:ofv|u|",
-        "application/msexcel": "ms-excel:ofv|u|",
-        "application/vnd.ms-excel": "ms-excel:ofv|u|",
-        "application/vnd.visio": "ms-visio:ofv|u|",
-        "application/msaccess": "ms-access:ofv|u|",
-        "application/x-msaccess": "ms-access:ofv|u|",
-        "application/msproject": "ms-project:ofv|u|",
-        "application/vnd.ms-project": "ms-project:ofv|u|",
-        "application/x-mspublisher": "ms-publisher:ofv|u|"
+      "enableMetaFilter": {
+        "user": false,
+        "bi": true
       },
-      "errorCallSupportString": null
+      "enableRelatedConcepts": {
+        "user": true,
+        "bi": false
+      },
+      "resultViewOrder": {
+        "bi": [
+          "topic-map",
+          "list",
+          "sunburst",
+          "table",
+          "map"
+        ],
+        "user": [
+          "list"
+        ]
+      }
+    },
+    "parametricNeverShow": [],
+    "parametricAlwaysShow": [],
+    "parametricOrder": [],
+    "specialUrlPrefixes": {
+      "application/msword": "ms-word:ofv|u|",
+      "application/mspowerpoint": "ms-powerpoint:ofv|u|",
+      "application/vnd.ms-powerpoint": "ms-powerpoint:ofv|u|",
+      "application/msexcel": "ms-excel:ofv|u|",
+      "application/vnd.ms-excel": "ms-excel:ofv|u|",
+      "application/vnd.visio": "ms-visio:ofv|u|",
+      "application/msaccess": "ms-access:ofv|u|",
+      "application/x-msaccess": "ms-access:ofv|u|",
+      "application/msproject": "ms-project:ofv|u|",
+      "application/vnd.ms-project": "ms-project:ofv|u|",
+      "application/x-mspublisher": "ms-publisher:ofv|u|"
+    },
+    "errorCallSupportString": null
   },
   "minScore": 0,
   "topicMapMaxResults": 1000,
@@ -264,6 +272,19 @@
       ],
       "displayName": "Place Elevation (ft)",
       "type": "NUMBER",
+      "advanced": true
+    },
+    "author": {
+      "names": [
+        "AUTHOR"
+      ],
+      "displayName": "AuThor",
+      "values": [
+        {
+          "value": "HAYES, ALEXANDRA",
+          "displayValue": "Alex"
+        }
+      ],
       "advanced": true
     }
   }

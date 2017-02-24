@@ -29,7 +29,9 @@ define([
 
                 const attributes = {
                     field: $field.attr('data-field'),
-                    value: $target.attr('data-value')
+                    displayName: $field.attr('data-field-display-name'),
+                    value: $target.attr('data-value'),
+                    displayValue: $target.attr('data-display-value')
                 };
 
                 if (this.selectedParametricValues.get(attributes)) {
@@ -41,10 +43,8 @@ define([
         },
 
         initialize: function (options) {
-            this.parametricFieldsCollection = options.parametricFieldsCollection;
             this.parametricCollection = options.parametricCollection;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
-            this.displayCollection = options.displayCollection;
             this.filterModel = options.filterModel;
 
             //ToDo : We are currently only monitoring parametricCollection for loading and error. Need to fix as part of FIND-618.
@@ -100,17 +100,17 @@ define([
                 collectionChangeEvents: false,
                 ItemView: ProxyView,
                 itemOptions: {
-                    typeAttribute: 'dataType',
+                    typeAttribute: 'type',
                     viewTypes: {
-                        date: {
+                        NumericDate: {
                             Constructor: CollapsibleNumericFieldView,
                             options: 'numericViewItemOptions'
                         },
-                        numeric: {
+                        Numeric: {
                             Constructor: CollapsibleNumericFieldView,
                             options: 'numericViewItemOptions'
                         },
-                        parametric: {
+                        Parametric: {
                             Constructor: FieldView,
                             options: 'parametricViewItemOptions'
                         }
@@ -119,7 +119,8 @@ define([
                         collapsed: isCollapsed,
                         queryModel: options.queryModel,
                         indexesCollection: options.indexesCollection,
-                        parametricFieldsCollection: this.parametricFieldsCollection,
+                        parametricFieldsCollection: this.collection,
+                        parametricCollection: this.parametricCollection,
                         selectedParametricValues: this.selectedParametricValues
                     },
                     numericViewItemOptions: {
@@ -160,7 +161,6 @@ define([
 
         remove: function () {
             this.fieldNamesListView.remove();
-            this.displayCollection.stopListening();
             Backbone.View.prototype.remove.call(this);
         },
 

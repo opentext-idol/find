@@ -12,22 +12,29 @@ define([
     
     'use strict';
 
-    var MEDIA_TYPES = ['audio', 'image', 'video'];
-    var WEB_TYPES = ['text/html', 'text/xhtml'];
-    var isUrlRegex = /^(?:https?|ftp):\/\/|\\\\\S+/;
+    const MEDIA_TYPES = ['audio', 'image', 'video'];
+    const WEB_TYPES = ['text/html', 'text/xhtml'];
+    const isUrlRegex = /^(?:https?|ftp):\/\/|\\\\\S+/;
 
     function isURL(reference) {
         return isUrlRegex.test(reference);
     }
 
-    var fieldTypeParsers = {
-        STRING: _.identity,
-        NUMBER: Number,
-        BOOLEAN: function(value) {
-            return value.toLowerCase() === 'true';
+    const fieldTypeParsers = {
+        STRING: function (valueWrapper) {
+            return valueWrapper.displayValue
         },
-        DATE: function(value) {
-            return moment(value).format('LLLL');
+        NUMBER: function (valueWrapper) {
+            return valueWrapper.value
+        },
+        /**
+         * @return {boolean}
+         */
+        BOOLEAN: function (valueWrapper) {
+            return valueWrapper.value.toLowerCase() === 'true';
+        },
+        DATE: function (valueWrapper) {
+            return moment(valueWrapper.value).format('LLLL');
         }
     };
 
@@ -45,7 +52,7 @@ define([
         return [];
     }
 
-    var getFieldValue = _.compose(_.first, getFieldValues);
+    const getFieldValue = _.compose(_.first, getFieldValues);
 
     // Model representing a document in an HOD text index
     return Backbone.Model.extend({
@@ -61,8 +68,8 @@ define([
                 // If there is no title, use the last part of the reference (assuming the reference is a file path)
                 // C:\Documents\file.txt -> file.txt
                 // /home/user/another-file.txt -> another-file.txt
-                var splitReference = response.reference.split(/\/|\\/);
-                var lastPart = _.last(splitReference);
+                const splitReference = response.reference.split(/\/|\\/);
+                const lastPart = _.last(splitReference);
 
                 if (/\S/.test(lastPart)) {
                     // Use the "file name" if it contains a non whitespace character
@@ -92,13 +99,13 @@ define([
             if (configuration().map.enabled) {
                 response.locations = _.chain(configuration().map.locationFields)
                     .filter(function (field) {
-                        var latitude = getFieldValue(response.fieldMap[field.latitudeField]);
-                        var longitude = getFieldValue(response.fieldMap[field.longitudeField]);
+                        const latitude = getFieldValue(response.fieldMap[field.latitudeField]);
+                        const longitude = getFieldValue(response.fieldMap[field.longitudeField]);
                         return longitude && latitude;
                     })
                     .map(function (field) {
-                        var latitude = getFieldValue(response.fieldMap[field.latitudeField]);
-                        var longitude = getFieldValue(response.fieldMap[field.longitudeField]);
+                        const latitude = getFieldValue(response.fieldMap[field.latitudeField]);
+                        const longitude = getFieldValue(response.fieldMap[field.longitudeField]);
 
                         return {
                             displayName: field.displayName,
@@ -131,7 +138,7 @@ define([
         },
 
         isWebType: function() {
-            var contentType = this.get('contentType');
+            const contentType = this.get('contentType');
 
             return contentType && _.contains(WEB_TYPES, contentType.toLowerCase());
         }
