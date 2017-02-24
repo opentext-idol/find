@@ -294,6 +294,10 @@ define([
                     views: this.resultsViews,
                     model: this.resultsViewSelectionModel
                 });
+
+                this.listenTo(this.queryModel.queryState.selectedParametricValues, 'graph', function(){
+                    this.resultsViewSelection.switchTab('dategraph')
+                })
             }
 
             this.resultsViewContainer = new ResultsViewContainer({
