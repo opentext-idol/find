@@ -59,7 +59,7 @@ define([
                 if (!this.hideMainPlot) {
                     rows.push({
                         color: '#00B388',
-                        label: 'Documents',
+                        label: i18n['search.resultsView.dategraph.defaultSeriesLabel'],
                         secondaryAxis: false,
                         values: _.pluck(modelBuckets, 'count')
                     })
@@ -135,7 +135,7 @@ define([
             var noValues = !modelBuckets || !modelBuckets.length;
 
             this.$('.dategraph-view-error-message').toggleClass('hide', !hadError);
-            this.$('.dategraph-view-empty-text').toggleClass('hide', hadError || !noValues);
+            this.$('.dategraph-view-empty-text').toggleClass('hide', hadError || !noValues || fetching);
 
             var hideLoadingIndicator = hadError || !fetching;
             this.$('.dategraph-loading').toggleClass('hide', hideLoadingIndicator);
@@ -155,7 +155,7 @@ define([
 
                 var data = (this.hideMainPlot ? [] : [{
                     color: '#00B388',
-                    label: 'Documents',
+                    label: i18n['search.resultsView.dategraph.defaultSeriesLabel'],
                     data: transform(modelBuckets)
                 }]).concat(_.map(this.plots, function(plot, idx, plots){
                     var label = plot.field.replace(/^.*\//, '').replace(/_/g, '\u00A0') + ': ' + plot.value;
