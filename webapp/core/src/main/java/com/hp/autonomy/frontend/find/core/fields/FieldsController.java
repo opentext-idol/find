@@ -77,6 +77,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
         output.addAll(fetchNumericParametricFieldAndValueDetails(request, FieldTypeParam.NumericDate, response));
         output.addAll(fetchNumericParametricFieldAndValueDetails(request, FieldTypeParam.Numeric, response));
         output.addAll(fetchParametricFieldAndValueDetails(FieldTypeParam.Parametric, response));
+        output.sort(parametricFieldComparator());
 
         return output;
     }
@@ -120,12 +121,11 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
 
         final Map<TagName, ValueDetails> valueDetailsResponse = valueDetailsFetch.fetch(tagNames);
 
-        final Comparator<FieldAndValueDetails> comparator = parametricFieldComparator();
         return tagNames.stream()
                 .map(tagName -> {
                     final FieldAndValueDetails.FieldAndValueDetailsBuilder builder = FieldAndValueDetails.builder()
                             .id(tagName.getId().getNormalisedPath())
-                            .name(tagName.getDisplayName())
+                            .displayName(tagName.getDisplayName())
                             .type(fieldType);
 
                     final ValueDetails valueDetails = valueDetailsResponse.get(tagName);
@@ -139,7 +139,6 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
 
                     return builder.build();
                 })
-                .sorted(comparator)
                 .collect(Collectors.toList());
     }
 
@@ -165,7 +164,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
                 .map(uiCustomization -> uiCustomization.getParametricOrder().stream().collect(Collectors.toMap(x -> x, x -> counter[0]++)))
                 .orElse(Collections.emptyMap());
         return Comparator.<FieldAndValueDetails, Integer>comparing(x -> orderMap.getOrDefault(tagNameFactory.getFieldPath(x.getId()), Integer.MAX_VALUE))
-                .thenComparing(FieldAndValueDetails::getName);
+                .thenComparing(FieldAndValueDetails::getDisplayName);
     }
 
     @FunctionalInterface

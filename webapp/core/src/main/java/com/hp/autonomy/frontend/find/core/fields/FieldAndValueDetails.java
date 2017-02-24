@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 public class FieldAndValueDetails {
     private final String id;
-    private final String name;
+    private final String displayName;
     private final double min;
     private final double max;
     private final long totalValues;
