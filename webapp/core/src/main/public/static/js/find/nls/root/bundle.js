@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -8,7 +8,7 @@ define([
 ], function(substitution) {
     return substitution({
         'about.app.version': 'Version',
-        'about.copyright': "Find © Copyright 2014-2016 Hewlett Packard Enterprise Development Company, L.P.",
+        'about.copyright': "Find © Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.",
         'about.foss': 'FOSS Acknowledgements',
         'about.lib.name': 'Library Name',
         'about.lib.version': 'Version',
