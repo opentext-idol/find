@@ -172,9 +172,12 @@ define([
                     xaxis: {mode: 'time'},
                     yaxes: multiAxes ? [ {}, { position: 'right' } ] : {}
                 })
+
+                this.$('.dategraph-view-pptx').removeClass('disabled');
             }
             else {
                 $contentEl.empty();
+                this.$('.dategraph-view-pptx').addClass('disabled');
             }
         },
 
