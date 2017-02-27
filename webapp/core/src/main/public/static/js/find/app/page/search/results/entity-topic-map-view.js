@@ -173,6 +173,7 @@ define([
             this.handleTopicMapError();
             this.$('.entity-topic-map-empty').toggleClass('hide', state !== ViewState.EMPTY);
             this.$('.entity-topic-map-loading').toggleClass('hide', state !== ViewState.LOADING);
+            this.$('.entity-topic-map-pptx').toggleClass('disabled', state !== ViewState.MAP);
         },
 
         generateErrorMessage: function(xhr) {

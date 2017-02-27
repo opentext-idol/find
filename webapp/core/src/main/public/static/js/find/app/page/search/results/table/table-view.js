@@ -89,6 +89,8 @@ define([
 
             // if parametric collection is empty then nothing has loaded and datatables will fail
             if(!this.parametricCollection.isEmpty()) {
+                this.$pptxButton.removeClass('disabled');
+
                 // columnNames will be empty if only one field is selected
                 if(_.isEmpty(this.dependentParametricCollection.columnNames)) {
                     this.$table.dataTable({

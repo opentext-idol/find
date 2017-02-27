@@ -80,6 +80,7 @@ define([
             this.$message = this.$('.parametric-view-message');
             this.$errorMessage = this.$('.parametric-view-error-message');
             this.$parametricSelections = this.$('.parametric-selections').addClass('hide');
+            this.$pptxButton = this.$('.parametric-pptx');
 
             this.listenTo(this.fieldsCollection.at(0), 'change:field', this.secondSelection);
             this.listenTo(this.model, 'change:loading', this.toggleLoading);
@@ -114,6 +115,10 @@ define([
             this.$content.toggleClass('invisible', loading);
             this.$parametricSelections.toggleClass('hide', this.noMoreParametricFields());
             this.updateMessage();
+
+            if (loading) {
+                this.$pptxButton.addClass('disabled');
+            }
         },
 
         swapFields: function() {

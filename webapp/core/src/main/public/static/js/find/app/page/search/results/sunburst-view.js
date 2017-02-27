@@ -152,6 +152,8 @@ define([
         },
 
         update: function() {
+            var disableExport = true;
+
             if(!this.parametricCollection.isEmpty()) {
                 const data = generateDataRoot(this.dependentParametricCollection.toJSON());
 
@@ -176,8 +178,11 @@ define([
                     this.$message.text(i18n['search.resultsView.sunburst.error.noSecondFieldValues']);
                 } else {
                     this.$message.empty();
+                    disableExport = false;
                 }
             }
+
+            this.$pptxButton.toggleClass('disabled', disableExport);
         },
 
         render: function() {

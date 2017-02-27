@@ -203,6 +203,8 @@ define([
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
                 this.formatResult(model, false);
+
+                this.$('.results-view-pptx').removeClass('disabled');
             });
 
             this.listenTo(this.documentsCollection, 'sync reset', function() {
@@ -216,6 +218,8 @@ define([
                 } else if(this.documentsCollection.isEmpty()) {
                     this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noResults"]}));
                 }
+
+                this.$('.results-view-pptx').toggleClass('disabled', this.documentsCollection.isEmpty());
             });
 
             this.listenTo(this.documentsCollection, 'error', function(collection, xhr) {
