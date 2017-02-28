@@ -232,11 +232,12 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
     @RequestMapping(value = PPT_REPORT_PATH, method = RequestMethod.POST)
     public HttpEntity<byte[]> report(
-            @RequestParam("data") final String dataStr
+            @RequestParam("data") final String dataStr,
+            @RequestParam(value = "multipage", defaultValue = "false") final boolean multipage
     ) throws IOException, TemplateLoadException {
         final ReportData report = objectMapper.readValue(dataStr, ReportData.class);
 
-        final XMLSlideShow ppt = pptService.report(report);
+        final XMLSlideShow ppt = pptService.report(report, multipage);
 
         return writePPT(ppt, "report.pptx");
     }
