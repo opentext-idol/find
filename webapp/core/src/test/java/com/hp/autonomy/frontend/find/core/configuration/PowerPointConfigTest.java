@@ -6,9 +6,13 @@
 package com.hp.autonomy.frontend.find.core.configuration;
 
 import com.hp.autonomy.frontend.configuration.ConfigException;
+import com.hp.autonomy.frontend.reports.powerpoint.PowerPointServiceImpl;
+import com.hp.autonomy.frontend.reports.powerpoint.TemplateSource;
 import com.hp.autonomy.frontend.reports.powerpoint.dto.Anchor;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,7 +54,6 @@ public class PowerPointConfigTest {
         assertEquals("Wrong height", anchor.getHeight(), 1, EPSILON);
     }
 
-
     @Test
     public void basicValidateAnchors() throws ConfigException {
         final PowerPointConfig config = new PowerPointConfig.Builder()
@@ -67,6 +70,42 @@ public class PowerPointConfigTest {
         assertEquals("Wrong top edge", anchor.getY(), 0.01, EPSILON);
         assertEquals("Wrong width", anchor.getWidth(), 0.93, EPSILON);
         assertEquals("Wrong height", anchor.getHeight(), 0.97, EPSILON);
+    }
+
+    @Test
+    public void basicValidateFile() throws ConfigException, IOException {
+        final File tempFile = File.createTempFile("temp", ".pptx");
+        tempFile.deleteOnExit();
+
+        try(final FileOutputStream os = new FileOutputStream(tempFile)) {
+            IOUtils.copyLarge(TemplateSource.DEFAULT.getInputStream(), os);
+        }
+
+        final PowerPointConfig config = new PowerPointConfig.Builder()
+                .setTemplateFile(tempFile.getAbsolutePath())
+                .build();
+
+        config.basicValidate(null);
+    }
+
+    @Test(expected = ConfigException.class)
+    public void basicValidateInvalidTop() throws ConfigException {
+        new PowerPointConfig.Builder().setMarginTop(2.0).build().basicValidate(null);
+    }
+
+    @Test(expected = ConfigException.class)
+    public void basicValidateInvalidBottom() throws ConfigException {
+        new PowerPointConfig.Builder().setMarginBottom(-0.1).build().basicValidate(null);
+    }
+
+    @Test(expected = ConfigException.class)
+    public void basicValidateInvalidLeft() throws ConfigException {
+        new PowerPointConfig.Builder().setMarginLeft(-1.0).build().basicValidate(null);
+    }
+
+    @Test(expected = ConfigException.class)
+    public void basicValidateInvalidRight() throws ConfigException {
+        new PowerPointConfig.Builder().setMarginRight(1.0).build().basicValidate(null);
     }
 
     @Test(expected = ConfigException.class)
