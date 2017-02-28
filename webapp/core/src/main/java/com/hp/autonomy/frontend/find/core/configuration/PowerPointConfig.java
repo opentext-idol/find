@@ -121,14 +121,14 @@ public class PowerPointConfig implements OptionalConfigurationComponent<PowerPoi
     private boolean differenceIsInvalid(final Double min, final Double max) {
         double realMin = min == null ? 0 : min;
         double realMax = max == null ? 0 : max;
-        if (1 - realMin - realMax <= 0) {
+        if (realMin + realMax >= 1) {
             return true;
         }
         return false;
     }
 
     private static boolean rangeIsInvalid(final Double value) {
-        return value != null && (value > 1 || value < 0);
+        return value != null && (value >= 1 || value < 0);
     }
 
     @Override
