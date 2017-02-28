@@ -167,10 +167,16 @@ define([
                     }
                 }))
 
+                var yaxes = [{ minTickSize: 1 }];
+
+                if (multiAxes) {
+                    yaxes.push({ minTickSize: 1, position: 'right' });
+                }
+
                 $.plot($contentEl[0], data, {
                     grid: { hoverable: true },
                     xaxis: {mode: 'time'},
-                    yaxes: multiAxes ? [ {}, { position: 'right' } ] : {}
+                    yaxes: yaxes
                 })
 
                 this.$('.dategraph-view-pptx').removeClass('disabled');
