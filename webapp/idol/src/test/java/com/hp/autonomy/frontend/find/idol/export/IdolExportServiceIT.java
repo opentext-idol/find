@@ -11,12 +11,15 @@ import com.hp.autonomy.frontend.find.core.export.CsvExportStrategy;
 import com.hp.autonomy.frontend.find.core.export.ExportService;
 import com.hp.autonomy.frontend.find.core.export.ExportServiceIT;
 import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
+import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.idol.beanconfiguration.HavenSearchIdolConfiguration;
 import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
+import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +37,6 @@ public class IdolExportServiceIT extends ExportServiceIT<IdolQueryRequest, IdolQ
                 final ExportStrategy[] exportStrategies) {
             return new IdolExportService(parameterHandler, aciServiceRetriever, exportStrategies);
         }
-
         @Bean
         public ExportStrategy csvExportStrategy(final ConfigService<IdolSearchCapable> configService) {
             return new CsvExportStrategy(configService);

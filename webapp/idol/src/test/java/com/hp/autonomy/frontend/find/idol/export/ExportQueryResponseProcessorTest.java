@@ -53,18 +53,8 @@ public class ExportQueryResponseProcessorTest {
 
     @Test
     public void export() throws IOException {
-        when(exportStrategy.writeHeader()).thenReturn(true);
-
         processor.process(new MockAciResponseInputStream(IdolExportServiceTest.class.getResourceAsStream("/com/hp/autonomy/frontend/find/idol/export/query-response.xml")));
-        verify(exportStrategy, times(7)).exportRecord(eq(outputStream), anyListOf(String.class));
-    }
-
-    @Test
-    public void exportEmptyResultSetWithHeader() throws IOException {
-        when(exportStrategy.writeHeader()).thenReturn(true);
-
-        processor.process(new MockAciResponseInputStream(IOUtils.toInputStream("<?xml version='1.0' encoding='UTF-8' ?>\n<autnresponse><response/></autnresponse>")));
-        verify(exportStrategy).exportRecord(outputStream, fieldNames);
+        verify(exportStrategy, times(6)).exportRecord(eq(outputStream), anyListOf(String.class));
     }
 
     @Test

@@ -18,11 +18,9 @@ import java.util.Map;
  */
 public interface ExportStrategy {
     /**
-     * Whether to write a header line using field names
-     *
-     * @return true if writing a header line, false otherwise
+     * Write the headers to the file and do anything else necessary to prepare the file before the results.
      */
-    boolean writeHeader();
+    void writeHeader(OutputStream outputStream, Collection<String> fieldNames) throws IOException;
 
     /**
      * Retrieves the names of all the fields to export
@@ -71,10 +69,4 @@ public interface ExportStrategy {
      */
     ExportFormat getExportFormat();
 
-    /**
-     * Retrieve the output prefix controlled by prependOutput()
-     *
-     * @return byte of sequence to write to output stream before commencing the file export (e.g. UTF-8 BOM)
-     */
-    default void prependOutput(final OutputStream outputStream) throws IOException {}
 }

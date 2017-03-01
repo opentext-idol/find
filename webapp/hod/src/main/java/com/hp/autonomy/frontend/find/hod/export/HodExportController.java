@@ -19,6 +19,7 @@ import com.hp.autonomy.types.requests.Documents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 
@@ -42,7 +43,7 @@ class HodExportController extends ExportController<HodQueryRequest, HodErrorExce
     protected void export(final OutputStream outputStream,
                           final HodQueryRequest queryRequest,
                           final ExportFormat exportFormat,
-                          final Collection<String> selectedFieldNames) throws HodErrorException {
+                          final Collection<String> selectedFieldNames) throws HodErrorException, IOException {
         final HodQueryRequest queryRequestForCount = queryRequest.toBuilder()
                 .maxResults(1)
                 .print(Print.no_results.name())
@@ -50,12 +51,6 @@ class HodExportController extends ExportController<HodQueryRequest, HodErrorExce
         final Documents<HodSearchResult> searchResult = documentsService.queryTextIndex(queryRequestForCount);
         final int totalResults = Math.min(Math.min(searchResult.getTotalResults(), queryRequest.getMaxResults()), HodDocumentsService.HOD_MAX_RESULTS);
 
-        for (int i = 0; i < totalResults; i += PAGINATION_SIZE) {
-            final HodQueryRequest paginatedQueryRequest = queryRequest.toBuilder()
-                    .start(i + 1)
-                    .maxResults(Math.min(i + PAGINATION_SIZE, HodDocumentsService.HOD_MAX_RESULTS))
-                    .build();
-            exportService.export(outputStream, paginatedQueryRequest, exportFormat, selectedFieldNames);
-        }
+        exportService.export(outputStream, queryRequest, exportFormat, selectedFieldNames, totalResults);
     }
 }

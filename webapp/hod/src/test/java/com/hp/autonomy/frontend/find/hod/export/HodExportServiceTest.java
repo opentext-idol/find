@@ -55,6 +55,8 @@ public class HodExportServiceTest {
     public void setUp() {
         when(queryRequest.toBuilder()).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.printFields(any())).thenReturn(queryRequestBuilder);
+        when(queryRequestBuilder.start(anyInt())).thenReturn(queryRequestBuilder);
+        when(queryRequestBuilder.maxResults(anyInt())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.build()).thenReturn(queryRequest);
 
         when(exportStrategy.getExportFormat()).thenReturn(ExportFormat.CSV);
@@ -78,8 +80,6 @@ public class HodExportServiceTest {
 
     @Test
     public void export() throws IOException, HodErrorException {
-        when(exportStrategy.writeHeader()).thenReturn(true);
-
         final HodSearchResult result1 = HodSearchResult.builder()
                 .reference("1")
                 .index("ClassicalDomain:GreekLiterature")
@@ -109,8 +109,8 @@ public class HodExportServiceTest {
         final Documents<HodSearchResult> results = new Documents<>(Arrays.asList(result1, result2), 2, null, null, null, null);
         when(documentsService.queryTextIndex(Matchers.any())).thenReturn(results);
 
-        hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
-        verify(exportStrategy, times(3)).exportRecord(eq(outputStream), anyListOf(String.class));
+        hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList(), 10L);
+        verify(exportStrategy, times(2)).exportRecord(eq(outputStream), anyListOf(String.class));
     }
 
     private FieldInfo<?> fieldInfo(final String id, final String name, final FieldType type, final Object value) {
@@ -124,28 +124,46 @@ public class HodExportServiceTest {
     }
 
     @Test
-    public void exportEmptyResultSetWithHeader() throws IOException, HodErrorException {
-        when(exportStrategy.writeHeader()).thenReturn(true);
-        when(documentsService.queryTextIndex(Matchers.any())).thenReturn(new Documents<>(Collections.emptyList(), 0, null, null, null, null));
-
-        hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
-        verify(exportStrategy).exportRecord(outputStream, fieldNames);
-    }
-
-    @Test
     public void exportEmptyResultSetWithoutHeader() throws IOException, HodErrorException {
         when(documentsService.queryTextIndex(Matchers.any())).thenReturn(new Documents<>(Collections.emptyList(), 0, null, null, null, null));
 
-        hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
+        hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList(), 10L);
         verify(exportStrategy, never()).exportRecord(eq(outputStream), anyListOf(String.class));
     }
 
     @Test(expected = RuntimeException.class)
     public void unexpectedError() throws IOException, HodErrorException {
-        when(exportStrategy.writeHeader()).thenReturn(true);
-        when(documentsService.queryTextIndex(Matchers.any())).thenReturn(new Documents<>(Collections.emptyList(), 0, null, null, null, null));
+        final HodSearchResult result1 = HodSearchResult.builder()
+                .reference("1")
+                .index("ClassicalDomain:GreekLiterature")
+                .title("The Iliad")
+                .summary("Sing goddess of the anger of Achilles")
+                .weight(0.51)
+                .date(DateTime.now())
+                .fieldMap(ImmutableMap.of(
+                        "author", fieldInfo("authors", "author", FieldType.STRING, "Homer"),
+                        "books", fieldInfo("books", "books", FieldType.NUMBER, 24),
+                        "epic", fieldInfo("epic", "epic", FieldType.BOOLEAN, true),
+                        "lastRead", fieldInfo("lastRead", "lastRead", FieldType.DATE, DateTime.now())))
+                .build();
+        final HodSearchResult result2 = HodSearchResult.builder()
+                .reference("2")
+                .index("ClassicalDomain:GreekLiterature")
+                .title("The Theogony")
+                .summary("Inspired by the Muses of Mount Helicon let us sing")
+                .weight(0.62)
+                .date(DateTime.now())
+                .fieldMap(ImmutableMap.of("categories", FieldInfo.builder()
+                        .id("categories")
+                        .name("category")
+                        .values(Arrays.asList("Epic Literature", "Philosophy", "Cosmogony"))
+                        .build()))
+                .build();
+        final Documents<HodSearchResult> results = new Documents<>(Arrays.asList(result1, result2), 2, null, null, null, null);
+        when(documentsService.queryTextIndex(Matchers.any())).thenReturn(results);
+
         doThrow(new IOException("")).when(exportStrategy).exportRecord(eq(outputStream), anyListOf(String.class));
 
-        hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
+        hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.singletonList("header"), 10L);
     }
 }

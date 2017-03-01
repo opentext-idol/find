@@ -55,13 +55,6 @@ class ExportQueryResponseProcessor extends AbstractStAXProcessor<Void> {
 
             final Collection<String> fieldNames = exportStrategy.getFieldNames(IdolMetadataNode.values(), selectedFieldIds);
 
-            //Caution: outputStream should not be written to before call to prependOutput().
-            exportStrategy.prependOutput(outputStream);
-
-            if(exportStrategy.writeHeader()) {
-                exportStrategy.exportRecord(outputStream, fieldNames);
-            }
-
             while(aciResponse.hasNext()) {
                 final int eventType = aciResponse.next();
 

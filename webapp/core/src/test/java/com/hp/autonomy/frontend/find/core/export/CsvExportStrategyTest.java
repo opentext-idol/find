@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
@@ -57,8 +58,10 @@ public class CsvExportStrategyTest {
     }
 
     @Test
-    public void writeHeader() {
-        assertThat(csvExportStrategy.writeHeader(), is(true));
+    public void writeHeader() throws IOException {
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        csvExportStrategy.writeHeader(byteArrayOutputStream, Arrays.asList("header1", "header2", "header3"));
+        assertThat(byteArrayOutputStream.toString(), endsWith("header1,header2,header3\r\n"));
     }
 
     @Test
