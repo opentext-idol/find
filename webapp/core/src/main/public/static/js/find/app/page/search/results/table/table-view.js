@@ -5,7 +5,6 @@
 
 define([
     'underscore',
-    'jquery',
     'find/app/page/search/results/parametric-results-view',
     'find/app/page/search/results/table/table-collection',
     'find/app/util/generate-error-support-message',
@@ -13,7 +12,7 @@ define([
     'text!find/templates/app/page/search/results/table/table-view.html',
     'datatables.net-bs',
     'datatables.net-fixedColumns'
-], function(_, $, ParametricResultsView, TableCollection, generateErrorHtml, i18n, tableTemplate) {
+], function(_, ParametricResultsView, TableCollection, generateErrorHtml, i18n, tableTemplate) {
     'use strict';
 
     const strings = {
