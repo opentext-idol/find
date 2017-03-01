@@ -89,6 +89,8 @@ module.exports = (grunt) ->
         options:
           strictMath: true
     watch:
+      options:
+        interval: 5000
       buildBrowserTest:
         files: testWatchFiles
         tasks: ['jasmine:browser-test:build']

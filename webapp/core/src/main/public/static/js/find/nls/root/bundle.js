@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -8,7 +8,7 @@ define([
 ], function(substitution) {
     return substitution({
         'about.app.version': 'Version',
-        'about.copyright': "Find © Copyright 2014-2016 Hewlett Packard Enterprise Development Company, L.P.",
+        'about.copyright': "Find © Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.",
         'about.foss': 'FOSS Acknowledgements',
         'about.lib.name': 'Library Name',
         'about.lib.version': 'Version',
@@ -197,6 +197,7 @@ define([
         'search.resultsView.amount.shown.no.increment': 'Showing the top <strong>{0}</strong> results of <strong>{1}</strong>',
         'search.resultsView.amount.shown.no.results': 'There are no results with the location field selected',
         'search.answeredQuestion': 'Answered question',
+        'search.answeredQuestion.systemName': 'Answered by {0}',
         'search.promoted': 'Promoted',
         'search.savedSearchControl.save': 'Save',
         'search.savedSearchControl.openEdit.create': 'Save query',

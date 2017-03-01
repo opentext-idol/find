@@ -2,7 +2,7 @@
   "app": {
     "type": "On Premise",
     "deployment": "develop",
-    "find": "http://localhost:8082"
+    "find": "http://localhost:8080"
   },
   "selenium": {
     "browsers": ["chrome"],

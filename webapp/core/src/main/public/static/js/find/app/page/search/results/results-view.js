@@ -73,7 +73,7 @@ define([
                 }
             };
 
-            var selector = configuration().directAccessLink ? '.preview-link' : '.preview-mode [data-cid]';
+            var selector = configuration().directAccessLink ? '.preview-link' : '.preview-mode [data-cid]:not(.answered-question)';
             events['click ' + selector] = 'openPreview';
 
             return events;
