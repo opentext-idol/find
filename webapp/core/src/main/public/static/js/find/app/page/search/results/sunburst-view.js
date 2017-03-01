@@ -80,17 +80,17 @@ define([
 
                 return sunburstLabelTemplate(templateArguments);
             },
-            hoverCallback: function(d, arc, outerRingAnimateSize, arcEls, arcData, paper) {
-                _.chain(_.zip(arcData, arcEls))
-                    .filter(function(dataEl) {
-                        const data = dataEl[0];
-
+            hoverCallback: function(hoveredDatum, arc, outerRingAnimateSize, arcEls, arcData, svg) {
+                svg.selectAll('path')
+                    .filter(function(d) {
                         // TODO Assumes depth=2 is the outer ring - will need to change if this changes
-                        return data.text !== '' && data.depth === 2 && data.text === d.text;
+                        return d.text !== '' && d.depth === 2 && d.text === hoveredDatum.text;
                     })
-                    .each(function(dataEl) {
-                        const el = dataEl[1];
-                        paper.set(el).animate({path: arc(outerRingAnimateSize)(dataEl[0])}, 100);
+                    .each(function(d) {
+                        d3.select(this)
+                            .transition()
+                            .duration(100)
+                            .attr('d', arc(outerRingAnimateSize));
                     });
             }
         });
