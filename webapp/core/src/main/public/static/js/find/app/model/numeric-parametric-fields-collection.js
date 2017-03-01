@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -8,10 +8,11 @@ define([
     'find/app/model/find-base-collection',
     'parametric-refinement/prettify-field-name',
     'find/app/configuration'
-], function (_, FindBaseCollection, prettifyFieldName, configuration) {
+], function(_, FindBaseCollection, prettifyFieldName, configuration) {
+    'use strict';
 
     function defaultCurrentRangeAttributes(absoluteRange) {
-        if (absoluteRange.max === absoluteRange.min) {
+        if(absoluteRange.max === absoluteRange.min) {
             // The current max must always be greater than the current min for bars to be visible on the widgets. If there
             // is only one value for the field, the absolute max will equal the absolute min. In this case, default to a
             // range spanning 1 around this value.
@@ -32,11 +33,11 @@ define([
     // Models represent numeric or date parametric fields. The currentMin and currentMax attributes are the current range
     // displayed on the numeric widget.
     return FindBaseCollection.extend({
-        url: function () {
+        url: function() {
             return 'api/public/fields/parametric-' + this.dataType;
         },
 
-        initialize: function (models, options) {
+        initialize: function(models, options) {
             this.dataType = options.dataType;
         },
 
@@ -48,7 +49,7 @@ define([
             }, defaultCurrentRangeAttributes({min: 0, max: 0})),
 
             initialize: function(attributes) {
-                if (!attributes.dataType) {
+                if(!attributes.dataType) {
                     this.set('dataType', this.collection.dataType);
                 }
             },
@@ -64,5 +65,4 @@ define([
             }
         })
     });
-
 });

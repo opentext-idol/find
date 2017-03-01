@@ -4,11 +4,22 @@
  */
 package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.searchcomponents.core.search.*;
+import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
+import com.hp.autonomy.searchcomponents.core.search.GetContentRequestBuilder;
+import com.hp.autonomy.searchcomponents.core.search.GetContentRequestIndex;
+import com.hp.autonomy.searchcomponents.core.search.GetContentRequestIndexBuilder;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
+import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
+import com.hp.autonomy.searchcomponents.core.search.SuggestRequestBuilder;
 import com.hp.autonomy.types.requests.Documents;
-import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import org.apache.commons.collections4.ListUtils;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,12 +28,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 
 @Controller
 @RequestMapping(DocumentsController.SEARCH_PATH)
-public abstract class DocumentsController<S extends Serializable, Q extends QueryRestrictions<S>, R extends SearchResult, E extends Exception> {
+public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends SuggestRequest<Q>, RC extends GetContentRequest<T>, S extends Serializable, Q extends QueryRestrictions<S>, T extends GetContentRequestIndex<S>, R extends SearchResult, E extends Exception> {
     public static final String SEARCH_PATH = "/api/public/search";
     public static final String QUERY_PATH = "query-text-index/results";
     public static final String TEXT_PARAM = "text";
@@ -43,15 +53,32 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
     private static final String MAX_DATE_PARAM = "max_date";
     private static final String HIGHLIGHT_PARAM = "highlight";
     private static final String MIN_SCORE_PARAM = "min_score";
-    protected final DocumentsService<S, R, E> documentsService;
-    private final QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory;
 
-    protected DocumentsController(final DocumentsService<S, R, E> documentsService, final QueryRestrictionsBuilderFactory<Q, S> queryRestrictionsBuilderFactory) {
+    protected final DocumentsService<RQ, RS, RC, Q, R, E> documentsService;
+    private final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory;
+    private final ObjectFactory<? extends QueryRequestBuilder<RQ, Q, ?>> queryRequestBuilderFactory;
+    private final ObjectFactory<? extends SuggestRequestBuilder<RS, Q, ?>> suggestRequestBuilderFactory;
+    private final ObjectFactory<? extends GetContentRequestBuilder<RC, T, ?>> getContentRequestBuilderFactory;
+    private final ObjectFactory<? extends GetContentRequestIndexBuilder<T, S, ?>> getContentRequestIndexBuilderFactory;
+
+    @SuppressWarnings("ConstructorWithTooManyParameters")
+    protected DocumentsController(final DocumentsService<RQ, RS, RC, Q, R, E> documentsService,
+                                  final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory,
+                                  final ObjectFactory<? extends QueryRequestBuilder<RQ, Q, ?>> queryRequestBuilderFactory,
+                                  final ObjectFactory<? extends SuggestRequestBuilder<RS, Q, ?>> suggestRequestBuilderFactory,
+                                  final ObjectFactory<? extends GetContentRequestBuilder<RC, T, ?>> getContentRequestBuilderFactory,
+                                  final ObjectFactory<? extends GetContentRequestIndexBuilder<T, S, ?>> getContentRequestIndexBuilderFactory) {
         this.documentsService = documentsService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
+        this.queryRequestBuilderFactory = queryRequestBuilderFactory;
+        this.suggestRequestBuilderFactory = suggestRequestBuilderFactory;
+        this.getContentRequestBuilderFactory = getContentRequestBuilderFactory;
+        this.getContentRequestIndexBuilderFactory = getContentRequestIndexBuilderFactory;
     }
 
-    protected abstract <T> T throwException(final String message) throws E;
+    protected abstract <EX> EX throwException(final String message) throws E;
+
+    protected abstract void addParams(final GetContentRequestBuilder<RC, T, ?> request);
 
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(value = QUERY_PATH, method = RequestMethod.GET)
@@ -71,28 +98,28 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
             @RequestParam(value = AUTO_CORRECT_PARAM, defaultValue = "true") final boolean autoCorrect,
             @RequestParam(value = QUERY_TYPE_PARAM, defaultValue = "MODIFIED") final String queryType
     ) throws E {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
-                .setQueryText(queryText)
-                .setFieldText(fieldText)
-                .setDatabases(ListUtils.emptyIfNull(databases))
-                .setMinDate(minDate)
-                .setMaxDate(maxDate)
-                .setMinScore(minScore)
+        final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
+                .queryText(queryText)
+                .fieldText(fieldText)
+                .databases(ListUtils.emptyIfNull(databases))
+                .minDate(minDate)
+                .maxDate(maxDate)
+                .minScore(minScore)
                 .build();
 
-        final SearchRequest<S> searchRequest = new SearchRequest.Builder<S>()
-                .setQueryRestrictions(queryRestrictions)
-                .setStart(resultsStart)
-                .setMaxResults(maxResults)
-                .setSummary(summary)
-                .setSummaryCharacters(MAX_SUMMARY_CHARACTERS)
-                .setSort(sort)
-                .setHighlight(highlight)
-                .setAutoCorrect(autoCorrect)
-                .setQueryType(SearchRequest.QueryType.valueOf(queryType))
+        final RQ queryRequest = queryRequestBuilderFactory.getObject()
+                .queryRestrictions(queryRestrictions)
+                .start(resultsStart)
+                .maxResults(maxResults)
+                .summaryCharacters(MAX_SUMMARY_CHARACTERS)
+                .highlight(highlight)
+                .autoCorrect(autoCorrect)
+                .summary(summary)
+                .sort(sort)
+                .queryType(QueryRequest.QueryType.valueOf(queryType))
                 .build();
 
-        return documentsService.queryTextIndex(searchRequest);
+        return documentsService.queryTextIndex(queryRequest);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
@@ -111,23 +138,23 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
             @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
             @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore
     ) throws E {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
-                .setFieldText(fieldText)
-                .setDatabases(ListUtils.emptyIfNull(databases))
-                .setMinDate(minDate)
-                .setMaxDate(maxDate)
-                .setMinScore(minScore)
+        final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
+                .fieldText(fieldText)
+                .databases(ListUtils.emptyIfNull(databases))
+                .minDate(minDate)
+                .maxDate(maxDate)
+                .minScore(minScore)
                 .build();
 
-        final SuggestRequest<S> suggestRequest = new SuggestRequest.Builder<S>()
-                .setReference(reference)
-                .setQueryRestrictions(queryRestrictions)
-                .setStart(resultsStart)
-                .setMaxResults(maxResults)
-                .setSummary(summary)
-                .setSummaryCharacters(MAX_SUMMARY_CHARACTERS)
-                .setSort(sort)
-                .setHighlight(highlight)
+        final RS suggestRequest = suggestRequestBuilderFactory.getObject()
+                .reference(reference)
+                .queryRestrictions(queryRestrictions)
+                .start(resultsStart)
+                .maxResults(maxResults)
+                .summaryCharacters(MAX_SUMMARY_CHARACTERS)
+                .highlight(highlight)
+                .summary(summary)
+                .sort(sort)
                 .build();
 
         return documentsService.findSimilar(suggestRequest);
@@ -139,10 +166,16 @@ public abstract class DocumentsController<S extends Serializable, Q extends Quer
             @RequestParam(REFERENCE_PARAM) final String reference,
             @RequestParam(DATABASE_PARAM) final S database
     ) throws E {
-        final GetContentRequestIndex<S> getContentRequestIndex = new GetContentRequestIndex<>(database, Collections.singleton(reference));
-        final GetContentRequest<S> getContentRequest = new GetContentRequest<>(Collections.singleton(getContentRequestIndex), PrintParam.All.name());
-        final List<R> results = documentsService.getDocumentContent(getContentRequest);
+        final T getContentRequestIndex = getContentRequestIndexBuilderFactory.getObject()
+                .index(database)
+                .reference(reference)
+                .build();
+        final GetContentRequestBuilder<RC, T, ?> requestBuilder = getContentRequestBuilderFactory.getObject()
+                .indexAndReferences(getContentRequestIndex);
+        addParams(requestBuilder);
+        final RC getContentRequest = requestBuilder.build();
 
-        return results.isEmpty() ? this.throwException("No content found for document with reference " + reference + " in database " + database) : results.get(0);
+        final List<R> results = documentsService.getDocumentContent(getContentRequest);
+        return results.isEmpty() ? throwException("No content found for document with reference " + reference + " in database " + database) : results.get(0);
     }
 }

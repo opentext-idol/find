@@ -9,19 +9,26 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.databases.DatabasesController;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
 import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequest;
+import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesService;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class HodDatabasesController extends DatabasesController<Database, HodDatabasesRequest, HodErrorException> {
+class HodDatabasesController extends DatabasesController<Database, HodDatabasesRequest, HodErrorException> {
+    private final ObjectFactory<HodDatabasesRequestBuilder> databasesRequestBuilderFactory;
     private final ConfigService<HodFindConfig> configService;
 
+    @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
-    public HodDatabasesController(final DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService, final ConfigService<HodFindConfig> configService) {
+    public HodDatabasesController(final HodDatabasesService databasesService,
+                                  final ObjectFactory<HodDatabasesRequestBuilder> databasesRequestBuilderFactory,
+                                  final ConfigService<HodFindConfig> configService) {
         super(databasesService);
+        this.databasesRequestBuilderFactory = databasesRequestBuilderFactory;
         this.configService = configService;
     }
 
@@ -30,8 +37,8 @@ public class HodDatabasesController extends DatabasesController<Database, HodDat
     protected HodDatabasesRequest buildDatabasesRequest() {
         final Boolean publicIndexesEnabled = configService.getConfig().getHod().getPublicIndexesEnabled();
 
-        return new HodDatabasesRequest.Builder()
-                .setPublicIndexesEnabled(publicIndexesEnabled)
+        return databasesRequestBuilderFactory.getObject()
+                .publicIndexesEnabled(publicIndexesEnabled)
                 .build();
     }
 }

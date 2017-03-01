@@ -6,12 +6,12 @@
 package com.hp.autonomy.frontend.find.idol.configuration;
 
 import com.autonomy.aci.client.transport.AciServerDetails;
-import com.hp.autonomy.frontend.configuration.CommunityService;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
-import com.hp.autonomy.frontend.configuration.ConfigValidationException;
-import com.hp.autonomy.frontend.configuration.SecurityType;
+import com.hp.autonomy.frontend.configuration.aci.CommunityService;
+import com.hp.autonomy.frontend.configuration.validation.ConfigValidationException;
 import com.hp.autonomy.frontend.logging.Markers;
+import com.hp.autonomy.types.idol.responses.SecurityType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

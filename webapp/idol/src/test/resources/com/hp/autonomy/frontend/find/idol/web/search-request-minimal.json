@@ -4,5 +4,5 @@
     "indexes": ["ClassicalLiterature", "EpicLiterature"]
   },
   "max_results": 30,
-  "summary": "off"
+  "summary": "Off"
 }

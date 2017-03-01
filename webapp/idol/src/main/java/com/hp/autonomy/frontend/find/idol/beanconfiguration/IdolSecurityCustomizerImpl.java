@@ -5,15 +5,16 @@
 
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
-import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthenticationProvider;
 import com.hp.autonomy.frontend.configuration.authentication.Role;
 import com.hp.autonomy.frontend.configuration.authentication.Roles;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.web.FindController;
-import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
+import com.hp.autonomy.frontend.find.idol.authentication.FindCommunityRole;
 import com.hp.autonomy.user.UserService;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,10 +24,10 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+@SuppressWarnings("SpringAutowiredFieldsWarningInspection")
 @Component
 @ConditionalOnProperty(value = "server.reverseProxy", havingValue = "false", matchIfMissing = true)
 public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
@@ -53,10 +54,10 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
         );
 
         http.formLogin()
-            .loginPage(FindController.DEFAULT_LOGIN_PAGE)
-            .loginProcessingUrl("/authenticate")
-            .successHandler(successHandler)
-            .failureUrl(FindController.DEFAULT_LOGIN_PAGE + "?error=auth");
+                .loginPage(FindController.DEFAULT_LOGIN_PAGE)
+                .loginProcessingUrl("/authenticate")
+                .successHandler(successHandler)
+                .failureUrl(FindController.DEFAULT_LOGIN_PAGE + "?error=auth");
     }
 
     @Override
@@ -66,16 +67,16 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
 
     private AuthenticationProvider communityAuthenticationProvider() {
         final Role user = new Role.Builder()
-            .setName(UserConfiguration.IDOL_USER_ROLE)
-            .setPrivileges(Collections.singleton("login"))
-            .build();
+                .setName(FindCommunityRole.USER.value())
+                .setPrivileges(Collections.singleton("login"))
+                .build();
 
         return new CommunityAuthenticationProvider(
-            configService,
-            userService,
-            new Roles(Collections.singletonList(user)),
-            Collections.singleton("login"),
-            grantedAuthoritiesMapper
+                configService,
+                userService,
+                new Roles(Collections.singletonList(user)),
+                Collections.singleton("login"),
+                grantedAuthoritiesMapper
         );
     }
 }

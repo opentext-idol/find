@@ -2,7 +2,6 @@
  * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
-
 define([
     'js-whatever/js/base-page',
     'backbone',
@@ -13,7 +12,6 @@ define([
     'find/app/page/search/input-view',
     'find/app/page/search/input-view-query-text-strategy',
     'find/app/page/search/tabbed-search-view',
-    'find/app/util/model-any-changed-attribute-listener',
     'find/app/util/merge-collection',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/page/search/query-middle-column-header-view',
@@ -32,14 +30,17 @@ define([
     'jquery',
     'underscore',
     'text!find/templates/app/page/find-search.html'
-], function (BasePage, Backbone, config, DatesFilterModel, SelectedParametricValuesCollection, DocumentsCollection,
-             InputView, queryTextStrategy, TabbedSearchView, addChangeListener, MergeCollection, SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel,
-             QueryTextModel, DocumentModel, DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, SavedQueryResultPoller, events, router, vent, i18n, $, _, template) {
-
+], function(BasePage, Backbone, config, DatesFilterModel, SelectedParametricValuesCollection, DocumentsCollection,
+            InputView, queryTextStrategy, TabbedSearchView, MergeCollection, SavedSearchModel,
+            QueryMiddleColumnHeaderView, MinScoreModel, QueryTextModel, DocumentModel, DocumentDetailView,
+            queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, SavedQueryResultPoller, events,
+            router, vent, i18n, $, _, template) {
     'use strict';
 
-    var reducedClasses = 'reverse-animated-container col-md-offset-1 col-lg-offset-2 col-xs-12 col-sm-12 col-md-10 col-lg-8';
-    var expandedClasses = 'animated-container col-sm-offset-0 col-md-offset-3 col-lg-offset-3 col-md-6 col-lg-6 col-xs-9 col-sm-9';
+    var reducedClasses = 'reverse-animated-container col-md-offset-1 ' +
+        'col-lg-offset-2 col-xs-12 col-sm-12 col-md-10 col-lg-8';
+    var expandedClasses = 'animated-container col-sm-offset-0 col-md-offset-3 ' +
+        'col-lg-offset-3 col-md-6 col-lg-6 col-xs-9 col-sm-9';
 
     var html = _.template(template)({i18n: i18n});
 
@@ -47,13 +48,13 @@ define([
         var privateIndexes = indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
         var selectedIndexes;
 
-        if (privateIndexes.length > 0) {
+        if(privateIndexes.length > 0) {
             selectedIndexes = privateIndexes;
         } else {
             selectedIndexes = indexesCollection.models;
         }
 
-        return _.map(selectedIndexes, function (indexModel) {
+        return _.map(selectedIndexes, function(indexModel) {
             return indexModel.pick('domain', 'name');
         });
     }
@@ -66,7 +67,7 @@ define([
                 reference: options.reference,
                 database: options.database
             }
-        }).done(function () {
+        }).done(function() {
             callback(documentModel);
         });
     }
@@ -91,24 +92,25 @@ define([
         suggestOptions: null,
         QueryLeftSideView: null,
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.configuration = config();
+            this.mmapTab = options.mmapTab;
             const optionalViews = [{
                 enabled: !this.configuration.hasBiRole,
                 selector: '.input-view-container',
-                construct: function () {
+                construct: function() {
                     // Model representing search bar text
                     this.searchModel = new QueryTextModel();
 
-                    this.listenTo(this.searchModel, 'change', function () {
+                    this.listenTo(this.searchModel, 'change', function() {
                         // Bind search model to routing
                         vent.navigate(this.generateURL(), {trigger: false});
 
-                        if (this.searchModel.get('inputText')) {
+                        if(this.searchModel.get('inputText')) {
                             this.expandedState();
 
                             // Create a tab if the user has run a search but has no open tabs
-                            if (this.selectedTabModel.get('selectedSearchCid') === null) {
+                            if(this.selectedTabModel.get('selectedSearchCid') === null) {
                                 this.createNewTab(this.searchModel.get('inputText'));
                             }
                         }
@@ -118,10 +120,10 @@ define([
                         strategy: queryTextStrategy(this.searchModel)
                     });
                 }.bind(this),
-                onExpand: function (instance) {
+                onExpand: function(instance) {
                     instance.unFocus();
                 },
-                onReduce: function (instance) {
+                onReduce: function(instance) {
                     instance.focus();
                 }
             }];
@@ -134,7 +136,7 @@ define([
 
             this.searchTypes = this.getSearchTypes();
 
-            this.searchCollections = _.mapObject(this.searchTypes, function (data) {
+            this.searchCollections = _.mapObject(this.searchTypes, function(data) {
                 return options[data.collection];
             });
 
@@ -154,7 +156,7 @@ define([
 
             this.listenTo(this.selectedTabModel, 'change', this.selectContentView);
 
-            this.listenTo(this.savedSearchCollection, 'remove', function (savedSearch) {
+            this.listenTo(this.savedSearchCollection, 'remove', function(savedSearch) {
                 var cid = savedSearch.cid;
                 this.serviceViews[cid].view.remove();
                 this.queryStates.unset(cid);
@@ -162,10 +164,10 @@ define([
 
                 events(cid).abandon();
 
-                if (this.selectedTabModel.get('selectedSearchCid') === cid) {
+                if(this.selectedTabModel.get('selectedSearchCid') === cid) {
                     var lastModel = this.savedQueryCollection.last();
 
-                    if (lastModel) {
+                    if(lastModel) {
                         this.selectedTabModel.set('selectedSearchCid', lastModel.cid);
                     } else {
                         // If the user closes their last tab, run a search for *
@@ -175,11 +177,11 @@ define([
             });
 
             //noinspection JSUnresolvedFunction
-            this.optionalViews.forEach(function (view) {
+            this.optionalViews.forEach(function(view) {
                 view.instance = view.construct();
             });
 
-            if (config().hasBiRole) {
+            if(config().hasBiRole) {
                 this.tabView = new TabbedSearchView({
                     savedSearchCollection: this.savedSearchCollection,
                     model: this.selectedTabModel,
@@ -190,13 +192,13 @@ define([
                 this.listenTo(this.tabView, 'startNewSearch', this.createNewTab);
 
                 var savedSearchConfig = config().savedSearchConfig;
-                if (savedSearchConfig.pollForUpdates) {
-                    this.listenToOnce(this.savedQueryCollection, 'sync', function () {
+                if(savedSearchConfig.pollForUpdates) {
+                    this.listenToOnce(this.savedQueryCollection, 'sync', function() {
                         this.savedQueryResultPoller = new SavedQueryResultPoller({
                             config: savedSearchConfig,
                             savedQueryCollection: this.savedQueryCollection,
                             queryStates: this.queryStates,
-                            onSuccess: _.bind(function (savedQueryModelId, newResults) {
+                            onSuccess: _.bind(function(savedQueryModelId, newResults) {
                                 this.savedQueryCollection.get(savedQueryModelId).set({
                                     newDocuments: newResults
                                 });
@@ -206,10 +208,10 @@ define([
                 }
             }
 
-            this.listenTo(router, 'route:searchSplash', function () {
+            this.listenTo(router, 'route:searchSplash', function() {
                 this.selectedTabModel.set('selectedSearchCid', null);
 
-                if (this.searchModel) {
+                if(this.searchModel) {
                     this.searchModel.set({inputText: ''});
                 }
 
@@ -217,23 +219,23 @@ define([
             }, this);
 
             // Bind routing to search model
-            this.listenTo(router, 'route:search', function (text) {
+            this.listenTo(router, 'route:search', function(text) {
                 this.removeDocumentDetailView();
                 this.removeSuggestView();
 
-                if (this.searchModel) {
+                if(this.searchModel) {
                     this.searchModel.set({
                         inputText: text || ''
                     });
                 }
 
-                if (this.isExpanded()) {
+                if(this.isExpanded()) {
                     this.$('.service-view-container').addClass('hide');
                     this.$('.query-service-view-container').removeClass('hide');
                 }
             }, this);
 
-            this.listenTo(router, 'route:documentDetail', function () {
+            this.listenTo(router, 'route:documentDetail', function() {
                 var backURL = this.suggestView ? this.generateSuggestURL(this.suggestView.documentModel) : this.generateURL();
                 this.expandedState();
                 this.$('.service-view-container').addClass('hide');
@@ -243,11 +245,12 @@ define([
 
                 var options = this.documentDetailOptions.apply(this, arguments);
 
-                fetchDocument(options, function (documentModel) {
+                fetchDocument(options, function(documentModel) {
                     this.documentDetailView = new DocumentDetailView({
                         backUrl: backURL,
                         model: documentModel,
-                        indexesCollection: this.indexesCollection
+                        indexesCollection: this.indexesCollection,
+                        mmapTab: this.mmapTab
                     });
 
                     this.$('.document-detail-service-view-container').append(this.documentDetailView.$el);
@@ -255,20 +258,21 @@ define([
                 }.bind(this));
             }, this);
 
-            this.listenTo(router, 'route:suggest', function () {
+            this.listenTo(router, 'route:suggest', function() {
                 this.expandedState();
                 this.$('.service-view-container').addClass('hide');
                 this.$('.suggest-service-view-container').removeClass('hide');
 
                 var options = this.suggestOptions.apply(this, arguments);
 
-                fetchDocument(options, function (documentModel) {
+                fetchDocument(options, function(documentModel) {
                     this.suggestView = new this.SuggestView({
                         backUrl: this.generateURL(),
                         documentModel: documentModel,
                         indexesCollection: this.indexesCollection,
                         scrollModel: this.windowScrollModel,
-                        configuration: config()
+                        configuration: config(),
+                        mmapTab: this.mmapTab
                     });
 
                     this.$('.suggest-service-view-container').append(this.suggestView.$el);
@@ -277,29 +281,29 @@ define([
             }, this);
         },
 
-        render: function () {
+        render: function() {
             this.$el.html(html);
 
-            this.optionalViews.forEach(function (view) {
+            this.optionalViews.forEach(function(view) {
                 view.instance.setElement(this.$(view.selector)).render();
             }, this);
 
-            if (this.tabView) {
+            if(this.tabView) {
                 this.tabView.setElement(this.$('.search-tabs-container')).render();
             }
 
-            if (this.selectedTabModel.get('selectedSearchCid') === null && !config().hasBiRole) {
+            if(this.selectedTabModel.get('selectedSearchCid') === null && !config().hasBiRole) {
                 this.reducedState();
             } else {
                 this.expandedState();
             }
 
-            _.each(this.serviceViews, function (data) {
+            _.each(this.serviceViews, function(data) {
                 this.$('.query-service-view-container').append(data.view.$el);
                 data.view.render();
             }, this);
-            
-            if (config().hasBiRole && this.selectedTabModel.get('selectedSearchCid') === null) {
+
+            if(config().hasBiRole && this.selectedTabModel.get('selectedSearchCid') === null) {
                 this.createNewTab();
             } else {
                 this.selectContentView();
@@ -317,7 +321,7 @@ define([
         },
 
         // Can be overridden
-        getSearchTypes: function () {
+        getSearchTypes: function() {
             return {
                 QUERY: {
                     cssClass: 'query',
@@ -335,15 +339,15 @@ define([
                         create: i18n['search.savedSearchControl.openEdit.create'],
                         edit: i18n['search.savedSearchControl.openEdit.edit']
                     },
-                    createSearchModelAttributes: function (conceptGroups) {
+                    createSearchModelAttributes: function(conceptGroups) {
                         return {
                             inputString: conceptGroups.length > 0 ? conceptGroups.first().get('concepts')[0] : '*'
                         };
                     },
-                    searchModelChange: function (options) {
-                        return function () {
+                    searchModelChange: function(options) {
+                        return function() {
                             const inputText = options.searchModel.get('inputText');
-                            if (inputText && inputText !== '*') {
+                            if(inputText && inputText !== '*') {
                                 options.queryState.conceptGroups.set([{concepts: [inputText], hidden: true}]);
                             } else {
                                 options.queryState.conceptGroups.reset();
@@ -354,7 +358,7 @@ define([
             };
         },
 
-        createNewTab: function (queryText) {
+        createNewTab: function(queryText) {
             var newSearch = new SavedSearchModel({
                 relatedConcepts: queryText ? [[queryText]] : [],
                 title: i18n['search.newSearch'],
@@ -366,26 +370,26 @@ define([
             this.selectedTabModel.set('selectedSearchCid', newSearch.cid);
         },
 
-        selectContentView: function () {
+        selectContentView: function() {
             var cid = this.selectedTabModel.get('selectedSearchCid');
 
-            _.each(this.serviceViews, function (data) {
+            _.each(this.serviceViews, function(data) {
                 data.view.$el.addClass('hide');
             }, this);
 
-            if (this.searchModel && this.searchChangeCallback !== null) {
+            if(this.searchModel && this.searchChangeCallback !== null) {
                 this.stopListening(this.searchModel, 'change', this.searchChangeCallback);
                 this.searchChangeCallback = null;
             }
 
-            if (cid) {
+            if(cid) {
                 let viewData;
                 const savedSearchModel = this.savedSearchCollection.get(cid);
                 const searchType = savedSearchModel.get('type');
 
                 events(cid);
 
-                if (this.serviceViews[cid]) {
+                if(this.serviceViews[cid]) {
                     viewData = this.serviceViews[cid];
                 } else {
                     const minScore = new MinScoreModel({minScore: 0});
@@ -394,8 +398,8 @@ define([
                     let initialSelectedIndexes;
                     const savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
 
-                    if (savedSelectedIndexes.length === 0) {
-                        if (this.indexesCollection.isEmpty()) {
+                    if(savedSelectedIndexes.length === 0) {
+                        if(this.indexesCollection.isEmpty()) {
                             initialSelectedIndexes = [];
                         } else {
                             initialSelectedIndexes = selectInitialIndexes(this.indexesCollection);
@@ -429,7 +433,8 @@ define([
                             savedSearchModel: savedSearchModel,
                             searchCollections: this.searchCollections,
                             searchTypes: this.searchTypes,
-                            selectedTabModel: this.selectedTabModel
+                            selectedTabModel: this.selectedTabModel,
+                            mmapTab: this.mmapTab
                         }, this.serviceViewOptions(cid)))
                     };
                     this.serviceViews[cid] = viewData;
@@ -438,7 +443,7 @@ define([
                     viewData.view.render();
                 }
 
-                if (this.searchModel) {
+                if(this.searchModel) {
                     this.searchModel.set(this.searchTypes[searchType].createSearchModelAttributes(viewData.queryState.conceptGroups));
 
                     const changeListenerOptions = {
@@ -460,12 +465,12 @@ define([
             }
         },
 
-        generateURL: function () {
-            if (this.searchModel && this.searchModel.get('inputText')) {
+        generateURL: function() {
+            if(this.searchModel && this.searchModel.get('inputText')) {
                 var inputText = this.searchModel.get('inputText');
                 return 'search/query/' + encodeURIComponent(inputText);
             } else {
-                if (this.selectedTabModel.get('selectedSearchCid') || config().hasBiRole) {
+                if(this.selectedTabModel.get('selectedSearchCid') || config().hasBiRole) {
                     return 'search/query';
                 } else {
                     return 'search/splash';
@@ -473,12 +478,12 @@ define([
             }
         },
 
-        generateSuggestURL: function (model) {
+        generateSuggestURL: function(model) {
             return 'search/suggest/' + vent.addSuffixForDocument(model);
         },
 
         // Run fancy animation from large central search bar to main search page
-        expandedState: function () {
+        expandedState: function() {
             this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
 
             this.$('.service-view-container').addClass('hide');
@@ -489,7 +494,7 @@ define([
             this.removeDocumentDetailView();
             this.removeSuggestView();
 
-            this.optionalViews.forEach(function (view) {
+            this.optionalViews.forEach(function(view) {
                 view.onExpand(view.instance)
             });
             this.$('.find-banner-container').addClass('hide');
@@ -499,7 +504,7 @@ define([
         },
 
         // Set view to initial state (large central search bar)
-        reducedState: function () {
+        reducedState: function() {
             this.$('.find').removeClass(expandedClasses).addClass(reducedClasses);
 
             this.$('.service-view-container').addClass('hide');
@@ -509,7 +514,7 @@ define([
             this.removeDocumentDetailView();
             this.removeSuggestView();
 
-            this.optionalViews.forEach(function (view) {
+            this.optionalViews.forEach(function(view) {
                 view.onReduce(view.instance)
             });
             this.$('.find-banner-container').removeClass('hide');
@@ -518,27 +523,27 @@ define([
             $('.container-fluid, .find-logo-small').addClass('reduced');
         },
 
-        isExpanded: function () {
+        isExpanded: function() {
             return this.$('.find').hasClass(expandedClasses);
         },
 
-        removeDocumentDetailView: function () {
-            if (this.documentDetailView) {
+        removeDocumentDetailView: function() {
+            if(this.documentDetailView) {
                 this.documentDetailView.remove();
                 this.stopListening(this.documentDetailView);
                 this.documentDetailView = null;
             }
         },
 
-        removeSuggestView: function () {
-            if (this.suggestView) {
+        removeSuggestView: function() {
+            if(this.suggestView) {
                 this.suggestView.remove();
                 this.stopListening(this.suggestView);
                 this.suggestView = null;
             }
         },
 
-        remove: function () {
+        remove: function() {
             //noinspection JSUnresolvedFunction
             _.chain(this.optionalViews).pluck('instance').invoke('remove');
 

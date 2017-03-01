@@ -1,7 +1,8 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'backbone',
     'jquery',
@@ -26,15 +27,15 @@ define([
 ], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
             ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, configuration,
             generateErrorHtml, html, loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
-    "use strict";
+    'use strict';
 
-    var SCROLL_INCREMENT = 30;
-    var INFINITE_SCROLL_POSITION_PIXELS = 500;
+    const SCROLL_INCREMENT = 30;
+    const INFINITE_SCROLL_POSITION_PIXELS = 500;
 
     function infiniteScroll() {
         var resultsPresent = this.documentsCollection.size() > 0 && this.fetchStrategy.validateQuery(this.queryModel);
 
-        if(resultsPresent && this.resultsFinished && !this.endOfResults) {
+        if(resultsPresent && this.loadingTracker.resultsFinished && !this.endOfResults) {
             this.start = this.maxResults + 1;
             this.maxResults += SCROLL_INCREMENT;
 
@@ -45,6 +46,9 @@ define([
     }
 
     return Backbone.View.extend({
+        // Overridden for HoD and IDOL implementations
+        getQuestionsViewConstructor: _.constant(null),
+
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         messageTemplate: _.template('<div class="result-message span10"><%-message%></div>'),
 
@@ -69,7 +73,7 @@ define([
                 }
             };
 
-            var selector = configuration().directAccessLink ? '.preview-link' : '.preview-mode [data-cid]';
+            var selector = configuration().directAccessLink ? '.preview-link' : '.preview-mode [data-cid]:not(.answered-question)';
             events['click ' + selector] = 'openPreview';
 
             return events;
@@ -84,6 +88,11 @@ define([
 
             this.indexesCollection = options.indexesCollection;
             this.scrollModel = options.scrollModel;
+            this.loadingTracker = {
+                resultsFinished: true,
+                promotionsFinished: true,
+                questionsFinished: true
+            };
 
             // Preview mode is enabled when a preview mode model is provided
             this.previewModeModel = options.previewModeModel;
@@ -98,6 +107,16 @@ define([
 
             if(this.showPromotions) {
                 this.promotionsCollection = new PromotionsCollection();
+            }
+
+            const QuestionsView = this.getQuestionsViewConstructor();
+
+            if(QuestionsView) {
+                this.questionsView = new QuestionsView({
+                    queryModel: this.queryModel,
+                    loadingTracker: this.loadingTracker,
+                    clearLoadingSpinner: _.bind(this.clearLoadingSpinner, this)
+                });
             }
 
             this.sortView = new SortView({
@@ -133,13 +152,17 @@ define([
             this.sortView.setElement(this.$('.sort-container')).render();
             this.resultsNumberView.setElement(this.$('.results-number-container')).render();
 
+            if(this.questionsView) {
+                this.questionsView.setElement(this.$('.main-results-content .answered-questions')).render();
+            }
+
             if(this.showPromotions) {
                 this.listenTo(this.promotionsCollection, 'add', function(model) {
                     this.formatResult(model, true);
                 });
 
                 this.listenTo(this.promotionsCollection, 'sync', function() {
-                    this.promotionsFinished = true;
+                    this.loadingTracker.promotionsFinished = true;
                     this.clearLoadingSpinner();
                 });
 
@@ -147,7 +170,7 @@ define([
                 // The Find User shouldn't hear about promotions, but the way we are doing it now, the DataAdmin or
                 // SysAdmin may never find out that promotions-related errors are affecting Users' searches.
                 this.listenTo(this.promotionsCollection, 'error', function() {
-                    this.promotionsFinished = true;
+                    this.loadingTracker.promotionsFinished = true;
                     this.clearLoadingSpinner();
                 });
             }
@@ -157,7 +180,7 @@ define([
             });
 
             this.listenTo(this.documentsCollection, 'sync reset', function() {
-                this.resultsFinished = true;
+                this.loadingTracker.resultsFinished = true;
                 this.clearLoadingSpinner();
 
                 this.endOfResults = this.maxResults >= this.documentsCollection.totalResults;
@@ -170,7 +193,7 @@ define([
             });
 
             this.listenTo(this.documentsCollection, 'error', function(collection, xhr) {
-                this.resultsFinished = true;
+                this.loadingTracker.resultsFinished = true;
                 this.clearLoadingSpinner();
                 this.handleError(xhr);
             });
@@ -211,7 +234,8 @@ define([
         },
 
         clearLoadingSpinner: function() {
-            if(this.resultsFinished && this.promotionsFinished || !this.showPromotions) {
+            if(this.loadingTracker.resultsFinished && this.loadingTracker.questionsFinished
+                && this.loadingTracker.promotionsFinished || !this.showPromotions) {
                 this.$loadingSpinner.addClass('hide');
             }
         },
@@ -256,6 +280,10 @@ define([
             this.$('.main-results-content .promotions').toggleClass('hide', on);
             this.$('.main-results-content .results').toggleClass('hide', on);
             this.$('.main-results-content .results-view-error').toggleClass('hide', !on);
+
+            if(this.questionsView) {
+                this.questionsView.$el.toggleClass('hide', on);
+            }
         },
 
         loadData: function(infiniteScroll) {
@@ -263,7 +291,11 @@ define([
                 this.$loadingSpinner.removeClass('hide');
             }
 
-            this.resultsFinished = false;
+            if(this.questionsView && !infiniteScroll) {
+                this.questionsView.fetchData();
+            }
+
+            this.loadingTracker.resultsFinished = false;
 
             var requestData = _.extend({
                 start: this.start,
@@ -300,7 +332,7 @@ define([
             });
 
             if(!infiniteScroll && this.showPromotions) {
-                this.promotionsFinished = false;
+                this.loadingTracker.promotionsFinished = false;
 
                 var promotionsRequestData = _.extend({
                     start: this.start,
@@ -342,6 +374,11 @@ define([
         remove: function() {
             this.sortView.remove();
             this.resultsNumberView.remove();
+
+            if(this.questionsView) {
+                this.questionsView.remove();
+            }
+
             Backbone.View.prototype.remove.call(this);
         }
     });

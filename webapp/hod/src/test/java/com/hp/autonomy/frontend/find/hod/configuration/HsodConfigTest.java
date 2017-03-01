@@ -1,37 +1,39 @@
 package com.hp.autonomy.frontend.find.hod.configuration;
 
 import com.hp.autonomy.frontend.configuration.ConfigException;
-import com.hp.autonomy.frontend.find.core.configuration.ConfigurationComponentTest;
+import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomizationOptionsTest;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.springframework.boot.test.json.JsonContent;
+import org.springframework.boot.test.json.ObjectContent;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class HsodConfigTest extends ConfigurationComponentTest<HsodConfig> {
     private static final String LANDING_PAGE_URL = "https://search.my-domain.com";
     private static final String JSON_LANDING_PAGE_URL = "https://search.another-domain.com";
 
     @Override
+    protected Class<HsodConfig> getType() {
+        return HsodConfig.class;
+    }
+
+    @Override
     protected HsodConfig constructComponent() {
         try {
-            return new HsodConfig.Builder()
-                    .setLandingPageUrl(new URL(LANDING_PAGE_URL))
+            return HsodConfig.builder()
+                    .landingPageUrl(new URL(LANDING_PAGE_URL))
                     .build();
         } catch (final MalformedURLException e) {
             throw new AssertionError("Could not parse landing page URL", e);
         }
-    }
-
-    @Override
-    protected Class<HsodConfig> getComponentType() {
-        return HsodConfig.class;
     }
 
     @Override
@@ -40,24 +42,29 @@ public class HsodConfigTest extends ConfigurationComponentTest<HsodConfig> {
     }
 
     @Override
-    protected void validateJson(final String json) {
-        assertThat(json, containsString(LANDING_PAGE_URL));
+    protected void validateJson(final JsonContent<HsodConfig> jsonContent) {
+        jsonContent.assertThat().hasJsonPathStringValue("@.landingPageUrl", LANDING_PAGE_URL);
     }
 
     @Override
-    protected void validateParsedComponent(final HsodConfig component) {
-        assertThat(component.getLandingPageUrl().toString(), is(JSON_LANDING_PAGE_URL));
+    protected void validateParsedComponent(final ObjectContent<HsodConfig> objectContent) {
+        assertThat(objectContent.getObject().getLandingPageUrl().toString(), is(JSON_LANDING_PAGE_URL));
     }
 
     @Override
-    protected void validateMergedComponent(final HsodConfig mergedComponent) {
-        assertThat(mergedComponent.getLandingPageUrl().toString(), is(LANDING_PAGE_URL));
+    protected void validateMergedComponent(final ObjectContent<HsodConfig> objectContent) {
+        assertThat(objectContent.getObject().getLandingPageUrl().toString(), is(LANDING_PAGE_URL));
+    }
+
+    @Override
+    protected void validateString(final String s) {
+        assertTrue(s.contains("landingPageUrl"));
     }
 
     @Test(expected = ConfigException.class)
     public void nullLandingPageUrlNotValid() throws ConfigException {
-        new HsodConfig.Builder()
-                .setLandingPageUrl(null)
+        HsodConfig.builder()
+                .landingPageUrl(null)
                 .build()
                 .basicValidate("configSection");
     }

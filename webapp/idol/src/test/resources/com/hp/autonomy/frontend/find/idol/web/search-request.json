@@ -9,7 +9,7 @@
   },
   "start": 10,
   "max_results": 30,
-  "summary": "off",
+  "summary": "Off",
   "sort": "DocumentCount",
   "highlight": true,
   "auto_correct": true,

@@ -10,9 +10,10 @@ import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.find.core.export.ExportFormat;
 import com.hp.autonomy.frontend.find.core.export.ExportService;
 import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import com.hp.autonomy.types.requests.idol.actions.query.QueryActions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 @Component
-public class IdolExportService implements ExportService<String, AciErrorException> {
+class IdolExportService implements ExportService<IdolQueryRequest, AciErrorException> {
     private final HavenSearchAciParameterHandler parameterHandler;
     private final AciServiceRetriever aciServiceRetriever;
     private final Map<ExportFormat, ExportStrategy> exportStrategies;
@@ -42,16 +43,16 @@ public class IdolExportService implements ExportService<String, AciErrorExceptio
     }
 
     @Override
-    public void export(final OutputStream outputStream, final SearchRequest<String> searchRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds) throws AciErrorException {
+    public void export(final OutputStream outputStream, final IdolQueryRequest queryRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds) throws AciErrorException {
         final AciParameters aciParameters = new AciParameters(QueryActions.Query.name());
 
-        parameterHandler.addSearchRestrictions(aciParameters, searchRequest.getQueryRestrictions());
-        parameterHandler.addSearchOutputParameters(aciParameters, searchRequest);
-        if(searchRequest.getQueryType() != SearchRequest.QueryType.RAW) {
-            parameterHandler.addQmsParameters(aciParameters, searchRequest.getQueryRestrictions());
+        parameterHandler.addSearchRestrictions(aciParameters, queryRequest.getQueryRestrictions());
+        parameterHandler.addSearchOutputParameters(aciParameters, queryRequest);
+        if(queryRequest.getQueryType() != QueryRequest.QueryType.RAW) {
+            parameterHandler.addQmsParameters(aciParameters, queryRequest.getQueryRestrictions());
         }
 
         final ExportStrategy exportStrategy = exportStrategies.get(exportFormat);
-        aciServiceRetriever.getAciService(searchRequest.getQueryType()).executeAction(aciParameters, new ExportQueryResponseProcessor(exportStrategy, outputStream, selectedFieldIds));
+        aciServiceRetriever.getAciService(queryRequest.getQueryType()).executeAction(aciParameters, new ExportQueryResponseProcessor(exportStrategy, outputStream, selectedFieldIds));
     }
 }

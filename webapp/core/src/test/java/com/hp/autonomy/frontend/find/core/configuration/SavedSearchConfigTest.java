@@ -34,7 +34,7 @@ public class SavedSearchConfigTest {
 
     @Test
     public void basicValidate() throws ConfigException {
-        savedSearchConfig.basicValidate();
+        savedSearchConfig.basicValidate(null);
     }
 
     @Test
@@ -43,7 +43,7 @@ public class SavedSearchConfigTest {
                 .setPollForUpdates(false)
                 .setPollingInterval(-1)
                 .build()
-                .basicValidate();
+                .basicValidate(null);
     }
 
     @Test(expected = ConfigException.class)
@@ -52,6 +52,6 @@ public class SavedSearchConfigTest {
                 .setPollForUpdates(true)
                 .setPollingInterval(-1)
                 .build()
-                .basicValidate();
+                .basicValidate(null);
     }
 }

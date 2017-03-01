@@ -1,4 +1,10 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
+    'jquery',
     'backbone',
     'find/idol/app/model/comparison/comparison-documents-collection',
     'find/app/page/search/results/state-token-strategy',
@@ -13,23 +19,27 @@ define([
     'text!find/idol/templates/comparison/map-comparison-view.html',
     'text!find/templates/app/page/search/results/map-popover.html',
     'find/app/vent',
+    'underscore',
     'iCheck'
-], function (Backbone, ComparisonDocumentsCollection, stateTokenStrategy, MapView, FieldSelectionView, configuration, i18n, comparisonsI18n, addLinksToSummary, searchDataUtil, loadingSpinnerTemplate, template, popoverTemplate, vent) {
+], function($, Backbone, ComparisonDocumentsCollection, stateTokenStrategy, MapView,
+            FieldSelectionView, configuration, i18n, comparisonsI18n, addLinksToSummary,
+            searchDataUtil, loadingSpinnerTemplate, template, popoverTemplate, vent, _) {
+    'use strict';
 
     return Backbone.View.extend({
         className: 'service-view-container',
         template: _.template(template),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
         popoverTemplate: _.template(popoverTemplate),
-        
+
         events: {
-            'click .map-popup-title': function (e) {
+            'click .map-popup-title': function(e) {
                 var allCollections = _.chain(this.comparisons).pluck('collection').pluck('models').flatten().value();
                 vent.navigateToDetailRoute(_.findWhere(allCollections, {cid: e.currentTarget.getAttribute('cid')}));
             }
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.searchModels = options.searchModels;
             this.locationFields = configuration().map.locationFields;
             this.resultsStep = configuration().map.resultsStep;
@@ -63,7 +73,6 @@ define([
                 fields: _.pluck(this.locationFields, 'displayName'),
                 allowEmpty: false
             });
-
 
             this.comparisons = [
                 {
@@ -100,7 +109,7 @@ define([
             this.createModelListeners(this.comparisons);
         },
 
-        render: function () {
+        render: function() {
             this.$el.html(this.template({
                 bothLabel: comparisonsI18n['list.title.both'],
                 firstLabel: comparisonsI18n['list.title.first'](this.searchModels.first.get('title')),
@@ -121,8 +130,8 @@ define([
 
             this.mapView.setElement(this.$('.location-comparison-map')).render();
 
-            this.$('.location-comparison-show-more').click(_.bind(function () {
-                _.each(this.comparisons, function (comparison) {
+            this.$('.location-comparison-show-more').click(_.bind(function() {
+                _.each(this.comparisons, function(comparison) {
                     this.fetchDocuments(comparison.model, comparison.collection);
                 }, this);
                 this.toggleLoading();
@@ -133,9 +142,9 @@ define([
             this.toggleLoading();
         },
 
-        createQueryModel: function (queryText, stateTokens, searchModels) {
+        createQueryModel: function(queryText, stateTokens, searchModels) {
             var indexes = _.chain(searchModels)
-                .map(function (model) {
+                .map(function(model) {
                     return searchDataUtil.buildIndexes(model.get('indexes'));
                 })
                 .flatten()
@@ -148,11 +157,11 @@ define([
             }, stateTokens));
         },
 
-        createAddListeners: function (comparisons) {
-            _.each(comparisons, function (comparison) {
-                this.listenTo(comparison.collection, 'add', function (model) {
+        createAddListeners: function(comparisons) {
+            _.each(comparisons, function(comparison) {
+                this.listenTo(comparison.collection, 'add', function(model) {
                     var location = _.findWhere(model.get('locations'), {displayName: comparison.model.get('field')});
-                    if (location) {
+                    if(location) {
                         var title = model.get('title');
                         var popover = this.popoverTemplate({
                             title: title,
@@ -169,11 +178,11 @@ define([
             }, this);
         },
 
-        createSyncListeners: function (comparisons) {
-            _.each(comparisons, function (comparison) {
-                this.listenTo(comparison.collection, 'sync', function () {
+        createSyncListeners: function(comparisons) {
+            _.each(comparisons, function(comparison) {
+                this.listenTo(comparison.collection, 'sync', function() {
                     var allMarkers = _.chain(this.comparisons).pluck('layer').invoke('getLayers').flatten().value();
-                    if (!_.isEmpty(allMarkers) && !this.collectionsFetching()) {
+                    if(!_.isEmpty(allMarkers) && !this.collectionsFetching()) {
                         this.mapView.loaded(allMarkers);
                     }
                     this.toggleLoading()
@@ -181,49 +190,49 @@ define([
             }, this)
         },
 
-        createModelListeners: function (comparisons) {
-            _.each(comparisons, function (comparison) {
+        createModelListeners: function(comparisons) {
+            _.each(comparisons, function(comparison) {
                 this.listenTo(comparison.model, 'change:field', _.bind(this.reloadMarkers, this, comparison));
             }, this)
         },
 
-        addLayers: function () {
-            _.each(this.comparisons, function (comparison) {
+        addLayers: function() {
+            _.each(this.comparisons, function(comparison) {
                 this.mapView.addLayer(comparison.layer, comparison.name)
             }, this);
         },
 
-        reloadMarkers: function (comparison) {
+        reloadMarkers: function(comparison) {
             this.clearMarkers(comparison.collection, comparison.layer);
             this.fetchDocuments(comparison.model, comparison.collection);
             this.toggleLoading();
         },
 
-        clearMarkers: function (collection, layer) {
+        clearMarkers: function(collection, layer) {
             collection.reset();
             layer.clearLayers();
         },
 
-        collectionsFetching: function () {
+        collectionsFetching: function() {
             return _.chain(this.comparisons).pluck('collection').pluck('fetching').some().value();
         },
 
-        collectionsFull: function () {
+        collectionsFull: function() {
             return _.chain(this.comparisons)
                 .pluck('collection')
-                .reject(function (collection) {
+                .reject(function(collection) {
                     return collection.length === collection.totalResults
                 })
                 .isEmpty()
                 .value();
         },
 
-        toggleLoading: function () {
+        toggleLoading: function() {
             this.$loadingSpinner.toggleClass('hide', !this.collectionsFetching());
             this.$('.location-comparison-show-more').prop('disabled', this.collectionsFetching() || this.collectionsFull());
         },
 
-        getFetchOptions: function (queryModel, selectedField, length) {
+        getFetchOptions: function(queryModel, selectedField, length) {
             var locationField = _.findWhere(this.locationFields, {displayName: selectedField});
 
             var latitudeFieldsInfo = configuration().fieldsInfo[locationField.latitudeField];
@@ -249,8 +258,8 @@ define([
             };
         },
 
-        fetchDocuments: function (queryModel, collection) {
-            if (collection.length !== collection.totalResults) {
+        fetchDocuments: function(queryModel, collection) {
+            if(collection.length !== collection.totalResults) {
                 var selectedField = queryModel.get('field');
 
                 var options = this.getFetchOptions(queryModel, selectedField, collection.length);
@@ -259,5 +268,4 @@ define([
             }
         }
     });
-
 });

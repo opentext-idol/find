@@ -13,9 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.beans.factory.ObjectFactory;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -23,23 +21,18 @@ import java.util.Collections;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractRelatedConceptsControllerTest<Q extends QuerySummaryElement, R extends QueryRestrictions<S>, L extends RelatedConceptsRequest<S>, S extends Serializable, E extends Exception> {
-    @Mock
-    protected RelatedConceptsService<Q, S, E> relatedConceptsService;
+public abstract class AbstractRelatedConceptsControllerTest<T extends QuerySummaryElement, Q extends QueryRestrictions<S>, R extends RelatedConceptsRequest<Q>, S extends Serializable, E extends Exception> {
+    private RelatedConceptsService<R, T, Q, E> relatedConceptsService;
+    private RelatedConceptsController<T, Q, R, S, E> relatedConceptsController;
 
-    @Mock
-    protected QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory;
+    protected abstract RelatedConceptsController<T, Q, R, S, E> buildController();
 
-    @Mock
-    protected ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory;
-
-    protected RelatedConceptsController<Q, R, L, S, E> relatedConceptsController;
-
-    protected abstract RelatedConceptsController<Q, R, L, S, E> buildController(final RelatedConceptsService<Q, S, E> relatedConceptsService, final QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory, final ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory);
+    protected abstract RelatedConceptsService<R, T, Q, E> buildService();
 
     @Before
     public void setUp() {
-        relatedConceptsController = buildController(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory);
+        relatedConceptsController = buildController();
+        relatedConceptsService = buildService();
     }
 
     @Test

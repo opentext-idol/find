@@ -10,9 +10,10 @@ import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciParameter;
 import com.hp.autonomy.frontend.find.core.export.ExportFormat;
 import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,21 +41,21 @@ public class IdolExportServiceTest {
     @Mock
     private OutputStream outputStream;
     @Mock
-    private SearchRequest<String> searchRequest;
+    private IdolQueryRequest queryRequest;
 
     private IdolExportService idolExportService;
 
     @Before
     public void setUp() {
         when(exportStrategy.getExportFormat()).thenReturn(ExportFormat.CSV);
-        when(aciServiceRetriever.getAciService(any(SearchRequest.QueryType.class))).thenReturn(aciService);
+        when(aciServiceRetriever.getAciService(any(QueryRequest.QueryType.class))).thenReturn(aciService);
 
         idolExportService = new IdolExportService(parameterHandler, aciServiceRetriever, new ExportStrategy[]{exportStrategy});
     }
 
     @Test
     public void export() {
-        idolExportService.export(outputStream, searchRequest, ExportFormat.CSV, Collections.emptyList());
+        idolExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
         verify(aciService).executeAction(anySetOf(AciParameter.class), any(Processor.class));
     }
 }

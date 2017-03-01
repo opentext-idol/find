@@ -6,7 +6,7 @@
 package com.hp.autonomy.frontend.find.hod.configuration;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.hp.autonomy.frontend.configuration.SingleUserAuthentication;
+import com.hp.autonomy.frontend.configuration.authentication.SingleUserAuthentication;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "name", defaultImpl = SingleUserAuthentication.class)
 public class HodAuthenticationMixins {

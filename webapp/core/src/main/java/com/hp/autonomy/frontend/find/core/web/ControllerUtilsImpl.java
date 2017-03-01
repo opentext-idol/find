@@ -9,8 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -18,15 +18,14 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Component
 @Slf4j
-public class ControllerUtilsImpl implements ControllerUtils {
+class ControllerUtilsImpl implements ControllerUtils {
     private static final String MESSAGE_CODE_CONTACT_SUPPORT_UUID = "error.contactSupportUUID";
     private static final String MESSAGE_CODE_CONTACT_SUPPORT_NO_UUID = "error.contactSupportNoUUID";
     private static final String MESSAGE_CODE_ERROR_BUTTON = "error.button";
@@ -36,10 +35,10 @@ public class ControllerUtilsImpl implements ControllerUtils {
     private final ObjectMapper objectMapper;
     private final MessageSource messageSource;
     private final String commit;
-    private final ConfigService<? extends FindConfig> configService;
+    private final ConfigService<? extends FindConfig<?, ?>> configService;
 
     @Autowired
-    public ControllerUtilsImpl(final ObjectMapper objectMapper, final MessageSource messageSource, @Value(AppConfiguration.GIT_COMMIT_PROPERTY) final String commit, final ConfigService<? extends FindConfig> configService) {
+    public ControllerUtilsImpl(final ObjectMapper objectMapper, final MessageSource messageSource, @Value(AppConfiguration.GIT_COMMIT_PROPERTY) final String commit, final ConfigService<? extends FindConfig<?, ?>> configService) {
         this.objectMapper = objectMapper;
         this.messageSource = messageSource;
         this.commit = commit;
@@ -66,10 +65,10 @@ public class ControllerUtilsImpl implements ControllerUtils {
         modelAndView.addObject(ErrorAttributes.STATUS_CODE.value(), errorInfo.getStatusCode());
         modelAndView.addObject(ErrorAttributes.AUTH_ERROR.value(), errorInfo.isAuthError());
 
-        final String contactSupportMessage = configService.getConfig().getUiCustomization().getErrorCallSupportString();
+        final String contactSupportMessage = Optional.ofNullable(configService.getConfig().getUiCustomization()).map(UiCustomization::getErrorCallSupportString).orElse(null);
 
-        if(errorInfo.isContactSupport()) {
-            if(errorInfo.getException() != null) {
+        if (errorInfo.isContactSupport()) {
+            if (errorInfo.getException() != null) {
                 final UUID uuid = UUID.randomUUID();
                 log.error("Unhandled exception with uuid {}", uuid);
                 log.error("Stack trace", errorInfo.getException());
@@ -83,7 +82,7 @@ public class ControllerUtilsImpl implements ControllerUtils {
             }
         }
 
-        if(errorInfo.getButtonHref() != null) {
+        if (errorInfo.getButtonHref() != null) {
             modelAndView.addObject(ErrorAttributes.BUTTON_HREF.value(), errorInfo.getButtonHref());
             modelAndView.addObject(ErrorAttributes.BUTTON_MESSAGE.value(), getMessage(MESSAGE_CODE_ERROR_BUTTON, null));
         }

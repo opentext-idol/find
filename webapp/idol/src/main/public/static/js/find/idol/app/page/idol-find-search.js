@@ -19,9 +19,9 @@ define([
     'find/idol/app/page/search/idol-query-left-side-view',
     'find/idol/app/page/search/comparison/compare-modal',
     'find/app/configuration'
-], function(FindSearch, _, i18n, snapshotsI18n, SavedSearchModel, IndexesCollection, ServiceView, SuggestView, SnapshotDataView, ComparisonView, stateTokenStrategy,
-            ComparisonDocumentsCollection, relatedConceptsClickHandlers, IdolQueryLeftSideView, CompareModal, configuration) {
-
+], function(FindSearch, _, i18n, snapshotsI18n, SavedSearchModel, IndexesCollection, ServiceView, SuggestView,
+            SnapshotDataView, ComparisonView, stateTokenStrategy, ComparisonDocumentsCollection,
+            relatedConceptsClickHandlers, IdolQueryLeftSideView, CompareModal, configuration) {
     'use strict';
 
     return FindSearch.extend({

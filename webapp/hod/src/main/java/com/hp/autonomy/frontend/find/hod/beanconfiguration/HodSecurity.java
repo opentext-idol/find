@@ -11,16 +11,12 @@ import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.hod.web.SsoController;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
+import com.hp.autonomy.hod.client.api.authentication.EntityType;
 import com.hp.autonomy.hod.client.api.authentication.TokenType;
 import com.hp.autonomy.hod.client.api.authentication.tokeninformation.GroupInformation;
 import com.hp.autonomy.hod.client.api.userstore.user.UserStoreUsersService;
 import com.hp.autonomy.hod.client.token.TokenRepository;
-import com.hp.autonomy.hod.sso.HodAuthenticationProvider;
-import com.hp.autonomy.hod.sso.HodTokenLogoutSuccessHandler;
-import com.hp.autonomy.hod.sso.HodUserMetadataResolver;
-import com.hp.autonomy.hod.sso.SsoAuthenticationEntryPoint;
-import com.hp.autonomy.hod.sso.SsoAuthenticationFilter;
-import com.hp.autonomy.hod.sso.UnboundTokenService;
+import com.hp.autonomy.hod.sso.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -91,7 +87,7 @@ public class HodSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(final HttpSecurity http) throws Exception {
         final AuthenticationEntryPoint ssoEntryPoint = new SsoAuthenticationEntryPoint(SsoController.SSO_PAGE);
 
-        final SsoAuthenticationFilter ssoAuthenticationFilter = new SsoAuthenticationFilter(SsoController.SSO_AUTHENTICATION_URI);
+        final SsoAuthenticationFilter<?> ssoAuthenticationFilter = new SsoAuthenticationFilter<>(SsoController.SSO_AUTHENTICATION_URI, EntityType.CombinedSso.INSTANCE);
         ssoAuthenticationFilter.setAuthenticationManager(authenticationManager());
 
         final LogoutSuccessHandler logoutSuccessHandler = new HodTokenLogoutSuccessHandler(SsoController.SSO_LOGOUT_PAGE, tokenRepository);

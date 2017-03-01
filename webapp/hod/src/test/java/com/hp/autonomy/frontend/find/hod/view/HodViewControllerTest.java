@@ -8,15 +8,18 @@ package com.hp.autonomy.frontend.find.hod.view;
 import com.hp.autonomy.frontend.find.core.view.AbstractViewControllerTest;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.hod.client.api.authentication.HodAuthenticationFailedException;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodError;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
+import com.hp.autonomy.searchcomponents.hod.view.HodViewRequest;
+import com.hp.autonomy.searchcomponents.hod.view.HodViewRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.view.HodViewServerService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -31,22 +34,31 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HodViewControllerTest extends AbstractViewControllerTest<HodViewController, ResourceIdentifier, HodErrorException> {
+public class HodViewControllerTest extends AbstractViewControllerTest<HodViewController, HodViewRequest, ResourceName, HodErrorException> {
     @Mock
-    private ViewServerService<ResourceIdentifier, HodErrorException> hodViewService;
+    private HodViewServerService hodViewServerService;
+    @Mock
+    private ObjectFactory<HodViewRequestBuilder> viewRequestBuilderFactory;
+    @Mock
+    private HodViewRequestBuilder viewRequestBuilder;
 
     @Override
     @Before
     public void setUp() {
-        viewServerService = hodViewService;
-        viewController = new HodViewController(viewServerService, controllerUtils);
+        when(viewRequestBuilderFactory.getObject()).thenReturn(viewRequestBuilder);
+        when(viewRequestBuilder.documentReference(any())).thenReturn(viewRequestBuilder);
+        when(viewRequestBuilder.database(any())).thenReturn(viewRequestBuilder);
+        when(viewRequestBuilder.highlightExpression(any())).thenReturn(viewRequestBuilder);
+
+        viewController = new HodViewController(hodViewServerService, viewRequestBuilderFactory, controllerUtils);
+        viewServerService = hodViewServerService;
         response = new MockHttpServletResponse();
         super.setUp();
     }
 
     @Override
-    protected ResourceIdentifier getSampleDatabase() {
-        return ResourceIdentifier.WIKI_ENG;
+    protected ResourceName getSampleDatabase() {
+        return ResourceName.WIKI_ENG;
     }
 
     @Test

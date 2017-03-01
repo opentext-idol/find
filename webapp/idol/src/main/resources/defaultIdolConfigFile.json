@@ -71,6 +71,17 @@
     },
     "highlighting": true
   },
+  "answerServer": {
+    "server": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 7700,
+      "productType": [
+        "ANSWERSERVER"
+      ]
+    },
+    "enabled": false
+  },
   "savedSearches": {
     "pollForUpdates": true,
     "pollingInterval": 5
@@ -108,6 +119,10 @@
         "enableRelatedConcepts": {
           "user": true,
           "bi": false
+        },
+        "resultViewOrder": {
+          "bi": ["topic-map", "list", "sunburst", "table", "map"],
+          "user": ["list"]
         }
       },
       "parametricNeverShow": [],
@@ -184,6 +199,24 @@
         "AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS"
       ],
       "type": "Date"
+    },
+    "mmapEventSourceType": {
+      "names": [
+        "MMAP_EVENT_SOURCE_TYPE"
+      ],
+      "advanced": true
+    },
+    "mmapEventSourceName": {
+      "names": [
+        "MMAP_EVENT_SOURCE_NAME"
+      ],
+      "advanced": true
+    },
+    "mmapEventTime": {
+      "names": [
+        "MMAP_EVENT_TIME"
+      ],
+      "advanced": true
     },
     "mmapUrl": {
       "names": [

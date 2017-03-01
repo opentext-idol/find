@@ -12,15 +12,16 @@ import com.autonomy.aci.client.services.ProcessorException;
 import com.autonomy.aci.client.util.AciParameters;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
-import com.hp.autonomy.frontend.configuration.ServerConfig;
-import com.hp.autonomy.frontend.configuration.ValidationResult;
+import com.hp.autonomy.frontend.configuration.ConfigException;
+import com.hp.autonomy.frontend.configuration.server.ServerConfig;
+import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
+import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
 import com.hp.autonomy.searchcomponents.idol.statsserver.Statistic;
 import com.hp.autonomy.searchcomponents.idol.statsserver.StatisticProcessor;
+import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -32,30 +33,28 @@ import java.util.Set;
 @JsonDeserialize(builder = StatsServerConfig.Builder.class)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
-public class StatsServerConfig implements ConfigurationComponent {
+public class StatsServerConfig implements OptionalConfigurationComponent<StatsServerConfig> {
 
     private final ServerConfig server;
-
-    @Getter(AccessLevel.NONE)
     private final Boolean enabled;
 
+    @Override
     public StatsServerConfig merge(final StatsServerConfig other) {
         if (other == null) {
             return this;
         }
 
         return new Builder()
-            .setEnabled(enabled == null ? other.enabled : enabled)
-            .setServer(server == null ? other.server : server.merge(other.server))
-            .build();
+                .setEnabled(enabled == null ? other.enabled : enabled)
+                .setServer(server == null ? other.server : server.merge(other.server))
+                .build();
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
+    public void basicValidate(final String s) throws ConfigException {
     }
 
-    public ValidationResult<?> validate(final AciService aciService, final Collection<Statistic> requiredStatistics, final IdolAnnotationsProcessorFactory processorFactory) {
+    ValidationResult<?> validate(final AciService aciService, final Collection<Statistic> requiredStatistics, final ProcessorFactory processorFactory, final IdolAnnotationsProcessorFactory annotationsProcessorFactory) {
         final ValidationResult<?> serverResult =  server.validate(aciService, null, processorFactory);
 
         if (!serverResult.isValid()) {
@@ -65,7 +64,7 @@ public class StatsServerConfig implements ConfigurationComponent {
         final Set<Statistic> statistics;
 
         try {
-            statistics = aciService.executeAction(server.toAciServerDetails(), new AciParameters("GetStatus"), new StatisticProcessor(processorFactory));
+            statistics = aciService.executeAction(server.toAciServerDetails(), new AciParameters("GetStatus"), new StatisticProcessor(annotationsProcessorFactory));
         } catch (final ProcessorException | AciServiceException ignored) {
             return new ValidationResult<>(false, ValidationKey.CONNECTION_ERROR);
         }
@@ -93,7 +92,7 @@ public class StatsServerConfig implements ConfigurationComponent {
         }
     }
 
-    private enum ValidationKey  {
+    private enum ValidationKey {
         CONNECTION_ERROR, INVALID_CONFIGURATION
     }
 

@@ -7,10 +7,8 @@ package com.hp.autonomy.frontend.find.hod.web;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.web.AbstractErrorControllerTest;
-import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HsodConfig;
-import org.apache.http.HttpStatus;
 import org.hamcrest.beans.HasPropertyWithValue;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,11 +36,11 @@ public class HodErrorControllerTest extends AbstractErrorControllerTest<HodError
         errorController = new HodErrorController(controllerUtils, configService);
         super.setUp();
 
-        final HsodConfig hsodConfig = new HsodConfig.Builder()
-                .setLandingPageUrl(new URL("https://search.havenondemand.com"))
+        final HsodConfig hsodConfig = HsodConfig.builder()
+                .landingPageUrl(new URL("https://search.havenondemand.com"))
                 .build();
 
-        final HodFindConfig config = new HodFindConfig.Builder().setHsod(hsodConfig).build();
+        final HodFindConfig config = HodFindConfig.builder().hsod(hsodConfig).build();
         when(configService.getConfig()).thenReturn(config);
     }
 

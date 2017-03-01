@@ -41,6 +41,9 @@ define([
         events: {
             'click .preview-mode-open-detail-button': 'openDocumentDetail',
             'click .preview-mode-highlight-query-terms': 'toggleHighlighting',
+            'click .preview-mode-mmap-button': function () {
+                this.mmapTab.open(this.model.attributes);
+            },
             'click .close-preview-mode': 'triggerClose'
         },
 
@@ -48,6 +51,7 @@ define([
             this.indexesCollection = options.indexesCollection;
             this.previewModeModel = options.previewModeModel;
             this.highlightingModel = new Backbone.Model({highlighting: false});
+            this.mmapTab = options.mmapTab;
 
             var queryText = options.queryText;
 
@@ -72,8 +76,7 @@ define([
             this.$el.html(this.template({
                 i18n: i18n,
                 href: href,
-                mmapBaseUrl: configuration().mmapBaseUrl,
-                mmapUrl: this.model.get('mmapUrl'),
+                mmap: this.mmapTab.supported(this.model.attributes),
                 viewHighlighting: this.highlighting
             }));
 

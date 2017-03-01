@@ -1,8 +1,8 @@
-<% var loginTypeUid = _.uniqueId('settings'); %>
+<% var uid = _.uniqueId('settings'); %>
 
 <div class="form-group m-t-sm">
-    <label class="control-label settings-label" for="login-type-<%-loginTypeUid%>"><%-strings.loginTypeLabel%>: </label>
-    <select class="form-control" id="login-type-<%-loginTypeUid%>" name="login-type" disabled></select>
-    <span class="fetch-security-types settings-info hide"><%-strings.fetchSecurityTypes%></span>
-    <span class="settings-client-validation settings-info hide"><%-strings.invalidSecurityType%></span>
+    <label class="control-label settings-label" for="aci-widget-dropdown-<%-uid%>"><%-label%>: </label>
+    <select id="aci-widget-dropdown-<%-uid%>" name="aci-widget-dropdown" class="disabled form-control" disabled></select>
+    <span class="fetch-dropdown-values settings-info hide"><%-fetchMessage%></span>
+    <span class="settings-client-validation settings-info hide"><%-invalidMessage%></span>
 </div>

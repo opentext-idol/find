@@ -1,16 +1,17 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
     'backbone',
-    'jquery',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'find/app/page/search/document/document-detail-tabs',
-    'find/app/model/document-model'
-], function(Backbone, $, configuration, i18n, documentDetailTabs, DocumentModel) {
+    'find/app/model/document-model',
+    'underscore'
+], function(Backbone, configuration, i18n, documentDetailTabs, DocumentModel, _) {
+    'use strict';
 
     function filterTabs(model) {
         return _.filter(documentDetailTabs, function(tab) {
@@ -137,5 +138,4 @@ define([
             });
         });
     });
-
 });

@@ -5,8 +5,11 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
+import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.Matchers;
+import org.springframework.boot.test.json.JsonContent;
+import org.springframework.boot.test.json.ObjectContent;
 
 import java.io.IOException;
 import java.util.Map;
@@ -17,16 +20,15 @@ import static org.junit.Assert.assertTrue;
 
 public class UiCustomizationRuleTest extends ConfigurationComponentTest<UiCustomizationRule> {
     @Override
-    protected UiCustomizationRule constructComponent() {
-        final UiCustomizationRule rule = new UiCustomizationRule();
-        rule.populateRule("user", false);
-
-        return rule;
+    protected Class<UiCustomizationRule> getType() {
+        return UiCustomizationRule.class;
     }
 
     @Override
-    protected Class<UiCustomizationRule> getComponentType() {
-        return UiCustomizationRule.class;
+    protected UiCustomizationRule constructComponent() {
+        return UiCustomizationRule.builder()
+                .populateRule("user", false)
+                .build();
     }
 
     @Override
@@ -35,22 +37,26 @@ public class UiCustomizationRuleTest extends ConfigurationComponentTest<UiCustom
     }
 
     @Override
-    protected void validateJson(final String json) {
-        assertTrue(json.contains("user"));
-        assertTrue(json.contains("false"));
+    protected void validateJson(final JsonContent<UiCustomizationRule> jsonContent) {
+        jsonContent.assertThat().hasJsonPathBooleanValue("@.user", false);
     }
 
     @Override
-    protected void validateParsedComponent(final UiCustomizationRule component) {
-        final Map<String, Object> rules = component.any();
+    protected void validateParsedComponent(final ObjectContent<UiCustomizationRule> objectContent) {
+        final Map<String, Object> rules = objectContent.getObject().getRoleMap();
         assertThat(rules, hasKey("user"));
         assertThat(rules, hasKey("bi"));
     }
 
     @Override
-    protected void validateMergedComponent(final UiCustomizationRule mergedComponent) {
-        final Map<String, Object> rules = mergedComponent.any();
-        assertThat(rules, Matchers.<String, Object>hasEntry("user", false));
-        assertThat(rules, Matchers.<String, Object>hasEntry("bi", true));
+    protected void validateMergedComponent(final ObjectContent<UiCustomizationRule> objectContent) {
+        final Map<String, Object> rules = objectContent.getObject().getRoleMap();
+        assertThat(rules, Matchers.hasEntry("user", false));
+        assertThat(rules, Matchers.hasEntry("bi", true));
+    }
+
+    @Override
+    protected void validateString(final String s) {
+        assertTrue(s.contains("user"));
     }
 }

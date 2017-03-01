@@ -6,7 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.test;
 
 import com.hp.autonomy.frontend.configuration.BaseConfigFileService;
-import com.hp.autonomy.frontend.configuration.CommunityAuthentication;
+import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
@@ -24,8 +24,8 @@ public class IdolFindMockConfigConfiguration {
     @Bean
     @Primary
     public BaseConfigFileService<?> configService() {
-        final CommunityAuthentication loginConfig = new CommunityAuthentication.Builder()
-                .setMethod("autonomy")
+        final CommunityAuthentication loginConfig = CommunityAuthentication.builder()
+                .method("autonomy")
                 .build();
 
         final MMAP mmapConfig = new MMAP.Builder()
@@ -34,10 +34,10 @@ public class IdolFindMockConfigConfiguration {
                 .build();
 
         // The rest of the fields are mocked in the haven-search-components IdolTestConfiguration class
-        final IdolFindConfig config = new IdolFindConfig.Builder()
-                .setLogin(loginConfig)
-                .setMap(new MapConfiguration("", false, "", null, 2, null))
-                .setMmap(mmapConfig)
+        final IdolFindConfig config = IdolFindConfig.builder()
+                .login(loginConfig)
+                .map(new MapConfiguration("", false, "", null, 2, null))
+                .mmap(mmapConfig)
                 .build();
 
         @SuppressWarnings("unchecked")

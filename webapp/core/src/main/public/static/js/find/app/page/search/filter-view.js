@@ -1,7 +1,8 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'backbone',
     'jquery',
@@ -20,12 +21,13 @@ define([
     'i18n!find/nls/indexes',
     'find/app/util/merge-collection'
 ], function(Backbone, $, _, AbstractSectionView, DateView, ParametricView, NumericParametricFieldView,
-            TextInput, Collapsible, FilteringCollection, prettifyFieldName, ParametricDisplayCollection, configuration, i18n, i18nIndexes, MergeCollection) {
+            TextInput, Collapsible, FilteringCollection, prettifyFieldName, ParametricDisplayCollection,
+            configuration, i18n, i18nIndexes, MergeCollection) {
     'use strict';
 
     var datesTitle = i18n['search.dates'];
 
-    var createFilteringCollection = function (baseCollection, filterModel) {
+    var createFilteringCollection = function(baseCollection, filterModel) {
         return new FilteringCollection([], {
             collection: baseCollection,
             filterModel: filterModel,
@@ -36,7 +38,7 @@ define([
 
     function filterPredicate(model, filterModel) {
         var searchText = filterModel && filterModel.get('text');
-        return searchText ? searchMatches(prettifyFieldName(model.id), filterModel.get('text')) : true;
+        return !searchText || searchMatches(prettifyFieldName(model.id), filterModel.get('text'));
     }
 
     function searchMatches(text, search) {
@@ -66,8 +68,7 @@ define([
 
                     this.$emptyMessage = $('<p class="hide">' + i18n['search.filters.empty'] + '</p>');
 
-                    //noinspection JSUnresolvedFunction
-                    this.listenTo(this.filterModel, 'change', function () {
+                    this.listenTo(this.filterModel, 'change', function() {
                         this.updateDatesVisibility();
                         this.updateParametricVisibility();
                         this.updateEmptyMessage();
@@ -94,14 +95,13 @@ define([
                     this.indexesEmpty = false;
                     this.collapsed.indexes = true;
 
-                    //noinspection JSUnresolvedFunction
                     var indexesView = new IndexesView({
                         delayedSelection: options.delayedIndexesSelection,
                         filterModel: this.filterModel,
                         indexesCollection: options.indexesCollection,
                         queryModel: options.queryModel,
                         selectedDatabasesCollection: options.queryState.selectedIndexes,
-                        visibleIndexesCallback: _.bind(function (indexes) {
+                        visibleIndexesCallback: _.bind(function(indexes) {
                             this.indexesEmpty = indexes.length === 0;
                             this.updateIndexesVisibility();
                             this.updateEmptyMessage();
@@ -110,13 +110,12 @@ define([
 
                     this.indexesViewWrapper = new Collapsible({
                         view: indexesView,
-                        collapsed: this.collapsed.indexes,
+                        collapseModel: new Backbone.Model({collapsed: this.collapsed.indexes}),
                         title: i18nIndexes['search.indexes']
                     });
 
                     // only track user triggered changes, not automatic ones
-                    //noinspection JSUnresolvedFunction
-                    this.listenTo(this.indexesViewWrapper, 'toggle', function (newState) {
+                    this.listenTo(this.indexesViewWrapper, 'toggle', function(newState) {
                         this.collapsed.indexes = newState;
                     });
                 }.bind(this),
@@ -142,12 +141,11 @@ define([
 
                     this.dateViewWrapper = new Collapsible({
                         view: dateView,
-                        collapsed: this.collapsed.dates,
+                        collapseModel: new Backbone.Model({collapsed: this.collapsed.dates}),
                         title: datesTitle
                     });
 
-                    //noinspection JSUnresolvedFunction
-                    this.listenTo(this.dateViewWrapper, 'toggle', function (newState) {
+                    this.listenTo(this.dateViewWrapper, 'toggle', function(newState) {
                         this.collapsed.dates = newState;
                     });
                 }.bind(this),
@@ -163,9 +161,13 @@ define([
                 }.bind(this)
             }, {
                 shown: true,
-                initialize: function () {
-                    this.filteredNumericParametricFieldsCollection = createFilteringCollection(options.numericParametricFieldsCollection, this.filterModel);
-                    this.filteredDateParametricFieldsCollection = createFilteringCollection(options.dateParametricFieldsCollection, this.filterModel);
+                initialize: function() {
+                    this.filteredNumericParametricFieldsCollection = createFilteringCollection(
+                        options.numericParametricFieldsCollection, this.filterModel
+                    );
+                    this.filteredDateParametricFieldsCollection = createFilteringCollection(
+                        options.dateParametricFieldsCollection, this.filterModel
+                    );
                     this.parametricDisplayCollection = new ParametricDisplayCollection([], {
                         parametricCollection: options.parametricCollection,
                         restrictedParametricCollection: options.restrictedParametricCollection,
@@ -173,20 +175,20 @@ define([
                         filterModel: this.filterModel
                     });
                     this.mergedParametricCollection = new MergeCollection([], {
-                        comparator: function (aModel, bModel) {
-                            var configArray = configuration().uiCustomization.parametricOrder;
+                        comparator: function(aModel, bModel) {
+                            var configArray = _.pluck(configuration().uiCustomization.parametricOrder, 'id');
                             var aIndex = configArray.indexOf(aModel.id);
                             var bIndex = configArray.indexOf(bModel.id);
 
                             // Sort initially to match the parametric order as defined in the config
-                            if (aIndex > bIndex) {
-                                if (bIndex < 0) {
+                            if(aIndex > bIndex) {
+                                if(bIndex < 0) {
                                     return -1;
                                 }
                                 return 1;
                             }
-                            if (aIndex < bIndex) {
-                                if (aIndex < 0) {
+                            if(aIndex < bIndex) {
+                                if(aIndex < 0) {
                                     return 1;
                                 }
                                 return -1;
@@ -202,8 +204,7 @@ define([
                     });
 
                     if(this.filterModel) {
-                        //noinspection JSUnresolvedFunction
-                        this.listenTo(this.mergedParametricCollection, 'update reset', function () {
+                        this.listenTo(this.mergedParametricCollection, 'update reset', function() {
                             this.updateParametricVisibility();
                             this.updateEmptyMessage();
                         });
@@ -239,55 +240,51 @@ define([
                 }.bind(this)
             }];
 
-            //noinspection JSUnresolvedFunction
             this.views = _.where(views, {shown: true});
-
-            //noinspection JSUnresolvedFunction
             _.invoke(this.views, 'initialize');
         },
 
         render: function() {
             AbstractSectionView.prototype.render.apply(this, arguments);
 
-            //noinspection JSUnresolvedVariable
             this.getViewContainer().empty();
             this.views.forEach(function(view) {
                 view.get$els().forEach(function($el) {
-                    //noinspection JSUnresolvedVariable
                     this.getViewContainer().append($el);
                 }.bind(this));
             }.bind(this));
 
-            //noinspection JSUnresolvedFunction
             _.invoke(this.views, 'render');
-            //noinspection JSUnresolvedFunction
             _.invoke(this.views, 'postRender');
 
             return this;
         },
 
-        remove: function () {
-            //noinspection JSUnresolvedFunction
+        remove: function() {
             _.invoke(this.views, 'remove');
 
             AbstractSectionView.prototype.remove.call(this);
         },
 
-        updateEmptyMessage: function () {
-            var noFiltersMatched = !(this.indexesEmpty && this.hideDates && this.mergedParametricCollection.length === 0);
+        updateEmptyMessage: function() {
+            var noFiltersMatched = !(
+                this.indexesEmpty &&
+                this.hideDates &&
+                this.mergedParametricCollection.length === 0
+            );
 
             this.$emptyMessage.toggleClass('hide', noFiltersMatched);
         },
 
-        updateParametricVisibility: function () {
-           
+        updateParametricVisibility: function() {
+
             var filterModelSwitch = Boolean(this.filterModel.get('text'));
 
             this.parametricView.$el.toggleClass('hide',
                 this.mergedParametricCollection.length === 0 && filterModelSwitch);
         },
 
-        updateDatesVisibility: function () {
+        updateDatesVisibility: function() {
             var search = this.filterModel.get('text');
             this.hideDates = !(!search || searchMatches(datesTitle, search));
 
@@ -295,9 +292,8 @@ define([
             this.dateViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.dates);
         },
 
-        updateIndexesVisibility: function () {
+        updateIndexesVisibility: function() {
             this.indexesViewWrapper.$el.toggleClass('hide', this.indexesEmpty);
-
             this.indexesViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.indexes);
         }
     });

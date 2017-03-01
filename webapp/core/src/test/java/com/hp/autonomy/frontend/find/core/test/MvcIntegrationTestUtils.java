@@ -6,12 +6,11 @@
 package com.hp.autonomy.frontend.find.core.test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
-import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
+import com.jayway.jsonpath.JsonPath;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,10 +18,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,13 +67,8 @@ public abstract class MvcIntegrationTestUtils {
 
         final MvcResult mvcResult = mockMvc.perform(requestBuilder)
                 .andReturn();
-        final TagName[] tagNames = new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), TagName[].class);
-        final List<String> fieldNames = new ArrayList<>(tagNames.length);
-        for (final TagName tagName : tagNames) {
-            fieldNames.add(tagName.getId());
-        }
-
-        return fieldNames.toArray(new String[fieldNames.size()]);
+        final Collection<Map<String, String>> tagNames = JsonPath.compile("$").read(mvcResult.getResponse().getContentAsString());
+        return tagNames.stream().map(tagName -> tagName.get("id")).toArray(String[]::new);
     }
 
     public Authentication userAuth() {

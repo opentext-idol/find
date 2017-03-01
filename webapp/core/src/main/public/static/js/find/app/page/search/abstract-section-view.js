@@ -1,11 +1,14 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
+    'jquery',
     'backbone',
-    'text!find/templates/app/page/search/abstract-section-view.html'
-], function(Backbone, template) {
+    'text!find/templates/app/page/search/abstract-section-view.html',
+    'underscore'
+], function($, Backbone, template, _) {
     'use strict';
 
     return Backbone.View.extend({

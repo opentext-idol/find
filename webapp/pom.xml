@@ -14,7 +14,7 @@
 
     <groupId>com.hp.autonomy.frontend.find</groupId>
     <artifactId>find</artifactId>
-    <version>11.2.0</version>
+    <version>11.3.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -23,13 +23,12 @@
         <module>hod</module>
         <module>on-prem-dist</module>
         <module>hsod-dist</module>
-        <module>mockui</module>
         <module>selenium-tests</module>
     </modules>
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
-        <haven.search.components.version>0.27.4</haven.search.components.version>
+        <haven.search.components.version>0.37.1</haven.search.components.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
         <!-- Disabling integration tests by default until we figure out how to run them on the build servers (CCUK-3480) -->
         <skipITs>true</skipITs>
@@ -90,10 +89,17 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.12.2</version>
+            <version>1.16.10</version>
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.configuration</groupId>
+            <artifactId>configuration-impl</artifactId>
+            <version>2.0.1</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -132,6 +138,11 @@
             <groupId>com.github.springtestdbunit</groupId>
             <artifactId>spring-test-dbunit</artifactId>
             <version>1.2.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

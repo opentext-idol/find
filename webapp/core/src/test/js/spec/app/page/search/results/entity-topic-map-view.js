@@ -1,7 +1,8 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'backbone',
     'find/app/configuration',
@@ -9,7 +10,7 @@ define([
     'find/app/util/topic-map-view',
     'mock/model/entity-collection'
 ], function(Backbone, configuration, EntityTopicMapView, TopicMapView, EntityCollection) {
-    "use strict";
+    'use strict';
 
     describe('EntityTopicMapView', function() {
         beforeEach(function() {

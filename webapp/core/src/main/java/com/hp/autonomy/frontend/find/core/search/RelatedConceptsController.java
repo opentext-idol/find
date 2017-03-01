@@ -5,7 +5,9 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequest;
+import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
 import com.hp.autonomy.types.requests.idol.actions.query.QuerySummaryElement;
 import org.apache.commons.collections4.ListUtils;
@@ -19,12 +21,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 @Controller
 @SuppressWarnings("SpringJavaAutowiringInspection")
 @RequestMapping(RelatedConceptsController.RELATED_CONCEPTS_PATH)
-public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R extends QueryRestrictions<S>, L extends RelatedConceptsRequest<S>, S extends Serializable, E extends Exception> {
+public abstract class RelatedConceptsController<T extends QuerySummaryElement, Q extends QueryRestrictions<S>, R extends RelatedConceptsRequest<Q>, S extends Serializable, E extends Exception> {
     public static final String RELATED_CONCEPTS_PATH = "/api/public/search/find-related-concepts";
 
     public static final String QUERY_TEXT_PARAM = "queryText";
@@ -39,13 +42,13 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
 
     private static final int QUERY_SUMMARY_LENGTH = 50;
 
-    private final RelatedConceptsService<Q, S, E> relatedConceptsService;
-    private final QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory;
-    private final ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory;
+    private final RelatedConceptsService<R, T, Q, E> relatedConceptsService;
+    private final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory;
+    private final ObjectFactory<? extends RelatedConceptsRequestBuilder<R, Q, ?>> relatedConceptsRequestBuilderFactory;
 
-    protected RelatedConceptsController(final RelatedConceptsService<Q, S, E> relatedConceptsService,
-                                        final QueryRestrictionsBuilderFactory<R, S> queryRestrictionsBuilderFactory,
-                                        final ObjectFactory<RelatedConceptsRequest.Builder<L, S>> relatedConceptsRequestBuilderFactory) {
+    protected RelatedConceptsController(final RelatedConceptsService<R, T, Q, E> relatedConceptsService,
+                                        final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory,
+                                        final ObjectFactory<? extends RelatedConceptsRequestBuilder<R, Q, ?>> relatedConceptsRequestBuilderFactory) {
         this.relatedConceptsService = relatedConceptsService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
         this.relatedConceptsRequestBuilderFactory = relatedConceptsRequestBuilderFactory;
@@ -54,10 +57,10 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<Q> findRelatedConcepts(
+    public List<T> findRelatedConcepts(
             @RequestParam(QUERY_TEXT_PARAM) final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-            @RequestParam(DATABASES_PARAM) final List<S> databases,
+            @RequestParam(DATABASES_PARAM) final Collection<S> databases,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
             @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final Integer minScore,
@@ -65,21 +68,21 @@ public abstract class RelatedConceptsController<Q extends QuerySummaryElement, R
             @RequestParam(value = STATE_DONT_MATCH_TOKEN_PARAM, required = false) final List<String> stateDontMatchTokens,
             @RequestParam(value = MAX_RESULTS, required = false) final Integer maxResults
     ) throws E {
-        final QueryRestrictions<S> queryRestrictions = queryRestrictionsBuilderFactory.createBuilder()
-                .setQueryText(queryText)
-                .setFieldText(fieldText)
-                .setDatabases(databases)
-                .setMinDate(minDate)
-                .setMaxDate(maxDate)
-                .setMinScore(minScore)
-                .setStateMatchId(ListUtils.emptyIfNull(stateMatchTokens))
-                .setStateDontMatchId(ListUtils.emptyIfNull(stateDontMatchTokens))
+        final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
+                .queryText(queryText)
+                .fieldText(fieldText)
+                .databases(databases)
+                .minDate(minDate)
+                .maxDate(maxDate)
+                .minScore(minScore)
+                .stateMatchIds(ListUtils.emptyIfNull(stateMatchTokens))
+                .stateDontMatchIds(ListUtils.emptyIfNull(stateDontMatchTokens))
                 .build();
 
-        final RelatedConceptsRequest<S> relatedConceptsRequest = relatedConceptsRequestBuilderFactory.getObject()
-                .setMaxResults(maxResults)
-                .setQuerySummaryLength(QUERY_SUMMARY_LENGTH)
-                .setQueryRestrictions(queryRestrictions)
+        final R relatedConceptsRequest = relatedConceptsRequestBuilderFactory.getObject()
+                .maxResults(maxResults)
+                .querySummaryLength(QUERY_SUMMARY_LENGTH)
+                .queryRestrictions(queryRestrictions)
                 .build();
         return relatedConceptsService.findRelatedConcepts(relatedConceptsRequest);
     }

@@ -5,7 +5,8 @@
   -->
 
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 
     <appender name="FileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${hp.find.home:-./temp}/logs/server.log</file>

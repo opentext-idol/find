@@ -6,7 +6,7 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -45,7 +45,7 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
                 .param(DocumentsController.AUTO_CORRECT_PARAM, "false")
                 .param(DocumentsController.SUMMARY_PARAM, "context")
                 .param(DocumentsController.INDEXES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                .param(DocumentsController.QUERY_TYPE_PARAM, SearchRequest.QueryType.MODIFIED.name())
+                .param(DocumentsController.QUERY_TYPE_PARAM, QueryRequest.QueryType.MODIFIED.name())
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)
@@ -62,7 +62,7 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
                 .param(DocumentsController.MAX_RESULTS_PARAM, "50")
                 .param(DocumentsController.SUMMARY_PARAM, "context")
                 .param(DocumentsController.INDEXES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                .param(DocumentsController.QUERY_TYPE_PARAM, SearchRequest.QueryType.PROMOTIONS.name())
+                .param(DocumentsController.QUERY_TYPE_PARAM, QueryRequest.QueryType.PROMOTIONS.name())
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)

@@ -7,19 +7,54 @@ package com.hp.autonomy.frontend.find.idol.export;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.export.ExportController;
+import com.hp.autonomy.frontend.find.core.export.ExportFormat;
 import com.hp.autonomy.frontend.find.core.export.ExportService;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
+import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
+import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.io.OutputStream;
+import java.util.Collection;
+
 @Controller
-class IdolExportController extends ExportController<String, AciErrorException> {
+class IdolExportController extends ExportController<IdolQueryRequest, AciErrorException> {
+
+    private final IdolDocumentsService documentsService;
+    private final ExportService<IdolQueryRequest, AciErrorException> exportService;
 
     @Autowired
-    public IdolExportController(final ExportService<String, AciErrorException> exportService,
-                                final RequestMapper<String> requestMapper,
-                                final ControllerUtils controllerUtils) {
-        super(exportService, requestMapper, controllerUtils);
+    public IdolExportController(final RequestMapper<IdolQueryRequest> requestMapper,
+                                final ControllerUtils controllerUtils,
+                                final IdolDocumentsService documentsService,
+                                final ExportService<IdolQueryRequest, AciErrorException> exportService) {
+        super(requestMapper, controllerUtils);
+        this.documentsService = documentsService;
+        this.exportService = exportService;
+    }
+
+    @Override
+    protected void export(final OutputStream outputStream,
+                          final IdolQueryRequest queryRequest,
+                          final ExportFormat exportFormat,
+                          final Collection<String> selectedFieldNames) throws AciErrorException {
+        final StateTokenAndResultCount stateTokenAndResultCount = documentsService.getStateTokenAndResultCount(queryRequest.getQueryRestrictions(), queryRequest.getMaxResults(), false);
+
+        final IdolQueryRequest queryRequestWithStateToken = queryRequest.toBuilder()
+                .queryRestrictions(queryRequest.getQueryRestrictions().toBuilder()
+                        .stateMatchId(stateTokenAndResultCount.getTypedStateToken().getStateToken())
+                        .build())
+                .build();
+
+        for (int i = 0; i < stateTokenAndResultCount.getResultCount(); i += PAGINATION_SIZE) {
+            final IdolQueryRequest paginatedQueryRequest = queryRequestWithStateToken.toBuilder()
+                    .start(i + 1)
+                    .maxResults(i + PAGINATION_SIZE)
+                    .build();
+            exportService.export(outputStream, paginatedQueryRequest, exportFormat, selectedFieldNames);
+        }
     }
 }

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>find</artifactId>
         <groupId>com.hp.autonomy.frontend.find</groupId>
-        <version>11.2.0</version>
+        <version>11.3.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -134,13 +134,6 @@
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>haven-search-components-hod</artifactId>
             <version>${haven.search.components.version}</version>
-        </dependency>
-
-        <!-- Overriding the version supplied by haven-search-components since the ISO SSO process does not support cookie-less SSO -->
-        <dependency>
-            <groupId>com.hp.autonomy.hod</groupId>
-            <artifactId>hod-sso-spring-security</artifactId>
-            <version>0.8.0</version>
         </dependency>
 
         <!-- It's not clear why, but we need to define dependency here as well, not just at the core level.  Otherwise the hibernate classloader does not pick this up. -->

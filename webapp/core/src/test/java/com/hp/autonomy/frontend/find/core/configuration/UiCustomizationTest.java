@@ -5,33 +5,70 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.collect.ImmutableMap;
+import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
+import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
+import com.hp.autonomy.searchcomponents.core.test.CoreTestContext;
 import org.apache.commons.io.IOUtils;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
+import org.springframework.boot.test.autoconfigure.json.JsonTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.boot.test.json.JsonContent;
+import org.springframework.boot.test.json.ObjectContent;
+import org.springframework.core.ResolvableType;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 
+import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CLASSES_PROPERTY;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
+@RunWith(SpringRunner.class)
+@JsonTest
+@AutoConfigureJsonTesters(enabled = false)
+@SpringBootTest(classes = CoreTestContext.class, properties = CORE_CLASSES_PROPERTY)
 public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomization> {
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private TagNameFactory tagNameFactory;
+
+    @Override
+    public void setUp() {
+        final SimpleModule module = new SimpleModule();
+        module.addSerializer(new FindConfigFileService.TagNameSerializer());
+        objectMapper.registerModule(module);
+        json = new JacksonTester<>(getClass(), ResolvableType.forClass(getType()), objectMapper);
+    }
+
+    @Override
+    protected Class<UiCustomization> getType() {
+        return UiCustomization.class;
+    }
+
     @Override
     protected UiCustomization constructComponent() {
-        final UiCustomizationRule rule = new UiCustomizationRule();
-        rule.populateRule("user", false);
+        final UiCustomizationRule rule = UiCustomizationRule.builder()
+                .populateRule("user", false)
+                .build();
 
         final UiCustomizationOptions uiCustomizationOptions = new UiCustomizationOptions();
         uiCustomizationOptions.populateRules("option3", rule);
 
         return UiCustomization.builder()
-                .setOptions(uiCustomizationOptions)
-                .setSpecialUrlPrefixes(ImmutableMap.of("application/vnd.visio", "ms-visio:ofv|u|"))
-                .setErrorCallSupportString("Custom technical support message")
+                .options(uiCustomizationOptions)
+                .parametricOrderItem(tagNameFactory.buildTagName("FIELD_Y"))
+                .parametricOrderItem(tagNameFactory.buildTagName("FIELD_X"))
+                .specialUrlPrefixes(ImmutableMap.of("application/vnd.visio", "ms-visio:ofv|u|"))
+                .errorCallSupportString("Custom technical support message")
                 .build();
-    }
-
-    @Override
-    protected Class<UiCustomization> getComponentType() {
-        return UiCustomization.class;
     }
 
     @Override
@@ -40,30 +77,34 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
     }
 
     @Override
-    protected void validateJson(final String json) {
-        assertTrue(json.contains("options"));
-        assertTrue(json.contains("option3"));
-        assertTrue(json.contains("application/vnd.visio"));
-        assertTrue(json.contains("ms-visio:ofv|u|"));
-        assertTrue(json.contains("Custom technical support message"));
+    protected void validateJson(final JsonContent<UiCustomization> jsonContent) {
+        jsonContent.assertThat().hasJsonPathBooleanValue("@.options.option3.user", false);
+        jsonContent.assertThat().hasJsonPathStringValue("@.parametricOrder[0]", "FIELD_Y");
+        jsonContent.assertThat().hasJsonPathStringValue("@.parametricOrder[1]", "FIELD_X");
+        jsonContent.assertThat().hasJsonPathStringValue("@.specialUrlPrefixes.['application/vnd.visio']", "ms-visio:ofv|u|");
+        jsonContent.assertThat().hasJsonPathStringValue("@.errorCallSupportString", "Custom technical support message");
     }
 
     @Override
-    protected void validateParsedComponent(final UiCustomization component) {
-        assertNotNull(component.getOptions());
-        assertFalse(component.getOptions().any().isEmpty());
-        assertThat(component.getParametricNeverShow(), not(empty()));
-        assertThat(component.getParametricAlwaysShow(), not(empty()));
+    protected void validateParsedComponent(final ObjectContent<UiCustomization> objectContent) {
+        assertNotNull(objectContent.getObject().getOptions());
+        assertFalse(objectContent.getObject().getOptions().any().isEmpty());
+        assertThat(objectContent.getObject().getParametricNeverShow(), not(empty()));
+        assertThat(objectContent.getObject().getParametricAlwaysShow(), not(empty()));
     }
 
     @Override
-    protected void validateMergedComponent(final UiCustomization mergedComponent) {
-        assertThat(mergedComponent.getOptions().any(), hasKey("option1"));
-        assertThat(mergedComponent.getOptions().any(), hasKey("option2"));
-        assertThat(mergedComponent.getOptions().any(), hasKey("option3"));
-        assertThat(mergedComponent.getParametricNeverShow(), hasItem(is("A_CLEAN_NUMERIC_FIELD")));
-        assertThat(mergedComponent.getParametricAlwaysShow(), hasItem(is("AUTN_DATE")));
-        assertThat(mergedComponent.getSpecialUrlPrefixes(), hasKey("application/msword"));
-        assertThat(mergedComponent.getSpecialUrlPrefixes(), hasKey("application/vnd.visio"));
+    protected void validateMergedComponent(final ObjectContent<UiCustomization> objectContent) {
+        assertThat(objectContent.getObject().getOptions().any(), hasKey("option1"));
+        assertThat(objectContent.getObject().getOptions().any(), hasKey("option2"));
+        assertThat(objectContent.getObject().getOptions().any(), hasKey("option3"));
+        assertThat(objectContent.getObject().getParametricNeverShow(), hasItem(hasProperty("id", is("A_CLEAN_NUMERIC_FIELD"))));
+        assertThat(objectContent.getObject().getParametricAlwaysShow(), hasItem(hasProperty("id", is("AUTN_DATE"))));
+        assertThat(objectContent.getObject().getSpecialUrlPrefixes(), hasKey("application/msword"));
+        assertThat(objectContent.getObject().getSpecialUrlPrefixes(), hasKey("application/vnd.visio"));
+    }
+
+    @Override
+    protected void validateString(final String s) {
     }
 }

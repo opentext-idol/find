@@ -9,10 +9,10 @@ package com.hp.autonomy.frontend.find.idol.comparison;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.requests.IdolQueryRestrictionsMixin;
+import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,39 +20,43 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@SuppressWarnings({"SpringJavaAutowiringInspection", "SpringJavaAutowiredMembersInspection"})
 public class ComparisonServiceIT extends AbstractFindIT {
     private static final String EMPTY_RESULT_SET_TOKEN = "NULL-0";
     private final ObjectMapper mapper = new ObjectMapper();
-    private final QueryRestrictions<String> queryRestrictions = new IdolQueryRestrictions.Builder()
-            .setQueryText("*")
-            .setFieldText("")
-            .setMinScore(0)
-            .build();
 
-    @SuppressWarnings({"SpringJavaAutowiringInspection", "SpringJavaAutowiredMembersInspection"})
+    private IdolQueryRestrictions queryRestrictions;
+
     @Autowired
-    private DocumentsService<String, IdolSearchResult, AciErrorException> documentsService;
+    private IdolDocumentsService documentsService;
+    @Autowired
+    private IdolQueryRestrictionsBuilder idolQueryRestrictionsBuilder;
 
     private String twoDocStateToken;
     private String sixDocStateToken;
 
     @Before
     public void createStateTokens() throws AciErrorException {
+        mapper.addMixIn(IdolQueryRestrictions.class, IdolQueryRestrictionsMixin.class);
+
+        queryRestrictions = idolQueryRestrictionsBuilder
+                .queryText("*")
+                .fieldText("")
+                .minScore(0)
+                .build();
         twoDocStateToken = documentsService.getStateToken(queryRestrictions, 2, false);
         sixDocStateToken = documentsService.getStateToken(queryRestrictions, 6, false);
     }
 
     @Test
     public void basicUserNotAuthorised() throws Exception {
-        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
+        final ComparisonRequest<IdolQueryRestrictions> comparisonRequest = new ComparisonRequest.Builder<IdolQueryRestrictions>()
                 .setFirstQueryStateToken(twoDocStateToken)
                 .setSecondQueryStateToken(sixDocStateToken)
                 .build();
@@ -68,7 +72,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
 
     @Test
     public void compareQueryStateTokens() throws Exception {
-        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
+        final ComparisonRequest<IdolQueryRestrictions> comparisonRequest = new ComparisonRequest.Builder<IdolQueryRestrictions>()
                 .setFirstQueryStateToken(twoDocStateToken)
                 .setSecondQueryStateToken(sixDocStateToken)
                 .build();
@@ -87,7 +91,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
 
     @Test
     public void compareRestrictionsAndToken() throws Exception {
-        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
+        final ComparisonRequest<IdolQueryRestrictions> comparisonRequest = new ComparisonRequest.Builder<IdolQueryRestrictions>()
                 .setFirstRestrictions(queryRestrictions)
                 .setSecondQueryStateToken(sixDocStateToken)
                 .build();
@@ -106,7 +110,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
 
     @Test
     public void compareTokenAndRestrictions() throws Exception {
-        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
+        final ComparisonRequest<IdolQueryRestrictions> comparisonRequest = new ComparisonRequest.Builder<IdolQueryRestrictions>()
                 .setFirstQueryStateToken(twoDocStateToken)
                 .setSecondRestrictions(queryRestrictions)
                 .build();
@@ -125,7 +129,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
 
     @Test
     public void compareRestrictions() throws Exception {
-        final ComparisonRequest<String> comparisonRequest = new ComparisonRequest.Builder<String>()
+        final ComparisonRequest<IdolQueryRestrictions> comparisonRequest = new ComparisonRequest.Builder<IdolQueryRestrictions>()
                 .setFirstRestrictions(queryRestrictions)
                 .setSecondRestrictions(queryRestrictions)
                 .build();
@@ -153,7 +157,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .param(ComparisonController.RESULTS_START_PARAM, "1")
                 .param(ComparisonController.MAX_RESULTS_PARAM, "6")
                 .param(ComparisonController.SUMMARY_PARAM, "context")
-                .param(ComparisonController.SORT_PARAM, "relevance")
+                .param(ComparisonController.SORT_PARAM, "Relevance")
                 .param(ComparisonController.HIGHLIGHT_PARAM, "false")
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));

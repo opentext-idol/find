@@ -10,7 +10,7 @@
   "start": 10,
   "max_results": 30,
   "summary": "off",
-  "sort": "DocumentCount",
+  "sort": "relevance",
   "highlight": true,
   "auto_correct": true,
   "queryType": "RAW"

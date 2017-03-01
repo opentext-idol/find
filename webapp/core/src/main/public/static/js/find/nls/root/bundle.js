@@ -1,13 +1,14 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'js-whatever/js/substitution'
 ], function(substitution) {
     return substitution({
         'about.app.version': 'Version',
-        'about.copyright': "Find © Copyright 2014-2016 Hewlett Packard Enterprise Development Company, L.P.",
+        'about.copyright': "Find © Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.",
         'about.foss': 'FOSS Acknowledgements',
         'about.lib.name': 'Library Name',
         'about.lib.version': 'Version',
@@ -29,6 +30,8 @@ define([
         'app.from': 'From',
         'app.loading': 'Loading\u2026',
         'app.logout': 'Logout',
+        'app.less': "less",
+        'app.more': "more",
         'app.name': "HPE Find",
         'app.ok': 'OK',
         'app.rename': 'Rename',
@@ -75,6 +78,8 @@ define([
         'placeholder.hostname': 'hostname',
         'placeholder.ip': 'IP',
         'placeholder.port': 'port',
+        'search.answeredQuestion.question': 'Question: ',
+        'search.answeredQuestion.answer': 'Answer: ',
         'search.alsoSearchingFor': 'Also searching for',
         'search.concepts': 'Concepts',
         'search.concepts.empty': 'No concepts selected',
@@ -190,6 +195,9 @@ define([
         'search.resultsView.amount.shown': 'Showing <strong>{0}</strong> to <strong>{1}</strong> of <strong>{2}</strong> results',
         'search.resultsView.amount.shown.no.increment': 'Showing the top <strong>{0}</strong> results of <strong>{1}</strong>',
         'search.resultsView.amount.shown.no.results': 'There are no results with the location field selected',
+        'search.answeredQuestion': 'Answered question',
+        'search.answeredQuestion.systemName': 'Answered by {0}',
+        'search.promoted': 'Promoted',
         'search.savedSearchControl.save': 'Save',
         'search.savedSearchControl.openEdit.create': 'Save query',
         'search.savedSearchControl.openEdit.edit': 'Save as query',
@@ -233,6 +241,13 @@ define([
         'settings.unload.confirm': 'You have unsaved settings!',
         'settings.adminUser': 'Admin User',
         'settings.adminUser.description': 'Configure the admin username and password for Find.',
+        'settings.answerServer.description': 'Specify where Answer Server is located.',
+        'settings.answerServer.enable': 'Enable Answer Server',
+        'settings.answerServer.enabled': 'Answer Server is enabled',
+        'settings.answerServer.disable': 'Disable Answer Server',
+        'settings.answerServer.disabled': 'Answer Server is disabled',
+        'settings.answerServer.loading': 'Loading\u2026',
+        'settings.answerServer.title': 'Answer Server',
         'settings.community.description': "Community handles authentication for Find. We recommend using a dedicated Community server for Find and not using it for any other parts of your IDOL installation.  Your Community server will need an Agentstore server for data storage.",
         'settings.community.login.type': 'Login Type',
         'settings.community.login.fetchTypes': 'Test connection to retrieve available login types.',

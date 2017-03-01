@@ -7,30 +7,95 @@ package com.hp.autonomy.frontend.find.idol.fields;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.fields.AbstractFieldsControllerTest;
-import com.hp.autonomy.frontend.find.core.fields.FieldsController;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
+import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.searchcomponents.idol.beanconfiguration.HavenSearchIdolConfiguration;
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsRequest;
+import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsService;
 import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequest;
+import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricValuesService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
+import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
+import org.mockito.Mock;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.mockito.Mockito.mock;
+import java.util.List;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolFieldsRequest, AciErrorException, String, IdolQueryRestrictions, IdolParametricRequest> {
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
+@SpringBootTest(classes = HavenSearchIdolConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolFieldsController, IdolFieldsRequest, AciErrorException, String, IdolQueryRestrictions, IdolParametricRequest, IdolFindConfig> {
+    @Mock
+    private IdolFieldsService idolFieldsService;
+    @Mock
+    private IdolParametricValuesService idolParametricValuesService;
+    @Mock
+    private ObjectFactory<IdolParametricRequestBuilder> parametricRequestBuilderFactory;
+    @Mock
+    private IdolParametricRequestBuilder parametricRequestBuilder;
+    @Mock
+    private ObjectFactory<IdolFieldsRequestBuilder> fieldsRequestBuilderFactory;
+    @Mock
+    private IdolFieldsRequestBuilder fieldsRequestBuilder;
+    @Mock
+    private IdolFieldsRequest fieldsRequest;
+    @Mock
+    private ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
+    @Mock
+    private IdolQueryRestrictionsBuilder queryRestrictionsBuilder;
+    @Mock
+    private IdolFindConfig idolFindConfig;
+
     @Override
-    protected FieldsController<IdolFieldsRequest, AciErrorException, String, IdolQueryRestrictions, IdolParametricRequest> constructController() {
-        @SuppressWarnings("unchecked")
-        final ObjectFactory<ParametricRequest.Builder<IdolParametricRequest, String>> requestBuilderFactory = mock(ObjectFactory.class);
+    protected IdolFieldsController constructController() {
+        when(parametricRequestBuilderFactory.getObject()).thenReturn(parametricRequestBuilder);
+        when(parametricRequestBuilder.fieldNames(any())).thenReturn(parametricRequestBuilder);
+        when(parametricRequestBuilder.queryRestrictions(any())).thenReturn(parametricRequestBuilder);
 
-        final ParametricRequest.Builder<IdolParametricRequest, String> builder = new IdolParametricRequest.Builder();
-        when(requestBuilderFactory.getObject()).thenReturn(builder);
+        when(fieldsRequestBuilderFactory.getObject()).thenReturn(fieldsRequestBuilder);
+        when(fieldsRequestBuilder.build()).thenReturn(fieldsRequest);
 
-        return new IdolFieldsController(service, parametricValuesService, requestBuilderFactory, configService);
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
+
+        return new IdolFieldsController(idolFieldsService, idolParametricValuesService, parametricRequestBuilderFactory, tagNameFactory, configService, fieldsRequestBuilderFactory, queryRestrictionsBuilderFactory);
     }
 
     @Override
-    protected IdolFieldsRequest createRequest() {
-        return new IdolFieldsRequest.Builder().build();
+    protected IdolFieldsService constructService() {
+        return idolFieldsService;
+    }
+
+    @Override
+    protected IdolParametricValuesService constructParametricValuesService() {
+        return idolParametricValuesService;
+    }
+
+    @Override
+    protected IdolFindConfig mockConfig() {
+        return idolFindConfig;
+    }
+
+    @Override
+    protected List<TagName> getParametricFields() {
+        return controller.getParametricFields();
+    }
+
+    @Override
+    protected List<FieldAndValueDetails> getParametricDateFields() {
+        return controller.getParametricDateFields();
+    }
+
+    @Override
+    protected List<FieldAndValueDetails> getParametricNumericFields() {
+        return controller.getParametricNumericFields();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -29,7 +29,7 @@ public class TomcatConfig {
     public EmbeddedServletContainerFactory servletContainer() {
         final TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
 
-        if (useReverseProxy) {
+        if(useReverseProxy) {
             tomcat.addAdditionalTomcatConnectors(createAjpConnector());
         }
 
@@ -49,5 +49,4 @@ public class TomcatConfig {
         connector.setAttribute("tomcatAuthentication", false);
         return connector;
     }
-
 }

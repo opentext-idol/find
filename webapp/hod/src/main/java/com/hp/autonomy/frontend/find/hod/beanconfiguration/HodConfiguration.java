@@ -7,10 +7,10 @@ package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hp.autonomy.frontend.configuration.Authentication;
-import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.configuration.SingleUserAuthenticationValidator;
+import com.hp.autonomy.frontend.configuration.authentication.Authentication;
+import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
+import com.hp.autonomy.frontend.configuration.authentication.SingleUserAuthenticationValidator;
 import com.hp.autonomy.frontend.find.hod.configuration.HodAuthenticationMixins;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.api.authentication.AuthenticationService;
@@ -28,12 +28,13 @@ import com.hp.autonomy.hod.sso.HodAuthenticationRequestServiceImpl;
 import com.hp.autonomy.hod.sso.HodSsoConfig;
 import com.hp.autonomy.hod.sso.UnboundTokenService;
 import com.hp.autonomy.hod.sso.UnboundTokenServiceImpl;
+import com.hp.autonomy.searchcomponents.hod.requests.HodQueryRestrictionsMixin;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,14 +59,16 @@ public class HodConfiguration {
     @Autowired
     public ObjectMapper jacksonObjectMapper(final Jackson2ObjectMapperBuilder builder, final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever) {
         final ObjectMapper mapper = builder.createXmlMapper(false)
-            .mixIn(Authentication.class, HodAuthenticationMixins.class)
-            .build();
+                .mixIn(Authentication.class, HodAuthenticationMixins.class)
+                .mixIn(HodQueryRestrictions.class, HodQueryRestrictionsMixin.class)
+                .build();
 
         mapper.setInjectableValues(new InjectableValues.Std().addValue(AuthenticationInformationRetriever.class, authenticationInformationRetriever));
 
         return mapper;
     }
 
+    @SuppressWarnings("TypeMayBeWeakened")
     @Bean
     public SingleUserAuthenticationValidator singleUserAuthenticationValidator(final ConfigService<? extends AuthenticationConfig<?>> configService) {
         final SingleUserAuthenticationValidator singleUserAuthenticationValidator = new SingleUserAuthenticationValidator();

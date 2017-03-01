@@ -12,24 +12,30 @@ import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
-class IdolSavedQueryController extends SavedQueryController<String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
+class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
+    @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
     public IdolSavedQueryController(final SavedSearchService<SavedQuery> service,
-                                    final DocumentsService<String, IdolSearchResult, AciErrorException> documentsService,
+                                    final IdolDocumentsService documentsService,
                                     final FieldTextParser fieldTextParser,
-                                    final QueryRestrictionsBuilderFactory<IdolQueryRestrictions, String> queryRestrictionsBuilderFactory) {
-        super(service, documentsService, fieldTextParser, queryRestrictionsBuilderFactory);
+                                    final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
+                                    final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory) {
+        super(service, documentsService, fieldTextParser, queryRestrictionsBuilderFactory, queryRequestBuilderFactory);
     }
 
     @Override
@@ -38,7 +44,7 @@ class IdolSavedQueryController extends SavedQueryController<String, IdolQueryRes
     }
 
     @Override
-    protected String getNoResultsPrintParam() {
-        return PrintParam.NoResults.name();
+    protected void addParams(final QueryRequestBuilder<IdolQueryRequest, IdolQueryRestrictions, ?> queryRequestBuilder) {
+        queryRequestBuilder.print(PrintParam.NoResults.name());
     }
 }

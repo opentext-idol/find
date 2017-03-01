@@ -5,7 +5,6 @@
 define([
     'backbone',
     'underscore',
-    'find/app/util/model-any-changed-attribute-listener',
     'find/app/util/topic-map-view',
     'find/app/model/entity-collection',
     'i18n!find/nls/bundle',
@@ -15,7 +14,8 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'iCheck',
     'slider/bootstrap-slider'
-], function(Backbone, _, addChangeListener, TopicMapView, EntityCollection, i18n, configuration, generateErrorHtml, template, loadingTemplate) {
+], function(Backbone, _, TopicMapView, EntityCollection, i18n, configuration, generateErrorHtml, template,
+            loadingTemplate) {
     'use strict';
 
     var loadingHtml = _.template(loadingTemplate)({i18n: i18n, large: true});
@@ -56,7 +56,6 @@ define([
                 getSelectedRelatedConcepts: function() {
                     // Comparison topic view does not have queryState
                     return this.queryState ? _.flatten(this.queryState.conceptGroups.pluck('concepts')) : [];
-
                 }.bind(this)
             });
             this.queryModel = options.queryModel;

@@ -17,7 +17,7 @@ import com.hp.autonomy.frontend.find.core.stats.Event;
 import com.hp.autonomy.frontend.find.core.stats.PageEvent;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.StatsServerConfig;
-import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
+import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import lombok.Data;
 import org.junit.Before;
@@ -52,7 +52,7 @@ public class IdolStatsServiceTest {
     private AciService aciService;
 
     @Mock
-    private AciResponseJaxbProcessorFactory processorFactory;
+    private ProcessorFactory processorFactory;
 
     @Mock
     private AuthenticationInformationRetriever<?, TestPrincipal> authenticationInformationRetriever;
@@ -74,7 +74,7 @@ public class IdolStatsServiceTest {
 
         when(configService.getConfig()).thenReturn(config);
         when(config.getStatsServer()).thenReturn(statsServerConfig);
-        when(statsServerConfig.isEnabled()).thenReturn(true);
+        when(statsServerConfig.getEnabled()).thenReturn(true);
 
         statsService = new IdolStatsService(aciService, processorFactory, xmlMapper, configService);
     }

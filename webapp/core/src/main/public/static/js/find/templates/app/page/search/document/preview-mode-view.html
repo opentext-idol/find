@@ -15,11 +15,11 @@
             <%- i18n['search.document.detail.highlightQueryTerms'] %>
         </button>
     <% } %>
-    <% if (mmapBaseUrl && mmapUrl) { %>
-        <a class="btn btn-white m-b-nil m-t-xs" href="<%-mmapBaseUrl + mmapUrl%>" target="_blank">
+    <% if (mmap) { %>
+        <button type="button" class="preview-mode-mmap-button btn btn-white m-b-nil m-t-xs">
             <i class="fa fa-external-link"></i>
             <%-i18n['search.preview.mmap']%>
-        </a>
+        </button>
     <% } %>
 </div>
 <h4 class="preview-mode-document-title"></h4>

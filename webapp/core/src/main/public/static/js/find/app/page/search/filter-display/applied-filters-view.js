@@ -1,16 +1,19 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
+    'jquery',
     'find/app/page/search/abstract-section-view',
     'js-whatever/js/list-view',
     'js-whatever/js/list-item-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filter-display/applied-filters-view.html',
     'text!find/templates/app/page/search/filter-display/applied-filters-view-item.html',
+    'underscore',
     'bootstrap'
-], function(AbstractSectionView, ListView, ListItemView, i18n, template, itemTemplate) {
+], function($, AbstractSectionView, ListView, ListItemView, i18n, template, itemTemplate, _) {
     'use strict';
 
     var html = _.template(template)({i18n: i18n});

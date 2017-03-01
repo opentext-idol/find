@@ -8,32 +8,23 @@ package com.hp.autonomy.frontend.find.hod.configuration;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
-import com.hp.autonomy.frontend.find.core.configuration.ConfigurationComponent;
-import lombok.Data;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
+import com.hp.autonomy.frontend.configuration.SimpleComponent;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.net.URL;
 
-@Data
-@JsonDeserialize(builder = HsodConfig.Builder.class)
-public class HsodConfig implements ConfigurationComponent<HsodConfig> {
+@Getter
+@Builder
+@SuppressWarnings("DefaultAnnotationParam")
+@EqualsAndHashCode(callSuper = false)
+@ToString
+@JsonDeserialize(builder = HsodConfig.HsodConfigBuilder.class)
+public class HsodConfig extends SimpleComponent<HsodConfig> implements ConfigurationComponent<HsodConfig> {
     private final URL landingPageUrl;
-
-    private HsodConfig(final Builder builder) {
-        landingPageUrl = builder.landingPageUrl;
-    }
-
-    @Override
-    public HsodConfig merge(final HsodConfig other) {
-        if (other == null) {
-            return this;
-        }
-
-        return new Builder()
-                .setLandingPageUrl(landingPageUrl == null ? other.landingPageUrl : landingPageUrl)
-                .build();
-    }
 
     @Override
     public void basicValidate(final String section) throws ConfigException {
@@ -42,14 +33,8 @@ public class HsodConfig implements ConfigurationComponent<HsodConfig> {
         }
     }
 
-    @Setter
-    @JsonPOJOBuilder(withPrefix = "set")
-    @Accessors(chain = true)
-    public static class Builder {
-        private URL landingPageUrl;
-
-        public HsodConfig build() {
-            return new HsodConfig(this);
-        }
+    @SuppressWarnings("WeakerAccess")
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class HsodConfigBuilder {
     }
 }

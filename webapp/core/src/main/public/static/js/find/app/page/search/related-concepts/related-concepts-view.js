@@ -1,7 +1,8 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'backbone',
     'jquery',
@@ -19,8 +20,8 @@ define([
     'text!find/templates/app/page/loading-spinner.html'
 ], function(Backbone, $, _, i18n, DocumentsCollection, popover, searchDataUtil, viewStateSelector, addLinksToSummary, viewTemplate, clusterTemplate,
             popoverMessageTemplate, popoverTemplate, loadingSpinnerTemplate) {
-    "use strict";
-    
+    'use strict';
+
     var html = _.template(viewTemplate)({
         i18n: i18n,
         loadingSpinnerHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false})
@@ -48,7 +49,7 @@ define([
 
     function popoverHandler($content, $target) {
         var entityCluster = $target.data('entityCluster');
-        var clusterEntities = _.isUndefined(entityCluster) ? [$target.data('entityText')] : _.flatten(this.entityCollection.getClusterEntities(entityCluster)).map(function (concept) {
+        var clusterEntities = _.isUndefined(entityCluster) ? [$target.data('entityText')] : _.flatten(this.entityCollection.getClusterEntities(entityCluster)).map(function(concept) {
             return '"' + concept + '"';
         });
         var relatedConcepts = _.union(this.conceptGroups.pluck('concepts'), [clusterEntities]);
@@ -92,7 +93,7 @@ define([
 
                     var $popover = $content.closest('.popover');
 
-                    if ($popover.hasClass('top')) {
+                    if($popover.hasClass('top')) {
                         // we've changed the content, so the Bootstrap provided position is wrong for top positioning
                         // we need to adjust the top by the difference between the old height and the new height
                         var newHeight = $content.height();

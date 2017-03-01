@@ -9,12 +9,12 @@ import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.find.core.export.ExportFormat;
 import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
 import com.hp.autonomy.frontend.find.core.export.MetadataNode;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldType;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.joda.time.DateTime;
@@ -38,19 +38,25 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class HodExportServiceTest {
     @Mock
-    private DocumentsService<ResourceIdentifier, HodSearchResult, HodErrorException> documentsService;
+    private HodDocumentsService documentsService;
+    @Mock
+    private HodQueryRequestBuilder queryRequestBuilder;
+    @Mock
+    private HodQueryRequest queryRequest;
     @Mock
     private ExportStrategy exportStrategy;
     @Mock
     private OutputStream outputStream;
-    @Mock
-    private SearchRequest<ResourceIdentifier> searchRequest;
 
     private List<String> fieldNames;
     private HodExportService hodExportService;
 
     @Before
     public void setUp() {
+        when(queryRequest.toBuilder()).thenReturn(queryRequestBuilder);
+        when(queryRequestBuilder.printFields(any())).thenReturn(queryRequestBuilder);
+        when(queryRequestBuilder.build()).thenReturn(queryRequest);
+
         when(exportStrategy.getExportFormat()).thenReturn(ExportFormat.CSV);
         fieldNames = Arrays.asList(HodMetadataNode.REFERENCE.getDisplayName(), HodMetadataNode.DATABASE.getDisplayName(), HodMetadataNode.SUMMARY.getDisplayName(), HodMetadataNode.DATE.getDisplayName(), "authors", "categories", "books", "epic", "lastRead");
         when(exportStrategy.getFieldNames(any(MetadataNode[].class), eq(Collections.emptyList()))).thenReturn(fieldNames);
@@ -74,37 +80,47 @@ public class HodExportServiceTest {
     public void export() throws IOException, HodErrorException {
         when(exportStrategy.writeHeader()).thenReturn(true);
 
-        final HodSearchResult result1 = new HodSearchResult.Builder()
-                .setReference("1")
-                .setIndex("ClassicalDomain:GreekLiterature")
-                .setTitle("The Iliad")
-                .setSummary("Sing goddess of the anger of Achilles")
-                .setWeight(0.51)
-                .setDate(DateTime.now())
-                .setFieldMap(ImmutableMap.of(
+        final HodSearchResult result1 = HodSearchResult.builder()
+                .reference("1")
+                .index("ClassicalDomain:GreekLiterature")
+                .title("The Iliad")
+                .summary("Sing goddess of the anger of Achilles")
+                .weight(0.51)
+                .date(DateTime.now())
+                .fieldMap(ImmutableMap.of(
                         "author", fieldInfo("authors", "author", FieldType.STRING, "Homer"),
                         "books", fieldInfo("books", "books", FieldType.NUMBER, 24),
                         "epic", fieldInfo("epic", "epic", FieldType.BOOLEAN, true),
                         "lastRead", fieldInfo("lastRead", "lastRead", FieldType.DATE, DateTime.now())))
                 .build();
-        final HodSearchResult result2 = new HodSearchResult.Builder()
-                .setReference("2")
-                .setIndex("ClassicalDomain:GreekLiterature")
-                .setTitle("The Theogony")
-                .setSummary("Inspired by the Muses of Mount Helicon let us sing")
-                .setWeight(0.62)
-                .setDate(DateTime.now())
-                .setFieldMap(ImmutableMap.of("categories", new FieldInfo<>("categories", Collections.singleton("category"), FieldType.STRING, false, Arrays.asList("Epic Literature", "Philosophy", "Cosmogony"))))
+        final HodSearchResult result2 = HodSearchResult.builder()
+                .reference("2")
+                .index("ClassicalDomain:GreekLiterature")
+                .title("The Theogony")
+                .summary("Inspired by the Muses of Mount Helicon let us sing")
+                .weight(0.62)
+                .date(DateTime.now())
+                .fieldMap(ImmutableMap.of("categories", FieldInfo.builder()
+                        .id("categories")
+                        .name("category")
+                        .values(Arrays.asList("Epic Literature", "Philosophy", "Cosmogony"))
+                        .build()))
                 .build();
         final Documents<HodSearchResult> results = new Documents<>(Arrays.asList(result1, result2), 2, null, null, null, null);
         when(documentsService.queryTextIndex(Matchers.any())).thenReturn(results);
 
-        hodExportService.export(outputStream, searchRequest, ExportFormat.CSV, Collections.emptyList());
+        hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
         verify(exportStrategy, times(3)).exportRecord(eq(outputStream), anyListOf(String.class));
     }
 
     private FieldInfo<?> fieldInfo(final String id, final String name, final FieldType type, final Object value) {
-        return new FieldInfo<>(id, Collections.singleton(name), type, true, value);
+        return FieldInfo.builder()
+                .id(id)
+                .name(name)
+                .type(type)
+                .advanced(true)
+                .value(value)
+                .build();
     }
 
     @Test
@@ -112,7 +128,7 @@ public class HodExportServiceTest {
         when(exportStrategy.writeHeader()).thenReturn(true);
         when(documentsService.queryTextIndex(Matchers.any())).thenReturn(new Documents<>(Collections.emptyList(), 0, null, null, null, null));
 
-        hodExportService.export(outputStream, searchRequest, ExportFormat.CSV, Collections.emptyList());
+        hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
         verify(exportStrategy).exportRecord(outputStream, fieldNames);
     }
 
@@ -120,7 +136,7 @@ public class HodExportServiceTest {
     public void exportEmptyResultSetWithoutHeader() throws IOException, HodErrorException {
         when(documentsService.queryTextIndex(Matchers.any())).thenReturn(new Documents<>(Collections.emptyList(), 0, null, null, null, null));
 
-        hodExportService.export(outputStream, searchRequest, ExportFormat.CSV, Collections.emptyList());
+        hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
         verify(exportStrategy, never()).exportRecord(eq(outputStream), anyListOf(String.class));
     }
 
@@ -129,6 +145,7 @@ public class HodExportServiceTest {
         when(exportStrategy.writeHeader()).thenReturn(true);
         when(documentsService.queryTextIndex(Matchers.any())).thenReturn(new Documents<>(Collections.emptyList(), 0, null, null, null, null));
         doThrow(new IOException("")).when(exportStrategy).exportRecord(eq(outputStream), anyListOf(String.class));
-        hodExportService.export(outputStream, searchRequest, ExportFormat.CSV, Collections.emptyList());
+
+        hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
     }
 }

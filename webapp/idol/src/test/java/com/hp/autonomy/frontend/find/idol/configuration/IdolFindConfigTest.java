@@ -6,9 +6,9 @@
 package com.hp.autonomy.frontend.find.idol.configuration;
 
 import com.autonomy.aci.client.transport.AciServerDetails;
-import com.hp.autonomy.frontend.configuration.CommunityAuthentication;
 import com.hp.autonomy.frontend.configuration.ConfigException;
-import com.hp.autonomy.frontend.configuration.ServerConfig;
+import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
+import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
@@ -43,24 +43,24 @@ public class IdolFindConfigTest {
 
     @Before
     public void setUp() {
-        idolFindConfig = new IdolFindConfig.Builder()
-                .setContent(serverConfig)
-                .setLogin(communityAuthentication)
-                .setQueryManipulation(queryManipulation)
-                .setSavedSearchConfig(savedSearchConfig)
-                .setView(viewConfig)
+        idolFindConfig = IdolFindConfig.builder()
+                .content(serverConfig)
+                .login(communityAuthentication)
+                .queryManipulation(queryManipulation)
+                .savedSearchConfig(savedSearchConfig)
+                .view(viewConfig)
                 .build();
     }
 
     @Test
     public void validateGoodConfig() throws ConfigException {
-        idolFindConfig.basicValidate();
+        idolFindConfig.basicValidate(null);
     }
 
     @Test(expected = ConfigException.class)
     public void validateBadConfig() throws ConfigException {
-        doThrow(new ConfigException("QMS", "Bad Config")).when(queryManipulation).basicValidate();
-        idolFindConfig.basicValidate();
+        doThrow(new ConfigException("QMS", "Bad Config")).when(queryManipulation).basicValidate(anyString());
+        idolFindConfig.basicValidate(null);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class IdolFindConfigTest {
         when(savedSearchConfig.merge(any(SavedSearchConfig.class))).thenReturn(savedSearchConfig);
         when(viewConfig.merge(any(ViewConfig.class))).thenReturn(viewConfig);
 
-        final IdolFindConfig defaults = new IdolFindConfig.Builder().setContent(mock(ServerConfig.class)).build();
+        final IdolFindConfig defaults = IdolFindConfig.builder().content(mock(ServerConfig.class)).build();
         final IdolFindConfig mergedConfig = idolFindConfig.merge(defaults);
         assertEquals(serverConfig, mergedConfig.getContent());
         assertEquals(communityAuthentication, mergedConfig.getLogin());

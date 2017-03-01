@@ -1,13 +1,13 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
 import com.hp.autonomy.frontend.configuration.Config;
-import com.hp.autonomy.frontend.configuration.ValidationResults;
-import com.hp.autonomy.frontend.configuration.ValidationService;
+import com.hp.autonomy.frontend.configuration.validation.ValidationResults;
+import com.hp.autonomy.frontend.configuration.validation.ValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
