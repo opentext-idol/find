@@ -16,9 +16,9 @@ define([
             generateErrorHtml, loadingSpinnerTemplate) {
     'use strict';
 
-    var fieldIsValid = function(field, fields) {
+    function fieldIsValid(field, fields) {
         return field && _.contains(fields, field);
-    };
+    }
 
     function getClickedParameters(data, fields, selectedParameters) {
         if(data.depth !== 0) {
@@ -33,7 +33,7 @@ define([
         return selectedParameters;
     }
 
-    var SNAPSHOT = 'SNAPSHOT';
+    const SNAPSHOT = 'SNAPSHOT';
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -195,10 +195,8 @@ define([
             this.firstChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(0),
                 name: 'first',
-                fields: _.difference(
-                    this.parametricCollection.pluck('id'),
-                    this.selectedParametricValues.pluck('field')
-                ).sort(),
+                fields: _.difference(this.parametricCollection.pluck('id'),
+                    this.selectedParametricValues.pluck('field')).sort(),
                 allowEmpty: false
             });
 
@@ -214,10 +212,8 @@ define([
             this.secondChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(1),
                 name: 'second',
-                fields: _.difference(
-                    this.parametricCollection.pluck('id'),
-                    _.union([this.fieldsCollection.at(0).get('field')], this.selectedParametricValues.pluck('field'))
-                ).sort(),
+                fields: _.difference(this.parametricCollection.pluck('id'),
+                    _.union([this.fieldsCollection.at(0).get('field')], this.selectedParametricValues.pluck('field'))).sort(),
                 allowEmpty: true
             });
 
@@ -234,14 +230,13 @@ define([
         },
 
         resolveFieldSelections: function() {
-            var fields = _.difference(
+            const fields = _.difference(
                 this.parametricCollection.pluck('name'),
                 this.selectedParametricValues.pluck('field')
             );
 
-            var primaryModel = this.fieldsCollection.at(0);
-            var secondaryModel = this.fieldsCollection.at(1);
-
+            const primaryModel = this.fieldsCollection.at(0);
+            const secondaryModel = this.fieldsCollection.at(1);
             const primaryField = primaryModel.get('field');
 
             if(!fieldIsValid(primaryField, fields)) {
