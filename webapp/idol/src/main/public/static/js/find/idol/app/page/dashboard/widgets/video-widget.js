@@ -68,8 +68,8 @@ define([
                     max_results: this.searchResultNumber,
                     indexes: this.queryModel.get('indexes'),
                     field_text: fieldText,
-                    min_date: this.queryModel.get('minDate'),
-                    max_date: this.queryModel.get('maxDate'),
+                    min_date: this.queryModel.getIsoDate('minDate'),
+                    max_date: this.queryModel.getIsoDate('maxDate'),
                     sort: 'relevance',
                     summary: 'context',
                     queryType: 'MODIFIED'
