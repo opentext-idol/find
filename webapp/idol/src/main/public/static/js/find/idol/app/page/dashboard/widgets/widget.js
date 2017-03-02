@@ -24,15 +24,17 @@ define([
         },
 
         render: function() {
-            this.$el.html(this.template({
-                name: this.name
-            }));
+            if(!this.$content) {
+                this.$el.html(this.template({
+                    name: this.name
+                }));
 
-            if(this.clickable) {
-                this.$el.click(this.onClick.bind(this));
+                if(this.clickable) {
+                    this.$el.click(this.onClick.bind(this));
+                }
+
+                this.$content = this.$('.widget-content').addClass(this.viewType);
             }
-
-            this.$content = this.$('.widget-content').addClass(this.viewType);
         },
 
         contentHeight: function() {

@@ -69,15 +69,23 @@ define([
             SavedSearchWidget.prototype.render.apply(this);
 
             var data = this.dependentParametricCollection.toJSON();
+            var rootData = {children: data};
 
             if(data.length > 0) {
-                this.$legendContainer = $('<div class="sunburst-legend"></div>');
-                this.$visualizerContainer = $('<div class="sunburst-visualizer-container"></div>');
+                if(!(this.$legendContainer && this.$visualizerContainer)) {
+                    this.$legendContainer = $('<div class="sunburst-legend"></div>');
+                    this.$visualizerContainer = $('<div class="sunburst-visualizer-container"></div>');
 
-                this.$content.append(this.$visualizerContainer.add(this.$legendContainer));
+                    this.$content.append(this.$visualizerContainer.add(this.$legendContainer));
+                }
                 this.determineLayout();
 
-                this.sunburst = this.drawSunburst(data);
+                if(this.sunburst) {
+                    this.sunburst.resize();
+                    this.sunburst.redraw(rootData);
+                } else {
+                    this.sunburst = this.drawSunburst(rootData);
+                }
                 this.$legendContainer
                     .html(this.legendTemplate({
                         innerRingHeader: prettyOrNull(this.firstField),
@@ -111,7 +119,7 @@ define([
             if(this.sunburst) {
                 //TODO recalculate font sizes here?
                 this.sunburst.resize();
-                this.sunburst.redraw();
+                this.sunburst.redraw({children: this.dependentParametricCollection.toJSON()});
             }
         },
 
@@ -127,7 +135,6 @@ define([
                     palette: d3.scale.category20c()
                 });
 
-                this.$visualizerContainer.empty();
 
                 var sunburst = new Sunburst(this.$visualizerContainer, {
                     animate: false,
@@ -137,9 +144,7 @@ define([
                         return d3.ascending(datumA.text, datumB.text);
                     },
                     outerRingAnimateSize: 15,
-                    data: {
-                        children: data
-                    },
+                    data: data,
                     fillColorFn: function(datum) {
                         if(datum.parent) {
                             if(datum.hidden || datum.parent.hidden) {

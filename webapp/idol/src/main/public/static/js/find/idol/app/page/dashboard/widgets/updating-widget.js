@@ -20,11 +20,16 @@ define([
         render: function() {
             Widget.prototype.render.apply(this);
 
-            this.$('.title').append(loadingTemplate);
+            if(!this.widgetLoadingSpinner) {
+                this.$('.title').append(loadingTemplate);
+                this.widgetLoadingSpinner = this.$('.widget-loading-spinner');
+            }
         },
 
         toggleSpinner: function(show) {
-            this.$('.widget-loading-spinner').toggleClass('hide', !show);
+            if(this.widgetLoadingSpinner) {
+                this.widgetLoadingSpinner.toggleClass('hide', !show);
+            }
         },
 
         update: function(updateTracker) {
