@@ -42,6 +42,22 @@ define([
             this.$time.text(time.format(this.timeFormat));
             this.$day.text(time.format('dddd'));
             this.$date.text(time.format(this.dateFormat));
+        },
+
+        exportPPTData: function(){
+            const fontScale = 10 / 16;
+
+            return {
+                data: {
+                    text: _.map([this.$time, this.$day, this.$date], function($el){
+                        return {
+                            text: $el.text().toUpperCase() + '\n',
+                            fontSize: Math.round(parseInt($el.css('font-size')) * fontScale)
+                        }
+                    })
+                },
+                type: 'text'
+            };
         }
     });
 });

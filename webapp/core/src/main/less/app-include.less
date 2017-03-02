@@ -2019,6 +2019,7 @@ h4.similar-dates-message {
   &:hover {
     transform: scale(1.015);
     transition: 0.3s;
+    z-index: 1;
   }
 
   .title {
@@ -2257,6 +2258,19 @@ h4.similar-dates-message {
 
 .results-view-pptx {
   margin-left: 5px;
+}
+
+.report-pptx-group {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  opacity: 0.1;
+  transition: 0.5s opacity;
+}
+
+.report-pptx-group:hover {
+  opacity: 1;
 }
 
 .powerpoint-margins {

@@ -5,7 +5,8 @@
 
 define([
     'jquery',
-    './widget'
+    './widget',
+    'html2canvas'
 ], function($, Widget) {
     'use strict';
 
@@ -22,6 +23,38 @@ define([
             const html = $('<div class="static-image" style=\'background-image: url("' + this.url + '")\'></div>');
 
             this.$content.html(html);
+        },
+
+        exportPPTData: function(){
+            var $imageEl = this.$('.static-image');
+
+            if (!$imageEl.length) {
+                return
+            }
+
+            var deferred = $.Deferred();
+            html2canvas($imageEl[0], {
+                useCORS: true,
+                onrendered: function(canvas) {
+                    try {
+                        deferred.resolve({
+                            image: canvas.toDataURL('image/jpeg'),
+                            markers: []
+                        });
+                    }
+                    catch (e) {
+                        // canvas.toDataURL can throw exceptions in IE11 even if there's CORS headers on the background-image
+                        deferred.resolve(null)
+                    }
+                }
+            });
+
+            return deferred.then(function(data){
+                return data && {
+                    data: data,
+                    type: 'map'
+                }
+            });
         }
     });
 });
