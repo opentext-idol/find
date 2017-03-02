@@ -8,6 +8,7 @@ require.config({
     paths: {
         'find': '../../../es5-jasmine-test/find',
         'find/templates': 'find/templates',
-        'find/idol/templates': 'find/idol/templates'
+        'find/idol/templates': 'find/idol/templates',
+        'mock': '../../../es5-jasmine-test-specs/mock'
     }
 });

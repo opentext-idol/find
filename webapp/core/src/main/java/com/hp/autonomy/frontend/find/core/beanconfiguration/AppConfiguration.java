@@ -6,10 +6,10 @@
 package com.hp.autonomy.frontend.find.core.beanconfiguration;
 
 import com.hp.autonomy.frontend.configuration.BaseConfigFileService;
-import com.hp.autonomy.frontend.configuration.Config;
 import com.hp.autonomy.frontend.configuration.validation.ValidationService;
 import com.hp.autonomy.frontend.configuration.validation.ValidationServiceImpl;
 import com.hp.autonomy.frontend.configuration.validation.Validator;
+import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.logging.ApplicationStartLogger;
 import com.hp.autonomy.frontend.logging.UserLoggingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ import java.util.Set;
  */
 @Configuration
 @PropertySource("classpath:/version.properties")
-public class AppConfiguration<C extends Config<C>> {
+public class AppConfiguration<C extends FindConfig<C, ?>> {
     public static final String APPLICATION_RELEASE_VERSION_PROPERTY = "${application.releaseVersion}";
     public static final String GIT_COMMIT_PROPERTY = "${application.commit}";
 
