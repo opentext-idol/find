@@ -1,12 +1,14 @@
 /*
- * Copyright 2014-2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
+    'jquery',
     'find/idol/app/page/dashboard/widgets/updating-widget',
     'find/idol/app/page/dashboard/update-tracker-model'
-], function(UpdatingWidget, UpdateTrackerModel) {
+], function(_, $, UpdatingWidget, UpdateTrackerModel) {
     'use strict';
 
     const spies = jasmine.createSpyObj('spies', ['onComplete', 'onIncrement', 'onCancelled', 'doUpdate']);
@@ -14,14 +16,13 @@ define([
     const TestUpdatingWidget = UpdatingWidget.extend(spies);
 
     describe('Updating widget', function() {
-
         beforeEach(function() {
             this.widget = new TestUpdatingWidget({
                 name: 'Test Widget'
             });
 
             this.widget.render();
-            
+
             this.updateDeferred = $.Deferred();
 
             this.updateTrackerModel = new UpdateTrackerModel();
@@ -32,7 +33,7 @@ define([
                 spy.calls.reset();
             })
         });
-        
+
         describe('when the update is synchronous', function() {
             beforeEach(function() {
                 this.widget.doUpdate.and.callFake(function(done) {
@@ -117,7 +118,5 @@ define([
                 });
             });
         })
-
     });
-
 });

@@ -12,13 +12,13 @@ define([
     'text!find/templates/app/page/search/results/parametric-results-view.html',
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/loading-spinner.html'
-], function(_, Backbone, DependentParametricCollection, i18n, FieldSelectionView, template,
-            generateErrorHtml, loadingSpinnerTemplate) {
+], function(_, Backbone, DependentParametricCollection, i18n, FieldSelectionView,
+            template, generateErrorHtml, loadingSpinnerTemplate) {
     'use strict';
 
-    var fieldIsValid = function(field, fields) {
+    function fieldIsValid(field, fields) {
         return field && _.contains(fields, field);
-    };
+    }
 
     function getClickedParameters(data, fields, selectedParameters) {
         if(data.depth !== 0) {
@@ -33,7 +33,7 @@ define([
         return selectedParameters;
     }
 
-    var SNAPSHOT = 'SNAPSHOT';
+    const SNAPSHOT = 'SNAPSHOT';
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -157,7 +157,7 @@ define([
         },
 
         updateParametricCollection: function() {
-            const noMoreParametricFields = this.noMoreParametricFields();
+            const noMoreParametricFields = !!this.noMoreParametricFields();
 
             this.$parametricSelections.toggleClass('hide', noMoreParametricFields);
 
@@ -195,10 +195,8 @@ define([
             this.firstChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(0),
                 name: 'first',
-                fields: _.difference(
-                    this.parametricCollection.pluck('id'),
-                    this.selectedParametricValues.pluck('field')
-                ).sort(),
+                fields: _.difference(this.parametricCollection.pluck('id'),
+                    this.selectedParametricValues.pluck('field')).sort(),
                 allowEmpty: false
             });
 
@@ -214,10 +212,8 @@ define([
             this.secondChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(1),
                 name: 'second',
-                fields: _.difference(
-                    this.parametricCollection.pluck('id'),
-                    _.union([this.fieldsCollection.at(0).get('field')], this.selectedParametricValues.pluck('field'))
-                ).sort(),
+                fields: _.difference(this.parametricCollection.pluck('id'),
+                    _.union([this.fieldsCollection.at(0).get('field')], this.selectedParametricValues.pluck('field'))).sort(),
                 allowEmpty: true
             });
 
@@ -234,14 +230,11 @@ define([
         },
 
         resolveFieldSelections: function() {
-            var fields = _.difference(
-                this.parametricCollection.pluck('name'),
-                this.selectedParametricValues.pluck('field')
-            );
+            const fields = _.difference(this.parametricCollection.pluck('name'),
+                this.selectedParametricValues.pluck('field'));
 
-            var primaryModel = this.fieldsCollection.at(0);
-            var secondaryModel = this.fieldsCollection.at(1);
-
+            const primaryModel = this.fieldsCollection.at(0);
+            const secondaryModel = this.fieldsCollection.at(1);
             const primaryField = primaryModel.get('field');
 
             if(!fieldIsValid(primaryField, fields)) {
@@ -253,26 +246,12 @@ define([
         },
 
         fetchDependentFields: function() {
-            var first = this.fieldsCollection.at(0).get('field');
-            var second = this.fieldsCollection.at(1).get('field');
+            const primaryField = this.fieldsCollection.at(0).get('field');
+            const secondaryField = this.fieldsCollection.at(1).get('field');
 
-            if(first) {
-                this.dependentParametricCollection.fetch({
-                    data: {
-                        databases: this.queryModel.get('indexes'),
-                        queryText: this.queryModel.get('queryText'),
-                        fieldText: this.queryModel.get('fieldText')
-                            ? this.queryModel.get('fieldText').toString()
-                            : '',
-                        minDate: this.queryModel.getIsoDate('minDate'),
-                        maxDate: this.queryModel.getIsoDate('maxDate'),
-                        minScore: this.queryModel.get('minScore'),
-                        fieldNames: second
-                            ? [first, second]
-                            : [first],
-                        stateTokens: this.queryModel.get('stateMatchIds')
-                    }
-                });
+            if(primaryField) {
+                this.dependentParametricCollection
+                    .fetchDependentFields(this.queryModel, primaryField, secondaryField);
             } else {
                 this.dependentParametricCollection.reset();
             }

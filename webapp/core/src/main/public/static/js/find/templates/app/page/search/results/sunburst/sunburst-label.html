@@ -1,2 +1,6 @@
-<div class="sunburst-sector-name <%=italic ? 'italic' : 'bold'%>"><%=icon%><%-name%></div>
-<% if(!noVal) { %><div><%-size%></div> <%}%>
+<div class="sunburst-sector-name <%- italic ? 'italic' : 'bold' %>">
+    <%= icon %><%- name %>
+</div>
+<% if(hasValue) { %>
+    <div><%- size %></div>
+<% } %>

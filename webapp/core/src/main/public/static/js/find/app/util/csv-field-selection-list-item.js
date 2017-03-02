@@ -1,12 +1,16 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'js-whatever/js/list-item-view',
     'underscore',
+    'js-whatever/js/list-item-view',
     'parametric-refinement/prettify-field-name',
     'text!find/templates/app/util/csv-field-selection-list-item.html',
     'i18n!find/nls/bundle',
     'iCheck'
-], function(ListItemView, _, prettifyFieldName, template, i18n) {
-
+], function(_, ListItemView, prettifyFieldName, template, i18n) {
     'use strict';
 
     return ListItemView.extend({
@@ -23,14 +27,16 @@ define([
         },
 
         render: function() {
-            ListItemView.prototype.render.apply(this, arguments);
+            ListItemView.prototype.render.apply(this);
 
             this.$el.iCheck({checkboxClass: 'icheckbox-hp'});
             this.updateSelected();
         },
 
         updateSelected: function() {
-            this.$el.iCheck(this.model.get('selected') ? 'check' : 'uncheck');
+            this.$el.iCheck(this.model.get('selected')
+                ? 'check'
+                : 'uncheck');
         }
     });
 });

@@ -1,17 +1,16 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'js-whatever/js/list-item-view',
     'underscore',
+    'js-whatever/js/list-item-view',
     'i18n!find/nls/bundle',
     'find/app/model/saved-searches/saved-search-model',
     'text!find/templates/app/page/search/search-tab-item-view.html',
     'bootstrap'
-], function(ListItemView, _, i18n, SavedSearchModel, template) {
-
+], function(_, ListItemView, i18n, SavedSearchModel, template) {
     'use strict';
 
     var templateFunction = _.template(template);
@@ -46,11 +45,11 @@ define([
         },
 
         render: function() {
-            ListItemView.prototype.render.apply(this, arguments);
+            ListItemView.prototype.render.apply(this);
 
             this.updateSavedness();
             this.updateTabBadge();
-            
+
             this.$tooltip = this.$('[data-toggle="tooltip"]');
 
             this.$tooltip.tooltip({
@@ -74,14 +73,15 @@ define([
 
         updateSavedness: function() {
             var changed = this.queryState ? !this.model.equalsQueryState(this.queryState) : false;
-            this.$('.search-tab-anchor').toggleClass('bold', this.model.isNew() || changed);
-            this.$('.search-tab-anchor .hp-new').toggleClass('hide', !this.model.isNew() && !changed);
+            const differentFromServer = this.model.isNew() || changed;
+            this.$('.search-tab-anchor').toggleClass('bold', differentFromServer);
+            this.$('.search-tab-anchor .hp-new').toggleClass('hide', !differentFromServer);
         },
 
         updateQueryStateListeners: function() {
             var newQueryState = this.queryStates.get(this.model.cid);
 
-            if (this.queryState) {
+            if(this.queryState) {
                 this.stopListening(this.queryState.selectedIndexes);
                 this.stopListening(this.queryState.conceptGroups);
                 this.stopListening(this.queryState.selectedParametricValues);
@@ -90,7 +90,7 @@ define([
 
             this.queryState = newQueryState;
 
-            if (this.queryState) {
+            if(this.queryState) {
                 this.listenTo(this.queryState.selectedIndexes, 'add remove', this.updateSavedness);
                 this.listenTo(this.queryState.conceptGroups, 'update change', this.updateSavedness);
                 this.listenTo(this.queryState.selectedParametricValues, 'add remove', this.updateSavedness);
@@ -98,5 +98,4 @@ define([
             }
         }
     });
-
 });

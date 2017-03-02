@@ -1,18 +1,17 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'jquery',
+    'underscore',
     'settings/js/widgets/query-manipulation-widget',
     'find/app/page/settings/enable-view',
     'text!find/templates/app/page/settings/query-manipulation-widget-extensions.html',
     'text!find/templates/app/page/settings/widget.html',
     'text!find/templates/app/page/settings/server-widget.html',
-    'text!find/templates/app/page/settings/aci-widget.html',
-    'underscore'
-], function($, QueryManipulationWidget, EnableView, extensionsTemplate, widgetTemplate, serverTemplate, aciTemplate, _) {
+    'text!find/templates/app/page/settings/aci-widget.html'
+], function(_, QueryManipulationWidget, EnableView, extensionsTemplate, widgetTemplate, serverTemplate, aciTemplate) {
     'use strict';
 
     return QueryManipulationWidget.extend({
@@ -38,7 +37,7 @@ define([
         },
 
         render: function() {
-            QueryManipulationWidget.prototype.render.apply(this, arguments);
+            QueryManipulationWidget.prototype.render.apply(this);
 
             this.enableView.render();
             var $validateButtonParent = this.$('.typeahead-mode').parent();
