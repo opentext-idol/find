@@ -288,6 +288,17 @@ define([
             return _.isEmpty(this.parametricCollection.reject(function(model) {
                 return this.selectedParametricValues.findWhere({field: model.get('id')});
             }, this));
+        },
+
+        remove: function() {
+            if(this.firstChosen) {
+                this.firstChosen.remove();
+            }
+            if(this.secondChosen) {
+                this.secondChosen.remove();
+            }
+
+            Backbone.View.prototype.remove.call(this);
         }
     });
 });

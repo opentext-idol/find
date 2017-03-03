@@ -1,10 +1,16 @@
+/*
+ * Copyright 2016-2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'backbone',
     'underscore',
     'jquery',
+    'backbone',
     'i18n!find/nls/bundle',
     'text!find/templates/app/util/selector.html'
-], function (Backbone, _, $, i18n, selectorTemplate) {
+], function(_, $, Backbone, i18n, selectorTemplate) {
+    'use strict';
 
     return Backbone.View.extend({
         selectorTemplate: _.template(selectorTemplate, {variable: 'data'}),
@@ -40,10 +46,9 @@ define([
 
         switchTab: function(tab) {
             const $tab = this.$('[data-tab-id = "' + tab + '"]');
-            if ($tab) {
+            if($tab) {
                 $tab.tab('show');
             }
         }
     });
-
 });
