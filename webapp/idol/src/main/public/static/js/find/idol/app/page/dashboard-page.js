@@ -125,6 +125,14 @@ define([
                 widget.view.setElement($div).render();
             }.bind(this));
 
+            var $exportBtn = this.$('.report-pptx-group');
+
+            $.when.apply($, _.map(this.widgetViews, function(widget){
+                return widget.view.savedSearchPromise
+            })).done(function(){
+                $exportBtn.removeClass('hide');
+            })
+
             this.listenTo(vent, 'vent:resize', this.onResize);
             this.listenTo(this.sidebarModel, 'change:collapsed', this.onResize);
         },
