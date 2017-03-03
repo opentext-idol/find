@@ -4,9 +4,9 @@
  */
 
 define([
-    'backbone',
-    'jquery',
     'underscore',
+    'jquery',
+    'backbone',
     'moment',
     'find/app/metrics',
     'find/app/model/dates-filter-model',
@@ -32,7 +32,7 @@ define([
     'parametric-refinement/prettify-field-name',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, moment, metrics, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel,
+], function(_, $, Backbone, moment, metrics, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel,
             ParametricCollection, ParametricFieldsCollection, NumericParametricFieldsCollection,
             queryStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
             RelatedConceptsView, addChangeListener, SavedSearchControlView, TopicMapView,
@@ -99,7 +99,7 @@ define([
             // Either:
             //      We have a change in the query model that is not related to the date filters
             this.listenTo(this.queryModel, 'change', function(model) {
-                if(!_.has(model.changed, 'minDate') && !_.has(model.changed, 'maxDate')) {
+                if(!(_.has(model.changed, 'minDate') || _.has(model.changed, 'maxDate'))) {
                     this.queryState.datesFilterModel.resetDateLastFetched();
                 }
             });
@@ -110,7 +110,7 @@ define([
                 var changeToNewDocFilter = value === DatesFilterModel.DateRange.NEW;
                 var removeNewDocFilter = !value && model.previous('dateRange') === DatesFilterModel.DateRange.NEW;
 
-                if(!changeToNewDocFilter && !removeNewDocFilter) {
+                if(!(changeToNewDocFilter || removeNewDocFilter)) {
                     this.queryState.datesFilterModel.resetDateLastFetched();
                 }
             });
@@ -119,7 +119,7 @@ define([
             this.listenTo(this.documentsCollection, 'sync', function() {
                 var changed = this.queryState ? !this.savedSearchModel.equalsQueryState(this.queryState) : false;
 
-                if(!changed && !this.savedSearchModel.isNew()) {
+                if(!(changed || this.savedSearchModel.isNew())) {
                     this.savedSearchModel.save({dateDocsLastFetched: moment()});
                 }
             });
@@ -172,7 +172,8 @@ define([
                 }
             }
 
-            this.leftSideFooterView = new this.searchTypes[searchType].LeftSideFooterView(_.extend({timeBarModel: this.timeBarModel}, subViewArguments));
+            this.leftSideFooterView = new this.searchTypes[searchType]
+                .LeftSideFooterView(_.extend({timeBarModel: this.timeBarModel}, subViewArguments));
 
             var MiddleColumnHeaderView = this.searchTypes[searchType].MiddleColumnHeaderView;
             this.middleColumnHeaderView = MiddleColumnHeaderView ? new MiddleColumnHeaderView(subViewArguments) : null;
@@ -414,7 +415,9 @@ define([
             if(this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                 var data = {
                     databases: this.queryModel.get('indexes'),
-                    queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery') ? this.queryModel.get('correctedQuery') : this.queryModel.get('queryText'),
+                    queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery')
+                        ? this.queryModel.get('correctedQuery')
+                        : this.queryModel.get('queryText'),
                     fieldText: this.queryModel.get('fieldText'),
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
@@ -451,7 +454,7 @@ define([
                 //noinspection JSUnresolvedFunction
                 this.listenTo(data.collection, 'sync', function() {
                     const flagName = data.type + 'FieldsLoaded';
-                    if(!data.collection.isEmpty() && !this[flagName]) {
+                    if(!(data.collection.isEmpty() || this[flagName])) {
                         this[flagName] = true;
                         metrics.addTimeSincePageLoad(data.type + '-fields-first-loaded');
                     }
@@ -469,7 +472,9 @@ define([
                     data: {
                         fieldNames: fieldNames,
                         databases: this.queryModel.get('indexes'),
-                        queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery') ? this.queryModel.get('correctedQuery') : this.queryModel.get('queryText'),
+                        queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery')
+                            ? this.queryModel.get('correctedQuery')
+                            : this.queryModel.get('queryText'),
                         fieldText: this.queryModel.get('fieldText'),
                         minDate: this.queryModel.getIsoDate('minDate'),
                         maxDate: this.queryModel.getIsoDate('maxDate'),

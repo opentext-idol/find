@@ -28,6 +28,10 @@ define([
                 type: 'QUERY'
             });
 
+            if(this.$content) {
+                this.entityTopicMap.setElement(this.$content).render();
+            }
+
             // use the dashboard resize handler instead of the built in one
             // contrary to the Backbone docs we do need to specify vent here
             this.entityTopicMap.topicMap.stopListening(vent, 'vent:resize');
@@ -36,8 +40,9 @@ define([
         render: function() {
             SavedSearchWidget.prototype.render.apply(this);
 
-            this.entityTopicMap.setElement(this.$content);
-            this.entityTopicMap.render();
+            if(this.entityTopicMap) {
+                this.entityTopicMap.setElement(this.$content).render();
+            }
         },
 
         onResize: function() {

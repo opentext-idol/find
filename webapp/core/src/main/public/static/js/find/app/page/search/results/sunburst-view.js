@@ -11,8 +11,11 @@ define([
     'find/app/page/search/results/parametric-results-view',
     'i18n!find/nls/bundle',
     'find/app/util/generate-error-support-message',
-    'text!find/templates/app/page/search/results/sunburst/sunburst-label.html'
-], function(_, $, d3, Sunburst, ParametricResultsView, i18n, generateErrorHtml, labelTemplate) {
+    'text!find/templates/app/page/search/results/sunburst/sunburst-label.html',
+    'parametric-refinement/prettify-field-name',
+    'find/app/vent'
+], function(_, $, d3, Sunburst, ParametricResultsView, i18n, generateErrorHtml, labelTemplate,
+            prettifyFieldName, vent) {
     'use strict';
 
     var HIDDEN_COLOR = '#f0f0f0';
@@ -20,66 +23,80 @@ define([
     var sunburstLabelIcon = '<i class="icon-zoom-out"></i>';
     var sunburstLabelTemplate = _.template(labelTemplate);
 
+    function generateDataRoot(data) {
+        return {
+            text: i18n['search.sunburst.title'],
+            children: data,
+            count: _.reduce(_.pluck(data, 'count'), function(a, b) {
+                return a + b;
+            })
+        }
+    }
+
     function drawSunburst($el, data, onClick) {
         const color = d3.scale.category20c();
         $el.empty();
 
-        this.sunburst = new Sunburst($el, {
+        var sunburst = new Sunburst($el, {
             animate: false,
             nameAttr: 'text',
             sizeAttr: 'count',
             comparator: null,
             clickCallback: onClick,
             outerRingAnimateSize: 15,
-            data: {
-                text: i18n['search.sunburst.title'],
-                children: data,
-                count: _.reduce(_.pluck(data, 'count'), function(a, b) {
-                    return a + b;
-                })
-            },
-            fillColorFn: function(data) {
-                if(!data.parent) {
+            data: data,
+            fillColorFn: function(datum) {
+                if(!datum.parent) {
                     // Set the centre of the Sunburst to a fixed color
                     return 'white';
                 }
 
-                if(data.hidden || data.parent.hidden) {
+                if(datum.hidden || datum.parent.hidden) {
                     return HIDDEN_COLOR;
                 }
 
                 // First tier sector
-                if(data.parent.parent) {
+                if(datum.parent.parent) {
                     // Second tier sector
-                    data.color = color(data.text);
+                    datum.color = color(datum.text);
                 } else {
-                    data.color = data.count
-                        ? color(data.parent.children.indexOf(data))
+                    datum.color = datum.count
+                        ? color(datum.parent.children.indexOf(datum))
                         : 'black';
                 }
 
-                return data.color;
+                return datum.color;
             },
             labelFormatter: function(datum, prevClicked) {
                 const zoomedOnRoot = !prevClicked || prevClicked.depth === 0;
                 const hoveringCenter = prevClicked ? datum === prevClicked.parent : datum.depth === 0;
                 const textIsEmpty = datum.text === '';
 
-                const hiddenFilterCount = datum.hiddenFilterCount;
                 const templateArguments = {
                     size: datum.count,
                     icon: !zoomedOnRoot && hoveringCenter
                         ? sunburstLabelIcon
                         : '',
                     hasValue: !textIsEmpty,
-                    italic: textIsEmpty,
-                    name: textIsEmpty && hiddenFilterCount > 0
-                        ? i18n['search.sunburst.noValue'](hiddenFilterCount)
-                        : datum.text
+                    italic: textIsEmpty
                 };
 
+                const hiddenFilterCount = datum.hiddenFilterCount;
+                if(hiddenFilterCount > 0) {
+                    // Child comprises values hidden by dependentParametricCollection
+                    templateArguments.name = i18n['search.sunburst.tooSmall'](hiddenFilterCount);
+                } else {
+                    templateArguments.name = hiddenFilterCount === 0
+                        // Child comprises results with no values for secondary parametric field
+                        ? i18n['search.sunburst.missingValues'](
+                            datum.count,
+                            prettifyFieldName(this.fieldsCollection.at(1).get('field'))
+                        )
+                        : datum.text;
+                }
+
                 return sunburstLabelTemplate(templateArguments);
-            },
+            }.bind(this),
             hoverCallback: function(hoveredDatum, arc, outerRingAnimateSize, arcEls, arcData, svg) {
                 svg.selectAll('path')
                     .filter(function(d) {
@@ -95,7 +112,7 @@ define([
             }
         });
 
-        return this.sunburst;
+        return sunburst;
     }
 
     return ParametricResultsView.extend({
@@ -105,14 +122,29 @@ define([
                 emptyMessage: generateErrorHtml({errorLookup: 'emptySunburstView'}),
                 errorMessageArguments: {messageToUser: i18n['search.resultsView.sunburst.error.query']}
             }, options));
+
+            this.listenTo(vent, 'vent:resize', function() {
+                if(this.sunburst && this.$content.is(':visible')) {
+                    this.sunburst.resize();
+                    this.sunburst.redraw();
+                }
+            });
         },
 
         update: function() {
             if(!this.parametricCollection.isEmpty()) {
-                drawSunburst.call(this,
-                    this.$content,
-                    this.dependentParametricCollection.toJSON(),
-                    _.bind(this.onClick, this));
+                const data = generateDataRoot(this.dependentParametricCollection.toJSON());
+
+                if(this.sunburst) {
+                    this.sunburst.resize();
+                    this.sunburst.redraw(data);
+                } else {
+                    this.sunburst = drawSunburst.call(this,
+                        this.$content,
+                        data,
+                        _.bind(this.onClick, this)
+                    );
+                }
 
                 const noValidChildren = _.chain(this.dependentParametricCollection.pluck('children'))
                     .flatten()
@@ -132,13 +164,6 @@ define([
             ParametricResultsView.prototype.render.apply(this);
 
             this.$content.addClass('sunburst');
-
-            $(window).resize(_.bind(function() {//???why not listen to vent resize?
-                if(this.sunburst) {
-                    this.sunburst.resize();
-                    this.sunburst.redraw();
-                }
-            }, this));
         }
     });
 });

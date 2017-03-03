@@ -1,3 +1,8 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.dashboards;
 
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -10,7 +15,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CurrentTimeWidgetITCase extends DashboardITCase {
-
     private static final Pattern AM = Pattern.compile("am", Pattern.LITERAL);
     private static final Pattern PM = Pattern.compile("pm", Pattern.LITERAL);
 

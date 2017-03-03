@@ -1,21 +1,22 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.dashboards;
 
 import com.autonomy.abc.base.IdolFindTestBase;
 import com.autonomy.abc.selenium.find.DashboardPage;
-import com.autonomy.abc.selenium.find.FindPage;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 
 public abstract class DashboardITCase extends IdolFindTestBase {
-
-    DashboardPage page;
     private final int numberOfWidgets;
     private final String dashboardName;
+    DashboardPage page;
 
     DashboardITCase(final TestConfig config, final int numberOfWidgets, final String dashboardName) {
         super(config);

@@ -1,7 +1,12 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 @font-face {
     font-family: 'icomoon';
-    src:url('../fonts/icomoon.eot?f8i4y6');
-    src:url('../fonts/icomoon.eot?#iefixf8i4y6') format('embedded-opentype'),
+    src: url('../fonts/icomoon.eot?f8i4y6');
+    src: url('../fonts/icomoon.eot?#iefixf8i4y6') format('embedded-opentype'),
     url('../fonts/icomoon.ttf?f8i4y6') format('truetype'),
     url('../fonts/icomoon.woff?f8i4y6') format('woff'),
     url('../fonts/icomoon.svg?f8i4y6#icomoon') format('svg');
@@ -9,8 +14,27 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'sunburst-legend';
+    src: url('../fonts/sunburst-legend.eot?ng5fd6');
+    src: url('../fonts/sunburst-legend.eot?ng5fd6#iefix') format('embedded-opentype'),
+    url('../fonts/sunburst-legend.ttf?ng5fd6') format('truetype'),
+    url('../fonts/sunburst-legend.woff?ng5fd6') format('woff'),
+    url('../fonts/sunburst-legend.svg?ng5fd6#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="icon-sunburst-legend-"], [class*=" icon-sunburst-legend-"] {
+    font-family: 'sunburst-legend';
+}
+
 [class^="icomoon-"], [class*=" icomoon-"] {
     font-family: 'icomoon';
+}
+
+[class^="icomoon-"], [class*=" icomoon-"],
+[class^="icon-sunburst-legend-"], [class*=" icon-sunburst-legend-"] {
     speak: none;
     font-style: normal;
     font-weight: normal;
@@ -31,42 +55,65 @@
 .icomoon-file-presentation:before {
     content: "\e600";
 }
+
 .icomoon-file-html:before {
     content: "\e601";
 }
+
 .icomoon-file-email:before {
     content: "\e602";
 }
+
 .icomoon-file-spreadsheet:before {
     content: "\e603";
 }
+
 .icomoon-file-powerpoint:before {
     content: "\e604";
 }
+
 .icomoon-file-general:before {
     content: "\e924";
 }
+
 .icomoon-file-text:before {
     content: "\e926";
 }
+
 .icomoon-file-image:before {
     content: "\e927";
 }
+
 .icomoon-file-audio:before {
     content: "\e928";
 }
+
 .icomoon-file-video:before {
     content: "\e92a";
 }
+
 .icomoon-file-spreadsheet2:before {
     content: "\ea70";
 }
+
 .icomoon-file-pdf:before {
     content: "\eada";
 }
+
 .icomoon-file-word:before {
     content: "\eadc";
 }
+
 .icomoon-file-excel:before {
     content: "\eadd";
+}
+
+/* Sunburst widget legend icons */
+
+.icon-sunburst-legend-inner:before {
+    content: "\e902";
+}
+
+.icon-sunburst-legend-outer:before {
+    content: "\e903";
 }

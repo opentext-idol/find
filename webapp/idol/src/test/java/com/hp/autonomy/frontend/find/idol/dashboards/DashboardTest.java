@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -17,7 +17,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DashboardTest extends ConfigurationComponentTest<Dashboard> {
-
     @Override
     protected Class<Dashboard> getType() {
         return Dashboard.class;
@@ -30,15 +29,19 @@ public class DashboardTest extends ConfigurationComponentTest<Dashboard> {
                 .enabled(true)
                 .width(5)
                 .height(5)
-                .widget(Widget.builder()
-                        .name("Sample Widget")
-                        .build())
+                .widget(
+                        Widget.builder()
+                                .name("Sample Widget")
+                                .build()
+                )
                 .build();
     }
 
     @Override
     protected String sampleJson() throws IOException {
-        return IOUtils.toString(getClass().getResourceAsStream("/com/hp/autonomy/frontend/find/idol/dashboards/dashboard.json"));
+        return IOUtils.toString(
+                getClass().getResourceAsStream("/com/hp/autonomy/frontend/find/idol/dashboards/dashboard.json")
+        );
     }
 
     @Override
@@ -53,26 +56,34 @@ public class DashboardTest extends ConfigurationComponentTest<Dashboard> {
 
     @Override
     protected void validateParsedComponent(final ObjectContent<Dashboard> objectContent) {
-        objectContent.assertThat().isEqualTo(Dashboard.builder()
-                .dashboardName("Default Dashboard")
-                .enabled(false)
-                .width(3)
-                .height(3)
-                .widgets(Collections.emptyList())
-                .build());
+        objectContent.assertThat().isEqualTo(
+                Dashboard.builder()
+                        .dashboardName("Default Dashboard")
+                        .enabled(false)
+                        .width(3)
+                        .height(3)
+                        .widgets(Collections.emptyList())
+                        .build()
+        );
     }
 
     @Override
     protected void validateMergedComponent(final ObjectContent<Dashboard> objectContent) {
-        objectContent.assertThat().isEqualTo(Dashboard.builder()
-                .dashboardName("My First Dashboard")
-                .enabled(true)
-                .width(5)
-                .height(5)
-                .widgets(Collections.singletonList(Widget.builder()
-                        .name("Sample Widget")
-                        .build()))
-                .build());
+        objectContent.assertThat().isEqualTo(
+                Dashboard.builder()
+                        .dashboardName("My First Dashboard")
+                        .enabled(true)
+                        .width(5)
+                        .height(5)
+                        .widgets(
+                                Collections.singletonList(
+                                        Widget.builder()
+                                                .name("Sample Widget")
+                                                .build()
+                                )
+                        )
+                        .build()
+        );
     }
 
     @Override

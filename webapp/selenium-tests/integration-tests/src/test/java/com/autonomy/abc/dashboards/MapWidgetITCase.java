@@ -1,3 +1,8 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.dashboards;
 
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -11,7 +16,6 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 import static org.openqa.selenium.By.cssSelector;
 
 public class MapWidgetITCase extends ClickableDashboardITCase {
-
     public MapWidgetITCase(final TestConfig config) {
         super(config, 1, "Map Dashboard", "Map", "MapSearch");
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -68,7 +68,7 @@ class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, St
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public SavedQuery get(@PathVariable("id") final long id) {
-        if (validIds.contains(id)) {
+        if(validIds.contains(id)) {
             return service.getDashboardSearch(id);
         } else {
             throw new IllegalArgumentException("Saved Search Id is not in the dashboards configuration file");

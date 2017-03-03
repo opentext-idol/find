@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -46,7 +46,7 @@
 @sidePanelLabelBorderColour: #676a6d;
 
 // Timebar colors
-@timebarSelectionColor: rgba(97,71,103,0.35);
+@timebarSelectionColor: rgba(97, 71, 103, 0.35);
 
 /*------Width variables------*/
 @pageContainerMinWidth: 640px;
@@ -754,7 +754,7 @@ fieldset.radio-fieldset > label {
 }
 
 .nav-menu-btn-container a.nav-menu-toggle-btn {
-    color: @white;
+  color: @white;
 }
 
 .hp-logo-footer {
@@ -1053,9 +1053,9 @@ input.find-input {
     transition: @transitAll;
   }
 
-    .search-controls .find-input-button {
-        height: @findInputHeight;
-    }
+  .search-controls .find-input-button {
+    height: @findInputHeight;
+  }
 }
 
 .reverse-animated-container .find-form:focus,
@@ -1373,85 +1373,85 @@ input.find-input {
 }
 
 .search-controls {
-    .find-input[type="text"],
-    .find-input[type="text"]:focus {
-        &:extend(.no-box-shadow);
+  .find-input[type="text"],
+  .find-input[type="text"]:focus {
+    &:extend(.no-box-shadow);
 
-        border-color: transparent;
-        border-radius: @nil;
-        height: @custom9;
-        padding-right: @custom3;
-    }
+    border-color: transparent;
+    border-radius: @nil;
+    height: @custom9;
+    padding-right: @custom3;
+  }
 
-    input::-webkit-input-placeholder,
-    input::-moz-placeholder {
-        color: @color1;
-        opacity: 0.5;
-    }
+  input::-webkit-input-placeholder,
+  input::-moz-placeholder {
+    color: @color1;
+    opacity: 0.5;
+  }
 
-    .find-input-button {
-        &:extend(.absolute);
+  .find-input-button {
+    &:extend(.absolute);
 
-        height: @custom9;
-        right: @nil;
-        top: @nil;
-    }
+    height: @custom9;
+    right: @nil;
+    top: @nil;
+  }
 
-    .find-input-button,
-    .find-input-button:hover {
-        &:extend(.no-box-shadow);
+  .find-input-button,
+  .find-input-button:hover {
+    &:extend(.no-box-shadow);
 
-        border-left: 1px solid @grey;
-        border: @nil;
-    }
+    border-left: 1px solid @grey;
+    border: @nil;
+  }
 }
 
 .concepts-controls {
-    .find-input[type="text"] {
-        &:extend(.no-box-shadow);
-        &:extend(.form-control);
+  .find-input[type="text"] {
+    &:extend(.no-box-shadow);
+    &:extend(.form-control);
 
-        border-radius: @nil;
-        color: inherit;
-        transition: border-color 0s ease-in-out 0s;
+    border-radius: @nil;
+    color: inherit;
+    transition: border-color 0s ease-in-out 0s;
 
-        &:focus {
-            &:extend(.form-control:focus);
-        }
+    &:focus {
+      &:extend(.form-control:focus);
+    }
+  }
+
+  .find-input-button {
+    &:extend(.absolute);
+    &:extend(.no-box-shadow);
+
+    &:hover {
+      background-color: @white;
     }
 
-    .find-input-button {
-        &:extend(.absolute);
-        &:extend(.no-box-shadow);
-
-        &:hover {
-            background-color: @white;
-        }
-
-        &:focus {
-            outline: 0;
-        }
-
-        height: 34px;
-        right: @nil;
-        top: @nil;
-        border-top: 1px solid #e5e6e7;
-        border-right: 1px solid #e5e6e7;
-        border-bottom: 1px solid #e5e6e7;
-        border-left: 0;
+    &:focus {
+      outline: 0;
     }
 
-    .find-input-button.in-focus {
-        border-top: 1px solid #60798d;
-        border-right: 1px solid #60798d;
-        border-bottom: 1px solid #60798d;
-    }
+    height: 34px;
+    right: @nil;
+    top: @nil;
+    border-top: 1px solid #e5e6e7;
+    border-right: 1px solid #e5e6e7;
+    border-bottom: 1px solid #e5e6e7;
+    border-left: 0;
+  }
 
-    input::-webkit-input-placeholder,
-    input::-moz-placeholder {
-        color: @color1;
-        opacity: 0.5;
-    }
+  .find-input-button.in-focus {
+    border-top: 1px solid #60798d;
+    border-right: 1px solid #60798d;
+    border-bottom: 1px solid #60798d;
+  }
+
+  input::-webkit-input-placeholder,
+  input::-moz-placeholder {
+    color: @color1;
+    opacity: 0.5;
+  }
 }
 
 .reverse-animated-container .find-input-button,
@@ -2003,7 +2003,7 @@ h4.similar-dates-message {
 
 .widget {
   background-color: @white;
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
   padding: 0.5em;
   position: absolute;
   display: flex;
@@ -2023,6 +2023,7 @@ h4.similar-dates-message {
 
   .widget-content {
     flex: 1 0 80%;
+
     overflow: hidden;
     cursor: pointer;
     font-size: 0.75vw;
@@ -2033,6 +2034,31 @@ h4.similar-dates-message {
 
     h3 {
       font-size: 0.75vw;
+    }
+
+    &.sunburst {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-direction: row;
+
+      &.narrow-widget {
+        justify-content: flex-start;
+        align-items: center;
+        flex-direction: column;
+
+        .sunburst-visualizer-container {
+          max-height: 60%;
+          min-height: 40%;
+          max-width: 100%;
+        }
+
+        .sunburst-legend {
+          max-height: 60%;
+          min-height: 40%;
+          max-width: 100%;
+        }
+      }
     }
 
     .results-list {
@@ -2058,22 +2084,68 @@ h4.similar-dates-message {
       }
     }
 
-  div.static-image {
-    background-size: contain;
-    background: no-repeat center;
-    height: 100%;
-  }
+    div.static-image {
+      background-size: contain;
+      background: no-repeat center;
+      height: 100%;
+    }
 
-  div.video-container {
-    background-color: transparent;
-    height: 100%;
-    position: relative;
+    div.video-container {
+      background-color: transparent;
+      height: 100%;
+      position: relative;
 
       video {
         position: absolute;
         width: 100%;
         height: 100%;
       }
+    }
+  }
+}
+
+.sunburst-visualizer-container {
+  height: 100%;
+  max-width: 60%;
+  min-width: 40%;
+  display: inline-block;
+}
+
+.sunburst-legend {
+  padding: 2px;
+  max-height: 100%;
+  max-width: 60%;
+  min-width: 40%;
+  overflow: hidden;
+
+  .sunburst-legend-field-container {
+    font-size: 1.2em;
+    margin: 3px;
+    padding: 3px;
+
+    .sunburst-legend-field-name {
+      font-size: 1.3em;
+      margin: 0 10px 0 0;
+      display: block;
+
+      i {
+        margin: 0 5px 0 0;
+      }
+    }
+  }
+
+  .sunburst-legend-item {
+    margin: 0 10px 0 0;
+    display: inline-block;
+
+    i {
+      margin: 0 4px 0 0;
+    }
+  }
+
+  &.legend-one-item-per-line {
+    .sunburst-legend-item {
+      display: block;
     }
   }
 }

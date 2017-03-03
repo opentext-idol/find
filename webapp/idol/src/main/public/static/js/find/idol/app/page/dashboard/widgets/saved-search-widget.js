@@ -5,11 +5,12 @@
 
 define([
     'underscore',
+    'jquery',
     './updating-widget',
     'find/idol/app/model/idol-indexes-collection',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/vent'
-], function(_, UpdatingWidget, IdolIndexesCollection, SavedSearchModel, vent) {
+], function(_, $, UpdatingWidget, IdolIndexesCollection, SavedSearchModel, vent) {
     'use strict';
 
     const DashboardSearchModel = SavedSearchModel.extend({
@@ -40,18 +41,20 @@ define([
                 type: options.savedSearch.type
             });
 
-            this.savedSearchPromise = this.savedSearchModel.fetch().done(function() {
-                this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                this.postInitialize();
-                this.getData();
-            }.bind(this));
+            this.initialiseWidgetPromise = this.savedSearchModel.fetch()
+                .then(function() {// TODO handle failure
+                    this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
+                    return $.when(this.postInitialize());
+                }.bind(this));
         },
 
         doUpdate: function(done) {
-            this.savedSearchModel.fetch().done(function() {
-                this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                this.updatePromise = this.getData().done(done);
-            }.bind(this));
+            $.when(this.savedSearchModel.fetch(), this.initialiseWidgetPromise)
+                .done(function() {// TODO handle failure
+                    this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
+                    this.updatePromise = this.getData()
+                        .done(done);// TODO handle failure
+                }.bind(this));
         },
 
         onClick: function() {
