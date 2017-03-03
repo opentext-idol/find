@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -17,7 +17,6 @@ import java.nio.file.Paths;
 
 @Service
 public class IdolDashboardConfigService extends BaseConfigFileService<IdolDashboardConfig> {
-    
     public IdolDashboardConfigService() {
         final ObjectMapper objectMapper = new Jackson2ObjectMapperBuilder()
                 .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
@@ -70,12 +69,8 @@ public class IdolDashboardConfigService extends BaseConfigFileService<IdolDashbo
     }
 
     @Override
-    public void postInitialise(final IdolDashboardConfig config) {
-
-    }
+    public void postInitialise(final IdolDashboardConfig config) {}
 
     @Override
-    public void postUpdate(final IdolDashboardConfig idolDashboardConfig) {
-
-    }
+    public void postUpdate(final IdolDashboardConfig idolDashboardConfig) {}
 }

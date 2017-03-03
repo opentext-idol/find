@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -38,7 +38,9 @@ public class WidgetTest extends ConfigurationComponentTest<Widget> {
 
     @Override
     protected String sampleJson() throws IOException {
-        return IOUtils.toString(getClass().getResourceAsStream("/com/hp/autonomy/frontend/find/idol/dashboards/widget.json"));
+        return IOUtils.toString(
+                getClass().getResourceAsStream("/com/hp/autonomy/frontend/find/idol/dashboards/widget.json")
+        );
     }
 
     @Override
@@ -57,28 +59,32 @@ public class WidgetTest extends ConfigurationComponentTest<Widget> {
 
     @Override
     protected void validateParsedComponent(final ObjectContent<Widget> objectContent) {
-        objectContent.assertThat().isEqualTo(Widget.builder()
-                .name("Default Widget")
-                .type("clockWidget")
-                .x(0)
-                .y(0)
-                .width(1)
-                .height(1)
-                .build());
+        objectContent.assertThat().isEqualTo(
+                Widget.builder()
+                        .name("Default Widget")
+                        .type("clockWidget")
+                        .x(0)
+                        .y(0)
+                        .width(1)
+                        .height(1)
+                        .build()
+        );
     }
 
     @Override
     protected void validateMergedComponent(final ObjectContent<Widget> objectContent) {
-        objectContent.assertThat().isEqualTo(Widget.builder()
-                .name("Test Widget")
-                .type("staticContentWidget")
-                .x(1)
-                .y(1)
-                .width(1)
-                .height(1)
-                .savedSearch(new WidgetSearchId(123L, WidgetSearchId.Type.QUERY))
-                .widgetSetting("content", "Hello World!")
-                .build());
+        objectContent.assertThat().isEqualTo(
+                Widget.builder()
+                        .name("Test Widget")
+                        .type("staticContentWidget")
+                        .x(1)
+                        .y(1)
+                        .width(1)
+                        .height(1)
+                        .savedSearch(new WidgetSearchId(123L, WidgetSearchId.Type.QUERY))
+                        .widgetSetting("content", "Hello World!")
+                        .build()
+        );
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -14,10 +14,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Singular;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -34,14 +32,9 @@ public class IdolDashboardConfig extends AbstractConfig<IdolDashboardConfig> {
     }
 
     @Override
-    public void basicValidate(final String section) throws ConfigException {
-
-    }
+    public void basicValidate(final String section) throws ConfigException {}
 
     @SuppressWarnings("WeakerAccess")
     @JsonPOJOBuilder(withPrefix = "")
-    public static class IdolDashboardConfigBuilder {
-
-    }
-
+    public static class IdolDashboardConfigBuilder {}
 }

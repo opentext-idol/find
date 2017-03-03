@@ -1,3 +1,8 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.dashboards;
 
 import com.autonomy.abc.selenium.find.FindPage;
@@ -19,14 +24,14 @@ public abstract class ClickableDashboardITCase extends DashboardITCase {
     }
 
     @Test
-    public void testClickThrough(){
+    public void testClickThrough() {
         Assume.assumeNotNull(resultsViewType, savedSearchName);
         getDriver().findElement(By.cssSelector(".widget-content")).click();
         final FindPage findPage = getElementFactory().getFindPage();
         findPage.waitForLoad();
         final String savedSearchName = getDriver().findElement(By.cssSelector(".search-tabs-list .search-tab.active .search-tab-anchor .search-tab-title")).getText();
         final String resultsViewType = getDriver().findElement(By.cssSelector("div:not(.hide) > .bi-query-service-view .middle-container li.active .result-view-type span")).getText();
-        assertThat("saved search name should be " + this.savedSearchName + " but was " + savedSearchName, savedSearchName.equals(this.savedSearchName));
-        assertThat("results view should be " + this.resultsViewType + " but was " + resultsViewType, resultsViewType.equals(this.resultsViewType));
+        assertThat("Saved search name should be " + this.savedSearchName + " but was " + savedSearchName, savedSearchName.equals(this.savedSearchName));
+        assertThat("Results view should be " + this.resultsViewType + " but was " + resultsViewType, resultsViewType.equals(this.resultsViewType));
     }
 }
