@@ -73,7 +73,7 @@ define([
 
             this.model = new Backbone.Model({
                 maxCount: 10,
-                maxResults: 300
+                maxResults: 100
             });
 
             this.listenTo(this.model, 'change:maxResults', this.fetchRelatedConcepts);
