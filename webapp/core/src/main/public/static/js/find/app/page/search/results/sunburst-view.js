@@ -12,8 +12,10 @@ define([
     'i18n!find/nls/bundle',
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/search/results/sunburst/sunburst-label.html',
+    'parametric-refinement/prettify-field-name',
     'find/app/vent'
-], function(_, $, d3, Sunburst, ParametricResultsView, i18n, generateErrorHtml, labelTemplate, vent) {
+], function(_, $, d3, Sunburst, ParametricResultsView, i18n, generateErrorHtml, labelTemplate,
+            prettifyFieldName, vent) {
     'use strict';
 
     var HIDDEN_COLOR = '#f0f0f0';
@@ -70,21 +72,31 @@ define([
                 const hoveringCenter = prevClicked ? datum === prevClicked.parent : datum.depth === 0;
                 const textIsEmpty = datum.text === '';
 
-                const hiddenFilterCount = datum.hiddenFilterCount;
                 const templateArguments = {
                     size: datum.count,
                     icon: !zoomedOnRoot && hoveringCenter
                         ? sunburstLabelIcon
                         : '',
                     hasValue: !textIsEmpty,
-                    italic: textIsEmpty,
-                    name: textIsEmpty && hiddenFilterCount > 0
-                        ? i18n['search.sunburst.noValue'](hiddenFilterCount)
-                        : datum.text
+                    italic: textIsEmpty
                 };
 
+                const hiddenFilterCount = datum.hiddenFilterCount;
+                if(hiddenFilterCount > 0) {
+                    // Child comprises values hidden by dependentParametricCollection
+                    templateArguments.name = i18n['search.sunburst.tooSmall'](hiddenFilterCount);
+                } else {
+                    templateArguments.name = hiddenFilterCount === 0
+                        // Child comprises results with no values for secondary parametric field
+                        ? i18n['search.sunburst.missingValues'](
+                            datum.count,
+                            prettifyFieldName(this.fieldsCollection.at(1).get('field'))
+                        )
+                        : datum.text;
+                }
+
                 return sunburstLabelTemplate(templateArguments);
-            },
+            }.bind(this),
             hoverCallback: function(hoveredDatum, arc, outerRingAnimateSize, arcEls, arcData, svg) {
                 svg.selectAll('path')
                     .filter(function(d) {
@@ -130,7 +142,8 @@ define([
                     this.sunburst = drawSunburst.call(this,
                         this.$content,
                         data,
-                        _.bind(this.onClick, this));
+                        _.bind(this.onClick, this)
+                    );
                 }
 
                 const noValidChildren = _.chain(this.dependentParametricCollection.pluck('children'))

@@ -1,11 +1,13 @@
 /*
- * Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
     'js-whatever/js/substitution'
 ], function(substitution) {
+    'use strict';
+
     return substitution({
         'about.app.version': 'Version',
         'about.copyright': "Find © Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.",
@@ -227,7 +229,8 @@ define([
         'search.sunburst.title': 'Parametric Distribution',
         'search.sunburst.fieldPlaceholder.first': 'Select a field',
         'search.sunburst.fieldPlaceholder.second': 'Select a second field',
-        'search.sunburst.noValue': 'There are an additional {0} values with document counts too small to display. Please refine your search.',
+        'search.sunburst.tooSmall': 'There are an additional {0} values with document counts too small to display. Please refine your search.',
+        'search.sunburst.missingValues': 'This area represents {0} search result(s) which contained no values for the parametric field {1}',
         'search.savedSearches': 'Searches',
         'search.savedSearches.confirm.deleteMessage': 'Are you sure you want to remove {0} saved search?',
         'search.savedSearches.confirm.deleteMessage.title': 'Delete saved search',

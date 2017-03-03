@@ -1,15 +1,19 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'backbone',
     'underscore',
+    'backbone',
     'text!find/templates/app/page/search/results/sunburst/field-selection-view.html',
     'i18n!find/nls/bundle',
     'parametric-refinement/prettify-field-name',
     'chosen'
-], function(Backbone, _, template, i18n, prettifyFieldName) {
-
+], function(_, Backbone, template, i18n, prettifyFieldName) {
     'use strict';
 
-    var optionTemplate = _.template('<option value="<%-field%>" <%= selected ? "selected" : ""%>><%-displayValue%></option>');
+    var optionTemplate = _.template('<option value="<%-field%>" <%- selected ? "selected" : ""%>><%-displayValue%></option>');
     var emptyOptionHtml = '<option value=""></option>';
 
     return Backbone.View.extend({
@@ -21,12 +25,14 @@ define([
             this.fields = options.fields;
             this.name = options.name;
             this.allowEmpty = options.allowEmpty;
-            this.width  = options.width || '20%';
+            this.width = options.width || '20%';
 
-            this.selectionsStart = this.allowEmpty ? [emptyOptionHtml] : [];
+            this.selectionsStart = this.allowEmpty
+                ? [emptyOptionHtml]
+                : [];
         },
 
-        updateModel: function () {
+        updateModel: function() {
             this.model.set('field', this.$select.val());
             this.model.set('displayValue', prettifyFieldName(this.$select.val()));
         },
@@ -55,12 +61,11 @@ define([
 
             this.$select.change(_.bind(this.updateModel, this));
 
-            if (!this.allowEmpty && !_.isEmpty(this.fields)) {
+            if(!(this.allowEmpty || _.isEmpty(this.fields))) {
                 this.updateModel();
             }
 
             return this;
         }
     });
-
 });
