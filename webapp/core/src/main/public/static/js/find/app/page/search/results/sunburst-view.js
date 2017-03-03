@@ -11,8 +11,9 @@ define([
     'find/app/page/search/results/parametric-results-view',
     'i18n!find/nls/bundle',
     'find/app/util/generate-error-support-message',
-    'text!find/templates/app/page/search/results/sunburst/sunburst-label.html'
-], function(_, $, d3, Sunburst, ParametricResultsView, i18n, generateErrorHtml, labelTemplate) {
+    'text!find/templates/app/page/search/results/sunburst/sunburst-label.html',
+    'find/app/vent'
+], function(_, $, d3, Sunburst, ParametricResultsView, i18n, generateErrorHtml, labelTemplate, vent) {
     'use strict';
 
     var HIDDEN_COLOR = '#f0f0f0';
@@ -105,6 +106,13 @@ define([
                 emptyMessage: generateErrorHtml({errorLookup: 'emptySunburstView'}),
                 errorMessageArguments: {messageToUser: i18n['search.resultsView.sunburst.error.query']}
             }, options));
+
+            this.listenTo(vent, 'vent:resize', function() {
+                if(this.sunburst && this.$content.is(':visible')) {
+                    this.sunburst.resize();
+                    this.sunburst.redraw();
+                }
+            });
         },
 
         update: function() {
@@ -132,13 +140,6 @@ define([
             ParametricResultsView.prototype.render.apply(this);
 
             this.$content.addClass('sunburst');
-
-            $(window).resize(_.bind(function() {//???why not listen to vent resize?
-                if(this.sunburst) {
-                    this.sunburst.resize();
-                    this.sunburst.redraw();
-                }
-            }, this));
         }
     });
 });
