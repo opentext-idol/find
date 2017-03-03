@@ -67,7 +67,10 @@ define([
                 username: configuration().username
             }));
 
-            this.$('.side-menu').metisMenu();
+            this.$('.side-menu').metisMenu({
+                activeClass: 'selected'
+            });
+
             this.listenTo(this.sideBarModel, 'change:collapsed', function(model) {
                 this.toggleSideBar(model.get('collapsed'));
             });
@@ -77,7 +80,10 @@ define([
 
         selectPage: function(pageName) {
             this.$('li').removeClass('active');
-            this.$('li[data-pagename="' + pageName + '"]').addClass('active');
+
+            let $li = this.$('li[data-pagename="' + pageName + '"]');
+            $li.addClass('active');
+            $li.parents('.find-navbar li').addClass('active');
         }
     });
 });

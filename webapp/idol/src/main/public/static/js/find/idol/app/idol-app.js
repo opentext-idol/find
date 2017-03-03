@@ -50,7 +50,7 @@ define([
                     title: i18n[dash.dashboardName] || dash.dashboardName,
                     order: index,
                     constructorArguments: dash,
-                    sideMenu: true
+                    navigation: 'dashboards'
                 };
 
                 return acc;
@@ -73,7 +73,7 @@ define([
                     ),
                     title: i18n['app.search'],
                     order: dashboardCount,
-                    sideMenu: true
+                    navigation: 'sidebar'
 
                 },
                 about: {
@@ -81,7 +81,7 @@ define([
                     icon: 'hp-icon hp-fw hp-info',
                     title: i18n['app.about'],
                     order: dashboardCount + 1,
-                    dropdownMenu: true
+                    navigation: 'dropdown'
                 }
             });
 
@@ -91,7 +91,7 @@ define([
                     icon: 'hp-icon hp-fw hp-settings',
                     title: i18n['app.settings'],
                     order: dashboardCount + 2,
-                    dropdownMenu: true
+                    navigation: 'dropdown'
                 };
             }
 

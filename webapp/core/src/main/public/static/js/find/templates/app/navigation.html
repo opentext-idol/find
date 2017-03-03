@@ -1,3 +1,5 @@
+<% var pages = _.groupBy(data.pages, 'navigation')%>
+
 <div class="find-navbar navbar navbar-static-top">
     <% if(data.username) { %>
         <span class="nav navbar-nav navbar-right navbar-username shorten"><%-data.username%></span>
@@ -12,7 +14,7 @@
                     </li>
                     <li class="divider"></li>
                 <% } %>
-                <%= data.menuItems({pages: data.pages.filter(function(data) {return data.dropdownMenu;})}) %>
+                <%= data.menuItems({pages: pages.dropdown}) %>
                 <li>
                     <a class="clickable navigation-logout"><i class="hp-icon hp-steps hp-fw text-muted"></i> <%-data.i18n['app.logout']%></a>
                 </li>
@@ -27,17 +29,35 @@
             <span class="find-logo-small side-nav navbar-brand m-l-sm m-t-sm navbar-hidden"></span>
         </div>
         <nav class="navbar-default navbar-static-side navbar-static-side-dark" role="navigation">
-            <ul class="nav side-menu" side-navigation="">
+            <ul class="nav side-menu metismenu">
                 <li></li><% /*this is added to allow for the logo elements expects which we don't use. (logo goes here when implemented)*/ %>
-                <% _.each(data.pages.reverse(), function(page, index) { %>
-                    <% if(page.sideMenu) { %>
-                        <li data-pagename="<%-page.pageName%>" <%if (index === 0) {%> class="active" <%}%>>
-                            <a href="public/<%-page.pageName%>" data-pagename="<%-page.pageName%>">
-                                <i class="<%-page.icon%>"></i> <%-page.title%>
-                            </a>
-                        </li>
-                    <% } %>
+                <% _.each(pages.sidebar, function(page, index) { %>
+                    <li data-pagename="<%-page.pageName%>" <%if (index === 0) {%> class="active" <%}%>>
+                        <a href="public/<%-page.pageName%>" data-pagename="<%-page.pageName%>">
+                            <i class="<%-page.icon%>"></i> <%-page.title%>
+                        </a>
+                    </li>
                 <% }); %>
+
+                <% if(pages.dashboards) { %>
+                    <li data-pagename="dashboards">
+                        <a>
+                            <i class="hp-icon hp-dashboard"></i>
+                            <%-data.i18n['dashboards']%>
+                            <i class="hp-icon hp-collapse arrow"></i>
+                        </a>
+                        <ul class="nav nav-second-level collapse">
+                            <% _.each(pages.dashboards, function(page, index) { %>
+                                <li data-pagename="<%-page.pageName%>" <%if (index === 0) {%> class="active" <%}%>>
+                                <a href="public/<%-page.pageName%>" data-pagename="<%-page.pageName%>">
+                                    <i class="<%-page.icon%>"></i> <%-page.title%>
+                                </a>
+                                </li>
+                            <% }); %>
+                        </ul>
+
+                    </li>
+                <% } %>
             </ul>
         </nav>
     </nav>
