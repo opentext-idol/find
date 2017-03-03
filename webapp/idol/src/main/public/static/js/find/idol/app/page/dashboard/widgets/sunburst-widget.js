@@ -21,6 +21,9 @@ define([
 
     const tooManyItemsHtml = _.template(tooManyItemsTemplate)({i18n: i18n});
     const legendItemTemplateFn = _.template(legendItemTemplate);
+    const noResultsMessage = '<span class="sunburst-widget-no-results-text">' +
+        i18n['dashboards.widget.sunburst.noResults'] +
+        '</span>';
 
     function composeLegendHtml(datum) {
         return legendItemTemplateFn({
@@ -41,13 +44,13 @@ define([
      * HTML with the requisite item.
      *
      * @param {String[]} legendHtmlArray HTML strings representing the legend entries
-     * @returns void
+     * @param tooMany {Boolean} flag setting whether a 'too many entries' item should be prepended
+     * @returns {String}
      */
-    function prependTooManyItems(legendHtmlArray) {
-        if(legendHtmlArray.length > 0) {
-            // Prepend first item by concatenation -- potentially faster than unshift
-            legendHtmlArray[0] = tooManyItemsHtml + legendHtmlArray[0];
-        }
+    function buildLegendHtml(legendHtmlArray, tooMany) {
+        return (legendHtmlArray.length > 0 && tooMany
+                ? tooManyItemsHtml
+                : '') + legendHtmlArray.join('');
     }
 
     return SavedSearchWidget.extend({
@@ -63,38 +66,44 @@ define([
             this.dependentParametricCollection = new DependentParametricCollection({
                 minShownResults: 10
             });
+
+            this.listenTo(this.dependentParametricCollection, 'update reset', function(collection) {
+                const data = collection.toJSON();
+
+                if(this.$visualizerContainer && this.$legendContainer) {
+                    const empty = collection.isEmpty();
+                    this.$visualizerContainer.toggleClass('hide', empty);
+                    this.$legendContainer.toggleClass('hide', empty);
+                    const $noResultsMessage = this.$('.sunburst-widget-no-results-text');
+                    if(empty) {
+                        if(!$noResultsMessage.length) {
+                            this.$content.prepend(noResultsMessage);
+                        }
+                    } else {
+                        const rootData = {children: data};
+
+                        $noResultsMessage.remove();
+                        this.updateLayout();
+                        if(this.sunburst) {
+                            this.sunburst.resize();
+                            this.sunburst.redraw(rootData);
+                        } else {
+                            this.sunburst = this.drawSunburst(rootData);
+                        }
+                    }
+                }
+                this.populateLegend(data);
+            });
         },
 
         render: function() {
             SavedSearchWidget.prototype.render.apply(this);
 
-            var data = this.dependentParametricCollection.toJSON();
-            var rootData = {children: data};
+            this.$legendContainer = $('<div class="sunburst-legend"></div>');
+            this.$visualizerContainer = $('<div class="sunburst-visualizer-container"></div>');
 
-            if(data.length > 0) {
-                if(!(this.$legendContainer && this.$visualizerContainer)) {
-                    this.$legendContainer = $('<div class="sunburst-legend"></div>');
-                    this.$visualizerContainer = $('<div class="sunburst-visualizer-container"></div>');
-
-                    this.$content.append(this.$visualizerContainer.add(this.$legendContainer));
-                }
-                this.determineLayout();
-
-                if(this.sunburst) {
-                    this.sunburst.resize();
-                    this.sunburst.redraw(rootData);
-                } else {
-                    this.sunburst = this.drawSunburst(rootData);
-                }
-                this.$legendContainer
-                    .html(this.legendTemplate({
-                        innerRingHeader: prettyOrNull(this.firstField),
-                        outerRingHeader: prettyOrNull(this.secondField)
-                    }));
-                this.populateLegend(data);
-            } else {
-                this.$content.text(i18n['dashboards.widget.sunburst.noResults']);
-            }
+            this.$content.append(this.$visualizerContainer.add(this.$legendContainer));
+            this.updateLayout();
         },
 
         postInitialize: function() {
@@ -102,7 +111,7 @@ define([
         },
 
         // Decide if legend is placed underneath the visualizer, or to the side.
-        determineLayout: function() {
+        updateLayout: function() {
             if(this.$legendContainer && this.$content) {
                 // Prefer side-by-side layout: widget must be slightly narrower than a square
                 // for legend to be placed underneath Sunburst
@@ -114,12 +123,12 @@ define([
         },
 
         onResize: function() {
-            this.determineLayout();
+            this.updateLayout();
 
             if(this.sunburst) {
                 //TODO recalculate font sizes here?
                 this.sunburst.resize();
-                this.sunburst.redraw({children: this.dependentParametricCollection.toJSON()});
+                this.sunburst.redraw();
             }
         },
 
@@ -129,14 +138,13 @@ define([
 
         drawSunburst: function(data, colors) {
             if(this.$content && this.$visualizerContainer) {
-                var colorScheme = _.defaults(colors || {}, {
+                const colorScheme = _.defaults(colors || {}, {
                     centre: 'white',
                     hidden: 'white',
                     palette: d3.scale.category20c()
                 });
 
-
-                var sunburst = new Sunburst(this.$visualizerContainer, {
+                return new Sunburst(this.$visualizerContainer, {
                     animate: false,
                     sizeAttr: 'count',
                     nameAttr: 'text',
@@ -167,10 +175,6 @@ define([
                     },
                     labelFormatter: null// no labels on hover
                 });
-
-                this.populateLegend(data);
-
-                return sunburst;
             }
         },
 
@@ -181,6 +185,12 @@ define([
 
         populateLegend: function(data) {
             if(this.$content && this.$legendContainer) {
+                this.$legendContainer
+                    .html(this.legendTemplate({
+                        innerRingHeader: prettyOrNull(this.firstField),
+                        outerRingHeader: prettyOrNull(this.secondField)
+                    }));
+
                 this.$innerLegend = this.$legendContainer
                     .find('.inner-ring-legend .sunburst-legend-field-values');
                 this.$outerLegend = this.$legendContainer
@@ -191,9 +201,9 @@ define([
                     this.$outerLegend.text(i18n['dashboards.widget.sunburst.legend.noValues']);
                 } else {
                     // Inner tier legend
-                    var outerValues = [];
-                    var innerHtmlArray = [];
-                    var innerTooMany = false;
+                    const outerValues = [];
+                    const innerHtmlArray = [];
+                    let innerTooMany = false;
 
                     _.each(data, function(datum) {
                         if(datum.children && datum.children.length > 0) {
@@ -207,15 +217,12 @@ define([
                         }
                     }.bind(this));
 
-                    if(innerTooMany) {
-                        prependTooManyItems(innerHtmlArray);
-                    }
-                    this.$innerLegend.html(innerHtmlArray.join(''));
+                    this.$innerLegend.html(buildLegendHtml(innerHtmlArray, innerTooMany));
 
                     // Outer tier legend
                     if(outerValues.length > 0) {
-                        var outerTooMany = false;
-                        var outerHtmlArray = [];
+                        let outerTooMany = false;
+                        const outerHtmlArray = [];
                         _.each(outerValues, function(datum) {
                             if(datum.hidden || datum.text === '') {
                                 outerTooMany = true;
@@ -224,10 +231,7 @@ define([
                             }
                         }.bind(this));
 
-                        if(outerTooMany) {
-                            outerHtmlArray.unshift(tooManyItemsHtml);
-                        }
-                        this.$outerLegend.html(outerHtmlArray.join(''));
+                        this.$outerLegend.html(buildLegendHtml(outerHtmlArray, outerTooMany));
                     } else {
                         this.$outerLegend.text(i18n['dashboards.widget.sunburst.legend.noValues']);
                     }

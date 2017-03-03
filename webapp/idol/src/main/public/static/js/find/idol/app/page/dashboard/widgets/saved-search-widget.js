@@ -41,25 +41,20 @@ define([
                 type: options.savedSearch.type
             });
 
-            this.savedSearchPromise = this.savedSearchModel.fetch()
-                .always(function() {// TODO handle failure
+            this.initialiseWidgetPromise = this.savedSearchModel.fetch()
+                .then(function() {// TODO handle failure
                     this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                    this.initialiseWidgetPromise = $.when(this.postInitialize());
+                    return $.when(this.postInitialize());
                 }.bind(this));
         },
 
         doUpdate: function(done) {
-            this.savedSearchModel.fetch().done(function() {// TODO handle failure
-                $.when(this.initialiseWidgetPromise)
-                    .done(function() {// TODO handle failure
-                        this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                        this.updatePromise = this.getData()
-                            .done(function() {// TODO handle failure
-                                this.render();
-                                done();
-                            }.bind(this));
-                    }.bind(this));
-            }.bind(this));
+            $.when(this.savedSearchModel.fetch(), this.initialiseWidgetPromise)
+                .done(function() {// TODO handle failure
+                    this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
+                    this.updatePromise = this.getData()
+                        .done(done);// TODO handle failure
+                }.bind(this));
         },
 
         onClick: function() {
