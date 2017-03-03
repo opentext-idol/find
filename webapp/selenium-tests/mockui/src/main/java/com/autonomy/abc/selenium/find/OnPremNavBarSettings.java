@@ -14,6 +14,7 @@ public class OnPremNavBarSettings extends NavBarSettings {
 
     public void goToDashboard(final String dashboardName) {
         openSideBar();
+        header().findElement(By.cssSelector("ul.side-menu li[data-pagename='dashboards']")).click();
         header().findElement(By.cssSelector("ul.side-menu li[data-pagename='dashboards/" + dashboardName + "']")).click();
     }
 }
