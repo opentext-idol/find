@@ -64,7 +64,7 @@ define([
                         var children = _.compact(arguments);
 
                         // Since it's an async action, we have to keep it as target: _self to avoid the popup blocker.
-                        var $form = $('<form class="hide" enctype="multipart/form-data" method="post" action="api/bi/export/ppt/report"><input name="multipage"><textarea name="data"></textarea><input type="submit"></form>');
+                        var $form = $('<form class="hide" enctype="application/x-www-form-urlencoded" method="post" action="api/bi/export/ppt/report"><input name="multipage"><textarea name="data"></textarea><input type="submit"></form>');
 
                         $form[0].data.value = JSON.stringify({
                             children: children
