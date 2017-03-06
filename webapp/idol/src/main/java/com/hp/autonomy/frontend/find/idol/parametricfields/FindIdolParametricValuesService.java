@@ -167,7 +167,7 @@ class FindIdolParametricValuesService implements IdolParametricValuesService {
             aciParameters.add(GetQueryTagValuesParams.MaxValues.name(), 1);
             aciParameters.add(GetQueryTagValuesParams.FieldName.name(), tagNamesToFieldNamesParam(parametricRequest.getFieldNames()));
             aciParameters.add(GetQueryTagValuesParams.ValueDetails.name(), true);
-            aciParameters.add(GetQueryTagValuesParams.DateOffset.name(), "day");
+            aciParameters.add(GetQueryTagValuesParams.DatePeriod.name(), "day");
 
             final GetQueryTagValuesResponseData responseData = executeAction(parametricRequest, aciParameters);
             final Collection<FlatField> fields = responseData.getField();
