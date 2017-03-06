@@ -15,11 +15,11 @@ define([
     const PIXELS_PER_BUCKET = 20;
 
     const graphConfiguration = {
-        date: {
+        NumericDate: {
             template: NumericParametricFieldView.dateInputTemplate,
             formatting: NumericParametricFieldView.dateFormatting
         },
-        numeric: {
+        Numeric: {
             template: NumericParametricFieldView.numericInputTemplate,
             formatting: NumericParametricFieldView.defaultFormatting
         }
@@ -58,7 +58,6 @@ define([
                 selectedParametricValues: this.selectedParametricValues,
                 zoomEnabled: true,
                 dataType: this.dataType,
-                numericRestriction: this.dataType === 'numeric',
                 model: fieldModel,
                 formatting: currentGraphConfig.formatting,
                 inputTemplate: currentGraphConfig.template

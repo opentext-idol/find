@@ -79,13 +79,13 @@ define([
             this.buttonsEnabled = options.selectionEnabled && options.buttonsEnabled;
             this.coordinatesEnabled = _.isUndefined(options.coordinatesEnabled) || options.coordinatesEnabled;
             this.hideTitle = options.hideTitle;
-            this.type = options.type;
             this.clickCallback = options.clickCallback;
 
             this.fieldName = this.model.id;
-            this.displayName = this.model.displayName;
+            this.displayName = this.model.get('displayName');
+            this.type = this.model.get('type');
 
-            const formatting = this.type === 'date'
+            const formatting = this.type === 'NumericDate'
                 ? options.formatting
                 : NumericParametricFieldView.defaultFormatting;
             this.formatValue = function (value) {
@@ -279,8 +279,6 @@ define([
                 field: this.fieldName,
                 displayName: this.displayName,
                 type: this.type,
-                // TODO: Replace numeric with the more expressive 'type'
-                numeric: this.type === 'numeric',
                 range: _.map(newRange, function (value, index) {
                     // Explicitly check null since 0 is falsy
                     return value === null ? existingRange[index] : value;

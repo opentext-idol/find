@@ -6,7 +6,7 @@ define([
     describe('Parametric Select Modal View', function() {
         beforeEach(function() {
             this.selectedParametricValues = new Backbone.Collection([
-                {field: 'AUTHOR', displayName: 'Author', value: 'Matthew', displayValue: 'Matthew'}
+                {field: 'AUTHOR', displayName: 'Author', value: 'Matthew', displayValue: 'Matthew', type: 'Parametric'}
             ]);
 
             const queryModel = new Backbone.Model({

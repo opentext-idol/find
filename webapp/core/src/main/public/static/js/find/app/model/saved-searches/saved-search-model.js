@@ -10,7 +10,7 @@ define([
     'find/app/util/array-equality',
     'find/app/util/database-name-resolver',
     'find/app/model/dates-filter-model'
-], function(Backbone, moment, _, arraysEqual, databaseNameResolver, DatesFilterModel) {
+], function (Backbone, moment, _, arraysEqual, databaseNameResolver, DatesFilterModel) {
     'use strict';
 
     /**
@@ -58,13 +58,13 @@ define([
         const parametricValues = [];
         const parametricRanges = [];
 
-        models.forEach(function(model) {
-            if(model.has('value')) {
+        models.forEach(function (model) {
+            if (model.has('value')) {
                 parametricValues.push({
                     field: model.get('field'),
                     value: model.get('value')
                 });
-            } else if(model.has('range')) {
+            } else if (model.has('range')) {
                 parametricRanges.push({
                     field: model.get('field'),
                     min: model.get('range')[0],
@@ -94,10 +94,10 @@ define([
 
     // Treat as equal if they are both either null or undefined, or pass a regular equality test
     function optionalEqual(equalityTest) {
-        return function(optionalItem1, optionalItem2) {
-            if(nullOrUndefined(optionalItem1)) {
+        return function (optionalItem1, optionalItem2) {
+            if (nullOrUndefined(optionalItem1)) {
                 return nullOrUndefined(optionalItem2);
-            } else if(nullOrUndefined(optionalItem2)) {
+            } else if (nullOrUndefined(optionalItem2)) {
                 return false;
             } else {
                 return equalityTest(optionalItem1, optionalItem2);
@@ -108,11 +108,11 @@ define([
     const arrayEqualityPredicate = _.partial(arraysEqual, _, _, _.isEqual);
 
     function relatedConceptsToClusterModel(relatedConcepts, clusterId) {
-        if(!relatedConcepts.length) {
+        if (!relatedConcepts.length) {
             return null;
         }
 
-        return _.map(relatedConcepts, function(concept, index) {
+        return _.map(relatedConcepts, function (concept, index) {
             return {
                 clusterId: clusterId,
                 phrase: concept,
@@ -136,7 +136,7 @@ define([
             minScore: 0
         },
 
-        parse: function(response) {
+        parse: function (response) {
             const dateAttributes = _.mapObject(_.pick(response, DATE_FIELDS), function (value) {
                 return value && moment(value);
             });
@@ -163,13 +163,13 @@ define([
             return _.defaults(dateAttributes, {queryStateTokens: tokensByType.QUERY}, {promotionsStateTokens: tokensByType.PROMOTIONS}, {relatedConcepts: relatedConcepts}, response);
         },
 
-        toJSON: function() {
+        toJSON: function () {
             return _.defaults({
                 conceptClusterPhrases: _.flatten(this.get('relatedConcepts').map(relatedConceptsToClusterModel))
             }, Backbone.Model.prototype.toJSON.call(this));
         },
 
-        destroy: function(options) {
+        destroy: function (options) {
             return Backbone.Model.prototype.destroy.call(this, _.extend(options || options, {
                 // The server returns an empty body (ie: not JSON)
                 // TODO: check for collision of names
@@ -182,7 +182,7 @@ define([
          * @param {QueryState} queryState
          * @return {Boolean}
          */
-        equalsQueryState: function(queryState) {
+        equalsQueryState: function (queryState) {
             const selectedIndexes = databaseNameResolver.getDatabaseInfoFromCollection(queryState.selectedIndexes);
 
             const parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
@@ -194,10 +194,10 @@ define([
                 && arraysEqual(this.get('parametricRanges'), parametricRestrictions.parametricRanges, _.isEqual);
         },
 
-        equalsQueryStateDateFilters: function(queryState) {
+        equalsQueryStateDateFilters: function (queryState) {
             const datesAttributes = queryState.datesFilterModel.toQueryModelAttributes();
 
-            if(this.get('dateRange') === DatesFilterModel.DateRange.CUSTOM) {
+            if (this.get('dateRange') === DatesFilterModel.DateRange.CUSTOM) {
                 return this.get('dateRange') === datesAttributes.dateRange
                     && optionalMomentsEqual(this.get('minDate'), datesAttributes.minDate)
                     && optionalMomentsEqual(this.get('maxDate'), datesAttributes.maxDate);
@@ -206,7 +206,7 @@ define([
             }
         },
 
-        toDatesFilterModelAttributes: function() {
+        toDatesFilterModelAttributes: function () {
             const minDate = this.get('minDate');
             const maxDate = this.get('maxDate');
 
@@ -218,30 +218,32 @@ define([
             };
         },
 
-        toConceptGroups: function() {
-            return this.get('relatedConcepts').map(function(concepts) {
+        toConceptGroups: function () {
+            return this.get('relatedConcepts').map(function (concepts) {
                 return {concepts: concepts};
             });
         },
 
-        toMinScoreModelAttributes: function() {
+        toMinScoreModelAttributes: function () {
             return this.pick('minScore');
         },
 
-        toSelectedParametricValues: function() {
-            return this.get('parametricValues').concat(this.get('parametricRanges').map(function(range) {
+        toSelectedParametricValues: function () {
+            const selectedParametricValues = this.get('parametricValues').map(function (fieldAndValues) {
+                return _.defaults(fieldAndValues, {type: 'Parametric'});
+            });
+            const selectedParametricRanges = this.get('parametricRanges').map(function (range) {
                 return {
                     field: range.field,
                     displayName: range.displayName,
                     range: [range.min, range.max],
-                    type: range.type === 'Numeric' ? 'Numeric' : 'NumericDate',
-                    // TODO: Replace numeric with the more expressive 'type'
-                    numeric: range.type === 'Numeric'
+                    type: range.type === 'Numeric' ? 'Numeric' : 'NumericDate'
                 };
-            }));
+            });
+            return selectedParametricValues.concat(selectedParametricRanges);
         },
 
-        toSelectedIndexes: function() {
+        toSelectedIndexes: function () {
             return this.get('indexes');
         }
     }, {
@@ -252,7 +254,7 @@ define([
          * @param {QueryState} queryState
          * @return {SavedSearchModelAttributes}
          */
-        attributesFromQueryState: function(queryState) {
+        attributesFromQueryState: function (queryState) {
             const indexes = databaseNameResolver.getDatabaseInfoFromCollection(queryState.selectedIndexes);
             const parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
 

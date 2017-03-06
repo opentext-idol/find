@@ -46,7 +46,7 @@ define([
             });
 
             this.selectedParametricValues = new SelectedParametricValues([
-                {field: 'AGE', displayName: 'Age', value: '4', displayValue: '4'}
+                {field: 'AGE', displayName: 'Age', value: '4', displayValue: '4', type: 'Parametric'}
             ]);
 
             this.collection = new FiltersCollection([], {

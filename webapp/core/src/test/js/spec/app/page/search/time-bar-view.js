@@ -10,13 +10,13 @@ define([
             this.queryModel = new Backbone.Model();
             this.selectedParametricValues = new Backbone.Collection();
             this.parametricFieldsCollection = new Backbone.Collection([
-                {id: 'autn_date', name: 'Autn Date'}
+                {id: 'autn_date', displayName: 'Autn Date', type: 'NumericDate'}
             ]);
 
             this.timeBarModel = new Backbone.Model({
                 graphedFieldId: 'autn_date',
                 graphedFieldName: 'Autn Date',
-                graphedDataType: 'date'
+                graphedDataType: 'NumericDate'
             });
 
             this.view = new TimeBarView({

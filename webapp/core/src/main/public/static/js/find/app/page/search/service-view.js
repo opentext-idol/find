@@ -380,6 +380,7 @@ define([
                     queryState: this.queryState,
                     previewModeModel: this.previewModeModel,
                     timeBarModel: this.timeBarModel,
+                    parametricFieldsCollection: this.parametricFieldsCollection
                 });
 
                 this.renderTimeBar();

@@ -46,8 +46,8 @@ define([
             this.fetchFunction = jasmine.createSpy('fetchFunction');
 
             this.selectedValues = new Backbone.Collection([
-                {field: 'CATEGORY', displayName: 'Category', value: 'ANIMALS', displayValue: 'Animals'},
-                {field: 'THINGS', displayName: 'Things', value: 'ANIMALS', displayValue: 'Animals'}
+                {field: 'CATEGORY', displayName: 'Category', value: 'ANIMALS', displayValue: 'Animals', type: 'Parametric'},
+                {field: 'THINGS', displayName: 'Things', value: 'ANIMALS', displayValue: 'Animals', type: 'Parametric'}
             ]);
 
             this.fetchFunction.and.callFake(function() {

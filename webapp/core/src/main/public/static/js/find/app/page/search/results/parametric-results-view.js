@@ -24,7 +24,8 @@ define([
                 field: fields[data.depth - 1].field,
                 displayName: fields[data.depth - 1].displayName,
                 value: data.underlyingValue,
-                displayValue: data.text
+                displayValue: data.text,
+                type: 'Parametric'
             };
             selectedParameters.push(parameter);
 

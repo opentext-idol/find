@@ -46,26 +46,28 @@ define([
     }
 
     // Get the display text for the given parametric field name and array of selected parametric values
-    function parametricFilterText(displayValues, ranges, numeric) {
-        let valueText;
+    function parametricFilterText(displayValues, ranges, type) {
+        let values;
 
-        if (_.isEmpty(displayValues)) {
-            valueText = ranges.map(function (range) {
+        if (type === 'Parametric') {
+            values = displayValues;
+        } else if (type === 'Numeric') {
+            values = ranges.map(function (range) {
+                const round = rounder().round;
+                return round(range[0], range[0], range[1]) + ' \u2013 ' + round(range[1], range[0], range[1]);
+            });
+        } else if (type === 'NumericDate') {
+            values = ranges.map(function (range) {
                 //Discard time of day if range greater than 1 week
-                if (numeric) {
-                    const round = rounder().round;
-                    return round(range[0], range[0], range[1]) + ' \u2013 ' + round(range[1], range[0], range[1]);
-                } else if (range[1] - range[0] <= DATE_SHORTEN_CUTOFF) {
+                if (range[1] - range[0] <= DATE_SHORTEN_CUTOFF) {
                     return formatDate(range[0], DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], DATE_FORMAT);
                 } else {
                     return formatDate(range[0], SHORT_DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], SHORT_DATE_FORMAT);
                 }
-            }).join(', ');
-        } else {
-            valueText = displayValues.join(', ');
+            });
         }
 
-        return valueText;
+        return values.join(', ');
     }
 
     // Get an array of filter model attributes from the selected parametric values collection
@@ -201,7 +203,7 @@ define([
                 this.add({
                     id: id,
                     field: field,
-                    text: parametricFilterText(displayValues, ranges, selectionModel.get('numeric')),
+                    text: parametricFilterText(displayValues, ranges, selectionModel.get('type')),
                     type: FilterType.PARAMETRIC,
                     heading: selectionModel.get('displayName')
                 }, {

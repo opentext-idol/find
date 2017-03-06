@@ -91,7 +91,8 @@ define([
                     field: this.fetchOptions.fieldName,
                     displayName: this.fieldDisplayName,
                     value: value,
-                    displayValue: model.get('displayValue')
+                    displayValue: model.get('displayValue'),
+                    type: 'Parametric'
                 });
             } else {
                 this.selectedValues.remove(this.selectedValues.findWhere({field: this.fetchOptions.fieldName, value: value}));

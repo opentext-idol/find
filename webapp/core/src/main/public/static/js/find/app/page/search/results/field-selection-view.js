@@ -27,7 +27,7 @@ define([
         updateModel: function () {
             const fieldId = this.$select.val();
             this.model.set('field', fieldId);
-            this.model.set('displayName', this.$select.find('option:selected').text());
+            this.model.set('displayName', _.findWhere(this.fields, {id: fieldId}).displayName);
         },
 
         render: function() {

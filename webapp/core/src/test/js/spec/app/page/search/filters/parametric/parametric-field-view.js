@@ -28,8 +28,8 @@ define([
             ]);
 
             this.selectedParametricValues = new SelectedParametricValues([
-                {field: 'primary_author', displayName: 'Primary Author', value: 'bob', displayValue: 'bob'},
-                {field: 'primary_author', displayName: 'Primary Author', value: 'penny', displayValue: 'penny'},
+                {field: 'primary_author', displayName: 'Primary Author', value: 'bob', displayValue: 'bob', type: 'Parametric'},
+                {field: 'primary_author', displayName: 'Primary Author', value: 'penny', displayValue: 'penny', type: 'Parametric'},
             ]);
         });
 

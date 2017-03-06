@@ -31,7 +31,8 @@ define([
                     field: $field.attr('data-field'),
                     displayName: $field.attr('data-field-display-name'),
                     value: $target.attr('data-value'),
-                    displayValue: $target.attr('data-display-value')
+                    displayValue: $target.attr('data-display-value'),
+                    type: 'Parametric'
                 };
 
                 if (this.selectedParametricValues.get(attributes)) {
@@ -130,7 +131,6 @@ define([
                         timeBarModel: options.timeBarModel,
                         selectedParametricValues: this.selectedParametricValues,
                         pixelsPerBucket: TARGET_NUMBER_OF_PIXELS_PER_BUCKET,
-                        numericRestriction: options.numericRestriction,
                         formatting: options.formatting,
                         selectionEnabled: options.selectionEnabled,
                         zoomEnabled: options.zoomEnabled,

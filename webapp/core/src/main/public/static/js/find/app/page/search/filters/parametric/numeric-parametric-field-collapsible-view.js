@@ -20,11 +20,11 @@ define([
         if (model) {
             let range;
             const rangeArray = model.get('range');
-            if (this.type === 'numeric') {
+            if (this.type === 'Numeric') {
                 range = _.map(rangeArray, function (entry) {
                     return rounder().round(entry, rangeArray[0], rangeArray[1]);
                 });
-            } else if (this.type === 'date') {
+            } else if (this.type === 'NumericDate') {
                 range = _.map(rangeArray, function (entry) {
                     return NumericParametricFieldView.dateFormatting.format(entry);
                 });
@@ -57,9 +57,9 @@ define([
                     const isCurrentField = this.isCurrentField();
 
                     this.timeBarModel.set({
-                        graphedDataType: isCurrentField ? null : this.model.type,
+                        graphedDataType: isCurrentField ? null : this.model.get('type'),
                         graphedFieldId: isCurrentField ? null : this.model.id,
-                        graphedFieldName: isCurrentField ? null : this.model.displayName
+                        graphedFieldName: isCurrentField ? null : this.model.get('displayName')
                     });
                 }.bind(this);
             }

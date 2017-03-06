@@ -48,7 +48,7 @@ define([
             });
 
             this.selectedParametricValues = new SelectedParametricValues([
-                {field: 'AGE', displayName: 'Age', value: '4', displayValue: '4'}
+                {field: 'AGE', displayName: 'Age', value: '4', displayValue: '4', type: 'Parametric'}
             ]);
 
             this.collection = new FiltersCollection([], {
@@ -256,7 +256,7 @@ define([
         describe('after adding a selected parametric value with a displayName in the configuration', function() {
             beforeEach(function() {
                 this.selectedParametricValues.add([
-                    {field: 'FELINES', displayName: 'cats', value: 'MR_MISTOFFELEES', displayValue: 'Mr. Mistoffelees, the magical cat'}
+                    {field: 'FELINES', displayName: 'cats', value: 'MR_MISTOFFELEES', displayValue: 'Mr. Mistoffelees, the magical cat', type: 'Parametric'}
                 ]);
             });
 
@@ -273,8 +273,8 @@ define([
         describe('after two more parametric values are selected from the NAME field', function() {
             beforeEach(function() {
                 this.selectedParametricValues.add([
-                    {field: 'NAME', displayName: 'Name', value: 'bobby', displayValue: 'bobby'},
-                    {field: 'NAME', displayName: 'Name', value: 'penny', displayValue: 'penny'}
+                    {field: 'NAME', displayName: 'Name', value: 'bobby', displayValue: 'bobby', type: 'Parametric'},
+                    {field: 'NAME', displayName: 'Name', value: 'penny', displayValue: 'penny', type: 'Parametric'}
                 ]);
             });
 
@@ -334,7 +334,7 @@ define([
             describe('then the selected parametric values collection is reset with a new selected field', function() {
                 beforeEach(function() {
                     this.selectedParametricValues.reset([
-                        {field: 'VEHICLE', displayName: 'Vehicle', value: 'car', displayValue: 'car'}
+                        {field: 'VEHICLE', displayName: 'Vehicle', value: 'car', displayValue: 'car', type: 'Parametric'}
                     ]);
                 });
 

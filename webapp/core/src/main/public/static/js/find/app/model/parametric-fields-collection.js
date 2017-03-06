@@ -38,6 +38,10 @@ define([
                 totalValues: 0
             }, defaultCurrentRangeAttributes({min: 0, max: 0})),
 
+            parse: function(response) {
+                return _.defaults(defaultCurrentRangeAttributes(response), response);
+            },
+
             getDefaultCurrentRange: function() {
                 return defaultCurrentRangeAttributes(this.pick('min', 'max'));
             }

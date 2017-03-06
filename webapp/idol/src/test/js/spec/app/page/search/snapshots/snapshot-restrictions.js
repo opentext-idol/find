@@ -80,9 +80,9 @@ define([
                 queryText: 'cat',
                 relatedConcepts: [],
                 parametricValues: [
-                    {field: 'animal', displayName: 'Animal', value: 'cat', displayValue: 'Cat'},
-                    {field: 'PRIMARY_COLOUR', displayName: 'Primary Colour', value: 'ginger', displayValue: 'Ginger'},
-                    {field: 'PRIMARY_COLOUR', displayName: 'Primary Colour', value: 'black', displayValue: 'Black'}
+                    {field: 'animal', displayName: 'Animal', value: 'cat', displayValue: 'Cat', type: 'Parametric'},
+                    {field: 'PRIMARY_COLOUR', displayName: 'Primary Colour', value: 'ginger', displayValue: 'Ginger', type: 'Parametric'},
+                    {field: 'PRIMARY_COLOUR', displayName: 'Primary Colour', value: 'black', displayValue: 'Black', type: 'Parametric'}
                 ]
             });
 
