@@ -145,7 +145,7 @@ define([
                 });
 
                 return new Sunburst(this.$visualizerContainer, {
-                    animate: false,
+                    animate: true,
                     sizeAttr: 'count',
                     nameAttr: 'text',
                     comparator: function(datumA, datumB) {
