@@ -54,6 +54,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     private static final String MIN_SCORE = "minScore";
     private static final String STATE_TOKEN_PARAM = "stateTokens";
     private static final String MAX_VALUES_PARAM = "maxValues";
+    private static final String VALUE_RESTRICTION_PARAM = "valueRestriction";
     private static final String START_PARAM = "start";
 
     private final ParametricValuesService<R, Q, E> parametricValuesService;
@@ -77,6 +78,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(FIELD_NAMES_PARAM) final List<FieldPath> fieldNames,
             @RequestParam(value = START_PARAM, required = false) final Integer start,
             @RequestParam(value = MAX_VALUES_PARAM, required = false) final Integer maxValues,
+            @RequestParam(value = VALUE_RESTRICTION_PARAM, required = false) final String valueRestriction,
             @RequestParam(value = QUERY_TEXT_PARAM, defaultValue = "*") final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
             @RequestParam(DATABASES_PARAM) final Collection<S> databases,
@@ -107,6 +109,10 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
 
         if (maxValues != null) {
             builder.maxValues(maxValues);
+        }
+
+        if (valueRestriction != null) {
+            builder.valueRestriction(valueRestriction);
         }
 
         return parametricValuesService.getParametricValues(builder.build());
