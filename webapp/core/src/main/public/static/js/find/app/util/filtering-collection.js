@@ -62,7 +62,7 @@ define([
         },
 
         filterModels: function() {
-            var models = this.collection.filter(this.predicate);
+            const models = this.collection.filter(this.predicate);
 
             if (this.resetOnFilter) {
                 this.reset(models);

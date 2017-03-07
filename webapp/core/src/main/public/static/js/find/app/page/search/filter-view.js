@@ -9,16 +9,16 @@ define([
     'underscore',
     'find/app/page/search/abstract-section-view',
     'find/app/page/search/filters/date/dates-filter-view',
+    'find/app/page/search/filters/parametric/filtered-parametric-fields-collection',
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'find/app/util/text-input',
     'find/app/util/collapsible',
-    'find/app/util/filtering-collection',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
-], function (Backbone, $, _, AbstractSectionView, DateView, ParametricView, NumericParametricFieldView,
-             TextInput, Collapsible, FilteringCollection, configuration, i18n, i18nIndexes) {
+], function (Backbone, $, _, AbstractSectionView, DateView, FilteredParametricFieldsCollection, ParametricView, NumericParametricFieldView,
+             TextInput, Collapsible, configuration, i18n, i18nIndexes) {
     'use strict';
 
     const datesTitle = i18n['search.dates'];
@@ -33,8 +33,6 @@ define([
 
             const IndexesView = options.IndexesView;
             this.collapsed = {};
-
-            this.parametricFieldsCollection = options.parametricFieldsCollection;
 
             const views = [{
                 shown: configuration().enableMetaFilter,
@@ -146,6 +144,12 @@ define([
             }, {
                 shown: true,
                 initialize: function () {
+                    this.parametricFieldsCollection = options.parametricFieldsCollection;
+                    this.filteredParametricFieldsCollection = new FilteredParametricFieldsCollection([], {
+                        collection: this.parametricFieldsCollection,
+                        filterModel: this.filterModel
+                    });
+
                     if (this.filterModel) {
                         this.listenTo(this.parametricFieldsCollection, 'update reset', function () {
                             this.updateParametricVisibility();
@@ -158,7 +162,8 @@ define([
                         queryModel: options.queryModel,
                         queryState: options.queryState,
                         timeBarModel: options.timeBarModel,
-                        collection: this.parametricFieldsCollection,
+                        collection: this.filteredParametricFieldsCollection,
+                        parametricFieldsCollection: this.parametricFieldsCollection,
                         inputTemplate: NumericParametricFieldView.dateInputTemplate,
                         formatting: NumericParametricFieldView.dateFormatting,
                         indexesCollection: options.indexesCollection,
@@ -174,7 +179,6 @@ define([
                 postRender: $.noop,
                 remove: function () {
                     this.parametricView.remove();
-                    this.parametricDisplayCollection.stopListening();
                 }.bind(this)
             }];
 
@@ -208,7 +212,7 @@ define([
             const noFiltersMatched = !(
                 this.indexesEmpty &&
                 this.hideDates &&
-                this.parametricFieldsCollection.length === 0
+                this.parametricFieldsEmpty()
             );
 
             this.$emptyMessage.toggleClass('hide', noFiltersMatched);
@@ -216,7 +220,7 @@ define([
 
         updateParametricVisibility: function () {
             const filterModelSwitch = Boolean(this.filterModel.get('text'));
-            this.parametricView.$el.toggleClass('hide', this.parametricFieldsCollection.length === 0 && filterModelSwitch);
+            this.parametricView.$el.toggleClass('hide', this.parametricFieldsEmpty() && filterModelSwitch);
         },
 
         updateDatesVisibility: function () {
@@ -230,6 +234,10 @@ define([
         updateIndexesVisibility: function () {
             this.indexesViewWrapper.$el.toggleClass('hide', this.indexesEmpty);
             this.indexesViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.indexes);
+        },
+
+        parametricFieldsEmpty: function () {
+            return !this.parametricFieldsCollection || this.parametricFieldsCollection.length === 0;
         }
     });
 });

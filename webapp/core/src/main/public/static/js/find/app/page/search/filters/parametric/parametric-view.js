@@ -120,7 +120,7 @@ define([
                         collapsed: isCollapsed,
                         queryModel: options.queryModel,
                         indexesCollection: options.indexesCollection,
-                        parametricFieldsCollection: this.collection,
+                        parametricFieldsCollection: options.parametricFieldsCollection,
                         parametricCollection: this.parametricCollection,
                         selectedParametricValues: this.selectedParametricValues
                     },
