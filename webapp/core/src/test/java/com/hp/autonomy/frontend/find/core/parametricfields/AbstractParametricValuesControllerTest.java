@@ -99,6 +99,7 @@ public abstract class AbstractParametricValuesControllerTest<
                 fieldNames,
                 1,
                 10,
+                null,
                 "cat",
                 "MATCH{ANIMAL}:CATEGORY",
                 Collections.emptyList(),
