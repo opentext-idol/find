@@ -35,32 +35,38 @@ define([
             'click .parametric-pptx': function(evt) {
                 evt.preventDefault();
 
-                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/table"><input name="title"><textarea name="data"></textarea><input type="submit"></form>');
-                $form[0].title.value = i18n['search.resultsView.table.breakdown.by'](this.fieldsCollection.at(0).get('displayValue'));
+                var data = this.exportPPTData();
 
-                var rows = this.$table.find('tr'), nCols = 0;
-
-                var cells = [];
-
-                rows.each(function(idx, el){
-                    var tds = $(el).find('th,td');
-                    nCols = tds.length;
-
-                    tds.each(function (idx, el) {
-                        cells.push($(el).text());
-                    })
-                });
-
-                $form[0].data.value = JSON.stringify({
-                    rows: rows.length,
-                    cols: nCols,
-                    cells: cells
-                });
-
-                $form.appendTo(document.body).submit().remove();
+                if (data) {
+                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/table"><input name="title"><textarea name="data"></textarea><input type="submit"></form>');
+                    $form[0].title.value = i18n['search.resultsView.table.breakdown.by'](this.fieldsCollection.at(0).get('displayValue'));
+                    $form[0].data.value = JSON.stringify(data);
+                    $form.appendTo(document.body).submit().remove();
+                }
             },
 
         }, ParametricResultsView.prototype.events),
+
+        exportPPTData: function(){
+            var rows = this.$table.find('tr'), nCols = 0;
+
+            var cells = [];
+
+            rows.each(function(idx, el){
+                var tds = $(el).find('th,td');
+                nCols = tds.length;
+
+                tds.each(function (idx, el) {
+                    cells.push($(el).text());
+                })
+            });
+
+            return rows.length ? {
+                rows: rows.length,
+                cols: nCols,
+                cells: cells
+            } : null;
+        },
 
         initialize: function(options) {
             ParametricResultsView.prototype.initialize.call(this, _.defaults({

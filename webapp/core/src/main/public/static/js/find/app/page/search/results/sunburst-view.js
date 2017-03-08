@@ -116,25 +116,31 @@ define([
             'click .parametric-pptx': function(evt) {
                 evt.preventDefault();
 
-                var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/sunburst"><textarea name="data"></textarea><input type="submit"></form>');
+                var data = this.exportPPTData();
 
-                var categories = [];
-                var values = [];
+                if (data) {
+                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/sunburst"><textarea name="data"></textarea><input type="submit"></form>');
+                    $form[0].data.value = JSON.stringify(data);
+                    $form.appendTo(document.body).submit().remove();
+                }
+            }
+        }, ParametricResultsView.prototype.events),
 
-                this.dependentParametricCollection.each(function(model){
-                    categories.push(model.get('text') || i18n['search.resultsView.sunburst.others']);
-                    values.push(model.get('count'));
-                });
+        exportPPTData: function(){
+            var categories = [];
+            var values = [];
 
-                $form[0].data.value = JSON.stringify({
+            this.dependentParametricCollection.each(function(model){
+                categories.push(model.get('text') || i18n['search.resultsView.sunburst.others']);
+                values.push(model.get('count'));
+            });
+
+            return values.length && categories.length ? {
                     categories: categories,
                     values: values,
                     title: i18n['search.resultsView.sunburst.breakdown.by'](this.fieldsCollection.at(0).get('displayValue'))
-                });
-
-                $form.appendTo(document.body).submit().remove();
-            }
-        }, ParametricResultsView.prototype.events),
+                } : null
+        },
 
         initialize: function(options) {
             ParametricResultsView.prototype.initialize.call(this, _.defaults({
