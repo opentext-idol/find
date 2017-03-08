@@ -9,6 +9,7 @@ define([
     'underscore',
     'find/app/page/search/abstract-section-view',
     'find/app/page/search/filters/date/dates-filter-view',
+    'find/app/page/search/filters/parametric/filtered-parametric-collection',
     'find/app/page/search/filters/parametric/filtered-parametric-fields-collection',
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
@@ -17,8 +18,8 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
-], function (Backbone, $, _, AbstractSectionView, DateView, FilteredParametricFieldsCollection, ParametricView, NumericParametricFieldView,
-             TextInput, Collapsible, configuration, i18n, i18nIndexes) {
+], function (Backbone, $, _, AbstractSectionView, DateView, FilteredParametricCollection, FilteredParametricFieldsCollection,
+             ParametricView, NumericParametricFieldView, TextInput, Collapsible, configuration, i18n, i18nIndexes) {
     'use strict';
 
     const datesTitle = i18n['search.dates'];
@@ -145,9 +146,15 @@ define([
                 shown: true,
                 initialize: function () {
                     this.parametricFieldsCollection = options.parametricFieldsCollection;
+                    const filteredParametricCollection = new FilteredParametricCollection([], {
+                        collection: options.parametricCollection
+                    });
                     this.filteredParametricFieldsCollection = new FilteredParametricFieldsCollection([], {
                         collection: this.parametricFieldsCollection,
-                        filterModel: this.filterModel
+                        filterModel: this.filterModel,
+                        queryModel: options.queryModel,
+                        parametricCollection: options.parametricCollection,
+                        filteredParametricCollection: filteredParametricCollection
                     });
 
                     if (this.filterModel) {
@@ -167,7 +174,7 @@ define([
                         inputTemplate: NumericParametricFieldView.dateInputTemplate,
                         formatting: NumericParametricFieldView.dateFormatting,
                         indexesCollection: options.indexesCollection,
-                        parametricCollection: options.parametricCollection
+                        filteredParametricCollection: filteredParametricCollection
                     });
                 }.bind(this),
                 get$els: function () {

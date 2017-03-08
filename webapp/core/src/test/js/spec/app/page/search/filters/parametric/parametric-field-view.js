@@ -19,7 +19,7 @@ define([
                 id: 'primary_author'
             });
 
-            this.parametricCollection = new Backbone.Collection([
+            this.filteredParametricCollection = new Backbone.Collection([
                 {id: 'primary_author', displayName: 'Primary Author', totalValues: 1500, values: [
                     {value: 'bob', displayValue: 'bob', count: 100},
                     {value: 'penny', displayValue: 'penny', count: 96},
@@ -38,7 +38,7 @@ define([
                 this.fieldView = new FieldView({
                     queryModel: this.queryModel,
                     model: this.model,
-                    parametricCollection: this.parametricCollection,
+                    filteredParametricCollection: this.filteredParametricCollection,
                     selectedParametricValues: this.selectedParametricValues,
                     collapsed: false
                 });
@@ -69,7 +69,7 @@ define([
                 this.fieldView = new FieldView({
                     queryModel: this.queryModel,
                     model: this.model,
-                    parametricCollection: this.parametricCollection,
+                    filteredParametricCollection: this.filteredParametricCollection,
                     selectedParametricValues: this.selectedParametricValues,
                     collapsed: function(model) {
                         return model.id === 'primary_author'
@@ -102,7 +102,7 @@ define([
                 this.fieldView = new FieldView({
                     queryModel: this.queryModel,
                     model: this.model,
-                    parametricCollection: this.parametricCollection,
+                    filteredParametricCollection: this.filteredParametricCollection,
                     selectedParametricValues: this.selectedParametricValues,
                     collapsed: false
                 });

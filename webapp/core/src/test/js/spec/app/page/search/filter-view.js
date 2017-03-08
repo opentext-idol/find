@@ -29,10 +29,12 @@ define([
             });
 
             const parametricFieldsCollection = new (backboneMockFactory.getCollection())();
+            const parametricCollection = new (backboneMockFactory.getCollection())();
             this.view = new FilterView({
                 IndexesView: MockIndexesView,
                 queryState: {},
-                parametricFieldsCollection: parametricFieldsCollection
+                parametricFieldsCollection: parametricFieldsCollection,
+                parametricCollection: parametricCollection
             });
 
             this.view.render();

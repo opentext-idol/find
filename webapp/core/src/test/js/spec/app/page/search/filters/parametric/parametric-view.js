@@ -33,7 +33,7 @@ define([
                     type: 'Numeric'
                 }]);
 
-                this.parametricCollection = new Backbone.Collection([{
+                this.filteredParametricCollection = new Backbone.Collection([{
                     id: '/DOCUMENT/WIKIPEDIA_CATEGORY',
                     displayName: 'Wikipedia Category',
                     totalValues: 121,
@@ -58,7 +58,7 @@ define([
                     filterModel: new Backbone.Model(),
                     collection: this.parametricFieldsCollection,
                     parametricFieldsCollection: this.parametricFieldsCollection,
-                    parametricCollection: this.parametricCollection,
+                    filteredParametricCollection: this.filteredParametricCollection,
                     queryState: {
                         selectedParametricValues: this.selectedParametricValues
                     }
@@ -87,8 +87,8 @@ define([
 
                 describe('then the parametric collection is fetched', function () {
                     beforeEach(function () {
-                        this.parametricCollection.reset();
-                        this.parametricCollection.trigger('request');
+                        this.filteredParametricCollection.reset();
+                        this.filteredParametricCollection.trigger('request');
                     });
 
                     it('displays the loading spinner', function () {
@@ -101,7 +101,7 @@ define([
 
                     describe('then the request fails', function () {
                         beforeEach(function () {
-                            this.parametricCollection.trigger('error', this.parametricCollection, {status: 500});
+                            this.filteredParametricCollection.trigger('error', this.filteredParametricCollection, {status: 500}, false);
                         });
 
                         it('hides the loading spinner', function () {
@@ -115,7 +115,7 @@ define([
 
                     describe('then the request is aborted', function () {
                         beforeEach(function () {
-                            this.parametricCollection.trigger('error', this.parametricCollection, {status: 0});
+                            this.filteredParametricCollection.trigger('error', this.filteredParametricCollection, {status: 0}, false);
                         });
 
                         it('hides the error message', function () {
@@ -125,7 +125,7 @@ define([
 
                     describe('then the request succeeds', function () {
                         beforeEach(function () {
-                            this.parametricCollection.reset([{
+                            this.filteredParametricCollection.reset([{
                                 id: '/DOCUMENT/PERSON_SEX',
                                 displayName: 'Person Sex',
                                 totalValues: 131,
@@ -133,7 +133,7 @@ define([
                                     {value: 'male', displayValue: 'male', count: 1}
                                 ]
                             }]);
-                            this.parametricCollection.trigger('sync');
+                            this.filteredParametricCollection.trigger('sync');
                         });
 
                         it('hides the loading spinner', function () {
@@ -154,12 +154,12 @@ define([
 
         describe('when no fields are returned', function () {
             beforeEach(function () {
-                this.parametricCollection = new Backbone.Collection();
+                this.filteredParametricCollection = new Backbone.Collection();
 
                 this.view = new ParametricView({
                     filterModel: new Backbone.Model(),
                     collection: new Backbone.Collection([]),
-                    parametricCollection: this.parametricCollection,
+                    filteredParametricCollection: this.filteredParametricCollection,
                     queryState: {
                         selectedParametricValues: this.selectedParametricValues
                     }

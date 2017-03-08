@@ -72,7 +72,7 @@ define([
         className: 'animated fadeIn',
 
         initialize: function (options) {
-            this.parametricCollection = options.parametricCollection;
+            this.filteredParametricCollection = options.filteredParametricCollection;
             this.parametricFieldsCollection = options.parametricFieldsCollection;
             this.selectedParametricValues = options.selectedParametricValues;
             this.indexesCollection = options.indexesCollection;
@@ -102,7 +102,7 @@ define([
                 })
             });
 
-            this.listenTo(this.parametricCollection, 'update change reset', this.onParametricChange);
+            this.listenTo(this.filteredParametricCollection, 'update change reset', this.onParametricChange);
             this.listenTo(this.selectedParametricValues, 'update change reset', this.onSelectedValueChange);
             this.listenTo(this.selectedValuesCollection, 'update change reset', this.updateTitle);
 
@@ -132,7 +132,7 @@ define([
 
         calculateSelectedCount: function () {
             const selectedCount = this.getFieldSelectedValuesLength();
-            const parametricModel = this.parametricCollection.get(this.model.id);
+            const parametricModel = this.filteredParametricCollection.get(this.model.id);
             const totalCount = parametricModel ? parametricModel.get('totalValues') : 0;
             return selectedCount
                 ? selectedCount + ' / ' + totalCount
@@ -149,7 +149,7 @@ define([
         },
 
         onParametricChange: function () {
-            const parametricModel = this.parametricCollection.get(this.model.id);
+            const parametricModel = this.filteredParametricCollection.get(this.model.id);
             const parametricValues = parametricModel ? parametricModel.get('values') : [];
             this.parametricValuesCollection.reset(parametricValues);
             this.updateTitle();

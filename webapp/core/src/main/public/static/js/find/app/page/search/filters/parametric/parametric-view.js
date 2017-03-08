@@ -44,13 +44,13 @@ define([
         },
 
         initialize: function (options) {
-            this.parametricCollection = options.parametricCollection;
+            this.filteredParametricCollection = options.filteredParametricCollection;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.filterModel = options.filterModel;
 
             //ToDo : We are currently only monitoring parametricCollection for loading and error. Need to fix as part of FIND-618.
             this.model = new Backbone.Model({
-                processing: Boolean(this.parametricCollection.currentRequest),
+                processing: Boolean(this.filteredParametricCollection.currentRequest),
                 error: false,
                 empty: this.collection.isEmpty()
             });
@@ -59,23 +59,23 @@ define([
             this.listenTo(this.model, 'change:error', this.updateError);
             this.listenTo(this.model, 'change', this.updateEmpty);
 
-            this.listenTo(this.parametricCollection, 'request', function() {
+            this.listenTo(this.filteredParametricCollection, 'request', function() {
                 this.model.set({processing: true, error: false});
             });
 
-            this.listenTo(this.parametricCollection, 'error', function(collection, xhr) {
+            this.listenTo(this.filteredParametricCollection, 'error', function(collection, xhr, processing) {
                 if (xhr.status === 0) {
-                    this.model.set({processing: Boolean(this.parametricCollection.currentRequest)});
+                    this.model.set({processing: processing});
                 } else {
                     // The request was not aborted, so there isn't another request in flight
                     this.model.set({error: true, processing: false});
                 }
             });
 
-            this.listenTo(this.parametricCollection, 'sync', function() {
+            this.listenTo(this.filteredParametricCollection, 'sync', function() {
                 this.model.set({processing: false});
 
-                if (!this.parametricCollection.isEmpty() && !this.parametricValuesLoaded) {
+                if (!this.filteredParametricCollection.isEmpty() && !this.parametricValuesLoaded) {
                     this.parametricValuesLoaded = true;
                     metrics.addTimeSincePageLoad('parametric-values-first-loaded');
                 }
@@ -121,7 +121,7 @@ define([
                         queryModel: options.queryModel,
                         indexesCollection: options.indexesCollection,
                         parametricFieldsCollection: options.parametricFieldsCollection,
-                        parametricCollection: this.parametricCollection,
+                        filteredParametricCollection: this.filteredParametricCollection,
                         selectedParametricValues: this.selectedParametricValues
                     },
                     numericViewItemOptions: {
