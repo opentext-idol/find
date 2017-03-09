@@ -10,13 +10,12 @@ define([
     'sunburst/js/sunburst',
     './saved-search-widget',
     'find/idol/app/page/dashboard/legend-color-collection',
-    'parametric-refinement/prettify-field-name',
     'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend.html',
     'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend-item.html',
     'text!find/idol/templates/page/dashboards/widgets/sunburst-legend-too-many-items-entry.html',
     'i18n!find/nls/bundle'
-], function(_, $, d3, Sunburst, SavedSearchWidget, LegendColorCollection, prettifyFieldName,
-            legendTemplate, legendItemTemplate, tooManyItemsTemplate, i18n) {
+], function(_, $, d3, Sunburst, SavedSearchWidget, LegendColorCollection, legendTemplate,
+            legendItemTemplate, tooManyItemsTemplate, i18n) {
     'use strict';
 
     const tooManyItemsHtml = _.template(tooManyItemsTemplate)({i18n: i18n});
@@ -31,6 +30,21 @@ define([
             text: datum.text,
             color: datum.color
         });
+    }
+
+    /**
+     * Prettify the given field name for display. Replaces underscores with spaces and capitalises the first letter of
+     * each word.
+     * @alias module:prettify-field-name
+     * @function
+     * @param {String} name The input field name
+     * @returns {String} The display name
+     */
+    function prettifyFieldName(name) {
+        // Compact to deal with field names which begin with underscore or contain consecutive underscores
+        return _.chain(name.substring(name.lastIndexOf('/') + 1).split('_')).compact().map(function(word) {
+            return word[0].toUpperCase() + word.slice(1).toLowerCase();
+        }).value().join(' ');
     }
 
     function prettyOrNull(field) {
