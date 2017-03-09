@@ -122,6 +122,9 @@ define([
         },
 
         update: function() {
+            if(this.$el.is(':visible')) {
+                this.updateGraph();
+            }
         },
 
         updateGraph: function() {
@@ -188,7 +191,10 @@ define([
         },
 
         fetchBuckets: function() {
-            var width = this.$('.dategraph-content').width();
+            // We now use the width of the closest visible ancestor, even if this tab itself is currently hidden,
+            //   since the filters may change when we're not looking at the screen; which gives zero width for
+            //   the SVG if it's not on the screen, but we still need data.
+            var width = this.$('.dategraph-content').closest(':visible').width();
 
             // If the SVG has no width or there are no values, there is no point fetching new data
             // if(width !== 0 && this.model.get('totalValues') !== 0) {
