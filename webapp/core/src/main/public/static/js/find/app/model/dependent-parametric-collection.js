@@ -11,44 +11,44 @@ define([
 
     function getArrayTotal(array) {
         return _.reduce(array, function(mem, val) {
-            return mem + (+val.count)
+            return mem + (+val.count);
         }, 0);
     }
 
     function parseResult(array, total, minShownResults) {
-        var minimumSize = Math.round(total / 100 * 5); // this is the smallest area of the chart an element will be visible at.
+        const minimumSize = Math.round(total / 100 * 5); // this is the smallest area of the chart an element will be visible at.
 
-        var initialSunburstData = _.chain(array)
+        const initialSunburstData = _.chain(array)
             .filter(function(element) {
                 return element.value !== '';
             })
             .map(function(entry) {
-                var entryHash = {
+                const entryHash = {
                     hidden: false,
                     text: entry.value,
                     count: +entry.count
                 };
                 return _.isEmpty(entry.field)
                     ? entryHash
-                    : _.extend(entryHash, {children: parseResult(entry.field, entry.count)}); // recurse for children
+                    : _.extend(entryHash, {children: parseResult(entry.field, entry.count, minShownResults)}); // recurse for children
             })
-            .sortBy('id')
+            .sortBy('text')
             .sortBy(function(x) {
-                return -x.count
+                return -x.count;
             })
             .value();
 
         // Always show the highest results
-        var alwaysShownValues = _.first(initialSunburstData, minShownResults || 20);
+        const alwaysShownValues = _.first(initialSunburstData, minShownResults || 20);
 
         //filter out any with document counts smaller than minimumSize
-        var filteredSunburstData = _.chain(initialSunburstData)
+        const filteredSunburstData = _.chain(initialSunburstData)
             .filter(function(child) {
                 return child.count > minimumSize;
             })
             .value();
 
-        var sunburstData = _.union(alwaysShownValues, filteredSunburstData);
+        const sunburstData = _.union(alwaysShownValues, filteredSunburstData);
 
         if(!_.isEmpty(sunburstData)) { //if there are items being displayed
             const childCount = getArrayTotal(sunburstData); // get total displayed document count
@@ -67,6 +67,7 @@ define([
     }
 
     return BaseCollection.extend({
+        idAttribute: 'text',
         url: 'api/public/parametric/dependent-values',
 
         initialize: function(opts) {

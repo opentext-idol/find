@@ -15,16 +15,24 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 
-public class DashboardPage extends AppElement {
+import static org.openqa.selenium.By.cssSelector;
 
+public class DashboardPage extends AppElement {
     DashboardPage(final WebDriver driver) {
         super(new WebDriverWait(driver, 30)
                       .withMessage("loading Dashboard page")
-                      .until(ExpectedConditions.visibilityOfElementLocated(By.className("dashboard"))), driver);
+                      .until(ExpectedConditions.visibilityOfElementLocated(
+                              By.className("dashboard"))), driver);
     }
 
     public List<WebElement> getWidgets() {
-        return getDriver().findElements(By.cssSelector(".widget"));
+        return getDriver().findElements(cssSelector(".widget"));
+    }
+
+    public void waitForSunburstWidgetToRender() {
+        new WebDriverWait(getDriver(), 60).withMessage("Sunburst never loaded")
+                .until(ExpectedConditions.presenceOfElementLocated(
+                        cssSelector(".sunburst-visualizer-container path")));
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, DashboardPage> {
