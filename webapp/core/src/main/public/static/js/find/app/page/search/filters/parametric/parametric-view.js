@@ -19,6 +19,12 @@ define([
 
     const TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
 
+    const STATES = {
+        PROCESSING: 'PROCESSING',
+        ERROR: 'ERROR',
+        SYNCED: 'SYNCED'
+    };
+
     return Backbone.View.extend({
         template: _.template(template)({i18n: i18n}),
 
@@ -48,42 +54,7 @@ define([
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.filterModel = options.filterModel;
 
-            //ToDo : We are currently only monitoring parametricCollection for loading and error. Need to fix as part of FIND-618.
-            this.model = new Backbone.Model({
-                processing: Boolean(this.filteredParametricCollection.currentRequest),
-                error: false,
-                empty: this.collection.isEmpty()
-            });
-
-            this.listenTo(this.model, 'change:processing', this.updateProcessing);
-            this.listenTo(this.model, 'change:error', this.updateError);
-            this.listenTo(this.model, 'change', this.updateEmpty);
-
-            this.listenTo(this.filteredParametricCollection, 'request', function() {
-                this.model.set({processing: true, error: false});
-            });
-
-            this.listenTo(this.filteredParametricCollection, 'error', function(collection, xhr, processing) {
-                if (xhr.status === 0) {
-                    this.model.set({processing: processing});
-                } else {
-                    // The request was not aborted, so there isn't another request in flight
-                    this.model.set({error: true, processing: false});
-                }
-            });
-
-            this.listenTo(this.filteredParametricCollection, 'sync', function() {
-                this.model.set({processing: false});
-
-                if (!this.filteredParametricCollection.isEmpty() && !this.parametricValuesLoaded) {
-                    this.parametricValuesLoaded = true;
-                    metrics.addTimeSincePageLoad('parametric-values-first-loaded');
-                }
-            });
-
-            this.listenTo(this.collection, 'update reset', function() {
-                this.model.set('empty', this.collection.isEmpty());
-            });
+            this.initializeProcessingBehaviour();
 
             const collapsed = {};
 
@@ -96,6 +67,7 @@ define([
             }.bind(this);
 
             this.fieldNamesListView = new ListView({
+                className: 'parametric-fields-list',
                 collection: this.collection,
                 proxyEvents: ['toggle'],
                 collectionChangeEvents: false,
@@ -122,7 +94,8 @@ define([
                         indexesCollection: options.indexesCollection,
                         parametricFieldsCollection: options.parametricFieldsCollection,
                         filteredParametricCollection: this.filteredParametricCollection,
-                        selectedParametricValues: this.selectedParametricValues
+                        selectedParametricValues: this.selectedParametricValues,
+                        filterModel: this.filterModel
                     },
                     numericViewItemOptions: {
                         inputTemplate: options.inputTemplate,
@@ -151,11 +124,12 @@ define([
             this.$el.html(this.template).prepend(this.fieldNamesListView.$el);
             this.fieldNamesListView.render();
 
-            this.$emptyMessage = this.$('.parametric-empty');
-            this.$errorMessage = this.$('.parametric-error');
-            this.$processing = this.$('.parametric-processing-indicator');
+            this.$emptyMessage = this.$('.parametric-fields-empty');
+            this.$list = this.$('.parametric-fields-list');
+            this.$errorMessage = this.$('.parametric-fields-error');
+            this.$processing = this.$('.parametric-fields-processing-indicator');
 
-            this.updateProcessing();
+            this.onStateChange();
             return this;
         },
 
@@ -164,23 +138,55 @@ define([
             Backbone.View.prototype.remove.call(this);
         },
 
+        initializeProcessingBehaviour: function () {
+            this.model = new Backbone.Model({
+                state: this.collection.isProcessing() ? STATES.PROCESSING : STATES.SYNCED,
+                empty: this.collection.isEmpty()
+            });
+
+            this.listenTo(this.model, 'change:state', this.onStateChange);
+            this.listenTo(this.model, 'change', this.updateEmpty);
+
+            this.listenTo(this.collection, 'request', function () {
+                this.model.set('state', STATES.PROCESSING);
+            });
+
+            this.listenTo(this.collection, 'error', function (collection, xhr) {
+                if (xhr.status !== 0) {
+                    // The request was not aborted, so there isn't another request in flight
+                    this.model.set('state', STATES.ERROR);
+                }
+            });
+
+            this.listenTo(this.collection, 'sync', function () {
+                this.model.set('state', STATES.SYNCED);
+            });
+
+            this.listenTo(this.collection, 'update reset', function () {
+                this.model.set('empty', this.collection.isEmpty());
+            });
+        },
+
         updateEmpty: function () {
             if (this.$emptyMessage) {
-                const showEmptyMessage = this.model.get('empty') && this.collection.isEmpty() && !(this.model.get('error') || this.model.get('processing'));
+                const showEmptyMessage = this.model.get('empty') && this.collection.isEmpty() && this.model.get('state') === STATES.SYNCED;
                 this.$emptyMessage.toggleClass('hide', !showEmptyMessage);
             }
         },
 
-        updateProcessing: function() {
+        onStateChange: function () {
+            const state = this.model.get('state');
             if (this.$processing) {
-                this.$processing.toggleClass('hide', !this.model.get('processing'));
+                this.$processing.toggleClass('hide', state !== STATES.PROCESSING);
+            }
+
+            if (this.$errorMessage) {
+                this.$errorMessage.toggleClass('hide', state !== STATES.ERROR);
+            }
+
+            if (this.$list) {
+                this.$list.toggleClass('hide', state !== STATES.SYNCED);
             }
         },
-
-        updateError: function() {
-            if (this.$errorMessage) {
-                this.$errorMessage.toggleClass('hide', !this.model.get('error'));
-            }
-        }
     });
 });

@@ -423,13 +423,22 @@ define([
         },
 
         listenForParametricFieldMetrics: function () {
-            //noinspection JSUnresolvedFunction
-            this.listenTo(this.parametricFieldsCollection, 'sync', function () {
-                if (!this.parametricFieldsCollection.isEmpty() && !this.parametricFieldsLoaded) {
-                    this.parametricFieldsLoaded = true;
-                    metrics.addTimeSincePageLoad('parametric-fields-first-loaded');
-                }
-            });
+            if (metrics.enabled()) {
+                //noinspection JSUnresolvedFunction
+                this.listenTo(this.parametricFieldsCollection, 'sync', function () {
+                    if (!this.parametricFieldsCollection.isEmpty() && !this.parametricFieldsLoaded) {
+                        this.parametricFieldsLoaded = true;
+                        metrics.addTimeSincePageLoad('parametric-fields-first-loaded');
+                    }
+                });
+
+                this.listenTo(this.parametricCollection, 'sync', function () {
+                    if (!this.parametricCollection.isEmpty() && !this.parametricValuesLoaded) {
+                        this.parametricValuesLoaded = true;
+                        metrics.addTimeSincePageLoad('parametric-values-first-loaded');
+                    }
+                });
+            }
         },
 
         fetchParametricCollection: function () {

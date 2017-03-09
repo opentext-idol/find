@@ -5,7 +5,7 @@ define([
     "use strict";
 
     function addMetric(name, timeInMillis) {
-        if (configuration().metricsEnabled) {
+        if (enabled()) {
             $.ajax('api/public/metrics/add', {
                 data: {
                     metricName: name,
@@ -16,10 +16,15 @@ define([
         }
     }
 
+    function enabled() {
+        return configuration().metricsEnabled;
+    }
+
     return {
         addMetric: addMetric,
         addTimeSincePageLoad: function (name) {
             addMetric(name,  performance.now());
-        }
+        },
+        enabled: enabled
     };
 });

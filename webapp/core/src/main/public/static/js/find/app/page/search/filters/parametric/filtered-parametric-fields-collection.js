@@ -23,6 +23,8 @@ define([
             this.valueRestrictedParametricCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
 
             this.listenTo(this.parametricCollection, 'sync', this.onParametricSync);
+            this.listenTo(this.valueRestrictedParametricCollection, 'request', this.onFilteredParametricRequest);
+            this.listenTo(this.valueRestrictedParametricCollection, 'error', this.onFilteredParametricError);
             this.listenTo(this.valueRestrictedParametricCollection, 'sync', this.onFilteredParametricSync);
 
             FilteringCollection.prototype.initialize.apply(this, [models, _.defaults({predicate: filterPredicate}, options)]);
@@ -47,12 +49,25 @@ define([
                         valueRestriction: filterText ? "*" + filterText + "*" : null
                     }
                 });
+            } else {
+                FilteringCollection.prototype.filterModels.apply(this);
             }
         },
 
         onParametricSync: function () {
             if (this.filterModel.get('text')) {
                 this.filterModels();
+            }
+        },
+
+        onFilteredParametricRequest: function () {
+            this.trigger('request');
+        },
+
+        onFilteredParametricError: function (collection, xhr) {
+            if (xhr.status !== 0) {
+                // The request was not aborted, so there isn't another request in flight
+                this.trigger('error', collection, xhr);
             }
         },
 
@@ -70,8 +85,9 @@ define([
                 return _.contains(this.matchingFieldIds, model.id);
             }.bind(this)));
 
-            this.set(matchedFieldModels);
             this.filteredParametricCollection.set(matchingParametricModels);
+            this.set(matchedFieldModels);
+            this.trigger('sync');
         }
     });
 });

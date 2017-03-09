@@ -44,10 +44,13 @@ define([
             this.timeBarModel = options.timeBarModel;
             this.filterModel = options.filterModel;
 
-            this.collapseModel = new Backbone.Model({
-                collapsed: Boolean(_.isFunction(options.collapsed)
+            const shouldBeCollapsed = function () {
+                return Boolean(_.isFunction(options.collapsed)
                     ? options.collapsed(options.model)
-                    : _.isUndefined(options.collapsed) || options.collapsed)
+                    : _.isUndefined(options.collapsed) || options.collapsed);
+            };
+            this.collapseModel = new Backbone.Model({
+                collapsed: shouldBeCollapsed()
             });
 
             let clickCallback = null;
@@ -104,8 +107,10 @@ define([
                 this.listenTo(this.filterModel, 'change', function () {
                     if (this.filterModel.get('text')) {
                         this.collapsible.show();
+                        this.collapseModel.set('collapsed', false);
                     } else {
-                        this.collapsible.toggle(!this.collapseModel.get('collapsed'));
+                        this.collapsible.toggle(!shouldBeCollapsed());
+                        this.collapseModel.set('collapsed', true);
                     }
                 });
             }
