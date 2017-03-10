@@ -271,7 +271,7 @@ define([
                     }, resultsViewsMap[viewId]);
                 });
 
-            const resultsViewSelectionModel = new Backbone.Model({
+            this.resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab
                 selectedTab: this.resultsViews[0].id
             });
@@ -280,13 +280,17 @@ define([
             if (this.resultsViews.length > 1) {
                 this.resultsViewSelection = new ResultsViewSelection({
                     views: this.resultsViews,
-                    model: resultsViewSelectionModel
+                    model: this.resultsViewSelectionModel
                 });
             }
 
             this.resultsViewContainer = new ResultsViewContainer({
                 views: this.resultsViews,
-                model: resultsViewSelectionModel
+                model: this.resultsViewSelectionModel
+            });
+
+            this.listenTo(this.resultsViewSelectionModel, 'change:selectedTab', function(model, selectedTab) {
+                this.trigger('updateRouting', selectedTab);
             });
 
             this.listenTo(this.queryModel, 'refresh', this.fetchData);
@@ -399,7 +403,9 @@ define([
             if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                 const data = {
                     databases: this.queryModel.get('indexes'),
-                    queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery') ? this.queryModel.get('correctedQuery') : this.queryModel.get('queryText'),
+                    queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery')
+                        ? this.queryModel.get('correctedQuery')
+                        : this.queryModel.get('queryText'),
                     fieldText: this.queryModel.get('fieldText'),
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
@@ -451,7 +457,9 @@ define([
                     data: {
                         fieldNames: fieldNames,
                         databases: this.queryModel.get('indexes'),
-                        queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery') ? this.queryModel.get('correctedQuery') : this.queryModel.get('queryText'),
+                        queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery')
+                            ? this.queryModel.get('correctedQuery')
+                            : this.queryModel.get('queryText'),
                         fieldText: this.queryModel.get('fieldText'),
                         minDate: this.queryModel.getIsoDate('minDate'),
                         maxDate: this.queryModel.getIsoDate('maxDate'),
@@ -467,7 +475,15 @@ define([
             this.$('.right-side-container').toggle(toggle);
         },
 
-        remove: function () {
+        changeTab: function (tab) {
+            this.resultsViewSelection.switchTab(tab);
+        },
+
+        getSelectedTab: function () {
+            return this.resultsViewSelectionModel.get('selectedTab');
+        },
+
+        remove: function() {
             $window
                 .off('resize', this.updateScrollParameters)
                 .off('scroll', this.updateScrollParameters);

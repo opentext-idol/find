@@ -22,7 +22,7 @@ import java.util.Map;
  * Common logic applied to HoD and Idol config implementations
  */
 public abstract class FindConfigFileService<C extends FindConfig<C, B>, B extends FindConfigBuilder<C, B>> extends AbstractAuthenticatingConfigFileService<C> {
-    private static final String CONFIG_FILE_LOCATION = "hp.find.home";
+    public static final String CONFIG_FILE_LOCATION = "hp.find.home";
     private static final String CONFIG_FILE_NAME = "config.json";
 
     protected FindConfigFileService(final FilterProvider filterProvider,

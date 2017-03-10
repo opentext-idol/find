@@ -1,14 +1,16 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
     'js-whatever/js/substitution'
 ], function(substitution) {
+    'use strict';
+
     return substitution({
         'about.app.version': 'Version',
-        'about.copyright': "Find © Copyright 2014-2016 Hewlett Packard Enterprise Development Company, L.P.",
+        'about.copyright': "Find © Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.",
         'about.foss': 'FOSS Acknowledgements',
         'about.lib.name': 'Library Name',
         'about.lib.version': 'Version',
@@ -47,6 +49,14 @@ define([
         'app.until': 'Until',
         'app.user': 'User',
         'app.users': 'Users',
+        'dashboards': 'Dashboards',
+        'dashboards.widget.notFound': 'Widget of type "{0}" could not be found. Please check your configuration and try again',
+        'dashboards.widget.lastRefresh.nextRefresh': 'Next refresh at',
+        'dashboards.widget.lastRefresh.refreshing': 'Refreshing {0} of {1} widgets',
+        'dashboards.widget.lastRefresh.timeLastUpdated': 'Last updated at',
+        'dashboards.widget.sunburst.noResults': 'The query did not match any documents',
+        'dashboards.widget.sunburst.legend.hiddenValues': 'Too many values',
+        'dashboards.widget.sunburst.legend.noValues': 'No values to display',
         'datepicker.language': 'en',
         'default.title': 'Page Unavailable',
         'default.message': "We can't find the page you requested.",
@@ -198,6 +208,7 @@ define([
         'search.resultsView.amount.shown.no.increment': 'Showing the top <strong>{0}</strong> results of <strong>{1}</strong>',
         'search.resultsView.amount.shown.no.results': 'There are no results with the location field selected',
         'search.answeredQuestion': 'Answered question',
+        'search.answeredQuestion.systemName': 'Answered by {0}',
         'search.promoted': 'Promoted',
         'search.savedSearchControl.save': 'Save',
         'search.savedSearchControl.openEdit.create': 'Save query',
@@ -222,7 +233,8 @@ define([
         'search.sunburst.title': 'Parametric Distribution',
         'search.sunburst.fieldPlaceholder.first': 'Select a field',
         'search.sunburst.fieldPlaceholder.second': 'Select a second field',
-        'search.sunburst.noValue': 'There are an additional {0} values with document counts too small to display. Please refine your search.',
+        'search.sunburst.tooSmall': 'There are an additional {0} values with document counts too small to display. Please refine your search.',
+        'search.sunburst.missingValues': 'This area represents {0} search result(s) which contained no values for the parametric field {1}',
         'search.savedSearches': 'Searches',
         'search.savedSearches.confirm.deleteMessage': 'Are you sure you want to remove {0} saved search?',
         'search.savedSearches.confirm.deleteMessage.title': 'Delete saved search',

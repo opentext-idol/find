@@ -1,22 +1,24 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
+    'underscore',
     'backbone',
     'find/app/model/dependent-parametric-collection',
-    'underscore',
     'i18n!find/nls/bundle',
     'find/app/page/search/results/field-selection-view',
     'text!find/templates/app/page/search/results/parametric-results-view.html',
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/loading-spinner.html'
-], function(Backbone, DependentParametricCollection, _, i18n, FieldSelectionView, template, generateErrorHtml, loadingSpinnerTemplate) {
+], function(_, Backbone, DependentParametricCollection, i18n, FieldSelectionView,
+            template, generateErrorHtml, loadingSpinnerTemplate) {
     'use strict';
 
-    const fieldInvalid = function (field, fields) {
-        return !field || !_.contains(fields, field);
-    };
+    function fieldIsValid(field, fields) {
+        return field && _.contains(fields, field);
+    }
 
     function getClickedParameters(data, fields, selectedParameters) {
         if(data.depth !== 0) {
@@ -86,6 +88,18 @@ define([
             this.listenTo(this.dependentParametricCollection, 'sync', this.updateData);
             this.listenTo(this.dependentParametricCollection, 'error', this.errorHandler);
             this.listenTo(this.selectedParametricValues, 'add remove reset', this.updateSelections);
+            this.$parametricSwapButton = this.$('.parametric-swap');
+            this.$parametricSwapButton.click(function() {
+                this.swapFields();
+            }.bind(this));
+
+            this.listenTo(this.fieldsCollection, 'change:field', function() {
+                const fieldsPopulated = this.fieldsCollection.every(function(model) {
+                    return model.get('field');
+                });
+                this.$parametricSwapButton.toggleClass('disabled', !fieldsPopulated);
+                this.$parametricSwapButton.prop('disabled', !fieldsPopulated);
+            });
 
             this.setLoadingListeners([this.parametricCollection, this.dependentParametricCollection]);
             this.makeSelectionsIfData();
@@ -94,10 +108,22 @@ define([
         },
 
         toggleLoading: function() {
-            this.$loadingSpinner.toggleClass('hide', !this.model.get('loading'));
-            this.$content.toggleClass('invisible', this.model.get('loading'));
+            const loading = this.model.get('loading');
+
+            this.$loadingSpinner.toggleClass('hide', !loading);
+            this.$content.toggleClass('invisible', loading);
             this.$parametricSelections.toggleClass('hide', this.noMoreParametricFields());
             this.updateMessage();
+        },
+
+        swapFields: function() {
+            const first = this.fieldsCollection.at(0);
+            const second = this.fieldsCollection.at(1);
+
+            first.set(second.attributes, {silent: true});
+            second.set(first.previousAttributes(), {silent: true});
+            this.updateSelections();
+            this.fetchDependentFields();
         },
 
         errorHandler: function(collection, xhr) {
@@ -135,12 +161,14 @@ define([
         },
 
         updateParametricCollection: function() {
-            if (this.noMoreParametricFields()) {
+            const noMoreParametricFields = !!this.noMoreParametricFields();
+
+            this.$parametricSelections.toggleClass('hide', noMoreParametricFields);
+
+            if (noMoreParametricFields) {
                 this.model.set('loading', false);
-                this.$parametricSelections.addClass('hide');
                 this.updateMessage(this.emptyMessage);
             } else {
-                this.$parametricSelections.removeClass('hide');
                 this.makeSelectionsIfData();
             }
         },
@@ -210,39 +238,29 @@ define([
         },
 
         resolveFieldSelections: function() {
-            const fields = _.difference(this.parametricCollection.pluck('name'), this.selectedParametricValues.pluck('field'));
+            const fields = _.difference(this.parametricCollection.pluck('name'),
+                this.selectedParametricValues.pluck('field'));
 
             const primaryModel = this.fieldsCollection.at(0);
             const secondaryModel = this.fieldsCollection.at(1);
+            const primaryField = primaryModel.get('field');
 
-            if(fieldInvalid(primaryModel.get('field'), fields)) {
+            if(!fieldIsValid(primaryField, fields)) {
                 primaryModel.set('field', fields.sort()[0]);
                 secondaryModel.set('field', '');
-            }
-            else if(fieldInvalid(secondaryModel.get('field'))) {
+            } else if(!fieldIsValid(secondaryModel.get('field'), _.without(fields, primaryField))) {
                 secondaryModel.set('field', '');
             }
         },
 
         fetchDependentFields: function() {
-            const first = this.fieldsCollection.at(0).get('field');
-            const second = this.fieldsCollection.at(1).get('field');
+            const primaryField = this.fieldsCollection.at(0).get('field');
+            const secondaryField = this.fieldsCollection.at(1).get('field');
 
-            if(first) {
-                this.dependentParametricCollection.fetch({
-                    data: {
-                        databases: this.queryModel.get('indexes'),
-                        queryText: this.queryModel.get('queryText'),
-                        fieldText: this.queryModel.get('fieldText') ? this.queryModel.get('fieldText').toString() : '',
-                        minDate: this.queryModel.getIsoDate('minDate'),
-                        maxDate: this.queryModel.getIsoDate('maxDate'),
-                        minScore: this.queryModel.get('minScore'),
-                        fieldNames: second ? [first, second] : [first],
-                        stateTokens: this.queryModel.get('stateMatchIds')
-                    }
-                });
-            }
-            else {
+            if(primaryField) {
+                this.dependentParametricCollection
+                    .fetchDependentFields(this.queryModel, primaryField, secondaryField);
+            } else {
                 this.dependentParametricCollection.reset();
             }
         },
@@ -251,7 +269,7 @@ define([
             this.$errorMessage.empty();
             if(message) {
                 this.$content.addClass('invisible');
-                this.$message.empty().append(message);
+                this.$message.html(message);
             } else {
                 this.$message.empty();
             }
@@ -261,20 +279,34 @@ define([
             this.$message.empty();
             if(message) {
                 this.$content.addClass('invisible');
-                this.$errorMessage.empty().append(message);
+                this.$errorMessage.html(message);
             } else {
                 this.$errorMessage.empty();
             }
         },
 
         toggleContentDisplay: function() {
-            this.$content.toggleClass('invisible', this.parametricCollection.isEmpty() || this.dependentParametricCollection.isEmpty() || this.noMoreParametricFields());
+            this.$content.toggleClass('invisible',
+                this.parametricCollection.isEmpty() ||
+                this.dependentParametricCollection.isEmpty() ||
+                this.noMoreParametricFields());
         },
 
         noMoreParametricFields: function() {
             return _.isEmpty(this.parametricCollection.reject(function(model) {
                 return this.selectedParametricValues.findWhere({field: model.get('id')});
             }, this));
+        },
+
+        remove: function() {
+            if(this.firstChosen) {
+                this.firstChosen.remove();
+            }
+            if(this.secondChosen) {
+                this.secondChosen.remove();
+            }
+
+            Backbone.View.prototype.remove.call(this);
         }
     });
 });

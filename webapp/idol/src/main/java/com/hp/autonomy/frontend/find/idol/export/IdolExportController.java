@@ -17,6 +17,7 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 
@@ -40,7 +41,7 @@ class IdolExportController extends ExportController<IdolQueryRequest, AciErrorEx
     protected void export(final OutputStream outputStream,
                           final IdolQueryRequest queryRequest,
                           final ExportFormat exportFormat,
-                          final Collection<String> selectedFieldNames) throws AciErrorException {
+                          final Collection<String> selectedFieldNames) throws AciErrorException, IOException {
         final StateTokenAndResultCount stateTokenAndResultCount = documentsService.getStateTokenAndResultCount(queryRequest.getQueryRestrictions(), queryRequest.getMaxResults(), false);
 
         final IdolQueryRequest queryRequestWithStateToken = queryRequest.toBuilder()
@@ -49,12 +50,6 @@ class IdolExportController extends ExportController<IdolQueryRequest, AciErrorEx
                         .build())
                 .build();
 
-        for (int i = 0; i < stateTokenAndResultCount.getResultCount(); i += PAGINATION_SIZE) {
-            final IdolQueryRequest paginatedQueryRequest = queryRequestWithStateToken.toBuilder()
-                    .start(i + 1)
-                    .maxResults(i + PAGINATION_SIZE)
-                    .build();
-            exportService.export(outputStream, paginatedQueryRequest, exportFormat, selectedFieldNames);
-        }
+        exportService.export(outputStream, queryRequestWithStateToken, exportFormat, selectedFieldNames, stateTokenAndResultCount.getResultCount());
     }
 }

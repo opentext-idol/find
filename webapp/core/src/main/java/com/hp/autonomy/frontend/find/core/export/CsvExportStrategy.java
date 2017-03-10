@@ -44,8 +44,9 @@ public class CsvExportStrategy implements ExportStrategy {
     }
 
     @Override
-    public boolean writeHeader() {
-        return true;
+    public void writeHeader(final OutputStream outputStream, final Collection<String> fieldNames) throws IOException {
+        outputStream.write(UTF8_BOM);
+        exportRecord(outputStream, fieldNames);
     }
 
     @Override
@@ -92,11 +93,6 @@ public class CsvExportStrategy implements ExportStrategy {
     @Override
     public ExportFormat getExportFormat() {
         return ExportFormat.CSV;
-    }
-
-    @Override
-    public void prependOutput(final OutputStream outputStream) throws IOException {
-        outputStream.write(UTF8_BOM);
     }
 
     private FieldsInfo getFieldsInfo() {

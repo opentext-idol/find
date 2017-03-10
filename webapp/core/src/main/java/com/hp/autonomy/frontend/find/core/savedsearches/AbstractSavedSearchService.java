@@ -60,6 +60,11 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
 
     }
 
+    @Override
+    public T getDashboardSearch(final long id) {
+        return crudRepository.findOne(id);
+    }
+
     private T getSearch(final long id) throws IllegalArgumentException {
         final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
         final T byIdAndUser_userId = crudRepository.findByActiveTrueAndIdAndUser_UserId(id, userId);

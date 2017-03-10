@@ -6,7 +6,9 @@
 package com.hp.autonomy.frontend.find.idol.savedsearches.query;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryControllerTest;
+import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
@@ -17,9 +19,9 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import org.mockito.Mock;
 import org.springframework.beans.factory.ObjectFactory;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
+import java.util.Collections;
+
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 public class IdolSavedSearchQueryControllerTest extends SavedQueryControllerTest<IdolQueryRequest, String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
@@ -38,6 +40,12 @@ public class IdolSavedSearchQueryControllerTest extends SavedQueryControllerTest
     @Mock
     private IdolQueryRequestBuilder queryRequestBuilder;
 
+    @Mock
+    private ConfigService<IdolDashboardConfig> idolDashboardConfigService;
+
+    @Mock
+    private IdolDashboardConfig idolDashboardConfig;
+
     @Override
     protected IdolSavedQueryController constructController() {
         when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
@@ -54,7 +62,9 @@ public class IdolSavedSearchQueryControllerTest extends SavedQueryControllerTest
         when(queryRequestBuilder.queryRestrictions(any())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.maxResults(anyInt())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.queryType(any())).thenReturn(queryRequestBuilder);
-        return new IdolSavedQueryController(savedQueryService, idolDocumentsService, fieldTextParser, queryRestrictionsBuilderFactory, queryRequestBuilderFactory);
+        when(idolDashboardConfigService.getConfig()).thenReturn(idolDashboardConfig);
+        when(idolDashboardConfig.getDashboards()).thenReturn(Collections.emptyList());
+        return new IdolSavedQueryController(savedQueryService, idolDocumentsService, fieldTextParser, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, idolDashboardConfigService);
     }
 
     @Override

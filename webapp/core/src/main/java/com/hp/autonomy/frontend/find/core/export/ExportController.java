@@ -31,7 +31,6 @@ import java.util.Collection;
 
 @RequestMapping(ExportController.EXPORT_PATH)
 public abstract class ExportController<R extends QueryRequest<?>, E extends Exception> {
-    protected static final int PAGINATION_SIZE = 1000;
     static final String EXPORT_PATH = "/api/bi/export";
     static final String CSV_PATH = "/csv";
     static final String SELECTED_EXPORT_FIELDS_PARAM = "selectedFieldIds";
@@ -64,7 +63,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     protected abstract void export(final OutputStream outputStream,
                                    final R queryRequest,
                                    final ExportFormat exportFormat,
-                                   final Collection<String> selectedFieldNames) throws E;
+                                   final Collection<String> selectedFieldNames) throws E, IOException;
 
     //TODO improve to inform what went wrong with export, rather than generic just error 500.
     @ExceptionHandler

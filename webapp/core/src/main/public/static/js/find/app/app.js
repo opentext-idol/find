@@ -23,7 +23,7 @@ define([
     'text!find/templates/app/app.html'
 ], function($, Backbone, _, testBrowser, WindowScrollModel, SavedQueryCollection, parseUrl, ModelRegistry,
             Navigation, configuration, metrics, Pages, logout, vent, router, escapeRegex, template) {
-
+    "use strict";
     function removeTrailingSlash(string) {
         return string.replace(/\/$/, '');
     }
@@ -69,6 +69,7 @@ define([
                         var route = href.replace(this.internalHrefRegexp, '');
                         vent.navigate(route);
                     }
+
                 }
             }
         },
@@ -101,7 +102,8 @@ define([
 
                 this.navigation = new this.Navigation({
                     pageData: pageData,
-                    router: router
+                    router: router,
+                    sidebarModel: modelRegistry.get('sidebarModel')
                 });
 
                 this.render();
@@ -137,6 +139,13 @@ define([
             var modelData = {
                 indexesCollection: {
                     Constructor: this.IndexesCollection
+                },
+                sidebarModel: {
+                    Constructor: Backbone.Model,
+                    fetch: false,
+                    attributes: {
+                        collapsed: false
+                    }
                 },
                 windowScrollModel: {
                     Constructor: WindowScrollModel,

@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
 import java.util.Collections;
 
 import static org.junit.Assert.assertNotNull;
@@ -37,14 +38,14 @@ public abstract class ExportServiceIT<R extends QueryRequest<Q>, Q extends Query
     protected ObjectFactory<QueryRequestBuilder<R, Q, ?>> queryRequestBuilderFactory;
 
     @Test
-    public void exportToCsv() throws E {
+    public void exportToCsv() throws E, IOException {
         final R queryRequest = queryRequestBuilderFactory.getObject()
                 .queryRestrictions(testUtils.buildQueryRestrictions())
                 .queryType(QueryRequest.QueryType.MODIFIED)
                 .build();
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        exportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
+        exportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList(), 1001L);
         assertNotNull(outputStream.toString());
     }
 }

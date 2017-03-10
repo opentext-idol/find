@@ -16,7 +16,8 @@ define([
             return response.map(function(response) {
                 return _.extend({
                     question: response.interpretation,
-                    answer: response.text
+                    answer: response.text,
+                    systemName: response.systemName
                 }, response);
             });
         }

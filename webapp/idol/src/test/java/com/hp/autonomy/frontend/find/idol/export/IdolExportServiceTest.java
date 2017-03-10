@@ -14,17 +14,18 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequestBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anySetOf;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -42,6 +43,8 @@ public class IdolExportServiceTest {
     private OutputStream outputStream;
     @Mock
     private IdolQueryRequest queryRequest;
+    @Mock
+    private IdolQueryRequestBuilder idolQueryRequestBuilder;
 
     private IdolExportService idolExportService;
 
@@ -49,13 +52,17 @@ public class IdolExportServiceTest {
     public void setUp() {
         when(exportStrategy.getExportFormat()).thenReturn(ExportFormat.CSV);
         when(aciServiceRetriever.getAciService(any(QueryRequest.QueryType.class))).thenReturn(aciService);
+        when(queryRequest.toBuilder()).thenReturn(idolQueryRequestBuilder);
+        when(idolQueryRequestBuilder.start(anyInt())).thenReturn(idolQueryRequestBuilder);
+        when(idolQueryRequestBuilder.maxResults(anyInt())).thenReturn(idolQueryRequestBuilder);
+        when(idolQueryRequestBuilder.build()).thenReturn(queryRequest);
 
         idolExportService = new IdolExportService(parameterHandler, aciServiceRetriever, new ExportStrategy[]{exportStrategy});
     }
 
     @Test
-    public void export() {
-        idolExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList());
+    public void export() throws IOException {
+        idolExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList(), 10l);
         verify(aciService).executeAction(anySetOf(AciParameter.class), any(Processor.class));
     }
 }

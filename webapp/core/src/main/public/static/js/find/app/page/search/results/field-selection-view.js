@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'underscore',
@@ -7,7 +12,7 @@ define([
 ], function(Backbone, _, template, i18n) {
     'use strict';
 
-    const optionTemplate = _.template('<option value="<%-field%>" <%= selected ? "selected" : ""%>><%-displayValue%></option>');
+    const optionTemplate = _.template('<option value="<%-field%>" <%- selected ? "selected" : ""%>><%-displayValue%></option>');
     const emptyOptionHtml = '<option value=""></option>';
 
     return Backbone.View.extend({
@@ -19,7 +24,7 @@ define([
             this.fields = options.fields;
             this.name = options.name;
             this.allowEmpty = options.allowEmpty;
-            this.width  = options.width || '20%';
+            this.width = options.width || '20%';
 
             this.selectionsStart = this.allowEmpty ? [emptyOptionHtml] : [];
         },
@@ -61,5 +66,4 @@ define([
             return this;
         }
     });
-
 });

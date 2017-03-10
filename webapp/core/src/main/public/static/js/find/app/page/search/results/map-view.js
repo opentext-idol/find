@@ -17,7 +17,15 @@ define([
         initialize: function (options) {
             this.addControl = options.addControl || false;
 
-            this.clusterMarkers = leaflet.markerClusterGroup();
+            this.centerCoordinates = options.centerCoordinates;
+            this.initialZoom = options.initialZoom;
+            this.removeZoomControl = options.removeZoomControl;
+            this.disableInteraction = options.disableInteraction || false;
+
+            this.clusterMarkers = leaflet.markerClusterGroup({
+                zoomToBoundsOnClick: !this.disableInteraction,
+                showCoverageOnHover: !this.disableInteraction
+            });
             this.markerLayerGroup = leaflet.featureGroup();
             this.markers = [];
 
@@ -34,7 +42,13 @@ define([
                 attributionControl: false,
                 minZoom: 1, // Furthest you can zoom out (smaller is further)
                 maxZoom: 18,// Map does not display tiles above zoom level 18 (2016-07-06)
-                worldCopyJump: true
+                worldCopyJump: true,
+                zoomControl: this.removeZoomControl ? false : true,
+                keyboard: !this.disableInteraction,
+                dragging: !this.disableInteraction,
+                scrollWheelZoom: !this.disableInteraction,
+                tap: !this.disableInteraction,
+                touchZoom: !this.disableInteraction
             });
 
             leaflet
@@ -53,17 +67,17 @@ define([
                     .addTo(map);
             }
             
-            var initialLatitude = configuration().map.initialLocation.latitude;
-            var initialLongitude = configuration().map.initialLocation.longitude;
+            var initialLatitude = this.centerCoordinates ? this.centerCoordinates.latitude : configuration().map.initialLocation.latitude;
+            var initialLongitude = this.centerCoordinates ? this.centerCoordinates.longitude : configuration().map.initialLocation.longitude;
 
-            map.setView([initialLatitude, initialLongitude], INITIAL_ZOOM);
+            map.setView([initialLatitude, initialLongitude], this.initialZoom ? this.initialZoom : INITIAL_ZOOM);
         },
 
         addMarkers: function(markers, cluster) {
             this.markers = markers;
             if (cluster) {
                 this.clusterMarkers.addLayers(markers);
-                this.map.addLayer(this.clusterMarkers)
+                this.map.addLayer(this.clusterMarkers);
             }
             else {
                 this.markerLayerGroup = new leaflet.featureGroup(markers);
@@ -88,8 +102,12 @@ define([
         },
         
         getMarker: function(latitude, longitude, icon, title, popover) {
-            return leaflet.marker([latitude, longitude], {icon: icon, title: title})
-                .bindPopup(popover);            
+            if (popover) {
+                return leaflet.marker([latitude, longitude], {icon: icon, title: title})
+                    .bindPopup(popover);
+            } else {
+                return leaflet.marker([latitude, longitude], {icon: icon, title: title});
+            }
         },
         
         getIcon: function (iconName, iconColor, markerColor) {

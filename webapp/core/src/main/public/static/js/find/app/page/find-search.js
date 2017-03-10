@@ -1,10 +1,13 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
-    'js-whatever/js/base-page',
+    'underscore',
+    'jquery',
     'backbone',
+    'js-whatever/js/base-page',
     'find/app/configuration',
     'find/app/model/dates-filter-model',
     'parametric-refinement/selected-values-collection',
@@ -27,14 +30,12 @@ define([
     'find/app/router',
     'find/app/vent',
     'i18n!find/nls/bundle',
-    'jquery',
-    'underscore',
     'text!find/templates/app/page/find-search.html'
-], function(BasePage, Backbone, config, DatesFilterModel, SelectedParametricValuesCollection, DocumentsCollection,
+], function(_, $, Backbone, BasePage, config, DatesFilterModel, SelectedParametricValuesCollection, DocumentsCollection,
             InputView, queryTextStrategy, TabbedSearchView, MergeCollection, SavedSearchModel,
             QueryMiddleColumnHeaderView, MinScoreModel, QueryTextModel, DocumentModel, DocumentDetailView,
             queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, SavedQueryResultPoller, events,
-            router, vent, i18n, $, _, template) {
+            router, vent, i18n, template) {
     'use strict';
 
     var reducedClasses = 'reverse-animated-container col-md-offset-1 ' +
@@ -127,7 +128,7 @@ define([
                     instance.focus();
                 }
             }];
-            //noinspection JSUnresolvedFunction
+
             this.optionalViews = _.where(optionalViews, {enabled: true});
 
             this.savedQueryCollection = options.savedQueryCollection;
@@ -168,6 +169,8 @@ define([
                     var lastModel = this.savedQueryCollection.last();
 
                     if(lastModel) {
+                        const route = lastModel.get('id') ? 'search/tab/' + lastModel.get('type') + ':' + lastModel.get('id') : 'search/query';
+                        vent.navigate(route, {trigger: false});
                         this.selectedTabModel.set('selectedSearchCid', lastModel.cid);
                     } else {
                         // If the user closes their last tab, run a search for *
@@ -176,7 +179,6 @@ define([
                 }
             });
 
-            //noinspection JSUnresolvedFunction
             this.optionalViews.forEach(function(view) {
                 view.instance = view.construct();
             });
@@ -235,8 +237,30 @@ define([
                 }
             }, this);
 
+            this.listenTo(router, 'route:savedSearch', function(tab, resultsView) {
+
+                if(this.savedSearchCollection.get(tab)) {
+                    this.selectedTabModel.set({
+                        'selectedSearchCid': this.savedSearchCollection.get(tab).cid,
+                        'selectedResultsView': resultsView || ''
+                    });
+                }
+                else {
+                    this.listenToOnce(options.savedQueryCollection, 'update', function() {
+                        if(this.savedSearchCollection.get(tab)) {
+                            this.selectedTabModel.set({
+                                'selectedSearchCid': this.savedSearchCollection.get(tab).cid,
+                                'selectedResultsView': resultsView || ''
+                            });
+                        }
+                    });
+                }
+            }, this);
+
             this.listenTo(router, 'route:documentDetail', function() {
-                var backURL = this.suggestView ? this.generateSuggestURL(this.suggestView.documentModel) : this.generateURL();
+                var backURL = this.suggestView
+                    ? this.generateSuggestURL(this.suggestView.documentModel)
+                    : this.generateURL();
                 this.expandedState();
                 this.$('.service-view-container').addClass('hide');
                 this.$('.document-detail-service-view-container').removeClass('hide');
@@ -314,7 +338,7 @@ define([
         update: function() {
             const viewData = this.serviceViews[this.selectedTabModel.get('selectedSearchCid')];
 
-            if (viewData && viewData.view.update) {
+            if(viewData && viewData.view.update) {
                 // Inform the service view that it is visible again so (e.g.) the topic map can be re-drawn
                 viewData.view.update();
             }
@@ -389,6 +413,7 @@ define([
 
                 events(cid);
 
+                const modelId = this.savedSearchCollection.modelId(savedSearchModel.attributes);
                 if(this.serviceViews[cid]) {
                     viewData = this.serviceViews[cid];
                 } else {
@@ -441,6 +466,8 @@ define([
 
                     this.$('.query-service-view-container').append(viewData.view.$el);
                     viewData.view.render();
+
+                    this.listenTo(viewData.view, 'updateRouting', _.bind(this.updateRouting, this, modelId));
                 }
 
                 if(this.searchModel) {
@@ -459,9 +486,16 @@ define([
 
                 viewData.view.$el.removeClass('hide');
 
-                if (viewData.view.update) {
+                if(viewData.view.update) {
                     viewData.view.update();
                 }
+
+                if(this.selectedTabModel.get('selectedResultsView')) {
+                    viewData.view.changeTab(this.selectedTabModel.get('selectedResultsView'));
+                    this.selectedTabModel.set('selectedResultsView', '');
+                }
+
+                this.updateRouting(modelId, viewData.view.getSelectedTab());
             }
         },
 
@@ -544,12 +578,25 @@ define([
         },
 
         remove: function() {
-            //noinspection JSUnresolvedFunction
             _.chain(this.optionalViews).pluck('instance').invoke('remove');
 
             this.savedQueryResultPoller.destroy();
             this.removeDocumentDetailView();
             Backbone.View.prototype.remove.call(this);
+        },
+
+        updateRouting: function(savedSearch, selectedTab) {
+            if(savedSearch) {
+                vent.navigate('/search/tab/' + savedSearch + (selectedTab ? '/view/' + selectedTab : ''), {trigger: false});
+            } else {
+                vent.navigate('/search/query', {trigger: false});
+            }
+
+            this.currentRoute = Backbone.history.getFragment();
+        },
+
+        getSelectedRoute: function() {
+            return this.currentRoute;
         }
     });
 });

@@ -25,6 +25,10 @@ public class NavBarSettings implements LoginService.LogoutHandler {
         header.findElement(By.className("hp-settings")).click();
     }
 
+    protected void openSideBar() {
+        header.findElement(By.className("hp-menu-skinny")).click();
+    }
+
     protected WebElement header() {
         return header;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -9,7 +9,8 @@ define([
     'resources/sunburst_test_data/dependent-parametric-collection-output-data-1',
     'resources/sunburst_test_data/dependent-parametric-collection-input-data-2',
     'resources/sunburst_test_data/dependent-parametric-collection-output-data-2'
-], function (DependentParametricCollection, inputData1, outputData1, inputData2, outputData2) {
+], function(DependentParametricCollection, inputData1, outputData1, inputData2, outputData2) {
+    'use strict';
 
     describe('DependentParametricCollection', function () {
         describe('parse method', function () {
@@ -28,5 +29,4 @@ define([
             });
         });
     });
-
 });

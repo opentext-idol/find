@@ -47,44 +47,47 @@ class HodExportService implements ExportService<HodQueryRequest, HodErrorExcepti
     }
 
     @Override
-    public void export(final OutputStream outputStream, final HodQueryRequest queryRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds) throws HodErrorException {
+    public void export(final OutputStream outputStream, final HodQueryRequest queryRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds, final long totalResults) throws HodErrorException {
         final ExportStrategy exportStrategy = exportStrategies.get(exportFormat);
         final List<String> fieldIds = exportStrategy.getFieldNames(HodMetadataNode.values(), selectedFieldIds);
-        final Documents<HodSearchResult> documents = documentsService.queryTextIndex(queryRequest.toBuilder().printFields(fieldIds).build());
 
         try {
-            //Caution: outputStream should not be written to before call to prependOutput().
-            exportStrategy.prependOutput(outputStream);
+            exportStrategy.writeHeader(outputStream, fieldIds);
+            for (int i = 0; i < totalResults; i += PAGINATION_SIZE) {
+                final HodQueryRequest paginatedQueryRequest = queryRequest.toBuilder()
+                        .start(i + 1)
+                        .maxResults(Math.min(i + PAGINATION_SIZE, HodDocumentsService.HOD_MAX_RESULTS))
+                        .build();
+                final Documents<HodSearchResult> documents = documentsService.queryTextIndex(paginatedQueryRequest.toBuilder().printFields(fieldIds).build());
 
-            if (exportStrategy.writeHeader()) {
-                exportStrategy.exportRecord(outputStream, fieldIds);
-            }
 
-            final List<Function<HodSearchResult, String>> exportMetadataFunctions = Arrays.stream(HodMetadataNode.values())
-                    .filter(node -> selectedFieldIds.isEmpty() || selectedFieldIds.contains(node.getName()))
-                    .map(node -> (Function<HodSearchResult, String>) hodSearchResult -> {
-                        final Object value = node.getGetter().apply(hodSearchResult);
-                        return value == null ? "" : value.toString();
-                    })
-                    .collect(Collectors.toList());
+                final List<Function<HodSearchResult, String>> exportMetadataFunctions = Arrays.stream(HodMetadataNode.values())
+                        .filter(node -> selectedFieldIds.isEmpty() || selectedFieldIds.contains(node.getName()))
+                        .map(node -> (Function<HodSearchResult, String>) hodSearchResult -> {
+                            final Object value = node.getGetter().apply(hodSearchResult);
+                            return value == null ? "" : value.toString();
+                        })
+                        .collect(Collectors.toList());
 
-            for (final HodSearchResult searchResult : documents.getDocuments()) {
-                final Stream<String> metadataStream = exportMetadataFunctions.stream()
-                        .map(extractor -> extractor.apply(searchResult));
+                for (final HodSearchResult searchResult : documents.getDocuments()) {
+                    final Stream<String> metadataStream = exportMetadataFunctions.stream()
+                            .map(extractor -> extractor.apply(searchResult));
 
-                final Stream<String> nonMetadataStream = exportStrategy.getConfiguredFieldsById().values().stream()
-                        .filter(configuredField -> selectedFieldIds.isEmpty() || selectedFieldIds.contains(configuredField.getId()))
-                        .map(configuredField -> {
-                            final FieldInfo<?> fieldInfo = searchResult.getFieldMap().get(configuredField.getId());
-                            return exportStrategy.combineValues(getValuesAsStrings(fieldInfo));
-                        });
+                    final Stream<String> nonMetadataStream = exportStrategy.getConfiguredFieldsById().values().stream()
+                            .filter(configuredField -> selectedFieldIds.isEmpty() || selectedFieldIds.contains(configuredField.getId()))
+                            .map(configuredField -> {
+                                final FieldInfo<?> fieldInfo = searchResult.getFieldMap().get(configuredField.getId());
+                                return exportStrategy.combineValues(getValuesAsStrings(fieldInfo));
+                            });
 
-                exportStrategy.exportRecord(outputStream, Stream.concat(metadataStream, nonMetadataStream).collect(Collectors.toList()));
+                    exportStrategy.exportRecord(outputStream, Stream.concat(metadataStream, nonMetadataStream).collect(Collectors.toList()));
+                }
             }
         } catch (final IOException e) {
             //noinspection ProhibitedExceptionThrown
             throw new RuntimeException("Error parsing data", e);
         }
+
     }
 
     private List<String> getValuesAsStrings(final FieldInfo<?> fieldInfo) {

@@ -1,12 +1,14 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'jquery',
     'backbone'
-], function(Backbone) {
-    
+], function($, Backbone) {
+    'use strict';
+
     return Backbone.Router.extend({
         routes: {
             'search/query(/:text)': 'search',
@@ -34,7 +36,14 @@ define([
 
         searchSplash: function() {
             this.trigger('route:page', 'search');
+        },
+
+        dashboards: function(dashboardName) {
+            this.trigger('route:page', 'dashboards/' + dashboardName);
+        },
+
+        savedSearch: function() {
+            this.trigger('route:page', 'search');
         }
     });
-
 });

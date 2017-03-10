@@ -1,12 +1,12 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'find/app/model/find-base-collection',
-    'underscore'
-], function (BaseCollection, _) {
+    'underscore',
+    'find/app/model/find-base-collection'
+], function(_, BaseCollection) {
     'use strict';
 
     function getArrayTotal(array) {
@@ -15,7 +15,7 @@ define([
         }, 0);
     }
 
-    function parseResult(array, total) {
+    function parseResult (array, total, minShownResults) {
         const minimumSize = Math.round(total / 100 * 5); // this is the smallest area of the chart an element will be visible at.
 
         const initialSunburstData = _.chain(array)
@@ -37,8 +37,8 @@ define([
             })
             .value();
 
-        // Always show the highest 20 results
-        const alwaysShownValues = _.first(initialSunburstData, 20);
+        // Always show the highest results
+        const alwaysShownValues = _.first(initialSunburstData, minShownResults || 20);
 
         //filter out any with document counts smaller than minimumSize
         const filteredSunburstData = _.chain(initialSunburstData)
@@ -69,10 +69,33 @@ define([
     return BaseCollection.extend({
         url: 'api/public/parametric/dependent-values',
 
-        parse: function (results) {
-            const totalCount = getArrayTotal(results);
+        initialize: function(opts) {
+            BaseCollection.prototype.initialize.apply(this, arguments);
+            const options = opts || {};
+            this.minShownResults = options.minShownResults;
+        },
 
-            return parseResult(results, totalCount);
+        parse: function(results) {
+            return parseResult(results, getArrayTotal(results), this.minShownResults);
+        },
+
+        fetchDependentFields: function(queryModel, primaryField, secondaryField) {
+            return this.fetch({
+                data: {
+                    databases: queryModel.get('indexes'),
+                    queryText: queryModel.get('queryText'),
+                    fieldText: queryModel.get('fieldText')
+                        ? queryModel.get('fieldText').toString()
+                        : '',
+                    minDate: queryModel.getIsoDate('minDate'),
+                    maxDate: queryModel.getIsoDate('maxDate'),
+                    minScore: queryModel.get('minScore'),
+                    fieldNames: secondaryField
+                        ? [primaryField, secondaryField]
+                        : [primaryField],
+                    stateTokens: queryModel.get('stateMatchIds')
+                }
+            });
         }
     });
 });

@@ -19,11 +19,9 @@ import java.util.Optional;
  */
 public interface ExportStrategy {
     /**
-     * Whether to write a header line using field names
-     *
-     * @return true if writing a header line, false otherwise
+     * Write the headers to the file and do anything else necessary to prepare the file before the results.
      */
-    boolean writeHeader();
+    void writeHeader(OutputStream outputStream, Collection<String> fieldNames) throws IOException;
 
     /**
      * Retrieves the names of all the fields to export
@@ -72,12 +70,4 @@ public interface ExportStrategy {
      * @return the {@link ExportFormat} associated with this format
      */
     ExportFormat getExportFormat();
-
-    /**
-     * Retrieve the output prefix controlled by prependOutput()
-     *
-     * @param outputStream byte of sequence to write to output stream before commencing the file export (e.g. UTF-8 BOM)
-     */
-    default void prependOutput(final OutputStream outputStream) throws IOException {
-    }
 }

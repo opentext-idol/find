@@ -18,6 +18,7 @@ import com.hp.autonomy.types.requests.idol.actions.query.QueryActions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -43,7 +44,7 @@ class IdolExportService implements ExportService<IdolQueryRequest, AciErrorExcep
     }
 
     @Override
-    public void export(final OutputStream outputStream, final IdolQueryRequest queryRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds) throws AciErrorException {
+    public void export(final OutputStream outputStream, final IdolQueryRequest queryRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds, final long totalResults) throws AciErrorException, IOException {
         final AciParameters aciParameters = new AciParameters(QueryActions.Query.name());
 
         parameterHandler.addSearchRestrictions(aciParameters, queryRequest.getQueryRestrictions());
@@ -53,6 +54,16 @@ class IdolExportService implements ExportService<IdolQueryRequest, AciErrorExcep
         }
 
         final ExportStrategy exportStrategy = exportStrategies.get(exportFormat);
-        aciServiceRetriever.getAciService(queryRequest.getQueryType()).executeAction(aciParameters, new ExportQueryResponseProcessor(exportStrategy, outputStream, selectedFieldIds));
+        final Collection<String> fieldNames = exportStrategy.getFieldNames(IdolMetadataNode.values(), selectedFieldIds);
+
+        exportStrategy.writeHeader(outputStream, fieldNames);
+
+        for (int i = 0; i < totalResults; i += PAGINATION_SIZE) {
+            final IdolQueryRequest paginatedQueryRequest = queryRequest.toBuilder()
+                    .start(i + 1)
+                    .maxResults(i + PAGINATION_SIZE)
+                    .build();
+            aciServiceRetriever.getAciService(paginatedQueryRequest.getQueryType()).executeAction(aciParameters, new ExportQueryResponseProcessor(exportStrategy, outputStream, selectedFieldIds));
+        }
     }
 }

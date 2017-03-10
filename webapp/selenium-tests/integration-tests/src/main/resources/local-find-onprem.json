@@ -5,7 +5,9 @@
     "find": "http://localhost:8082"
   },
   "selenium": {
-    "browsers": ["chrome"],
+    "browsers": [
+      "chrome"
+    ],
     "url": "http://localhost:4444/wd/hub"
   },
   "users": {
