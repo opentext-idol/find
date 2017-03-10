@@ -103,7 +103,7 @@ define([
                     data: {
                         categories: categories,
                         values: values,
-                        title: i18n['search.resultsView.sunburst.breakdown.by'](prettyOrNull(this.firstField))
+                        title: prettyOrNull(this.firstField)
                     }
                 } : null
         },
