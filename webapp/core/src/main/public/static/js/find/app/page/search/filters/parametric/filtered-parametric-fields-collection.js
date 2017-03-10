@@ -55,7 +55,7 @@ define([
         },
 
         onParametricSync: function () {
-            if (this.filterModel.get('text')) {
+            if (this.filterModel && this.filterModel.get('text')) {
                 this.filterModels();
             }
         },
