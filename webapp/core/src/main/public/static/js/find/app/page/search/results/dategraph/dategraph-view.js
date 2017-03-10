@@ -100,7 +100,7 @@ define([
 
             this.bucketModel = new BucketedParametricCollection.Model({id: this.fieldName});
             this.selectedParametricValues = options.queryState.selectedParametricValues;
-            this.dateParametricFieldsCollection = options.dateParametricFieldsCollection;
+            this.parametricFieldsCollection = options.parametricFieldsCollection;
 
             this.listenTo(this.queryModel, 'change', this.fetchBuckets);
 
@@ -211,7 +211,7 @@ define([
                 var minDate = this.queryModel.getIsoDate('minDate');
                 var maxDate = this.queryModel.getIsoDate('maxDate');
 
-                var dateField = this.dateParametricFieldsCollection.find(dateModelMatching(this.fieldName, this.dataType));
+                var dateField = this.parametricFieldsCollection.find(dateModelMatching(this.fieldName, this.dataType));
 
                 var baseParams = {
                     queryText: this.queryModel.get('queryText'),
