@@ -178,6 +178,7 @@ define([
                 this.view = new ParametricView({
                     filterModel: new Backbone.Model(),
                     collection: parametricFieldsCollection,
+                    parametricFieldsCollection: parametricFieldsCollection,
                     filteredParametricCollection: this.filteredParametricCollection,
                     queryState: {
                         selectedParametricValues: this.selectedParametricValues

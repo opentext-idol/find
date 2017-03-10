@@ -159,7 +159,7 @@ define([
                     });
 
                     if (this.filterModel) {
-                        this.listenTo(this.parametricFieldsCollection, 'update reset', function () {
+                        this.listenTo(this.filteredParametricFieldsCollection, 'update reset', function () {
                             this.updateParametricVisibility();
                             this.updateEmptyMessage();
                         });
@@ -245,7 +245,7 @@ define([
         },
 
         parametricFieldsEmpty: function () {
-            return !this.parametricFieldsCollection || this.parametricFieldsCollection.length === 0;
+            return !this.filteredParametricFieldsCollection || this.filteredParametricFieldsCollection.length === 0;
         }
     });
 });

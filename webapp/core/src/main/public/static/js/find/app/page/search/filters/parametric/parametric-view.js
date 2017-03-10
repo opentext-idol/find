@@ -50,6 +50,7 @@ define([
         },
 
         initialize: function (options) {
+            this.parametricFieldsCollection = options.parametricFieldsCollection;
             this.filteredParametricCollection = options.filteredParametricCollection;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.filterModel = options.filterModel;
@@ -141,7 +142,7 @@ define([
         initializeProcessingBehaviour: function () {
             this.model = new Backbone.Model({
                 state: this.collection.isProcessing() ? STATES.PROCESSING : STATES.SYNCED,
-                empty: this.collection.isEmpty()
+                empty: this.parametricFieldsCollection.isEmpty()
             });
 
             this.listenTo(this.model, 'change:state', this.onStateChange);
@@ -162,14 +163,14 @@ define([
                 this.model.set('state', STATES.SYNCED);
             });
 
-            this.listenTo(this.collection, 'update reset', function () {
-                this.model.set('empty', this.collection.isEmpty());
+            this.listenTo(this.parametricFieldsCollection, 'update reset', function () {
+                this.model.set('empty', this.parametricFieldsCollection.isEmpty());
             });
         },
 
         updateEmpty: function () {
             if (this.$emptyMessage) {
-                const showEmptyMessage = this.model.get('empty') && this.collection.isEmpty() && this.model.get('state') === STATES.SYNCED;
+                const showEmptyMessage = this.model.get('empty') && this.parametricFieldsCollection.isEmpty() && this.model.get('state') === STATES.SYNCED;
                 this.$emptyMessage.toggleClass('hide', !showEmptyMessage);
             }
         },
