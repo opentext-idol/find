@@ -9,27 +9,42 @@ define([
     'd3',
     'sunburst/js/sunburst',
     './saved-search-widget',
-    'find/app/model/dependent-parametric-collection',
-    'parametric-refinement/prettify-field-name',
+    'find/idol/app/page/dashboard/legend-color-collection',
     'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend.html',
     'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend-item.html',
     'text!find/idol/templates/page/dashboards/widgets/sunburst-legend-too-many-items-entry.html',
     'i18n!find/nls/bundle'
-], function(_, $, d3, Sunburst, SavedSearchWidget, DependentParametricCollection,
-            prettifyFieldName, legendTemplate, legendItemTemplate, tooManyItemsTemplate, i18n) {
+], function(_, $, d3, Sunburst, SavedSearchWidget, LegendColorCollection, legendTemplate,
+            legendItemTemplate, tooManyItemsTemplate, i18n) {
     'use strict';
 
     const tooManyItemsHtml = _.template(tooManyItemsTemplate)({i18n: i18n});
     const legendItemTemplateFn = _.template(legendItemTemplate);
-    const noResultsMessage = '<span class="sunburst-widget-no-results-text">' +
-        i18n['dashboards.widget.sunburst.noResults'] +
+    const noResultsMessage = '<span class="sunburst-widget-no-results-text hide">' +
+        _.escape(i18n['dashboards.widget.sunburst.noResults']) +
         '</span>';
+    const HIDDEN_COLOR = '#ffffff';
 
     function composeLegendHtml(datum) {
         return legendItemTemplateFn({
             text: datum.text,
             color: datum.color
         });
+    }
+
+    /**
+     * Prettify the given field name for display. Replaces underscores with spaces and capitalises the first letter of
+     * each word.
+     * @alias module:prettify-field-name
+     * @function
+     * @param {String} name The input field name
+     * @returns {String} The display name
+     */
+    function prettifyFieldName(name) {
+        // Compact to deal with field names which begin with underscore or contain consecutive underscores
+        return _.chain(name.substring(name.lastIndexOf('/') + 1).split('_')).compact().map(function(word) {
+            return word[0].toUpperCase() + word.slice(1).toLowerCase();
+        }).value().join(' ');
     }
 
     function prettyOrNull(field) {
@@ -63,37 +78,13 @@ define([
             // TODO display error msg if field absent (no dashboards config validation)
             this.firstField = options.widgetSettings.firstField;
             this.secondField = options.widgetSettings.secondField;
-            this.dependentParametricCollection = new DependentParametricCollection({
-                minShownResults: 10
+
+            this.legendColorCollection = new LegendColorCollection(null, {
+                hiddenColor: HIDDEN_COLOR,
+                maxLegendEntries: 5
             });
 
-            this.listenTo(this.dependentParametricCollection, 'update reset', function(collection) {
-                const data = collection.toJSON();
-
-                if(this.$visualizerContainer && this.$legendContainer) {
-                    const empty = collection.isEmpty();
-                    this.$visualizerContainer.toggleClass('hide', empty);
-                    this.$legendContainer.toggleClass('hide', empty);
-                    const $noResultsMessage = this.$('.sunburst-widget-no-results-text');
-                    if(empty) {
-                        if(!$noResultsMessage.length) {
-                            this.$content.prepend(noResultsMessage);
-                        }
-                    } else {
-                        const rootData = {children: data};
-
-                        $noResultsMessage.remove();
-                        this.updateLayout();
-                        if(this.sunburst) {
-                            this.sunburst.resize();
-                            this.sunburst.redraw(rootData);
-                        } else {
-                            this.sunburst = this.drawSunburst(rootData);
-                        }
-                    }
-                }
-                this.populateLegend(data);
-            });
+            this.listenTo(this.legendColorCollection, 'update reset', this.updateSunburstAndLegend);
         },
 
         render: function() {
@@ -101,8 +92,9 @@ define([
 
             this.$legendContainer = $('<div class="sunburst-legend"></div>');
             this.$visualizerContainer = $('<div class="sunburst-visualizer-container"></div>');
+            this.$emptyMessage = $(noResultsMessage);
 
-            this.$content.append(this.$visualizerContainer.add(this.$legendContainer));
+            this.$content.append(this.$emptyMessage.add(this.$visualizerContainer.add(this.$legendContainer)));
             this.updateLayout();
         },
 
@@ -126,7 +118,6 @@ define([
             this.updateLayout();
 
             if(this.sunburst) {
-                //TODO recalculate font sizes here?
                 this.sunburst.resize();
                 this.sunburst.redraw();
             }
@@ -136,42 +127,25 @@ define([
             return this.updateParametricDistribution();
         },
 
-        drawSunburst: function(data, colors) {
+        drawSunburst: function(data) {
             if(this.$content && this.$visualizerContainer) {
-                const colorScheme = _.defaults(colors || {}, {
-                    centre: 'white',
-                    hidden: 'white',
-                    palette: d3.scale.category20c()
-                });
-
                 return new Sunburst(this.$visualizerContainer, {
-                    animate: false,
+                    animate: true,
                     sizeAttr: 'count',
                     nameAttr: 'text',
                     comparator: function(datumA, datumB) {
                         return d3.ascending(datumA.text, datumB.text);
                     },
-                    outerRingAnimateSize: 15,
                     data: data,
                     fillColorFn: function(datum) {
-                        if(datum.parent) {
-                            if(datum.hidden || datum.parent.hidden) {
-                                return colorScheme.hidden;
-                            } else if(datum.parent.parent) {
-                                // Outer tier sector
-                                datum.color = colorScheme.palette(datum.text);
-                            } else {
-                                // Inner tier sector
-                                datum.color = (datum.count && datum.text
-                                    ? colorScheme.palette(datum.text)
-                                    : colorScheme.hidden);
-                            }
-                        } else {
-                            // assigns a fixed colour to the Sunburst's centre
-                            return colorScheme.centre;
+                        if(!datum.parent) {
+                            return 'none';
                         }
 
-                        return datum.color;
+                        // All data should have colors by this point
+                        return datum.color
+                            ? datum.color
+                            : HIDDEN_COLOR;
                     },
                     labelFormatter: null// no labels on hover
                 });
@@ -179,11 +153,36 @@ define([
         },
 
         updateParametricDistribution: function() {
-            return this.dependentParametricCollection
+            return this.legendColorCollection
                 .fetchDependentFields(this.queryModel, this.firstField, this.secondField);
         },
 
-        populateLegend: function(data) {
+        updateSunburstAndLegend: function(collection) {
+            if(this.$visualizerContainer && this.$legendContainer && this.$emptyMessage) {
+                const empty = collection.isEmpty();
+                this.$visualizerContainer.toggleClass('hide', empty);
+                this.$legendContainer.toggleClass('hide', empty);
+                this.$emptyMessage.toggleClass('hide', !empty);
+                if(empty) {
+                    // Next time we have data, the initialisation animation will run again
+                    this.sunburst = null;
+                    this.$visualizerContainer.empty();
+                } else {
+                    const rootData = {children: collection.toJSON()};
+
+                    this.updateLayout();
+                    if(this.sunburst) {
+                        this.sunburst.resize();
+                        this.sunburst.redraw(rootData);
+                    } else {
+                        this.sunburst = this.drawSunburst(rootData);
+                    }
+                }
+            }
+            this.populateLegend();
+        },
+
+        populateLegend: function() {
             if(this.$content && this.$legendContainer) {
                 this.$legendContainer
                     .html(this.legendTemplate({
@@ -196,46 +195,36 @@ define([
                 this.$outerLegend = this.$legendContainer
                     .find('.outer-ring-legend .sunburst-legend-field-values');
 
-                if(data.length === 0) {
-                    this.$innerLegend.text(i18n['dashboards.widget.sunburst.legend.noValues']);
-                    this.$outerLegend.text(i18n['dashboards.widget.sunburst.legend.noValues']);
-                } else {
-                    // Inner tier legend
-                    const outerValues = [];
-                    const innerHtmlArray = [];
-                    let innerTooMany = false;
+                const tier1Hash = this.legendColorCollection.tier1;
+                const tier2Hash = this.legendColorCollection.tier2;
+                const tier1 = {
+                    legendData: tier1Hash ? tier1Hash.legendData : null,
+                    hidden: tier1Hash ? tier1Hash.hidden : null,
+                    $el: this.$innerLegend
+                };
+                const tier2 = {
+                    legendData: tier2Hash ? tier2Hash.legendData : null,
+                    hidden: tier2Hash ? tier2Hash.hidden : null,
+                    $el: this.$outerLegend
+                };
 
-                    _.each(data, function(datum) {
-                        if(datum.children && datum.children.length > 0) {
-                            outerValues.push.apply(outerValues, datum.children);
-                        }
-
-                        if(datum.hidden || datum.text === '') {
-                            innerTooMany = true;
-                        } else {
-                            innerHtmlArray.push(composeLegendHtml(datum));
-                        }
-                    }.bind(this));
-
-                    this.$innerLegend.html(buildLegendHtml(innerHtmlArray, innerTooMany));
-
-                    // Outer tier legend
-                    if(outerValues.length > 0) {
-                        let outerTooMany = false;
-                        const outerHtmlArray = [];
-                        _.each(outerValues, function(datum) {
-                            if(datum.hidden || datum.text === '') {
-                                outerTooMany = true;
-                            } else {
-                                outerHtmlArray.push(composeLegendHtml(datum));
-                            }
-                        }.bind(this));
-
-                        this.$outerLegend.html(buildLegendHtml(outerHtmlArray, outerTooMany));
+                _.each([tier1, tier2], function(tier) {
+                    if(!tier || (tier && tier.legendData === null)) {
+                        tier.$el.text(i18n['dashboards.widget.sunburst.legend.noValues']);
                     } else {
-                        this.$outerLegend.text(i18n['dashboards.widget.sunburst.legend.noValues']);
+                        const htmlArray = [];
+
+                        _.each(tier.legendData, function(legendDatum) {
+                            htmlArray.push(composeLegendHtml(legendDatum));
+                        });
+
+                        if(htmlArray.length > 0) {
+                            tier.$el.html(buildLegendHtml(htmlArray, tier.hidden));
+                        } else {
+                            tier.$el.text(i18n['dashboards.widget.sunburst.legend.noValues']);
+                        }
                     }
-                }
+                });
             }
         }
     });

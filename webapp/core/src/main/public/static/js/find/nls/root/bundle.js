@@ -55,7 +55,7 @@ define([
         'dashboards.widget.lastRefresh.refreshing': 'Refreshing {0} of {1} widgets',
         'dashboards.widget.lastRefresh.timeLastUpdated': 'Last updated at',
         'dashboards.widget.sunburst.noResults': 'The query did not match any documents',
-        'dashboards.widget.sunburst.legend.hiddenValues': 'Too many values',
+        'dashboards.widget.sunburst.legend.hiddenValues': 'Too many entries',
         'dashboards.widget.sunburst.legend.noValues': 'No values to display',
         'datepicker.language': 'en',
         'default.title': 'Page Unavailable',

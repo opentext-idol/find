@@ -11,7 +11,7 @@ define([
 
     function getArrayTotal(array) {
         return _.reduce(array, function (mem, val) {
-            return mem + val.count
+            return mem + val.count;
         }, 0);
     }
 
@@ -31,9 +31,9 @@ define([
                 };
                 return _.isEmpty(entry.subFields) ? entryHash : _.extend(entryHash, {children: parseResult(entry.subFields, entry.count)}); // recurse for children
             })
-            .sortBy('id')
+            .sortBy('text')
             .sortBy(function (x) {
-                return -x.count
+                return -x.count;
             })
             .value();
 
@@ -67,6 +67,7 @@ define([
     }
 
     return BaseCollection.extend({
+        idAttribute: 'text',
         url: 'api/public/parametric/dependent-values',
 
         initialize: function(opts) {
