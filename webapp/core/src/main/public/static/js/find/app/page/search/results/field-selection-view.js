@@ -4,17 +4,16 @@
  */
 
 define([
-    'underscore',
     'backbone',
+    'underscore',
     'text!find/templates/app/page/search/results/sunburst/field-selection-view.html',
     'i18n!find/nls/bundle',
-    'parametric-refinement/prettify-field-name',
     'chosen'
-], function(_, Backbone, template, i18n, prettifyFieldName) {
+], function(Backbone, _, template, i18n) {
     'use strict';
 
-    var optionTemplate = _.template('<option value="<%-field%>" <%- selected ? "selected" : ""%>><%-displayValue%></option>');
-    var emptyOptionHtml = '<option value=""></option>';
+    const optionTemplate = _.template('<option value="<%-field%>" <%- selected ? "selected" : ""%>><%-displayValue%></option>');
+    const emptyOptionHtml = '<option value=""></option>';
 
     return Backbone.View.extend({
         className: 'field-selection-view',
@@ -27,14 +26,13 @@ define([
             this.allowEmpty = options.allowEmpty;
             this.width = options.width || '20%';
 
-            this.selectionsStart = this.allowEmpty
-                ? [emptyOptionHtml]
-                : [];
+            this.selectionsStart = this.allowEmpty ? [emptyOptionHtml] : [];
         },
 
-        updateModel: function() {
-            this.model.set('field', this.$select.val());
-            this.model.set('displayValue', prettifyFieldName(this.$select.val()));
+        updateModel: function () {
+            const fieldId = this.$select.val();
+            this.model.set('field', fieldId);
+            this.model.set('displayName', _.findWhere(this.fields, {id: fieldId}).displayName);
         },
 
         render: function() {
@@ -42,11 +40,11 @@ define([
                 dataPlaceholder: i18n['search.sunburst.fieldPlaceholder.' + this.name]
             }));
 
-            var options = this.selectionsStart.concat(_.map(this.fields, function(field) {
+            const options = this.selectionsStart.concat(_.map(this.fields, function (field) {
                 return optionTemplate({
-                    field: field,
-                    selected: field === this.model.get('field'),
-                    displayValue: prettifyFieldName(field)
+                    field: field.id,
+                    selected: field.id === this.model.get('field'),
+                    displayValue: field.displayName
                 });
             }, this));
 
@@ -61,7 +59,7 @@ define([
 
             this.$select.change(_.bind(this.updateModel, this));
 
-            if(!(this.allowEmpty || _.isEmpty(this.fields))) {
+            if (!this.allowEmpty && !_.isEmpty(this.fields)) {
                 this.updateModel();
             }
 

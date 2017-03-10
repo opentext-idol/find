@@ -11,35 +11,35 @@ define([
     'find/app/util/csv-field-selection-list-item',
     'find/app/configuration',
     'text!find/templates/app/util/csv-export-form-template.html'
-], function(Backbone, _, $, ListView, ItemView, configuration, exportFormTemplate) {
+], function (Backbone, _, $, ListView, ItemView, configuration, exportFormTemplate) {
     'use strict';
 
     return Backbone.View.extend({
         formTemplate: _.template(exportFormTemplate),
 
         events: {
-            'ifClicked .csv-field-label': function(e) {
-                var $currentTarget = $(e.currentTarget);
-                var fieldName = $currentTarget.attr('data-field-id');
+            'ifClicked .csv-field-label': function (e) {
+                const $currentTarget = $(e.currentTarget);
+                const fieldName = $currentTarget.attr('data-field-id');
 
-                var selectedFieldsModel = this.exportFieldCollection.get(fieldName);
+                const selectedFieldsModel = this.exportFieldCollection.get(fieldName);
 
                 // checked is the old value
-                var selected = !$(e.target).prop('checked');
+                const selected = !$(e.target).prop('checked');
                 selectedFieldsModel.set('selected', selected);
             }
         },
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.queryModel = options.queryModel;
 
-            var fieldsInfo = configuration().fieldsInfo;
+            const fieldsInfo = configuration().fieldsInfo;
 
-            var metadataModels = _.values(configuration().metadataFieldIds).map(function(id) {
+            const metadataModels = _.values(configuration().metadataFieldIds).map(function (id) {
                 return {id: id, selected: true};
             });
 
-            var fieldModels = _.map(fieldsInfo, function(info) {
+            const fieldModels = _.map(fieldsInfo, function (info) {
                 return _.extend({selected: true}, info);
             });
 
@@ -53,9 +53,9 @@ define([
                 }
             });
 
-            this.listenTo(this.exportFieldCollection, 'update change', function() {
+            this.listenTo(this.exportFieldCollection, 'update change', function () {
                 // TODO: Inelegant, event is triggered every time a checkbox is clicked.
-                if(this.exportFieldCollection.where({selected: true}).length === 0) {
+                if (this.exportFieldCollection.where({selected: true}).length === 0) {
                     this.trigger('primary-button-disable');
                 } else {
                     this.trigger('primary-button-enable');
@@ -63,16 +63,16 @@ define([
             });
         },
 
-        render: function() {
+        render: function () {
             this.listView.render();
             this.$el.empty().append(this.listView.el);
         },
 
-        requestCsv: function() {
-            var selectedFields = _.pluck(this.exportFieldCollection.where({selected: true}), 'id');
+        requestCsv: function () {
+            const selectedFields = _.pluck(this.exportFieldCollection.where({selected: true}), 'id');
 
             //noinspection AmdModulesDependencies
-            var queryRequest = JSON.stringify({
+            const queryRequest = JSON.stringify({
                 queryRestrictions: {
                     text: this.queryModel.get('queryText'),
                     field_text: this.queryModel.get('fieldText') ? this.queryModel.get('fieldText').toString() : '',
@@ -91,7 +91,7 @@ define([
                 queryType: 'MODIFIED'
             });
 
-            var $form = $(this.formTemplate({queryRequest: queryRequest, fields: selectedFields}));
+            const $form = $(this.formTemplate({queryRequest: queryRequest, fields: selectedFields}));
             $form.appendTo('body').submit().remove();
         }
     });

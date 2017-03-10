@@ -4,13 +4,12 @@
  */
 
 define([
-    'underscore',
     'js-whatever/js/list-item-view',
-    'parametric-refinement/prettify-field-name',
+    'underscore',
     'text!find/templates/app/util/csv-field-selection-list-item.html',
     'i18n!find/nls/bundle',
     'iCheck'
-], function(_, ListItemView, prettifyFieldName, template, i18n) {
+], function(ListItemView, _, template, i18n) {
     'use strict';
 
     return ListItemView.extend({
@@ -21,7 +20,7 @@ define([
                 template: this.template,
                 templateOptions: {
                     fieldDataId: options.model.id,
-                    fieldPrintedLabel: i18n['search.document.' + options.model.id] || prettifyFieldName(options.model.id)
+                    fieldPrintedLabel: i18n['search.document.' + options.model.id] || options.model.displayName || options.model.id
                 }
             }, options));
         },
@@ -34,9 +33,7 @@ define([
         },
 
         updateSelected: function() {
-            this.$el.iCheck(this.model.get('selected')
-                ? 'check'
-                : 'uncheck');
+            this.$el.iCheck(this.model.get('selected') ? 'check' : 'uncheck');
         }
     });
 });

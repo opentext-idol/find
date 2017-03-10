@@ -12,7 +12,7 @@ define([
 ], function(_, FilterView, configuration, Backbone, i18n, backboneMockFactory) {
     'use strict';
 
-    var MATCH_NOTHING = 'y54u65u4w5uy654u5eureuy654yht754wy54euy45';
+    const MATCH_NOTHING = 'y54u65u4w5uy654u5eureuy654yht754wy54euy45';
 
     const MockIndexesView = Backbone.View.extend({
         initialize: function(options) {
@@ -28,18 +28,20 @@ define([
                 };
             });
 
+            const parametricFieldsCollection = new (backboneMockFactory.getCollection())();
+            const parametricCollection = new (backboneMockFactory.getCollection())();
             this.view = new FilterView({
                 IndexesView: MockIndexesView,
                 queryState: {},
-                numericParametricFieldsCollection: new (backboneMockFactory.getCollection())(),
-                dateParametricFieldsCollection: new (backboneMockFactory.getCollection())()
+                parametricFieldsCollection: parametricFieldsCollection,
+                parametricCollection: parametricCollection
             });
 
             this.view.render();
 
             this.parametricInfo = {
                 description: 'parametric',
-                collection: this.view.mergedParametricCollection,
+                collection: parametricFieldsCollection,
                 view: this.view.parametricView
             };
         });

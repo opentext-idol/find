@@ -20,7 +20,6 @@ import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricReques
 import com.hp.autonomy.searchcomponents.hod.parametricvalues.HodParametricValuesService;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
-import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectFactory;
@@ -32,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -61,24 +59,10 @@ class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorExc
 
     @RequestMapping(value = GET_PARAMETRIC_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public List<TagName> getParametricFields(@RequestParam(DATABASES_PARAM) final Collection<ResourceName> databases) throws HodErrorException {
+    public List<FieldAndValueDetails> getParametricFields(@RequestParam(FIELD_TYPES_PARAM) final Collection<FieldTypeParam> fieldTypes,
+                                                          @RequestParam(DATABASES_PARAM) final Collection<ResourceName> databases) throws HodErrorException {
         return getParametricFields(fieldsRequestBuilderFactory.getObject()
-                .databases(databases)
-                .build());
-    }
-
-    @RequestMapping(value = GET_PARAMETRIC_NUMERIC_FIELDS_PATH, method = RequestMethod.GET)
-    @ResponseBody
-    public List<FieldAndValueDetails> getParametricNumericFields(@RequestParam(DATABASES_PARAM) final Collection<ResourceName> databases) throws HodErrorException {
-        return getParametricNumericFields(fieldsRequestBuilderFactory.getObject()
-                .databases(databases)
-                .build());
-    }
-
-    @RequestMapping(value = GET_PARAMETRIC_DATE_FIELDS_PATH, method = RequestMethod.GET)
-    @ResponseBody
-    public List<FieldAndValueDetails> getParametricDateFields(@RequestParam(DATABASES_PARAM) final Collection<ResourceName> databases) throws HodErrorException {
-        return getParametricDateFields(fieldsRequestBuilderFactory.getObject()
+                .fieldTypes(fieldTypes)
                 .databases(databases)
                 .build());
     }
@@ -89,11 +73,5 @@ class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorExc
                 .queryText("*")
                 .databases(new LinkedList<>(request.getDatabases()))
                 .build();
-    }
-
-    @Override
-    protected List<FieldAndValueDetails> getParametricDateFields(final HodFieldsRequest request) throws HodErrorException {
-        // TODO: Remove this override once FIND-180 is complete; we are just preventing AUTN_DATE from showing up in HoD as it will cause performance problems
-        return fetchParametricFieldAndValueDetails(request, FieldTypeParam.NumericDate, Collections.emptyList());
     }
 }

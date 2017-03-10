@@ -12,6 +12,7 @@ import com.hp.autonomy.frontend.find.core.export.ExportServiceIT;
 import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Print;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import com.hp.autonomy.searchcomponents.hod.beanconfiguration.HavenSearchHodConfiguration;
 import com.hp.autonomy.searchcomponents.hod.configuration.HodSearchCapable;
 import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
@@ -38,8 +39,8 @@ public class HodExportServiceIT extends ExportServiceIT<HodQueryRequest, HodQuer
         }
 
         @Bean
-        public ExportStrategy csvExportStrategy(final ConfigService<HodSearchCapable> configService) {
-            return new CsvExportStrategy(configService);
+        public ExportStrategy csvExportStrategy(final ConfigService<HodSearchCapable> configService, final FieldPathNormaliser fieldPathNormaliser) {
+            return new CsvExportStrategy(configService, fieldPathNormaliser);
         }
     }
 }

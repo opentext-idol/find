@@ -53,14 +53,12 @@ public class FilterPanel {
     }
 
     public IndexesTreeContainer indexesTreeContainer() {
-        final WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Indexes') or contains(text(), 'Databases')]"));
-        final WebElement container = ElementUtil.ancestor(heading, 2);
+        final WebElement container = panel.findElement(By.xpath(".//div[contains(div/@class, 'collapsible-header') and (contains(div/h4/span/text(), 'Indexes') or contains(div/h4/span/text(), 'Databases'))]"));
         return new IndexesTreeContainer(container, driver);
     }
 
     public DateFilterContainer dateFilterContainer() {
-        final WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Dates')]"));
-        final WebElement container = ElementUtil.ancestor(heading, 2);
+        final WebElement container = panel.findElement(By.xpath(".//div[contains(div/@class, 'collapsible-header') and contains(div/h4/span/text(), 'Dates')]"));
         return new DateFilterContainer(container, driver);
     }
 

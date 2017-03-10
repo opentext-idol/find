@@ -124,7 +124,7 @@ public class BIFilterITCase extends IdolFindTestBase {
         assertThat(filters().getErrorMessage(), is("No filters matched"));
 
         filters().clearMetaFilter();
-        findPage.waitUntilDatabasesLoaded();
+        findPage.waitForParametricValuesToLoad();
         assertThat(filters().getErrorMessage(), isEmptyOrNullString());
     }
 

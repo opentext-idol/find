@@ -12,16 +12,14 @@ define([
     'i18n!find/nls/bundle',
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/search/results/sunburst/sunburst-label.html',
-    'parametric-refinement/prettify-field-name',
     'find/app/vent'
-], function(_, $, d3, Sunburst, ParametricResultsView, i18n, generateErrorHtml, labelTemplate,
-            prettifyFieldName, vent) {
+], function(_, $, d3, Sunburst, ParametricResultsView, i18n, generateErrorHtml, labelTemplate, vent) {
     'use strict';
 
-    var HIDDEN_COLOR = '#f0f0f0';
+    const HIDDEN_COLOR = '#f0f0f0';
 
-    var sunburstLabelIcon = '<i class="icon-zoom-out"></i>';
-    var sunburstLabelTemplate = _.template(labelTemplate);
+    const sunburstLabelIcon = '<i class="icon-zoom-out"></i>';
+    const sunburstLabelTemplate = _.template(labelTemplate);
 
     function generateDataRoot(data) {
         return {
@@ -37,7 +35,7 @@ define([
         const color = d3.scale.category20c();
         $el.empty();
 
-        var sunburst = new Sunburst($el, {
+        const sunburst = new Sunburst($el, {
             animate: false,
             nameAttr: 'text',
             sizeAttr: 'count',
@@ -88,10 +86,7 @@ define([
                 } else {
                     templateArguments.name = hiddenFilterCount === 0
                         // Child comprises results with no values for secondary parametric field
-                        ? i18n['search.sunburst.missingValues'](
-                            datum.count,
-                            prettifyFieldName(this.fieldsCollection.at(1).get('field'))
-                        )
+                        ? i18n['search.sunburst.missingValues'](datum.count, this.fieldsCollection.at(1).get('displayName'))
                         : datum.text;
                 }
 

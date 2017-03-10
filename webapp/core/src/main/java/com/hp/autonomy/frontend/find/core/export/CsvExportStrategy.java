@@ -8,7 +8,9 @@ package com.hp.autonomy.frontend.find.core.export;
 import com.google.common.base.Strings;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
+import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.core.config.HavenSearchCapable;
+import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.lang3.StringUtils;
@@ -20,22 +22,25 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
 public class CsvExportStrategy implements ExportStrategy {
     // Excel can't cope with CSV files without a BOM (FIND-498)
-    private static final byte[] UTF8_BOM = new byte[]{(byte)0xEF, (byte)0xBB, (byte)0xBF};
+    private static final byte[] UTF8_BOM = new byte[]{(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
 
     private final ConfigService<? extends HavenSearchCapable> configService;
+    private final FieldPathNormaliser fieldPathNormaliser;
 
     @Autowired
-    public CsvExportStrategy(final ConfigService<? extends HavenSearchCapable> configService) {
+    public CsvExportStrategy(final ConfigService<? extends HavenSearchCapable> configService,
+                             final FieldPathNormaliser fieldPathNormaliser) {
         this.configService = configService;
+        this.fieldPathNormaliser = fieldPathNormaliser;
     }
 
     @Override
@@ -51,8 +56,9 @@ public class CsvExportStrategy implements ExportStrategy {
                 .filter(metadataNode -> selectedFieldIds.isEmpty() || selectedFieldIds.contains(metadataNode.getName()))
                 .map(MetadataNode::getDisplayName);
 
-        final Stream<String> nonMetadataStream = getFieldConfig().stream()
-                .map(FieldInfo::getId)
+        final Stream<String> nonMetadataStream = getFieldsInfo().getFieldConfig()
+                .keySet()
+                .stream()
                 // Filters parametric (non-metadata) fields
                 .filter(id -> selectedFieldIds.isEmpty() || selectedFieldIds.contains(id));
 
@@ -61,41 +67,27 @@ public class CsvExportStrategy implements ExportStrategy {
 
     @Override
     public Map<String, FieldInfo<?>> getConfiguredFieldsById() {
-        final Map<String, FieldInfo<?>> configuredFieldIds = new LinkedHashMap<>();
-
-        getFieldConfig().forEach(field -> configuredFieldIds.put(field.getId(), field));
-
-        return configuredFieldIds;
+        return getFieldsInfo().getFieldConfig();
     }
 
     @Override
-    public Map<String, FieldInfo<?>> getConfiguredFieldsByName() {
-        final Map<String, FieldInfo<?>> configuredFieldINames = new LinkedHashMap<>();
-        final Collection<FieldInfo<?>> fieldConfig = getFieldConfig();
-        for(final FieldInfo<?> field : fieldConfig) {
-            for(final String name : field.getNames()) {
-                configuredFieldINames.put(name, field);
-            }
-        }
-
-        return configuredFieldINames;
+    public Optional<FieldInfo<?>> getFieldInfoForNode(final String nodeName) {
+        return Optional.ofNullable(getFieldsInfo().getFieldConfigByName().get(fieldPathNormaliser.normaliseFieldPath(nodeName)));
     }
 
     @Override
     public void exportRecord(final OutputStream outputStream, final Iterable<String> values) throws IOException {
-        try(final CSVPrinter csvPrinter = new CSVPrinter(new OutputStreamWriter(outputStream), CSVFormat.EXCEL)) {
+        try (final CSVPrinter csvPrinter = new CSVPrinter(new OutputStreamWriter(outputStream), CSVFormat.EXCEL)) {
             csvPrinter.printRecord(values);
         }
     }
 
     @Override
     // CAUTION: Method has more than one exit point.
-    public String combineValues(final List<String> values) {
-        if(values == null) {
-            return "";
-        } else {
-            return StringUtils.join(values.stream().filter(val -> !Strings.isNullOrEmpty(val)).collect(Collectors.toList()), ", ");
-        }
+    public String combineValues(final List<String> maybeValues) {
+        return Optional.ofNullable(maybeValues)
+                .map(values -> StringUtils.join(values.stream().filter(val -> !Strings.isNullOrEmpty(val)).collect(Collectors.toList()), ", "))
+                .orElse("");
     }
 
     @Override
@@ -103,7 +95,7 @@ public class CsvExportStrategy implements ExportStrategy {
         return ExportFormat.CSV;
     }
 
-    private Collection<FieldInfo<?>> getFieldConfig() {
-        return configService.getConfig().getFieldsInfo().getFieldConfig().values();
+    private FieldsInfo getFieldsInfo() {
+        return configService.getConfig().getFieldsInfo();
     }
 }

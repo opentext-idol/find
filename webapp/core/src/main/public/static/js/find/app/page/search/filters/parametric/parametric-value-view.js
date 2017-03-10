@@ -2,18 +2,23 @@ define([
     'backbone',
     'jquery',
     'text!find/templates/app/page/search/filters/parametric/parametric-value-view.html'
-], function(Backbone, $, template) {
+], function (Backbone, $, template) {
     'use strict';
 
     return Backbone.View.extend({
         className: 'parametric-value-element selectable-table-item clickable',
         tagName: 'tr',
 
-        initialize: function() {
-            this.$el.attr('data-value', this.model.id);
+        initialize: function (options) {
+            this.selectedValuesCollection = options.selectedValuesCollection;
+
+            this.$el.attr('data-value', this.model.get('value'));
+            this.$el.attr('data-display-value', this.model.get('displayValue'));
+
+            this.listenTo(this.selectedValuesCollection, 'update', this.updateSelected);
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(template);
 
             this.$text = this.$('.parametric-value-text');
@@ -26,10 +31,10 @@ define([
             this.updateSelected();
         },
 
-        updateText: function() {
+        updateText: function () {
             this.$text.tooltip('destroy');
 
-            var name = this.model.get('displayName') || this.model.id;
+            const name = this.model.get('displayValue');
             this.$name.text(name);
 
             this.$text.tooltip({
@@ -39,25 +44,25 @@ define([
             });
         },
 
-        updateCount: function() {
-            if(this.$count) {
-                var count = this.model.get('count');
+        updateCount: function () {
+            if (this.$count) {
+                const count = this.model.get('count');
 
-                if(count !== null) {
-                    this.$count.text(' (' + count + ')');
-                } else {
+                if (count === null) {
                     this.$count.text('');
+                } else {
+                    this.$count.text(' (' + count + ')');
                 }
             }
         },
 
-        updateSelected: function() {
-            if(this.$check) {
-                this.$check.toggleClass('hide', !this.model.get('selected'));
+        updateSelected: function () {
+            if (this.$check) {
+                this.$check.toggleClass('hide', !this.selectedValuesCollection.get(this.model.get('value')));
             }
         },
 
-        remove: function() {
+        remove: function () {
             this.$text.tooltip('destroy');
 
             Backbone.View.prototype.remove.apply(this, arguments);

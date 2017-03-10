@@ -37,7 +37,7 @@
     "hp-autonomy-fieldtext-js": "1.4.0",
     "hp-autonomy-topic-map": "1.4.0",
     "hp-autonomy-sunburst": "2.1.0",
-    "hp-autonomy-js-parametric-refinement": "0.8.1",
+    "hp-autonomy-js-parametric-refinement": "0.9.0",
     "leaflet": "0.7.7",
     "Leaflet.awesome-markers": "2.0.2",
     "leaflet.markercluster": "leaflet-0.7",

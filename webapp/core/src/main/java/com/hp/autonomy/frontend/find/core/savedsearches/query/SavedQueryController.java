@@ -32,13 +32,13 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
     static final String PATH = "/api/bi/saved-query";
     static final String NEW_RESULTS_PATH = "/new-results/";
 
-    protected final SavedSearchService<SavedQuery> service;
+    protected final SavedSearchService<SavedQuery, SavedQuery.Builder> service;
     private final DocumentsService<RQ, ?, ?, Q, D, E> documentsService;
     private final FieldTextParser fieldTextParser;
     private final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory;
     private final ObjectFactory<? extends QueryRequestBuilder<RQ, Q, ?>> queryRequestBuilderFactory;
 
-    protected SavedQueryController(final SavedSearchService<SavedQuery> service,
+    protected SavedQueryController(final SavedSearchService<SavedQuery, SavedQuery.Builder> service,
                                    final DocumentsService<RQ, ?, ?, Q, D, E> documentsService,
                                    final FieldTextParser fieldTextParser,
                                    final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory,

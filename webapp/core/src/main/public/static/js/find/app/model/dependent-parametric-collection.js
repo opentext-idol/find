@@ -10,30 +10,29 @@ define([
     'use strict';
 
     function getArrayTotal(array) {
-        return _.reduce(array, function(mem, val) {
-            return mem + (+val.count);
+        return _.reduce(array, function (mem, val) {
+            return mem + val.count;
         }, 0);
     }
 
-    function parseResult(array, total, minShownResults) {
+    function parseResult (array, total, minShownResults) {
         const minimumSize = Math.round(total / 100 * 5); // this is the smallest area of the chart an element will be visible at.
 
         const initialSunburstData = _.chain(array)
-            .filter(function(element) {
+            .filter(function (element) {
                 return element.value !== '';
             })
-            .map(function(entry) {
+            .map(function (entry) {
                 const entryHash = {
                     hidden: false,
-                    text: entry.value,
-                    count: +entry.count
+                    text: entry.displayValue,
+                    underlyingValue: entry.value,
+                    count: entry.count
                 };
-                return _.isEmpty(entry.field)
-                    ? entryHash
-                    : _.extend(entryHash, {children: parseResult(entry.field, entry.count, minShownResults)}); // recurse for children
+                return _.isEmpty(entry.subFields) ? entryHash : _.extend(entryHash, {children: parseResult(entry.subFields, entry.count)}); // recurse for children
             })
             .sortBy('text')
-            .sortBy(function(x) {
+            .sortBy(function (x) {
                 return -x.count;
             })
             .value();
@@ -43,20 +42,21 @@ define([
 
         //filter out any with document counts smaller than minimumSize
         const filteredSunburstData = _.chain(initialSunburstData)
-            .filter(function(child) {
+            .filter(function (child) {
                 return child.count > minimumSize;
             })
             .value();
 
         const sunburstData = _.union(alwaysShownValues, filteredSunburstData);
 
-        if(!_.isEmpty(sunburstData)) { //if there are items being displayed
+        if (!_.isEmpty(sunburstData)) { //if there are items being displayed
             const childCount = getArrayTotal(sunburstData); // get total displayed document count
             const remaining = total - childCount; // get the total hidden document count
             const hiddenFilterCount = initialSunburstData.length - sunburstData.length;  // get the number of hidden values
-            if(remaining > 0) {
+            if (remaining > 0) {
                 sunburstData.push({
                     text: '',
+                    underlyingValue: '',
                     hidden: true,
                     count: remaining,
                     hiddenFilterCount: hiddenFilterCount

@@ -13,26 +13,26 @@ define([
     'moment'
 ], function(Backbone, _, SavedSearchModel, DatesFilterModel, MinScoreModel, databaseNameResolver, moment) {
 
-    var RELATED_CONCEPTS = [['johnny'], ['depp']];
-    var MAX_DATE = 555555555;
-    var MIN_DATE = 444444444;
-    var MIN_SCORE = 0;
+    const RELATED_CONCEPTS = [['johnny'], ['depp']];
+    const MAX_DATE = 555555555;
+    const MIN_DATE = 444444444;
+    const MIN_SCORE = 0;
 
-    var BASE_INDEXES = [
+    const BASE_INDEXES = [
         {domain: 'DOMAIN', name: 'DOCUMENTS'}
     ];
 
-    var PARAMETRIC_VALUES = [
+    const PARAMETRIC_VALUES = [
         {field: 'CATEGORY', value: 'person'},
         {field: 'CATEGORY', value: 'film'}
     ];
 
-    var PARAMETRIC_RANGES_CLIENT = [
-        {field: 'YEAR', range: [1066, 1485], dataType: 'numeric'},
-        {field: 'DATE', range: [123456789000, 123456791000], dataType: 'date'}
+    const PARAMETRIC_RANGES_CLIENT = [
+        {field: 'YEAR', range: [1066, 1485], type: 'Numeric'},
+        {field: 'DATE', range: [123456789000, 123456791000], type: 'NumericDate'}
     ];
 
-    var PARAMETRIC_RANGES_SERVER = [
+    const PARAMETRIC_RANGES_SERVER = [
         {field: 'YEAR', min: 1066, max: 1485, type: 'Numeric'},
         {field: 'DATE', min: 123456789000, max: 123456791000, type: 'Date'}
     ];
@@ -122,7 +122,7 @@ define([
             });
 
             it('returns false when the indexes are different', function() {
-                var newIndex = {domain: 'DOMAIN', name: 'MORE_DOCUMENTS'};
+                const newIndex = {domain: 'DOMAIN', name: 'MORE_DOCUMENTS'};
                 this.selectedIndexes.add(newIndex);
                 databaseNameResolver.getDatabaseInfoFromCollection.and.callFake(function () {
                     return [newIndex].concat(BASE_INDEXES);

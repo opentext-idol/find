@@ -9,6 +9,7 @@ define([
                 this.model = new Backbone.Model({
                     selected: false,
                     value: 'CAT',
+                    displayValue: 'Cat',
                     count: 42
                 });
 
@@ -45,6 +46,7 @@ define([
                 this.model = new Backbone.Model({
                     selected: true,
                     value: 'CAT',
+                    displayValue: 'Cat',
                     count: 42
                 });
 

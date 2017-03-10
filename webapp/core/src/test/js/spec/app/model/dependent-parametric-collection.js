@@ -12,23 +12,19 @@ define([
 ], function(DependentParametricCollection, inputData1, outputData1, inputData2, outputData2) {
     'use strict';
 
-    describe('DependentParametricCollection', function() {
-        describe('parse method', function() {
-            it('should split values into segments with correct padding', function() {
-                var output = DependentParametricCollection.prototype.parse(inputData1);
-                var expected = outputData1;
-
-                expect(output).toEqual(expected);
+    describe('DependentParametricCollection', function () {
+        describe('parse method', function () {
+            it('should split values into segments with correct padding', function () {
+                const output = DependentParametricCollection.prototype.parse(inputData1);
+                expect(output).toEqual(outputData1);
             });
 
-            it('should split values and children into segments with correct padding', function() {
-                var output = DependentParametricCollection.prototype.parse(inputData2);
-                var expected = outputData2;
-
-                expect(output).toEqual(expected);
+            it('should split values and children into segments with correct padding', function () {
+                const output = DependentParametricCollection.prototype.parse(inputData2);
+                expect(output).toEqual(outputData2);
             });
 
-            it('returns an empty array when given an empty array', function() {
+            it('returns an empty array when given an empty array', function () {
                 expect(DependentParametricCollection.prototype.parse([])).toEqual([]);
             });
         });

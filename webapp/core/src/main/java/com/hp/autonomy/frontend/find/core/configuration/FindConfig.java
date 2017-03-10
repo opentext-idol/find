@@ -28,8 +28,6 @@ public interface FindConfig<C extends FindConfig<C, B>, B extends FindConfigBuil
 
     UiCustomization getUiCustomization();
 
-    Collection<ParametricDisplayValues> getParametricDisplayValues();
-
     Integer getTopicMapMaxResults();
 
     B toBuilder();

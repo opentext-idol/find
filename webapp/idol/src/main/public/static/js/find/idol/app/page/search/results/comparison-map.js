@@ -21,10 +21,19 @@ define([
     'find/app/vent',
     'underscore',
     'iCheck'
-], function($, Backbone, ComparisonDocumentsCollection, stateTokenStrategy, MapView,
-            FieldSelectionView, configuration, i18n, comparisonsI18n, addLinksToSummary,
-            searchDataUtil, loadingSpinnerTemplate, template, popoverTemplate, vent, _) {
+], function ($, Backbone, ComparisonDocumentsCollection, stateTokenStrategy, MapView,
+             FieldSelectionView, configuration, i18n, comparisonsI18n, addLinksToSummary,
+             searchDataUtil, loadingSpinnerTemplate, template, popoverTemplate, vent, _) {
     'use strict';
+
+    function locationFieldsToSelectionFields(locationFields) {
+        return locationFields.map(function (locationField) {
+            return {
+                id: locationField.displayName,
+                displayName: locationField.displayName
+            }
+        })
+    }
 
     return Backbone.View.extend({
         className: 'service-view-container',
@@ -33,28 +42,29 @@ define([
         popoverTemplate: _.template(popoverTemplate),
 
         events: {
-            'click .map-popup-title': function(e) {
-                var allCollections = _.chain(this.comparisons).pluck('collection').pluck('models').flatten().value();
+            'click .map-popup-title': function (e) {
+                const allCollections = _.chain(this.comparisons).pluck('collection').pluck('models').flatten().value();
                 vent.navigateToDetailRoute(_.findWhere(allCollections, {cid: e.currentTarget.getAttribute('cid')}));
             }
         },
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.searchModels = options.searchModels;
             this.locationFields = configuration().map.locationFields;
             this.resultsStep = configuration().map.resultsStep;
 
             this.mapView = new MapView({addControl: true});
 
-            var firstQueryModel = this.createQueryModel(this.model.get('firstText'), this.model.get('onlyInFirst'), [this.searchModels.first]);
-            var bothQueryModel = this.createQueryModel(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]);
-            var secondQueryModel = this.createQueryModel(this.model.get('secondText'), this.model.get('onlyInSecond'), [this.searchModels.second]);
+            const firstQueryModel = this.createQueryModel(this.model.get('firstText'), this.model.get('onlyInFirst'), [this.searchModels.first]);
+            const bothQueryModel = this.createQueryModel(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]);
+            const secondQueryModel = this.createQueryModel(this.model.get('secondText'), this.model.get('onlyInSecond'), [this.searchModels.second]);
 
+            const selectionFields = locationFieldsToSelectionFields(this.locationFields);
             this.firstSelectionView = new FieldSelectionView({
                 model: firstQueryModel,
                 name: 'FirstFieldSelectionView',
                 width: '100%',
-                fields: _.pluck(this.locationFields, 'displayName'),
+                fields: selectionFields,
                 allowEmpty: false
             });
 
@@ -62,7 +72,7 @@ define([
                 model: bothQueryModel,
                 name: 'BothFieldSelectionView',
                 width: '100%',
-                fields: _.pluck(this.locationFields, 'displayName'),
+                fields: selectionFields,
                 allowEmpty: false
             });
 
@@ -70,7 +80,7 @@ define([
                 model: secondQueryModel,
                 name: 'SecondFieldSelectionView',
                 width: '100%',
-                fields: _.pluck(this.locationFields, 'displayName'),
+                fields: selectionFields,
                 allowEmpty: false
             });
 
@@ -109,7 +119,7 @@ define([
             this.createModelListeners(this.comparisons);
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(this.template({
                 bothLabel: comparisonsI18n['list.title.both'],
                 firstLabel: comparisonsI18n['list.title.first'](this.searchModels.first.get('title')),
@@ -130,8 +140,8 @@ define([
 
             this.mapView.setElement(this.$('.location-comparison-map')).render();
 
-            this.$('.location-comparison-show-more').click(_.bind(function() {
-                _.each(this.comparisons, function(comparison) {
+            this.$('.location-comparison-show-more').click(_.bind(function () {
+                _.each(this.comparisons, function (comparison) {
                     this.fetchDocuments(comparison.model, comparison.collection);
                 }, this);
                 this.toggleLoading();
@@ -142,9 +152,9 @@ define([
             this.toggleLoading();
         },
 
-        createQueryModel: function(queryText, stateTokens, searchModels) {
-            var indexes = _.chain(searchModels)
-                .map(function(model) {
+        createQueryModel: function (queryText, stateTokens, searchModels) {
+            const indexes = _.chain(searchModels)
+                .map(function (model) {
                     return searchDataUtil.buildIndexes(model.get('indexes'));
                 })
                 .flatten()
@@ -157,20 +167,20 @@ define([
             }, stateTokens));
         },
 
-        createAddListeners: function(comparisons) {
-            _.each(comparisons, function(comparison) {
-                this.listenTo(comparison.collection, 'add', function(model) {
-                    var location = _.findWhere(model.get('locations'), {displayName: comparison.model.get('field')});
-                    if(location) {
-                        var title = model.get('title');
-                        var popover = this.popoverTemplate({
+        createAddListeners: function (comparisons) {
+            _.each(comparisons, function (comparison) {
+                this.listenTo(comparison.collection, 'add', function (model) {
+                    const location = _.findWhere(model.get('locations'), {displayName: comparison.model.get('field')});
+                    if (location) {
+                        const title = model.get('title');
+                        const popover = this.popoverTemplate({
                             title: title,
                             i18n: i18n,
                             summary: addLinksToSummary(model.get('summary')),
                             cidForClickRouting: model.cid
                         });
-                        var icon = this.mapView.getIcon('hp-record', 'white', comparison.color);
-                        var marker = this.mapView.getMarker(location.latitude, location.longitude, icon, title, popover);
+                        const icon = this.mapView.getIcon('hp-record', 'white', comparison.color);
+                        const marker = this.mapView.getMarker(location.latitude, location.longitude, icon, title, popover);
                         model.set('marker', marker);
                         comparison.layer.addLayer(marker);
                     }
@@ -178,11 +188,11 @@ define([
             }, this);
         },
 
-        createSyncListeners: function(comparisons) {
-            _.each(comparisons, function(comparison) {
-                this.listenTo(comparison.collection, 'sync', function() {
-                    var allMarkers = _.chain(this.comparisons).pluck('layer').invoke('getLayers').flatten().value();
-                    if(!_.isEmpty(allMarkers) && !this.collectionsFetching()) {
+        createSyncListeners: function (comparisons) {
+            _.each(comparisons, function (comparison) {
+                this.listenTo(comparison.collection, 'sync', function () {
+                    const allMarkers = _.chain(this.comparisons).pluck('layer').invoke('getLayers').flatten().value();
+                    if (!_.isEmpty(allMarkers) && !this.collectionsFetching()) {
                         this.mapView.loaded(allMarkers);
                     }
                     this.toggleLoading()
@@ -190,60 +200,60 @@ define([
             }, this)
         },
 
-        createModelListeners: function(comparisons) {
-            _.each(comparisons, function(comparison) {
+        createModelListeners: function (comparisons) {
+            _.each(comparisons, function (comparison) {
                 this.listenTo(comparison.model, 'change:field', _.bind(this.reloadMarkers, this, comparison));
             }, this)
         },
 
-        addLayers: function() {
-            _.each(this.comparisons, function(comparison) {
+        addLayers: function () {
+            _.each(this.comparisons, function (comparison) {
                 this.mapView.addLayer(comparison.layer, comparison.name)
             }, this);
         },
 
-        reloadMarkers: function(comparison) {
+        reloadMarkers: function (comparison) {
             this.clearMarkers(comparison.collection, comparison.layer);
             this.fetchDocuments(comparison.model, comparison.collection);
             this.toggleLoading();
         },
 
-        clearMarkers: function(collection, layer) {
+        clearMarkers: function (collection, layer) {
             collection.reset();
             layer.clearLayers();
         },
 
-        collectionsFetching: function() {
+        collectionsFetching: function () {
             return _.chain(this.comparisons).pluck('collection').pluck('fetching').some().value();
         },
 
-        collectionsFull: function() {
+        collectionsFull: function () {
             return _.chain(this.comparisons)
                 .pluck('collection')
-                .reject(function(collection) {
+                .reject(function (collection) {
                     return collection.length === collection.totalResults
                 })
                 .isEmpty()
                 .value();
         },
 
-        toggleLoading: function() {
+        toggleLoading: function () {
             this.$loadingSpinner.toggleClass('hide', !this.collectionsFetching());
             this.$('.location-comparison-show-more').prop('disabled', this.collectionsFetching() || this.collectionsFull());
         },
 
-        getFetchOptions: function(queryModel, selectedField, length) {
-            var locationField = _.findWhere(this.locationFields, {displayName: selectedField});
+        getFetchOptions: function (queryModel, selectedField, length) {
+            const locationField = _.findWhere(this.locationFields, {displayName: selectedField});
 
-            var latitudeFieldsInfo = configuration().fieldsInfo[locationField.latitudeField];
-            var longitudeFieldsInfo = configuration().fieldsInfo[locationField.longitudeField];
+            const latitudeFieldsInfo = configuration().fieldsInfo[locationField.latitudeField];
+            const longitudeFieldsInfo = configuration().fieldsInfo[locationField.longitudeField];
 
-            var latitudesFieldsString = latitudeFieldsInfo.names.join(':');
-            var longitudeFieldsString = longitudeFieldsInfo.names.join(':');
+            const latitudesFieldsString = latitudeFieldsInfo.names.join(':');
+            const longitudeFieldsString = longitudeFieldsInfo.names.join(':');
 
-            var exists = 'EXISTS{}:' + latitudesFieldsString + ' AND EXISTS{}:' + longitudeFieldsString;
+            const exists = 'EXISTS{}:' + latitudesFieldsString + ' AND EXISTS{}:' + longitudeFieldsString;
 
-            var newFieldText = queryModel.get('fieldText') ? queryModel.get('fieldText') + ' AND ' + exists : exists;
+            const newFieldText = queryModel.get('fieldText') ? queryModel.get('fieldText') + ' AND ' + exists : exists;
 
             return {
                 data: _.extend({
@@ -258,11 +268,11 @@ define([
             };
         },
 
-        fetchDocuments: function(queryModel, collection) {
-            if(collection.length !== collection.totalResults) {
-                var selectedField = queryModel.get('field');
+        fetchDocuments: function (queryModel, collection) {
+            if (collection.length !== collection.totalResults) {
+                const selectedField = queryModel.get('field');
 
-                var options = this.getFetchOptions(queryModel, selectedField, collection.length);
+                const options = this.getFetchOptions(queryModel, selectedField, collection.length);
 
                 collection.fetch(options)
             }

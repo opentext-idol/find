@@ -19,7 +19,6 @@ public enum MvcConstants {
     USERNAME("username"),
     MIN_SCORE("minScore"),
     UI_CUSTOMIZATION("uiCustomization"),
-    PARAMETRIC_DISPLAY_VALUES("parametricDisplayValues"),
     FIELDS_INFO("fieldsInfo"),
     TOPIC_MAP_MAX_RESULTS("topicMapMaxResults"),
     METADATA_FIELD_IDS("metadataFieldIds"),

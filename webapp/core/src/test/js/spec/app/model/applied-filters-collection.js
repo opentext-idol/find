@@ -9,41 +9,29 @@ define([
     'parametric-refinement/selected-values-collection',
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
-    'find/app/configuration',
     'find/app/util/database-name-resolver',
     'backbone',
     'moment'
-], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, i18n, fieldTextParser, configuration, databaseNameResolver, Backbone, moment) {
+], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, i18n, fieldTextParser, databaseNameResolver, Backbone, moment) {
     'use strict';
 
-    var WOOKIEPEDIA = {
+    const WOOKIEPEDIA = {
         id: 'TESTDOMAIN:wookiepedia',
         domain: 'TESTDOMAIN',
         name: 'wookiepedia'
     };
 
-    var WIKI_ENG = {
+    const WIKI_ENG = {
         id: 'TESTDOMAIN:wiki_eng',
         domain: 'TESTDOMAIN',
         name: 'wiki_eng'
     };
 
-    var INITIAL_MIN_DATE = moment();
-    var DATE_FORMAT = 'LLL';
+    const INITIAL_MIN_DATE = moment();
+    const DATE_FORMAT = 'LLL';
 
     describe('Search filters collection initialised with an indexes filter, a DatesFilterModel with a min date set and a selected parametric value on the AGE field', function() {
         beforeEach(function() {
-            configuration.and.returnValue({
-                parametricDisplayValues: [{
-                    name: "FELINES",
-                    displayName: "cats",
-                    values: [{
-                        name: "MR_MISTOFFELEES",
-                        displayName: "Mr. Mistoffelees, the magical cat"
-                    }]
-                }]
-            });
-
             this.indexesCollection = new Backbone.Collection([WOOKIEPEDIA, WIKI_ENG]);
             this.selectedIndexesCollection = new Backbone.Collection([WIKI_ENG]);
             databaseNameResolver.getDatabaseDisplayNameFromDatabaseModel.and.callFake(function() {
@@ -60,7 +48,7 @@ define([
             });
 
             this.selectedParametricValues = new SelectedParametricValues([
-                {field: 'AGE', value: '4'}
+                {field: 'AGE', displayName: 'Age', value: '4', displayValue: '4', type: 'Parametric'}
             ]);
 
             this.collection = new FiltersCollection([], {
@@ -79,20 +67,20 @@ define([
         });
 
         it('contains a min date filter model', function() {
-            var model = this.collection.get(FiltersCollection.FilterType.MIN_DATE);
+            const model = this.collection.get(FiltersCollection.FilterType.MIN_DATE);
             expect(model).toBeDefined();
             expect(model.get('text')).toContain(INITIAL_MIN_DATE.format(DATE_FORMAT));
         });
 
         it('contains a databases filter model', function() {
-            var model = this.collection.get(FiltersCollection.FilterType.INDEXES);
+            const model = this.collection.get(FiltersCollection.FilterType.INDEXES);
             expect(model).toBeDefined();
             expect(model.get('text')).toContain(WIKI_ENG.name);
             expect(model.get('text')).not.toContain(WOOKIEPEDIA.name);
         });
 
         it('contains an AGE parametric field filter model', function() {
-            var model = this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC});
+            const model = this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC});
             expect(model).toBeDefined();
             expect(model.get('field')).toBe('AGE');
             expect(model.get('text')).toContain('4');
@@ -120,7 +108,7 @@ define([
             });
 
             it('contains a max date filter model with the correct date', function() {
-                var model = this.collection.get(FiltersCollection.FilterType.MAX_DATE);
+                const model = this.collection.get(FiltersCollection.FilterType.MAX_DATE);
                 expect(model).toBeDefined();
                 expect(model.get('text')).toContain(i18n['app.until']);
                 expect(model.get('text')).toContain(moment(this.maxDate).format(DATE_FORMAT));
@@ -144,7 +132,7 @@ define([
             });
 
             it('updates the min date filter model', function() {
-                var model = this.collection.get(FiltersCollection.FilterType.MIN_DATE);
+                const model = this.collection.get(FiltersCollection.FilterType.MIN_DATE);
                 expect(model.get('text')).toContain(i18n['app.from']);
                 expect(model.get('text')).toContain(moment(this.minDate).format(DATE_FORMAT));
             });
@@ -164,7 +152,7 @@ define([
             });
 
             it('adds a date range model', function() {
-                var model = this.collection.get(FiltersCollection.FilterType.DATE_RANGE);
+                const model = this.collection.get(FiltersCollection.FilterType.DATE_RANGE);
                 expect(model.get('text')).toContain(i18n['search.dates.timeInterval.' + DatesFilterModel.DateRange.WEEK]);
             });
         });
@@ -219,7 +207,7 @@ define([
                 });
 
                 it('adds a databases filter model', function() {
-                    var model = this.collection.get(FiltersCollection.FilterType.INDEXES);
+                    const model = this.collection.get(FiltersCollection.FilterType.INDEXES);
                     expect(model).toBeDefined();
                     expect(model.get('text')).toContain(WOOKIEPEDIA.name);
                     expect(model.get('text')).not.toContain(WIKI_ENG.name);
@@ -268,12 +256,12 @@ define([
         describe('after adding a selected parametric value with a displayName in the configuration', function() {
             beforeEach(function() {
                 this.selectedParametricValues.add([
-                    {field: 'FELINES', fieldDisplayName: 'cats', value: 'MR_MISTOFFELEES'}
+                    {field: 'FELINES', displayName: 'cats', value: 'MR_MISTOFFELEES', displayValue: 'Mr. Mistoffelees, the magical cat', type: 'Parametric'}
                 ]);
             });
 
             it('uses the display names from the configuration', function() {
-                var model = this.collection.findWhere({
+                const model = this.collection.findWhere({
                     type: FiltersCollection.FilterType.PARAMETRIC,
                     field: 'FELINES'
                 });
@@ -285,8 +273,8 @@ define([
         describe('after two more parametric values are selected from the NAME field', function() {
             beforeEach(function() {
                 this.selectedParametricValues.add([
-                    {field: 'NAME', fieldDisplayName: 'Name', value: 'bobby'},
-                    {field: 'NAME', fieldDisplayName: 'Name', value: 'penny'}
+                    {field: 'NAME', displayName: 'Name', value: 'bobby', displayValue: 'bobby', type: 'Parametric'},
+                    {field: 'NAME', displayName: 'Name', value: 'penny', displayValue: 'penny', type: 'Parametric'}
                 ]);
             });
 
@@ -295,7 +283,7 @@ define([
             });
 
             it('contains a NAME parametric filter model', function() {
-                var model = this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'NAME'});
+                const model = this.collection.findWhere({type: FiltersCollection.FilterType.PARAMETRIC, field: 'NAME'});
                 expect(model).toBeDefined();
                 expect(model.get('text')).toContain('bobby');
                 expect(model.get('text')).toContain('penny');
@@ -314,7 +302,7 @@ define([
                 });
 
                 it('removes the deselected field value from the NAME parametric filter model', function() {
-                    var model = this.collection.findWhere({
+                    const model = this.collection.findWhere({
                         type: FiltersCollection.FilterType.PARAMETRIC,
                         field: 'NAME'
                     });
@@ -346,7 +334,7 @@ define([
             describe('then the selected parametric values collection is reset with a new selected field', function() {
                 beforeEach(function() {
                     this.selectedParametricValues.reset([
-                        {field: 'VEHICLE', value: 'car'}
+                        {field: 'VEHICLE', displayName: 'Vehicle', value: 'car', displayValue: 'car', type: 'Parametric'}
                     ]);
                 });
 
@@ -364,7 +352,7 @@ define([
                         field: 'NAME'
                     })).toBeUndefined();
 
-                    var vehicleModel = this.collection.findWhere({
+                    const vehicleModel = this.collection.findWhere({
                         type: FiltersCollection.FilterType.PARAMETRIC,
                         field: 'VEHICLE'
                     });

@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.configuration;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.configuration.authentication.Authentication;
@@ -15,7 +16,7 @@ import com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfoConfigMixins;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
-import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
+import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,8 +28,9 @@ public class IdolFindConfigFileService extends FindConfigFileService<IdolFindCon
     @Autowired
     public IdolFindConfigFileService(final FilterProvider filterProvider,
                                      final TextEncryptor textEncryptor,
-                                     final JsonDeserializer<TagName> tagNameDeserializer) {
-        super(filterProvider, textEncryptor, tagNameDeserializer);
+                                     final JsonSerializer<FieldPath> fieldPathSerializer,
+                                     final JsonDeserializer<FieldPath> fieldPathDeserializer) {
+        super(filterProvider, textEncryptor, fieldPathSerializer, fieldPathDeserializer);
     }
 
     @Override

@@ -6,8 +6,8 @@ define([
     describe('Parametric Select Modal', function() {
         beforeEach(function() {
             this.selectedParametricValues = new Backbone.Collection([
-                {field: 'AUTHOR', value: 'Matthew'},
-                {field: 'AUTN_DATE', range: [1435281816, 1444974627]}
+                {field: 'AUTHOR', displayName: 'Author', value: 'Matthew', displayValue: 'Matthew', type: 'Parametric'},
+                {field: 'AUTN_DATE', displayName: 'Autn Date', range: [1435281816, 1444974627], type: 'NumericDate'}
             ]);
 
             const queryModel = new Backbone.Model({
@@ -30,9 +30,9 @@ define([
                     {name: 'WIKIPEDIA'}
                 ]),
                 parametricFieldsCollection: new Backbone.Collection([
-                    {id: '/DOCUMENT/AUTHOR', displayName: 'Author'},
-                    {id: '/DOCUMENT/PLACE'},
-                    {id: '/DOCUMENT/CATEGORY'}
+                    {id: '/DOCUMENT/AUTHOR', displayName: 'Author', type: 'Parametric'},
+                    {id: '/DOCUMENT/PLACE', displayName: 'Place', type: 'Parametric'},
+                    {id: '/DOCUMENT/CATEGORY', displayName: 'Category', type: 'Parametric'}
                 ])
             })
         });

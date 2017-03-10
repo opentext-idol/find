@@ -41,7 +41,7 @@ class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, St
 
     @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
-    public IdolSavedQueryController(final SavedSearchService<SavedQuery> service,
+    public IdolSavedQueryController(final SavedSearchService<SavedQuery, SavedQuery.Builder> service,
                                     final IdolDocumentsService documentsService,
                                     final FieldTextParser fieldTextParser,
                                     final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,

@@ -10,7 +10,7 @@ define([
     'find/idol/app/page/search/results/idol-results-view-augmentation',
     'find/idol/app/page/search/results/idol-results-view',
     'js-whatever/js/model-any-changed-attribute-listener'
-], function(_, configuration, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener) {
+], function (_, configuration, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener) {
     'use strict';
 
     return ServiceView.extend({
@@ -19,7 +19,7 @@ define([
         mapViewResultsStep: configuration().map.resultsStep,
         mapViewAllowIncrement: true,
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.comparisonModalCallback = options.comparisonModalCallback;
 
             ServiceView.prototype.initialize.call(this, options);
@@ -38,17 +38,16 @@ define([
                 ], this.fetchData);
         },
 
-        fetchParametricFields: function(fieldsCollection, callback) {
+        fetchParametricFields: function (fieldsCollection, callback) {
             fieldsCollection.fetch({
-                success: _.bind(function() {
-                    if(callback) {
-                        callback();
-                    }
-                }, this)
+                data: {
+                    fieldTypes: ['Parametric', 'Numeric', 'NumericDate']
+                },
+                success: callback.bind(this)
             });
         },
 
-        getSavedSearchControlViewOptions: function() {
+        getSavedSearchControlViewOptions: function () {
             return {
                 comparisonModalCallback: this.comparisonModalCallback
             };

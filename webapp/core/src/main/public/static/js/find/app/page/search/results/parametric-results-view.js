@@ -22,7 +22,13 @@ define([
 
     function getClickedParameters(data, fields, selectedParameters) {
         if(data.depth !== 0) {
-            var parameter = {field: fields[data.depth - 1], value: data.text};
+            const parameter = {
+                field: fields[data.depth - 1].field,
+                displayName: fields[data.depth - 1].displayName,
+                value: data.underlyingValue,
+                displayValue: data.text,
+                type: 'Parametric'
+            };
             selectedParameters.push(parameter);
 
             if(data.parent && data.parent.depth !== 0) {
@@ -50,11 +56,9 @@ define([
             this.errorMessageArguments = options.errorMessageArguments;
 
             this.dependentParametricCollection = options.dependentParametricCollection || new DependentParametricCollection();
-            this.fieldsCollection = new Backbone.Collection([{field: ''}, {field: ''}]);
+            this.fieldsCollection = new Backbone.Collection([{field: '', displayName: ''}, {field: '', displayName: ''}]);
 
-            this.onClick = this.savedSearchModel.get('type') === SNAPSHOT
-                ? _.noop
-                : this.onSavedSearchClick;
+            this.onClick = this.savedSearchModel.get('type') === SNAPSHOT ? _.noop : this.onSavedSearchClick;
 
             this.model = new Backbone.Model({
                 loading: this.parametricCollection.fetching
@@ -126,7 +130,7 @@ define([
             if(xhr.status !== 0) {
                 this.model.set('loading', false);
                 if(xhr.responseJSON) {
-                    var messageArguments = _.extend({
+                    const messageArguments = _.extend({
                         errorDetails: xhr.responseJSON.message,
                         errorLookup: xhr.responseJSON.backendErrorCode,
                         errorUUID: xhr.responseJSON.uuid
@@ -148,10 +152,10 @@ define([
         },
 
         onSavedSearchClick: function(data) {
-            var selectedParameters = getClickedParameters(data, this.fieldsCollection.pluck('field'), []);
+            const selectedParameters = getClickedParameters(data, this.fieldsCollection.invoke('pick', 'field', 'displayName'), []);
 
             // empty value means padding element was clicked on
-            if(!_.findWhere(selectedParameters, {value: ''})) {
+            if (!_.findWhere(selectedParameters, {value: ''})) {
                 this.selectedParametricValues.add(selectedParameters);
             }
         },
@@ -161,7 +165,7 @@ define([
 
             this.$parametricSelections.toggleClass('hide', noMoreParametricFields);
 
-            if(noMoreParametricFields) {
+            if (noMoreParametricFields) {
                 this.model.set('loading', false);
                 this.updateMessage(this.emptyMessage);
             } else {
@@ -172,7 +176,7 @@ define([
         updateData: function() {
             this.model.set('loading', false);
 
-            if(!(this.parametricCollection.fetching || this.dependentParametricCollection.isEmpty())) {
+            if(!this.parametricCollection.fetching && !this.dependentParametricCollection.isEmpty()) {
                 this.update();
             } else if(this.dependentParametricCollection.isEmpty()) {
                 this.model.set('loading', false);
@@ -192,11 +196,13 @@ define([
                 this.firstChosen.remove();
             }
 
+            const selectedFieldsAndValues = this.selectedParametricValues.toFieldsAndValues();
             this.firstChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(0),
                 name: 'first',
-                fields: _.difference(this.parametricCollection.pluck('id'),
-                    this.selectedParametricValues.pluck('field')).sort(),
+                fields: this.parametricCollection.invoke('pick', 'id', 'displayName').filter(function (data) {
+                    return !selectedFieldsAndValues[data.id];
+                }.bind(this)).sort(),
                 allowEmpty: false
             });
 
@@ -209,11 +215,13 @@ define([
                 this.secondChosen.remove();
             }
 
+            const selectedFieldsAndValues = this.selectedParametricValues.toFieldsAndValues();
             this.secondChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(1),
                 name: 'second',
-                fields: _.difference(this.parametricCollection.pluck('id'),
-                    _.union([this.fieldsCollection.at(0).get('field')], this.selectedParametricValues.pluck('field'))).sort(),
+                fields: this.parametricCollection.invoke('pick', 'id', 'displayName').filter(function (data) {
+                    return data.id !== this.fieldsCollection.at(0).get('field') && !selectedFieldsAndValues[data.id];
+                }.bind(this)).sort(),
                 allowEmpty: true
             });
 

@@ -18,7 +18,6 @@ import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
-import com.hp.autonomy.frontend.find.core.configuration.ParametricDisplayValues;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
@@ -31,10 +30,7 @@ import com.hp.autonomy.user.UserServiceConfig;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Singular;
-import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.Collection;
 import java.util.Optional;
 
 @SuppressWarnings({"InstanceVariableOfConcreteClass", "DefaultAnnotationParam"})
@@ -59,8 +55,6 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final Integer minScore;
     private final StatsServerConfig statsServer;
     private final Integer topicMapMaxResults;
-    @Singular
-    private final Collection<ParametricDisplayValues> parametricDisplayValues;
 
     @Override
     public IdolFindConfig merge(final IdolFindConfig maybeOther) {
@@ -78,7 +72,6 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                         .map(map == null ? other.map : map.merge(other.map))
                         .minScore(minScore == null ? other.minScore : minScore)
                         .statsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
-                        .parametricDisplayValues(CollectionUtils.isEmpty(parametricDisplayValues) ? other.parametricDisplayValues : parametricDisplayValues)
                         .topicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
                         .build())
                 .orElse(this);
@@ -122,15 +115,15 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         content.basicValidate("content");
         savedSearchConfig.basicValidate(SECTION);
 
-        if(map != null) {
+        if (map != null) {
             map.basicValidate("map");
         }
 
-        if(queryManipulation != null) {
+        if (queryManipulation != null) {
             queryManipulation.basicValidate(SECTION);
         }
 
-        if(answerServer != null) {
+        if (answerServer != null) {
             answerServer.basicValidate("AnswerServer");
         }
     }

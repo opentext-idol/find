@@ -16,7 +16,7 @@ define([
 
     // Convert a selected value model to a field value pair
     function toAttributes(model) {
-        return model.pick('field', 'value', 'range');
+        return model.pick('field', 'displayName', 'value', 'displayValue', 'type', 'range');
     }
 
     return Modal.extend({

@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.core.parametricfields;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
+import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -23,7 +24,7 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
     @Test
     public void getParametricValues() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_PATH + ParametricValuesController.VALUES_PATH)
-                .param(ParametricValuesController.FIELD_NAMES_PARAM, mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_FIELDS_PATH))
+                .param(ParametricValuesController.FIELD_NAMES_PARAM, mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_FIELDS_PATH, FieldTypeParam.Parametric.name()))
                 .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
                 .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
                 .param(ParametricValuesController.FIELD_TEXT_PARAM, "")
@@ -73,7 +74,7 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
     @Test
     public void getDependentParametricValues() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_PATH + ParametricValuesController.DEPENDENT_VALUES_PATH)
-                .param(ParametricValuesController.FIELD_NAMES_PARAM, mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_FIELDS_PATH))
+                .param(ParametricValuesController.FIELD_NAMES_PARAM, mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_FIELDS_PATH, FieldTypeParam.Parametric.name(), FieldTypeParam.Numeric.name(), FieldTypeParam.NumericDate.name()))
                 .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
                 .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
                 .param(ParametricValuesController.FIELD_TEXT_PARAM, "")

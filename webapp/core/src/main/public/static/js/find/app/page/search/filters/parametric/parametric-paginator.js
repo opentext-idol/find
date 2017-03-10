@@ -31,6 +31,7 @@ define([
      * @constructor
      */
     const ParametricPaginator = function (options) {
+        this.fieldDisplayName = options.fieldDisplayName;
         this.selectedValues = options.selectedValues;
         this.fetchFunction = options.fetchFunction;
 
@@ -86,7 +87,13 @@ define([
             model.set('selected', isSelected);
 
             if (isSelected) {
-                this.selectedValues.add({field: this.fetchOptions.fieldName, value: value});
+                this.selectedValues.add({
+                    field: this.fetchOptions.fieldName,
+                    displayName: this.fieldDisplayName,
+                    value: value,
+                    displayValue: model.get('displayValue'),
+                    type: 'Parametric'
+                });
             } else {
                 this.selectedValues.remove(this.selectedValues.findWhere({field: this.fetchOptions.fieldName, value: value}));
             }
@@ -158,6 +165,7 @@ define([
                             return {
                                 count: nextFetch.useCount ? data.count : 0,
                                 value: data.value,
+                                displayValue: data.displayValue,
                                 selected: Boolean(this.selectedValues.findWhere({
                                     field: this.fetchOptions.fieldName,
                                     value: data.value

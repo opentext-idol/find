@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 class HodSavedQueryController extends SavedQueryController<HodQueryRequest, ResourceName, HodQueryRestrictions, HodSearchResult, HodErrorException> {
     @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
-    public HodSavedQueryController(final SavedSearchService<SavedQuery> service,
+    public HodSavedQueryController(final SavedSearchService<SavedQuery, SavedQuery.Builder> service,
                                    final HodDocumentsService documentsService,
                                    final FieldTextParser fieldTextParser,
                                    final ObjectFactory<HodQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,

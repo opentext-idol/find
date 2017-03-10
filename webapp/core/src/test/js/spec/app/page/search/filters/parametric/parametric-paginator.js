@@ -46,8 +46,8 @@ define([
             this.fetchFunction = jasmine.createSpy('fetchFunction');
 
             this.selectedValues = new Backbone.Collection([
-                {field: 'CATEGORY', value: 'ANIMALS'},
-                {field: 'THINGS', value: 'ANIMALS'}
+                {field: 'CATEGORY', displayName: 'Category', value: 'ANIMALS', displayValue: 'Animals', type: 'Parametric'},
+                {field: 'THINGS', displayName: 'Things', value: 'ANIMALS', displayValue: 'Animals', type: 'Parametric'}
             ]);
 
             this.fetchFunction.and.callFake(function() {
@@ -60,6 +60,7 @@ define([
                 fetchRestrictions: {queryText: 'cat', databases: ['Generic']},
                 fetchFunction: this.fetchFunction,
                 fieldName: 'CATEGORY',
+                fieldDisplayName: 'Category',
                 allIndexes: ALL_INDEXES,
                 pageSize: 2,
                 selectedValues: this.selectedValues
@@ -130,16 +131,16 @@ define([
                     beforeEach(respond(1, {
                         totalValues: 4,
                         values: [
-                            {value: 'PLANTS', count: 10},
-                            {value: 'ANIMALS', count: 7}
+                            {value: 'PLANTS', displayValue: 'Plants', count: 10},
+                            {value: 'ANIMALS', displayValue: 'Animals', count: 7}
                         ]
                     }));
 
                     it('is not loading or empty and has no error', checkState({}));
 
                     it('adds new models to the values collection with count 0, setting the selected flag as appropriate', checkModels([
-                        {value: 'PLANTS', count: 0, selected: false},
-                        {value: 'ANIMALS', count: 0, selected: true}
+                        {value: 'PLANTS', displayValue: 'Plants', count: 0, selected: false},
+                        {value: 'ANIMALS', displayValue: 'Animals', count: 0, selected: true}
                     ]));
                 });
             });
@@ -148,7 +149,7 @@ define([
                 beforeEach(respond(0, {
                     totalValues: 1,
                     values: [
-                        {value: 'PLANTS', count: 5}
+                        {value: 'PLANTS', displayValue: 'Plants', count: 5}
                     ]
                 }));
 
@@ -157,7 +158,7 @@ define([
                 }));
 
                 it('adds new models to the values collection, setting the selected flag as appropriate', checkModels([
-                    {value: 'PLANTS', count: 5, selected: false}
+                    {value: 'PLANTS', displayValue: 'Plants', count: 5, selected: false}
                 ]));
 
                 it('calls the fetchFunction for page 1 without the query restrictions', function() {
@@ -172,16 +173,16 @@ define([
                     beforeEach(respond(1, {
                         totalValues: 4,
                         values: [
-                            {value: 'PLANTS', count: 10},
-                            {value: 'ANIMALS', count: 7}
+                            {value: 'PLANTS', displayValue: 'Plants', count: 10},
+                            {value: 'ANIMALS', displayValue: 'Animals', count: 7}
                         ]
                     }));
 
                     it('has no error and is not empty or loading', checkState());
 
                     it('adds the correct model to the values collection with count 0, setting the selected flag as appropriate', checkModels([
-                        {value: 'PLANTS', count: 5, selected: false},
-                        {value: 'ANIMALS', count: 0, selected: true}
+                        {value: 'PLANTS', displayValue: 'Plants', count: 5, selected: false},
+                        {value: 'ANIMALS', displayValue: 'Animals', count: 0, selected: true}
                     ]));
 
                     it('makes no further requests', function() {
@@ -209,15 +210,15 @@ define([
                     beforeEach(respond(1, {
                         totalValues: 3,
                         values: [
-                            {value: 'FUNGI', count: 9},
-                            {value: 'ANIMALS', count: 7}
+                            {value: 'FUNGI', displayValue: 'Fungi', count: 9},
+                            {value: 'ANIMALS', displayValue: 'Animals', count: 7}
                         ]
                     }));
 
                     it('adds the correct model to the values collection with count 0, setting the selected flag as appropriate', checkModels([
-                        {value: 'PLANTS', count: 5, selected: false},
-                        {value: 'FUNGI', count: 0, selected: false},
-                        {value: 'ANIMALS', count: 0, selected: true}
+                        {value: 'PLANTS', displayValue: 'Plants', count: 5, selected: false},
+                        {value: 'FUNGI', displayValue: 'Fungi', count: 0, selected: false},
+                        {value: 'ANIMALS', displayValue: 'Animals', count: 0, selected: true}
                     ]));
 
                     it('has no error and is not empty or loading', checkState());
@@ -238,16 +239,16 @@ define([
                 beforeEach(respond(0, {
                     totalValues: 10,
                     values: [
-                        {value: 'PLANTS', count: 5},
-                        {value: 'ANIMALS', count: 3}
+                        {value: 'PLANTS', displayValue: 'Plants', count: 5},
+                        {value: 'ANIMALS', displayValue: 'Animals', count: 3}
                     ]
                 }));
 
                 it('has no error and is not loading', checkState());
 
                 it('adds new models to the values collection, setting the selected flag as appropriate', checkModels([
-                    {value: 'PLANTS', count: 5, selected: false},
-                    {value: 'ANIMALS', count: 3, selected: true}
+                    {value: 'PLANTS', displayValue: 'Plants', count: 5, selected: false},
+                    {value: 'ANIMALS', displayValue: 'Animals', count: 3, selected: true}
                 ]));
 
                 describe('then a value is selected and another value is deselected', function() {
@@ -263,8 +264,8 @@ define([
                     });
 
                     it('updates the models in the values collection', checkModels([
-                        {value: 'PLANTS', count: 5, selected: true},
-                        {value: 'ANIMALS', count: 3, selected: false}
+                        {value: 'PLANTS', displayValue: 'Plants', count: 5, selected: true},
+                        {value: 'ANIMALS', displayValue: 'Animals', count: 3, selected: false}
                     ]));
 
                     describe('then fetchNext is called again', function() {
@@ -284,18 +285,18 @@ define([
                             beforeEach(respond(1, {
                                 totalValues: 10,
                                 values: [
-                                    {count: 1, value: 'INSECTS'},
-                                    {count: 1, value: 'FUNGI'}
+                                    {count: 1, value: 'INSECTS', displayValue: 'Insects'},
+                                    {count: 1, value: 'FUNGI', displayValue: 'Fungi'}
                                 ]
                             }));
 
                             it('has no error and is not loading', checkState());
 
                             it('adds new models to the values collection, setting the selected flag as appropriate', checkModels([
-                                {value: 'PLANTS', count: 5, selected: true},
-                                {value: 'ANIMALS', count: 3, selected: false},
-                                {value: 'INSECTS', count: 1, selected: false},
-                                {value: 'FUNGI', count: 1, selected: false},
+                                {value: 'PLANTS', displayValue: 'Plants', count: 5, selected: true},
+                                {value: 'ANIMALS', displayValue: 'Animals', count: 3, selected: false},
+                                {value: 'INSECTS', displayValue: 'Insects', count: 1, selected: false},
+                                {value: 'FUNGI', displayValue: 'Fungi', count: 1, selected: false},
                             ]));
                         });
                     });

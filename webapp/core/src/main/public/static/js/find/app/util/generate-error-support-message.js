@@ -12,7 +12,7 @@ define([
 ], function(configuration, i18n, i18nErrors, errorCustomContactSupportTemplate, _) {
     'use strict';
 
-    var customContactSupportTemplate = _.template(errorCustomContactSupportTemplate);
+    const customContactSupportTemplate = _.template(errorCustomContactSupportTemplate);
 
     /**
      * @typedef {Object} GenerateErrorSupportMessageArgument
@@ -26,7 +26,7 @@ define([
      * @param {GenerateErrorSupportMessageArgument} argumentHash
      */
     function generateErrorSupportMessage(argumentHash) {
-        var options = _.extend({
+        const options = _.extend({
             errorHeader: i18n['error.message.default'],
             messageToUser: "",
             errorDetails: "",
@@ -34,9 +34,9 @@ define([
             errorUUID: ""
         }, argumentHash);
 
-        var detailsTemplate = i18n['error.details'];
-        var uuidTemplate = i18n['error.UUID'];
-        var needTechSupport;
+        const detailsTemplate = i18n['error.details'];
+        const uuidTemplate = i18n['error.UUID'];
+        let needTechSupport;
 
         if(!options.errorDetails && options.errorLookup) {
             if(i18nErrors["error.code." + options.errorLookup]) {
@@ -51,7 +51,7 @@ define([
         }
 
         // If app's config.json contains a custom "call support" string, print it. Otherwise fall back on bundle.js
-        var messageContactSupport = needTechSupport ? (configuration().errorCallSupportString || i18n['error.default.contactSupport']) : "";
+        const messageContactSupport = needTechSupport ? (configuration().errorCallSupportString || i18n['error.default.contactSupport']) : "";
 
         return customContactSupportTemplate({
             errorHeader: options.errorHeader,

@@ -9,17 +9,23 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.core.config.HavenSearchCapable;
+import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
+import com.hp.autonomy.searchcomponents.core.test.CoreTestContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CLASSES_PROPERTY;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.hasSize;
@@ -27,13 +33,20 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings({"unused", "SpringJavaAutowiredMembersInspection"})
+@RunWith(SpringRunner.class)
+@SpringBootTest(
+        classes = {CoreTestContext.class, CsvExportStrategy.class},
+        properties = CORE_CLASSES_PROPERTY,
+        webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class CsvExportStrategyTest {
-    @Mock
+    @Autowired
+    private FieldPathNormaliser fieldPathNormaliser;
+    @MockBean
     private ConfigService<HavenSearchCapable> configService;
     @Mock
     private HavenSearchCapable config;
-
+    @Autowired
     private CsvExportStrategy csvExportStrategy;
 
     @Before
@@ -42,19 +55,20 @@ public class CsvExportStrategyTest {
         when(config.getFieldsInfo()).thenReturn(FieldsInfo.builder()
                 .populateResponseMap("authors", FieldInfo.<String>builder()
                         .id("authors")
-                        .names(Arrays.asList("AUTHOR", "author"))
+                        .name(fieldPathNormaliser.normaliseFieldPath("AUTHOR"))
+                        .name(fieldPathNormaliser.normaliseFieldPath("author"))
                         .build())
                 .populateResponseMap("categories", FieldInfo.<String>builder()
                         .id("categories")
-                        .names(Arrays.asList("CATEGORY", "category"))
+                        .name(fieldPathNormaliser.normaliseFieldPath("CATEGORY"))
+                        .name(fieldPathNormaliser.normaliseFieldPath("category"))
                         .build())
                 .populateResponseMap("databases", FieldInfo.<String>builder()
                         .id("databases")
-                        .names(Arrays.asList("DATABASE", "database"))
+                        .name(fieldPathNormaliser.normaliseFieldPath("DATABASE"))
+                        .name(fieldPathNormaliser.normaliseFieldPath("database"))
                         .build())
                 .build());
-
-        csvExportStrategy = new CsvExportStrategy(configService);
     }
 
     @Test

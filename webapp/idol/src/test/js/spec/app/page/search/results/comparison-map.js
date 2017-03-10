@@ -24,7 +24,7 @@ define([
                         longitude: 0.1278
                     },
                     locationFields: [{
-                        displayName: 'test',
+                        displayName: 'Test',
                         latitudeField: 'latitude',
                         longitudeField: 'longitude'
                     }]
@@ -56,17 +56,17 @@ define([
                 inBoth: 'inBoth'
             });
 
-            var firstModel = new Backbone.Model({
+            const firstModel = new Backbone.Model({
                 indexes: ['firstIndexes'],
                 field: 'test'
             });
 
-            var secondModel = new Backbone.Model({
+            const secondModel = new Backbone.Model({
                 indexes: ['secondIndexes'],
                 field: 'test'
             });
 
-            var bothModel = new Backbone.Model({
+            const bothModel = new Backbone.Model({
                 indexes: ['firstIndexes', 'secondIndexes'],
                 field: 'test'
             });
@@ -86,7 +86,7 @@ define([
         });
 
         it('displays three dropdown boxes with the correct field names', function() {
-            var $selects = this.view.$('.chosen-select');
+            const $selects = this.view.$('.chosen-select');
             expect($selects).toHaveLength(3);
             expect($selects[0]).toHaveText('Test');
             expect($selects[1]).toHaveText('Test');
@@ -94,7 +94,7 @@ define([
         });
 
         it('should show the show more button but it should be disabled', function() {
-            var $showMore = this.view.$('.location-comparison-show-more');
+            const $showMore = this.view.$('.location-comparison-show-more');
 
             expect($showMore).toExist();
             expect($showMore).toBeDisabled();
@@ -106,7 +106,7 @@ define([
                 comparison.collection.trigger('sync');
             });
 
-            var $showMore = this.view.$('.location-comparison-show-more');
+            const $showMore = this.view.$('.location-comparison-show-more');
             expect($showMore).toExist();
             expect($showMore).not.toBeDisabled();
         });
@@ -121,13 +121,13 @@ define([
             });
 
             it('should disable the show more button when the collections are fetching', function() {
-                var $showMore = this.view.$('.location-comparison-show-more');
+                const $showMore = this.view.$('.location-comparison-show-more');
                 expect($showMore).toExist();
                 expect($showMore).toBeDisabled();
             });
 
             it('should show the loading spinner when the collections are fetching', function() {
-                var $showMore = this.view.$('.location-comparison-show-more');
+                const $showMore = this.view.$('.location-comparison-show-more');
                 expect($showMore).toExist();
                 expect($showMore).toBeDisabled();
             });
@@ -139,7 +139,7 @@ define([
                     summary: 'Here be dragons',
                     title: 'testTitle',
                     locations: [{
-                        displayName: 'test',
+                        displayName: 'Test',
                         latitude: 100,
                         longitude: 42
                     }]

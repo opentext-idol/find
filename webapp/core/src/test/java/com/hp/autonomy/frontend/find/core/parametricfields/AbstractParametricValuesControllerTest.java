@@ -12,8 +12,8 @@ import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequestB
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
+import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
 import com.hp.autonomy.types.requests.idol.actions.tags.RangeInfo;
-import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import lombok.Data;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -23,7 +23,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +59,7 @@ public abstract class AbstractParametricValuesControllerTest<
         RB extends ParametricRequestBuilder<R, Q, RB>,
         S extends Serializable,
         E extends Exception
-> {
+        > {
     @ClassRule
     public static final SpringClassRule SCR = new SpringClassRule();
     @Rule
@@ -94,12 +93,13 @@ public abstract class AbstractParametricValuesControllerTest<
 
     @Test
     public void getParametricValues() throws E {
-        final List<TagName> fieldNames = Stream.of("CATEGORY", "AUTHOR").map(tagNameFactory::buildTagName).collect(Collectors.toList());
+        final List<FieldPath> fieldNames = Stream.of("CATEGORY", "AUTHOR").map(tagNameFactory::getFieldPath).collect(Collectors.toList());
 
         parametricValuesController.getParametricValues(
                 fieldNames,
                 1,
                 10,
+                null,
                 "cat",
                 "MATCH{ANIMAL}:CATEGORY",
                 Collections.emptyList(),
@@ -115,7 +115,7 @@ public abstract class AbstractParametricValuesControllerTest<
     @Test
     public void getDependentParametricValues() throws E {
         parametricValuesController.getDependentParametricValues(
-                Collections.singletonList(tagNameFactory.buildTagName("SomeParametricField")),
+                Collections.singletonList(tagNameFactory.getFieldPath("SomeParametricField")),
                 "Some query text",
                 null,
                 Collections.emptyList(),
@@ -137,16 +137,16 @@ public abstract class AbstractParametricValuesControllerTest<
 
         when(parametricValuesService.getNumericParametricValuesInBuckets(Matchers.any(), Matchers.any())).thenAnswer(invocation -> {
             @SuppressWarnings("unchecked")
-            final Map<TagName, BucketingParams> bucketingParamsPerField = invocation.getArgumentAt(1, Map.class);
+            final Map<FieldPath, BucketingParams> bucketingParamsPerField = invocation.getArgumentAt(1, Map.class);
 
-            final BucketingParams bucketingParams = bucketingParamsPerField.get(tagNameFactory.buildTagName(fieldName));
+            final BucketingParams bucketingParams = bucketingParamsPerField.get(tagNameFactory.getFieldPath(fieldName));
             return expectedBucketingParams.equals(bucketingParams)
                     ? Collections.singletonList(rangeInfo)
                     : Collections.emptyList();
         });
 
         final RangeInfo output = parametricValuesController.getNumericParametricValuesInBucketsForField(
-                tagNameFactory.buildTagName(fieldName),
+                tagNameFactory.getFieldPath(fieldName),
                 expectedBucketingParams.getTargetNumberOfBuckets(),
                 expectedBucketingParams.getMin(),
                 expectedBucketingParams.getMax(),
@@ -170,26 +170,34 @@ public abstract class AbstractParametricValuesControllerTest<
             QB extends QueryRestrictionsBuilder<Q, S, QB>,
             S extends Serializable,
             E extends Exception
-    > {
+            > {
         private final PS parametricValuesService;
         private final ObjectFactory<QB> queryRestrictionsBuilderFactory;
         private final ObjectFactory<RB> parametricRequestBuilderFactory;
     }
 
     static class ParametricRequestMatcher<R extends ParametricRequest<?>> extends BaseMatcher<R> {
-        private final List<TagName> expectedFieldNames;
+        private final List<FieldPath> expectedFieldNames;
         private final String expectedQueryText;
         private final String expectedFieldText;
 
-        private ParametricRequestMatcher(final List<TagName> expectedFieldNames, final String expectedQueryText, final String expectedFieldText) {
+        private ParametricRequestMatcher(final List<FieldPath> expectedFieldNames, final String expectedQueryText, final String expectedFieldText) {
             this.expectedFieldNames = expectedFieldNames;
             this.expectedQueryText = expectedQueryText;
             this.expectedFieldText = expectedFieldText;
         }
 
+        static <R extends ParametricRequest<?>> ParametricRequestMatcher<R> matchesParametricRequest(
+                final List<FieldPath> expectedFieldNames,
+                final String expectedQueryText,
+                final String expectedFieldText
+        ) {
+            return new ParametricRequestMatcher<>(expectedFieldNames, expectedQueryText, expectedFieldText);
+        }
+
         @Override
         public boolean matches(final Object item) {
-            if (!(item instanceof ParametricRequest)){
+            if (!(item instanceof ParametricRequest)) {
                 return false;
             }
 
@@ -203,14 +211,6 @@ public abstract class AbstractParametricValuesControllerTest<
         @Override
         public void describeTo(final Description description) {
             description.appendText("matchesParametricRequest(" + expectedFieldNames + ", " + expectedQueryText + ", " + expectedFieldText + ')');
-        }
-
-        static <R extends ParametricRequest<?>> ParametricRequestMatcher<R> matchesParametricRequest(
-                final List<TagName> expectedFieldNames,
-                final String expectedQueryText,
-                final String expectedFieldText
-        ) {
-            return new ParametricRequestMatcher<>(expectedFieldNames, expectedQueryText, expectedFieldText);
         }
     }
 }

@@ -6,47 +6,55 @@
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
 import com.hp.autonomy.searchcomponents.core.parametricvalues.BucketingParams;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.DependentParametricField;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
-import com.hp.autonomy.types.idol.responses.RecursiveField;
+import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
 import com.hp.autonomy.types.requests.idol.actions.tags.RangeInfo;
-import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import org.apache.commons.collections4.ListUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequestMapping(ParametricValuesController.PARAMETRIC_PATH)
 public abstract class ParametricValuesController<Q extends QueryRestrictions<S>, R extends ParametricRequest<Q>, S extends Serializable, E extends Exception> {
     @SuppressWarnings("WeakerAccess")
     public static final String PARAMETRIC_PATH = "/api/public/parametric";
-    static final String VALUES_PATH = "/values";
-    static final String BUCKET_PARAMETRIC_PATH = "/buckets";
     public static final String DEPENDENT_VALUES_PATH = "/dependent-values";
-
     public static final String FIELD_NAMES_PARAM = "fieldNames";
     public static final String QUERY_TEXT_PARAM = "queryText";
     public static final String FIELD_TEXT_PARAM = "fieldText";
     public static final String DATABASES_PARAM = "databases";
+    static final String VALUES_PATH = "/values";
+    static final String BUCKET_PARAMETRIC_PATH = "/buckets";
+    static final String TARGET_NUMBER_OF_BUCKETS_PARAM = "targetNumberOfBuckets";
+    static final String BUCKET_MIN_PARAM = "bucketMin";
+    static final String BUCKET_MAX_PARAM = "bucketMax";
     private static final String MIN_DATE_PARAM = "minDate";
     private static final String MAX_DATE_PARAM = "maxDate";
     private static final String MIN_SCORE = "minScore";
     private static final String STATE_TOKEN_PARAM = "stateTokens";
-    static final String TARGET_NUMBER_OF_BUCKETS_PARAM = "targetNumberOfBuckets";
-    static final String BUCKET_MIN_PARAM = "bucketMin";
-    static final String BUCKET_MAX_PARAM = "bucketMax";
     private static final String MAX_VALUES_PARAM = "maxValues";
+    private static final String VALUE_RESTRICTION_PARAM = "valueRestriction";
     private static final String START_PARAM = "start";
 
     private final ParametricValuesService<R, Q, E> parametricValuesService;
@@ -67,9 +75,10 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     @RequestMapping(method = RequestMethod.GET, path = VALUES_PATH)
     @ResponseBody
     public Set<QueryTagInfo> getParametricValues(
-            @RequestParam(FIELD_NAMES_PARAM) final List<TagName> fieldNames,
+            @RequestParam(FIELD_NAMES_PARAM) final List<FieldPath> fieldNames,
             @RequestParam(value = START_PARAM, required = false) final Integer start,
             @RequestParam(value = MAX_VALUES_PARAM, required = false) final Integer maxValues,
+            @RequestParam(value = VALUE_RESTRICTION_PARAM, required = false) final String valueRestriction,
             @RequestParam(value = QUERY_TEXT_PARAM, defaultValue = "*") final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
             @RequestParam(DATABASES_PARAM) final Collection<S> databases,
@@ -102,6 +111,10 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             builder.maxValues(maxValues);
         }
 
+        if (valueRestriction != null) {
+            builder.valueRestriction(valueRestriction);
+        }
+
         return parametricValuesService.getParametricValues(builder.build());
     }
 
@@ -110,7 +123,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     @ResponseBody
     public RangeInfo getNumericParametricValuesInBucketsForField(
             @SuppressWarnings("MVCPathVariableInspection")
-            @PathVariable("encodedField") final TagName fieldName,
+            @PathVariable("encodedField") final FieldPath fieldName,
             @RequestParam(TARGET_NUMBER_OF_BUCKETS_PARAM) final Integer targetNumberOfBuckets,
             @RequestParam(BUCKET_MIN_PARAM) final Double bucketMin,
             @RequestParam(BUCKET_MAX_PARAM) final Double bucketMax,
@@ -137,15 +150,15 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
                 .build();
 
         final BucketingParams bucketingParams = new BucketingParams(targetNumberOfBuckets, bucketMin, bucketMax);
-        final Map<TagName, BucketingParams> bucketingParamsPerField = Collections.singletonMap(fieldName, bucketingParams);
+        final Map<FieldPath, BucketingParams> bucketingParamsPerField = Collections.singletonMap(fieldName, bucketingParams);
         return parametricValuesService.getNumericParametricValuesInBuckets(parametricRequest, bucketingParamsPerField).get(0);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(method = RequestMethod.GET, value = DEPENDENT_VALUES_PATH)
     @ResponseBody
-    public List<RecursiveField> getDependentParametricValues(
-            @RequestParam(FIELD_NAMES_PARAM) final List<TagName> fieldNames,
+    public List<DependentParametricField> getDependentParametricValues(
+            @RequestParam(FIELD_NAMES_PARAM) final List<FieldPath> fieldNames,
             @RequestParam(QUERY_TEXT_PARAM) final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
             @RequestParam(DATABASES_PARAM) final Collection<S> databases,
