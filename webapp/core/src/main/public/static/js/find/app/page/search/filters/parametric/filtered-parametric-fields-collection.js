@@ -50,6 +50,7 @@ define([
                     }
                 });
             } else {
+                this.filteredParametricCollection.set(this.parametricCollection.models);
                 FilteringCollection.prototype.filterModels.apply(this);
             }
         },
