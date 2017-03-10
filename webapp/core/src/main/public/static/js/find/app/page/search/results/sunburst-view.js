@@ -12,10 +12,8 @@ define([
     'i18n!find/nls/bundle',
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/search/results/sunburst/sunburst-label.html',
-    'parametric-refinement/prettify-field-name',
     'find/app/vent'
-], function(_, $, d3, Sunburst, ParametricResultsView, i18n, generateErrorHtml, labelTemplate,
-            prettifyFieldName, vent) {
+], function(_, $, d3, Sunburst, ParametricResultsView, i18n, generateErrorHtml, labelTemplate, vent) {
     'use strict';
 
     const HIDDEN_COLOR = '#f0f0f0';
@@ -88,10 +86,7 @@ define([
                 } else {
                     templateArguments.name = hiddenFilterCount === 0
                         // Child comprises results with no values for secondary parametric field
-                        ? i18n['search.sunburst.missingValues'](
-                            datum.count,
-                            prettifyFieldName(this.fieldsCollection.at(1).get('field'))
-                        )
+                        ? i18n['search.sunburst.missingValues'](datum.count, this.fieldsCollection.at(1).get('displayName'))
                         : datum.text;
                 }
 
