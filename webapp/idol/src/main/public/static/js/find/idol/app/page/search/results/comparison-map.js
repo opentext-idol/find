@@ -51,7 +51,7 @@ define([
                 this.mapView.exportPPT(
                     '\'' + this.searchModels.first.get('title') + '\' v.s. \'' + this.searchModels.second.get('title') + '\''
                     + '\n' + '(' +  _.unique(_.map([this.firstSelectionView, this.bothSelectionView, this.secondSelectionView], function(view){
-                        return view.model.get('displayValue');
+                        return view.model.get('displayName');
                     })).join(', ') + ')'
                 )
             }
