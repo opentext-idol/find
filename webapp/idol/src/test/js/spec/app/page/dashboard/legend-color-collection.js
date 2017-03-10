@@ -13,36 +13,43 @@ define([
     const expectedOutputOneTier = [{
         hidden: false,
         text: 't00',
+        underlyingValue: 't00',
         count: 11
     }, {
         hidden: false,
         text: 't01',
+        underlyingValue: 't01',
         count: 111
     }, {
         hidden: false,
         text: 't02',
+        underlyingValue: 't02',
         count: 22
     }, {
         hidden: false,
         text: 't03',
+        underlyingValue: 't03',
         count: 202
     }, {
         hidden: false,
         text: 't04',
+        underlyingValue: 't04',
         count: 322
     }, {
         hidden: false,
         text: 't05',
+        underlyingValue: 't05',
         count: 2
     }, {
         hidden: false,
         text: 't06',
+        underlyingValue: 't06',
         count: 10
     }];
 
     function prepareInputs(expectedOutput) {
         return _.map(expectedOutput, function(d) {
-            return {count: d.count, value: d.text, field: []};
+            return {count: d.count, value: d.text, displayValue: d.text, subFields: []};
         });
     }
 

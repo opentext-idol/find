@@ -59,7 +59,6 @@ public class HodExportServiceTest {
     @Autowired
     private FieldPathNormaliser fieldPathNormaliser;
 
-    private List<String> fieldNames;
     private HodExportService hodExportService;
 
     @Before
@@ -71,7 +70,7 @@ public class HodExportServiceTest {
         when(queryRequestBuilder.build()).thenReturn(queryRequest);
 
         when(exportStrategy.getExportFormat()).thenReturn(ExportFormat.CSV);
-        fieldNames = Arrays.asList(HodMetadataNode.REFERENCE.getDisplayName(), HodMetadataNode.DATABASE.getDisplayName(), HodMetadataNode.SUMMARY.getDisplayName(), HodMetadataNode.DATE.getDisplayName(), "authors", "categories", "books", "epic", "lastRead");
+        final List<String> fieldNames = Arrays.asList(HodMetadataNode.REFERENCE.getDisplayName(), HodMetadataNode.DATABASE.getDisplayName(), HodMetadataNode.SUMMARY.getDisplayName(), HodMetadataNode.DATE.getDisplayName(), "authors", "categories", "books", "epic", "lastRead");
         when(exportStrategy.getFieldNames(any(MetadataNode[].class), eq(Collections.emptyList()))).thenReturn(fieldNames);
         final FieldInfo<?> authorInfo = fieldInfo("authors", "author", FieldType.STRING, null);
         final FieldInfo<?> categoryInfo = fieldInfo("categories", "category", FieldType.STRING, null);
@@ -168,8 +167,10 @@ public class HodExportServiceTest {
                 .date(DateTime.now())
                 .fieldMap(ImmutableMap.of("categories", FieldInfo.builder()
                         .id("categories")
-                        .name("category")
-                        .values(Arrays.asList("Epic Literature", "Philosophy", "Cosmogony"))
+                        .name(fieldPathNormaliser.normaliseFieldPath("category"))
+                        .value(new FieldValue<>("Epic Literature", "Epic Literature"))
+                        .value(new FieldValue<>("Philosophy", "Philosophy"))
+                        .value(new FieldValue<>("Cosmogony", "Cosmogony"))
                         .build()))
                 .build();
         final Documents<HodSearchResult> results = new Documents<>(Arrays.asList(result1, result2), 2, null, null, null, null);
