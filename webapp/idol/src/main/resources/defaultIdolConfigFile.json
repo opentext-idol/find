@@ -252,40 +252,6 @@
       ],
       "type": "NUMBER",
       "advanced": true
-    },
-    "country": {
-      "names": [
-        "COUNTRY_ORIGIN"
-      ],
-      "displayName": "Country",
-      "advanced": true,
-      "values": [
-        {
-          "value": "UK",
-          "displayValue": "United Kingdom of Great Britain and Northern Ireland"
-        }
-      ]
-    },
-    "placeElevation": {
-      "names": [
-        "PLACE_ELEVATION"
-      ],
-      "displayName": "Place Elevation (ft)",
-      "type": "NUMBER",
-      "advanced": true
-    },
-    "author": {
-      "names": [
-        "AUTHOR"
-      ],
-      "displayName": "AuThor",
-      "values": [
-        {
-          "value": "HAYES, ALEXANDRA",
-          "displayValue": "Alex"
-        }
-      ],
-      "advanced": true
     }
   }
 }
