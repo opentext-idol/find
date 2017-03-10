@@ -90,12 +90,14 @@ define([
         },
 
         exportPPTData: function(){
-            const categories = [];
-            const values = [];
+            const categories = [],
+                values = [],
+                colors = [];
 
             this.legendColorCollection.each(function(model){
                 categories.push(model.get('text') || i18n['search.resultsView.sunburst.others']);
                 values.push(model.get('count'));
+                colors.push(model.get('color') || HIDDEN_COLOR);
             });
 
             return values.length && categories.length ? {
@@ -103,7 +105,9 @@ define([
                     data: {
                         categories: categories,
                         values: values,
-                        title: prettyOrNull(this.firstField)
+                        title: prettyOrNull(this.firstField),
+                        colors: colors,
+                        strokeColors: ['#000000']
                     }
                 } : null
         },
