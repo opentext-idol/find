@@ -9,13 +9,28 @@ define([
 ], function(_, DependentParametricCollection) {
     'use strict';
 
-    // Based on d3.scale.category20c(), sorted alphabetically
+    // Based chiefly on d3.scale.category20b() and d3.scale.category20c()
     const defaultPalette = [
-        '#3182bd', '#31a354', '#636363', '#6baed6',
-        '#74c476', '#756bb1', '#969696', '#9e9ac8',
-        '#9ecae1', '#a1d99b', '#bcbddc', '#bdbdbd',
-        '#c6dbef', '#c7e9c0', '#d9d9d9', '#dadaeb',
-        '#e6550d', '#fd8d3c', '#fdae6b', '#fdd0a2'
+        '#3182bd',
+        '#31a354',
+        '#fd8d3c',
+        '#fdd0a2',
+        '#636363',
+        '#6baed6',
+        '#74c476',
+        '#756bb1',
+        '#969696',
+        '#9ecae1',
+        '#a1d99b',
+        '#9e9ac8',
+        '#bcbddc',
+        '#c7e9c0',
+        '#8ca252',
+        '#b5cf6b',
+        '#ce6dbd',
+        '#de9ed6',
+        '#e6550d',
+        '#fdae6b'
     ];
 
     function initializePalette(palette) {
@@ -144,7 +159,11 @@ define([
             _.each(tiers, function(tier, i) {
                 this['tier' + (i + 1)] = tier && tier.length > 0
                     ? {
-                        legendData: _.map(tier, _.partial(reuseColors, this.palettes[i])),
+                        // Ultimately, legend should be sorted alphabetically
+                        legendData: _.sortBy(
+                            _.map(tier, _.partial(reuseColors, this.palettes[i])),
+                            'text'
+                        ),
                         hidden: !!tiersHiddenFlags[i]
                     }
                     : null;

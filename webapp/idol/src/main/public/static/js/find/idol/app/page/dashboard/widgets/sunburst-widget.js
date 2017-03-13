@@ -63,9 +63,10 @@ define([
      * @returns {String}
      */
     function buildLegendHtml(legendHtmlArray, tooMany) {
-        return (legendHtmlArray.length > 0 && tooMany
+        return legendHtmlArray.join('') +
+            (legendHtmlArray.length > 0 && tooMany
                 ? tooManyItemsHtml
-                : '') + legendHtmlArray.join('');
+                : '');
     }
 
     return SavedSearchWidget.extend({
@@ -78,10 +79,11 @@ define([
             // TODO display error msg if field absent (no dashboards config validation)
             this.firstField = options.widgetSettings.firstField;
             this.secondField = options.widgetSettings.secondField;
+            this.maxLegendEntries = options.widgetSettings.maxLegendEntries || 5;
 
             this.legendColorCollection = new LegendColorCollection(null, {
                 hiddenColor: HIDDEN_COLOR,
-                maxLegendEntries: 5
+                maxLegendEntries: this.maxLegendEntries
             });
 
             this.listenTo(this.legendColorCollection, 'update reset', this.updateSunburstAndLegend);
