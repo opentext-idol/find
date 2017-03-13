@@ -70,7 +70,13 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream().filter(predicate).collect(Collectors.toSet())));
         final TagName autnDateField;
         if (request.getFieldTypes().contains(FieldTypeParam.NumericDate) && predicate.test(autnDateField = tagNameFactory.buildTagName(ParametricValuesService.AUTN_DATE_FIELD))) {
-            response.get(FieldTypeParam.NumericDate).add(autnDateField);
+            response.compute(FieldTypeParam.NumericDate, (key, maybeValue) -> Optional.ofNullable(maybeValue)
+                    .map(value -> {
+                        value.add(autnDateField);
+                        return value;
+                    })
+                    .orElse(Collections.singleton(autnDateField))
+            );
         }
 
         final List<FieldAndValueDetails> output = new ArrayList<>();
