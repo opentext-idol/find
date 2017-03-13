@@ -10,7 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
+import com.hp.autonomy.searchcomponents.idol.test.IdolTestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,9 +28,17 @@ import static org.mockito.Mockito.when;
 @Component
 @ConditionalOnProperty(value = "mock.configuration", matchIfMissing = true)
 public class IdolMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
+    private final Environment environment;
+
+    @Autowired
+    public IdolMvcIntegrationTestUtils(final Environment environment) {
+        this.environment = environment;
+    }
+
     @Override
     public String[] getDatabases() {
-        return new String[]{"Wookiepedia"};
+        final String testDatabase = environment.getProperty(IdolTestUtils.TEST_DATABASE_PROPERTY, IdolTestUtils.DEFAULT_TEST_DATABASE);
+        return new String[]{testDatabase};
     }
 
     @Override
