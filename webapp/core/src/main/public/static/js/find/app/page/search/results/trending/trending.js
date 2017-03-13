@@ -29,6 +29,8 @@ define([
                 const containerHeight = options.containerHeight;
                 const chartWidth = containerWidth - LEGEND_WIDTH;
                 const chartHeight = containerHeight;
+                const xAxisLabel = options.xAxisLabel;
+                const yAxisLabel = options.yAxisLabel;
                 const maxValue = _.max(_.map(data, function (d) {
                     return _.max(d, function (v) {
                         return v[1];
@@ -49,11 +51,11 @@ define([
                     .domain([minDate, maxDate])
                     .range([CHART_PADDING, chartWidth - CHART_PADDING]);
 
-                const yAxis = d3.svg.axis()
+                const yAxisScale = d3.svg.axis()
                     .scale(yScale)
                     .orient('left');
 
-                const xAxis = d3.svg.axis()
+                const xAxisScale = d3.svg.axis()
                     .scale(xScale)
                     .orient('bottom')
                     .tickFormat(TIME_FORMAT);
@@ -154,15 +156,26 @@ define([
 
 
                 // Add the x and y axes //
-                svg.append('g')
+                const yAxis = svg.append('g')
                     .attr('class', 'y-axis')
                     .attr('transform', 'translate(' + CHART_PADDING + ',0)')
-                    .call(yAxis);
+                    .call(yAxisScale);
 
-                svg.append('g')
+                yAxis.append('text')
+                    .attr('x', -(chartHeight/2))
+                    .attr('y', -(CHART_PADDING/5*4))
+                    .attr('transform', 'rotate(270)')
+                    .text(yAxisLabel);
+
+                const xAxis = svg.append('g')
                     .attr('class', 'x-axis')
                     .attr('transform', 'translate(0,' + (chartHeight - CHART_PADDING) + ')')
-                    .call(xAxis);
+                    .call(xAxisScale);
+
+                xAxis.append('text')
+                    .attr('x', chartWidth/2)
+                    .attr('y', CHART_PADDING/5*4)
+                    .text(xAxisLabel);
 
                 // Add the legend //
                 const legend = svg.append('g')

@@ -29,18 +29,16 @@ define([
         numberOfParametricValuesToShow: 10,
 
         initialize: function(options) {
-            this.parametricCollection = options.parametricCollection;
+            this.trendingFieldsCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
 
             this.bucketedValues = {};
 
-            this.listenTo(this.parametricCollection, 'sync', this.updateFieldInfo);
-
             this.listenTo(this.queryModel, 'change', function() {
                 if(this.$el.is(':visible')) {
                     this.removeChart();
-                    this.fetchRangeData();
+                    this.fetchFieldData();
                 }
             });
 
@@ -59,21 +57,40 @@ define([
                 loadingHtml: this.loadingHtml
             }));
             if(this.$el.is(':visible')) {
-                this.fetchRangeData();
+                this.fetchFieldData();
             }
         },
 
-        fetchRangeData: function () {
-            let selectedValues = this.selectedParametricValues.map(function (model) {
-                return model.toJSON();
-            });
+        fetchFieldData: function() {
+            this.trendingFieldsCollection.fetch({
+                data: {
+                    fieldNames: [this.fieldName],
+                    databases: this.queryModel.get('indexes'),
+                    queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery')
+                        ? this.queryModel.get('correctedQuery')
+                        : this.queryModel.get('queryText'),
+                    fieldText: this.queryModel.get('fieldText'),
+                    minDate: this.queryModel.getIsoDate('minDate'),
+                    maxDate: this.queryModel.getIsoDate('maxDate'),
+                    minScore: this.queryModel.get('minScore'),
+                    maxValues: this.numberOfParametricValuesToShow
+                },
+                success: _.bind(function() {
+                    this.selectedField = this.trendingFieldsCollection.filter(function(model) {
+                        return model.get('id') === this.fieldName;
+                    }, this);
+                    this.fetchRangeData();
+                }, this)
+            })
+        },
 
+        fetchRangeData: function () {
             this.parametricDetailsModel = new ParametricDetailsModel();
             this.parametricDetailsModel.fetch({
                 data: {
                     fieldName: this.dateField,
                     queryText: this.queryModel.get('queryText'),
-                    fieldText: toFieldTextNode(selectedValues),
+                    fieldText: toFieldTextNode(this.getFieldText()),
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
                     minScore: this.queryModel.get('minScore'),
@@ -88,6 +105,7 @@ define([
         fetchBucketingData: function() {
             // ToDo After rebasing make sure the the new parametric collection changes depending on the query
             // Currently only the max and min dates will change, the values are static
+            this.bucketedValues = {};
 
             _.each(_.first(this.selectedField[0].get('values'), this.numberOfParametricValuesToShow), function(value) {
                 this.bucketedValues[value.value] = new BucketedParametricCollection.Model({
@@ -97,10 +115,11 @@ define([
             }, this);
 
             $.when.apply($, _.map(this.bucketedValues, function(model) {
+                const fieldText = this.getFieldText().length > 0 ? ' AND ' + toFieldTextNode(this.getFieldText()) : '';
                 return model.fetch({
                     data: {
                         queryText: this.queryModel.get('queryText'),
-                        fieldText: 'MATCH{' + model.get('valueName') + '}:' + this.fieldName,
+                        fieldText: 'MATCH{' + model.get('valueName') + '}:' + this.fieldName + fieldText,
                         minDate: this.queryModel.getIsoDate('minDate'),
                         maxDate: this.queryModel.getIsoDate('maxDate'),
                         minScore: this.queryModel.get('minScore'),
@@ -144,7 +163,9 @@ define([
                 minDate: new Date(this.parametricDetailsModel.get('min') * MILLISECONDS_TO_SECONDS),
                 maxDate: new Date(this.parametricDetailsModel.get('max') * MILLISECONDS_TO_SECONDS),
                 containerWidth: this.$('#trending-chart').width(),
-                containerHeight: this.$('#trending-chart').height()
+                containerHeight: this.$('#trending-chart').height(),
+                xAxisLabel: i18n['search.resultsView.trending.xAxis'],
+                yAxisLabel: i18n['search.resultsView.trending.yAxis']
             });
         },
 
@@ -152,10 +173,10 @@ define([
             this.$('#trending-chart').empty();
         },
 
-        updateFieldInfo: function() {
-            this.selectedField = this.parametricCollection.filter(function(model) {
-                return model.get('id') === this.fieldName;
-            }, this);
+        getFieldText() {
+            return this.selectedParametricValues.map(function (model) {
+                return model.toJSON();
+            });
         }
     });
 });
