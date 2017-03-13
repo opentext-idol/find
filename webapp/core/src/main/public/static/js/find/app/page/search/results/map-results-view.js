@@ -48,7 +48,7 @@ define([
             this.fieldSelectionView = new FieldSelectionView({
                 model: this.model,
                 name: 'FieldSelectionView',
-                fields: this.locationFields.forEach(function (locationField) {
+                fields: this.locationFields.map(function (locationField) {
                     return {
                         id: locationField.displayName,
                         displayName: locationField.displayName
