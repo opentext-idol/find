@@ -7,17 +7,8 @@ package com.hp.autonomy.frontend.find.idol.view;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciServiceException;
-import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.view.AbstractViewControllerTest;
-import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
-import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
-import com.hp.autonomy.searchcomponents.idol.view.IdolViewRequest;
-import com.hp.autonomy.searchcomponents.idol.view.IdolViewRequestBuilder;
-import com.hp.autonomy.searchcomponents.idol.view.IdolViewServerService;
-import com.hp.autonomy.searchcomponents.idol.view.ViewDocumentNotFoundException;
-import com.hp.autonomy.searchcomponents.idol.view.ViewNoReferenceFieldException;
-import com.hp.autonomy.searchcomponents.idol.view.ViewServerErrorException;
-import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
+import com.hp.autonomy.searchcomponents.idol.view.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,8 +30,6 @@ public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewC
     private ObjectFactory<IdolViewRequestBuilder> viewRequestBuilderFactory;
     @Mock
     private IdolViewRequestBuilder viewRequestBuilder;
-    @Mock
-    private ConfigService<IdolSearchCapable> configService;
 
     @Override
     @Before
@@ -50,7 +39,7 @@ public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewC
         when(viewRequestBuilder.database(any())).thenReturn(viewRequestBuilder);
         when(viewRequestBuilder.highlightExpression(any())).thenReturn(viewRequestBuilder);
 
-        viewController = new IdolViewController(idolViewServerService, viewRequestBuilderFactory, configService, controllerUtils);
+        viewController = new IdolViewController(idolViewServerService, viewRequestBuilderFactory, controllerUtils);
         viewServerService = idolViewServerService;
         response = new MockHttpServletResponse();
         super.setUp();
@@ -64,18 +53,6 @@ public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewC
     @Test
     public void viewDocumentNotFound() {
         assertNotNull(viewController.handleViewDocumentNotFoundException(new ViewDocumentNotFoundException("some reference"), new MockHttpServletRequest(), new MockHttpServletResponse()));
-    }
-
-    @Test
-    public void noReferenceField() {
-        when(configService.getConfig()).thenReturn(IdolFindConfig.builder().view(ViewConfig.builder().build()).build());
-
-        assertNotNull(viewController.handleViewNoReferenceFieldException(new ViewNoReferenceFieldException("some reference", "some field"), new MockHttpServletRequest(), new MockHttpServletResponse()));
-    }
-
-    @Test
-    public void referenceFieldBlank() {
-        assertNotNull(viewController.handleReferenceFieldBlankException(new MockHttpServletRequest(), new MockHttpServletResponse()));
     }
 
     @Test
