@@ -125,7 +125,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
                 .filter(entry -> entry.getKey() != fieldType)
                 .forEach(entry -> entry.getValue().remove(tagName)));
 
-        final Map<TagName, ValueDetails> valueDetailsResponse = valueDetailsFetch.fetch(tagNames);
+        final Map<FieldPath, ValueDetails> valueDetailsResponse = valueDetailsFetch.fetch(tagNames);
 
         return tagNames.stream()
                 .map(tagName -> {
@@ -134,7 +134,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
                             .displayName(tagName.getDisplayName())
                             .type(fieldType);
 
-                    final ValueDetails valueDetails = valueDetailsResponse.get(tagName);
+                    final ValueDetails valueDetails = valueDetailsResponse.get(tagName.getId());
 
                     if (valueDetails != null) {
                         builder
@@ -175,6 +175,6 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
 
     @FunctionalInterface
     private interface ValueDetailsFetch<E extends Exception> {
-        Map<TagName, ValueDetails> fetch(final Set<TagName> tagNames) throws E;
+        Map<FieldPath, ValueDetails> fetch(final Set<TagName> tagNames) throws E;
     }
 }

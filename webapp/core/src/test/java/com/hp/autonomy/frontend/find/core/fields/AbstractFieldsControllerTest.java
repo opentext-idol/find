@@ -16,6 +16,7 @@ import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import com.hp.autonomy.types.requests.idol.actions.tags.ValueDetails;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
@@ -135,8 +136,8 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
                 .setTotalValues(25)
                 .build();
 
-        final Map<TagName, ValueDetails> valueDetailsOutput = ImmutableMap.<TagName, ValueDetails>builder()
-                .put(tagNameFactory.buildTagName(fieldName), valueDetails)
+        final Map<FieldPath, ValueDetails> valueDetailsOutput = ImmutableMap.<FieldPath, ValueDetails>builder()
+                .put(tagNameFactory.getFieldPath(fieldName), valueDetails)
                 .build();
 
         when(parametricValuesService.getValueDetails(any())).thenReturn(valueDetailsOutput);
@@ -168,9 +169,9 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
                 .setTotalValues(15000)
                 .build();
 
-        final Map<TagName, ValueDetails> valueDetailsOutput = ImmutableMap.<TagName, ValueDetails>builder()
-                .put(tagNameFactory.buildTagName("parametric_date_field"), valueDetails)
-                .put(tagNameFactory.buildTagName(ParametricValuesService.AUTN_DATE_FIELD), autnDateValueDetails)
+        final Map<FieldPath, ValueDetails> valueDetailsOutput = ImmutableMap.<FieldPath, ValueDetails>builder()
+                .put(tagNameFactory.getFieldPath("parametric_date_field"), valueDetails)
+                .put(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATE_FIELD), autnDateValueDetails)
                 .build();
 
         when(parametricValuesService.getValueDetails(any())).thenReturn(valueDetailsOutput);

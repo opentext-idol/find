@@ -15,7 +15,6 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
 import com.hp.autonomy.types.requests.idol.actions.tags.RangeInfo;
-import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import com.hp.autonomy.types.requests.idol.actions.tags.ValueDetails;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import org.apache.commons.collections4.ListUtils;
@@ -41,12 +40,10 @@ import java.util.Set;
 public abstract class ParametricValuesController<Q extends QueryRestrictions<S>, R extends ParametricRequest<Q>, S extends Serializable, E extends Exception> {
     @SuppressWarnings("WeakerAccess")
     public static final String PARAMETRIC_PATH = "/api/public/parametric";
-    static final String VALUES_PATH = "/values";
     private static final String VALUE_DETAILS_PATH = "/value-details";
-    static final String BUCKET_PARAMETRIC_PATH = "/buckets";
     public static final String DEPENDENT_VALUES_PATH = "/dependent-values";
     public static final String FIELD_NAMES_PARAM = "fieldNames";
-    public static final String FIELD_NAME_PARAM = "fieldName";
+    private static final String FIELD_NAME_PARAM = "fieldName";
     public static final String QUERY_TEXT_PARAM = "queryText";
     public static final String FIELD_TEXT_PARAM = "fieldText";
     public static final String DATABASES_PARAM = "databases";
@@ -164,7 +161,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     @RequestMapping(method = RequestMethod.GET, value = VALUE_DETAILS_PATH)
     @ResponseBody
     public ValueDetails getValueDetails(
-            @RequestParam(FIELD_NAME_PARAM) final TagName fieldName,
+            @RequestParam(FIELD_NAME_PARAM) final FieldPath fieldName,
             @RequestParam(QUERY_TEXT_PARAM) final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
             @RequestParam(DATABASES_PARAM) final Collection<S> databases,
@@ -180,6 +177,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
                 .minDate(minDate)
                 .maxDate(maxDate)
                 .minScore(minScore)
+                .stateMatchIds(ListUtils.emptyIfNull(stateTokens))
                 .build();
         final R parametricRequest = parametricRequestBuilderFactory.getObject()
                 .fieldName(fieldName)
