@@ -57,6 +57,7 @@ define([
         'error.code.DAHQUERY512': 'Find did not understand your search text',
         'error.code.AXEQUERY512': 'Find did not understand your search text',
         'error.code.emptyTableView': 'Could not display Table View: your search returned no parametric values',
-        'error.code.emptySunburstView': 'Could not display Sunburst View: your search returned no parametric values'
+        'error.code.emptySunburstView': 'Could not display Sunburst View: your search returned no parametric values',
+        'error.code.emptyTrendingView': 'Could not display Trending Chart: your search returned no parametric values'
     });
 });

@@ -26,6 +26,7 @@ define([
     'find/app/page/search/results/sunburst-view',
     'find/app/page/search/results/map-results-view',
     'find/app/page/search/results/table/table-view',
+    'find/app/page/search/results/trending/trending-view',
     'find/app/page/search/time-bar-view',
     'find/app/configuration',
     'i18n!find/nls/bundle',
@@ -34,7 +35,7 @@ define([
             SavedSearchModel, ParametricCollection, ParametricFieldsCollection, queryStrategy,
             stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView,
             addChangeListener, SavedSearchControlView, TopicMapView, SunburstView, MapResultsView,
-            TableView, TimeBarView, configuration, i18n, templateString) {
+            TableView, TrendingView, TimeBarView, configuration, i18n, templateString) {
     'use strict';
 
     const $window = $(window);
@@ -267,6 +268,15 @@ define([
                     selector: {
                         displayNameKey: 'table',
                         icon: 'hp-table'
+                    }
+                },
+                trending: {
+                    Constructor: TrendingView,
+                    constructorArguments: subViewArguments,
+                    shown: hasBiRole,
+                    selector: {
+                        displayNameKey: 'trending',
+                        icon: 'hp-line-chart'
                     }
                 }
             };

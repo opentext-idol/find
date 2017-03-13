@@ -210,6 +210,8 @@ define([
         'search.resultsView.table.previous': 'Previous',
         'search.resultsView.table.searchInResults': 'Search in Results',
         'search.resultsView.table.zeroRecords': 'No matching records found',
+        'search.resultsView.trending': 'Trending',
+        'search.resultsView.trending.error.query': 'Error: could not display Trending Chart',
         'search.resultsView.amount.shown': 'Showing <strong>{0}</strong> to <strong>{1}</strong> of <strong>{2}</strong> results',
         'search.resultsView.amount.shown.no.increment': 'Showing the top <strong>{0}</strong> results of <strong>{1}</strong>',
         'search.resultsView.amount.shown.no.results': 'There are no results with the location field selected',
