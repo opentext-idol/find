@@ -46,6 +46,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     static final String BUCKET_PARAMETRIC_PATH = "/buckets";
     public static final String DEPENDENT_VALUES_PATH = "/dependent-values";
     public static final String FIELD_NAMES_PARAM = "fieldNames";
+    public static final String FIELD_NAME_PARAM = "fieldName";
     public static final String QUERY_TEXT_PARAM = "queryText";
     public static final String FIELD_TEXT_PARAM = "fieldText";
     public static final String DATABASES_PARAM = "databases";
@@ -162,8 +163,8 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(method = RequestMethod.GET, value = VALUE_DETAILS_PATH)
     @ResponseBody
-    public Map<TagName, ValueDetails> getValueDetails(
-            @RequestParam(FIELD_NAMES_PARAM) final List<TagName> fieldNames,
+    public ValueDetails getValueDetails(
+            @RequestParam(FIELD_NAME_PARAM) final TagName fieldName,
             @RequestParam(QUERY_TEXT_PARAM) final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
             @RequestParam(DATABASES_PARAM) final Collection<S> databases,
@@ -181,11 +182,11 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
                 .minScore(minScore)
                 .build();
         final R parametricRequest = parametricRequestBuilderFactory.getObject()
-                .fieldNames(ListUtils.emptyIfNull(fieldNames))
+                .fieldName(fieldName)
                 .maxValues(null)
                 .queryRestrictions(queryRestrictions)
                 .build();
-        return parametricValuesService.getValueDetails(parametricRequest);
+        return parametricValuesService.getValueDetails(parametricRequest).get(fieldName);
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")

@@ -130,7 +130,7 @@ public abstract class AbstractParametricValuesControllerTest<
 
     @Test
     public void getValueDetails() throws E {
-        parametricValuesController.getValueDetails(Collections.singletonList(tagNameFactory.buildTagName("SomeParametricField")), "Some query text", null, Collections.emptyList(), null, null, 0, null);
+        parametricValuesController.getValueDetails(tagNameFactory.buildTagName("SomeParametricField"), "Some query text", null, Collections.emptyList(), null, null, 0, null);
         verify(parametricValuesService).getValueDetails(Matchers.any());
     }
 
