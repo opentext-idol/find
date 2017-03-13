@@ -33,7 +33,7 @@ define([
         var upperCase = fieldName.toUpperCase();
 
         return function(model) {
-            return model.get('field').toUpperCase() === upperCase && model.get('range') && model.get('dataType') === dataType;
+            return model.get('field').toUpperCase() === upperCase && model.get('range') && model.get('type') === dataType;
         };
     }
 
@@ -41,7 +41,7 @@ define([
         var upperCase = fieldName.toUpperCase();
 
         return function(model) {
-            return model.id.toUpperCase() === upperCase && model.get('dataType') === dataType;
+            return model.id.toUpperCase() === upperCase && model.get('type') === dataType;
         };
     }
 
@@ -96,7 +96,7 @@ define([
             this.pixelsPerBucket = options.pixelsPerBucket || 20;
 
             this.fieldName = 'autn_date';
-            this.dataType = 'date';
+            this.dataType = 'NumericDate';
 
             this.bucketModel = new BucketedParametricCollection.Model({id: this.fieldName});
             this.selectedParametricValues = options.queryState.selectedParametricValues;
