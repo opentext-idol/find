@@ -450,7 +450,7 @@ define([
         fetchParametricCollection: function () {
             this.parametricCollection.reset();
 
-            const fieldNames = this.parametricFieldsCollection.pluck('id');
+            const fieldNames = _.pluck(this.parametricFieldsCollection.where({type: 'Parametric'}), 'id');
 
             if (fieldNames.length > 0 && this.queryModel.get('indexes').length !== 0) {
                 this.parametricCollection.fetch({
