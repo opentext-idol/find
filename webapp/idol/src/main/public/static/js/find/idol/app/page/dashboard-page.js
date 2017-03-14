@@ -94,10 +94,7 @@ define([
                     this.stopListening(this.updateTracker);
                 }
 
-                // set up tracker
-                this.updateTracker = new UpdateTrackerModel();
-
-                // update views
+                // find updating views
                 const updatingViews = _.chain(this.widgetViews)
                     .pluck('view')
                     .filter(function(view) {
@@ -108,8 +105,11 @@ define([
                     .value();
 
                 // don't set up this listener if no work to do
-                if(updatingViews.length > 0) {
-                    this.updateTracker.set('total', updatingViews.length);
+                const total = updatingViews.length;
+
+                if(total > 0) {
+                    // set up tracker
+                    this.updateTracker = new UpdateTrackerModel({total: total});
 
                     _.each(updatingViews, function(view) {
                         view.update(this.updateTracker)
@@ -117,7 +117,7 @@ define([
 
                     // handle completion
                     this.listenTo(this.updateTracker, 'change:count', function(model, count) {
-                        if(count === updatingViews.length) {
+                        if(count === total) {
                             // publish completion
                             this.updateTracker.set('complete', true);
                             this.stopListening(this.updateTracker);

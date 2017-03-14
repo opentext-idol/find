@@ -40,21 +40,22 @@ define([
                 id: options.savedSearch.id,
                 type: options.savedSearch.type
             });
-
-            this.initialiseWidgetPromise = this.savedSearchModel.fetch()
-                .then(function() {// TODO handle failure
-                    this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                    return $.when(this.postInitialize());
-                }.bind(this));
         },
 
         doUpdate: function(done) {
-            $.when(this.savedSearchModel.fetch(), this.initialiseWidgetPromise)
-                .done(function() {// TODO handle failure
-                    this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                    this.updatePromise = this.getData()
-                        .done(done);// TODO handle failure
-                }.bind(this));
+            if(this.initialiseWidgetPromise) {
+                $.when(this.savedSearchModel.fetch(), this.initialiseWidgetPromise)
+                    .done(function() {// TODO handle failure
+                        this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
+                        this.updatePromise = this.getData().done(done);// TODO handle failure
+                    }.bind(this));
+            } else {
+                this.initialiseWidgetPromise = this.savedSearchModel.fetch()
+                    .then(function() {// TODO handle failure
+                        this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
+                        return $.when(this.postInitialize()).done(done);// TODO handle failure
+                    }.bind(this));
+            }
         },
 
         onClick: function() {
