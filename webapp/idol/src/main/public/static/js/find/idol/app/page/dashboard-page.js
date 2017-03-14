@@ -128,7 +128,7 @@ define([
             var $exportBtn = this.$('.report-pptx-group');
 
             $.when.apply($, _.map(this.widgetViews, function(widget){
-                return widget.view.savedSearchPromise
+                return widget.view.initialiseWidgetPromise
             })).done(function(){
                 $exportBtn.removeClass('hide');
             })
