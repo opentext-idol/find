@@ -24,7 +24,7 @@ define([
         template: _.template(template),
         loadingHtml: _.template(loadingSpinnerHtml),
         dateField: 'AUTN_DATE',
-        fieldName: '/DOCUMENT/CATEGORY',
+        fieldName: '/DOCUMENT/PERSON',
         targetNumberOfBuckets: 10,
         numberOfParametricValuesToShow: 10,
 
@@ -69,28 +69,32 @@ define([
                     queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery')
                         ? this.queryModel.get('correctedQuery')
                         : this.queryModel.get('queryText'),
-                    fieldText: this.queryModel.get('fieldText'),
+                    fieldText: toFieldTextNode(this.getFieldText()),
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
                     minScore: this.queryModel.get('minScore'),
                     maxValues: this.numberOfParametricValuesToShow
                 },
-                success: _.bind(function() {
+                success: function() {
                     this.selectedField = this.trendingFieldsCollection.filter(function(model) {
                         return model.get('id') === this.fieldName;
                     }, this);
                     this.fetchRangeData();
-                }, this)
+                }.bind(this)
             })
         },
 
         fetchRangeData: function () {
+            const trendingValues = _.first(this.selectedField[0].get('values'), this.numberOfParametricValuesToShow);
+            const trendingValuesRestriction = 'MATCH{' + _.pluck(trendingValues, 'value').toString() + '}:' + this.fieldName;
+            const fieldText = this.getFieldText().length > 0 ? ' AND ' + toFieldTextNode(this.getFieldText()) : '';
+
             this.parametricDetailsModel = new ParametricDetailsModel();
             this.parametricDetailsModel.fetch({
                 data: {
                     fieldName: this.dateField,
                     queryText: this.queryModel.get('queryText'),
-                    fieldText: toFieldTextNode(this.getFieldText()),
+                    fieldText: trendingValuesRestriction + fieldText,
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
                     minScore: this.queryModel.get('minScore'),
@@ -103,8 +107,6 @@ define([
         },
 
         fetchBucketingData: function() {
-            // ToDo After rebasing make sure the the new parametric collection changes depending on the query
-            // Currently only the max and min dates will change, the values are static
             this.bucketedValues = {};
 
             _.each(_.first(this.selectedField[0].get('values'), this.numberOfParametricValuesToShow), function(value) {

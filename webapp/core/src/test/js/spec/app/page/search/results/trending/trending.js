@@ -74,7 +74,6 @@ define([
             });
 
             it('has rendered a legend with the correct labels', function() {
-                expect(this.view.$('rect').length).toBe(5);
                 const labels = this.view.$('.legend-text');
                 expect(labels.length).toBe(5);
                 _.each(labels, function(label) {

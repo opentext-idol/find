@@ -11,7 +11,6 @@ define([
     const NUMBER_OF_COLORS = 10;
     const FADE_OUT_OPACITY = 0.3;
     const LEGEND_WIDTH = 200;
-    const LEGEND_MARKER_HEIGHT = 2;
     const LEGEND_MARKER_WIDTH = 15;
     const LEGEND_TEXT_WIDTH = 100;
     const LEGEND_TEXT_HEIGHT = 12;
@@ -113,7 +112,17 @@ define([
                                 d3.select(this)
                                     .attr('opacity', FADE_OUT_OPACITY)
                             }
-                        })
+                        });
+                    d3.selectAll('.legend-text')
+                        .each(function () {
+                            if(this.parentNode.getAttribute('data-name') === newValue) {
+                                d3.select(this)
+                                    .attr('font-size', '15')
+                            } else {
+                                d3.select(this)
+                                    .attr('font-size', '12')
+                            }
+                        });
                 };
 
                 const lineAndPointMouseout = function () {
@@ -124,6 +133,9 @@ define([
                     d3.selectAll('circle')
                         .attr('opacity', 1)
                         .attr('r', 4);
+
+                    d3.selectAll('.legend-text')
+                        .attr('font-size', '12')
                 };
 
                 parametricValue.append('path')
@@ -189,7 +201,7 @@ define([
 
                 const legendMouseover = function (d) {
                     d3.selectAll('.line')
-                        .each(function (data) {
+                        .each(function () {
                             if (this.parentNode.getAttribute('data-name') === d) {
                                 d3.select(this)
                                     .attr('stroke-width', 5);
@@ -199,7 +211,7 @@ define([
                             }
                         });
                     d3.selectAll('circle')
-                        .each(function (data) {
+                        .each(function () {
                             if (this.parentNode.getAttribute('data-name') === d) {
                                 d3.select(this)
                                     .attr('r', 5);
@@ -208,18 +220,27 @@ define([
                                     .attr('opacity', FADE_OUT_OPACITY);
                             }
                         });
+                    d3.selectAll('.legend-text')
+                        .each(function () {
+                            if(this.parentNode.getAttribute('data-name') === d) {
+                                d3.select(this)
+                                    .attr('font-size', '15')
+                            } else {
+                                d3.select(this)
+                                    .attr('font-size', '12')
+                            }
+                        });
                 };
 
                 const legendMouseout = function () {
                     d3.selectAll('.line')
-                        .each(function () {
-                            d3.select(this)
-                                .attr('stroke-width', 2)
-                                .attr('opacity', 1);
-                        });
+                        .attr('stroke-width', 2)
+                        .attr('opacity', 1);
                     d3.selectAll('circle')
                         .attr('r', 4)
                         .attr('opacity', 1);
+                    d3.selectAll('.legend-text')
+                        .attr('font-size', '12')
                 };
 
                 const adjustLabelPositions = function (legendData, maxScaledY) {
@@ -247,7 +268,8 @@ define([
                     const labelData = _.map(data, function(datum, i) {
                         return {
                             index: i,
-                            y: yScale(datum[datum.length - 1][1])
+                            y: yScale(datum[datum.length - 1][1]),
+                            yData: yScale(datum[datum.length - 1][1])
                         }
                     });
 
@@ -271,11 +293,13 @@ define([
                             .attr('data-name', names[d.index])
                             .attr('class', 'color' + (d.index % NUMBER_OF_COLORS));
 
-                        g.append('rect')
-                            .attr('x', chartWidth - CHART_PADDING + LEGEND_PADDING)
-                            .attr('y', d.y - (LEGEND_PADDING/2))
-                            .attr('width', LEGEND_MARKER_WIDTH)
-                            .attr('height', LEGEND_MARKER_HEIGHT)
+                        g.append('line')
+                            .attr('x1', chartWidth - CHART_PADDING + LEGEND_PADDING)
+                            .attr('y1', d.yData)
+                            .attr('x2', chartWidth - CHART_PADDING + LEGEND_PADDING + LEGEND_MARKER_WIDTH)
+                            .attr('y2', d.y)
+                            .attr('stroke-width', 2)
+                            .attr('stroke-dasharray', '3,2')
                             .on('mouseover', function() {
                                 legendMouseover(names[d.index]);
                             })
@@ -288,15 +312,15 @@ define([
                             .attr('y', d.y + 4 - (LEGEND_PADDING/2))
                             .attr('class', 'legend-text')
                             .attr('width', LEGEND_TEXT_WIDTH)
-                            .attr('height', LEGEND_MARKER_HEIGHT)
+                            .attr('height', LEGEND_TEXT_HEIGHT)
                             .attr('cursor', 'default')
                             .attr('font-size', LEGEND_TEXT_HEIGHT)
-                            .text(names[i])
+                            .text(names[d.index])
                             .on('mouseover', function() {
                                 legendMouseover(names[d.index]);
                             })
                             .on('mouseout', function() {
-                                legendMouseout(names[d.index])
+                                legendMouseout(names[d.index]);
                             });
                     });
             }
