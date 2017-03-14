@@ -24,7 +24,12 @@ define([
 
     return UpdatingWidget.extend({
         clickable: true,
+
+        // Called once after the first saved search promise resolves. If it
+        // returns a promise, any future updates will be contingent on its resolution.
         postInitialize: _.noop,
+
+        // Called during every update (but not when the widget first loads)
         getData: _.noop,
 
         initialize: function(options) {
@@ -42,6 +47,9 @@ define([
             });
         },
 
+        // Called by the widget's update() method, which in turn is called by the dashboard-page's update().
+        // The argument callback hides the loading spinner -- every execution path that does not call it will
+        // result in the loading spinner not disappearing after the update.
         doUpdate: function(done) {
             if(this.initialiseWidgetPromise) {
                 $.when(this.savedSearchModel.fetch(), this.initialiseWidgetPromise)
