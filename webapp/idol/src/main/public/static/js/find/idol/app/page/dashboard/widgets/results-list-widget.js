@@ -51,6 +51,10 @@ define([
             _.defer(_.bind(this.hideOverflow, this));
         },
 
+        postInitialize: function(){
+            return this.getData();
+        },
+
         getData: function() {
             return this.documentsCollection.fetch({
                 data: {
