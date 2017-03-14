@@ -1,23 +1,24 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
+    'jquery',
     'find/app/page/find-settings-page',
     'js-whatever/js/empty-navbar',
     'find/app/util/test-browser',
-    'jquery',
     'i18n!find/nls/bundle',
     'text!find/templates/config/config.html',
-    'text!find/templates/config/empty-navbar.html',
-    'underscore'
-], function(SettingsPage, EmptyNavbar, testBrowser, $, i18n, template, emptyNavbar, _) {
+    'text!find/templates/config/empty-navbar.html'
+], function(_, $, SettingsPage, EmptyNavbar, testBrowser, i18n, template, emptyNavbar) {
+    'use strict';
 
     return function() {
         $.ajaxSetup({cache: false});
 
-        var $page = $('.page');
+        const $page = $('.page');
 
         $page.html(_.template(template));
 
@@ -29,7 +30,7 @@ define([
 
             events: {
                 'click a': function(e) {
-                    if (!this.options.settingsPage.hasSavedSettings) {
+                    if(!this.options.settingsPage.hasSavedSettings) {
                         e.preventDefault();
 
                         alert('You should save your settings before you can log out.');
@@ -53,5 +54,4 @@ define([
 
         testBrowser();
     };
-
 });
