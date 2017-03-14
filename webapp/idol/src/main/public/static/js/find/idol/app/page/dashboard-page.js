@@ -33,7 +33,7 @@ define([
                     scaleY = 0.01 * this.heightPerUnit,
                     $el = $(evt.currentTarget),
                     multipage = $el.is('.report-pptx-multipage'),
-                    $group = $el.closest('.btn-group').removeClass('report-complete').data('json', ''),
+                    $group = $el.closest('.btn-group'),
                     labels = $group.find('.report-pptx-labels:checked').length,
                     padding = $group.find('.report-pptx-padding:checked').length;
 
@@ -71,8 +71,6 @@ define([
                         })
 
                         $form[0].multipage.value = multipage;
-
-                        $group.addClass('report-complete').data('json', $form[0].data.value)
 
                         $form.appendTo(document.body).submit().remove()
                     })
