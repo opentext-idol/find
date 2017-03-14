@@ -78,7 +78,7 @@ define([
                 const labels = this.view.$('.legend-text');
                 expect(labels.length).toBe(5);
                 _.each(labels, function(label) {
-                    expect(_.contains(testNames, label.__data__)).toBe(true);
+                    expect(_.contains(testNames, label.textContent)).toBe(true);
                 });
             });
 

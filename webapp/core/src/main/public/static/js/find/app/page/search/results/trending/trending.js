@@ -10,10 +10,12 @@ define([
     const TIME_FORMAT = d3.time.format("%Y-%m-%d");
     const NUMBER_OF_COLORS = 10;
     const FADE_OUT_OPACITY = 0.3;
-    const LEGEND_WIDTH = 300;
-    const LEGEND_MARKER_HEIGHT = 15;
+    const LEGEND_WIDTH = 200;
+    const LEGEND_MARKER_HEIGHT = 2;
+    const LEGEND_MARKER_WIDTH = 15;
     const LEGEND_TEXT_WIDTH = 100;
-    const LEGEND_ITEM_HEIGHT = 25;
+    const LEGEND_TEXT_HEIGHT = 12;
+    const LEGEND_PADDING = 5;
 
 
     return function Trending(options) {
@@ -220,34 +222,82 @@ define([
                         .attr('opacity', 1);
                 };
 
+                const adjustLabelPositions = function (legendData, maxScaledY) {
+                    _.each(legendData, function (d, i) {
+                        if (i >= 1) {
+                            const prevVal = legendData[i - 1].y + LEGEND_TEXT_HEIGHT;
+                            d.y = d.y < prevVal ? prevVal : d.y;
+                        }
+                    });
+
+                    if (!_.isEmpty(legendData) && legendData[legendData.length - 1].y > maxScaledY) {
+                        legendData[legendData.length - 1].y = maxScaledY;
+                        legendData.reverse();
+                        _.each(legendData, function (d, i) {
+                            if (i >= 1) {
+                                const prevVal = legendData[i - 1].y - LEGEND_TEXT_HEIGHT;
+                                d.y = d.y > prevVal ? prevVal : d.y;
+                            }
+                        });
+                        legendData.reverse();
+                    }
+                };
+
+                const getYPositionOfLegendLabel = function() {
+                    const labelData = _.map(data, function(datum, i) {
+                        return {
+                            index: i,
+                            y: yScale(datum[datum.length - 1][1])
+                        }
+                    });
+
+                    labelData.sort(function(a,b) {
+                        return a.y - b.y;
+                    });
+
+                    const maxScaledY = _.max(labelData, function(datum) { return datum.y; }).y;
+
+                    adjustLabelPositions(labelData, maxScaledY);
+
+                    return labelData;
+                };
+
                 legend.selectAll('g')
-                    .data(names)
+                    .data(getYPositionOfLegendLabel())
                     .enter()
                     .append('g')
                     .each(function (d, i) {
                         const g = d3.select(this)
-                            .attr('data-name', d)
-                            .attr('class', 'color' + (i % NUMBER_OF_COLORS));
+                            .attr('data-name', names[d.index])
+                            .attr('class', 'color' + (d.index % NUMBER_OF_COLORS));
 
                         g.append('rect')
-                            .attr('x', chartWidth)
-                            .attr('y', (i + 1) * LEGEND_ITEM_HEIGHT)
-                            .attr('width', LEGEND_MARKER_HEIGHT)
+                            .attr('x', chartWidth - CHART_PADDING + LEGEND_PADDING)
+                            .attr('y', d.y - (LEGEND_PADDING/2))
+                            .attr('width', LEGEND_MARKER_WIDTH)
                             .attr('height', LEGEND_MARKER_HEIGHT)
-                            .on('mouseover', legendMouseover)
-                            .on('mouseout', legendMouseout);
+                            .on('mouseover', function() {
+                                legendMouseover(names[d.index]);
+                            })
+                            .on('mouseout', function() {
+                                legendMouseout(names[d.index]);
+                            });
 
                         g.append('text')
-                            .attr('x', chartWidth + LEGEND_ITEM_HEIGHT)
-                            .attr('y', (i + 1) * LEGEND_ITEM_HEIGHT + 12)
+                            .attr('x', chartWidth - CHART_PADDING + LEGEND_MARKER_WIDTH + LEGEND_PADDING)
+                            .attr('y', d.y + 4 - (LEGEND_PADDING/2))
                             .attr('class', 'legend-text')
                             .attr('width', LEGEND_TEXT_WIDTH)
                             .attr('height', LEGEND_MARKER_HEIGHT)
                             .attr('cursor', 'default')
-                            .text(d)
-                            .on('mouseover', legendMouseover)
-                            .on('mouseout', legendMouseout);
-
+                            .attr('font-size', LEGEND_TEXT_HEIGHT)
+                            .text(names[i])
+                            .on('mouseover', function() {
+                                legendMouseover(names[d.index]);
+                            })
+                            .on('mouseout', function() {
+                                legendMouseout(names[d.index])
+                            });
                     });
             }
         }
