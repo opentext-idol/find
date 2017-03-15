@@ -86,24 +86,18 @@ define([
         },
 
         exportPPTData: function(){
-            var text = [];
-
-            this.documentsCollection.each(function(model){
-                text.push({
-                    text: model.get('title') + '\n',
-                    fontSize: 11,
-                    bold: true
-                }, {
-                    text: (model.get('title') || '') + '\n\n',
-                    fontSize: 10
-                })
-            });
-
             return {
                 data: {
-                    text: text
+                    drawIcons: false,
+                    docs: this.documentsCollection.map(function(model){
+                        return {
+                            title: model.get('title'),
+                            summary: model.get('summary'),
+                            thumbnail: model.get('thumbnail')
+                        }
+                    })
                 },
-                type: 'text'
+                type: 'list'
             }
         }
     });
