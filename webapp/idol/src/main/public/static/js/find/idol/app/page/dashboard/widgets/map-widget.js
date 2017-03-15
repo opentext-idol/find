@@ -44,6 +44,10 @@ define([
             return this.mapView.getIcon(locationField.iconName, locationField.iconColor, locationField.markerColor);
         },
 
+        postInitialize: function(){
+            return this.getData();
+        },
+
         getData: function() {
             if(!this.hasRendered) {
                 return $.when();
