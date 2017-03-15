@@ -73,11 +73,15 @@ define([
                 href = urlManipulator.addSpecialUrlPrefix(this.model.get('contentType'), this.model.get('url'));
             }
 
+            var referenceKey = this.model.get('url') ? 'url' : 'reference';
+            var reference = this.model.get(referenceKey);
+
             this.$el.html(this.template({
                 i18n: i18n,
                 href: href,
                 mmap: this.mmapTab.supported(this.model.attributes),
-                viewHighlighting: this.highlighting
+                viewHighlighting: this.highlighting,
+                url: reference
             }));
 
             this.$highlightToggle = this.$('.preview-mode-highlight-query-terms');
@@ -86,21 +90,16 @@ define([
                 this.$highlightToggle.toggleClass('active', this.highlightingModel.get('highlighting'));
             }, this));
 
-            this.$('.preview-mode-document-title').text(this.model.get('title'));
 
-            var referenceKey = this.model.get('url') ? 'url' : 'reference';
+            this.$('.preview-mode-document-title').prepend(this.model.get('title'));
+            this.$('.preview-mode-document-database').text(databaseNameResolver.getDatabaseDisplayNameFromDocumentModel(this.indexesCollection, this.model));
+            this.$('.preview-mode-document-url').text(reference).toggleClass('hide', !reference);
+
             //noinspection JSUnresolvedFunction
             this.$('.preview-mode-metadata').html(this.metaDataTemplate({
                 i18n: i18n,
                 i18nIndexes: i18nIndexes,
                 model: this.model,
-                fields: [{
-                    key: 'index',
-                    value: databaseNameResolver.getDatabaseDisplayNameFromDocumentModel(this.indexesCollection, this.model)
-                }, {
-                    key: referenceKey,
-                    value: this.model.get(referenceKey)
-                }]
             }));
 
             var $preview = this.$('.preview-mode-document');

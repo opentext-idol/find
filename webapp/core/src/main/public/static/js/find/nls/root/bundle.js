@@ -135,6 +135,7 @@ define([
         'search.document.title': 'Title',
         'search.document.thumbnail': 'Thumbnail',
         'search.document.thumbnailUrl': 'Thumbnail URL',
+        'search.document.transcript': 'Transcript',
         'search.document.url': 'URL',
         'search.document.mmapUrl': 'MMAP URL',
         'search.document.weight': 'Weight',
