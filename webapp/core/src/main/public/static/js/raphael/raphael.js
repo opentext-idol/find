@@ -6026,17 +6026,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return mode && (mode === 9 || mode === 10);
 	    },
 	    fillurl = function (id) {
-	      if (isIE9or10()) {
-	          return "url('#" + id + "')";
-	      }
-	      var location = document.location;
-	      var locationString = (
-	          location.protocol + '//' +
-	          location.host +
-	          location.pathname +
-	          location.search
-	      );
-	      return "url('" + locationString + "#" + id + "')";
+            return "url('#" + id + "')";
 	    },
 	    updatePosition = function (o) {
 	        var bbox = o.getBBox(1);
