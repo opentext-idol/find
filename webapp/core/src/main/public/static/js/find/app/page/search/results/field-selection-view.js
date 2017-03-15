@@ -32,7 +32,7 @@ define([
         updateModel: function () {
             const fieldId = this.$select.val();
             this.model.set('field', fieldId);
-            this.model.set('displayName', _.findWhere(this.fields, {id: fieldId}).displayName);
+            this.model.set('displayName', fieldId ? _.findWhere(this.fields, {id: fieldId}).displayName : '');
         },
 
         render: function() {
