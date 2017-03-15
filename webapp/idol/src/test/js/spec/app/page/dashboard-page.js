@@ -187,6 +187,24 @@ define([
                     });
                 });
             });
+
+            describe('then the page is hidden', function() {
+                beforeEach(function() {
+                    this.dashboardPage.hide();
+                    jasmine.clock().tick(61000);
+                });
+
+                it('should not update the widgets again', function() {
+                    _.each(getUpdatingWidgets(this.dashboardPage), function(view) {
+                        expect(view.update.calls.count()).toEqual(1);
+                    });
+                });
+
+                it('should cancel the tracker', function() {
+                    expect(this.dashboardPage.updateTracker.get('cancelled')).toEqual(true);
+                    expect(this.dashboardPage.stopListening.calls.count()).toEqual(1);
+                });
+            });
         });
     });
 });

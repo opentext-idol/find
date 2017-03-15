@@ -48,10 +48,8 @@ define([
             }.bind(this));
 
             spyOn(vent, 'navigate');
-        });
 
-        it('holds a route to its underlying saved search', function() {
-            expect(this.widget.savedSearchRoute).toEqual('/search/tab/QUERY-or-SNAPSHOT:123');
+            this.tracker = jasmine.createSpyObj('mockTracker', ['increment']);
         });
 
         it('does not fetch any data before it is displayed', function() {
@@ -62,12 +60,12 @@ define([
         describe('when the page renders and updates the widget', function() {
             beforeEach(function() {
                 this.widget.render();
-                this.widget.update();
+                this.widget.update(this.tracker);
             });
 
             it('navigates to the saved search when clicked', function() {
                 this.widget.$content.click();
-                expect(vent.navigate).toHaveBeenCalledWith(this.widget.savedSearchRoute);
+                expect(vent.navigate).toHaveBeenCalledWith('/search/tab/QUERY-or-SNAPSHOT:123');
             });
 
             it('displays the widget\'s container without waiting for data to fetch', function() {
@@ -98,7 +96,7 @@ define([
 
                     describe('then the widget updates', function() {
                         beforeEach(function() {
-                            this.widget.doUpdate();
+                            this.widget.update(this.tracker);
                         });
 
                         it('fetches the saved search again', function() {
@@ -123,7 +121,7 @@ define([
 
                 describe('then the widget updates', function() {
                     beforeEach(function() {
-                        this.widget.doUpdate();
+                        this.widget.update(this.tracker);
                     });
 
                     it('fetches the saved search again', function() {

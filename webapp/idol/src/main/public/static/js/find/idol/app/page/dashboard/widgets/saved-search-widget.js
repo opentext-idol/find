@@ -29,7 +29,7 @@ define([
         // returns a promise, any future updates will be contingent on its resolution.
         postInitialize: _.noop,
 
-        // Called during every update (but not when the widget first loads)
+        // Called during every update (but not when the widget first loads). Must return a promise.
         getData: _.noop,
 
         initialize: function(options) {
@@ -51,19 +51,30 @@ define([
         // The argument callback hides the loading spinner -- every execution path that does not call it will
         // result in the loading spinner not disappearing after the update.
         doUpdate: function(done) {
+            const savedSearchPromise = this.savedSearchModel.fetch()
+                .done(function() {
+                    this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
+                }.bind(this));
+
+            let promise;
+
             if(this.initialiseWidgetPromise) {
-                $.when(this.savedSearchModel.fetch(), this.initialiseWidgetPromise)
-                    .done(function() {// TODO handle failure
-                        this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                        this.updatePromise = this.getData().done(done);// TODO handle failure
+                promise = $.when(savedSearchPromise, this.initialiseWidgetPromise)
+                    .then(function() {
+                        this.updatePromise = this.getData();// TODO handle failure
+                        return this.updatePromise;
                     }.bind(this));
             } else {
-                this.initialiseWidgetPromise = this.savedSearchModel.fetch()
+                promise = savedSearchPromise
                     .then(function() {// TODO handle failure
-                        this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                        return $.when(this.postInitialize()).done(done);// TODO handle failure
+                        // postInitialize may not return a promise
+                        return $.when(this.postInitialize());// TODO handle failure
                     }.bind(this));
+
+                this.initialiseWidgetPromise = promise;
             }
+
+            promise.done(done);
         },
 
         onClick: function() {

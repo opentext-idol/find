@@ -60,10 +60,6 @@ define([
 
             this.listenTo(vent, 'vent:resize', this.onResize);
             this.listenTo(this.sidebarModel, 'change:collapsed', this.onResize);
-
-            if(this.updateInterval) {
-                setInterval(this.update, this.updateInterval);
-            }
         },
 
         generateWidgetDiv: function(position) {
@@ -84,6 +80,27 @@ define([
                     widget.view.onResize();
                 });
             }
+        },
+
+        show: function() {
+            BasePage.prototype.show.call(this);
+
+            if(this.updateInterval) {
+                this.periodicUpdate = setInterval(this.update, this.updateInterval);
+            }
+        },
+
+        hide: function() {
+            if(this.updateTracker) {
+                this.updateTracker.set('cancelled', true);
+                this.stopListening(this.updateTracker);
+            }
+
+            if(this.periodicUpdate) {
+                clearInterval(this.periodicUpdate);
+            }
+
+            BasePage.prototype.hide.call(this);
         },
 
         update: function() {
