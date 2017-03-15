@@ -16,8 +16,8 @@ define([
     'find/idol/app/page/dashboard-page',
     'find/app/page/find-settings-page',
     'i18n!find/nls/bundle'
-], function(_, BaseApp, logout, configuration, IndexesCollection, SavedSnapshotCollection, Navigation, FindSearch, AboutPage,
-            DashboardPage, SettingsPage, i18n) {
+], function(_, BaseApp, logout, configuration, IndexesCollection, SavedSnapshotCollection, Navigation,
+            FindSearch, AboutPage, DashboardPage, SettingsPage, i18n) {
     'use strict';
 
     return BaseApp.extend({
@@ -99,9 +99,9 @@ define([
         },
 
         ajaxErrorHandler: function(event, xhr) {
-            if (xhr.status === 401) {
+            if(xhr.status === 401) {
                 logout('../logout');
-            } else if (xhr.status === 403) {
+            } else if(xhr.status === 403) {
                 // refresh the page - the filters should then redirect to the login screen
                 window.location.reload();
             }

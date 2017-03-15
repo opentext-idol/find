@@ -24,7 +24,12 @@ define([
 
     return UpdatingWidget.extend({
         clickable: true,
+
+        // Called once after the first saved search promise resolves. If it
+        // returns a promise, any future updates will be contingent on its resolution.
         postInitialize: _.noop,
+
+        // Called during every update (but not when the widget first loads). Must return a promise.
         getData: _.noop,
 
         initialize: function(options) {
@@ -40,21 +45,36 @@ define([
                 id: options.savedSearch.id,
                 type: options.savedSearch.type
             });
-
-            this.initialiseWidgetPromise = this.savedSearchModel.fetch()
-                .then(function() {// TODO handle failure
-                    this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                    return $.when(this.postInitialize());
-                }.bind(this));
         },
 
+        // Called by the widget's update() method, which in turn is called by the dashboard-page's update().
+        // The argument callback hides the loading spinner -- every execution path that does not call it will
+        // result in the loading spinner not disappearing after the update.
         doUpdate: function(done) {
-            $.when(this.savedSearchModel.fetch(), this.initialiseWidgetPromise)
-                .done(function() {// TODO handle failure
+            const savedSearchPromise = this.savedSearchModel.fetch()
+                .done(function() {
                     this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                    this.updatePromise = this.getData()
-                        .done(done);// TODO handle failure
                 }.bind(this));
+
+            let promise;
+
+            if(this.initialiseWidgetPromise) {
+                promise = $.when(savedSearchPromise, this.initialiseWidgetPromise)
+                    .then(function() {
+                        this.updatePromise = this.getData();// TODO handle failure
+                        return this.updatePromise;
+                    }.bind(this));
+            } else {
+                promise = savedSearchPromise
+                    .then(function() {// TODO handle failure
+                        // postInitialize may not return a promise
+                        return $.when(this.postInitialize());// TODO handle failure
+                    }.bind(this));
+
+                this.initialiseWidgetPromise = promise;
+            }
+
+            promise.done(done);
         },
 
         onClick: function() {

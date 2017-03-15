@@ -15,7 +15,7 @@ define([
 
     const TestUpdatingWidget = UpdatingWidget.extend(spies);
 
-    describe('Updating widget', function() {
+    describe('Updating Widget', function() {
         beforeEach(function() {
             this.widget = new TestUpdatingWidget({
                 name: 'Test Widget'

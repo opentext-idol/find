@@ -60,10 +60,6 @@ define([
 
             this.listenTo(vent, 'vent:resize', this.onResize);
             this.listenTo(this.sidebarModel, 'change:collapsed', this.onResize);
-
-            if(this.updateInterval) {
-                setInterval(this.update, this.updateInterval);
-            }
         },
 
         generateWidgetDiv: function(position) {
@@ -86,6 +82,27 @@ define([
             }
         },
 
+        show: function() {
+            BasePage.prototype.show.call(this);
+
+            if(this.updateInterval) {
+                this.periodicUpdate = setInterval(this.update, this.updateInterval);
+            }
+        },
+
+        hide: function() {
+            if(this.updateTracker) {
+                this.updateTracker.set('cancelled', true);
+                this.stopListening(this.updateTracker);
+            }
+
+            if(this.periodicUpdate) {
+                clearInterval(this.periodicUpdate);
+            }
+
+            BasePage.prototype.hide.call(this);
+        },
+
         update: function() {
             if(this.isVisible()) {
                 // cancel pending update
@@ -94,10 +111,7 @@ define([
                     this.stopListening(this.updateTracker);
                 }
 
-                // set up tracker
-                this.updateTracker = new UpdateTrackerModel();
-
-                // update views
+                // find updating views
                 const updatingViews = _.chain(this.widgetViews)
                     .pluck('view')
                     .filter(function(view) {
@@ -108,8 +122,11 @@ define([
                     .value();
 
                 // don't set up this listener if no work to do
-                if(updatingViews.length > 0) {
-                    this.updateTracker.set('total', updatingViews.length);
+                const total = updatingViews.length;
+
+                if(total > 0) {
+                    // set up tracker
+                    this.updateTracker = new UpdateTrackerModel({total: total});
 
                     _.each(updatingViews, function(view) {
                         view.update(this.updateTracker)
@@ -117,7 +134,7 @@ define([
 
                     // handle completion
                     this.listenTo(this.updateTracker, 'change:count', function(model, count) {
-                        if(count === updatingViews.length) {
+                        if(count === total) {
                             // publish completion
                             this.updateTracker.set('complete', true);
                             this.stopListening(this.updateTracker);
