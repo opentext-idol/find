@@ -217,6 +217,7 @@
       "advanced": true
     },
     "thumbnail": {
+      "advanced": true,
       "names": [
         "PREVIEW_THUMBNAIL_BASE64"
       ]
