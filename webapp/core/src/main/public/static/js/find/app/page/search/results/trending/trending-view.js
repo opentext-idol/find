@@ -6,6 +6,7 @@ define([
     'i18n!find/nls/bundle',
     'find/app/util/generate-error-support-message',
     'find/app/page/search/results/parametric-results-view',
+    'find/app/page/search/filters/parametric/calibrate-buckets',
     'find/app/model/bucketed-parametric-collection',
     'find/app/model/parametric-field-details-model',
     'find/app/model/parametric-collection',
@@ -14,24 +15,27 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/templates/app/page/search/results/trending/trending-results-view.html',
     'find/app/vent'
-], function (Backbone, _, $, d3, i18n, generateErrorHtml, ParametricResultsView, BucketedParametricCollection,
+], function (Backbone, _, $, d3, i18n, generateErrorHtml, ParametricResultsView, calibrateBuckets, BucketedParametricCollection,
              ParametricDetailsModel, ParametricCollection, Trending, toFieldTextNode, loadingSpinnerHtml, template, vent) {
     'use strict';
 
     const MILLISECONDS_TO_SECONDS = 1000;
+    const DEBOUNCE_TIME = 500;
 
     return Backbone.View.extend({
         template: _.template(template),
         loadingHtml: _.template(loadingSpinnerHtml),
         dateField: 'AUTN_DATE',
-        fieldName: '/DOCUMENT/PERSON',
-        targetNumberOfBuckets: 10,
+        fieldName: '/DOCUMENT/CATEGORY',
+        targetNumberOfBuckets: 20,
         numberOfParametricValuesToShow: 10,
 
         initialize: function(options) {
             this.trendingFieldsCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
+            this.model = new Backbone.Model();
+            this.debouncedFetchBucketingData = _.debounce(this.fetchBucketingData, DEBOUNCE_TIME);
 
             this.bucketedValues = {};
 
@@ -44,7 +48,6 @@ define([
 
             this.listenTo(vent, 'vent:resize', function() {
                 if(this.trendingChart && this.$el.is(':visible')) {
-                    this.removeChart();
                     this.renderChart();
                 }
             });
@@ -101,6 +104,8 @@ define([
                     databases: this.queryModel.get('indexes')
                 },
                 success: _.bind(function () {
+                    this.model.set('currentMin', this.parametricDetailsModel.get('min'));
+                    this.model.set('currentMax', this.parametricDetailsModel.get('max'));
                     this.fetchBucketingData();
                 }, this)
             });
@@ -111,7 +116,7 @@ define([
 
             _.each(_.first(this.selectedField[0].get('values'), this.numberOfParametricValuesToShow), function(value) {
                 this.bucketedValues[value.value] = new BucketedParametricCollection.Model({
-                    id: 'AUTN_DATE',
+                    id: this.dateField,
                     valueName: value.value
                 });
             }, this);
@@ -127,8 +132,8 @@ define([
                         minScore: this.queryModel.get('minScore'),
                         databases: this.queryModel.get('indexes'),
                         targetNumberOfBuckets: this.targetNumberOfBuckets,
-                        bucketMin: this.parametricDetailsModel.get('min'),
-                        bucketMax: this.parametricDetailsModel.get('max')
+                        bucketMin: this.model.get('currentMin'),
+                        bucketMax: this.model.get('currentMax')
                     }
                 });
             }, this)).done(_.bind(function() {
@@ -145,7 +150,7 @@ define([
                 });
             }
 
-            const data = [];
+            let data = [];
             const names = [];
 
             _.each(this.bucketedValues, function (model) {
@@ -159,15 +164,28 @@ define([
                 });
             });
 
+            data = this.adjustBuckets(data, this.model.get('currentMin'), this.model.get('currentMax'));
+
+            const zoomCallback = function (min, max) {
+                this.model.set({
+                    currentMin: Math.floor(min),
+                    currentMax: Math.floor(max)
+                });
+                this.renderChart();
+                this.debouncedFetchBucketingData();
+            }.bind(this);
+
+            this.removeChart();
             this.trendingChart.draw({
                 data: data,
                 names: names,
-                minDate: new Date(this.parametricDetailsModel.get('min') * MILLISECONDS_TO_SECONDS),
-                maxDate: new Date(this.parametricDetailsModel.get('max') * MILLISECONDS_TO_SECONDS),
+                minDate: this.model.get('currentMin'),
+                maxDate: this.model.get('currentMax'),
                 containerWidth: this.$('#trending-chart').width(),
                 containerHeight: this.$('#trending-chart').height(),
                 xAxisLabel: i18n['search.resultsView.trending.xAxis'],
-                yAxisLabel: i18n['search.resultsView.trending.yAxis']
+                yAxisLabel: i18n['search.resultsView.trending.yAxis'],
+                zoomCallback: zoomCallback
             });
         },
 
@@ -178,6 +196,15 @@ define([
         getFieldText() {
             return this.selectedParametricValues.map(function (model) {
                 return model.toJSON();
+            });
+        },
+
+        adjustBuckets(values, min, max) {
+            return _.map(values, function(value) {
+                return _.filter(value, function(point) {
+                    const date = new Date(point[0]).getTime()/MILLISECONDS_TO_SECONDS;
+                    return date >= min && date <= max;
+                });
             });
         }
     });

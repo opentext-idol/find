@@ -2,8 +2,9 @@ define([
     'backbone',
     'underscore',
     'jquery',
-    'd3'
-], function (Backbone, _, $, d3) {
+    'd3',
+    'find/app/util/widget-zoom'
+], function (Backbone, _, $, d3, widgetZoom) {
     'use strict';
 
     const CHART_PADDING = 50;
@@ -15,13 +16,14 @@ define([
     const LEGEND_TEXT_WIDTH = 100;
     const LEGEND_TEXT_HEIGHT = 12;
     const LEGEND_PADDING = 5;
+    const MILLISECONDS_TO_SECONDS = 1000;
 
 
     return function Trending(options) {
         const getContainerCallback = options.getContainerCallback;
 
         return {
-            draw: function (options) {
+            draw: function(options) {
                 const data = options.data;
                 const names = options.names;
                 const minDate = options.minDate;
@@ -48,8 +50,17 @@ define([
                     .domain([minValue, maxValue])
                     .range([chartHeight - CHART_PADDING, CHART_PADDING]);
 
+                let xMin, xMax;
+                if (data[data.length - 1][data[0].length - 1][0].getTime()/MILLISECONDS_TO_SECONDS === maxDate) { // Not zooming
+                    xMin = data[0][0][0];
+                    xMax = data[data.length - 1][data[0].length - 1][0];
+                } else {
+                    xMin = new Date(minDate * MILLISECONDS_TO_SECONDS);
+                    xMax = new Date(maxDate * MILLISECONDS_TO_SECONDS);
+                }
+
                 const xScale = d3.time.scale()
-                    .domain([minDate, maxDate])
+                    .domain([xMin, xMax])
                     .range([CHART_PADDING, chartWidth - CHART_PADDING]);
 
                 const yAxisScale = d3.svg.axis()
@@ -288,7 +299,7 @@ define([
                     .data(getYPositionOfLegendLabel())
                     .enter()
                     .append('g')
-                    .each(function (d, i) {
+                    .each(function (d) {
                         const g = d3.select(this)
                             .attr('data-name', names[d.index])
                             .attr('class', 'color' + (d.index % NUMBER_OF_COLORS));
@@ -323,6 +334,15 @@ define([
                                 legendMouseout(names[d.index]);
                             });
                     });
+
+                widgetZoom.addZoomBehaviour({
+                    chart: svg,
+                    xScale: xScale,
+                    scaleType: 'date',
+                    minValue: minDate,
+                    maxValue: maxDate,
+                    callback: options.zoomCallback
+                });
             }
         }
 
