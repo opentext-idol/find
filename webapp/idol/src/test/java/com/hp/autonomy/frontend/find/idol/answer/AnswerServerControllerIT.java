@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.idol.answer;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
@@ -13,7 +18,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AnswerServerControllerIT extends AbstractFindIT {
     @Test
     public void ask() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(AnswerServerController.BASE_PATH + '/' + AnswerServerController.ASK_PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = get(
+                AnswerServerController.BASE_PATH +
+                        '/' + AnswerServerController.ASK_PATH + '/')
                 .param(AnswerServerController.TEXT_PARAM, "GPU")
                 .param(AnswerServerController.MAX_RESULTS_PARAM, "5")
                 .contentType(MediaType.APPLICATION_JSON)
