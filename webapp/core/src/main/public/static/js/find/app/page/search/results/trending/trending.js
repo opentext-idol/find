@@ -3,8 +3,9 @@ define([
     'underscore',
     'jquery',
     'd3',
-    'find/app/util/widget-zoom'
-], function (Backbone, _, $, d3, widgetZoom) {
+    'find/app/util/widget-zoom',
+    'find/app/util/widget-drag'
+], function (Backbone, _, $, d3, widgetZoom, widgetDrag) {
     'use strict';
 
     const CHART_PADDING = 50;
@@ -342,6 +343,16 @@ define([
                     minValue: minDate,
                     maxValue: maxDate,
                     callback: options.zoomCallback
+                });
+
+                widgetDrag.addDragBehaviour({
+                    chart: svg,
+                    xScale: xScale,
+                    scaleType: 'date',
+                    min: minDate,
+                    max: maxDate,
+                    dragMoveCallback: options.dragMoveCallback,
+                    dragEndCallback: options.dragEndCallback
                 });
             }
         }

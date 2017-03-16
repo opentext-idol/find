@@ -167,11 +167,18 @@ define([
             data = this.adjustBuckets(data, this.model.get('currentMin'), this.model.get('currentMax'));
 
             const zoomCallback = function (min, max) {
-                this.model.set({
-                    currentMin: Math.floor(min),
-                    currentMax: Math.floor(max)
-                });
+                this.setMinMax(min, max);
                 this.renderChart();
+                this.debouncedFetchBucketingData();
+            }.bind(this);
+
+            const dragMoveCallback = function(min, max) {
+                this.setMinMax(min, max);
+                this.renderChart();
+            }.bind(this);
+
+            const dragEndCallback = function(min, max) {
+                this.setMinMax(min, max);
                 this.debouncedFetchBucketingData();
             }.bind(this);
 
@@ -185,7 +192,9 @@ define([
                 containerHeight: this.$('#trending-chart').height(),
                 xAxisLabel: i18n['search.resultsView.trending.xAxis'],
                 yAxisLabel: i18n['search.resultsView.trending.yAxis'],
-                zoomCallback: zoomCallback
+                zoomCallback: zoomCallback,
+                dragMoveCallback: dragMoveCallback,
+                dragEndCallback: dragEndCallback
             });
         },
 
@@ -205,6 +214,13 @@ define([
                     const date = new Date(point[0]).getTime()/MILLISECONDS_TO_SECONDS;
                     return date >= min && date <= max;
                 });
+            });
+        },
+
+        setMinMax(min, max) {
+            this.model.set({
+                currentMin: Math.floor(min),
+                currentMax: Math.floor(max)
             });
         }
     });
