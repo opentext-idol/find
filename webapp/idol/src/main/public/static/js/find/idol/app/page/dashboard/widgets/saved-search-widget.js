@@ -36,14 +36,14 @@ define([
             UpdatingWidget.prototype.initialize.apply(this, arguments);
 
             this.savedSearchRoute = '/search/tab/' +
-                options.savedSearch.type +
+                options.datasource.config.type +
                 ':' +
-                options.savedSearch.id +
+                options.datasource.config.id +
                 (this.viewType ? '/view/' + this.viewType : '');
 
             this.savedSearchModel = new DashboardSearchModel({
-                id: options.savedSearch.id,
-                type: options.savedSearch.type
+                id: options.datasource.config.id,
+                type: options.datasource.config.type
             });
         },
 

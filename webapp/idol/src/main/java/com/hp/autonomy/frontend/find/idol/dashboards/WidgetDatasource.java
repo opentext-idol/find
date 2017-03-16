@@ -12,19 +12,25 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Map;
+
 @Data
 @Builder(toBuilder = true)
 @EqualsAndHashCode(callSuper = false)
-@JsonDeserialize(builder = WidgetSearchId.WidgetSearchIdBuilder.class)
-public class WidgetSearchId extends SimpleComponent<WidgetSearchId> {
-    private final long id;
-    private final Type type;
-    public enum Type {
-        QUERY,
-        SNAPSHOT
+@JsonDeserialize(builder = WidgetDatasource.WidgetDatasourceBuilder.class)
+public class WidgetDatasource extends SimpleComponent<WidgetDatasource> {
+    private final Source source;
+    private final Map<String, Object> config;
+
+    public enum Source {
+        savedsearch
+    }
+
+    public Object getConfigValue(final WidgetDatasourceConfigKey key) {
+        return config.get(key.getValue());
     }
 
     @SuppressWarnings("WeakerAccess")
     @JsonPOJOBuilder(withPrefix = "")
-    public static class WidgetSearchIdBuilder {}
+    public static class WidgetDatasourceBuilder {}
 }

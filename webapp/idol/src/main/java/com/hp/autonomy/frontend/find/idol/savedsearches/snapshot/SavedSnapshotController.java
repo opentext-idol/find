@@ -8,7 +8,8 @@ import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
-import com.hp.autonomy.frontend.find.idol.dashboards.WidgetSearchId;
+import com.hp.autonomy.frontend.find.idol.dashboards.WidgetDatasource;
+import com.hp.autonomy.frontend.find.idol.dashboards.WidgetDatasourceConfigKey;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
@@ -37,12 +38,13 @@ class SavedSnapshotController {
     static final String PATH = "/api/bi/saved-snapshot";
 
     private static final Integer STATE_TOKEN_MAX_RESULTS = Integer.MAX_VALUE;
+    private static final String SNAPSHOT = "SNAPSHOT";
 
     private final IdolDocumentsService documentsService;
     private final SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> service;
     private final FieldTextParser fieldTextParser;
     private final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
-    private final Set<Long> validIds;
+    private final Set<Integer> validIds;
 
     @Autowired
     public SavedSnapshotController(final IdolDocumentsService documentsService,
@@ -56,8 +58,10 @@ class SavedSnapshotController {
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
         validIds = dashConfig.getConfig().getDashboards().stream()
                 .flatMap(dashboard -> dashboard.getWidgets().stream()
-                        .filter(widget -> widget.getSavedSearch() != null && widget.getSavedSearch().getType() == WidgetSearchId.Type.SNAPSHOT)
-                        .map(widget -> widget.getSavedSearch().getId()))
+                        .filter(widget -> widget.getDatasource() != null &&
+                                widget.getDatasource().getSource() == WidgetDatasource.Source.savedsearch &&
+                                SNAPSHOT.equals(widget.getDatasource().getConfigValue(WidgetDatasourceConfigKey.TYPE)))
+                        .map(widget -> (int) widget.getDatasource().getConfigValue(WidgetDatasourceConfigKey.ID)))
                 .collect(Collectors.toSet());
     }
 
@@ -138,7 +142,7 @@ class SavedSnapshotController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
-    public SavedSnapshot get(@PathVariable("id") final long id) {
+    public SavedSnapshot get(@PathVariable("id") final int id) {
         if (validIds.contains(id)) {
             return service.getDashboardSearch(id);
         } else {

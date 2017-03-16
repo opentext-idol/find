@@ -14,7 +14,8 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
 import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
-import com.hp.autonomy.frontend.find.idol.dashboards.WidgetSearchId;
+import com.hp.autonomy.frontend.find.idol.dashboards.WidgetDatasource;
+import com.hp.autonomy.frontend.find.idol.dashboards.WidgetDatasourceConfigKey;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
@@ -37,7 +38,8 @@ import java.util.stream.Collectors;
 @RestController
 @ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
 class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
-    private final Set<Long> validIds;
+    private static final String QUERY = "QUERY";
+    private final Set<Integer> validIds;
 
     @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
@@ -51,8 +53,10 @@ class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, St
 
         validIds = dashConfig.getConfig().getDashboards().stream()
                 .flatMap(dashboard -> dashboard.getWidgets().stream()
-                        .filter(widget -> widget.getSavedSearch() != null && widget.getSavedSearch().getType() == WidgetSearchId.Type.QUERY)
-                        .map(widget -> widget.getSavedSearch().getId()))
+                        .filter(widget -> widget.getDatasource() != null &&
+                                widget.getDatasource().getSource() == WidgetDatasource.Source.savedsearch &&
+                                QUERY.equals(widget.getDatasource().getConfigValue(WidgetDatasourceConfigKey.TYPE)))
+                        .map(widget -> (int) widget.getDatasource().getConfigValue(WidgetDatasourceConfigKey.ID)))
                 .collect(Collectors.toSet());
     }
 
@@ -67,7 +71,7 @@ class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, St
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
-    public SavedQuery get(@PathVariable("id") final long id) {
+    public SavedQuery get(@PathVariable("id") final int id) {
         if(validIds.contains(id)) {
             return service.getDashboardSearch(id);
         } else {

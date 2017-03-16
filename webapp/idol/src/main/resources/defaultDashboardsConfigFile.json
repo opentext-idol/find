@@ -14,9 +14,12 @@
           "y": 0,
           "width": 1,
           "height": 1,
-          "savedSearch": {
-            "id": 123,
-            "type": "QUERY"
+          "datasource": {
+            "source": "savedsearch",
+            "config": {
+              "id": 123,
+              "type": "QUERY"
+            }
           },
           "widgetSettings": {
             "html": "Hello World!"

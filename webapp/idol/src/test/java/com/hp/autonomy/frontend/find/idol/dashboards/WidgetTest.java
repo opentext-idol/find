@@ -11,6 +11,8 @@ import org.springframework.boot.test.json.JsonContent;
 import org.springframework.boot.test.json.ObjectContent;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,7 +33,7 @@ public class WidgetTest extends ConfigurationComponentTest<Widget> {
                 .y(1)
                 .width(1)
                 .height(1)
-                .savedSearch(new WidgetSearchId(123L, WidgetSearchId.Type.QUERY))
+                .datasource(new WidgetDatasource(WidgetDatasource.Source.savedsearch, getConfig()))
                 .widgetSetting("content", "Hello World!")
                 .build();
     }
@@ -52,8 +54,8 @@ public class WidgetTest extends ConfigurationComponentTest<Widget> {
                 .hasJsonPathNumberValue("$.y", 1)
                 .hasJsonPathNumberValue("$.width", 1)
                 .hasJsonPathNumberValue("$.height", 1)
-                .hasJsonPathNumberValue("$.savedSearch.id", 123)
-                .hasJsonPathStringValue("$.savedSearch.type", "QUERY")
+                .hasJsonPathNumberValue("$.datasource.config.id", 123)
+                .hasJsonPathStringValue("$.datasource.config.type", "QUERY")
                 .hasJsonPathStringValue("$.widgetSettings.content", "Hello World!");
     }
 
@@ -81,7 +83,7 @@ public class WidgetTest extends ConfigurationComponentTest<Widget> {
                         .y(1)
                         .width(1)
                         .height(1)
-                        .savedSearch(new WidgetSearchId(123L, WidgetSearchId.Type.QUERY))
+                        .datasource(new WidgetDatasource(WidgetDatasource.Source.savedsearch, getConfig()))
                         .widgetSetting("content", "Hello World!")
                         .build()
         );
@@ -90,5 +92,12 @@ public class WidgetTest extends ConfigurationComponentTest<Widget> {
     @Override
     protected void validateString(final String s) {
         assertThat(s, containsString("name"));
+    }
+
+    private Map<String, Object> getConfig() {
+        final Map<String, Object> config = new HashMap<>();
+        config.put(WidgetDatasourceConfigKey.ID.getValue(), 123);
+        config.put(WidgetDatasourceConfigKey.TYPE.getValue(), "QUERY");
+        return config;
     }
 }
