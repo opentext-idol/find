@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -43,7 +43,12 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "/clean-database.sql")
 public abstract class AbstractFindIT {
-    private static final String TEST_DIR = "./target/test";
+    protected static final String TEST_DIR = "./target/test";
+    @Autowired
+    protected WebApplicationContext wac;
+    @Autowired
+    protected MvcIntegrationTestUtils mvcIntegrationTestUtils;
+    protected MockMvc mockMvc;
 
     @BeforeClass
     public static void init() throws IOException {
@@ -56,14 +61,6 @@ public abstract class AbstractFindIT {
     public static void destroy() throws IOException {
         FileUtils.forceDelete(new File(TEST_DIR));
     }
-
-    @Autowired
-    protected WebApplicationContext wac;
-
-    @Autowired
-    protected MvcIntegrationTestUtils mvcIntegrationTestUtils;
-
-    protected MockMvc mockMvc;
 
     @Before
     public void setUp() {

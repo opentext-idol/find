@@ -57,6 +57,7 @@ define([
         'dashboards.widget.sunburst.noResults': 'The query did not match any documents',
         'dashboards.widget.sunburst.legend.hiddenValues': 'Other',
         'dashboards.widget.sunburst.legend.noValues': 'No values to display',
+        'dashboards.reloadConfiguration': 'Reload configuration',
         'datepicker.language': 'en',
         'default.title': 'Page Unavailable',
         'default.message': "We can't find the page you requested.",
