@@ -9,10 +9,10 @@
     <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 
     <appender name="FileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/logs/server.log</file>
+        <file>${LOG_PATH}/server.log</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/logs/server.%d{yyyy-MM-dd}.log</fileNamePattern>  <!-- daily rollover -->
+            <fileNamePattern>${LOG_PATH}/server.%d{yyyy-MM-dd}.log</fileNamePattern>  <!-- daily rollover -->
             <maxHistory>10</maxHistory> <!-- keep 10 days worth of history -->
         </rollingPolicy>
 
@@ -22,9 +22,9 @@
     </appender>
 
     <appender name="AuditFileAppender"  class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/logs/find.log</file>
+        <file>${LOG_PATH}/find.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/logs/find.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${LOG_PATH}/find.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>30</maxHistory>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>104857600</maxFileSize>
@@ -39,9 +39,9 @@
     </appender>
 
     <appender name="IdolFileAppender"  class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/logs/idol-access.log</file>
+        <file>${LOG_PATH}/idol-access.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/logs/idol-access.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${LOG_PATH}/idol-access.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>30</maxHistory>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>104857600</maxFileSize>
