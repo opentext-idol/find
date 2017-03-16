@@ -8,7 +8,7 @@
 <% }); %>
 
 <% _.each(model.get('fields'), function(field) { %>
-    <% if (field.displayName) { %>
+    <% if (!field.advanced) { %>
         <tr>
             <th class="font-bold"><%-field.displayName%></th>
             <td class="break-all">
