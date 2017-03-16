@@ -65,6 +65,11 @@ define([
         exportPPTData: function(){
             var paths = this.topicMap.exportPaths();
 
+            paths.forEach(function(polygons, idx){
+                var depthFromLeaf = paths.length - 1 - idx;
+                polygons.forEach(function(path){ path.level = depthFromLeaf })
+            })
+
             return paths ? {
                 paths: _.flatten(paths.slice(1).reverse())
             } : null
