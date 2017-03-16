@@ -16,7 +16,13 @@ define([
         beforeEach(function() {
             this.widget = new SavedSearchWidget({
                 name: 'Test Widget',
-                savedSearch: {type: 'QUERY-or-SNAPSHOT', id: 123}
+                datasource: {
+                    source: "savedsearch",
+                    config: {
+                        type: 'QUERY-or-SNAPSHOT',
+                        id: 123
+                    }
+                }
             });
 
             this.savedSearchPromises = [];
