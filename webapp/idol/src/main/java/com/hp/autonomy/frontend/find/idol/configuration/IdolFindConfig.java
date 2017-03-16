@@ -62,6 +62,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final StatsServerConfig statsServer;
     private final Integer topicMapMaxResults;
 
+    @JsonIgnore
     private volatile Map<String, Map<Integer, String>> productMap;
 
     @Override
