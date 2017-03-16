@@ -18,31 +18,31 @@ define([
     'use strict';
 
     const registry = {
-        staticContentWidget: {
+        StaticContentWidget: {
             Constructor: StaticContentWidget
         },
-        staticImageWidget: {
+        StaticImageWidget: {
             Constructor: StaticImageWidget
         },
-        mapWidget: {
+        MapWidget: {
             Constructor: MapWidget
         },
-        sunburstWidget: {
+        SunburstWidget: {
             Constructor: SunburstWidget
         },
-        topicMapWidget: {
+        TopicMapWidget: {
             Constructor: TopicMapWidget
         },
-        timeLastRefreshedWidget: {
+        TimeLastRefreshedWidget: {
             Constructor: TimeLastRefreshedWidget
         },
-        currentTimeWidget: {
+        CurrentTimeWidget: {
             Constructor: CurrentTime
         },
-        resultsListWidget: {
+        ResultsListWidget: {
             Constructor: ResultsListWidget
         },
-        videoWidget: {
+        VideoWidget: {
             Constructor: VideoWidget
         }
     };

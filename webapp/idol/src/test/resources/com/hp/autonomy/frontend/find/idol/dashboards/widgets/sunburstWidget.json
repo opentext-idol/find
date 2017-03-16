@@ -1,0 +1,20 @@
+{
+  "name": "star 769 (content type/author) 7 entries",
+  "type": "SunburstWidget",
+  "x": 0,
+  "y": 4,
+  "width": 5,
+  "height": 2,
+  "datasource": {
+    "source": "SavedSearch",
+    "config": {
+      "id": 769,
+      "type": "QUERY"
+    }
+  },
+  "widgetSettings": {
+    "firstField": "/DOCUMENT/CONTENT-TYPE",
+    "secondField": "/DOCUMENT/AUTHOR",
+    "maxLegendEntries": 7
+  }
+}

@@ -11,11 +11,11 @@ import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
+import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
 import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
-import com.hp.autonomy.frontend.find.idol.dashboards.WidgetDatasource;
-import com.hp.autonomy.frontend.find.idol.dashboards.WidgetDatasourceConfigKey;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchDatasource;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
@@ -38,25 +38,24 @@ import java.util.stream.Collectors;
 @RestController
 @ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
 class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
-    private static final String QUERY = "QUERY";
-    private final Set<Integer> validIds;
+    private final Set<Long> validIds;
 
-    @SuppressWarnings("TypeMayBeWeakened")
+    @SuppressWarnings({"TypeMayBeWeakened", "ConstructorWithTooManyParameters"})
     @Autowired
     public IdolSavedQueryController(final SavedSearchService<SavedQuery, SavedQuery.Builder> service,
                                     final IdolDocumentsService documentsService,
                                     final FieldTextParser fieldTextParser,
                                     final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
                                     final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory,
-                                    final ConfigService<IdolDashboardConfig> dashConfig) {
+                                    final ConfigService<IdolDashboardConfig> dashboardConfigService) {
         super(service, documentsService, fieldTextParser, queryRestrictionsBuilderFactory, queryRequestBuilderFactory);
 
-        validIds = dashConfig.getConfig().getDashboards().stream()
+        validIds = dashboardConfigService.getConfig().getDashboards().stream()
                 .flatMap(dashboard -> dashboard.getWidgets().stream()
-                        .filter(widget -> widget.getDatasource() != null &&
-                                widget.getDatasource().getSource() == WidgetDatasource.Source.savedsearch &&
-                                QUERY.equals(widget.getDatasource().getConfigValue(WidgetDatasourceConfigKey.TYPE)))
-                        .map(widget -> (int) widget.getDatasource().getConfigValue(WidgetDatasourceConfigKey.ID)))
+                        .filter(widget -> widget.getDatasource() instanceof SavedSearchDatasource)
+                        .map(widget -> (SavedSearchDatasource) widget.getDatasource())
+                        .filter(datasource -> datasource.getConfig().getType() == SavedSearchType.QUERY)
+                        .map(datasource -> datasource.getConfig().getId()))
                 .collect(Collectors.toSet());
     }
 
@@ -71,8 +70,8 @@ class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, St
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
-    public SavedQuery get(@PathVariable("id") final int id) {
-        if(validIds.contains(id)) {
+    public SavedQuery get(@PathVariable("id") final long id) {
+        if (validIds.contains(id)) {
             return service.getDashboardSearch(id);
         } else {
             throw new IllegalArgumentException("Saved Search Id is not in the dashboards configuration file");
