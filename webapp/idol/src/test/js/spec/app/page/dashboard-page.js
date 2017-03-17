@@ -30,21 +30,21 @@ define([
                 "updateInterval": 60,
                 "widgets": [{
                     "name": "Not Updating Widget",
-                    "type": "widget",
+                    "type": "Widget",
                     "x": 0,
                     "y": 0,
                     "width": 1,
                     "height": 1
                 }, {
                     "name": "Updating Widget 1",
-                    "type": "updatingWidget",
+                    "type": "UpdatingWidget",
                     "x": 1,
                     "y": 0,
                     "width": 1,
                     "height": 1
                 }, {
                     "name": "Updating Widget 2",
-                    "type": "updatingWidget",
+                    "type": "UpdatingWidget",
                     "x": 2,
                     "y": 0,
                     "width": 1,

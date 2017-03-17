@@ -5,10 +5,19 @@
 
 package com.hp.autonomy.frontend.find.idol.dashboards;
 
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.configuration.BaseConfigFileService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.TagNameSerializer;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.Widget;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.WidgetMixins;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasourceMixins;
+import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +26,13 @@ import java.nio.file.Paths;
 
 @Service
 public class IdolDashboardConfigService extends BaseConfigFileService<IdolDashboardConfig> {
-    public IdolDashboardConfigService() {
+    @Autowired
+    public IdolDashboardConfigService(final JsonDeserializer<TagName> tagNameDeserializer) {
         final ObjectMapper objectMapper = new Jackson2ObjectMapperBuilder()
+                .mixIn(Widget.class, WidgetMixins.class)
+                .mixIn(WidgetDatasource.class, WidgetDatasourceMixins.class)
+                .deserializersByType(ImmutableMap.of(TagName.class, tagNameDeserializer))
+                .serializersByType(ImmutableMap.of(TagName.class, new TagNameSerializer()))
                 .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
                 .createXmlMapper(false)
                 .build();
@@ -69,8 +83,10 @@ public class IdolDashboardConfigService extends BaseConfigFileService<IdolDashbo
     }
 
     @Override
-    public void postInitialise(final IdolDashboardConfig config) {}
+    public void postInitialise(final IdolDashboardConfig config) {
+    }
 
     @Override
-    public void postUpdate(final IdolDashboardConfig idolDashboardConfig) {}
+    public void postUpdate(final IdolDashboardConfig idolDashboardConfig) {
+    }
 }

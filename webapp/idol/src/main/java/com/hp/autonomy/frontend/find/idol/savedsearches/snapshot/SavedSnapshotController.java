@@ -6,10 +6,10 @@ import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
+import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
-import com.hp.autonomy.frontend.find.idol.dashboards.WidgetDatasource;
-import com.hp.autonomy.frontend.find.idol.dashboards.WidgetDatasourceConfigKey;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchDatasource;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
@@ -38,30 +38,30 @@ class SavedSnapshotController {
     static final String PATH = "/api/bi/saved-snapshot";
 
     private static final Integer STATE_TOKEN_MAX_RESULTS = Integer.MAX_VALUE;
-    private static final String SNAPSHOT = "SNAPSHOT";
 
     private final IdolDocumentsService documentsService;
     private final SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> service;
     private final FieldTextParser fieldTextParser;
     private final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
-    private final Set<Integer> validIds;
+    private final Set<Long> validIds;
 
+    @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
     public SavedSnapshotController(final IdolDocumentsService documentsService,
                                    final SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> service,
                                    final FieldTextParser fieldTextParser,
                                    final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
-                                   final ConfigService<IdolDashboardConfig> dashConfig) {
+                                   final ConfigService<IdolDashboardConfig> dashboardConfigService) {
         this.documentsService = documentsService;
         this.service = service;
         this.fieldTextParser = fieldTextParser;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
-        validIds = dashConfig.getConfig().getDashboards().stream()
+        validIds = dashboardConfigService.getConfig().getDashboards().stream()
                 .flatMap(dashboard -> dashboard.getWidgets().stream()
-                        .filter(widget -> widget.getDatasource() != null &&
-                                widget.getDatasource().getSource() == WidgetDatasource.Source.savedsearch &&
-                                SNAPSHOT.equals(widget.getDatasource().getConfigValue(WidgetDatasourceConfigKey.TYPE)))
-                        .map(widget -> (int) widget.getDatasource().getConfigValue(WidgetDatasourceConfigKey.ID)))
+                        .filter(widget -> widget.getDatasource() instanceof SavedSearchDatasource)
+                        .map(widget -> (SavedSearchDatasource) widget.getDatasource())
+                        .filter(datasource -> datasource.getConfig().getType() == SavedSearchType.SNAPSHOT)
+                        .map(datasource -> datasource.getConfig().getId()))
                 .collect(Collectors.toSet());
     }
 
@@ -142,7 +142,7 @@ class SavedSnapshotController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
-    public SavedSnapshot get(@PathVariable("id") final int id) {
+    public SavedSnapshot get(@PathVariable("id") final long id) {
         if (validIds.contains(id)) {
             return service.getDashboardSearch(id);
         } else {

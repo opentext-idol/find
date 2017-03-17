@@ -9,13 +9,13 @@
       "widgets": [
         {
           "name": "Sample Widget",
-          "type": "staticContentWidget",
+          "type": "StaticContentWidget",
           "x": 0,
           "y": 0,
           "width": 1,
           "height": 1,
           "datasource": {
-            "source": "savedsearch",
+            "source": "SavedSearch",
             "config": {
               "id": 123,
               "type": "QUERY"

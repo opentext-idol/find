@@ -17,7 +17,7 @@ define([
             this.widget = new SavedSearchWidget({
                 name: 'Test Widget',
                 datasource: {
-                    source: "savedsearch",
+                    source: "SavedSearch",
                     config: {
                         type: 'QUERY-or-SNAPSHOT',
                         id: 123

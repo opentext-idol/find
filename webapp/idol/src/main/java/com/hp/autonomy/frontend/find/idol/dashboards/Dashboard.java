@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.SimpleComponent;
 import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.Widget;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,7 +30,7 @@ public class Dashboard extends SimpleComponent<Dashboard> implements OptionalCon
     private final Integer updateInterval;
 
     @Singular
-    private final Collection<Widget> widgets;
+    private final Collection<Widget<?, ?>> widgets;
 
     @SuppressWarnings("WeakerAccess")
     @JsonPOJOBuilder(withPrefix = "")

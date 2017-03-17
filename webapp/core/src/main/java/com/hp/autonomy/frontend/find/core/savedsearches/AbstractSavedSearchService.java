@@ -9,6 +9,8 @@ import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
 import org.springframework.data.domain.AuditorAware;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -84,19 +86,22 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
 
     private T augmentOutputWithDisplayNames(final T result) {
         return result.toBuilder()
-                .setParametricValues(result.getParametricValues()
-                        .stream()
-                        .map(parametricValue -> parametricValue.toBuilder()
-                                .displayName(tagNameFactory.buildTagName(parametricValue.getField()).getDisplayName())
-                                .displayValue(tagNameFactory.getTagDisplayValue(parametricValue.getField(), parametricValue.getValue()))
-                                .build())
-                        .collect(Collectors.toSet()))
-                .setParametricRanges(result.getParametricRanges()
-                        .stream()
-                        .map(parametricRange -> parametricRange.toBuilder()
-                                .displayName(tagNameFactory.buildTagName(parametricRange.getField()).getDisplayName())
-                                .build())
-                        .collect(Collectors.toSet()))
+                .setParametricValues(Optional.ofNullable(result.getParametricValues())
+                        .map(parametricValues -> parametricValues
+                                .stream()
+                                .map(parametricValue -> parametricValue.toBuilder()
+                                        .displayName(tagNameFactory.buildTagName(parametricValue.getField()).getDisplayName())
+                                        .displayValue(tagNameFactory.getTagDisplayValue(parametricValue.getField(), parametricValue.getValue()))
+                                        .build())
+                                .collect(Collectors.toSet()))
+                        .orElse(Collections.emptySet()))
+                .setParametricRanges(Optional.ofNullable(result.getParametricRanges())
+                        .map(parametricRanges -> parametricRanges.stream()
+                                .map(parametricRange -> parametricRange.toBuilder()
+                                        .displayName(tagNameFactory.buildTagName(parametricRange.getField()).getDisplayName())
+                                        .build())
+                                .collect(Collectors.toSet()))
+                        .orElse(Collections.emptySet()))
                 .build();
     }
 }
