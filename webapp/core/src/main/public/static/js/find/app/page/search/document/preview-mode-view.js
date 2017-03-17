@@ -82,7 +82,7 @@ define([
                 mmap: this.mmapTab.supported(this.model.attributes),
                 viewHighlighting: this.highlighting,
                 url: reference,
-                isAudio: this.model.get('media') === 'audio' ? 'audio-container' : ''
+                mediaType: this.model.get('media') + '-container'
             }));
 
             this.$highlightToggle = this.$('.preview-mode-highlight-query-terms');
