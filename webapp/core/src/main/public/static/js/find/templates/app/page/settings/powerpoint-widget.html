@@ -1,0 +1,25 @@
+<% var uid = _.uniqueId('powerpoint') %>
+
+<div class="form-group">
+    <label for="<%-uid%>-template-file" class="control-label"><%-strings.templateFile%>: </label>
+    <input id="<%-uid%>-template-file" class="form-control template-file-input" placeholder="<%-strings.templateFileDefault%>">
+
+    <div>
+        <label><%-strings.templateMargins%>:</label>
+        <div class="powerpoint-margins">
+            <div class="powerpoint-margins-indicator"></div>
+            <div class="powerpoint-margins-docbox">
+                <i class="icomoon-file-general"></i>
+            </div>
+            <input id="<%-uid%>-template-marginLeft" class="form-control template-input-margin template-input-marginLeft" placeholder="0" type="number" min="0" max="1" step="0.01">
+            <input id="<%-uid%>-template-marginTop" class="form-control template-input-margin template-input-marginTop" placeholder="0" type="number" min="0" max="1" step="0.01">
+            <input id="<%-uid%>-template-marginRight" class="form-control template-input-margin template-input-marginRight" placeholder="0" type="number" min="0" max="1" step="0.01">
+            <input id="<%-uid%>-template-marginBottom" class="form-control template-input-margin template-input-marginBottom" placeholder="0" type="number" min="0" max="1" step="0.01">
+        </div>
+    </div>
+</div>
+
+<div class="m-t-sm">
+    <button type="button" name="validate" class="btn btn-primary"><i class="hp-icon hp-fw hp-check"></i> <%-strings.templateValidate%></button> <span class="settings-client-validation settings-info"></span>
+    <a class="btn btn-default pull-right" href="<%-pptxTemplateUrl%>" target="_blank"><i class="hp-icon hp-document-download"></i> <%-strings.templateSampleDownload%></a>
+</div>

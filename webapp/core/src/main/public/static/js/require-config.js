@@ -28,6 +28,7 @@ require.config({
         json2: '../bower_components/json/json2',
         'login-page': '../bower_components/hp-autonomy-login-page/src',
         leaflet: '../bower_components/leaflet/dist/leaflet-src',
+        'leaflet.notransform': 'leaflet.notransform/leaflet.notransform',
         'Leaflet.awesome-markers': '../bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers',
         'leaflet.markercluster': '../bower_components/leaflet.markercluster/dist/leaflet.markercluster-src',
         moment: '../bower_components/moment/moment',
@@ -39,7 +40,8 @@ require.config({
         sunburst: '../bower_components/hp-autonomy-sunburst/src',
         topicmap: '../bower_components/hp-autonomy-topic-map/src',
         underscore: '../bower_components/underscore/underscore',
-        typeahead: '../bower_components/corejs-typeahead/dist/typeahead.jquery'
+        typeahead: '../bower_components/corejs-typeahead/dist/typeahead.jquery',
+        'html2canvas': '../bower_components/html2canvas/build/html2canvas'
     },
     shim: {
         'backbone': {
@@ -59,6 +61,7 @@ require.config({
             exports: '_'
         },
         'Leaflet.awesome-markers': ['leaflet'],
-        'leaflet.markercluster': ['leaflet']
+        'leaflet.markercluster': ['leaflet'],
+        'leaflet': ['leaflet.notransform']
     }
 });

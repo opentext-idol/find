@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.export;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
@@ -33,6 +34,8 @@ public abstract class ExportControllerTest<R extends QueryRequest<?>, E extends 
     protected RequestMapper<R> requestMapper;
     @Mock
     protected ControllerUtils controllerUtils;
+    @Mock
+    protected ObjectMapper objectMapper;
 
     private ExportController<R, E> controller;
 

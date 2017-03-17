@@ -5,8 +5,10 @@
 
 package com.hp.autonomy.frontend.find.hod.export;
 
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.export.ExportController;
 import com.hp.autonomy.frontend.find.core.export.ExportControllerTest;
+import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
@@ -29,6 +31,8 @@ public class HodExportControllerTest extends ExportControllerTest<HodQueryReques
     private HodQueryRequest queryRequest;
     @Mock
     private HodQueryRequestBuilder queryRequestBuilder;
+    @Mock
+    private ConfigService<HodFindConfig> hodFindConfig;
 
     @Override
     protected ExportController<HodQueryRequest, HodErrorException> constructController() throws IOException {
@@ -41,7 +45,7 @@ public class HodExportControllerTest extends ExportControllerTest<HodQueryReques
 
         when(queryRequest.getMaxResults()).thenReturn(Integer.MAX_VALUE);
 
-        return new HodExportController(requestMapper, controllerUtils, documentsService, exportService);
+        return new HodExportController(requestMapper, controllerUtils, documentsService, exportService, objectMapper, hodFindConfig);
     }
 
     @Override

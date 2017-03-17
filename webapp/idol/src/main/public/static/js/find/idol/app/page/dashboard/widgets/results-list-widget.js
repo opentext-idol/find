@@ -51,6 +51,10 @@ define([
             _.defer(_.bind(this.hideOverflow, this));
         },
 
+        postInitialize: function(){
+            return this.getData();
+        },
+
         getData: function() {
             return this.documentsCollection.fetch({
                 data: {
@@ -58,8 +62,8 @@ define([
                     max_results: this.maxResults,
                     indexes: this.queryModel.get('indexes'),
                     field_text: this.queryModel.get('fieldText'),
-                    min_date: this.queryModel.get('minDate'),
-                    max_date: this.queryModel.get('maxDate'),
+                    min_date: this.queryModel.getIsoDate('minDate'),
+                    max_date: this.queryModel.getIsoDate('maxDate'),
                     sort: this.sort,
                     summary: 'context',
                     queryType: 'MODIFIED',
@@ -79,6 +83,22 @@ define([
                         ? boundingClientRect.right > containerBounds.right
                         : boundingClientRect.bottom > containerBounds.bottom);
             }.bind(this));
+        },
+
+        exportPPTData: function(){
+            return {
+                data: {
+                    drawIcons: false,
+                    docs: this.documentsCollection.map(function(model){
+                        return {
+                            title: model.get('title'),
+                            summary: model.get('summary'),
+                            thumbnail: model.get('thumbnail')
+                        }
+                    })
+                },
+                type: 'list'
+            }
         }
     });
 });

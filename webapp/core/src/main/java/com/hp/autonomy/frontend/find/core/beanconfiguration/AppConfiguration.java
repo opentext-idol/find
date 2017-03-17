@@ -19,6 +19,8 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.LocaleResolver;
@@ -65,12 +67,19 @@ public class AppConfiguration<C extends FindConfig<C, ?>> {
      * since that's apparently what the servlet spec specifies,
      * It's required despite URIEncoding="UTF-8" on the connector since that only works on GET parameters.
      * Jetty doesn't have this problem, it seems to use UTF-8 as the default.
+     * It also has to be a FilterRegistrationBean and be explicitly marked HIGHEST-PRECEDENCE otherwise it'll have no
+     * effect if other filters run getParameter() before this filter is called.
      */
     @Bean
-    public CharacterEncodingFilter characterEncodingFilter() {
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public FilterRegistrationBean characterEncodingFilter() {
         final CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
         characterEncodingFilter.setEncoding("UTF-8");
-        return characterEncodingFilter;
+
+        final FilterRegistrationBean frb = new FilterRegistrationBean(characterEncodingFilter);
+        frb.addUrlPatterns("/*");
+
+        return frb;
     }
 
     @Bean

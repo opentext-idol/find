@@ -9,6 +9,7 @@ import com.autonomy.aci.client.transport.AciServerDetails;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
+import com.hp.autonomy.frontend.find.core.configuration.PowerPointConfig;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
@@ -39,6 +40,9 @@ public class IdolFindConfigTest {
     @Mock
     private ViewConfig viewConfig;
 
+    @Mock
+    private PowerPointConfig powerPointConfig;
+
     private IdolFindConfig idolFindConfig;
 
     @Before
@@ -49,6 +53,7 @@ public class IdolFindConfigTest {
                 .queryManipulation(queryManipulation)
                 .savedSearchConfig(savedSearchConfig)
                 .view(viewConfig)
+                .powerPoint(powerPointConfig)
                 .build();
     }
 
@@ -70,6 +75,7 @@ public class IdolFindConfigTest {
         when(queryManipulation.merge(any(QueryManipulation.class))).thenReturn(queryManipulation);
         when(savedSearchConfig.merge(any(SavedSearchConfig.class))).thenReturn(savedSearchConfig);
         when(viewConfig.merge(any(ViewConfig.class))).thenReturn(viewConfig);
+        when(powerPointConfig.merge(any(PowerPointConfig.class))).thenReturn(powerPointConfig);
 
         final IdolFindConfig defaults = IdolFindConfig.builder().content(mock(ServerConfig.class)).build();
         final IdolFindConfig mergedConfig = idolFindConfig.merge(defaults);
@@ -78,6 +84,7 @@ public class IdolFindConfigTest {
         assertEquals(queryManipulation, mergedConfig.getQueryManipulation());
         assertEquals(savedSearchConfig, mergedConfig.getSavedSearchConfig());
         assertEquals(viewConfig, mergedConfig.getViewConfig());
+        assertEquals(powerPointConfig, mergedConfig.getPowerPoint());
         assertEquals(idolFindConfig, mergedConfig);
     }
 

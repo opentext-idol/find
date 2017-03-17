@@ -53,6 +53,19 @@ define([
 
         getData: function() {
             return this.entityTopicMap.fetchRelatedConcepts();
+        },
+
+        exportPPTData: function() {
+            if (this.entityTopicMap) {
+                var data = this.entityTopicMap.exportPPTData();
+
+                if (data) {
+                    return {
+                        data: data,
+                        type: 'topicmap'
+                    }
+                }
+            }
         }
     });
 });

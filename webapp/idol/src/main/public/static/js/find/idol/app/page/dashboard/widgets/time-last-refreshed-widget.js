@@ -85,6 +85,20 @@ define([
 
         formatDate: function(date) {
             return date.format(this.dateFormat);
+        },
+
+        exportPPTData: function(){
+            return {
+                data: {
+                    text: _.map([this.$lastRefresh, this.$nextRefresh], function($el){
+                        return {
+                            text: $el.text() + '\n',
+                            fontSize: 15
+                        }
+                    })
+                },
+                type: 'text'
+            };
         }
     });
 });

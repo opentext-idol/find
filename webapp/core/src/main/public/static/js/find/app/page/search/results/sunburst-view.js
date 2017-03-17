@@ -111,6 +111,37 @@ define([
     }
 
     return ParametricResultsView.extend({
+
+        events: _.extend({
+            'click .parametric-pptx': function(evt) {
+                evt.preventDefault();
+
+                var data = this.exportPPTData();
+
+                if (data) {
+                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/sunburst"><textarea name="data"></textarea><input type="submit"></form>');
+                    $form[0].data.value = JSON.stringify(data);
+                    $form.appendTo(document.body).submit().remove();
+                }
+            }
+        }, ParametricResultsView.prototype.events),
+
+        exportPPTData: function(){
+            var categories = [];
+            var values = [];
+
+            this.dependentParametricCollection.each(function(model){
+                categories.push(model.get('text') || i18n['search.resultsView.sunburst.others']);
+                values.push(model.get('count'));
+            });
+
+            return values.length && categories.length ? {
+                    categories: categories,
+                    values: values,
+                    title: i18n['search.resultsView.sunburst.breakdown.by'](this.fieldsCollection.at(0).get('displayValue'))
+                } : null
+        },
+
         initialize: function(options) {
             ParametricResultsView.prototype.initialize.call(this, _.defaults({
                 emptyDependentMessage: i18n['search.resultsView.sunburst.error.noDependentParametricValues'],
@@ -127,6 +158,8 @@ define([
         },
 
         update: function() {
+            var disableExport = true;
+
             if(!this.parametricCollection.isEmpty()) {
                 const data = generateDataRoot(this.dependentParametricCollection.toJSON());
 
@@ -151,8 +184,11 @@ define([
                     this.$message.text(i18n['search.resultsView.sunburst.error.noSecondFieldValues']);
                 } else {
                     this.$message.empty();
+                    disableExport = false;
                 }
             }
+
+            this.$pptxButton.toggleClass('disabled', disableExport);
         },
 
         render: function() {

@@ -89,6 +89,29 @@ define([
             this.listenTo(this.legendColorCollection, 'update reset', this.updateSunburstAndLegend);
         },
 
+        exportPPTData: function(){
+            const data = this.legendColorCollection.map(function(model){
+                return {
+                    category: model.get('text') || i18n['search.resultsView.sunburst.others'],
+                    value: model.get('count'),
+                    color: model.get('color') || HIDDEN_COLOR
+                }
+            }).sort(function(a, b){
+                return d3.ascending(a.category, b.category)
+            });
+
+            return data.length ? {
+                    type: 'sunburst',
+                    data: {
+                        categories: _.pluck(data, 'category'),
+                        values: _.pluck(data, 'value'),
+                        title: prettyOrNull(this.firstField),
+                        colors: _.pluck(data, 'color'),
+                        strokeColors: ['#000000']
+                    }
+                } : null
+        },
+
         render: function() {
             SavedSearchWidget.prototype.render.apply(this);
 

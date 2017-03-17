@@ -31,6 +31,43 @@ define([
 
         tableTemplate: _.template(tableTemplate),
 
+        events: _.extend({
+            'click .parametric-pptx': function(evt) {
+                evt.preventDefault();
+
+                var data = this.exportPPTData();
+
+                if (data) {
+                    var $form = $('<form class="hide" enctype="multipart/form-data" method="post" target="_blank" action="api/bi/export/ppt/table"><input name="title"><textarea name="data"></textarea><input type="submit"></form>');
+                    $form[0].title.value = i18n['search.resultsView.table.breakdown.by'](this.fieldsCollection.at(0).get('displayValue'));
+                    $form[0].data.value = JSON.stringify(data);
+                    $form.appendTo(document.body).submit().remove();
+                }
+            },
+
+        }, ParametricResultsView.prototype.events),
+
+        exportPPTData: function(){
+            var rows = this.$table.find('tr'), nCols = 0;
+
+            var cells = [];
+
+            rows.each(function(idx, el){
+                var tds = $(el).find('th,td');
+                nCols = tds.length;
+
+                tds.each(function (idx, el) {
+                    cells.push($(el).text());
+                })
+            });
+
+            return rows.length ? {
+                rows: rows.length,
+                cols: nCols,
+                cells: cells
+            } : null;
+        },
+
         initialize: function(options) {
             ParametricResultsView.prototype.initialize.call(this, _.defaults({
                 dependentParametricCollection: new TableCollection(),
@@ -41,7 +78,7 @@ define([
         },
 
         render: function() {
-            ParametricResultsView.prototype.render.apply(this);
+            ParametricResultsView.prototype.render.apply(this, arguments);
 
             this.$content.html(this.tableTemplate());
 
@@ -58,6 +95,8 @@ define([
 
             // if parametric collection is empty then nothing has loaded and datatables will fail
             if(!this.parametricCollection.isEmpty()) {
+                this.$pptxButton.removeClass('disabled');
+
                 // columnNames will be empty if only one field is selected
                 if(_.isEmpty(this.dependentParametricCollection.columnNames)) {
                     this.$table.dataTable({

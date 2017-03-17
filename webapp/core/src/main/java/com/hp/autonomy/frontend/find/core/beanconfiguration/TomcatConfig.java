@@ -25,6 +25,9 @@ public class TomcatConfig {
     @Value("${server.tomcat.resources.max-cache-kb}")
     private long webResourcesCacheSize;
 
+    @Value("${server.tomcat.connector.max-post-size}")
+    private int connectorMaxPostSize;
+
     @Bean
     public EmbeddedServletContainerFactory servletContainer() {
         final TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
@@ -40,6 +43,10 @@ public class TomcatConfig {
             context.setResources(resources);
         });
 
+        tomcat.addConnectorCustomizers(connector -> {
+            connector.setMaxPostSize(connectorMaxPostSize);
+        });
+
         return tomcat;
     }
 
@@ -47,6 +54,7 @@ public class TomcatConfig {
         final Connector connector = new Connector("AJP/1.3");
         connector.setPort(ajpPort);
         connector.setAttribute("tomcatAuthentication", false);
+        connector.setMaxPostSize(connectorMaxPostSize);
         return connector;
     }
 }
