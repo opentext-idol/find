@@ -10,10 +10,10 @@ define([
     'use strict';
 
     const registry = {
-        widget: {
+        Widget: {
             Constructor: Widget
         },
-        updatingWidget: {
+        UpdatingWidget: {
             Constructor: UpdatingWidget
         }
     };
