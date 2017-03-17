@@ -21,6 +21,11 @@ define([
 
     const MILLISECONDS_TO_SECONDS = 1000;
     const DEBOUNCE_TIME = 500;
+    const SECONDS_IN_ONE_YEAR = 31556926;
+    const SECONDS_IN_ONE_MONTH = 2629743;
+    const SECONDS_IN_ONE_WEEK = 604800;
+    const SECONDS_IN_ONE_DAY = 86400;
+    const SECONDS_IN_ONE_HOUR = 3600;
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -194,7 +199,8 @@ define([
                 yAxisLabel: i18n['search.resultsView.trending.yAxis'],
                 zoomCallback: zoomCallback,
                 dragMoveCallback: dragMoveCallback,
-                dragEndCallback: dragEndCallback
+                dragEndCallback: dragEndCallback,
+                timeFormat: this.getTimeFormat()
             });
         },
 
@@ -222,6 +228,16 @@ define([
                 currentMin: Math.floor(min),
                 currentMax: Math.floor(max)
             });
+        },
+
+        getTimeFormat() {
+            const range = this.model.get('currentMax') - this.model.get('currentMin');
+            if (range > SECONDS_IN_ONE_YEAR) { return d3.time.format("%B %Y"); }
+            if (range < SECONDS_IN_ONE_HOUR) { return d3.time.format("%S s %H h %d %B %Y"); }
+            if (range < SECONDS_IN_ONE_DAY) { return d3.time.format("%H h %d %B %Y"); }
+            if (range < SECONDS_IN_ONE_WEEK) { return d3.time.format("%d %B %Y"); }
+            if (range < SECONDS_IN_ONE_MONTH) { return d3.time.format("%d %B %Y"); }
+            return d3.time.format("%d %B %Y");
         }
     });
 });

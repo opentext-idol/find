@@ -8,8 +8,7 @@ define([
 ], function (Backbone, _, $, d3, widgetZoom, widgetDrag) {
     'use strict';
 
-    const CHART_PADDING = 50;
-    const TIME_FORMAT = d3.time.format("%Y-%m-%d");
+    const CHART_PADDING = 70;
     const NUMBER_OF_COLORS = 10;
     const FADE_OUT_OPACITY = 0.3;
     const LEGEND_WIDTH = 200;
@@ -33,8 +32,8 @@ define([
                 const containerHeight = options.containerHeight;
                 const chartWidth = containerWidth - LEGEND_WIDTH;
                 const chartHeight = containerHeight;
-                const xAxisLabel = options.xAxisLabel;
                 const yAxisLabel = options.yAxisLabel;
+                const timeFormat = options.timeFormat;
                 const maxValue = _.max(_.map(data, function (d) {
                     return _.max(d, function (v) {
                         return v[1];
@@ -71,7 +70,7 @@ define([
                 const xAxisScale = d3.svg.axis()
                     .scale(xScale)
                     .orient('bottom')
-                    .tickFormat(TIME_FORMAT);
+                    .tickFormat(timeFormat);
 
                 // Create the chart svg //
                 const svg = d3.select(getContainerCallback())
@@ -198,10 +197,34 @@ define([
                     .attr('transform', 'translate(0,' + (chartHeight - CHART_PADDING) + ')')
                     .call(xAxisScale);
 
-                xAxis.append('text')
-                    .attr('x', chartWidth/2)
-                    .attr('y', CHART_PADDING/5*4)
-                    .text(xAxisLabel);
+                function wrap(text, width) {
+                    const tickWidth = width/text[0].length;
+                    const padding = 15;
+                    text.each(function() {
+                        var text = d3.select(this),
+                            words = text.text().split(/\s+/).reverse(),
+                            word,
+                            line = [],
+                            lineNumber = 0,
+                            lineHeight = 1.1, // ems
+                            y = text.attr("y"),
+                            dy = parseFloat(text.attr("dy")),
+                            tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+                        while (word = words.pop()) {
+                            line.push(word);
+                            tspan.text(line.join(" "));
+                            if (tspan.node().getComputedTextLength() > tickWidth - padding) {
+                                line.pop();
+                                tspan.text(line.join(" "));
+                                line = [word];
+                                tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+                            }
+                        }
+                    });
+                }
+
+                xAxis.selectAll('.tick text')
+                    .call(wrap, chartWidth);
 
                 // Add the legend //
                 const legend = svg.append('g')
