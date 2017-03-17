@@ -1,3 +1,9 @@
+<% if(model.get('media') === 'audio') {%>
+<div class="preview-media-player-audio">
+    <i class="hp-icon hp-sound" aria-hidden="true"></i>
+</div>
+<% } %>
+
 <<%= model.get('media') %> src="<%- model.get('url') %>#t=<%- model.get('offset') %>" preload="auto" class="preview-media-player" controls>
     <% if ('image' != model.get('media')) { %>
         <p>

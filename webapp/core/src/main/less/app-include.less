@@ -4,6 +4,7 @@
  */
 
 /*------Colour variables------*/
+@color47: #3a3a3a;
 @color27: #5c5959;
 @color22: #5e5e5e;
 @color25: #8e8e8e;
@@ -908,6 +909,31 @@ input.find-input {
 
 .preview-mode-document-container {
   flex: 1;
+}
+
+.preview-media-player-audio {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+
+  i.hp-sound {
+    color: @white;
+    font-size: 7em;
+    margin: auto;
+  }
+}
+
+audio.preview-media-player {
+  flex: 1;
+  max-height: 30px;
+}
+
+.audio-container {
+  background-color: @color47;
+
+  .preview-mode-document {
+    flex-direction: column;
+  }
 }
 
 .content-type {
