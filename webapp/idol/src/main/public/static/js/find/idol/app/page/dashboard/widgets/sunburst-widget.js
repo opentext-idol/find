@@ -14,8 +14,8 @@ define([
     'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend-item.html',
     'text!find/idol/templates/page/dashboards/widgets/sunburst-legend-too-many-items-entry.html',
     'i18n!find/nls/bundle'
-], function(_, $, d3, Sunburst, SavedSearchWidget, LegendColorCollection, legendTemplate,
-            legendItemTemplate, tooManyItemsTemplate, i18n) {
+], function (_, $, d3, Sunburst, SavedSearchWidget, LegendColorCollection, legendTemplate,
+             legendItemTemplate, tooManyItemsTemplate, i18n) {
     'use strict';
 
     const tooManyItemsHtml = _.template(tooManyItemsTemplate)({i18n: i18n});
@@ -30,27 +30,6 @@ define([
             text: datum.text,
             color: datum.color
         });
-    }
-
-    /**
-     * Prettify the given field name for display. Replaces underscores with spaces and capitalises the first letter of
-     * each word.
-     * @alias module:prettify-field-name
-     * @function
-     * @param {String} name The input field name
-     * @returns {String} The display name
-     */
-    function prettifyFieldName(name) {
-        // Compact to deal with field names which begin with underscore or contain consecutive underscores
-        return _.chain(name.substring(name.lastIndexOf('/') + 1).split('_')).compact().map(function(word) {
-            return word[0].toUpperCase() + word.slice(1).toLowerCase();
-        }).value().join(' ');
-    }
-
-    function prettyOrNull(field) {
-        return field
-            ? prettifyFieldName(field)
-            : null;
     }
 
     /**
@@ -73,10 +52,9 @@ define([
         viewType: 'sunburst',
         legendTemplate: _.template(legendTemplate),
 
-        initialize: function(options) {
+        initialize: function (options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
 
-            // TODO display error msg if field absent (no dashboards config validation)
             this.firstField = options.widgetSettings.firstField;
             this.secondField = options.widgetSettings.secondField;
             this.maxLegendEntries = options.widgetSettings.maxLegendEntries || 5;
@@ -89,7 +67,7 @@ define([
             this.listenTo(this.legendColorCollection, 'update reset', this.updateSunburstAndLegend);
         },
 
-        render: function() {
+        render: function () {
             SavedSearchWidget.prototype.render.apply(this);
 
             this.$legendContainer = $('<div class="sunburst-legend"></div>');
@@ -100,13 +78,13 @@ define([
             this.updateLayout();
         },
 
-        postInitialize: function() {
+        postInitialize: function () {
             return this.updateParametricDistribution();
         },
 
         // Decide if legend is placed underneath the visualizer, or to the side.
-        updateLayout: function() {
-            if(this.$legendContainer && this.$content) {
+        updateLayout: function () {
+            if (this.$legendContainer && this.$content) {
                 // Prefer side-by-side layout: widget must be slightly narrower than a square
                 // for legend to be placed underneath Sunburst
                 const narrowWidget = this.contentWidth() * 0.9 < this.contentHeight();
@@ -116,31 +94,32 @@ define([
             }
         },
 
-        onResize: function() {
+        onResize: function () {
             this.updateLayout();
 
-            if(this.sunburst) {
+            if (this.sunburst) {
                 this.sunburst.resize();
                 this.sunburst.redraw();
             }
         },
 
-        getData: function() {
+        getData: function () {
             return this.updateParametricDistribution();
         },
 
-        drawSunburst: function(data) {
-            if(this.$content && this.$visualizerContainer) {
+        drawSunburst: function (data) {
+            if (this.$content && this.$visualizerContainer) {
+                //noinspection JSUnusedGlobalSymbols
                 return new Sunburst(this.$visualizerContainer, {
                     animate: true,
                     sizeAttr: 'count',
                     nameAttr: 'text',
-                    comparator: function(datumA, datumB) {
+                    comparator: function (datumA, datumB) {
                         return d3.ascending(datumA.text, datumB.text);
                     },
                     data: data,
-                    fillColorFn: function(datum) {
-                        if(!datum.parent) {
+                    fillColorFn: function (datum) {
+                        if (!datum.parent) {
                             return 'none';
                         }
 
@@ -152,20 +131,22 @@ define([
                     labelFormatter: null// no labels on hover
                 });
             }
+
+            return null;
         },
 
-        updateParametricDistribution: function() {
+        updateParametricDistribution: function () {
             return this.legendColorCollection
-                .fetchDependentFields(this.queryModel, this.firstField, this.secondField);
+                .fetchDependentFields(this.queryModel, this.firstField.id, this.secondField ? this.secondField.id : null);
         },
 
-        updateSunburstAndLegend: function(collection) {
-            if(this.$visualizerContainer && this.$legendContainer && this.$emptyMessage) {
+        updateSunburstAndLegend: function (collection) {
+            if (this.$visualizerContainer && this.$legendContainer && this.$emptyMessage) {
                 const empty = collection.isEmpty();
                 this.$visualizerContainer.toggleClass('hide', empty);
                 this.$legendContainer.toggleClass('hide', empty);
                 this.$emptyMessage.toggleClass('hide', !empty);
-                if(empty) {
+                if (empty) {
                     // Next time we have data, the initialisation animation will run again
                     this.sunburst = null;
                     this.$visualizerContainer.empty();
@@ -173,7 +154,7 @@ define([
                     const rootData = {children: collection.toJSON()};
 
                     this.updateLayout();
-                    if(this.sunburst) {
+                    if (this.sunburst) {
                         this.sunburst.resize();
                         this.sunburst.redraw(rootData);
                     } else {
@@ -184,12 +165,12 @@ define([
             this.populateLegend();
         },
 
-        populateLegend: function() {
-            if(this.$content && this.$legendContainer) {
+        populateLegend: function () {
+            if (this.$content && this.$legendContainer) {
                 this.$legendContainer
                     .html(this.legendTemplate({
-                        innerRingHeader: prettyOrNull(this.firstField),
-                        outerRingHeader: prettyOrNull(this.secondField)
+                        innerRingHeader: this.firstField.displayName,
+                        outerRingHeader: this.secondField ? this.secondField.displayName : null
                     }));
 
                 this.$innerLegend = this.$legendContainer
@@ -210,17 +191,17 @@ define([
                     $el: this.$outerLegend
                 };
 
-                _.each([tier1, tier2], function(tier) {
-                    if(!tier || (tier && tier.legendData === null)) {
+                _.each([tier1, tier2], function (tier) {
+                    if (!tier || (tier && tier.legendData === null)) {
                         tier.$el.text(i18n['dashboards.widget.sunburst.legend.noValues']);
                     } else {
                         const htmlArray = [];
 
-                        _.each(tier.legendData, function(legendDatum) {
+                        _.each(tier.legendData, function (legendDatum) {
                             htmlArray.push(composeLegendHtml(legendDatum));
                         });
 
-                        if(htmlArray.length > 0) {
+                        if (htmlArray.length > 0) {
                             tier.$el.html(buildLegendHtml(htmlArray, tier.hidden));
                         } else {
                             tier.$el.text(i18n['dashboards.widget.sunburst.legend.noValues']);
