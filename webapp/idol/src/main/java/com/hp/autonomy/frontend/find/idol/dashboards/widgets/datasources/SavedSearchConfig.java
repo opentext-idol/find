@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.SimpleComponent;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import lombok.Builder;
@@ -23,6 +24,15 @@ public class SavedSearchConfig extends SimpleComponent<SavedSearchConfig> implem
     private final Long id;
     private final SavedSearchType type;
     private final Map<String, Object> config;
+
+    @Override
+    public void basicValidate(final String section) throws ConfigException {
+        if (id == null || type == null) {
+            throw new ConfigException(section, "Dashboard SavedSearch datasource config must contain an id and a type");
+        }
+
+        super.basicValidate(section);
+    }
 
     @Override
     @JsonAnyGetter

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.SimpleComponent;
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import lombok.Builder;
@@ -20,9 +21,20 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = false)
 @JsonDeserialize(builder = SunburstWidgetSettings.SunburstWidgetSettingsBuilder.class)
 public class SunburstWidgetSettings extends SimpleComponent<SunburstWidgetSettings> implements WidgetSettings<SunburstWidgetSettings> {
+    private static final String SECTION = "Sunburst Dashboard";
+
     private final Map<String, Object> widgetSettings;
     private final TagName firstField;
     private final TagName secondField;
+
+    @Override
+    public void basicValidate(final String section) throws ConfigException {
+        if (firstField == null) {
+            throw new ConfigException(SECTION, "Sunburst dashboard config must specify a first field");
+        }
+
+        super.basicValidate(section);
+    }
 
     @Override
     @JsonAnyGetter
