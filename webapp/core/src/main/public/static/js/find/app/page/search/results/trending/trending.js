@@ -11,6 +11,7 @@ define([
     const CHART_PADDING = 70;
     const NUMBER_OF_COLORS = 10;
     const FADE_OUT_OPACITY = 0.3;
+    const POINT_RADIUS = 5;
     const LEGEND_WIDTH = 200;
     const LEGEND_MARKER_WIDTH = 15;
     const LEGEND_TEXT_WIDTH = 100;
@@ -33,6 +34,7 @@ define([
                 const chartWidth = containerWidth - LEGEND_WIDTH;
                 const chartHeight = containerHeight;
                 const yAxisLabel = options.yAxisLabel;
+                const tooltipText = options.tooltipText;
                 const timeFormat = options.timeFormat;
                 const maxValue = _.max(_.map(data, function (d) {
                     return _.max(d, function (v) {
@@ -51,7 +53,7 @@ define([
                     .range([chartHeight - CHART_PADDING, CHART_PADDING]);
 
                 let xMin, xMax;
-                if (data[data.length - 1][data[0].length - 1][0].getTime()/MILLISECONDS_TO_SECONDS === maxDate) { // Not zooming
+                if (data[data.length - 1][data[0].length - 1][3].getTime()/MILLISECONDS_TO_SECONDS === maxDate) { // Not zooming
                     xMin = data[0][0][0];
                     xMax = data[data.length - 1][data[0].length - 1][0];
                 } else {
@@ -100,7 +102,7 @@ define([
                     .interpolate('linear');
 
                 const lineAndPointMouseover = function () {
-                    let newValue = this.parentNode.getAttribute('data-name');
+                    let newValue = d3.event.target.parentNode.getAttribute('data-name');
                     d3.selectAll('.line')
                         .each(function () {
                             //noinspection JSPotentiallyInvalidUsageOfThis
@@ -118,7 +120,7 @@ define([
                             //noinspection JSPotentiallyInvalidUsageOfThis
                             if (this.parentNode.getAttribute('data-name') === newValue) {
                                 d3.select(this)
-                                    .attr('r', 5);
+                                    .attr('r', POINT_RADIUS);
                             } else {
                                 d3.select(this)
                                     .attr('opacity', FADE_OUT_OPACITY)
@@ -159,11 +161,37 @@ define([
                     .on('mouseover', lineAndPointMouseover)
                     .on('mouseout', lineAndPointMouseout);
 
+                const pointMouseover = function(d) {
+                    svg.append('line')
+                        .attr('class', 'guide-line')
+                        .attr('x1', CHART_PADDING)
+                        .attr('y1', yScale(d[1]))
+                        .attr('x2', xScale(d[0]) - POINT_RADIUS/2)
+                        .attr('y2', yScale(d[1]));
+
+                    svg.append('line')
+                        .attr('class', 'guide-line')
+                        .attr('x1', xScale(d[0]))
+                        .attr('y1', yScale(d[1]) + POINT_RADIUS/2)
+                        .attr('x2', xScale(d[0]))
+                        .attr('y2', chartHeight - CHART_PADDING);
+
+                    lineAndPointMouseover();
+                };
+
+                const pointMouseout = function() {
+                    svg.selectAll('.guide-line')
+                        .remove();
+
+                    svg.selectAll('.chart-tooltip')
+                        .remove();
+
+                    lineAndPointMouseout();
+                };
+
                 // Add the data points along the lines //
                 const points = parametricValue.selectAll('circle')
-                    .data(function (d) {
-                        return d;
-                    });
+                    .data(_.identity);
 
                 points.enter()
                     .append('circle')
@@ -176,8 +204,17 @@ define([
                     })
                     .attr('fill', 'white')
                     .attr('stroke-width', 3)
-                    .on('mouseover', lineAndPointMouseover)
-                    .on('mouseout', lineAndPointMouseout);
+                    .attr('data-toggle', 'tooltip')
+                    .attr('title', function(d) {
+                        return tooltipText(
+                            d[1],
+                            this.parentNode.getAttribute('data-name'),
+                            d[2].toDateString(),
+                            d[3].toDateString()
+                        );
+                    })
+                    .on('mouseover', pointMouseover)
+                    .on('mouseout', pointMouseout);
 
 
                 // Add the x and y axes //
@@ -201,14 +238,14 @@ define([
                     const tickWidth = width/text[0].length;
                     const padding = 15;
                     text.each(function() {
-                        var text = d3.select(this),
+                        const text = d3.select(this),
                             words = text.text().split(/\s+/).reverse(),
-                            word,
-                            line = [],
-                            lineNumber = 0,
                             lineHeight = 1.1, // ems
                             y = text.attr("y"),
-                            dy = parseFloat(text.attr("dy")),
+                            dy = parseFloat(text.attr("dy"));
+                        let word,
+                            lineNumber = 0,
+                            line = [],
                             tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
                         while (word = words.pop()) {
                             line.push(word);

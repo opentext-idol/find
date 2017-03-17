@@ -147,6 +147,8 @@ define([
         },
 
         renderChart: function() {
+            this.$('[data-toggle="tooltip"]').tooltip('destroy');
+
             if (!this.trendingChart){
                 this.trendingChart = Trending({
                     getContainerCallback: function() {
@@ -159,13 +161,22 @@ define([
             const names = [];
 
             _.each(this.bucketedValues, function (model) {
-                data.push(_.zip(_.pluck(model.get('values'), 'max'), _.pluck(model.get('values'), 'count')));
+                data.push(_.zip(
+                    _.map(model.get('values'), function(value) {
+                        return Math.floor(value.min + ((value.max - value.min)/2));
+                    }),
+                    _.pluck(model.get('values'), 'count'),
+                    _.pluck(model.get('values'), 'min'),
+                    _.pluck(model.get('values'), 'max')
+                ));
                 names.push(model.get('valueName'));
             });
 
             _.each(data, function (value) {
                 _.each(value, function (point) {
                     point[0] = new Date(point[0] * MILLISECONDS_TO_SECONDS);
+                    point[2] = new Date(point[2] * MILLISECONDS_TO_SECONDS);
+                    point[3] = new Date(point[3] * MILLISECONDS_TO_SECONDS);
                 });
             });
 
@@ -200,7 +211,13 @@ define([
                 zoomCallback: zoomCallback,
                 dragMoveCallback: dragMoveCallback,
                 dragEndCallback: dragEndCallback,
-                timeFormat: this.getTimeFormat()
+                timeFormat: this.getTimeFormat(),
+                tooltipText: i18n['search.resultsView.trending.tooltipText']
+            });
+
+            this.$('[data-toggle="tooltip"]').tooltip({
+                container: 'body',
+                placement: 'top'
             });
         },
 
@@ -238,6 +255,12 @@ define([
             if (range < SECONDS_IN_ONE_WEEK) { return d3.time.format("%d %B %Y"); }
             if (range < SECONDS_IN_ONE_MONTH) { return d3.time.format("%d %B %Y"); }
             return d3.time.format("%d %B %Y");
+        },
+
+        remove() {
+            this.$('[data-toggle="tooltip"]').tooltip('destroy');
+            this.trendingChart.remove();
+            this.remove();
         }
     });
 });

@@ -212,6 +212,7 @@ define([
         'search.resultsView.table.zeroRecords': 'No matching records found',
         'search.resultsView.trending': 'Trending',
         'search.resultsView.trending.error.query': 'Error: could not display Trending Chart',
+        'search.resultsView.trending.tooltipText': '{0} document(s) indexed with the tag "{1}" between {2} and {3}',
         'search.resultsView.trending.yAxis': 'Document Count',
         'search.resultsView.trending.xAxis': 'Date',
         'search.resultsView.amount.shown': 'Showing <strong>{0}</strong> to <strong>{1}</strong> of <strong>{2}</strong> results',
