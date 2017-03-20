@@ -69,6 +69,10 @@
                 "user": true,
                 "bi": false
             },
+            "enableTypeAhead": {
+                "user": true,
+                "bi": true
+            },
             "resultViewOrder": {
                 "bi": ["list", "topic-map", "sunburst", "table", "map"],
                 "user": ["list"]

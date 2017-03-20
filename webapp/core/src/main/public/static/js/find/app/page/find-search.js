@@ -118,6 +118,7 @@ define([
                     });
 
                     return new InputView({
+                        enableTypeAhead: this.configuration.enableTypeAhead,
                         strategy: queryTextStrategy(this.searchModel)
                     });
                 }.bind(this),
