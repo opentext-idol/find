@@ -11,6 +11,7 @@ import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentica
 import com.hp.autonomy.frontend.configuration.server.ProductType;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
+import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import org.junit.Before;
@@ -32,6 +33,9 @@ public class IdolFindConfigTest {
     private CommunityAuthentication communityAuthentication;
 
     @Mock
+    private ExportConfig export;
+
+    @Mock
     private QueryManipulation queryManipulation;
 
     @Mock
@@ -50,6 +54,7 @@ public class IdolFindConfigTest {
                 .queryManipulation(queryManipulation)
                 .savedSearchConfig(savedSearchConfig)
                 .view(viewConfig)
+                .export(export)
                 .build();
     }
 
@@ -71,6 +76,7 @@ public class IdolFindConfigTest {
         when(queryManipulation.merge(any(QueryManipulation.class))).thenReturn(queryManipulation);
         when(savedSearchConfig.merge(any(SavedSearchConfig.class))).thenReturn(savedSearchConfig);
         when(viewConfig.merge(any(ViewConfig.class))).thenReturn(viewConfig);
+        when(export.merge(any(ExportConfig.class))).thenReturn(export);
 
         final IdolFindConfig defaults = IdolFindConfig.builder().content(mock(ServerConfig.class)).build();
         final IdolFindConfig mergedConfig = idolFindConfig.merge(defaults);
@@ -79,6 +85,7 @@ public class IdolFindConfigTest {
         assertEquals(queryManipulation, mergedConfig.getQueryManipulation());
         assertEquals(savedSearchConfig, mergedConfig.getSavedSearchConfig());
         assertEquals(viewConfig, mergedConfig.getViewConfig());
+        assertEquals(export, mergedConfig.getExport());
         assertEquals(idolFindConfig, mergedConfig);
     }
 

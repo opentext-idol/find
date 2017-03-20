@@ -103,6 +103,11 @@
       }
     ]
   },
+  "export": {
+    "powerpoint": {
+      "templateFile": ""
+    }
+  },
   "mmap": {
     "enabled": false,
     "baseUrl": ""

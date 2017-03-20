@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.core.configuration;
 
 import com.hp.autonomy.frontend.configuration.Config;
 import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
+import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 
 import java.util.Collection;
@@ -29,6 +30,8 @@ public interface FindConfig<C extends FindConfig<C, B>, B extends FindConfigBuil
     UiCustomization getUiCustomization();
 
     Integer getTopicMapMaxResults();
+
+    ExportConfig getExport();
 
     B toBuilder();
 }
