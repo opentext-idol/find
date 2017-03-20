@@ -120,6 +120,10 @@
         "user": true,
         "bi": false
       },
+      "enableTypeAhead": {
+        "user": true,
+        "bi": true
+      },
       "resultViewOrder": {
         "bi": [
           "topic-map",

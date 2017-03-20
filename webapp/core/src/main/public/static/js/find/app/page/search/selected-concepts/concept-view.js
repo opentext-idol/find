@@ -42,6 +42,7 @@ define([
                 selector: '.concept-view-container',
                 construct: function() {
                     return new InputView({
+                        enableTypeAhead: options.configuration.enableTypeAhead,
                         strategy: conceptStrategy(options.queryState.conceptGroups)
                     });
                 },

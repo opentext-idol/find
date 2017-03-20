@@ -15,9 +15,11 @@ define([
     describe('Input view', function() {
         const model = new Backbone.Model({inputText: 'cat'});
         const collection = new Backbone.Collection([{concepts: ['cat']}]);
+
         const configurations = [{
             description: 'using query text strategy',
             options: {
+                enableTypeAhead: true,
                 strategy: queryTextStrategy(model)
             },
             expectations: {
@@ -34,6 +36,7 @@ define([
         }, {
             description: 'using concept strategy',
             options: {
+                enableTypeAhead: true,
                 strategy: conceptStrategy(collection)
             },
             expectations: {

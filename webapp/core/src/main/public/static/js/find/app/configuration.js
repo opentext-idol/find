@@ -36,7 +36,9 @@ define([
                 config.directAccessLink = parseBooleanOption(config, uiCustomization, 'directAccessLink');
                 config.enableMetaFilter = parseBooleanOption(config, uiCustomization, 'enableMetaFilter');
                 config.enableRelatedConcepts = parseBooleanOption(config, uiCustomization, 'enableRelatedConcepts');
+                config.enableTypeAhead = parseBooleanOption(config, uiCustomization, 'enableTypeAhead');
                 config.errorCallSupportString = uiCustomization.errorCallSupportString;
+
                 config.resultViewOrder = config.hasBiRole &&
                     uiCustomization.options.resultViewOrder.bi ||
                     uiCustomization.options.resultViewOrder.user;
