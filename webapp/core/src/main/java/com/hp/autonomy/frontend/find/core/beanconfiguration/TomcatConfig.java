@@ -25,6 +25,9 @@ public class TomcatConfig {
     @Value("${server.tomcat.resources.max-cache-kb}")
     private long webResourcesCacheSize;
 
+    @Value("${server.tomcat.connector.max-post-size}")
+    private int connectorMaxPostSize;
+
     @Bean
     public EmbeddedServletContainerFactory servletContainer() {
         final TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
@@ -38,6 +41,10 @@ public class TomcatConfig {
             final WebResourceRoot resources = new StandardRoot(context);
             resources.setCacheMaxSize(webResourcesCacheSize);
             context.setResources(resources);
+        });
+
+        tomcat.addConnectorCustomizers(connector -> {
+            connector.setMaxPostSize(connectorMaxPostSize);
         });
 
         return tomcat;
