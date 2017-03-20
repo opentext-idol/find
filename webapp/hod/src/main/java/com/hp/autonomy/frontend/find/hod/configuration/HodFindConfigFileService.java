@@ -15,8 +15,9 @@ import com.hp.autonomy.frontend.configuration.filter.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfoConfigMixins;
+import com.hp.autonomy.searchcomponents.core.config.FieldValue;
+import com.hp.autonomy.searchcomponents.core.config.FieldValueConfigMixins;
 import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
-import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -56,6 +57,7 @@ class HodFindConfigFileService extends FindConfigFileService<HodFindConfig, HodF
                 .put(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class)
                 .put(HodFindConfig.class, ConfigurationFilterMixin.class)
                 .put(FieldInfo.class, FieldInfoConfigMixins.class)
+                .put(FieldValue.class, FieldValueConfigMixins.class)
                 .build();
     }
 }
