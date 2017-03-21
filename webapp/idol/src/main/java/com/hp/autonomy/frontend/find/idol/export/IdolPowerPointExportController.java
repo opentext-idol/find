@@ -8,7 +8,7 @@ import com.hp.autonomy.frontend.find.core.web.RequestMapper;
 import com.hp.autonomy.frontend.reports.powerpoint.TemplateLoadException;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
-import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,48 +36,48 @@ public class IdolPowerPointExportController extends IdolExportController {
 
     @Override
     @RequestMapping(value = TOPIC_MAP_PATH, method = RequestMethod.POST)
-    public HttpEntity<byte[]> topicMap(@RequestParam(DATA_PARAM) final String rawData) throws IOException, TemplateLoadException, AciErrorException {
+    public ResponseEntity<byte[]> topicMap(@RequestParam(DATA_PARAM) final String rawData) throws IOException, TemplateLoadException, AciErrorException {
         return super.topicMap(rawData);
     }
 
     @Override
     @RequestMapping(value = SUNBURST_PATH, method = RequestMethod.POST)
-    public HttpEntity<byte[]> sunburst(@RequestParam(DATA_PARAM) final String rawData) throws IOException, TemplateLoadException, AciErrorException {
+    public ResponseEntity<byte[]> sunburst(@RequestParam(DATA_PARAM) final String rawData) throws IOException, TemplateLoadException, AciErrorException {
         return super.sunburst(rawData);
     }
 
     @Override
     @RequestMapping(value = TABLE_PATH, method = RequestMethod.POST)
-    public HttpEntity<byte[]> table(@RequestParam(DATA_PARAM) final String rawData,
-                                    @RequestParam(TITLE_PARAM) final String title) throws IOException, TemplateLoadException, AciErrorException {
+    public ResponseEntity<byte[]> table(@RequestParam(DATA_PARAM) final String rawData,
+                                        @RequestParam(TITLE_PARAM) final String title) throws IOException, TemplateLoadException, AciErrorException {
         return super.table(rawData, title);
     }
 
     @Override
     @RequestMapping(value = MAP_PATH, method = RequestMethod.POST)
-    public HttpEntity<byte[]> map(@RequestParam(DATA_PARAM) final String rawData,
-                                  @RequestParam(TITLE_PARAM) final String title) throws IOException, TemplateLoadException, AciErrorException {
+    public ResponseEntity<byte[]> map(@RequestParam(DATA_PARAM) final String rawData,
+                                      @RequestParam(TITLE_PARAM) final String title) throws IOException, TemplateLoadException, AciErrorException {
         return super.map(rawData, title);
     }
 
     @Override
     @RequestMapping(value = LIST_PATH, method = RequestMethod.POST)
-    public HttpEntity<byte[]> list(@RequestParam(DATA_PARAM) final String rawData,
-                                   @RequestParam(RESULTS_PARAM) final String results,
-                                   @RequestParam(SORT_BY_PARAM) final String sortBy) throws IOException, TemplateLoadException, AciErrorException {
+    public ResponseEntity<byte[]> list(@RequestParam(DATA_PARAM) final String rawData,
+                                       @RequestParam(RESULTS_PARAM) final String results,
+                                       @RequestParam(SORT_BY_PARAM) final String sortBy) throws IOException, TemplateLoadException, AciErrorException {
         return super.list(rawData, results, sortBy);
     }
 
     @Override
     @RequestMapping(value = DATE_GRAPH_PATH, method = RequestMethod.POST)
-    public HttpEntity<byte[]> dateGraph(@RequestParam(DATA_PARAM) final String rawData) throws IOException, TemplateLoadException, AciErrorException {
+    public ResponseEntity<byte[]> dateGraph(@RequestParam(DATA_PARAM) final String rawData) throws IOException, TemplateLoadException, AciErrorException {
         return super.dateGraph(rawData);
     }
 
     @Override
     @RequestMapping(value = REPORT_PATH, method = RequestMethod.POST)
-    public HttpEntity<byte[]> report(@RequestParam(DATA_PARAM) final String rawData,
-                                     @RequestParam(value = MULTI_PAGE_PARAM, defaultValue = MULTI_PAGE_PARAM_DEFAULT) final boolean multiPage) throws IOException, TemplateLoadException, AciErrorException {
+    public ResponseEntity<byte[]> report(@RequestParam(DATA_PARAM) final String rawData,
+                                         @RequestParam(value = MULTI_PAGE_PARAM, defaultValue = MULTI_PAGE_PARAM_DEFAULT) final boolean multiPage) throws IOException, TemplateLoadException, AciErrorException {
         return super.report(rawData, multiPage);
     }
 }

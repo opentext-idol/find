@@ -22,7 +22,6 @@ import com.hp.autonomy.frontend.reports.powerpoint.dto.TableData;
 import com.hp.autonomy.frontend.reports.powerpoint.dto.TopicMapData;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -123,21 +122,21 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         );
     }
 
-    public HttpEntity<byte[]> topicMap(
+    public ResponseEntity<byte[]> topicMap(
             @RequestParam("data") final String rawData
     ) throws IOException, TemplateLoadException, E {
         final TopicMapData data = objectMapper.readValue(rawData, TopicMapData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().topicMap(outputStream, data), TOPIC_MAP_EXPORT_FILE_NAME);
     }
 
-    public HttpEntity<byte[]> sunburst(
+    public ResponseEntity<byte[]> sunburst(
             @RequestParam("data") final String rawData
     ) throws IOException, TemplateLoadException, E {
         final SunburstData data = objectMapper.readValue(rawData, SunburstData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().sunburst(outputStream, data), SUNBURST_EXPORT_FILE_NAME);
     }
 
-    public HttpEntity<byte[]> table(
+    public ResponseEntity<byte[]> table(
             @RequestParam("data") final String rawData,
             @RequestParam("title") final String title
     ) throws IOException, TemplateLoadException, E {
@@ -145,7 +144,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().table(outputStream, data, title), TABLE_EXPORT_FILE_NAME);
     }
 
-    public HttpEntity<byte[]> map(
+    public ResponseEntity<byte[]> map(
             @RequestParam("data") final String rawData,
             @RequestParam("title") final String title
     ) throws IOException, TemplateLoadException, E {
@@ -153,7 +152,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().map(outputStream, data, title), MAP_EXPORT_FILE_NAME);
     }
 
-    public HttpEntity<byte[]> list(
+    public ResponseEntity<byte[]> list(
             @RequestParam("data") final String rawData,
             @RequestParam("results") final String results,
             @RequestParam("sortBy") final String sortBy
@@ -162,14 +161,14 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().list(outputStream, data, results, sortBy), LIST_EXPORT_FILE_NAME);
     }
 
-    public HttpEntity<byte[]> dateGraph(
+    public ResponseEntity<byte[]> dateGraph(
             @RequestParam("data") final String rawData
     ) throws IOException, TemplateLoadException, E {
         final DategraphData data = objectMapper.readValue(rawData, DategraphData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().dateGraph(outputStream, data), DATE_GRAPH_EXPORT_FILE_NAME);
     }
 
-    public HttpEntity<byte[]> report(
+    public ResponseEntity<byte[]> report(
             @RequestParam("data") final String rawData,
             @RequestParam(value = "multipage", defaultValue = "false") final boolean multiPage
     ) throws IOException, TemplateLoadException, E {
