@@ -33,7 +33,7 @@ define([
 
             this.updateTime();
 
-            setInterval(this.updateTime.bind(this), 1000);
+            setInterval(this.updateTime.bind(this), 250);
         },
 
         updateTime: function() {
