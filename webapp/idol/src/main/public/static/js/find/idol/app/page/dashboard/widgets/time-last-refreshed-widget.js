@@ -18,8 +18,9 @@ define([
         initialize: function(options) {
             UpdatingWidget.prototype.initialize.apply(this, arguments);
 
-            this.dateFormat = options.widgetSettings.dateFormat || 'HH:mm z';
-            this.timeZone = options.widgetSettings.timeZone || moment.tz.guess();
+            this.dateFormat = this.widgetSettings.dateFormat || 'HH:mm z';
+            this.timeZone = this.widgetSettings.timeZone || moment.tz.guess();
+
             this.updateInterval = options.updateInterval;
 
             this.lastUpdated = moment().tz(this.timeZone);

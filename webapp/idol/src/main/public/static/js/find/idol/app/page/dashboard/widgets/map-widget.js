@@ -19,15 +19,17 @@ define([
         initialize: function(options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
             this.markers = [];
-            this.locationFieldPair = options.widgetSettings.locationFieldPair;
-            this.maxResults = options.widgetSettings.maxResults || 1000;
+
+            this.locationFieldPair = this.widgetSettings.locationFieldPair;
+            this.maxResults = this.widgetSettings.maxResults || 1000;
+            this.clusterMarkers = this.widgetSettings.clusterMarkers || false;
+
             this.documentsCollection = new DocumentsCollection();
-            this.clusterMarkers = options.widgetSettings.clusterMarkers || false;
 
             this.mapView = new MapView({
                 addControl: false,
-                centerCoordinates: options.widgetSettings.centerCoordinates,
-                initialZoom: options.widgetSettings.zoomLevel,
+                centerCoordinates: this.widgetSettings.centerCoordinates,
+                initialZoom: this.widgetSettings.zoomLevel,
                 removeZoomControl: true,
                 disableInteraction: true
             });
@@ -40,8 +42,14 @@ define([
         },
 
         getIcon: function() {
-            const locationField = _.findWhere(configuration().map.locationFields, {displayName: this.locationFieldPair});
-            return this.mapView.getIcon(locationField.iconName, locationField.iconColor, locationField.markerColor);
+            const locationField = _.findWhere(configuration().map.locationFields,
+                {displayName: this.locationFieldPair});
+
+            return this.mapView.getIcon(
+                locationField.iconName,
+                locationField.iconColor,
+                locationField.markerColor
+            );
         },
 
         getData: function() {
@@ -51,7 +59,8 @@ define([
 
             this.markers = [];
             this.mapView.clearMarkers(this.clusterMarkers);
-            const locationField = _.findWhere(configuration().map.locationFields, {displayName: this.locationFieldPair});
+            const locationField = _.findWhere(configuration().map.locationFields,
+                {displayName: this.locationFieldPair});
 
             const latitudeFieldsInfo = configuration().fieldsInfo[locationField.latitudeField];
             const longitudeFieldsInfo = configuration().fieldsInfo[locationField.longitudeField];
@@ -61,7 +70,9 @@ define([
 
             const exists = 'EXISTS{}:' + latitudesFieldsString + ' AND EXISTS{}:' + longitudeFieldsString;
 
-            const newFieldText = this.queryModel.get('fieldText') ? this.queryModel.get('fieldText') + ' AND ' + exists : exists;
+            const newFieldText = this.queryModel.get('fieldText')
+                ? this.queryModel.get('fieldText') + ' AND ' + exists
+                : exists;
 
             return this.documentsCollection.fetch({
                 data: {

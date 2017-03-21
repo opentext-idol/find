@@ -19,10 +19,11 @@ define([
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
 
             this.videoTemplate = _.template(template);
-            this.loop = options.widgetSettings.loop !== false;
-            this.audio = options.widgetSettings.audio || false;
-            this.searchResultNumber = options.widgetSettings.searchResultNumber || 1;
-            this.restrictSearch = Boolean(options.widgetSettings.restrictSearch);
+
+            this.loop = this.widgetSettings.loop !== false;
+            this.audio = this.widgetSettings.audio || false;
+            this.searchResultNumber = this.widgetSettings.searchResultNumber || 1;
+            this.restrictSearch = !!(this.widgetSettings.restrictSearch);
 
             this.documentsCollection = new DocumentsCollection();
         },
@@ -34,13 +35,16 @@ define([
                 if(model.get('media') === 'video') {
                     const url = model.get('url');
                     const offset = model.get('offset');
-                    const src = offset ? url + '#t=' + offset : url;
+                    const src = offset
+                        ? url + '#t=' + offset
+                        : url;
 
                     this.$content.html(this.videoTemplate({
                         loop: this.loop,
                         muted: !this.audio,
                         src: src
                     }));
+
                     if(this.updateCallback) {
                         this.updateCallback();
                         delete this.updateCallback();

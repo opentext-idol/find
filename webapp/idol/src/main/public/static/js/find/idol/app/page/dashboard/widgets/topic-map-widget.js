@@ -16,7 +16,7 @@ define([
         initialize: function(options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
 
-            this.maxResults = options.widgetSettings.maxResults;
+            this.maxResults = this.widgetSettings.maxResults;
         },
 
         postInitialize: function() {

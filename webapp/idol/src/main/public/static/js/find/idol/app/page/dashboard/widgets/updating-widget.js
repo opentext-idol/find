@@ -30,7 +30,7 @@ define([
         update: function(updateTracker) {
             this.toggleSpinner(true);
 
-            const listener = function(callback) {
+            const listener = function listener(callback) {
                 this.toggleSpinner(false);
 
                 callback.call(this, updateTracker);
@@ -40,7 +40,6 @@ define([
 
             this.listenTo(updateTracker, 'change:complete', _.partial(listener, this.onComplete));
             this.listenTo(updateTracker, 'change:cancelled', _.partial(listener, this.onCancelled));
-
             this.listenTo(updateTracker, 'change:count', function() {
                 this.onIncrement(updateTracker);
             });

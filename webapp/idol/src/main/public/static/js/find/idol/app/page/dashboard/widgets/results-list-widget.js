@@ -20,12 +20,16 @@ define([
 
         initialize: function(options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
-            this.sort = options.widgetSettings.sort || 'relevance';
-            this.maxResults = options.widgetSettings.maxResults || 6;
-            this.columnLayout = options.widgetSettings.columnLayout;
+
+            this.sort = this.widgetSettings.sort || 'relevance';
+            this.maxResults = this.widgetSettings.maxResults || 6;
+            this.columnLayout = this.widgetSettings.columnLayout;
+
             this.documentsCollection = new DocumentsCollection();
             this.listView = new ListView({
-                className: 'results-list ' + (this.columnLayout ? 'results-list-column' : 'results-list-row'),
+                className: 'results-list ' + (this.columnLayout
+                    ? 'results-list-column'
+                    : 'results-list-row'),
                 collection: this.documentsCollection,
                 ItemView: ListItemView,
                 itemOptions: {

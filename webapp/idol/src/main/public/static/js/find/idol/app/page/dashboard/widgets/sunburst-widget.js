@@ -11,22 +11,22 @@ define([
     './saved-search-widget',
     'find/idol/app/page/dashboard/legend-color-collection',
     'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend.html',
-    'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend-item.html',
-    'text!find/idol/templates/page/dashboards/widgets/sunburst-legend-too-many-items-entry.html',
+    'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend-entry.html',
+    'text!find/idol/templates/page/dashboards/widgets/sunburst-legend-other-entry.html',
     'i18n!find/nls/bundle'
-], function (_, $, d3, Sunburst, SavedSearchWidget, LegendColorCollection, legendTemplate,
-             legendItemTemplate, tooManyItemsTemplate, i18n) {
+], function(_, $, d3, Sunburst, SavedSearchWidget, LegendColorCollection, legendTemplate,
+            legendEntryTemplate, legendOtherEntryTemplate, i18n) {
     'use strict';
 
-    const tooManyItemsHtml = _.template(tooManyItemsTemplate)({i18n: i18n});
-    const legendItemTemplateFn = _.template(legendItemTemplate);
+    const otherHtml = _.template(legendOtherEntryTemplate)({i18n: i18n});
+    const legendEntryTemplateFn = _.template(legendEntryTemplate);
     const noResultsMessage = '<span class="sunburst-widget-no-results-text hide">' +
         _.escape(i18n['dashboards.widget.sunburst.noResults']) +
         '</span>';
     const HIDDEN_COLOR = '#ffffff';
 
     function composeLegendHtml(datum) {
-        return legendItemTemplateFn({
+        return legendEntryTemplateFn({
             text: datum.text,
             color: datum.color
         });
@@ -34,17 +34,17 @@ define([
 
     /**
      * @desc If there are too many values to display in the Sunburst or in the legend, the
-     * legend's first entry should say there are too many entries. This function prepends the legend's
-     * HTML with the requisite item.
+     * legend's first entry should say there are too many entries. This function appends
+     * the requisite entry to the legend's HTML.
      *
      * @param {String[]} legendHtmlArray HTML strings representing the legend entries
-     * @param tooMany {Boolean} flag setting whether a 'too many entries' item should be prepended
+     * @param tooMany {Boolean} flag setting whether an 'Other' entry should be prepended
      * @returns {String}
      */
     function buildLegendHtml(legendHtmlArray, tooMany) {
         return legendHtmlArray.join('') +
             (legendHtmlArray.length > 0 && tooMany
-                ? tooManyItemsHtml
+                ? otherHtml
                 : '');
     }
 
@@ -52,12 +52,12 @@ define([
         viewType: 'sunburst',
         legendTemplate: _.template(legendTemplate),
 
-        initialize: function (options) {
+        initialize: function(options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
 
-            this.firstField = options.widgetSettings.firstField;
-            this.secondField = options.widgetSettings.secondField;
-            this.maxLegendEntries = options.widgetSettings.maxLegendEntries || 5;
+            this.firstField = this.widgetSettings.firstField;
+            this.secondField = this.widgetSettings.secondField;
+            this.maxLegendEntries = this.widgetSettings.maxLegendEntries || 5;
 
             this.legendColorCollection = new LegendColorCollection(null, {
                 hiddenColor: HIDDEN_COLOR,
@@ -67,7 +67,7 @@ define([
             this.listenTo(this.legendColorCollection, 'update reset', this.updateSunburstAndLegend);
         },
 
-        render: function () {
+        render: function() {
             SavedSearchWidget.prototype.render.apply(this);
 
             this.$legendContainer = $('<div class="sunburst-legend"></div>');
@@ -78,48 +78,47 @@ define([
             this.updateLayout();
         },
 
-        postInitialize: function () {
+        postInitialize: function() {
             return this.updateParametricDistribution();
         },
 
         // Decide if legend is placed underneath the visualizer, or to the side.
-        updateLayout: function () {
-            if (this.$legendContainer && this.$content) {
+        updateLayout: function() {
+            if(this.$legendContainer && this.$content) {
                 // Prefer side-by-side layout: widget must be slightly narrower than a square
                 // for legend to be placed underneath Sunburst
                 const narrowWidget = this.contentWidth() * 0.9 < this.contentHeight();
 
-                this.$legendContainer.toggleClass('legend-one-item-per-line', !narrowWidget);
+                this.$legendContainer.toggleClass('legend-one-entry-per-line', !narrowWidget);
                 this.$content.toggleClass('narrow-widget', narrowWidget);
             }
         },
 
-        onResize: function () {
+        onResize: function() {
             this.updateLayout();
 
-            if (this.sunburst) {
+            if(this.sunburst) {
                 this.sunburst.resize();
                 this.sunburst.redraw();
             }
         },
 
-        getData: function () {
+        getData: function() {
             return this.updateParametricDistribution();
         },
 
-        drawSunburst: function (data) {
-            if (this.$content && this.$visualizerContainer) {
-                //noinspection JSUnusedGlobalSymbols
-                return new Sunburst(this.$visualizerContainer, {
+        drawSunburst: function(data) {
+            return this.$content && this.$visualizerContainer
+                ? new Sunburst(this.$visualizerContainer, {
                     animate: true,
                     sizeAttr: 'count',
                     nameAttr: 'text',
-                    comparator: function (datumA, datumB) {
+                    comparator: function(datumA, datumB) {
                         return d3.ascending(datumA.text, datumB.text);
                     },
                     data: data,
-                    fillColorFn: function (datum) {
-                        if (!datum.parent) {
+                    fillColorFn: function(datum) {
+                        if(!datum.parent) {
                             return 'none';
                         }
 
@@ -129,24 +128,22 @@ define([
                             : HIDDEN_COLOR;
                     },
                     labelFormatter: null// no labels on hover
-                });
-            }
-
-            return null;
+                })
+                : null;
         },
 
-        updateParametricDistribution: function () {
+        updateParametricDistribution: function() {
             return this.legendColorCollection
                 .fetchDependentFields(this.queryModel, this.firstField.id, this.secondField ? this.secondField.id : null);
         },
 
-        updateSunburstAndLegend: function (collection) {
-            if (this.$visualizerContainer && this.$legendContainer && this.$emptyMessage) {
+        updateSunburstAndLegend: function(collection) {
+            if(this.$visualizerContainer && this.$legendContainer && this.$emptyMessage) {
                 const empty = collection.isEmpty();
                 this.$visualizerContainer.toggleClass('hide', empty);
                 this.$legendContainer.toggleClass('hide', empty);
                 this.$emptyMessage.toggleClass('hide', !empty);
-                if (empty) {
+                if(empty) {
                     // Next time we have data, the initialisation animation will run again
                     this.sunburst = null;
                     this.$visualizerContainer.empty();
@@ -154,7 +151,7 @@ define([
                     const rootData = {children: collection.toJSON()};
 
                     this.updateLayout();
-                    if (this.sunburst) {
+                    if(this.sunburst) {
                         this.sunburst.resize();
                         this.sunburst.redraw(rootData);
                     } else {
@@ -162,11 +159,12 @@ define([
                     }
                 }
             }
+
             this.populateLegend();
         },
 
-        populateLegend: function () {
-            if (this.$content && this.$legendContainer) {
+        populateLegend: function() {
+            if(this.$content && this.$legendContainer) {
                 this.$legendContainer
                     .html(this.legendTemplate({
                         innerRingHeader: this.firstField.displayName,
@@ -191,17 +189,17 @@ define([
                     $el: this.$outerLegend
                 };
 
-                _.each([tier1, tier2], function (tier) {
-                    if (!tier || (tier && tier.legendData === null)) {
+                _.each([tier1, tier2], function(tier) {
+                    if(!tier || (tier && tier.legendData === null)) {
                         tier.$el.text(i18n['dashboards.widget.sunburst.legend.noValues']);
                     } else {
                         const htmlArray = [];
 
-                        _.each(tier.legendData, function (legendDatum) {
+                        _.each(tier.legendData, function(legendDatum) {
                             htmlArray.push(composeLegendHtml(legendDatum));
                         });
 
-                        if (htmlArray.length > 0) {
+                        if(htmlArray.length > 0) {
                             tier.$el.html(buildLegendHtml(htmlArray, tier.hidden));
                         } else {
                             tier.$el.text(i18n['dashboards.widget.sunburst.legend.noValues']);

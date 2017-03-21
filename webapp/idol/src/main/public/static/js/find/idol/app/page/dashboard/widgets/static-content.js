@@ -12,7 +12,7 @@ define([
         initialize: function(options) {
             Widget.prototype.initialize.apply(this, arguments);
 
-            this.html = options.widgetSettings.html;
+            this.html = this.widgetSettings.html;
         },
 
         render: function() {

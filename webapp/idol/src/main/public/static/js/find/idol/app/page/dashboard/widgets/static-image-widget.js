@@ -13,7 +13,7 @@ define([
         initialize: function(options) {
             Widget.prototype.initialize.apply(this, arguments);
 
-            this.url = options.widgetSettings.url;
+            this.url = this.widgetSettings.url;
         },
 
         render: function() {
