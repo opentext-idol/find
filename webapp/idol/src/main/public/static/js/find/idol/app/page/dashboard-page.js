@@ -13,7 +13,7 @@ define([
     './dashboard/update-tracker-model',
     'text!find/idol/templates/page/dashboards/dashboard-page.html',
     'i18n!find/nls/bundle'
-], function (_, $, BasePage, vent, widgetRegistry, WidgetNotFoundWidget, UpdateTrackerModel, template, i18n) {
+], function(_, $, BasePage, vent, widgetRegistry, WidgetNotFoundWidget, UpdateTrackerModel, template, i18n) {
     'use strict';
 
     return BasePage.extend({
@@ -66,16 +66,29 @@ define([
             }.bind(this);
         },
 
-        render: function () {
-            this.$el.html(this.template({i18n: i18n}));
-
-            const $widgets = this.$('.widgets');
+        render: function() {
+            this.$el.html(this.template({
+                i18n: i18n,
+                dashboardName: this.dashboardName,
+                powerpointExportButton: i18n['export.powerpoint.button'],
+                powerpointSingle: i18n['export.powerpoint.single'],
+                powerpointMultiple: i18n['export.powerpoint.multiple'],
+                powerpointLabels: i18n['export.powerpoint.labels'],
+                powerpointPadding: i18n['export.powerpoint.padding'],
+            }));
 
             _.each(this.widgetViews, function (widget) {
                 const $div = this.generateWidgetDiv(widget.position);
                 $widgets.append($div);
                 widget.view.setElement($div).render();
             }.bind(this));
+
+            const $exportBtn = this.$('.report-pptx-group');
+            $.when.apply($, _.map(this.widgetViews, function(widget){
+                return widget.view.initialiseWidgetPromise
+            })).done(function(){
+                $exportBtn.removeClass('hide');
+            });
 
             this.addFullScreenListener();
 
