@@ -20,9 +20,8 @@ define([
     const LEGEND_TICK_PADDING = 15;
     const MILLISECONDS_TO_SECONDS = 1000;
     const SECONDS_IN_ONE_YEAR = 31556926;
-    const SECONDS_IN_ONE_MONTH = 2629743;
+    const SECONDS_IN_ONE_WEEK = 604800;
     const SECONDS_IN_ONE_DAY = 86400;
-    const SECONDS_IN_ONE_HOUR = 3600;
 
 
     function setScales(options, chartHeight, chartWidth) {
@@ -264,11 +263,11 @@ define([
         }
     }
 
-    function getTimeFormat(range) {
+    function getTimeFormat(max, min) {
+        var range = max.getTime()/MILLISECONDS_TO_SECONDS - min.getTime()/MILLISECONDS_TO_SECONDS;
         if (range > SECONDS_IN_ONE_YEAR) { return d3.time.format("%B %Y"); }
-        if (range < SECONDS_IN_ONE_HOUR) { return d3.time.format("%S s %H h %d %B %Y"); }
-        if (range < SECONDS_IN_ONE_DAY) { return d3.time.format("%H h %d %B %Y"); }
-        if (range < SECONDS_IN_ONE_MONTH) { return d3.time.format("%d %B %Y"); }
+        if (range < SECONDS_IN_ONE_DAY) { return d3.time.format("%H:%M:%S %d %B %Y"); }
+        if (range < SECONDS_IN_ONE_WEEK) { return d3.time.format("%H:%M %d %B %Y"); }
         return d3.time.format("%d %B %Y");
     }
 
@@ -284,7 +283,7 @@ define([
             const chartHeight = containerHeight;
             const yAxisLabel = options.yAxisLabel;
             const tooltipText = options.tooltipText;
-            const timeFormat = getTimeFormat();
+            const timeFormat = getTimeFormat(maxDate, minDate);
 
             const scales = setScales(options, chartHeight, chartWidth);
 
@@ -339,8 +338,7 @@ define([
                 .attr({
                     r: 4,
                     fill: 'white',
-                    'stroke-width': 3,
-                    'data-toggle': 'tooltip'
+                    'stroke-width': 3
                 })
                 .attr('cy', function (d) {
                     return scales.yScale(d.count);
