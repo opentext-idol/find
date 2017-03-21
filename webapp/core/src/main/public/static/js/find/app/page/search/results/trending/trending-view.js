@@ -16,16 +16,17 @@ define([
     'text!find/templates/app/page/search/results/trending/trending-results-view.html',
     'find/app/vent'
 ], function (Backbone, _, $, d3, i18n, generateErrorHtml, ParametricResultsView, calibrateBuckets, BucketedParametricCollection,
-             ParametricDetailsModel, ParametricCollection, Trending, toFieldTextNode, loadingSpinnerHtml, template, vent) {
+             ParametricDetailsModel, ParametricCollection, trending, toFieldTextNode, loadingSpinnerHtml, template, vent) {
     'use strict';
 
     const MILLISECONDS_TO_SECONDS = 1000;
     const DEBOUNCE_TIME = 500;
-    const SECONDS_IN_ONE_YEAR = 31556926;
-    const SECONDS_IN_ONE_MONTH = 2629743;
-    const SECONDS_IN_ONE_WEEK = 604800;
-    const SECONDS_IN_ONE_DAY = 86400;
-    const SECONDS_IN_ONE_HOUR = 3600;
+
+    const renderState = {
+        RENDERING_NEW_DATA: 'RENDERING NEW DATA',
+        ZOOMING: 'ZOOMING',
+        DRAGGING: 'DRAGGING'
+    };
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -39,7 +40,9 @@ define([
             this.trendingFieldsCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
-            this.model = new Backbone.Model();
+            this.model = new Backbone.Model({
+                currentState: renderState.RENDERING_NEW_DATA
+            });
             this.debouncedFetchBucketingData = _.debounce(this.fetchBucketingData, DEBOUNCE_TIME);
 
             this.bucketedValues = {};
@@ -52,7 +55,7 @@ define([
             });
 
             this.listenTo(vent, 'vent:resize', function() {
-                if(this.trendingChart && this.$el.is(':visible')) {
+                if(this.$el.is(':visible')) {
                     this.renderChart();
                 }
             });
@@ -142,6 +145,7 @@ define([
                     }
                 });
             }, this)).done(_.bind(function() {
+                this.model.set('currentState', renderState.RENDERING_NEW_DATA);
                 this.renderChart();
             }, this));
         },
@@ -149,80 +153,79 @@ define([
         renderChart: function() {
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
 
-            if (!this.trendingChart){
-                this.trendingChart = Trending({
-                    getContainerCallback: function() {
-                        return this.$('#trending-chart').get(0);
-                    }.bind(this)
-                });
-            }
-
             let data = [];
             const names = [];
 
             _.each(this.bucketedValues, function (model) {
-                data.push(_.zip(
+                data.push(
                     _.map(model.get('values'), function(value) {
-                        return Math.floor(value.min + ((value.max - value.min)/2));
-                    }),
-                    _.pluck(model.get('values'), 'count'),
-                    _.pluck(model.get('values'), 'min'),
-                    _.pluck(model.get('values'), 'max')
-                ));
+                        return {
+                            count: value.count,
+                            mid: Math.floor(value.min + ((value.max - value.min)/2)),
+                            min: value.min,
+                            max: value.max
+                        };
+                    }));
                 names.push(model.get('valueName'));
             });
 
             _.each(data, function (value) {
                 _.each(value, function (point) {
-                    point[0] = new Date(point[0] * MILLISECONDS_TO_SECONDS);
-                    point[2] = new Date(point[2] * MILLISECONDS_TO_SECONDS);
-                    point[3] = new Date(point[3] * MILLISECONDS_TO_SECONDS);
+                    point.mid = new Date(point.mid * MILLISECONDS_TO_SECONDS);
+                    point.min = new Date(point.min * MILLISECONDS_TO_SECONDS);
+                    point.max = new Date(point.max * MILLISECONDS_TO_SECONDS);
                 });
             });
 
             data = this.adjustBuckets(data, this.model.get('currentMin'), this.model.get('currentMax'));
 
+
             const zoomCallback = function (min, max) {
                 this.setMinMax(min, max);
+                this.model.set('currentState', renderState.ZOOMING);
                 this.renderChart();
                 this.debouncedFetchBucketingData();
             }.bind(this);
 
             const dragMoveCallback = function(min, max) {
                 this.setMinMax(min, max);
+                this.model.set('currentState', renderState.DRAGGING);
                 this.renderChart();
             }.bind(this);
 
             const dragEndCallback = function(min, max) {
                 this.setMinMax(min, max);
+                this.model.set('currentState', renderState.DRAGGING);
                 this.debouncedFetchBucketingData();
             }.bind(this);
 
+            let minDate, maxDate;
+            if (this.model.get('currentState') === renderState.RENDERING_NEW_DATA) {
+                minDate = data[0][0].mid;
+                maxDate = data[data.length - 1][data[0].length - 1].mid;
+            } else {
+                minDate = new Date(this.model.get('currentMin') * MILLISECONDS_TO_SECONDS);
+                maxDate = new Date(this.model.get('currentMax') * MILLISECONDS_TO_SECONDS);
+            }
+
             this.removeChart();
-            this.trendingChart.draw({
+            trending.draw({
+                el:  this.$('.trending-chart').get(0),
                 data: data,
                 names: names,
-                minDate: this.model.get('currentMin'),
-                maxDate: this.model.get('currentMax'),
-                containerWidth: this.$('#trending-chart').width(),
-                containerHeight: this.$('#trending-chart').height(),
+                minDate: minDate,
+                maxDate: maxDate,
                 xAxisLabel: i18n['search.resultsView.trending.xAxis'],
                 yAxisLabel: i18n['search.resultsView.trending.yAxis'],
                 zoomCallback: zoomCallback,
                 dragMoveCallback: dragMoveCallback,
                 dragEndCallback: dragEndCallback,
-                timeFormat: this.getTimeFormat(),
-                tooltipText: i18n['search.resultsView.trending.tooltipText']
-            });
-
-            this.$('[data-toggle="tooltip"]').tooltip({
-                container: 'body',
-                placement: 'top'
+                tooltipText: i18n['search.resultsView.trending.tooltipText'] // ToDo move out of draw
             });
         },
 
         removeChart: function() {
-            this.$('#trending-chart').empty();
+            this.$('.trending-chart').empty();
         },
 
         getFieldText() {
@@ -234,7 +237,7 @@ define([
         adjustBuckets(values, min, max) {
             return _.map(values, function(value) {
                 return _.filter(value, function(point) {
-                    const date = new Date(point[0]).getTime()/MILLISECONDS_TO_SECONDS;
+                    const date = new Date(point.mid).getTime()/MILLISECONDS_TO_SECONDS;
                     return date >= min && date <= max;
                 });
             });
@@ -247,19 +250,8 @@ define([
             });
         },
 
-        getTimeFormat() {
-            const range = this.model.get('currentMax') - this.model.get('currentMin');
-            if (range > SECONDS_IN_ONE_YEAR) { return d3.time.format("%B %Y"); }
-            if (range < SECONDS_IN_ONE_HOUR) { return d3.time.format("%S s %H h %d %B %Y"); }
-            if (range < SECONDS_IN_ONE_DAY) { return d3.time.format("%H h %d %B %Y"); }
-            if (range < SECONDS_IN_ONE_WEEK) { return d3.time.format("%d %B %Y"); }
-            if (range < SECONDS_IN_ONE_MONTH) { return d3.time.format("%d %B %Y"); }
-            return d3.time.format("%d %B %Y");
-        },
-
         remove() {
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
-            this.trendingChart.remove();
             this.remove();
         }
     });

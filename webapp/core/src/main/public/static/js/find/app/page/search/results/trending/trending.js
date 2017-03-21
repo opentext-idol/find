@@ -1,11 +1,10 @@
 define([
-    'backbone',
     'underscore',
     'jquery',
     'd3',
     'find/app/util/widget-zoom',
     'find/app/util/widget-drag'
-], function (Backbone, _, $, d3, widgetZoom, widgetDrag) {
+], function (_, $, d3, widgetZoom, widgetDrag) {
     'use strict';
 
     const CHART_PADDING = 70;
@@ -16,406 +15,419 @@ define([
     const LEGEND_MARKER_WIDTH = 15;
     const LEGEND_TEXT_WIDTH = 100;
     const LEGEND_TEXT_HEIGHT = 12;
+    const LEGEND_TEXT_EMS = 1.1;
     const LEGEND_PADDING = 5;
+    const LEGEND_TICK_PADDING = 15;
     const MILLISECONDS_TO_SECONDS = 1000;
+    const SECONDS_IN_ONE_YEAR = 31556926;
+    const SECONDS_IN_ONE_MONTH = 2629743;
+    const SECONDS_IN_ONE_DAY = 86400;
+    const SECONDS_IN_ONE_HOUR = 3600;
 
 
-    return function Trending(options) {
-        const getContainerCallback = options.getContainerCallback;
+    function setScales(options, chartHeight, chartWidth) {
+        const data = options.data;
+        const maxValue = _.max(_.map(data, function (d) {
+            return _.max(d, function (v) {
+                return v.count;
+            }).count
+        }));
+        const minValue = _.min(_.map(data, function (d) {
+            return _.min(d, function (v) {
+                return v.count;
+            }).count
+        }));
+
+        const yScale = d3.scale.linear()
+            .domain([minValue, maxValue])
+            .range([chartHeight - CHART_PADDING, CHART_PADDING/2]);
+
+        const xScale = d3.time.scale()
+            .domain([options.minDate, options.maxDate])
+            .range([CHART_PADDING, chartWidth - CHART_PADDING]);
 
         return {
-            draw: function(options) {
-                const data = options.data;
-                const names = options.names;
-                const minDate = options.minDate;
-                const maxDate = options.maxDate;
-                const containerWidth = options.containerWidth;
-                const containerHeight = options.containerHeight;
-                const chartWidth = containerWidth - LEGEND_WIDTH;
-                const chartHeight = containerHeight;
-                const yAxisLabel = options.yAxisLabel;
-                const tooltipText = options.tooltipText;
-                const timeFormat = options.timeFormat;
-                const maxValue = _.max(_.map(data, function (d) {
-                    return _.max(d, function (v) {
-                        return v[1];
-                    })[1]
-                }));
-                const minValue = _.min(_.map(data, function (d) {
-                    return _.min(d, function (v) {
-                        return v[1];
-                    })[1]
-                }));
-
-                // Set the scales //
-                const yScale = d3.scale.linear()
-                    .domain([minValue, maxValue])
-                    .range([chartHeight - CHART_PADDING, CHART_PADDING]);
-
-                let xMin, xMax;
-                if (data[data.length - 1][data[0].length - 1][3].getTime()/MILLISECONDS_TO_SECONDS === maxDate) { // Not zooming
-                    xMin = data[0][0][0];
-                    xMax = data[data.length - 1][data[0].length - 1][0];
-                } else {
-                    xMin = new Date(minDate * MILLISECONDS_TO_SECONDS);
-                    xMax = new Date(maxDate * MILLISECONDS_TO_SECONDS);
-                }
-
-                const xScale = d3.time.scale()
-                    .domain([xMin, xMax])
-                    .range([CHART_PADDING, chartWidth - CHART_PADDING]);
-
-                const yAxisScale = d3.svg.axis()
-                    .scale(yScale)
-                    .orient('left');
-
-                const xAxisScale = d3.svg.axis()
-                    .scale(xScale)
-                    .orient('bottom')
-                    .tickFormat(timeFormat);
-
-                // Create the chart svg //
-                const svg = d3.select(getContainerCallback())
-                    .append('svg')
-                    .attr('width', chartWidth + LEGEND_WIDTH)
-                    .attr('height', chartHeight);
-
-                // Draw a line on the chart for each value //
-                const parametricValue = svg.selectAll('.data-item')
-                    .data(data)
-                    .enter()
-                    .append('g')
-                    .attr('class', function (d, i) {
-                        return 'data-item color' + (i % NUMBER_OF_COLORS);
-                    })
-                    .attr('data-name', function (d, i) {
-                        return names[i];
-                    });
-
-                const line = d3.svg.line()
-                    .x(function (d) {
-                        return xScale(d[0])
-                    })
-                    .y(function (d) {
-                        return yScale(d[1])
-                    })
-                    .interpolate('linear');
-
-                const lineAndPointMouseover = function () {
-                    let newValue = d3.event.target.parentNode.getAttribute('data-name');
-                    d3.selectAll('.line')
-                        .each(function () {
-                            //noinspection JSPotentiallyInvalidUsageOfThis
-                            if (this.parentNode.getAttribute('data-name') === newValue) {
-                                d3.select(this)
-                                    .attr('stroke-width', 5);
-                            } else {
-                                d3.select(this)
-                                    .attr('opacity', FADE_OUT_OPACITY);
-                            }
-                        });
-
-                    d3.selectAll('circle')
-                        .each(function () {
-                            //noinspection JSPotentiallyInvalidUsageOfThis
-                            if (this.parentNode.getAttribute('data-name') === newValue) {
-                                d3.select(this)
-                                    .attr('r', POINT_RADIUS);
-                            } else {
-                                d3.select(this)
-                                    .attr('opacity', FADE_OUT_OPACITY)
-                            }
-                        });
-                    d3.selectAll('.legend-text')
-                        .each(function () {
-                            if(this.parentNode.getAttribute('data-name') === newValue) {
-                                d3.select(this)
-                                    .attr('font-size', '15')
-                            } else {
-                                d3.select(this)
-                                    .attr('font-size', '12')
-                            }
-                        });
-                };
-
-                const lineAndPointMouseout = function () {
-                    d3.selectAll('.line')
-                        .attr('opacity', 1)
-                        .attr('stroke-width', 2);
-
-                    d3.selectAll('circle')
-                        .attr('opacity', 1)
-                        .attr('r', 4);
-
-                    d3.selectAll('.legend-text')
-                        .attr('font-size', '12')
-                };
-
-                parametricValue.append('path')
-                    .attr('class', 'line')
-                    .attr('stroke-width', 2)
-                    .attr('fill', 'none')
-                    .attr('d', function (d) {
-                        return line(d);
-                    })
-                    .on('mouseover', lineAndPointMouseover)
-                    .on('mouseout', lineAndPointMouseout);
-
-                const pointMouseover = function(d) {
-                    svg.append('line')
-                        .attr('class', 'guide-line')
-                        .attr('x1', CHART_PADDING)
-                        .attr('y1', yScale(d[1]))
-                        .attr('x2', xScale(d[0]) - POINT_RADIUS/2)
-                        .attr('y2', yScale(d[1]));
-
-                    svg.append('line')
-                        .attr('class', 'guide-line')
-                        .attr('x1', xScale(d[0]))
-                        .attr('y1', yScale(d[1]) + POINT_RADIUS/2)
-                        .attr('x2', xScale(d[0]))
-                        .attr('y2', chartHeight - CHART_PADDING);
-
-                    lineAndPointMouseover();
-                };
-
-                const pointMouseout = function() {
-                    svg.selectAll('.guide-line')
-                        .remove();
-
-                    svg.selectAll('.chart-tooltip')
-                        .remove();
-
-                    lineAndPointMouseout();
-                };
-
-                // Add the data points along the lines //
-                const points = parametricValue.selectAll('circle')
-                    .data(_.identity);
-
-                points.enter()
-                    .append('circle')
-                    .attr('r', 4)
-                    .attr('cy', function (d) {
-                        return yScale(d[1]);
-                    })
-                    .attr('cx', function (d) {
-                        return xScale(d[0]);
-                    })
-                    .attr('fill', 'white')
-                    .attr('stroke-width', 3)
-                    .attr('data-toggle', 'tooltip')
-                    .attr('title', function(d) {
-                        return tooltipText(
-                            d[1],
-                            this.parentNode.getAttribute('data-name'),
-                            d[2].toDateString(),
-                            d[3].toDateString()
-                        );
-                    })
-                    .on('mouseover', pointMouseover)
-                    .on('mouseout', pointMouseout);
-
-
-                // Add the x and y axes //
-                const yAxis = svg.append('g')
-                    .attr('class', 'y-axis')
-                    .attr('transform', 'translate(' + CHART_PADDING + ',0)')
-                    .call(yAxisScale);
-
-                yAxis.append('text')
-                    .attr('x', -(chartHeight/2))
-                    .attr('y', -(CHART_PADDING/5*4))
-                    .attr('transform', 'rotate(270)')
-                    .text(yAxisLabel);
-
-                const xAxis = svg.append('g')
-                    .attr('class', 'x-axis')
-                    .attr('transform', 'translate(0,' + (chartHeight - CHART_PADDING) + ')')
-                    .call(xAxisScale);
-
-                function wrap(text, width) {
-                    const tickWidth = width/text[0].length;
-                    const padding = 15;
-                    text.each(function() {
-                        const text = d3.select(this),
-                            words = text.text().split(/\s+/).reverse(),
-                            lineHeight = 1.1, // ems
-                            y = text.attr("y"),
-                            dy = parseFloat(text.attr("dy"));
-                        let word,
-                            lineNumber = 0,
-                            line = [],
-                            tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
-                        while (word = words.pop()) {
-                            line.push(word);
-                            tspan.text(line.join(" "));
-                            if (tspan.node().getComputedTextLength() > tickWidth - padding) {
-                                line.pop();
-                                tspan.text(line.join(" "));
-                                line = [word];
-                                tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
-                            }
-                        }
-                    });
-                }
-
-                xAxis.selectAll('.tick text')
-                    .call(wrap, chartWidth);
-
-                // Add the legend //
-                const legend = svg.append('g')
-                    .attr('class', 'legend')
-                    .attr('x', chartWidth)
-                    .attr('y', 0)
-                    .attr('height', chartHeight)
-                    .attr('width', LEGEND_WIDTH);
-
-                const legendMouseover = function (d) {
-                    d3.selectAll('.line')
-                        .each(function () {
-                            if (this.parentNode.getAttribute('data-name') === d) {
-                                d3.select(this)
-                                    .attr('stroke-width', 5);
-                            } else {
-                                d3.select(this)
-                                    .attr('opacity', FADE_OUT_OPACITY);
-                            }
-                        });
-                    d3.selectAll('circle')
-                        .each(function () {
-                            if (this.parentNode.getAttribute('data-name') === d) {
-                                d3.select(this)
-                                    .attr('r', 5);
-                            } else {
-                                d3.select(this)
-                                    .attr('opacity', FADE_OUT_OPACITY);
-                            }
-                        });
-                    d3.selectAll('.legend-text')
-                        .each(function () {
-                            if(this.parentNode.getAttribute('data-name') === d) {
-                                d3.select(this)
-                                    .attr('font-size', '15')
-                            } else {
-                                d3.select(this)
-                                    .attr('font-size', '12')
-                            }
-                        });
-                };
-
-                const legendMouseout = function () {
-                    d3.selectAll('.line')
-                        .attr('stroke-width', 2)
-                        .attr('opacity', 1);
-                    d3.selectAll('circle')
-                        .attr('r', 4)
-                        .attr('opacity', 1);
-                    d3.selectAll('.legend-text')
-                        .attr('font-size', '12')
-                };
-
-                const adjustLabelPositions = function (legendData, maxScaledY) {
-                    _.each(legendData, function (d, i) {
-                        if (i >= 1) {
-                            const prevVal = legendData[i - 1].y + LEGEND_TEXT_HEIGHT;
-                            d.y = d.y < prevVal ? prevVal : d.y;
-                        }
-                    });
-
-                    if (!_.isEmpty(legendData) && legendData[legendData.length - 1].y > maxScaledY) {
-                        legendData[legendData.length - 1].y = maxScaledY;
-                        legendData.reverse();
-                        _.each(legendData, function (d, i) {
-                            if (i >= 1) {
-                                const prevVal = legendData[i - 1].y - LEGEND_TEXT_HEIGHT;
-                                d.y = d.y > prevVal ? prevVal : d.y;
-                            }
-                        });
-                        legendData.reverse();
-                    }
-                };
-
-                const getYPositionOfLegendLabel = function() {
-                    const labelData = _.map(data, function(datum, i) {
-                        return {
-                            index: i,
-                            y: yScale(datum[datum.length - 1][1]),
-                            yData: yScale(datum[datum.length - 1][1])
-                        }
-                    });
-
-                    labelData.sort(function(a,b) {
-                        return a.y - b.y;
-                    });
-
-                    const maxScaledY = _.max(labelData, function(datum) { return datum.y; }).y;
-
-                    adjustLabelPositions(labelData, maxScaledY);
-
-                    return labelData;
-                };
-
-                legend.selectAll('g')
-                    .data(getYPositionOfLegendLabel())
-                    .enter()
-                    .append('g')
-                    .each(function (d) {
-                        const g = d3.select(this)
-                            .attr('data-name', names[d.index])
-                            .attr('class', 'color' + (d.index % NUMBER_OF_COLORS));
-
-                        g.append('line')
-                            .attr('x1', chartWidth - CHART_PADDING + LEGEND_PADDING)
-                            .attr('y1', d.yData)
-                            .attr('x2', chartWidth - CHART_PADDING + LEGEND_PADDING + LEGEND_MARKER_WIDTH)
-                            .attr('y2', d.y)
-                            .attr('stroke-width', 2)
-                            .attr('stroke-dasharray', '3,2')
-                            .on('mouseover', function() {
-                                legendMouseover(names[d.index]);
-                            })
-                            .on('mouseout', function() {
-                                legendMouseout(names[d.index]);
-                            });
-
-                        g.append('text')
-                            .attr('x', chartWidth - CHART_PADDING + LEGEND_MARKER_WIDTH + LEGEND_PADDING)
-                            .attr('y', d.y + 4 - (LEGEND_PADDING/2))
-                            .attr('class', 'legend-text')
-                            .attr('width', LEGEND_TEXT_WIDTH)
-                            .attr('height', LEGEND_TEXT_HEIGHT)
-                            .attr('cursor', 'default')
-                            .attr('font-size', LEGEND_TEXT_HEIGHT)
-                            .text(names[d.index])
-                            .on('mouseover', function() {
-                                legendMouseover(names[d.index]);
-                            })
-                            .on('mouseout', function() {
-                                legendMouseout(names[d.index]);
-                            });
-                    });
-
-                widgetZoom.addZoomBehaviour({
-                    chart: svg,
-                    xScale: xScale,
-                    scaleType: 'date',
-                    minValue: minDate,
-                    maxValue: maxDate,
-                    callback: options.zoomCallback
-                });
-
-                widgetDrag.addDragBehaviour({
-                    chart: svg,
-                    xScale: xScale,
-                    scaleType: 'date',
-                    min: minDate,
-                    max: maxDate,
-                    dragMoveCallback: options.dragMoveCallback,
-                    dragEndCallback: options.dragEndCallback
-                });
-            }
-        }
-
+            yScale: yScale,
+            xScale: xScale
+        };
     }
+
+    function setHoverFunctionality(chart, scales, chartHeight, tooltipText, timeFormat) {
+        const mouseover = function (valueName) {
+            d3.selectAll('.line')
+                .each(function () {
+                    if (this.parentNode.getAttribute('data-name') === valueName) {
+                        d3.select(this)
+                            .attr('stroke-width', POINT_RADIUS);
+                    } else {
+                        d3.select(this)
+                            .attr('opacity', FADE_OUT_OPACITY);
+                    }
+                });
+            d3.selectAll('circle')
+                .each(function () {
+                    if (this.parentNode.getAttribute('data-name') === valueName) {
+                        d3.select(this)
+                            .attr('r', 5);
+                    } else {
+                        d3.select(this)
+                            .attr('opacity', FADE_OUT_OPACITY);
+                    }
+                });
+            d3.selectAll('.legend-text')
+                .each(function () {
+                    if (this.parentNode.getAttribute('data-name') === valueName) {
+                        d3.select(this)
+                            .attr('font-size', '15')
+                    } else {
+                        d3.select(this)
+                            .attr('font-size', '12')
+                    }
+                });
+        };
+
+        const mouseout = function () {
+            d3.selectAll('.line')
+                .attr('stroke-width', 2)
+                .attr('opacity', 1);
+            d3.selectAll('circle')
+                .attr('r', 4)
+                .attr('opacity', 1);
+            d3.selectAll('.legend-text')
+                .attr('font-size', '12')
+        };
+
+        const lineAndPointMouseover = function () {
+            let valueName = d3.event.target.parentNode.getAttribute('data-name');
+            mouseover(valueName);
+        };
+
+        const pointMouseover = function (d) {
+            chart.append('line')
+                .attr({
+                    class: 'guide-line',
+                    x1: CHART_PADDING,
+                    y1: scales.yScale(d.count),
+                    x2: scales.xScale(d.mid) - POINT_RADIUS / 2,
+                    y2: scales.yScale(d.count)
+                });
+            chart.append('line')
+                .attr({
+                    class: 'guide-line',
+                    x1: scales.xScale(d.mid),
+                    y1: scales.yScale(d.count) + POINT_RADIUS / 2,
+                    x2: scales.xScale(d.mid),
+                    y2: chartHeight - CHART_PADDING
+                });
+
+            const title = tooltipText(
+                d.count,
+                this.parentNode.getAttribute('data-name'),
+                timeFormat(d.min),
+                timeFormat(d.max)
+            );
+
+            $(this).tooltip({
+                title: title,
+                container: 'body',
+                placement: 'top',
+                trigger: 'manual'
+            });
+
+            $(this).tooltip('show');
+
+            lineAndPointMouseover();
+        };
+
+        const pointMouseout = function () {
+            chart.selectAll('.guide-line')
+                .remove();
+            chart.selectAll('.chart-tooltip')
+                .remove();
+            $(this).tooltip('destroy');
+            mouseout();
+        };
+
+        return {
+            lineAndPointMouseover: lineAndPointMouseover,
+            lineAndPointMouseout: mouseout,
+            pointMouseover: pointMouseover,
+            pointMouseout: pointMouseout,
+            legendMouseover: mouseover,
+            legendMouseout: mouseout
+        }
+    }
+
+    function setAxes(chart, scales, chartHeight, chartWidth, yAxisLabel, timeFormat) {
+
+        const yAxisScale = d3.svg.axis()
+            .scale(scales.yScale)
+            .orient('left');
+
+        const xAxisScale = d3.svg.axis()
+            .scale(scales.xScale)
+            .orient('bottom')
+            .tickFormat(timeFormat);
+
+        const yAxis = chart.append('g')
+            .attr({
+                class: 'y-axis',
+                transform: 'translate(' + CHART_PADDING + ',0)'
+            })
+            .call(yAxisScale);
+
+        yAxis.append('text')
+            .attr({
+                x: -(chartHeight / 2),
+                y: -(CHART_PADDING / 5 * 4),
+                transform: 'rotate(270)'
+            })
+            .text(yAxisLabel);
+
+        const xAxis = chart.append('g')
+            .attr({
+                class: 'x-axis',
+                transform: 'translate(0,' + (chartHeight - CHART_PADDING) + ')'
+            })
+            .call(xAxisScale);
+
+        xAxis.selectAll('.tick text')
+            .call(labelWrap, chartWidth);
+    }
+
+    function labelWrap(labels, width) {
+        const tickWidth = width / labels[0].length;
+
+        labels.each(function () {
+            const label = d3.select(this);
+            const words = label.text().split(/\s+/).reverse();
+            const y = label.attr("y");
+            const dy = parseFloat(label.attr("dy"));
+            let word;
+            let lineNumber = 0;
+            let line = [];
+            let tspan = label.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+
+            //noinspection AssignmentResultUsedJS
+            while (word = words.pop()) {
+                line.push(word);
+                tspan.text(line.join(" "));
+                //noinspection JSUnresolvedFunction
+                if (tspan.node().getComputedTextLength() > tickWidth - LEGEND_TICK_PADDING) {
+                    line.pop();
+                    tspan.text(line.join(" "));
+                    line = [word];
+                    tspan = label.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * LEGEND_TEXT_EMS + dy + "em").text(word);
+                }
+            }
+        });
+    }
+
+    function getAdjustedLegendData(data, scales) {
+        const labelData = _.map(data, function (datum, i) {
+            return {
+                index: i,
+                labelY: scales.yScale(datum[datum.length - 1].count),
+                dataY: scales.yScale(datum[datum.length - 1].count)
+            }
+        });
+
+        labelData.sort(function (a, b) {
+            return a.labelY - b.labelY;
+        });
+
+        const maxScaledY = _.max(labelData, function (datum) {
+            return datum.labelY;
+        }).labelY;
+        adjustLabelPositions(labelData, maxScaledY);
+        return labelData;
+    }
+
+    function adjustLabelPositions(legendData, maxScaledY) {
+        _.each(legendData, function (d, i) {
+            if (i >= 1) {
+                const prevVal = legendData[i - 1].labelY + LEGEND_TEXT_HEIGHT;
+                d.labelY = d.labelY < prevVal ? prevVal : d.labelY;
+            }
+        });
+
+        if (!_.isEmpty(legendData) && legendData[legendData.length - 1].labelY > maxScaledY) {
+            legendData[legendData.length - 1].labelY = maxScaledY;
+            legendData.reverse();
+            _.each(legendData, function (d, i) {
+                if (i >= 1) {
+                    const prevVal = legendData[i - 1].labelY - LEGEND_TEXT_HEIGHT;
+                    d.labelY = d.labelY > prevVal ? prevVal : d.labelY;
+                }
+            });
+            legendData.reverse();
+        }
+    }
+
+    function getTimeFormat(range) {
+        if (range > SECONDS_IN_ONE_YEAR) { return d3.time.format("%B %Y"); }
+        if (range < SECONDS_IN_ONE_HOUR) { return d3.time.format("%S s %H h %d %B %Y"); }
+        if (range < SECONDS_IN_ONE_DAY) { return d3.time.format("%H h %d %B %Y"); }
+        if (range < SECONDS_IN_ONE_MONTH) { return d3.time.format("%d %B %Y"); }
+        return d3.time.format("%d %B %Y");
+    }
+
+    return {
+        draw: function (options) {
+            const data = options.data;
+            const names = options.names;
+            const minDate = options.minDate;
+            const maxDate = options.maxDate;
+            const containerWidth = $(options.el).width();
+            const containerHeight = $(options.el).height();
+            const chartWidth = containerWidth - LEGEND_WIDTH;
+            const chartHeight = containerHeight;
+            const yAxisLabel = options.yAxisLabel;
+            const tooltipText = options.tooltipText;
+            const timeFormat = getTimeFormat();
+
+            const scales = setScales(options, chartHeight, chartWidth);
+
+            const chart = d3.select(options.el)
+                .append('svg')
+                .attr({
+                    width: containerWidth,
+                    height: containerHeight
+                });
+
+            const hover = setHoverFunctionality(chart, scales, chartHeight, tooltipText, timeFormat);
+
+            // ToDo have a think about reusing groups with new data
+            const value = chart.selectAll('.value')
+                .data(data)
+                .enter()
+                .append('g')
+                .attr('class', function (d, i) {
+                    return 'value color' + (i % NUMBER_OF_COLORS);
+                })
+                .attr('data-name', function (d, i) {
+                    return names[i];
+                });
+
+            const line = d3.svg.line()
+                .x(function (d) {
+                    return scales.xScale(d.mid)
+                })
+                .y(function (d) {
+                    return scales.yScale(d.count)
+                })
+                .interpolate('linear');
+
+
+            value.append('path')
+                .attr({
+                    class: 'line',
+                    'stroke-width': 2,
+                    fill: 'none'
+                })
+                .attr('d', function (d) {
+                    return line(d);
+                })
+                .on('mouseover', hover.lineAndPointMouseover)
+                .on('mouseout', hover.lineAndPointMouseout);
+
+
+            value.selectAll('circle')
+                .data(_.identity)
+                .enter()
+                .append('circle')
+                .attr({
+                    r: 4,
+                    fill: 'white',
+                    'stroke-width': 3,
+                    'data-toggle': 'tooltip'
+                })
+                .attr('cy', function (d) {
+                    return scales.yScale(d.count);
+                })
+                .attr('cx', function (d) {
+                    return scales.xScale(d.mid);
+                })
+                .on('mouseover', hover.pointMouseover)
+                .on('mouseout', hover.pointMouseout);
+
+            setAxes(chart, scales, chartHeight, chartWidth, yAxisLabel, timeFormat);
+
+            const legend = chart.append('g')
+                .attr({
+                    class: 'legend',
+                    x: chartWidth,
+                    y: 0,
+                    height: chartHeight,
+                    width: LEGEND_WIDTH
+                });
+
+            legend.selectAll('g')
+                .data(getAdjustedLegendData(data, scales))
+                .enter()
+                .append('g')
+                .each(function (d) {
+                    const g = d3.select(this)
+                        .attr({
+                            'data-name': names[d.index],
+                            class: 'color' + (d.index % NUMBER_OF_COLORS)
+                        });
+
+                    g.append('line')
+                        .attr({
+                            x1: chartWidth - CHART_PADDING + LEGEND_PADDING,
+                            y1: d.dataY,
+                            x2: chartWidth - CHART_PADDING + LEGEND_PADDING + LEGEND_MARKER_WIDTH,
+                            y2: d.labelY,
+                            'stroke-width': 2,
+                            'stroke-dasharray': '3,2'
+                        })
+                        .on('mouseover', function () {
+                            hover.legendMouseover(names[d.index]);
+                        })
+                        .on('mouseout', function () {
+                            hover.legendMouseout(names[d.index]);
+                        });
+
+                    g.append('text')
+                        .attr({
+                            x: chartWidth - CHART_PADDING + LEGEND_MARKER_WIDTH + LEGEND_PADDING,
+                            y: d.labelY + 4 - (LEGEND_PADDING / 2),
+                            class: 'legend-text',
+                            width: LEGEND_TEXT_WIDTH,
+                            height: LEGEND_TEXT_HEIGHT,
+                            cursor: 'default',
+                            'font-size': LEGEND_TEXT_HEIGHT
+                        })
+                        .text(names[d.index])
+                        .on('mouseover', function () {
+                            hover.legendMouseover(names[d.index]);
+                        })
+                        .on('mouseout', function () {
+                            hover.legendMouseout(names[d.index]);
+                        });
+                });
+
+            widgetZoom.addZoomBehaviour({
+                chart: chart,
+                xScale: scales.xScale,
+                scaleType: 'date',
+                minValue: minDate.getTime()/MILLISECONDS_TO_SECONDS,
+                maxValue: maxDate.getTime()/MILLISECONDS_TO_SECONDS,
+                callback: options.zoomCallback
+            });
+
+            widgetDrag.addDragBehaviour({
+                chart: chart,
+                xScale: scales.xScale,
+                scaleType: 'date',
+                min: minDate.getTime()/MILLISECONDS_TO_SECONDS,
+                max: maxDate.getTime()/MILLISECONDS_TO_SECONDS,
+                dragMoveCallback: options.dragMoveCallback,
+                dragEndCallback: options.dragEndCallback
+            });
+        }
+    };
+
+
 });

@@ -6,13 +6,14 @@ define([
     'use strict';
 
     const ZOOM_EXTENT = [0.1, 10];
+    const MILLISECONDS_TO_SECONDS = 1000;
 
     function zoom(scale, scaleType, min, max, zoomCallback) {
         return function() {
             const p = d3.mouse(this);
             let mouseValue;
             if (scaleType === 'date') {
-                 mouseValue = new Date(scale.invert(p[0])).getTime()/1000;
+                 mouseValue = new Date(scale.invert(p[0])).getTime()/MILLISECONDS_TO_SECONDS;
             } else {
                  mouseValue = scale.invert(p[0]);
             }

@@ -6,17 +6,138 @@
 define([
     'underscore',
     'backbone',
+    'i18n!find/nls/bundle',
     'find/app/page/search/results/trending/trending'
-], function(_, Backbone, Trending) {
+], function(_, Backbone, i18n, trending) {
     'use strict';
 
-    const testData = [
-        [["2008-07-01T14:39:39.200Z", 36], ["2009-06-19T06:19:18.400Z", 9], ["2010-06-06T21:58:57.600Z", 241], ["2011-05-25T13:38:36.800Z", 90], ["2012-05-12T05:18:16.000Z", 123]],
-        [["2008-07-01T14:39:39.200Z", 0], ["2009-06-19T06:19:18.400Z", 0], ["2010-06-06T21:58:57.600Z", 117], ["2011-05-25T13:38:36.800Z", 0], ["2012-05-12T05:18:16.000Z", 0]],
-        [["2008-07-01T14:39:39.200Z", 64], ["2009-06-19T06:19:18.400Z", 83], ["2010-06-06T21:58:57.600Z", 64], ["2011-05-25T13:38:36.800Z", 0], ["2012-05-12T05:18:16.000Z", 0]],
-        [["2008-07-01T14:39:39.200Z", 3], ["2009-06-19T06:19:18.400Z", 38], ["2010-06-06T21:58:57.600Z", 53], ["2011-05-25T13:38:36.800Z", 43], ["2012-05-12T05:18:16.000Z", 2]],
-        [["2008-07-01T14:39:39.200Z", 0], ["2009-06-19T06:19:18.400Z", 0], ["2010-06-06T21:58:57.600Z", 9], ["2011-05-25T13:38:36.800Z", 0], ["2012-05-12T05:18:16.000Z", 0]]
-    ];
+    const testData = [[{
+        "count": 36,
+        "mid": "2009-08-12T18:18:00.000Z",
+        "min": "2009-07-19T23:00:00.000Z",
+        "max": "2009-09-05T13:36:00.000Z"
+    }, {
+        "count": 9,
+        "mid": "2009-09-29T08:54:00.000Z",
+        "min": "2009-09-05T13:36:00.000Z",
+        "max": "2009-10-23T04:12:00.000Z"
+    }, {
+        "count": 241,
+        "mid": "2009-11-15T23:30:00.000Z",
+        "min": "2009-10-23T04:12:00.000Z",
+        "max": "2009-12-09T18:48:00.000Z"
+    }, {
+        "count": 90,
+        "mid": "2010-01-02T14:06:00.000Z",
+        "min": "2009-12-09T18:48:00.000Z",
+        "max": "2010-01-26T09:24:00.000Z"
+    }, {
+        "count": 123,
+        "mid": "2010-02-19T04:42:00.000Z",
+        "min": "2010-01-26T09:24:00.000Z",
+        "max": "2010-03-15T00:00:00.000Z"
+    }], [{
+        "count": 0,
+        "mid": "2009-08-12T18:18:00.000Z",
+        "min": "2009-07-19T23:00:00.000Z",
+        "max": "2009-09-05T13:36:00.000Z"
+    }, {
+        "count": 0,
+        "mid": "2009-09-29T08:54:00.000Z",
+        "min": "2009-09-05T13:36:00.000Z",
+        "max": "2009-10-23T04:12:00.000Z"
+    }, {
+        "count": 117,
+        "mid": "2009-11-15T23:30:00.000Z",
+        "min": "2009-10-23T04:12:00.000Z",
+        "max": "2009-12-09T18:48:00.000Z"
+    }, {
+        "count": 0,
+        "mid": "2010-01-02T14:06:00.000Z",
+        "min": "2009-12-09T18:48:00.000Z",
+        "max": "2010-01-26T09:24:00.000Z"
+    }, {
+        "count": 0,
+        "mid": "2010-02-19T04:42:00.000Z",
+        "min": "2010-01-26T09:24:00.000Z",
+        "max": "2010-03-15T00:00:00.000Z"
+    }], [{
+        "count": 64,
+        "mid": "2009-08-12T18:18:00.000Z",
+        "min": "2009-07-19T23:00:00.000Z",
+        "max": "2009-09-05T13:36:00.000Z"
+    }, {
+        "count": 83,
+        "mid": "2009-09-29T08:54:00.000Z",
+        "min": "2009-09-05T13:36:00.000Z",
+        "max": "2009-10-23T04:12:00.000Z"
+    }, {
+        "count": 64,
+        "mid": "2009-11-15T23:30:00.000Z",
+        "min": "2009-10-23T04:12:00.000Z",
+        "max": "2009-12-09T18:48:00.000Z"
+    }, {
+        "count": 0,
+        "mid": "2010-01-02T14:06:00.000Z",
+        "min": "2009-12-09T18:48:00.000Z",
+        "max": "2010-01-26T09:24:00.000Z"
+    }, {
+        "count": 0,
+        "mid": "2010-02-19T04:42:00.000Z",
+        "min": "2010-01-26T09:24:00.000Z",
+        "max": "2010-03-15T00:00:00.000Z"
+    }], [{
+        "count": 3,
+        "mid": "2009-08-12T18:18:00.000Z",
+        "min": "2009-07-19T23:00:00.000Z",
+        "max": "2009-09-05T13:36:00.000Z"
+    }, {
+        "count": 38,
+        "mid": "2009-09-29T08:54:00.000Z",
+        "min": "2009-09-05T13:36:00.000Z",
+        "max": "2009-10-23T04:12:00.000Z"
+    }, {
+        "count": 53,
+        "mid": "2009-11-15T23:30:00.000Z",
+        "min": "2009-10-23T04:12:00.000Z",
+        "max": "2009-12-09T18:48:00.000Z"
+    }, {
+        "count": 43,
+        "mid": "2010-01-02T14:06:00.000Z",
+        "min": "2009-12-09T18:48:00.000Z",
+        "max": "2010-01-26T09:24:00.000Z"
+    }, {
+        "count": 2,
+        "mid": "2010-02-19T04:42:00.000Z",
+        "min": "2010-01-26T09:24:00.000Z",
+        "max": "2010-03-15T00:00:00.000Z"
+    }], [{
+        "count": 0,
+        "mid": "2009-08-12T18:18:00.000Z",
+        "min": "2009-07-19T23:00:00.000Z",
+        "max": "2009-09-05T13:36:00.000Z"
+    }, {
+        "count": 0,
+        "mid": "2009-09-29T08:54:00.000Z",
+        "min": "2009-09-05T13:36:00.000Z",
+        "max": "2009-10-23T04:12:00.000Z"
+    }, {
+        "count": 9,
+        "mid": "2009-11-15T23:30:00.000Z",
+        "min": "2009-10-23T04:12:00.000Z",
+        "max": "2009-12-09T18:48:00.000Z"
+    }, {
+        "count": 0,
+        "mid": "2010-01-02T14:06:00.000Z",
+        "min": "2009-12-09T18:48:00.000Z",
+        "max": "2010-01-26T09:24:00.000Z"
+    }, {
+        "count": 0,
+        "mid": "2010-02-19T04:42:00.000Z",
+        "min": "2010-01-26T09:24:00.000Z",
+        "max": "2010-03-15T00:00:00.000Z"
+    }]];
+
     const testNames = ['Dragon', 'Phoenix', 'Griffin', 'Hydra', 'Siren'];
     const chartWidth = 600;
     const chartHeight = 400;
@@ -28,37 +149,30 @@ define([
     };
 
     describe('Trending', function() {
-        it('exposes a constructor function', function() {
-            expect(typeof Trending).toBe('function');
-        });
-
-        beforeEach(function() {
-            _.each(testData, function (value) {
-                _.each(value, function (point) {
-                    point[0] = toDateObject(point[0]);
-                });
-            });
-            this.view = new Backbone.View();
-            this.trending = Trending({
-                getContainerCallback: function() {
-                    return this.view.$el.get(0);
-                }.bind(this)
-            });
-        });
-
-        it('has a draw function and a resize function', function() {
-            expect(typeof this.trending.draw).toBe('function');
+        it('exposes a draw function', function() {
+            expect(typeof trending.draw).toBe('function');
         });
 
         describe('after the chart is drawn', function() {
             beforeEach(function() {
-                this.trending.draw({
+                _.each(testData, function (value) {
+                    _.each(value, function (point) {
+                        point.mid = toDateObject(point.mid);
+                        point.min = toDateObject(point.min);
+                        point.max = toDateObject(point.max);
+                    });
+                });
+                this.view = new Backbone.View();
+                this.view.$el.height(chartHeight);
+                this.view.$el.width(chartWidth);
+
+                trending.draw({
+                    el: this.view.$el.get(0),
                     data: testData,
                     names: testNames,
                     maxDate: toDateObject('2012-05-12T05:18:16.000Z'),
                     minDate: toDateObject('2008-07-01T14:39:39.200Z'),
-                    containerWidth: chartWidth,
-                    containerHeight: chartHeight,
+                    tooltipText: i18n['search.resultsView.trending.tooltipText']
                 });
             });
 
@@ -89,13 +203,15 @@ define([
             describe('on redrawing', function() {
                 beforeEach(function() {
                     this.view.$el.empty();
-                    this.trending.draw({
+                    this.view.$el.height(newChartHeight);
+                    this.view.$el.width(newChartWidth);
+                    trending.draw({
+                        el: this.view.$el.get(0),
                         data: testData,
                         names: testNames,
                         maxDate: toDateObject('2012-05-12T05:18:16.000Z'),
                         minDate: toDateObject('2008-07-01T14:39:39.200Z'),
-                        containerWidth: newChartWidth,
-                        containerHeight: newChartHeight,
+                        tooltipText: i18n['search.resultsView.trending.tooltipText']
                     });
                 });
 
