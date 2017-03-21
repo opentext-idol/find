@@ -3,14 +3,14 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.idol.export;
+package com.hp.autonomy.frontend.find.idol.export.service;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.find.core.export.CsvExportStrategy;
-import com.hp.autonomy.frontend.find.core.export.ExportService;
-import com.hp.autonomy.frontend.find.core.export.ExportServiceIT;
-import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
+import com.hp.autonomy.frontend.find.core.export.service.CsvExportStrategy;
+import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportStrategy;
+import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportService;
+import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportServiceIT;
 import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import com.hp.autonomy.searchcomponents.idol.beanconfiguration.HavenSearchIdolConfiguration;
 import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
@@ -23,21 +23,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@SpringBootTest(classes = {HavenSearchIdolConfiguration.class, IdolExportServiceIT.ExportConfiguration.class}, value = "export.it=true", webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class IdolExportServiceIT extends ExportServiceIT<IdolQueryRequest, IdolQueryRestrictions, AciErrorException> {
+@SpringBootTest(classes = {HavenSearchIdolConfiguration.class, IdolPlatformDataExportServiceIT.ExportConfiguration.class}, value = "export.it=true", webEnvironment = SpringBootTest.WebEnvironment.NONE)
+public class IdolPlatformDataExportServiceIT extends PlatformDataExportServiceIT<IdolQueryRequest, IdolQueryRestrictions, AciErrorException> {
     @Configuration
     @ConditionalOnProperty("export.it")
     public static class ExportConfiguration {
         @Bean
-        public ExportService<IdolQueryRequest, AciErrorException> exportService(
+        public PlatformDataExportService<IdolQueryRequest, AciErrorException> exportService(
                 final HavenSearchAciParameterHandler parameterHandler,
                 final AciServiceRetriever aciServiceRetriever,
-                final ExportStrategy[] exportStrategies) {
-            return new IdolExportService(parameterHandler, aciServiceRetriever, exportStrategies);
+                final PlatformDataExportStrategy[] exportStrategies) {
+            return new IdolPlatformDataExportService(parameterHandler, aciServiceRetriever, exportStrategies);
         }
 
         @Bean
-        public ExportStrategy csvExportStrategy(final ConfigService<IdolSearchCapable> configService, final FieldPathNormaliser fieldPathNormaliser) {
+        public PlatformDataExportStrategy csvExportStrategy(final ConfigService<IdolSearchCapable> configService, final FieldPathNormaliser fieldPathNormaliser) {
             return new CsvExportStrategy(configService, fieldPathNormaliser);
         }
     }

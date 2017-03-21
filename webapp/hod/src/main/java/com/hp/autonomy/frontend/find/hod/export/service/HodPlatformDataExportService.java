@@ -3,11 +3,11 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.hod.export;
+package com.hp.autonomy.frontend.find.hod.export.service;
 
-import com.hp.autonomy.frontend.find.core.export.ExportFormat;
-import com.hp.autonomy.frontend.find.core.export.ExportService;
-import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
+import com.hp.autonomy.frontend.find.core.export.service.ExportFormat;
+import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportService;
+import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportStrategy;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
@@ -31,24 +31,24 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-class HodExportService implements ExportService<HodQueryRequest, HodErrorException> {
+class HodPlatformDataExportService implements PlatformDataExportService<HodQueryRequest, HodErrorException> {
     private final HodDocumentsService documentsService;
-    private final Map<ExportFormat, ExportStrategy> exportStrategies;
+    private final Map<ExportFormat, PlatformDataExportStrategy> exportStrategies;
 
     @Autowired
-    public HodExportService(final HodDocumentsService documentsService,
-                            final ExportStrategy[] exportStrategies) {
+    public HodPlatformDataExportService(final HodDocumentsService documentsService,
+                                        final PlatformDataExportStrategy[] exportStrategies) {
         this.documentsService = documentsService;
 
         this.exportStrategies = new EnumMap<>(ExportFormat.class);
-        for (final ExportStrategy exportStrategy : exportStrategies) {
+        for (final PlatformDataExportStrategy exportStrategy : exportStrategies) {
             this.exportStrategies.put(exportStrategy.getExportFormat(), exportStrategy);
         }
     }
 
     @Override
-    public void export(final OutputStream outputStream, final HodQueryRequest queryRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds, final long totalResults) throws HodErrorException {
-        final ExportStrategy exportStrategy = exportStrategies.get(exportFormat);
+    public void exportQueryResults(final OutputStream outputStream, final HodQueryRequest queryRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds, final long totalResults) throws HodErrorException {
+        final PlatformDataExportStrategy exportStrategy = exportStrategies.get(exportFormat);
         final List<String> fieldIds = exportStrategy.getFieldNames(HodMetadataNode.values(), selectedFieldIds);
 
         try {
@@ -95,5 +95,10 @@ class HodExportService implements ExportService<HodQueryRequest, HodErrorExcepti
                 // prevents NullPointerException if the data set contains an incorrectly formatted date
                 .filter(Objects::nonNull)
                 .map(Object::toString).collect(Collectors.toList()) : Collections.emptyList();
+    }
+
+    @Override
+    public Collection<ExportFormat> handlesFormats() {
+        return exportStrategies.keySet();
     }
 }

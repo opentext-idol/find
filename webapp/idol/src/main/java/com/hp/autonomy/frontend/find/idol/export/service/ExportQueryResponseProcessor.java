@@ -3,13 +3,13 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.idol.export;
+package com.hp.autonomy.frontend.find.idol.export.service;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.ProcessorException;
 import com.autonomy.aci.client.services.impl.AbstractStAXProcessor;
 import com.autonomy.aci.client.services.impl.ErrorProcessor;
-import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
+import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportStrategy;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldType;
 
@@ -37,11 +37,11 @@ class ExportQueryResponseProcessor extends AbstractStAXProcessor<Void> {
         }
     }
 
-    private final ExportStrategy exportStrategy;
+    private final PlatformDataExportStrategy exportStrategy;
     private final OutputStream outputStream;
     private final Collection<String> selectedFieldIds;
 
-    ExportQueryResponseProcessor(final ExportStrategy exportStrategy, final OutputStream outputStream, final Collection<String> selectedFieldIds) {
+    ExportQueryResponseProcessor(final PlatformDataExportStrategy exportStrategy, final OutputStream outputStream, final Collection<String> selectedFieldIds) {
         this.outputStream = outputStream;
         this.selectedFieldIds = new ArrayList<>(selectedFieldIds);
 

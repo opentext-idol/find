@@ -3,7 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.export;
+package com.hp.autonomy.frontend.find.core.export.service;
 
 import com.google.common.base.Strings;
 import com.hp.autonomy.frontend.configuration.ConfigService;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
-public class CsvExportStrategy implements ExportStrategy {
+public class CsvExportStrategy implements PlatformDataExportStrategy {
     // Excel can't cope with CSV files without a BOM (FIND-498)
     private static final byte[] UTF8_BOM = new byte[]{(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
 

@@ -3,9 +3,9 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.idol.export;
+package com.hp.autonomy.frontend.find.idol.export.service;
 
-import com.hp.autonomy.frontend.find.core.export.MetadataNode;
+import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
 import com.hp.autonomy.searchcomponents.core.config.FieldType;
 import lombok.Getter;
 

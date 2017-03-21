@@ -3,7 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.export;
+package com.hp.autonomy.frontend.find.core.export.service;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
@@ -27,9 +27,7 @@ import java.util.Collections;
 
 import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CLASSES_PROPERTY;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

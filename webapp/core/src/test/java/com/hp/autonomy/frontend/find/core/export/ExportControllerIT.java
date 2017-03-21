@@ -4,7 +4,9 @@
  */
 package com.hp.autonomy.frontend.find.core.export;
 
+import com.hp.autonomy.frontend.find.core.export.service.ExportFormat;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -33,6 +35,102 @@ public abstract class ExportControllerIT extends AbstractFindIT {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(ExportFormat.CSV.getMimeType()))
+                .andExpect(content().string(notNullValue()));
+    }
+
+    @Ignore
+    @Test
+    public void exportTopicMapToPptx() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.TOPIC_MAP_PATH).with(authentication(biAuth()));
+        //TODO determine good test data
+        requestBuilder.param(ExportController.DATA_PARAM, "{}");
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(ExportFormat.PPTX.getMimeType()))
+                .andExpect(content().string(notNullValue()));
+    }
+
+    @Ignore
+    @Test
+    public void exportSunburstToPptx() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.SUNBURST_PATH).with(authentication(biAuth()));
+        //TODO determine good test data
+        requestBuilder.param(ExportController.DATA_PARAM, "{}");
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(ExportFormat.PPTX.getMimeType()))
+                .andExpect(content().string(notNullValue()));
+    }
+
+    @Ignore
+    @Test
+    public void exportTableToPptx() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.TABLE_PATH).with(authentication(biAuth()));
+        //TODO determine good test data
+        requestBuilder.param(ExportController.DATA_PARAM, "{}");
+        requestBuilder.param(ExportController.TITLE_PARAM, "");
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(ExportFormat.PPTX.getMimeType()))
+                .andExpect(content().string(notNullValue()));
+    }
+
+    @Ignore
+    @Test
+    public void exportMapToPptx() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.MAP_PATH).with(authentication(biAuth()));
+        //TODO determine good test data
+        requestBuilder.param(ExportController.DATA_PARAM, "{}");
+        requestBuilder.param(ExportController.TITLE_PARAM, "");
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(ExportFormat.PPTX.getMimeType()))
+                .andExpect(content().string(notNullValue()));
+    }
+
+    @Ignore
+    @Test
+    public void exportListToPptx() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.LIST_PATH).with(authentication(biAuth()));
+        //TODO determine good test data
+        requestBuilder.param(ExportController.DATA_PARAM, "{}");
+        requestBuilder.param(ExportController.RESULTS_PARAM, "");
+        requestBuilder.param(ExportController.SORT_BY_PARAM, "");
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(ExportFormat.PPTX.getMimeType()))
+                .andExpect(content().string(notNullValue()));
+    }
+
+    @Ignore
+    @Test
+    public void exportDateGraphToPptx() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.DATE_GRAPH_PATH).with(authentication(biAuth()));
+        //TODO determine good test data
+        requestBuilder.param(ExportController.DATA_PARAM, "{}");
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(ExportFormat.PPTX.getMimeType()))
+                .andExpect(content().string(notNullValue()));
+    }
+
+    @Ignore
+    @Test
+    public void exportReportToPptx() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.REPORT_PATH).with(authentication(biAuth()));
+        //TODO determine good test data
+        requestBuilder.param(ExportController.DATA_PARAM, "{}");
+        requestBuilder.param(ExportController.MULTI_PAGE_PARAM, "false");
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(ExportFormat.PPTX.getMimeType()))
                 .andExpect(content().string(notNullValue()));
     }
 }

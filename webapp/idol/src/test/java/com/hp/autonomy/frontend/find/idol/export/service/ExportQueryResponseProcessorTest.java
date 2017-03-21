@@ -3,13 +3,13 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.idol.export;
+package com.hp.autonomy.frontend.find.idol.export.service;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.ProcessorException;
 import com.autonomy.aci.client.transport.AciResponseInputStream;
-import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
-import com.hp.autonomy.frontend.find.core.export.MetadataNode;
+import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportStrategy;
+import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import com.hp.autonomy.searchcomponents.core.test.CoreTestContext;
@@ -41,7 +41,7 @@ public class ExportQueryResponseProcessorTest {
     @Autowired
     private FieldPathNormaliser fieldPathNormaliser;
     @Mock
-    private ExportStrategy exportStrategy;
+    private PlatformDataExportStrategy exportStrategy;
 
     private ByteArrayOutputStream outputStream;
     private ExportQueryResponseProcessor processor;
@@ -62,7 +62,7 @@ public class ExportQueryResponseProcessorTest {
 
     @Test
     public void export() throws IOException {
-        processor.process(new MockAciResponseInputStream(IdolExportServiceTest.class.getResourceAsStream("/com/hp/autonomy/frontend/find/idol/export/query-response.xml")));
+        processor.process(new MockAciResponseInputStream(IdolPlatformDataExportServiceTest.class.getResourceAsStream("/com/hp/autonomy/frontend/find/idol/export/query-response.xml")));
         verify(exportStrategy, times(6)).exportRecord(eq(outputStream), anyListOf(String.class));
     }
 
@@ -74,7 +74,7 @@ public class ExportQueryResponseProcessorTest {
 
     @Test(expected = AciErrorException.class)
     public void errorResponse() {
-        processor.process(new MockAciResponseInputStream(IdolExportServiceTest.class.getResourceAsStream("/com/hp/autonomy/frontend/find/idol/export/error-response.xml")));
+        processor.process(new MockAciResponseInputStream(IdolPlatformDataExportServiceTest.class.getResourceAsStream("/com/hp/autonomy/frontend/find/idol/export/error-response.xml")));
     }
 
     @Test(expected = ProcessorException.class)

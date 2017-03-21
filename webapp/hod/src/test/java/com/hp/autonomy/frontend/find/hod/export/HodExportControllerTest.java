@@ -5,7 +5,6 @@
 
 package com.hp.autonomy.frontend.find.hod.export;
 
-import com.hp.autonomy.frontend.find.core.export.ExportController;
 import com.hp.autonomy.frontend.find.core.export.ExportControllerTest;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
@@ -13,17 +12,16 @@ import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
 import com.hp.autonomy.types.requests.Documents;
 import org.mockito.Mock;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.io.IOException;
 import java.util.Collections;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
-public class HodExportControllerTest extends ExportControllerTest<HodQueryRequest, HodErrorException> {
-    @Mock
+abstract class HodExportControllerTest extends ExportControllerTest<HodQueryRequest, HodErrorException> {
+    @MockBean
     private HodDocumentsService documentsService;
     @Mock
     private HodQueryRequest queryRequest;
@@ -31,7 +29,7 @@ public class HodExportControllerTest extends ExportControllerTest<HodQueryReques
     private HodQueryRequestBuilder queryRequestBuilder;
 
     @Override
-    protected ExportController<HodQueryRequest, HodErrorException> constructController() throws IOException {
+    protected void mockRequestObjects() throws IOException {
         when(requestMapper.parseQueryRequest(any())).thenReturn(queryRequest);
         when(queryRequest.toBuilder()).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.start(anyInt())).thenReturn(queryRequestBuilder);
@@ -40,8 +38,6 @@ public class HodExportControllerTest extends ExportControllerTest<HodQueryReques
         when(queryRequestBuilder.build()).thenReturn(queryRequest);
 
         when(queryRequest.getMaxResults()).thenReturn(Integer.MAX_VALUE);
-
-        return new HodExportController(requestMapper, controllerUtils, documentsService, exportService);
     }
 
     @Override

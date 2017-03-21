@@ -7,40 +7,34 @@ package com.hp.autonomy.frontend.find.idol.export;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.export.ExportController;
-import com.hp.autonomy.frontend.find.core.export.ExportFormat;
-import com.hp.autonomy.frontend.find.core.export.ExportService;
+import com.hp.autonomy.frontend.find.core.export.service.ExportFormat;
+import com.hp.autonomy.frontend.find.core.export.service.ExportServiceFactory;
+import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportService;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 
-@Controller
-class IdolExportController extends ExportController<IdolQueryRequest, AciErrorException> {
+abstract class IdolExportController extends ExportController<IdolQueryRequest, AciErrorException> {
 
     private final IdolDocumentsService documentsService;
-    private final ExportService<IdolQueryRequest, AciErrorException> exportService;
 
-    @Autowired
-    public IdolExportController(final RequestMapper<IdolQueryRequest> requestMapper,
-                                final ControllerUtils controllerUtils,
-                                final IdolDocumentsService documentsService,
-                                final ExportService<IdolQueryRequest, AciErrorException> exportService) {
-        super(requestMapper, controllerUtils);
+    protected IdolExportController(final RequestMapper<IdolQueryRequest> requestMapper,
+                                   final ControllerUtils controllerUtils,
+                                   final ExportServiceFactory<IdolQueryRequest, AciErrorException> exportServiceFactory,
+                                   final IdolDocumentsService documentsService) {
+        super(requestMapper, controllerUtils, exportServiceFactory);
         this.documentsService = documentsService;
-        this.exportService = exportService;
     }
 
     @Override
     protected void export(final OutputStream outputStream,
                           final IdolQueryRequest queryRequest,
-                          final ExportFormat exportFormat,
                           final Collection<String> selectedFieldNames) throws AciErrorException, IOException {
         final StateTokenAndResultCount stateTokenAndResultCount = documentsService.getStateTokenAndResultCount(queryRequest.getQueryRestrictions(), queryRequest.getMaxResults(), false);
 
@@ -50,6 +44,9 @@ class IdolExportController extends ExportController<IdolQueryRequest, AciErrorEx
                         .build())
                 .build();
 
-        exportService.export(outputStream, queryRequestWithStateToken, exportFormat, selectedFieldNames, stateTokenAndResultCount.getResultCount());
+        final ExportFormat exportFormat = getExportFormat();
+        final PlatformDataExportService<IdolQueryRequest, AciErrorException> exportService = exportServiceFactory.getPlatformDataExportService(exportFormat)
+                .orElseThrow(() -> new UnsupportedOperationException("Query result export not supported for format " + exportFormat.name()));
+        exportService.exportQueryResults(outputStream, queryRequestWithStateToken, exportFormat, selectedFieldNames, stateTokenAndResultCount.getResultCount());
     }
 }

@@ -3,7 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.export;
+package com.hp.autonomy.frontend.find.core.export.service;
 
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 
@@ -17,23 +17,23 @@ import java.util.Optional;
 /**
  * Export implementation for a particular {@link ExportFormat}
  */
-public interface ExportStrategy {
+public interface PlatformDataExportStrategy {
     /**
      * Write the headers to the file and do anything else necessary to prepare the file before the results.
      */
     void writeHeader(OutputStream outputStream, Collection<String> fieldNames) throws IOException;
 
     /**
-     * Retrieves the names of all the fields to export
+     * Retrieves the names of all the fields to exportQueryResults
      *
      * @param metadataNodes    hard metadata (HoD/Idol specific)
-     * @param selectedFieldIds only export fields with ids in this collection. If empty, export all fields
-     * @return the names of all the metadata/fields to export
+     * @param selectedFieldIds only exportQueryResults fields with ids in this collection. If empty, exportQueryResults all fields
+     * @return the names of all the metadata/fields to exportQueryResults
      */
     List<String> getFieldNames(MetadataNode[] metadataNodes, final Collection<String> selectedFieldIds);
 
     /**
-     * Returns the fields configured for export in the config file. Inverse lookup of getConfiguredFieldsByName().
+     * Returns the fields configured for exportQueryResults in the config file. Inverse lookup of getConfiguredFieldsByName().
      *
      * @return a map of field ID as it appears in the frontend to field information
      */

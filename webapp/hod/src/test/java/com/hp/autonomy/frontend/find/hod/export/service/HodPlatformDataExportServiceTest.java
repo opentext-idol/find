@@ -3,12 +3,12 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.hod.export;
+package com.hp.autonomy.frontend.find.hod.export.service;
 
 import com.google.common.collect.ImmutableMap;
-import com.hp.autonomy.frontend.find.core.export.ExportFormat;
-import com.hp.autonomy.frontend.find.core.export.ExportStrategy;
-import com.hp.autonomy.frontend.find.core.export.MetadataNode;
+import com.hp.autonomy.frontend.find.core.export.service.ExportFormat;
+import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportStrategy;
+import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldType;
@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CoreTestContext.class, properties = CORE_CLASSES_PROPERTY, webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class HodExportServiceTest {
+public class HodPlatformDataExportServiceTest {
     @Mock
     private HodDocumentsService documentsService;
     @Mock
@@ -53,13 +53,13 @@ public class HodExportServiceTest {
     @Mock
     private HodQueryRequest queryRequest;
     @Mock
-    private ExportStrategy exportStrategy;
+    private PlatformDataExportStrategy exportStrategy;
     @Mock
     private OutputStream outputStream;
     @Autowired
     private FieldPathNormaliser fieldPathNormaliser;
 
-    private HodExportService hodExportService;
+    private HodPlatformDataExportService hodExportService;
 
     @Before
     public void setUp() {
@@ -85,7 +85,7 @@ public class HodExportServiceTest {
                 .put("lastRead", lastReadInfo)
                 .build());
 
-        hodExportService = new HodExportService(documentsService, new ExportStrategy[]{exportStrategy});
+        hodExportService = new HodPlatformDataExportService(documentsService, new PlatformDataExportStrategy[]{exportStrategy});
     }
 
     @Test
@@ -121,7 +121,7 @@ public class HodExportServiceTest {
         final Documents<HodSearchResult> results = new Documents<>(Arrays.asList(result1, result2), 2, null, null, null, null);
         when(documentsService.queryTextIndex(Matchers.any())).thenReturn(results);
 
-        hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList(), 10L);
+        hodExportService.exportQueryResults(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList(), 10L);
         verify(exportStrategy, times(2)).exportRecord(eq(outputStream), anyListOf(String.class));
     }
 
@@ -139,7 +139,7 @@ public class HodExportServiceTest {
     public void exportEmptyResultSetWithoutHeader() throws IOException, HodErrorException {
         when(documentsService.queryTextIndex(Matchers.any())).thenReturn(new Documents<>(Collections.emptyList(), 0, null, null, null, null));
 
-        hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList(), 10L);
+        hodExportService.exportQueryResults(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList(), 10L);
         verify(exportStrategy, never()).exportRecord(eq(outputStream), anyListOf(String.class));
     }
 
@@ -178,6 +178,6 @@ public class HodExportServiceTest {
 
         doThrow(new IOException("")).when(exportStrategy).exportRecord(eq(outputStream), anyListOf(String.class));
 
-        hodExportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.singletonList("header"), 10L);
+        hodExportService.exportQueryResults(outputStream, queryRequest, ExportFormat.CSV, Collections.singletonList("header"), 10L);
     }
 }

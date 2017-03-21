@@ -3,7 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.export;
+package com.hp.autonomy.frontend.find.core.export.service;
 
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
@@ -27,15 +27,15 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(SpringRunner.class)
 @JsonTest
 @AutoConfigureJsonTesters(enabled = false)
-public abstract class ExportServiceIT<R extends QueryRequest<Q>, Q extends QueryRestrictions<?>, E extends Exception> {
+public abstract class PlatformDataExportServiceIT<R extends QueryRequest<Q>, Q extends QueryRestrictions<?>, E extends Exception> {
     @Autowired
-    protected ExportService<R, E> exportService;
+    private PlatformDataExportService<R, E> exportService;
 
     @Autowired
-    protected TestUtils<Q> testUtils;
+    private TestUtils<Q> testUtils;
 
     @Autowired
-    protected ObjectFactory<QueryRequestBuilder<R, Q, ?>> queryRequestBuilderFactory;
+    private ObjectFactory<QueryRequestBuilder<R, Q, ?>> queryRequestBuilderFactory;
 
     @Test
     public void exportToCsv() throws E, IOException {
@@ -45,7 +45,7 @@ public abstract class ExportServiceIT<R extends QueryRequest<Q>, Q extends Query
                 .build();
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        exportService.export(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList(), 1001L);
+        exportService.exportQueryResults(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList(), 1001L);
         assertNotNull(outputStream.toString());
     }
 }
