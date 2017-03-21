@@ -24,16 +24,16 @@ public interface PlatformDataExportStrategy {
     void writeHeader(OutputStream outputStream, Collection<String> fieldNames) throws IOException;
 
     /**
-     * Retrieves the names of all the fields to exportQueryResults
+     * Retrieves the names of all the fields to export
      *
      * @param metadataNodes    hard metadata (HoD/Idol specific)
-     * @param selectedFieldIds only exportQueryResults fields with ids in this collection. If empty, exportQueryResults all fields
-     * @return the names of all the metadata/fields to exportQueryResults
+     * @param selectedFieldIds only export fields with ids in this collection. If empty, export all fields
+     * @return the names of all the metadata/fields to export
      */
     List<String> getFieldNames(MetadataNode[] metadataNodes, final Collection<String> selectedFieldIds);
 
     /**
-     * Returns the fields configured for exportQueryResults in the config file. Inverse lookup of getConfiguredFieldsByName().
+     * Returns the fields configured for export in the config file. Inverse lookup of getConfiguredFieldsByName().
      *
      * @return a map of field ID as it appears in the frontend to field information
      */
