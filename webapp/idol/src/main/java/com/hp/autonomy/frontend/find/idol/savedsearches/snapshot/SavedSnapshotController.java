@@ -1,3 +1,8 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 
 import com.autonomy.aci.client.services.AciErrorException;
@@ -8,6 +13,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
+import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot.Builder;
 import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchDatasource;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
@@ -40,15 +46,15 @@ class SavedSnapshotController {
     private static final Integer STATE_TOKEN_MAX_RESULTS = Integer.MAX_VALUE;
 
     private final IdolDocumentsService documentsService;
-    private final SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> service;
+    private final SavedSearchService<SavedSnapshot, Builder> service;
     private final FieldTextParser fieldTextParser;
     private final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
-    private final Set<Long> validIds;
+    private final ConfigService<IdolDashboardConfig> dashboardConfigService;
 
     @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
     public SavedSnapshotController(final IdolDocumentsService documentsService,
-                                   final SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> service,
+                                   final SavedSearchService<SavedSnapshot, Builder> service,
                                    final FieldTextParser fieldTextParser,
                                    final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
                                    final ConfigService<IdolDashboardConfig> dashboardConfigService) {
@@ -56,10 +62,14 @@ class SavedSnapshotController {
         this.service = service;
         this.fieldTextParser = fieldTextParser;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
-        validIds = dashboardConfigService.getConfig().getDashboards().stream()
+        this.dashboardConfigService = dashboardConfigService;
+    }
+
+    private Set<Long> getValidIds() {
+        return dashboardConfigService.getConfig().getDashboards().stream()
                 .flatMap(dashboard -> dashboard.getWidgets().stream()
                         .filter(widget -> widget.getDatasource() instanceof SavedSearchDatasource)
-                        .map(widget -> (SavedSearchDatasource) widget.getDatasource())
+                        .map(widget -> (SavedSearchDatasource)widget.getDatasource())
                         .filter(datasource -> datasource.getConfig().getType() == SavedSearchType.SNAPSHOT)
                         .map(datasource -> datasource.getConfig().getId()))
                 .collect(Collectors.toSet());
@@ -81,7 +91,7 @@ class SavedSnapshotController {
 
         final Set<TypedStateToken> stateTokens = new HashSet<>();
 
-        for (final StateTokenAndResultCount listToken : stateTokensList) {
+        for(final StateTokenAndResultCount listToken : stateTokensList) {
             final TypedStateToken token = listToken.getTypedStateToken();
             stateTokens.add(token);
         }
@@ -90,7 +100,7 @@ class SavedSnapshotController {
         final long resultCount = stateTokensList.get(0).getResultCount();
 
         return service.create(
-                new SavedSnapshot.Builder(snapshot)
+                new Builder(snapshot)
                         .setStateTokens(stateTokens)
                         .setResultCount(resultCount)
                         .build()
@@ -104,7 +114,7 @@ class SavedSnapshotController {
     ) throws AciErrorException {
         // It is only possible to update a snapshot's title
         return service.update(
-                new SavedSnapshot.Builder()
+                new Builder()
                         .setId(id)
                         .setTitle(snapshot.getTitle())
                         .build()
@@ -121,7 +131,7 @@ class SavedSnapshotController {
     private StateTokenAndResultCount getStateTokenAndResultCount(final SavedSnapshot snapshot, final boolean promotions) throws AciErrorException {
         final List<String> indexes;
 
-        if (snapshot.getIndexes() == null) {
+        if(snapshot.getIndexes() == null) {
             indexes = null;
         } else {
             indexes = new ArrayList<>();
@@ -143,7 +153,7 @@ class SavedSnapshotController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public SavedSnapshot get(@PathVariable("id") final long id) {
-        if (validIds.contains(id)) {
+        if(getValidIds().contains(id)) {
             return service.getDashboardSearch(id);
         } else {
             throw new IllegalArgumentException("Saved Search Id is not in the dashboards configuration file");
