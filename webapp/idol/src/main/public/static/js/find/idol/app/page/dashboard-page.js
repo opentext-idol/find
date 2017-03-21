@@ -63,15 +63,12 @@ define([
         },
 
         generateWidgetDiv: function(position) {
-            const widgetElement = $('<div class="widget p-xs"></div>');
-            widgetElement.css({
+            return $('<div class="widget p-xs"></div>').css({
                 'left': 'calc(' + position.x * this.widthPerUnit + '% + 20px)',
                 'top': 'calc(' + position.y * this.heightPerUnit + '% + 20px)',
                 'width': 'calc(' + position.width * this.widthPerUnit + '% - 10px)',
                 'height': 'calc(' + position.height * this.heightPerUnit + '% - 10px)'
             });
-
-            return widgetElement;
         },
 
         onResize: function() {

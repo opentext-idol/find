@@ -5,7 +5,7 @@
 
 define([
     'underscore',
-    './static-content',
+    './static-content-widget',
     'i18n!find/nls/bundle'
 ], function(_, StaticContentWidget, i18n) {
     'use strict';

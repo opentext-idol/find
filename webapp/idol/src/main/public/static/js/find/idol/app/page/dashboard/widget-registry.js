@@ -4,17 +4,17 @@
  */
 
 define([
-    './widgets/static-content',
+    './widgets/static-content-widget',
     './widgets/static-image-widget',
     './widgets/map-widget',
     './widgets/sunburst-widget',
     './widgets/topic-map-widget',
     './widgets/time-last-refreshed-widget',
-    './widgets/current-time',
+    './widgets/current-time-widget',
     './widgets/results-list-widget',
     './widgets/video-widget'
 ], function(StaticContentWidget, StaticImageWidget, MapWidget, SunburstWidget, TopicMapWidget,
-            TimeLastRefreshedWidget, CurrentTime, ResultsListWidget, VideoWidget) {
+            TimeLastRefreshedWidget, CurrentTimeWidget, ResultsListWidget, VideoWidget) {
     'use strict';
 
     const registry = {
@@ -37,7 +37,7 @@ define([
             Constructor: TimeLastRefreshedWidget
         },
         CurrentTimeWidget: {
-            Constructor: CurrentTime
+            Constructor: CurrentTimeWidget
         },
         ResultsListWidget: {
             Constructor: ResultsListWidget
