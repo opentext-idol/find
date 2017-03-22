@@ -10,8 +10,6 @@ import com.autonomy.abc.selenium.find.DashboardPage;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 
