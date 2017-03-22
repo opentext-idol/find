@@ -9,17 +9,20 @@ define([
     'i18n!find/nls/bundle',
     'text!find/idol/templates/page/dashboards/widgets/time-last-refreshed-widget.html',
     'moment-timezone-with-data'
-], function(_, UpdatingWidget, i18n, template, moment) {
+], function (_, UpdatingWidget, i18n, template, moment) {
     'use strict';
+
+    const EXPORT_FONT_SIZE = 10;
+    const EXPORT_TIME_FONT_SIZE = 15;
 
     return UpdatingWidget.extend({
         lastRefreshTemplate: _.template(template),
 
-        initialize: function(options) {
+        initialize: function (options) {
             UpdatingWidget.prototype.initialize.apply(this, arguments);
 
-            this.dateFormat = this.widgetSettings.dateFormat || 'HH:mm z';
-            this.timeZone = this.widgetSettings.timeZone || moment.tz.guess();
+            this.dateFormat = this.widgetSettings && this.widgetSettings.dateFormat ? this.widgetSettings.dateFormat : 'HH:mm z';
+            this.timeZone = this.widgetSettings && this.widgetSettings.timeZone ? this.widgetSettings.timeZone : moment.tz.guess();
 
             this.updateInterval = options.updateInterval;
 
@@ -27,7 +30,7 @@ define([
             this.nextRefresh = this.lastUpdated.clone().add(this.updateInterval)
         },
 
-        render: function() {
+        render: function () {
             UpdatingWidget.prototype.render.apply(this);
 
             this.$content.html(this.lastRefreshTemplate({
@@ -44,8 +47,8 @@ define([
             this.hasRendered = true;
         },
 
-        doUpdate: function(done, updateTracker) {
-            if(this.hasRendered) { // set up progress bar
+        doUpdate: function (done, updateTracker) {
+            if (this.hasRendered) { // set up progress bar
                 this.$updating.removeClass('hide');
                 this.$updateProgress.text(i18n['dashboards.widget.lastRefresh.refreshing'](0, updateTracker.get('total') - 1));
                 this.$updateProgress.removeClass('hide');
@@ -54,18 +57,18 @@ define([
             done();
         },
 
-        onCancelled: function() {
-            if(this.hasRendered) {
+        onCancelled: function () {
+            if (this.hasRendered) {
                 this.$updating.addClass('hide');
                 this.$updateProgress.addClass('hide');
             }
         },
 
-        onComplete: function() {
+        onComplete: function () {
             this.lastUpdated = moment().tz(this.timeZone);
             this.nextRefresh = this.lastUpdated.clone().add(this.updateInterval);
 
-            if(this.hasRendered) {
+            if (this.hasRendered) {
                 this.$updating.addClass('hide');
                 this.$updateProgress.addClass('hide');
 
@@ -74,18 +77,39 @@ define([
             }
         },
 
-        onIncrement: function(updateTracker) {
+        onIncrement: function (updateTracker) {
             // we do not include this widget in the counts
             const completedWidgets = updateTracker.get('count') - 1;
             const totalWidgets = updateTracker.get('total') - 1;
 
-            if(this.hasRendered) {
+            if (this.hasRendered) {
                 this.$updateProgress.text(i18n['dashboards.widget.lastRefresh.refreshing'](completedWidgets, totalWidgets));
             }
         },
 
-        formatDate: function(date) {
+        formatDate: function (date) {
             return date.format(this.dateFormat);
+        },
+
+        exportData: function () {
+            return {
+                data: {
+                    text: [{
+                        text: i18n['dashboards.widget.lastRefresh.timeLastUpdated'] + '\n',
+                        fontSize: EXPORT_FONT_SIZE
+                    }, {
+                        text: this.$lastRefresh.text() + '\n',
+                        fontSize: EXPORT_TIME_FONT_SIZE
+                    }, {
+                        text: i18n['dashboards.widget.lastRefresh.nextRefresh'] + '\n',
+                        fontSize: EXPORT_FONT_SIZE
+                    }, {
+                        text: this.$nextRefresh.text() + '\n',
+                        fontSize: EXPORT_TIME_FONT_SIZE
+                    }]
+                },
+                type: 'text'
+            };
         }
     });
 });
