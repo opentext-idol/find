@@ -23,6 +23,7 @@ define([
             this.dashboardName = options.dashboardName;
             this.updateInterval = 1000 * options.updateInterval;
             this.sidebarModel = options.sidebarModel;
+            this.displayWidgetNames = options.displayWidgetNames || 'never';
 
             this.widgetViews = _.map(options.widgets, function(widget) {
                 const widgetDefinition = widgetRegistry(widget.type);
@@ -63,7 +64,7 @@ define([
         },
 
         generateWidgetDiv: function(position) {
-            return $('<div class="widget p-xs"></div>').css({
+            return $('<div class="widget p-xs widget-name-' + this.displayWidgetNames + '"' + '></div>').css({
                 'left': 'calc(' + position.x * this.widthPerUnit + '% + 20px)',
                 'top': 'calc(' + position.y * this.heightPerUnit + '% + 20px)',
                 'width': 'calc(' + position.width * this.widthPerUnit + '% - 10px)',

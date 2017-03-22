@@ -6,8 +6,9 @@
 define([
     'underscore',
     'backbone',
+    'i18n!find/nls/bundle',
     'text!find/idol/templates/page/dashboards/widget.html'
-], function(_, Backbone, template) {
+], function(_, Backbone, i18n, template) {
     'use strict';
 
     return Backbone.View.extend({
@@ -26,7 +27,8 @@ define([
 
         render: function() {
             this.$el.html(this.template({
-                name: this.name
+                name: this.name,
+                i18n: i18n
             }));
 
             if(this.clickable) {

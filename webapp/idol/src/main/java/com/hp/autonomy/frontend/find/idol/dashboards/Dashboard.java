@@ -24,6 +24,7 @@ import java.util.Collection;
 public class Dashboard extends SimpleComponent<Dashboard> implements OptionalConfigurationComponent<Dashboard> {
 
     private final String dashboardName;
+    private final WidgetNameSetting displayWidgetNames;
     private final Boolean enabled;
     private final Integer width;
     private final Integer height;

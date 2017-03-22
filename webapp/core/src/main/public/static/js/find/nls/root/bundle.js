@@ -50,6 +50,7 @@ define([
         'app.user': 'User',
         'app.users': 'Users',
         'dashboards': 'Dashboards',
+        'dashboards.widget': 'Widget',
         'dashboards.widget.notFound': 'Widget of type "{0}" could not be found. Please check your configuration and try again',
         'dashboards.widget.lastRefresh.nextRefresh': 'Next refresh at',
         'dashboards.widget.lastRefresh.refreshing': 'Refreshing {0} of {1} widgets',

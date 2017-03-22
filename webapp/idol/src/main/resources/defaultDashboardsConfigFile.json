@@ -6,6 +6,7 @@
       "width": 3,
       "height": 3,
       "updateInterval": 60,
+      "displayWidgetNames": "never",
       "widgets": [
         {
           "name": "Sample Widget",
