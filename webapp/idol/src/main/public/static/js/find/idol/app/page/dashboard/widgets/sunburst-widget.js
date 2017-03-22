@@ -107,7 +107,13 @@ define([
                         values: _.pluck(data, 'value'),
                         title: prettyOrNull(this.firstField),
                         colors: _.pluck(data, 'color'),
-                        strokeColors: ['#000000']
+                        strokeColors: ['#000000'],
+                        showInLegend: _.reduce(data, function (acc, val, idx) {
+                            if (val.color !== HIDDEN_COLOR) {
+                                acc.push(idx);
+                            }
+                            return acc;
+                        }, [])
                     }
                 } : null
         },
