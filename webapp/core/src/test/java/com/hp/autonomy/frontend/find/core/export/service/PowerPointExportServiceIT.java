@@ -33,14 +33,13 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = {ExportConfiguration.class, PowerPointExportService.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class PowerPointExportServiceIT {
     private static final String SUNBURST_DATA = "/com/hp/autonomy/frontend/find/core/export/sunburst-data.json";
+    private static final String LIST_DATA = "/com/hp/autonomy/frontend/find/core/export/list-data.json";
     private static final String REPORT_DATA = "/com/hp/autonomy/frontend/find/core/export/report-data.json";
-
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @MockBean
     private ConfigService<? extends FindConfig<?, ?>> configService;
     @Autowired
     private VisualDataExportService powerPointExportService;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @SuppressWarnings("rawtypes")
     @Before
@@ -86,12 +85,10 @@ public class PowerPointExportServiceIT {
         });
     }
 
-    @Ignore
     @Test
     public void list() throws IOException {
-        //TODO determine good test data
         simpleDataTest(outputStream -> {
-            final ListData listData = new ListData();
+            final ListData listData = getData(LIST_DATA, ListData.class);
             powerPointExportService.list(outputStream, listData, "", "");
         });
     }

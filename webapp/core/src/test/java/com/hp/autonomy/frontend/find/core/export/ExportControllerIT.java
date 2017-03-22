@@ -21,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public abstract class ExportControllerIT extends AbstractFindIT {
     private static final String SUNBURST_DATA = "/com/hp/autonomy/frontend/find/core/export/sunburst-data.json";
+    private static final String LIST_DATA = "/com/hp/autonomy/frontend/find/core/export/list-data.json";
     private static final String REPORT_DATA = "/com/hp/autonomy/frontend/find/core/export/report-data.json";
 
     @Test
@@ -96,12 +97,10 @@ public abstract class ExportControllerIT extends AbstractFindIT {
                 .andExpect(content().string(notNullValue()));
     }
 
-    @Ignore
     @Test
     public void exportListToPptx() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.LIST_PATH).with(authentication(biAuth()));
-        //TODO determine good test data
-        requestBuilder.param(ExportController.DATA_PARAM, "{}");
+        requestBuilder.param(ExportController.DATA_PARAM, getData(LIST_DATA));
         requestBuilder.param(ExportController.RESULTS_PARAM, "");
         requestBuilder.param(ExportController.SORT_BY_PARAM, "");
 
