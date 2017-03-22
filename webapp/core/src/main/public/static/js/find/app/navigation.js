@@ -57,7 +57,11 @@ define([
                 .map(function(data, name) {
                     return _.extend({pageName: name}, data);
                 })
+                .filter(function(page) {
+                    return _.has(page, 'navigation');
+                })
                 .sortBy('order')
+                .groupBy('navigation')
                 .value();
 
             this.$el.html(this.template({
