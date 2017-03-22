@@ -26,20 +26,17 @@ define([
 
     function setScales(options, chartHeight, chartWidth) {
         const data = options.data;
-        const maxValue = _.max(_.map(data, function (d) {
-            return _.max(d, function (v) {
-                return v.count;
-            }).count
-        }));
-        const minValue = _.min(_.map(data, function (d) {
-            return _.min(d, function (v) {
-                return v.count;
-            }).count
-        }));
+
+        const maxValue = _.max(_.flatten(_.map(_.pluck(data, 'points'), function (point) {
+            return _.pluck(point, 'count');
+        })));
+        const minValue = _.min(_.flatten(_.map(_.pluck(data, 'points'), function (point) {
+            return _.pluck(point, 'count');
+        })));
 
         const yScale = d3.scale.linear()
             .domain([minValue, maxValue])
-            .range([chartHeight - CHART_PADDING, CHART_PADDING/2]);
+            .range([chartHeight - CHART_PADDING, CHART_PADDING / 2]);
 
         const xScale = d3.time.scale()
             .domain([options.minDate, options.maxDate])
@@ -159,6 +156,9 @@ define([
 
     function setAxes(chart, scales, chartHeight, chartWidth, yAxisLabel, timeFormat) {
 
+        chart.selectAll('.y-axis').remove();
+        chart.selectAll('.x-axis').remove();
+
         const yAxisScale = d3.svg.axis()
             .scale(scales.yScale)
             .orient('left');
@@ -226,8 +226,9 @@ define([
         const labelData = _.map(data, function (datum, i) {
             return {
                 index: i,
-                labelY: scales.yScale(datum[datum.length - 1].count),
-                dataY: scales.yScale(datum[datum.length - 1].count)
+                name: datum.name,
+                labelY: scales.yScale(datum.points[datum.points.length - 1].count),
+                dataY: scales.yScale(datum.points[datum.points.length - 1].count)
             }
         });
 
@@ -264,49 +265,45 @@ define([
     }
 
     function getTimeFormat(max, min) {
-        var range = max.getTime()/MILLISECONDS_TO_SECONDS - min.getTime()/MILLISECONDS_TO_SECONDS;
-        if (range > SECONDS_IN_ONE_YEAR) { return d3.time.format("%B %Y"); }
-        if (range < SECONDS_IN_ONE_DAY) { return d3.time.format("%H:%M:%S %d %B %Y"); }
-        if (range < SECONDS_IN_ONE_WEEK) { return d3.time.format("%H:%M %d %B %Y"); }
+        const range = max.getTime() / MILLISECONDS_TO_SECONDS - min.getTime() / MILLISECONDS_TO_SECONDS;
+        if (range > SECONDS_IN_ONE_YEAR) {
+            return d3.time.format("%B %Y");
+        }
+        if (range < SECONDS_IN_ONE_DAY) {
+            return d3.time.format("%H:%M:%S %d %B %Y");
+        }
+        if (range < SECONDS_IN_ONE_WEEK) {
+            return d3.time.format("%H:%M %d %B %Y");
+        }
         return d3.time.format("%d %B %Y");
     }
 
-    return {
+    function Trending(options) {
+        this.el = options.el;
+
+        this.chart = d3.select(this.el)
+            .append('svg');
+    }
+
+    _.extend(Trending.prototype, {
         draw: function (options) {
+            const reloaded = options.reloaded;
             const data = options.data;
-            const names = options.names;
             const minDate = options.minDate;
             const maxDate = options.maxDate;
-            const containerWidth = $(options.el).width();
-            const containerHeight = $(options.el).height();
-            const chartWidth = containerWidth - LEGEND_WIDTH;
-            const chartHeight = containerHeight;
+            const chartWidth = $(this.el).width() - LEGEND_WIDTH;
+            const chartHeight = $(this.el).height();
             const yAxisLabel = options.yAxisLabel;
             const tooltipText = options.tooltipText;
             const timeFormat = getTimeFormat(maxDate, minDate);
 
             const scales = setScales(options, chartHeight, chartWidth);
 
-            const chart = d3.select(options.el)
-                .append('svg')
-                .attr({
-                    width: containerWidth,
-                    height: containerHeight
-                });
+            const hover = setHoverFunctionality(this.chart, scales, chartHeight, tooltipText, timeFormat);
 
-            const hover = setHoverFunctionality(chart, scales, chartHeight, tooltipText, timeFormat);
-
-            // ToDo have a think about reusing groups with new data
-            const value = chart.selectAll('.value')
-                .data(data)
-                .enter()
-                .append('g')
-                .attr('class', function (d, i) {
-                    return 'value color' + (i % NUMBER_OF_COLORS);
-                })
-                .attr('data-name', function (d, i) {
-                    return names[i];
-                });
+            const getIndexOfValueName = function(name) {
+                return _.pluck(data, 'name').indexOf(name);
+            };
 
             const line = d3.svg.line()
                 .x(function (d) {
@@ -317,29 +314,71 @@ define([
                 })
                 .interpolate('linear');
 
+            this.chart.attr({
+                width: $(this.el).width(),
+                height: $(this.el).height()
+            });
 
-            value.append('path')
+            if (this.dataJoin) {
+                this.dataJoin = this.dataJoin
+                    .data(data, function (d) {
+                        return d.name;
+                    });
+            } else {
+                this.dataJoin = this.chart.selectAll('.value')
+                    .data(data, function (d) {
+                        return d.name;
+                    });
+            }
+
+            this.dataJoin.enter()
+                .append('g')
+                .attr('data-name', function (d) {
+                    return d.name;
+                })
+                .append('path');
+
+            this.dataJoin
+                .attr('class', function (d) {
+                    return 'value color' + (getIndexOfValueName(d.name) % NUMBER_OF_COLORS);
+                });
+
+            this.dataJoin.select('path')
                 .attr({
                     class: 'line',
                     'stroke-width': 2,
                     fill: 'none'
                 })
                 .attr('d', function (d) {
-                    return line(d);
+                    return line(d.points);
                 })
                 .on('mouseover', hover.lineAndPointMouseover)
                 .on('mouseout', hover.lineAndPointMouseout);
 
+            this.dataJoin.exit().remove();
 
-            value.selectAll('circle')
-                .data(_.identity)
+            if (this.pointsJoin && !reloaded) {
+                this.pointsJoin = this.pointsJoin
+                    .data(function (d) {
+                        return d.points;
+                    });
+            } else {
+                this.pointsJoin = this.dataJoin.selectAll('circle')
+                    .data(function (d) {
+                        return d.points;
+                    });
+            }
+
+            this.pointsJoin
                 .enter()
                 .append('circle')
                 .attr({
                     r: 4,
                     fill: 'white',
                     'stroke-width': 3
-                })
+                });
+
+            this.pointsJoin
                 .attr('cy', function (d) {
                     return scales.yScale(d.count);
                 })
@@ -349,9 +388,13 @@ define([
                 .on('mouseover', hover.pointMouseover)
                 .on('mouseout', hover.pointMouseout);
 
-            setAxes(chart, scales, chartHeight, chartWidth, yAxisLabel, timeFormat);
+            this.pointsJoin.exit().remove();
 
-            const legend = chart.append('g')
+            setAxes(this.chart, scales, chartHeight, chartWidth, yAxisLabel, timeFormat);
+
+            this.chart.selectAll('.legend').remove();
+
+            const legend = this.chart.append('g')
                 .attr({
                     class: 'legend',
                     x: chartWidth,
@@ -367,7 +410,7 @@ define([
                 .each(function (d) {
                     const g = d3.select(this)
                         .attr({
-                            'data-name': names[d.index],
+                            'data-name': d.name,
                             class: 'color' + (d.index % NUMBER_OF_COLORS)
                         });
 
@@ -381,10 +424,10 @@ define([
                             'stroke-dasharray': '3,2'
                         })
                         .on('mouseover', function () {
-                            hover.legendMouseover(names[d.index]);
+                            hover.legendMouseover(d.name);
                         })
                         .on('mouseout', function () {
-                            hover.legendMouseout(names[d.index]);
+                            hover.legendMouseout(d.name);
                         });
 
                     g.append('text')
@@ -397,35 +440,35 @@ define([
                             cursor: 'default',
                             'font-size': LEGEND_TEXT_HEIGHT
                         })
-                        .text(names[d.index])
+                        .text(d.name)
                         .on('mouseover', function () {
-                            hover.legendMouseover(names[d.index]);
+                            hover.legendMouseover(d.name);
                         })
                         .on('mouseout', function () {
-                            hover.legendMouseout(names[d.index]);
+                            hover.legendMouseout(d.name);
                         });
                 });
 
             widgetZoom.addZoomBehaviour({
-                chart: chart,
+                chart: this.chart,
                 xScale: scales.xScale,
                 scaleType: 'date',
-                minValue: minDate.getTime()/MILLISECONDS_TO_SECONDS,
-                maxValue: maxDate.getTime()/MILLISECONDS_TO_SECONDS,
+                minValue: minDate.getTime() / MILLISECONDS_TO_SECONDS,
+                maxValue: maxDate.getTime() / MILLISECONDS_TO_SECONDS,
                 callback: options.zoomCallback
             });
 
             widgetDrag.addDragBehaviour({
-                chart: chart,
+                chart: this.chart,
                 xScale: scales.xScale,
                 scaleType: 'date',
-                min: minDate.getTime()/MILLISECONDS_TO_SECONDS,
-                max: maxDate.getTime()/MILLISECONDS_TO_SECONDS,
+                min: minDate.getTime() / MILLISECONDS_TO_SECONDS,
+                max: maxDate.getTime() / MILLISECONDS_TO_SECONDS,
                 dragMoveCallback: options.dragMoveCallback,
                 dragEndCallback: options.dragEndCallback
             });
         }
-    };
+    });
 
-
+    return Trending;
 });

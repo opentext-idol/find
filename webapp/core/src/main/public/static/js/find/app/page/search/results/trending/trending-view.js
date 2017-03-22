@@ -16,7 +16,7 @@ define([
     'text!find/templates/app/page/search/results/trending/trending-results-view.html',
     'find/app/vent'
 ], function (Backbone, _, $, d3, i18n, generateErrorHtml, ParametricResultsView, calibrateBuckets, BucketedParametricCollection,
-             ParametricDetailsModel, ParametricCollection, trending, toFieldTextNode, loadingSpinnerHtml, template, vent) {
+             ParametricDetailsModel, ParametricCollection, Trending, toFieldTextNode, loadingSpinnerHtml, template, vent) {
     'use strict';
 
     const MILLISECONDS_TO_SECONDS = 1000;
@@ -49,7 +49,6 @@ define([
 
             this.listenTo(this.queryModel, 'change', function() {
                 if(this.$el.is(':visible')) {
-                    this.removeChart();
                     this.fetchFieldData();
                 }
             });
@@ -154,23 +153,23 @@ define([
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
 
             let data = [];
-            const names = [];
 
             _.each(this.bucketedValues, function (model) {
-                data.push(
-                    _.map(model.get('values'), function(value) {
+                data.push({
+                    points: _.map(model.get('values'), function(value) {
                         return {
                             count: value.count,
                             mid: Math.floor(value.min + ((value.max - value.min)/2)),
                             min: value.min,
                             max: value.max
                         };
-                    }));
-                names.push(model.get('valueName'));
+                    }),
+                    name: model.get('valueName')
+                });
             });
 
             _.each(data, function (value) {
-                _.each(value, function (point) {
+                _.each(value.points, function (point) {
                     point.mid = new Date(point.mid * MILLISECONDS_TO_SECONDS);
                     point.min = new Date(point.min * MILLISECONDS_TO_SECONDS);
                     point.max = new Date(point.max * MILLISECONDS_TO_SECONDS);
@@ -201,18 +200,20 @@ define([
 
             let minDate, maxDate;
             if (this.model.get('currentState') === renderState.RENDERING_NEW_DATA) {
-                minDate = data[0][0].mid;
-                maxDate = data[data.length - 1][data[0].length - 1].mid;
+                minDate = data[0].points[0].mid;
+                maxDate = data[data.length - 1].points[data[0].points.length - 1].mid;
             } else {
                 minDate = new Date(this.model.get('currentMin') * MILLISECONDS_TO_SECONDS);
                 maxDate = new Date(this.model.get('currentMax') * MILLISECONDS_TO_SECONDS);
             }
 
-            this.removeChart();
-            trending.draw({
-                el:  this.$('.trending-chart').get(0),
+            if (!this.trendingChart) {
+                this.trendingChart = new Trending({ el: this.$('.trending-chart').get(0) });
+            }
+
+            this.trendingChart.draw({
+                reloaded: this.model.get('currentState') === renderState.RENDERING_NEW_DATA,
                 data: data,
-                names: names,
                 minDate: minDate,
                 maxDate: maxDate,
                 xAxisLabel: i18n['search.resultsView.trending.xAxis'],
@@ -224,10 +225,6 @@ define([
             });
         },
 
-        removeChart: function() {
-            this.$('.trending-chart').empty();
-        },
-
         getFieldText() {
             return this.selectedParametricValues.map(function (model) {
                 return model.toJSON();
@@ -235,11 +232,14 @@ define([
         },
 
         adjustBuckets(values, min, max) {
-            return _.map(values, function(value) {
-                return _.filter(value, function(point) {
-                    const date = new Date(point.mid).getTime()/MILLISECONDS_TO_SECONDS;
-                    return date >= min && date <= max;
-                });
+            return _.map(values, function (value) {
+                return {
+                    name: value.name,
+                    points: _.filter(value.points, function (point) {
+                        const date = new Date(point.mid).getTime() / MILLISECONDS_TO_SECONDS;
+                        return date >= min && date <= max;
+                    })
+                }
             });
         },
 
