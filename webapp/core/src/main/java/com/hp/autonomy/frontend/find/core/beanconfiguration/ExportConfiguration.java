@@ -9,6 +9,7 @@ import com.hp.autonomy.frontend.reports.powerpoint.TemplateSettings;
 import com.hp.autonomy.frontend.reports.powerpoint.TemplateSettingsSource;
 import com.hp.autonomy.frontend.reports.powerpoint.TemplateSource;
 import com.hp.autonomy.frontend.reports.powerpoint.dto.Anchor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,7 +22,7 @@ public class ExportConfiguration {
     @Bean
     public PowerPointService powerPointService(final ConfigService<? extends FindConfig<?, ?>> configService) {
         final TemplateSource templateSource = () -> {
-            final Optional<String> maybeTemplateFile = getConfig(configService).flatMap(powerPointConfig -> Optional.ofNullable(powerPointConfig.getTemplateFile()));
+            final Optional<String> maybeTemplateFile = getConfig(configService).flatMap(powerPointConfig -> Optional.ofNullable(StringUtils.defaultIfBlank(powerPointConfig.getTemplateFile(), null)));
             return maybeTemplateFile.isPresent() ? new FileInputStream(maybeTemplateFile.get()) : TemplateSource.DEFAULT.getInputStream();
         };
         final TemplateSettingsSource templateSettingsSource = () -> getConfig(configService)

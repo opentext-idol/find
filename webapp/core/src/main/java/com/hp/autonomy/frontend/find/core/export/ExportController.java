@@ -40,7 +40,7 @@ import java.io.OutputStream;
 import java.util.Collection;
 
 public abstract class ExportController<R extends QueryRequest<?>, E extends Exception> {
-    public static final String EXPORT_PATH = "/api/bi/exportQueryResults";
+    public static final String EXPORT_PATH = "/api/bi/export";
     public static final String PPTX_PATH = "/pptx";
     protected static final String CSV_PATH = "/csv";
     protected static final String TOPIC_MAP_PATH = "/topic-map";
@@ -123,54 +123,54 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     }
 
     public ResponseEntity<byte[]> topicMap(
-            @RequestParam("data") final String rawData
+            @RequestParam(DATA_PARAM) final String rawData
     ) throws IOException, TemplateLoadException, E {
         final TopicMapData data = objectMapper.readValue(rawData, TopicMapData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().topicMap(outputStream, data), TOPIC_MAP_EXPORT_FILE_NAME);
     }
 
     public ResponseEntity<byte[]> sunburst(
-            @RequestParam("data") final String rawData
+            @RequestParam(DATA_PARAM) final String rawData
     ) throws IOException, TemplateLoadException, E {
         final SunburstData data = objectMapper.readValue(rawData, SunburstData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().sunburst(outputStream, data), SUNBURST_EXPORT_FILE_NAME);
     }
 
     public ResponseEntity<byte[]> table(
-            @RequestParam("data") final String rawData,
-            @RequestParam("title") final String title
+            @RequestParam(DATA_PARAM) final String rawData,
+            @RequestParam(TITLE_PARAM) final String title
     ) throws IOException, TemplateLoadException, E {
         final TableData data = objectMapper.readValue(rawData, TableData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().table(outputStream, data, title), TABLE_EXPORT_FILE_NAME);
     }
 
     public ResponseEntity<byte[]> map(
-            @RequestParam("data") final String rawData,
-            @RequestParam("title") final String title
+            @RequestParam(DATA_PARAM) final String rawData,
+            @RequestParam(TITLE_PARAM) final String title
     ) throws IOException, TemplateLoadException, E {
         final MapData data = objectMapper.readValue(rawData, MapData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().map(outputStream, data, title), MAP_EXPORT_FILE_NAME);
     }
 
     public ResponseEntity<byte[]> list(
-            @RequestParam("data") final String rawData,
-            @RequestParam("results") final String results,
-            @RequestParam("sortBy") final String sortBy
+            @RequestParam(DATA_PARAM) final String rawData,
+            @RequestParam(RESULTS_PARAM) final String results,
+            @RequestParam(SORT_BY_PARAM) final String sortBy
     ) throws IOException, TemplateLoadException, E {
         final ListData data = objectMapper.readValue(rawData, ListData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().list(outputStream, data, results, sortBy), LIST_EXPORT_FILE_NAME);
     }
 
     public ResponseEntity<byte[]> dateGraph(
-            @RequestParam("data") final String rawData
+            @RequestParam(DATA_PARAM) final String rawData
     ) throws IOException, TemplateLoadException, E {
         final DategraphData data = objectMapper.readValue(rawData, DategraphData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().dateGraph(outputStream, data), DATE_GRAPH_EXPORT_FILE_NAME);
     }
 
     public ResponseEntity<byte[]> report(
-            @RequestParam("data") final String rawData,
-            @RequestParam(value = "multipage", defaultValue = "false") final boolean multiPage
+            @RequestParam(DATA_PARAM) final String rawData,
+            @RequestParam(value = MULTI_PAGE_PARAM, defaultValue = "false") final boolean multiPage
     ) throws IOException, TemplateLoadException, E {
         final ReportData data = objectMapper.readValue(rawData, ReportData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().report(outputStream, data, multiPage), REPORT_EXPORT_FILE_NAME);
