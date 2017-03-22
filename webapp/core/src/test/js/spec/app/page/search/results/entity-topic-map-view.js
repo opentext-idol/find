@@ -201,6 +201,11 @@ define([
                     });
                 });
             });
+
+            it('exports data', function() {
+                this.view.exportData();
+                expect(this.topicMap.exportPaths).toHaveBeenCalled();
+            });
         });
     });
 });

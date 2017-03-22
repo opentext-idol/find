@@ -32,9 +32,11 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ExportConfiguration.class, PowerPointExportService.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class PowerPointExportServiceIT {
+    private static final String TOPIC_MAP_DATA = "/com/hp/autonomy/frontend/find/core/export/topic-map-data.json";
     private static final String SUNBURST_DATA = "/com/hp/autonomy/frontend/find/core/export/sunburst-data.json";
     private static final String LIST_DATA = "/com/hp/autonomy/frontend/find/core/export/list-data.json";
     private static final String REPORT_DATA = "/com/hp/autonomy/frontend/find/core/export/report-data.json";
+
     private final ObjectMapper objectMapper = new ObjectMapper();
     @MockBean
     private ConfigService<? extends FindConfig<?, ?>> configService;
@@ -47,12 +49,10 @@ public class PowerPointExportServiceIT {
         when(((ConfigService) configService).getConfig()).thenReturn(mock(FindConfig.class));
     }
 
-    @Ignore
     @Test
     public void topicMap() throws IOException {
-        //TODO determine good test data
         simpleDataTest(outputStream -> {
-            final TopicMapData topicMapData = new TopicMapData();
+            final TopicMapData topicMapData = getData(TOPIC_MAP_DATA, TopicMapData.class);
             powerPointExportService.topicMap(outputStream, topicMapData);
         });
     }

@@ -7,6 +7,6 @@ define([
     'js-testing/backbone-mock-factory'
 ], function(mockFactory) {
 
-    return mockFactory.getView(['draw', 'setData']);
+    return mockFactory.getView(['draw', 'setData', 'exportPaths']);
 
 });
