@@ -30,11 +30,11 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
-], function(_, $, Backbone, moment, metrics, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel,
-            ParametricCollection, ParametricFieldsCollection, queryStrategy, stateTokenStrategy,
-            ResultsViewContainer, ResultsViewSelection, RelatedConceptsView, addChangeListener,
-            SavedSearchControlView, TopicMapView, SunburstView, MapResultsView, TableView, TimeBarView,
-            configuration, i18n, templateString) {
+], function(_, $, Backbone, moment, metrics, DatesFilterModel, EntityCollection, QueryModel,
+            SavedSearchModel, ParametricCollection, ParametricFieldsCollection, queryStrategy,
+            stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView,
+            addChangeListener, SavedSearchControlView, TopicMapView, SunburstView, MapResultsView,
+            TableView, TimeBarView, configuration, i18n, templateString) {
     'use strict';
 
     const $window = $(window);
@@ -65,6 +65,7 @@ define([
         ResultsViewAugmentation: null,
         fetchParametricFields: null,
         timeBarView: null,
+        parametricFieldsCollection: null,
 
         initialize: function(options) {
             const hasBiRole = configuration().hasBiRole;
@@ -120,7 +121,13 @@ define([
                 }
             });
 
-            this.parametricFieldsCollection = new ParametricFieldsCollection([]);
+            // [FIND-910] IDOL only needs one parametricFieldsCollection (as the field names are the same
+            // for all saved searches), therefore parametricFieldsCollection is set on the prototype. HOD's
+            // service view needs a per-instance parametricFieldsCollection, so it is instantiated here.
+            if(this.parametricFieldsCollection === null) {
+                this.parametricFieldsCollection = new ParametricFieldsCollection([]);
+            }
+
             this.parametricCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
 
             // Tracks the document model which is currently shown in the preview
