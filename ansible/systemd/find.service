@@ -1,0 +1,26 @@
+[Unit]
+Description=Find
+Requires=network.target
+After=network.target
+
+[Service]
+User=find
+Group=find
+
+ExecStart={{ JAVA_BIN }} -Xmx{{ JAVA_MAX_HEAP_SIZE }}m -Dhp.find.home={{ FIND_HOME_DIR }} -Dlogging.path={{ FIND_LOGGING_DIR }} -Dserver.port={{ FIND_PORT }} -jar {{ FIND_INSTALL_DIR }}/find.jar >> {{ FIND_SYSLOG }}
+
+# Ensures stdin, stdout and stderr are all connected to /dev/null
+StandardInput=null
+StandardOutput=null
+StandardError=null
+
+WorkingDirectory=/opt/find
+
+# Waits 60 seconds on startup before considered failed
+TimeoutStartSec=30
+# Waits 30 seconds on shutdown before sending a SIGTERM, then a further 30 seconds before sending a SIGKILL
+TimeoutStopSec=30
+
+[Install]
+# Start on machine startup
+WantedBy=multi-user.target
