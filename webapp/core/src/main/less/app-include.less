@@ -2053,6 +2053,23 @@ h4.similar-dates-message {
   height: calc(100vh - @navBarHeight);
   position: relative;
   width: 100%;
+  overflow: hidden;
+
+  .widgets {
+    height: 100%;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+
+    &.fullscreen {
+      background-color: #fafafa;
+      height: 100%;
+    }
+  }
+
+  .btn-group .btn.inline-dropdown.dropdown-toggle > span {
+        border-bottom: none !important;
+  }
 
   .widget.widget-name-always {
     .title {

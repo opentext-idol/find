@@ -10,6 +10,8 @@ import com.autonomy.abc.selenium.find.DashboardPage;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 
@@ -38,5 +40,12 @@ public abstract class DashboardITCase extends IdolFindTestBase {
     @Test
     public void testWidgetsLoaded() {
         assertThat("Incorrect number of widgets", page.getWidgets().size() == numberOfWidgets);
+    }
+
+    @Test
+    public void testFullscreen() {
+        assertThat("dropdown toggle is not present", page.getDropdownToggle().isDisplayed());
+        page.enterFullscreen();
+        assertThat("page is not fullscreen", page.isFullscreen());
     }
 }

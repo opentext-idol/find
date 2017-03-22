@@ -10,12 +10,18 @@ define([
     'find/app/vent',
     'find/idol/app/page/dashboard/widget-registry',
     './dashboard/widgets/widget-not-found',
-    './dashboard/update-tracker-model'
-], function(_, $, BasePage, vent, widgetRegistry, WidgetNotFoundWidget, UpdateTrackerModel) {
+    './dashboard/update-tracker-model',
+    'text!find/idol/templates/page/dashboards/dashboard-page.html',
+    'i18n!find/nls/bundle'
+], function(_, $, BasePage, vent, widgetRegistry, WidgetNotFoundWidget, UpdateTrackerModel, template, i18n) {
     'use strict';
 
     return BasePage.extend({
-        className: 'dashboard',
+        template: _.template(template),
+
+        events: {
+            'click .fullscreen': 'toggleFullScreen'
+        },
 
         initialize: function(options) {
             _.bindAll(this, 'update');
@@ -51,13 +57,15 @@ define([
         },
 
         render: function() {
-            this.$el.empty();
+            this.$el.html(this.template({i18n: i18n}));
 
             _.each(this.widgetViews, function(widget) {
                 const $div = this.generateWidgetDiv(widget.position);
-                this.$el.append($div);
+                this.$('.widgets').append($div);
                 widget.view.setElement($div).render();
             }.bind(this));
+
+            this.addFullScreenListener();
 
             this.listenTo(vent, 'vent:resize', this.onResize);
             this.listenTo(this.sidebarModel, 'change:collapsed', this.onResize);
@@ -141,6 +149,69 @@ define([
                 }
 
                 this.onResize();
+            }
+        },
+
+        addFullScreenListener: function () {
+            const element = this.$('.widgets').get(0);
+
+            if (element.requestFullscreen) {
+                this.$('.widgets').on('fullscreenchange', function () {
+                    this.$('.widgets').toggleClass('fullscreen', document.currentFullScreenElement);
+                    this.onResize();
+                }.bind(this));
+            } else if(element.webkitRequestFullscreen) {
+                this.$('.widgets').on('webkitfullscreenchange', function () {
+                    this.$('.widgets').toggleClass('fullscreen', document.webkitCurrentFullScreenElement);
+                    this.onResize();
+                }.bind(this));
+            } else if(element.mozRequestFullScreen) {
+                document.addEventListener('mozfullscreenchange', function () {
+                    this.$('.widgets').toggleClass('fullscreen', document.mozCurrentFullScreenElement);
+                    this.onResize();
+                }.bind(this));
+            } else if (element.msRequestFullscreen) {
+                document.addEventListener('MSFullscreenChange', function () {
+                    this.$('.widgets').toggleClass('fullscreen', document.msCurrentFullScreenElement);
+                    this.onResize();
+                }.bind(this));
+            }
+        },
+
+        toggleFullScreen: function () {
+            const element = this.$('.widgets').get(0);
+            if (element.requestFullscreen) {
+                if (!document.currentFullScreenElement) {
+                    element.requestFullscreen();
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            } else if(element.webkitRequestFullscreen) {
+                if (!document.webkitCurrentFullScreenElement) {
+                    element.webkitRequestFullscreen();
+                } else {
+                    if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    }
+                }
+            } else if(element.mozRequestFullScreen) {
+                if (!document.mozCurrentFullScreenElement) {
+                    element.mozRequestFullScreen();
+                } else {
+                    if (document.mozExitFullScreen) {
+                        document.mozExitFullScreen();
+                    }
+                }
+            } else if (element.msRequestFullscreen) {
+                if (!document.msCurrentFullScreenElement) {
+                    element.msRequestFullscreen();
+                } else {
+                    if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                }
             }
         }
     });
