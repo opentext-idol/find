@@ -12,15 +12,23 @@ define([
     './dashboard/widgets/widget-not-found',
     './dashboard/update-tracker-model',
     'text!find/idol/templates/page/dashboards/dashboard-page.html',
+    'text!find/idol/templates/page/dashboards/powerpoint-export-form.html',
     'i18n!find/nls/bundle'
-], function(_, $, BasePage, vent, widgetRegistry, WidgetNotFoundWidget, UpdateTrackerModel, template, i18n) {
+], function (_, $, BasePage, vent, widgetRegistry, WidgetNotFoundWidget, UpdateTrackerModel, template, exportFormTemplate, i18n) {
     'use strict';
 
     return BasePage.extend({
         template: _.template(template),
+        formTemplate: _.template(exportFormTemplate),
 
         events: {
-            'click .fullscreen': 'toggleFullScreen'
+            'click .fullscreen': 'toggleFullScreen',
+            'click .report-pptx-checkbox': function (event) {
+                event.stopPropagation();
+            },
+            'click .report-pptx': function (event) {
+                this.exportDashboard(event);
+            }
         },
 
         initialize: function (options) {
@@ -66,7 +74,7 @@ define([
             }.bind(this);
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(this.template({
                 i18n: i18n,
                 dashboardName: this.dashboardName,
@@ -77,6 +85,8 @@ define([
                 powerpointPadding: i18n['export.powerpoint.padding'],
             }));
 
+            const $widgets = this.$('.widgets');
+
             _.each(this.widgetViews, function (widget) {
                 const $div = this.generateWidgetDiv(widget.position);
                 $widgets.append($div);
@@ -84,9 +94,9 @@ define([
             }.bind(this));
 
             const $exportBtn = this.$('.report-pptx-group');
-            $.when.apply($, _.map(this.widgetViews, function(widget){
+            $.when.apply($, _.map(this.widgetViews, function (widget) {
                 return widget.view.initialiseWidgetPromise
-            })).done(function(){
+            })).done(function () {
                 $exportBtn.removeClass('hide');
             });
 
@@ -223,6 +233,55 @@ define([
                 if (!document.msCurrentFullScreenElement) {
                     element.msRequestFullscreen();
                 }
+            }
+        },
+
+        exportDashboard: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const reports = [],
+                scaleX = 0.01 * this.widthPerUnit,
+                scaleY = 0.01 * this.heightPerUnit,
+                $el = $(event.currentTarget),
+                multiPage = $el.is('.report-pptx-multipage'),
+                $group = $el.closest('.btn-group'),
+                labels = $group.find('.report-pptx-labels:checked').length,
+                padding = $group.find('.report-pptx-padding:checked').length;
+
+            this.widgetViews.forEach(function (widget) {
+                if (widget.view.exportData) {
+                    const data = widget.view.exportData();
+
+                    // this may be a promise, or an actual object
+                    if (data) {
+                        reports.push($.when(data).then(function (data) {
+                            const pos = widget.position;
+
+                            return _.defaults(data, {
+                                title: labels ? widget.view.name : undefined,
+                                x: multiPage ? 0 : pos.x * scaleX,
+                                y: multiPage ? 0 : pos.y * scaleY,
+                                width: multiPage ? 1 : pos.width * scaleX,
+                                height: multiPage ? 1 : pos.height * scaleY,
+                                margin: padding ? 3 : 0
+                            })
+                        }));
+                    }
+                }
+            });
+
+            if (reports.length) {
+                $.when.apply($, reports).done(function () {
+                    const children = _.compact(arguments);
+                    const $form = $(this.formTemplate({
+                        data: JSON.stringify({
+                            children: children
+                        }),
+                        multiPage: multiPage
+                    }));
+                    $form.appendTo(document.body).submit().remove()
+                }.bind(this))
             }
         }
     });

@@ -172,6 +172,32 @@ define([
                             });
                         });
                     });
+
+                    describe('if powerpoint export is triggered', function() {
+                        beforeEach(function() {
+                            this.resultCount = 0;
+
+                            this.dashboardPage.widgetViews.forEach(function (widgetView) {
+                                widgetView.view.exportData = function () {
+                                    this.resultCount++;
+                                    return {
+                                        type: 'some-widget-type',
+                                        data: {}
+                                    };
+                                }.bind(this)
+                            }.bind(this));
+
+                            this.dashboardPage.$('.report-pptx')[0].click();
+                        });
+
+                        afterEach(function() {
+                            this.resultCount = 0;
+                        });
+
+                        it('should export data for all widgets', function() {
+                            expect(this.resultCount).toEqual(3);
+                        });
+                    });
                 });
 
                 describe('if the interval elapses before completion occurs', function() {
