@@ -1,5 +1,6 @@
 package com.hp.autonomy.frontend.find.core.export.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.ExportConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
@@ -31,70 +32,104 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ExportConfiguration.class, PowerPointExportService.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class PowerPointExportServiceIT {
+    private static final String SUNBURST_DATA = "/com/hp/autonomy/frontend/find/core/export/sunburst-data.json";
+    private static final String REPORT_DATA = "/com/hp/autonomy/frontend/find/core/export/report-data.json";
+
     @MockBean
     private ConfigService<? extends FindConfig<?, ?>> configService;
     @Autowired
     private VisualDataExportService powerPointExportService;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @SuppressWarnings("rawtypes")
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(((ConfigService) configService).getConfig()).thenReturn(mock(FindConfig.class));
     }
 
     @Ignore
     @Test
-    public void topicMap() throws Exception {
+    public void topicMap() throws IOException {
         //TODO determine good test data
-        simpleDataTest(outputStream -> powerPointExportService.topicMap(outputStream, new TopicMapData()));
+        simpleDataTest(outputStream -> {
+            final TopicMapData topicMapData = new TopicMapData();
+            powerPointExportService.topicMap(outputStream, topicMapData);
+        });
+    }
+
+    @Test
+    public void sunburst() throws IOException {
+        simpleDataTest(outputStream -> {
+            final SunburstData sunburstData = getData(SUNBURST_DATA, SunburstData.class);
+            powerPointExportService.sunburst(outputStream, sunburstData);
+        });
     }
 
     @Ignore
     @Test
-    public void sunburst() throws Exception {
+    public void table() throws IOException {
         //TODO determine good test data
-        simpleDataTest(outputStream -> powerPointExportService.sunburst(outputStream, new SunburstData()));
+        simpleDataTest(outputStream -> {
+            final TableData tableData = new TableData();
+            powerPointExportService.table(outputStream, tableData, "Test Table");
+        });
     }
 
     @Ignore
     @Test
-    public void table() throws Exception {
+    public void map() throws IOException {
         //TODO determine good test data
-        simpleDataTest(outputStream -> powerPointExportService.table(outputStream, new TableData(), "Test Table"));
+        simpleDataTest(outputStream -> {
+            final MapData mapData = new MapData();
+            powerPointExportService.map(outputStream, mapData, "Test Map");
+        });
     }
 
     @Ignore
     @Test
-    public void map() throws Exception {
+    public void list() throws IOException {
         //TODO determine good test data
-        simpleDataTest(outputStream -> powerPointExportService.map(outputStream, new MapData(), "Test Map"));
+        simpleDataTest(outputStream -> {
+            final ListData listData = new ListData();
+            powerPointExportService.list(outputStream, listData, "", "");
+        });
     }
 
     @Ignore
     @Test
-    public void list() throws Exception {
+    public void dateGraph() throws IOException {
         //TODO determine good test data
-        simpleDataTest(outputStream -> powerPointExportService.list(outputStream, new ListData(), "", ""));
+        simpleDataTest(outputStream -> {
+            final DategraphData dategraphData = new DategraphData();
+            powerPointExportService.dateGraph(outputStream, dategraphData);
+        });
     }
 
-    @Ignore
     @Test
-    public void dateGraph() throws Exception {
-        //TODO determine good test data
-        simpleDataTest(outputStream -> powerPointExportService.dateGraph(outputStream, new DategraphData()));
+    public void report() throws IOException {
+        simpleDataTest(outputStream -> {
+            final ReportData reportData = getData(REPORT_DATA, ReportData.class);
+            powerPointExportService.report(outputStream, reportData, false);
+        });
     }
 
-    @Ignore
     @Test
-    public void report() throws Exception {
-        //TODO determine good test data
-        simpleDataTest(outputStream -> powerPointExportService.report(outputStream, new ReportData(), false));
+    public void multiPageReport() throws IOException {
+        simpleDataTest(outputStream -> {
+            final ReportData reportData = getData(REPORT_DATA, ReportData.class);
+            powerPointExportService.report(outputStream, reportData, true);
+        });
     }
 
     private void simpleDataTest(final Operation operation) throws IOException {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         operation.accept(outputStream);
         assertNotNull(outputStream.toByteArray());
+    }
+
+    private <T> T getData(final String resource, final Class<T> type) throws IOException {
+        return objectMapper.readValue(getClass().getResourceAsStream(resource), type);
     }
 
     @FunctionalInterface

@@ -6,9 +6,12 @@ package com.hp.autonomy.frontend.find.core.export;
 
 import com.hp.autonomy.frontend.find.core.export.service.ExportFormat;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
+import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+
+import java.io.IOException;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
@@ -17,6 +20,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public abstract class ExportControllerIT extends AbstractFindIT {
+    private static final String SUNBURST_DATA = "/com/hp/autonomy/frontend/find/core/export/sunburst-data.json";
+    private static final String REPORT_DATA = "/com/hp/autonomy/frontend/find/core/export/report-data.json";
+
     @Test
     public void exportAsCsv() throws Exception {
         final String json = "{\"queryRestrictions\": {" +
@@ -51,12 +57,10 @@ public abstract class ExportControllerIT extends AbstractFindIT {
                 .andExpect(content().string(notNullValue()));
     }
 
-    @Ignore
     @Test
     public void exportSunburstToPptx() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.SUNBURST_PATH).with(authentication(biAuth()));
-        //TODO determine good test data
-        requestBuilder.param(ExportController.DATA_PARAM, "{}");
+        requestBuilder.param(ExportController.DATA_PARAM, getData(SUNBURST_DATA));
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -120,17 +124,31 @@ public abstract class ExportControllerIT extends AbstractFindIT {
                 .andExpect(content().string(notNullValue()));
     }
 
-    @Ignore
     @Test
     public void exportReportToPptx() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.REPORT_PATH).with(authentication(biAuth()));
-        //TODO determine good test data
-        requestBuilder.param(ExportController.DATA_PARAM, "{}");
+        requestBuilder.param(ExportController.DATA_PARAM, getData(REPORT_DATA));
         requestBuilder.param(ExportController.MULTI_PAGE_PARAM, "false");
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(ExportFormat.PPTX.getMimeType()))
                 .andExpect(content().string(notNullValue()));
+    }
+
+    @Test
+    public void exportReportToPptxMultiPage() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.REPORT_PATH).with(authentication(biAuth()));
+        requestBuilder.param(ExportController.DATA_PARAM, getData(REPORT_DATA));
+        requestBuilder.param(ExportController.MULTI_PAGE_PARAM, "true");
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(ExportFormat.PPTX.getMimeType()))
+                .andExpect(content().string(notNullValue()));
+    }
+
+    private String getData(final String resource) throws IOException {
+        return IOUtils.toString(getClass().getResourceAsStream(resource));
     }
 }
