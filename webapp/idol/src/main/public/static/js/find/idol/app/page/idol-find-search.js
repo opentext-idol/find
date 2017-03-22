@@ -1,10 +1,11 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
-    'find/app/page/find-search',
     'underscore',
+    'find/app/page/find-search',
     'i18n!find/nls/bundle',
     'find/idol/nls/root/snapshots',
     'find/app/model/saved-searches/saved-search-model',
@@ -19,7 +20,7 @@ define([
     'find/idol/app/page/search/idol-query-left-side-view',
     'find/idol/app/page/search/comparison/compare-modal',
     'find/app/configuration'
-], function(FindSearch, _, i18n, snapshotsI18n, SavedSearchModel, IndexesCollection, ServiceView, SuggestView,
+], function(_, FindSearch, i18n, snapshotsI18n, SavedSearchModel, IndexesCollection, ServiceView, SuggestView,
             SnapshotDataView, ComparisonView, stateTokenStrategy, ComparisonDocumentsCollection,
             relatedConceptsClickHandlers, IdolQueryLeftSideView, CompareModal, configuration) {
     'use strict';
@@ -31,32 +32,29 @@ define([
         QueryLeftSideView: IdolQueryLeftSideView,
 
         getSearchTypes: function() {
-            var searchTypes = FindSearch.prototype.getSearchTypes.call(this);
-
-            if(configuration().hasBiRole) {
-                searchTypes = _.extend({
-                    SNAPSHOT: {
-                        cssClass: 'snapshot',
-                        autoCorrect: false,
-                        queryTextModelChange: _.constant(_.noop),
-                        collection: 'savedSnapshotCollection',
-                        icon: 'hp-camera',
-                        isMutable: false,
-                        fetchStrategy: stateTokenStrategy,
-                        showTimeBar: false,
-                        DocumentsCollection: ComparisonDocumentsCollection,
-                        LeftSideFooterView: SnapshotDataView,
-                        MiddleColumnHeaderView: null,
-                        relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
-                        openEditText: {
-                            create: snapshotsI18n['openEdit.create'],
-                            edit: snapshotsI18n['openEdit.edit']
+            return _.extend(FindSearch.prototype.getSearchTypes.call(this),
+                configuration().hasBiRole
+                    ? {
+                        SNAPSHOT: {
+                            cssClass: 'snapshot',
+                            autoCorrect: false,
+                            queryTextModelChange: _.constant(_.noop),
+                            collection: 'savedSnapshotCollection',
+                            icon: 'hp-camera',
+                            isMutable: false,
+                            fetchStrategy: stateTokenStrategy,
+                            showTimeBar: false,
+                            DocumentsCollection: ComparisonDocumentsCollection,
+                            LeftSideFooterView: SnapshotDataView,
+                            MiddleColumnHeaderView: null,
+                            relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
+                            openEditText: {
+                                create: snapshotsI18n['openEdit.create'],
+                                edit: snapshotsI18n['openEdit.edit']
+                            }
                         }
                     }
-                }, searchTypes);
-            }
-
-            return searchTypes;
+                    : {});
         },
 
         serviceViewOptions: function(cid) {
@@ -82,6 +80,7 @@ define([
                                     this.$('.query-service-view-container').removeClass('hide');
                                 }.bind(this)
                             });
+
                             this.comparisonView.$el.insertBefore(this.$('.hp-logo-footer'));
                             this.comparisonView.render();
                         }.bind(this)
@@ -92,8 +91,8 @@ define([
 
         documentDetailOptions: function(database, reference) {
             return {
-                reference: reference,
-                database: database
+                database: database,
+                reference: reference
             };
         },
 
@@ -106,7 +105,8 @@ define([
 
         removeComparisonView: function() {
             if(this.comparisonView) {
-                // Setting the element to nothing prevents the containing element from being removed when the view is removed
+                // Setting the element to nothing prevents the containing element from being
+                // removed when the view is removed
                 this.comparisonView.setElement();
                 this.comparisonView.remove();
                 this.stopListening(this.comparisonView);

@@ -1,16 +1,15 @@
 /*
- * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'underscore',
     'find/app/configuration',
     'find/app/page/search/service-view',
     'find/idol/app/page/search/results/idol-results-view-augmentation',
     'find/idol/app/page/search/results/idol-results-view',
     'js-whatever/js/model-any-changed-attribute-listener'
-], function (_, configuration, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener) {
+], function(configuration, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener) {
     'use strict';
 
     return ServiceView.extend({
@@ -19,7 +18,7 @@ define([
         mapViewResultsStep: configuration().map.resultsStep,
         mapViewAllowIncrement: true,
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.comparisonModalCallback = options.comparisonModalCallback;
 
             ServiceView.prototype.initialize.call(this, options);
@@ -35,19 +34,21 @@ define([
                     'maxDate',
                     'minScore',
                     'stateMatchIds'
-                ], this.fetchData);
+                ],
+                this.fetchData
+            );
         },
 
-        fetchParametricFields: function (fieldsCollection, callback) {
-            fieldsCollection.fetch({
+        fetchParametricFields: function() {
+            this.parametricFieldsCollection.fetch({
                 data: {
                     fieldTypes: ['Parametric', 'Numeric', 'NumericDate']
                 },
-                success: callback.bind(this)
+                success: this.fetchParametricCollection.bind(this)
             });
         },
 
-        getSavedSearchControlViewOptions: function () {
+        getSavedSearchControlViewOptions: function() {
             return {
                 comparisonModalCallback: this.comparisonModalCallback
             };

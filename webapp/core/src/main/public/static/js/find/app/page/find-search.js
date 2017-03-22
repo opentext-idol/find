@@ -31,29 +31,25 @@ define([
     'find/app/vent',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/find-search.html'
-], function(_, $, Backbone, BasePage, config, DatesFilterModel, SelectedParametricValuesCollection, DocumentsCollection,
-            InputView, queryTextStrategy, TabbedSearchView, MergeCollection, SavedSearchModel,
-            QueryMiddleColumnHeaderView, MinScoreModel, QueryTextModel, DocumentModel, DocumentDetailView,
-            queryStrategy, relatedConceptsClickHandlers, databaseNameResolver, SavedQueryResultPoller, events,
-            router, vent, i18n, template) {
+], function(_, $, Backbone, BasePage, config, DatesFilterModel, SelectedParametricValuesCollection,
+            DocumentsCollection, InputView, queryTextStrategy, TabbedSearchView, MergeCollection,
+            SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel, QueryTextModel, DocumentModel,
+            DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver,
+            SavedQueryResultPoller, events, router, vent, i18n, template) {
     'use strict';
 
-    var reducedClasses = 'reverse-animated-container col-md-offset-1 ' +
+    const reducedClasses = 'reverse-animated-container col-md-offset-1 ' +
         'col-lg-offset-2 col-xs-12 col-sm-12 col-md-10 col-lg-8';
-    var expandedClasses = 'animated-container col-sm-offset-0 col-md-offset-3 ' +
+    const expandedClasses = 'animated-container col-sm-offset-0 col-md-offset-3 ' +
         'col-lg-offset-3 col-md-6 col-lg-6 col-xs-9 col-sm-9';
 
-    var html = _.template(template)({i18n: i18n});
+    const html = _.template(template)({i18n: i18n});
 
     function selectInitialIndexes(indexesCollection) {
-        var privateIndexes = indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
-        var selectedIndexes;
-
-        if(privateIndexes.length > 0) {
-            selectedIndexes = privateIndexes;
-        } else {
-            selectedIndexes = indexesCollection.models;
-        }
+        const privateIndexes = indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
+        const selectedIndexes = privateIndexes.length > 0
+            ? privateIndexes
+            : indexesCollection.models;
 
         return _.map(selectedIndexes, function(indexModel) {
             return indexModel.pick('domain', 'name');
@@ -61,16 +57,18 @@ define([
     }
 
     function fetchDocument(options, callback) {
-        var documentModel = new DocumentModel();
+        const documentModel = new DocumentModel();
 
-        documentModel.fetch({
-            data: {
-                reference: options.reference,
-                database: options.database
-            }
-        }).done(function() {
-            callback(documentModel);
-        });
+        documentModel
+            .fetch({
+                data: {
+                    reference: options.reference,
+                    database: options.database
+                }
+            })
+            .done(function() {
+                callback(documentModel);
+            });
     }
 
     return BasePage.extend({
@@ -108,7 +106,7 @@ define([
                         vent.navigate(this.generateURL(), {trigger: false});
 
                         if(this.searchModel.get('inputText')) {
-                            this.expandedState();
+                            this.toggleExpandedState(true);
 
                             // Create a tab if the user has run a search but has no open tabs
                             if(this.selectedTabModel.get('selectedSearchCid') === null) {
@@ -159,7 +157,7 @@ define([
             this.listenTo(this.selectedTabModel, 'change', this.selectContentView);
 
             this.listenTo(this.savedSearchCollection, 'remove', function(savedSearch) {
-                var cid = savedSearch.cid;
+                const cid = savedSearch.cid;
                 this.serviceViews[cid].view.remove();
                 this.queryStates.unset(cid);
                 delete this.serviceViews[cid];
@@ -167,7 +165,7 @@ define([
                 events(cid).abandon();
 
                 if(this.selectedTabModel.get('selectedSearchCid') === cid) {
-                    var lastModel = this.savedQueryCollection.last();
+                    const lastModel = this.savedQueryCollection.last();
 
                     if(lastModel) {
                         const route = lastModel.get('id') ? 'search/tab/' + lastModel.get('type') + ':' + lastModel.get('id') : 'search/query';
@@ -194,7 +192,7 @@ define([
 
                 this.listenTo(this.tabView, 'startNewSearch', this.createNewTab);
 
-                var savedSearchConfig = config().savedSearchConfig;
+                const savedSearchConfig = config().savedSearchConfig;
                 if(savedSearchConfig.pollForUpdates) {
                     this.listenToOnce(this.savedQueryCollection, 'sync', function() {
                         this.savedQueryResultPoller = new SavedQueryResultPoller({
@@ -218,7 +216,7 @@ define([
                     this.searchModel.set({inputText: ''});
                 }
 
-                this.reducedState();
+                this.toggleExpandedState(false);
             }, this);
 
             // Bind routing to search model
@@ -239,14 +237,13 @@ define([
             }, this);
 
             this.listenTo(router, 'route:savedSearch', function(tab, resultsView) {
-
                 if(this.savedSearchCollection.get(tab)) {
                     this.selectedTabModel.set({
-                        'selectedSearchCid': this.savedSearchCollection.get(tab).cid,
-                        'selectedResultsView': resultsView || ''
+                        selectedSearchCid: this.savedSearchCollection.get(tab).cid,
+                        selectedResultsView: resultsView || ''
                     });
-                }
-                else {
+                } else {
+                    // TODO promise surrogate? Clean this up.
                     this.listenToOnce(options.savedQueryCollection, 'update', function() {
                         if(this.savedSearchCollection.get(tab)) {
                             this.selectedTabModel.set({
@@ -259,16 +256,16 @@ define([
             }, this);
 
             this.listenTo(router, 'route:documentDetail', function() {
-                var backURL = this.suggestView
+                const backURL = this.suggestView
                     ? this.generateSuggestURL(this.suggestView.documentModel)
                     : this.generateURL();
-                this.expandedState();
+                this.toggleExpandedState(true);
                 this.$('.service-view-container').addClass('hide');
                 this.$('.document-detail-service-view-container').removeClass('hide');
 
                 this.removeDocumentDetailView();
 
-                var options = this.documentDetailOptions.apply(this, arguments);
+                const options = this.documentDetailOptions.apply(this, arguments);
 
                 fetchDocument(options, function(documentModel) {
                     this.documentDetailView = new DocumentDetailView({
@@ -284,11 +281,11 @@ define([
             }, this);
 
             this.listenTo(router, 'route:suggest', function() {
-                this.expandedState();
+                this.toggleExpandedState(true);
                 this.$('.service-view-container').addClass('hide');
                 this.$('.suggest-service-view-container').removeClass('hide');
 
-                var options = this.suggestOptions.apply(this, arguments);
+                const options = this.suggestOptions.apply(this, arguments);
 
                 fetchDocument(options, function(documentModel) {
                     this.suggestView = new this.SuggestView({
@@ -317,11 +314,7 @@ define([
                 this.tabView.setElement(this.$('.search-tabs-container')).render();
             }
 
-            if(this.selectedTabModel.get('selectedSearchCid') === null && !config().hasBiRole) {
-                this.reducedState();
-            } else {
-                this.expandedState();
-            }
+            this.toggleExpandedState(this.selectedTabModel.get('selectedSearchCid') !== null || config().hasBiRole);
 
             _.each(this.serviceViews, function(data) {
                 this.$('.query-service-view-container').append(data.view.$el);
@@ -366,7 +359,9 @@ define([
                     },
                     createSearchModelAttributes: function(conceptGroups) {
                         return {
-                            inputString: conceptGroups.length > 0 ? conceptGroups.first().get('concepts')[0] : '*'
+                            inputString: conceptGroups.length > 0
+                                ? conceptGroups.first().get('concepts')[0]
+                                : '*'
                         };
                     },
                     searchModelChange: function(options) {
@@ -384,7 +379,7 @@ define([
         },
 
         createNewTab: function(queryText) {
-            var newSearch = new SavedSearchModel({
+            const newSearch = new SavedSearchModel({
                 relatedConcepts: queryText ? [[queryText]] : [],
                 title: i18n['search.newSearch'],
                 type: SavedSearchModel.Type.QUERY,
@@ -396,7 +391,7 @@ define([
         },
 
         selectContentView: function() {
-            var cid = this.selectedTabModel.get('selectedSearchCid');
+            const cid = this.selectedTabModel.get('selectedSearchCid');
 
             _.each(this.serviceViews, function(data) {
                 data.view.$el.addClass('hide');
@@ -418,30 +413,23 @@ define([
                 if(this.serviceViews[cid]) {
                     viewData = this.serviceViews[cid];
                 } else {
-                    const minScore = new MinScoreModel({minScore: 0});
                     const documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
-
-                    let initialSelectedIndexes;
                     const savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
-
-                    if(savedSelectedIndexes.length === 0) {
-                        if(this.indexesCollection.isEmpty()) {
-                            initialSelectedIndexes = [];
-                        } else {
-                            initialSelectedIndexes = selectInitialIndexes(this.indexesCollection);
-                        }
-                    } else {
-                        initialSelectedIndexes = savedSelectedIndexes;
-                    }
 
                     /**
                      * @type {QueryState}
                      */
                     const queryState = {
                         conceptGroups: new Backbone.Collection(savedSearchModel.toConceptGroups()),
-                        minScoreModel: minScore,
+                        minScoreModel: new MinScoreModel({minScore: 0}),
                         datesFilterModel: new DatesFilterModel(savedSearchModel.toDatesFilterModelAttributes()),
-                        selectedIndexes: new this.IndexesCollection(initialSelectedIndexes),
+                        selectedIndexes: new this.IndexesCollection(
+                            savedSelectedIndexes.length === 0
+                                ? (this.indexesCollection.isEmpty()
+                                    ? []
+                                    : selectInitialIndexes(this.indexesCollection))
+                                : savedSelectedIndexes
+                        ),
                         selectedParametricValues: new SelectedParametricValuesCollection(savedSearchModel.toSelectedParametricValues())
                     };
 
@@ -472,16 +460,16 @@ define([
                 }
 
                 if(this.searchModel) {
-                    this.searchModel.set(this.searchTypes[searchType].createSearchModelAttributes(viewData.queryState.conceptGroups));
+                    this.searchModel.set(this.searchTypes[searchType]
+                        .createSearchModelAttributes(viewData.queryState.conceptGroups));
 
-                    const changeListenerOptions = {
-                        savedQueryCollection: this.savedQueryCollection,
-                        selectedTabModel: this.selectedTabModel,
-                        searchModel: this.searchModel,
-                        queryState: viewData.queryState
-                    };
-
-                    this.searchChangeCallback = this.searchTypes[searchType].searchModelChange(changeListenerOptions);
+                    this.searchChangeCallback = this.searchTypes[searchType]
+                        .searchModelChange({
+                            savedQueryCollection: this.savedQueryCollection,
+                            selectedTabModel: this.selectedTabModel,
+                            searchModel: this.searchModel,
+                            queryState: viewData.queryState
+                        });
                     this.listenTo(this.searchModel, 'change', this.searchChangeCallback);
                 }
 
@@ -501,61 +489,45 @@ define([
         },
 
         generateURL: function() {
-            if(this.searchModel && this.searchModel.get('inputText')) {
-                var inputText = this.searchModel.get('inputText');
-                return 'search/query/' + encodeURIComponent(inputText);
-            } else {
-                if(this.selectedTabModel.get('selectedSearchCid') || config().hasBiRole) {
-                    return 'search/query';
-                } else {
-                    return 'search/splash';
-                }
-            }
+            const inputText = this.searchModel
+                ? this.searchModel.get('inputText')
+                : null;
+
+            return inputText
+                ? 'search/query/' + encodeURIComponent(inputText)
+                : (this.selectedTabModel.get('selectedSearchCid') || config().hasBiRole
+                    ? 'search/query'
+                    : 'search/splash');
         },
 
         generateSuggestURL: function(model) {
             return 'search/suggest/' + vent.addSuffixForDocument(model);
         },
 
-        // Run fancy animation from large central search bar to main search page
-        expandedState: function() {
-            this.$('.find').removeClass(reducedClasses).addClass(expandedClasses);
-
+        // bool == true. expanded state. Run fancy animation from large central search bar to main search page
+        // bool == false: reduced state. Set view to initial state (large central search bar)
+        toggleExpandedState: function(bool) {
+            this.$('.find').toggleClass(expandedClasses, bool).toggleClass(reducedClasses, !bool);
             this.$('.service-view-container').addClass('hide');
-            this.$('.query-service-view-container').removeClass('hide');
-            this.$('.app-logo').addClass('hide');
-            this.$('.hp-logo-footer').addClass('hide');
+
+            if(bool) {
+                this.$('.query-service-view-container').removeClass('hide');
+            }
+
+            this.$('.app-logo').toggleClass('hide', bool);
+            this.$('.hp-logo-footer').toggleClass('hide', bool);
 
             this.removeDocumentDetailView();
             this.removeSuggestView();
 
             this.optionalViews.forEach(function(view) {
-                view.onExpand(view.instance)
+                view[bool ? 'onExpand' : 'onReduce'](view.instance);
             });
-            this.$('.find-banner-container').addClass('hide');
+
+            this.$('.find-banner-container').toggleClass('hide', bool);
 
             // TODO: somebody else needs to own this
-            $('.container-fluid, .find-logo-small').removeClass('reduced');
-        },
-
-        // Set view to initial state (large central search bar)
-        reducedState: function() {
-            this.$('.find').removeClass(expandedClasses).addClass(reducedClasses);
-
-            this.$('.service-view-container').addClass('hide');
-            this.$('.app-logo').removeClass('hide');
-            this.$('.hp-logo-footer').removeClass('hide');
-
-            this.removeDocumentDetailView();
-            this.removeSuggestView();
-
-            this.optionalViews.forEach(function(view) {
-                view.onReduce(view.instance)
-            });
-            this.$('.find-banner-container').removeClass('hide');
-
-            // TODO: somebody else needs to own this
-            $('.container-fluid, .find-logo-small').addClass('reduced');
+            $('.container-fluid, .find-logo-small').toggleClass('reduced', !bool);
         },
 
         isExpanded: function() {
@@ -587,11 +559,10 @@ define([
         },
 
         updateRouting: function(savedSearch, selectedTab) {
-            if(savedSearch) {
-                vent.navigate('/search/tab/' + savedSearch + (selectedTab ? '/view/' + selectedTab : ''), {trigger: false});
-            } else {
-                vent.navigate('/search/query', {trigger: false});
-            }
+            vent.navigate(savedSearch
+                    ? '/search/tab/' + savedSearch + (selectedTab ? '/view/' + selectedTab : '')
+                    : '/search/query',
+                {trigger: false});
 
             this.currentRoute = Backbone.history.getFragment();
         },
