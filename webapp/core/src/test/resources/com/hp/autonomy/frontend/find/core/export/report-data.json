@@ -83,6 +83,31 @@
       "width": 1,
       "height": 1,
       "margin": 3
+    },
+    {
+      "data": {
+        "text": [
+          {
+            "text": "15:18 GMT\n",
+            "fontSize": 18
+          },
+          {
+            "text": "WEDNESDAY\n",
+            "fontSize": 9
+          },
+          {
+            "text": "MAR 22, 2017\n",
+            "fontSize": 9
+          }
+        ]
+      },
+      "type": "text",
+      "title": "Current Time Date",
+      "x": 0.25,
+      "y": 0.25,
+      "width": 0.5,
+      "height": 0.5,
+      "margin": 3
     }
   ]
 }
