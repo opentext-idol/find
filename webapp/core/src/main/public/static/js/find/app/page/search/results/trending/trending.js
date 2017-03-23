@@ -233,7 +233,8 @@ define([
         });
 
         labelData.sort(function (a, b) {
-            return a.labelY - b.labelY;
+            const difference = a.labelY - b.labelY;
+            return difference === 0 ? a.index - b.index : difference;
         });
 
         const maxScaledY = _.max(labelData, function (datum) {
