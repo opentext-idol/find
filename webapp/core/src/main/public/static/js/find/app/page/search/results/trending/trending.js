@@ -274,8 +274,9 @@ define([
         return d3.time.format("%d %B %Y");
     }
 
-    function Trending(options) {
-        this.el = options.el;
+    function Trending(settings) {
+        this.el = settings.el;
+        this.tooltipText = settings.tooltipText;
 
         this.chart = d3.select(this.el)
             .append('svg');
@@ -290,12 +291,11 @@ define([
             const chartWidth = $(this.el).width() - LEGEND_WIDTH;
             const chartHeight = $(this.el).height();
             const yAxisLabel = options.yAxisLabel;
-            const tooltipText = options.tooltipText;
             const timeFormat = getTimeFormat(maxDate, minDate);
 
             const scales = setScales(options, chartHeight, chartWidth);
 
-            const hover = setHoverFunctionality(this.chart, scales, chartHeight, tooltipText, timeFormat);
+            const hover = setHoverFunctionality(this.chart, scales, chartHeight, this.tooltipText, timeFormat);
 
             const getIndexOfValueName = function(name) {
                 return _.pluck(data, 'name').indexOf(name);

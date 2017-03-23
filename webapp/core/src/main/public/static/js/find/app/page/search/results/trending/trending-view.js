@@ -21,6 +21,7 @@ define([
 
     const MILLISECONDS_TO_SECONDS = 1000;
     const DEBOUNCE_TIME = 500;
+    const ERROR_MESSAGE_ARGUMENTS = { messageToUser: i18n['search.resultsView.trending.error.query'] };
 
     const renderState = {
         RENDERING_NEW_DATA: 'RENDERING NEW DATA',
@@ -44,45 +45,41 @@ define([
         numberOfParametricValuesToShow: 20,
 
         initialize: function(options) {
-            this.trendingFieldsCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
-            this.errorMessageArguments = { messageToUser: i18n['search.resultsView.trending.error.query']};
-            this.model = new Backbone.Model();
-            this.viewStateModel = new Backbone.Model({
-                currentState: renderState.RENDERING_NEW_DATA
-            });
-            this.debouncedFetchBucketingData = _.debounce(this.fetchBucketingData, DEBOUNCE_TIME);
 
+            this.debouncedFetchBucketingData = _.debounce(this.fetchBucketingData, DEBOUNCE_TIME);
             this.bucketedValues = {};
+            this.trendingFieldsCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
+
+            this.model = new Backbone.Model();
+            this.viewStateModel = new Backbone.Model({ currentState: renderState.RENDERING_NEW_DATA });
 
             this.listenTo(this.queryModel, 'change', function() {
-                if(this.$el.is(':visible')) {
-                    this.fetchFieldData();
-                }
+                if(this.$el.is(':visible')) { this.fetchFieldData(); }
             });
-
             this.listenTo(vent, 'vent:resize', function() {
-                if(this.$el.is(':visible')) {
-                    this.renderChart();
-                }
+                if(this.$el.is(':visible')) { this.updateChart(); }
             });
-
             this.listenTo(this.viewStateModel, 'change:dataState', this.onDataStateChange);
         },
 
         render: function() {
-            this.bucketedValues = {};
             this.$el.html(this.template({
                 i18n: i18n,
                 loadingHtml: this.loadingHtml
             }));
-
             this.$errorMessage = this.$('.trending-error');
 
-            if(this.$el.is(':visible')) {
-                this.fetchFieldData();
+            if(this.$el.is(':visible')) { this.fetchFieldData(); }
+
+            if (this.trendingChart) {
+                this.trendingChart.remove();
             }
+            this.trendingChart = new Trending({
+                el: this.$('.trending-chart').get(0),
+                tooltipText: i18n['search.resultsView.trending.tooltipText']
+            });
         },
 
         remove() {
@@ -92,6 +89,7 @@ define([
 
         fetchFieldData: function() {
             this.viewStateModel.set('dataState', dataState.LOADING);
+
             this.trendingFieldsCollection.fetch({
                 data: {
                     fieldNames: [this.fieldName],
@@ -176,15 +174,41 @@ define([
             }, this)).done(_.bind(function() {
                 this.viewStateModel.set('currentState', renderState.RENDERING_NEW_DATA);
                 this.viewStateModel.set('dataState', dataState.OK);
-                this.renderChart();
+                this.updateChart();
             }, this)).fail(_.bind(function(xhr) {
                 this.onDataError(xhr);
             }, this));
         },
 
-        renderChart: function() {
+        updateChart: function() {
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
 
+            const data = this.createChartData();
+            const callbacks = this.createCallbacks();
+
+            let minDate, maxDate;
+            if (this.viewStateModel.get('currentState') === renderState.RENDERING_NEW_DATA) {
+                minDate = data[0].points[0].mid;
+                maxDate = data[data.length - 1].points[data[0].points.length - 1].mid;
+            } else {
+                minDate = new Date(this.model.get('currentMin') * MILLISECONDS_TO_SECONDS);
+                maxDate = new Date(this.model.get('currentMax') * MILLISECONDS_TO_SECONDS);
+            }
+
+            this.trendingChart.draw({
+                reloaded: this.viewStateModel.get('currentState') === renderState.RENDERING_NEW_DATA,
+                data: data,
+                minDate: minDate,
+                maxDate: maxDate,
+                xAxisLabel: i18n['search.resultsView.trending.xAxis'],
+                yAxisLabel: i18n['search.resultsView.trending.yAxis'],
+                zoomCallback: callbacks.zoomCallback,
+                dragMoveCallback: callbacks.dragMoveCallback,
+                dragEndCallback: callbacks.dragEndCallback
+            });
+        },
+
+        createChartData: function() {
             let data = [];
 
             _.each(this.bucketedValues, function (model) {
@@ -209,59 +233,7 @@ define([
                 });
             });
 
-            data = this.adjustBuckets(data, this.model.get('currentMin'), this.model.get('currentMax'));
-
-
-            const zoomCallback = function (min, max) {
-                this.setMinMax(min, max);
-                this.viewStateModel.set('currentState', renderState.ZOOMING);
-                this.renderChart();
-                this.debouncedFetchBucketingData();
-            }.bind(this);
-
-            const dragMoveCallback = function(min, max) {
-                this.setMinMax(min, max);
-                this.viewStateModel.set('currentState', renderState.DRAGGING);
-                this.renderChart();
-            }.bind(this);
-
-            const dragEndCallback = function(min, max) {
-                this.setMinMax(min, max);
-                this.viewStateModel.set('currentState', renderState.DRAGGING);
-                this.debouncedFetchBucketingData();
-            }.bind(this);
-
-            let minDate, maxDate;
-            if (this.viewStateModel.get('currentState') === renderState.RENDERING_NEW_DATA) {
-                minDate = data[0].points[0].mid;
-                maxDate = data[data.length - 1].points[data[0].points.length - 1].mid;
-            } else {
-                minDate = new Date(this.model.get('currentMin') * MILLISECONDS_TO_SECONDS);
-                maxDate = new Date(this.model.get('currentMax') * MILLISECONDS_TO_SECONDS);
-            }
-
-            if (!this.trendingChart) {
-                this.trendingChart = new Trending({ el: this.$('.trending-chart').get(0) });
-            }
-
-            this.trendingChart.draw({
-                reloaded: this.viewStateModel.get('currentState') === renderState.RENDERING_NEW_DATA,
-                data: data,
-                minDate: minDate,
-                maxDate: maxDate,
-                xAxisLabel: i18n['search.resultsView.trending.xAxis'],
-                yAxisLabel: i18n['search.resultsView.trending.yAxis'],
-                zoomCallback: zoomCallback,
-                dragMoveCallback: dragMoveCallback,
-                dragEndCallback: dragEndCallback,
-                tooltipText: i18n['search.resultsView.trending.tooltipText'] // ToDo move out of draw
-            });
-        },
-
-        getFieldText: function() {
-            return this.selectedParametricValues.map(function (model) {
-                return model.toJSON();
-            });
+            return this.adjustBuckets(data, this.model.get('currentMin'), this.model.get('currentMax'));
         },
 
         adjustBuckets: function(values, min, max) {
@@ -273,6 +245,39 @@ define([
                         return date >= min && date <= max;
                     })
                 }
+            });
+        },
+
+        createCallbacks: function() {
+            const zoomCallback = function (min, max) {
+                this.setMinMax(min, max);
+                this.viewStateModel.set('currentState', renderState.ZOOMING);
+                this.updateChart();
+                this.debouncedFetchBucketingData();
+            }.bind(this);
+
+            const dragMoveCallback = function(min, max) {
+                this.setMinMax(min, max);
+                this.viewStateModel.set('currentState', renderState.DRAGGING);
+                this.updateChart();
+            }.bind(this);
+
+            const dragEndCallback = function(min, max) {
+                this.setMinMax(min, max);
+                this.viewStateModel.set('currentState', renderState.DRAGGING);
+                this.debouncedFetchBucketingData();
+            }.bind(this);
+
+            return {
+                zoomCallback: zoomCallback,
+                dragMoveCallback: dragMoveCallback,
+                dragEndCallback: dragEndCallback
+            }
+        },
+
+        getFieldText: function() {
+            return this.selectedParametricValues.map(function (model) {
+                return model.toJSON();
             });
         },
 
@@ -299,7 +304,7 @@ define([
             const messageArguments = _.extend({
                 errorDetails: xhr.responseJSON.message,
                 errorUUID: xhr.responseJSON.uuid
-            }, this.errorMessageArguments);
+            }, ERROR_MESSAGE_ARGUMENTS);
             const errorMessage = generateErrorHtml(messageArguments);
             this.$errorMessage.html(errorMessage);
         }
