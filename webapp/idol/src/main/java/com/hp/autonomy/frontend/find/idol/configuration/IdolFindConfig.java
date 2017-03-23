@@ -16,6 +16,7 @@ import com.hp.autonomy.frontend.configuration.authentication.Authentication;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
 import com.hp.autonomy.frontend.configuration.server.ProductType;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
+import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
@@ -33,11 +34,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.BooleanUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.function.BiFunction;
 
 @SuppressWarnings({"InstanceVariableOfConcreteClass", "DefaultAnnotationParam"})
 @Data
@@ -153,23 +155,23 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     public String lookupComponentNameByHostAndPort(final String hostName, final int port) {
         if (productMap == null) {
             final Map<String, Map<Integer, String>> tempProductMap = new HashMap<>();
-            tempProductMap.compute(content.getHost(), productMapCompute(content.getPort(), ProductType.AXE.getFriendlyName()));
-            tempProductMap.compute(view.getHost(), productMapCompute(view.getPort(), ProductType.VIEW.getFriendlyName()));
+            addEntriesToProductMap(tempProductMap, ProductType.AXE.getFriendlyName(), content.getHost(), content.getPort(), content.getServicePort());
+            addEntriesToProductMap(tempProductMap, ProductType.VIEW.getFriendlyName(), view.getHost(), view.getPort(), view.getServicePort());
 
             if (!"default".equals(login.getMethod())) {
-                tempProductMap.compute(login.getCommunity().getHost(), productMapCompute(login.getCommunity().getPort(), ProductType.UASERVER.getFriendlyName()));
+                addEntriesToProductMap(tempProductMap, ProductType.UASERVER.getFriendlyName(), login.getCommunity().getHost(), login.getCommunity().getPort(), login.getCommunity().getServicePort());
             }
 
-            if (BooleanUtils.isTrue(queryManipulation.getEnabled())) {
-                tempProductMap.compute(queryManipulation.getServer().getHost(), productMapCompute(queryManipulation.getServer().getPort(), ProductType.QMS.getFriendlyName()));
+            if (isOptionalComponentEnabled(queryManipulation)) {
+                addEntriesToProductMap(tempProductMap, ProductType.QMS.getFriendlyName(), queryManipulation.getServer().getHost(), queryManipulation.getServer().getPort(), queryManipulation.getServer().getServicePort());
             }
 
-            if (BooleanUtils.isTrue(answerServer.getEnabled())) {
-                tempProductMap.compute(answerServer.getServer().getHost(), productMapCompute(answerServer.getServer().getPort(), ProductType.ANSWERSERVER.getFriendlyName()));
+            if (isOptionalComponentEnabled(answerServer)) {
+                addEntriesToProductMap(tempProductMap, ProductType.ANSWERSERVER.getFriendlyName(), answerServer.getServer().getHost(), answerServer.getServer().getPort(), answerServer.getServer().getServicePort());
             }
 
-            if (BooleanUtils.isTrue(statsServer.getEnabled())) {
-                tempProductMap.compute(statsServer.getServer().getHost(), productMapCompute(statsServer.getServer().getPort(), ProductType.STATS.getFriendlyName()));
+            if (isOptionalComponentEnabled(statsServer)) {
+                addEntriesToProductMap(tempProductMap, statsServer.getServer().getHost(), ProductType.STATS.getFriendlyName(), statsServer.getServer().getPort(), statsServer.getServer().getServicePort());
             }
 
             productMap = tempProductMap;
@@ -178,12 +180,23 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         return productMap.getOrDefault(hostName, Collections.emptyMap()).get(port);
     }
 
-    private BiFunction<String, Map<Integer, String>, Map<Integer, String>> productMapCompute(final int port, final String productName) {
-        return (hostName, maybeMap) -> {
+    private <T extends OptionalConfigurationComponent<T>> Boolean isOptionalComponentEnabled(final OptionalConfigurationComponent<T> maybeComponent) {
+        return Optional.ofNullable(maybeComponent)
+                .map(component -> BooleanUtils.isTrue(component.getEnabled()))
+                .orElse(false);
+    }
+
+    private void addEntriesToProductMap(final Map<String, Map<Integer, String>> productMap,
+                                        final String productName,
+                                        final String hostName,
+                                        final Integer... ports) {
+        productMap.compute(hostName, (key, maybeMap) -> {
             final Map<Integer, String> map = Optional.ofNullable(maybeMap).orElse(new HashMap<>());
-            map.put(port, productName);
+            Arrays.stream(ports)
+                    .filter(Objects::nonNull)
+                    .forEach(port -> map.put(port, productName));
             return map;
-        };
+        });
     }
 
     @SuppressWarnings("WeakerAccess")

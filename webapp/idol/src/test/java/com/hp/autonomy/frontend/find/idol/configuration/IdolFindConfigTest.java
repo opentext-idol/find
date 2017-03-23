@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.idol.configuration;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
+import com.hp.autonomy.frontend.configuration.server.ProductType;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
@@ -120,5 +121,19 @@ public class IdolFindConfigTest {
     @Test
     public void withHashedPasswords() {
         assertEquals(idolFindConfig, idolFindConfig.withHashedPasswords());
+    }
+
+    @Test
+    public void lookupComponentNameByHostAndPort() {
+        when(communityAuthentication.getMethod()).thenReturn("default");
+
+        final String host = "localhost";
+        when(serverConfig.getHost()).thenReturn(host);
+        final int port = 1234;
+        when(serverConfig.getPort()).thenReturn(port);
+        final int servicePort = 5678;
+        when(serverConfig.getServicePort()).thenReturn(servicePort);
+        assertEquals(ProductType.AXE.getFriendlyName(), idolFindConfig.lookupComponentNameByHostAndPort(host, port));
+        assertEquals(ProductType.AXE.getFriendlyName(), idolFindConfig.lookupComponentNameByHostAndPort(host, servicePort));
     }
 }
