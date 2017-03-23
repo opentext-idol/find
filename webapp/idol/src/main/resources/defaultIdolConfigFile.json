@@ -251,14 +251,14 @@
     },
     "latitude": {
       "names": [
-        "LAT"
+        "NODE_PLACE/LAT"
       ],
       "type": "NUMBER",
       "advanced": true
     },
     "longitude": {
       "names": [
-        "LON"
+        "NODE_PLACE/LON"
       ],
       "type": "NUMBER",
       "advanced": true

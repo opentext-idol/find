@@ -31,6 +31,7 @@ require.config({
         leaflet: '../bower_components/leaflet/dist/leaflet-src',
         'Leaflet.awesome-markers': '../bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers',
         'leaflet.markercluster': '../bower_components/leaflet.markercluster/dist/leaflet.markercluster-src',
+        'leaflet.notransform': 'leaflet.notransform/leaflet.notransform',
         moment: '../bower_components/moment/moment',
         'moment-timezone-with-data': '../bower_components/moment-timezone/builds/moment-timezone-with-data',
         Raphael: '../bower_components/raphael/raphael',
@@ -60,6 +61,7 @@ require.config({
             exports: '_'
         },
         'Leaflet.awesome-markers': ['leaflet'],
-        'leaflet.markercluster': ['leaflet']
+        'leaflet.markercluster': ['leaflet'],
+        'leaflet': ['leaflet.notransform']
     }
 });

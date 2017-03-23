@@ -6,12 +6,19 @@ define([
     'find/app/vent',
     'leaflet',
     'Leaflet.awesome-markers',
-    'leaflet.markercluster'
-
+    'leaflet.markercluster',
+    'html2canvas'
 ], function (Backbone, _, $, configuration, vent, leaflet) {
 
     'use strict';
-    var INITIAL_ZOOM = 3;
+    const INITIAL_ZOOM = 3;
+
+    const leafletMarkerColorMap = {
+        'green': '#70ad25',
+        'orange': '#f0932f',
+        'red': '#d33d2a',
+        'blue': '#37a8da'
+    };
 
     return Backbone.View.extend({
         initialize: function (options) {
@@ -33,17 +40,17 @@ define([
                 if (this.map) {
                     this.map.invalidateSize();
                 }
-            });            
+            });
         },
 
         render: function () {
             this.removeMap();
-            var map = this.map = leaflet.map(this.$el.get(0), {
+            const map = this.map = leaflet.map(this.$el.get(0), {
                 attributionControl: false,
                 minZoom: 1, // Furthest you can zoom out (smaller is further)
                 maxZoom: 18,// Map does not display tiles above zoom level 18 (2016-07-06)
                 worldCopyJump: true,
-                zoomControl: this.removeZoomControl ? false : true,
+                zoomControl: !this.removeZoomControl,
                 keyboard: !this.disableInteraction,
                 dragging: !this.disableInteraction,
                 scrollWheelZoom: !this.disableInteraction,
@@ -55,7 +62,7 @@ define([
                 .tileLayer(configuration().map.tileUrlTemplate)
                 .addTo(map);
 
-            var attributionText = configuration().map.attribution;
+            const attributionText = configuration().map.attribution;
 
             if (this.addControl) {
                 this.control = leaflet.control.layers().addTo(map);
@@ -66,14 +73,14 @@ define([
                     .addAttribution(attributionText)
                     .addTo(map);
             }
-            
-            var initialLatitude = this.centerCoordinates ? this.centerCoordinates.latitude : configuration().map.initialLocation.latitude;
-            var initialLongitude = this.centerCoordinates ? this.centerCoordinates.longitude : configuration().map.initialLocation.longitude;
+
+            const initialLatitude = this.centerCoordinates ? this.centerCoordinates.latitude : configuration().map.initialLocation.latitude;
+            const initialLongitude = this.centerCoordinates ? this.centerCoordinates.longitude : configuration().map.initialLocation.longitude;
 
             map.setView([initialLatitude, initialLongitude], this.initialZoom ? this.initialZoom : INITIAL_ZOOM);
         },
 
-        addMarkers: function(markers, cluster) {
+        addMarkers: function (markers, cluster) {
             this.markers = markers;
             if (cluster) {
                 this.clusterMarkers.addLayers(markers);
@@ -85,23 +92,23 @@ define([
             }
         },
 
-        createLayer: function(options) {
+        createLayer: function (options) {
             // This can be changed in the future to create a cluster or normal group if needed.
             return new leaflet.markerClusterGroup(options);
         },
-        
-        addLayer: function(layer, name) {
+
+        addLayer: function (layer, name) {
             this.map.addLayer(layer);
             if (this.control) {
                 this.control.addOverlay(layer, name);
             }
-        },        
-        
-        loaded: function(markers) {
+        },
+
+        loaded: function (markers) {
             this.map.fitBounds(new leaflet.featureGroup(_.isEmpty(markers) ? this.markers : markers))
         },
-        
-        getMarker: function(latitude, longitude, icon, title, popover) {
+
+        getMarker: function (latitude, longitude, icon, title, popover) {
             if (popover) {
                 return leaflet.marker([latitude, longitude], {icon: icon, title: title})
                     .bindPopup(popover);
@@ -109,7 +116,7 @@ define([
                 return leaflet.marker([latitude, longitude], {icon: icon, title: title});
             }
         },
-        
+
         getIcon: function (iconName, iconColor, markerColor) {
             return leaflet.AwesomeMarkers.icon({
                 icon: iconName || 'compass',
@@ -120,7 +127,7 @@ define([
             });
         },
 
-        getDivIconCreateFunction: function(className) {
+        getDivIconCreateFunction: function (className) {
             return function (cluster) {
                 return new leaflet.DivIcon({
                     html: '<div><span>' + cluster.getChildCount() + '</span></div>',
@@ -148,6 +155,110 @@ define([
             if (this.map) {
                 this.map.remove();
             }
+        },
+
+        exportData: function () {
+            const deferred = $.Deferred();
+
+            const map = this.map,
+                mapSize = map.getSize(),
+                $mapEl = $(map.getContainer()),
+                markers = [];
+
+            function lPad(str) {
+                return str.length < 2 ? '0' + str : str;
+            }
+
+            function hexColor(str) {
+                let match;
+                if (match = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)/.exec(str)) {
+                    return '#' + lPad(Number(match[1]).toString(16))
+                        + lPad(Number(match[2]).toString(16))
+                        + lPad(Number(match[3]).toString(16));
+                } else if (match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(str)) {
+                    return '#' + lPad(Number(match[1]).toString(16))
+                        + lPad(Number(match[2]).toString(16))
+                        + lPad(Number(match[3]).toString(16));
+                }
+                return str;
+            }
+
+            map.eachLayer(function (layer) {
+                if (layer instanceof leaflet.Marker) {
+                    const pos = map.latLngToContainerPoint(layer.getLatLng());
+
+                    const isCluster = layer.getChildCount;
+
+                    const xFraction = pos.x / mapSize.x;
+                    const yFraction = pos.y / mapSize.y;
+                    const tolerance = 0.001;
+
+                    if (xFraction > -tolerance && xFraction < 1 + tolerance && yFraction > -tolerance && yFraction < 1 + tolerance) {
+                        let fontColor = '#000000',
+                            color = '#37a8da',
+                            match,
+                            fade = false,
+                            text = '';
+
+                        const $iconEl = $(layer._icon);
+                        if (isCluster) {
+                            color = hexColor($iconEl.css('background-color'));
+                            fontColor = hexColor($iconEl.children('div').css('color'));
+                            fade = +$iconEl.css('opacity') < 1;
+                            text = layer.getChildCount();
+                        } else if (match = /awesome-marker-icon-(\w+)/.exec(layer._icon.classList)) {
+                            if (leafletMarkerColorMap.hasOwnProperty(match[1])) {
+                                color = leafletMarkerColorMap[match[1]]
+                            }
+
+                            const popup = layer.getPopup();
+                            if (popup && popup._content) {
+                                text = $(popup._content).find('.map-popup-title').text()
+                            }
+                        }
+
+                        const marker = {
+                            x: xFraction,
+                            y: yFraction,
+                            text: text,
+                            cluster: !!isCluster,
+                            color: color,
+                            fontColor: fontColor,
+                            fade: fade,
+                            z: +$iconEl.css('z-index')
+                        };
+
+                        markers.push(marker)
+                    }
+                }
+            });
+
+            const $objs = $mapEl.find('.leaflet-objects-pane').addClass('hide');
+
+            html2canvas($mapEl, {
+                // This seems to avoid issues with IE11 only rendering a small portion of the map the size of the window
+                // If width and height are undefined, Firefox sometimes renders black areas.
+                // If width and height are equal to the $mapEl.width()/height(), then Chrome has the same problem as IE11.
+                width: $(document).width(),
+                height: $(document).height(),
+                proxy: 'api/public/map/proxy',
+                useCORS: true,
+                onrendered: function (canvas) {
+                    $objs.removeClass('hide');
+
+                    deferred.resolve({
+                        // ask for lossless PNG image
+                        image: canvas.toDataURL('image/png'),
+                        markers: markers.sort(function (a, b) {
+                            return a.z - b.z;
+                        }).map(function (a) {
+                            return _.omit(a, 'z')
+                        })
+                    });
+                }
+            });
+
+            return deferred.promise();
         }
     });
 });

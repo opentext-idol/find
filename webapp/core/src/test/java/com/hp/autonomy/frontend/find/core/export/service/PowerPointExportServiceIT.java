@@ -34,6 +34,7 @@ import static org.mockito.Mockito.when;
 public class PowerPointExportServiceIT {
     private static final String TOPIC_MAP_DATA = "/com/hp/autonomy/frontend/find/core/export/topic-map-data.json";
     private static final String SUNBURST_DATA = "/com/hp/autonomy/frontend/find/core/export/sunburst-data.json";
+    private static final String MAP_DATA = "/com/hp/autonomy/frontend/find/core/export/map-data.json";
     private static final String LIST_DATA = "/com/hp/autonomy/frontend/find/core/export/list-data.json";
     private static final String REPORT_DATA = "/com/hp/autonomy/frontend/find/core/export/report-data.json";
 
@@ -75,12 +76,10 @@ public class PowerPointExportServiceIT {
         });
     }
 
-    @Ignore
     @Test
     public void map() throws IOException {
-        //TODO determine good test data
         simpleDataTest(outputStream -> {
-            final MapData mapData = new MapData();
+            final MapData mapData = getData(MAP_DATA, MapData.class);
             powerPointExportService.map(outputStream, mapData, "Test Map");
         });
     }

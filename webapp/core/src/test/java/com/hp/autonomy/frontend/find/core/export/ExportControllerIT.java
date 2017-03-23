@@ -22,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public abstract class ExportControllerIT extends AbstractFindIT {
     private static final String TOPIC_MAP_DATA = "/com/hp/autonomy/frontend/find/core/export/topic-map-data.json";
     private static final String SUNBURST_DATA = "/com/hp/autonomy/frontend/find/core/export/sunburst-data.json";
+    private static final String MAP_DATA = "/com/hp/autonomy/frontend/find/core/export/map-data.json";
     private static final String LIST_DATA = "/com/hp/autonomy/frontend/find/core/export/list-data.json";
     private static final String REPORT_DATA = "/com/hp/autonomy/frontend/find/core/export/report-data.json";
 
@@ -82,13 +83,11 @@ public abstract class ExportControllerIT extends AbstractFindIT {
                 .andExpect(content().string(notNullValue()));
     }
 
-    @Ignore
     @Test
     public void exportMapToPptx() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.MAP_PATH).with(authentication(biAuth()));
-        //TODO determine good test data
-        requestBuilder.param(ExportController.DATA_PARAM, "{}");
-        requestBuilder.param(ExportController.TITLE_PARAM, "");
+        requestBuilder.param(ExportController.DATA_PARAM, getData(MAP_DATA));
+        requestBuilder.param(ExportController.TITLE_PARAM, "Test");
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
