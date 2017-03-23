@@ -78,10 +78,6 @@ define([
             this.updateLayout();
         },
 
-        postInitialize: function() {
-            return this.updateParametricDistribution();
-        },
-
         // Decide if legend is placed underneath the visualizer, or to the side.
         updateLayout: function() {
             if(this.$legendContainer && this.$content) {
@@ -104,7 +100,8 @@ define([
         },
 
         getData: function() {
-            return this.updateParametricDistribution();
+            return this.legendColorCollection
+                .fetchDependentFields(this.queryModel, this.firstField.id, this.secondField ? this.secondField.id : null);
         },
 
         drawSunburst: function(data) {
@@ -130,11 +127,6 @@ define([
                     labelFormatter: null// no labels on hover
                 })
                 : null;
-        },
-
-        updateParametricDistribution: function() {
-            return this.legendColorCollection
-                .fetchDependentFields(this.queryModel, this.firstField.id, this.secondField ? this.secondField.id : null);
         },
 
         updateSunburstAndLegend: function(collection) {

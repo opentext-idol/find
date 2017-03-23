@@ -25,11 +25,12 @@ define([
     return UpdatingWidget.extend({
         clickable: true,
 
-        // Called once after the first saved search promise resolves. If it
-        // returns a promise, any future updates will be contingent on its resolution.
+        // Called once after the first saved search promise resolves. Calls
+        // through to getData; if postInitialize() returns a promise,
+        // this and any future calls to getData() will be contingent on its resolution.
         postInitialize: _.noop,
 
-        // Called during every update (but not when the widget first loads). Must return a promise.
+        // Called during every update. Must return a promise.
         getData: _.noop,
 
         initialize: function(options) {
@@ -51,30 +52,41 @@ define([
         // The argument callback hides the loading spinner -- every execution path that does not call it will
         // result in the loading spinner not disappearing after the update.
         doUpdate: function(done) {
-            const savedSearchPromise = this.savedSearchModel.fetch()
-                .done(function() {
-                    this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                }.bind(this));
+            // TODO does not fetch saved search again unless widget is fully initialised. This fails to cover the edge case in which:
+            // 1. the widget loads, a saved search is fetched, and its promise resolves
+            // 2. then the postInitialize() promise takes a long time to resolve
+            // 3. then an update happens. A new saved search is not fetched
+            // 4. then the postInitialize() promise resolves and this.getData() is called using the 'old' saved search.
+            // If the saved search was modified between 2. and 4., the first update will happen using stale data.
+            if(this.initialiseWidgetPromise && this.initialiseWidgetPromise.state() !== 'resolved') {
+                done();
+            } else {
+                const savedSearchPromise = this.savedSearchModel.fetch()
+                    .done(function() {
+                        this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
+                    }.bind(this));
 
-            let promise;
+                let promise;
 
-            if(this.initialiseWidgetPromise) {
-                promise = $.when(savedSearchPromise, this.initialiseWidgetPromise)
+                if(this.initialiseWidgetPromise) {
+                    promise = $.when(savedSearchPromise, this.initialiseWidgetPromise);
+                } else {
+                    promise = savedSearchPromise
+                        .then(function() {// TODO handle failure
+                            // postInitialize may not return a promise
+                            return $.when(this.postInitialize());// TODO handle failure
+                        }.bind(this));
+
+                    this.initialiseWidgetPromise = promise;
+                }
+
+                promise
                     .then(function() {
                         this.updatePromise = this.getData();// TODO handle failure
                         return this.updatePromise;
-                    }.bind(this));
-            } else {
-                promise = savedSearchPromise
-                    .then(function() {// TODO handle failure
-                        // postInitialize may not return a promise
-                        return $.when(this.postInitialize());// TODO handle failure
-                    }.bind(this));
-
-                this.initialiseWidgetPromise = promise;
+                    }.bind(this))
+                    .done(done);
             }
-
-            promise.done(done);
         },
 
         onClick: function() {

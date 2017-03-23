@@ -26,8 +26,8 @@ define([
             });
 
             this.savedSearchPromises = [];
-            this.widgetInitializePromises = [];
-            this.widgetUpdatePromises = [];
+            this.postInitializePromises = [];
+            this.getDataPromises = [];
 
             _.each([
                 {
@@ -38,12 +38,12 @@ define([
                 {
                     spy: 'postInitialize',
                     target: this.widget,
-                    promiseArray: this.widgetInitializePromises
+                    promiseArray: this.postInitializePromises
                 },
                 {
                     spy: 'getData',
                     target: this.widget,
-                    promiseArray: this.widgetUpdatePromises
+                    promiseArray: this.getDataPromises
                 }
             ], function(obj) {
                 spyOn(obj.target, obj.spy).and.callFake(function() {
@@ -75,7 +75,7 @@ define([
             });
 
             it('displays the widget\'s container without waiting for data to fetch', function() {
-                expect(this.widget.$content).toBeTruthy();
+                expect(this.widget.$content).toBeDefined();
             });
 
             it('fetches its saved search data', function() {
@@ -97,10 +97,39 @@ define([
 
                 describe('then the postInitialize() promise is resolved', function() {
                     beforeEach(function() {
-                        this.widgetInitializePromises[0].resolve();
+                        this.postInitializePromises[0].resolve();
                     });
 
-                    describe('then the widget updates', function() {
+                    it('the widget calls getData() after initialisation', function() {
+                        expect(this.widget.getData.calls.count()).toEqual(1);
+                    });
+
+                    describe('then the widget fetches data and is updated', function() {
+                        beforeEach(function() {
+                            this.getDataPromises[0].resolve();
+                            this.widget.update(this.tracker);
+                        });
+
+                        it('fetches the saved search again', function() {
+                            expect(this.widget.savedSearchModel.fetch.calls.count()).toEqual(2);
+                        });
+
+                        it('does not call postInitialize() again', function() {
+                            expect(this.widget.postInitialize.calls.count()).toEqual(1);
+                        });
+
+                        describe('then the saved search fetch succeeds', function() {
+                            beforeEach(function() {
+                                this.savedSearchPromises[1].resolve();
+                            });
+
+                            it('the widget calls getData() again', function() {
+                                expect(this.widget.getData.calls.count()).toEqual(2);
+                            });
+                        });
+                    });
+
+                    describe('then the widget updates before the first promise resolves', function() {
                         beforeEach(function() {
                             this.widget.update(this.tracker);
                         });
@@ -119,44 +148,69 @@ define([
                             });
 
                             it('the widget calls getData()', function() {
-                                expect(this.widget.getData.calls.count()).toEqual(1);
+                                expect(this.widget.getData.calls.count()).toEqual(2);
                             });
                         });
                     });
                 });
 
-                describe('then the widget updates', function() {
+                describe('then the widget updates before the postInitialize() promise resolves', function() {
                     beforeEach(function() {
                         this.widget.update(this.tracker);
-                    });
-
-                    it('fetches the saved search again', function() {
-                        expect(this.widget.savedSearchModel.fetch.calls.count()).toEqual(2);
                     });
 
                     it('does not call postInitialize() again', function() {
                         expect(this.widget.postInitialize.calls.count()).toEqual(1);
                     });
 
-                    describe('then the saved search fetch succeeds', function() {
+                    // TODO this is not ideal. If saved search is modified between
+                    // the first saved search fetch and the postInitialize() promise resolving, the first update
+                    // will be based on stale data.
+                    it('does not fetch the saved search again', function() {
+                        expect(this.widget.savedSearchModel.fetch.calls.count()).toEqual(1);
+                    });
+
+                    describe('then the postInitialize() promise is resolved', function() {
                         beforeEach(function() {
-                            this.savedSearchPromises[1].resolve();
+                            this.postInitializePromises[0].resolve();
                         });
 
-                        // The widget is not fully initialized by this point, because
-                        // the postInitialize() promise hasn't resolved yet
-                        it('widget does not call getData()', function() {
-                            expect(this.widget.getData).not.toHaveBeenCalled();
+                        it('the widget only calls getData() once', function() {
+                            expect(this.widget.getData.calls.count()).toEqual(1);
+                        });
+                    });
+                });
+            });
+
+            describe('then the widget updates before the saved search returns', function() {
+                beforeEach(function() {
+                    this.widget.update(this.tracker);
+                });
+
+                it('does not fetch the saved search again', function() {
+                    expect(this.widget.savedSearchModel.fetch.calls.count()).toEqual(1);
+                });
+
+                describe('then the saved search fetch succeeds', function() {
+                    beforeEach(function() {
+                        this.savedSearchPromises[0].resolve();
+                    });
+
+                    it('postInitialize() is called', function() {
+                        expect(this.widget.postInitialize.calls.count()).toEqual(1);
+                    });
+
+                    it('getData() is not called', function() {
+                        expect(this.widget.getData).not.toHaveBeenCalled();
+                    });
+
+                    describe('then the postInitialize() promise is resolved', function() {
+                        beforeEach(function() {
+                            this.postInitializePromises[0].resolve();
                         });
 
-                        describe('then the postInitialize() promise is resolved', function() {
-                            beforeEach(function() {
-                                this.widgetInitializePromises[0].resolve();
-                            });
-
-                            it('the widget calls getData()', function() {
-                                expect(this.widget.getData.calls.count()).toEqual(1);
-                            });
+                        it('the widget only calls getData() once', function() {
+                            expect(this.widget.getData.calls.count()).toEqual(1);
                         });
                     });
                 });
