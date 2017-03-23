@@ -211,6 +211,7 @@ define([
         'search.resultsView.table.searchInResults': 'Search in Results',
         'search.resultsView.table.zeroRecords': 'No matching records found',
         'search.resultsView.trending': 'Trending',
+        'search.resultsView.trending.empty': 'Could not display Trending Chart. No parametric values to display for this query.',
         'search.resultsView.trending.error.query': 'Error: could not display Trending Chart',
         'search.resultsView.trending.tooltipText': '{0} document(s) indexed with the tag "{1}" between {2} and {3}',
         'search.resultsView.trending.yAxis': 'Document Count',
