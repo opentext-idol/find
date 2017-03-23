@@ -38,6 +38,7 @@
     "hp-autonomy-topic-map": "1.4.0",
     "hp-autonomy-sunburst": "2.1.0",
     "hp-autonomy-js-parametric-refinement": "0.9.0",
+    "html2canvas": "0.4.1",
     "leaflet": "0.7.7",
     "Leaflet.awesome-markers": "2.0.2",
     "leaflet.markercluster": "leaflet-0.7",
