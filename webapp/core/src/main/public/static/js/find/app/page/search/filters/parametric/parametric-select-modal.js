@@ -26,6 +26,10 @@ define([
             'shown.bs.modal': function() {
                 // The content view will be visible now, so check if we need to load parametric values
                 this.parametricSelectView.checkScroll();
+            },
+            'click .parametric-value-graph': function(e){
+                var $checkboxEl = $(e.currentTarget).prev()
+                this.externalSelectedValues.trigger('graph', this.parametricSelectView.getSelectedField(), $checkboxEl.data('value'));
             }
         }, Modal.prototype.events),
 
@@ -40,7 +44,8 @@ define([
                 indexesCollection: options.indexesCollection,
                 queryModel: options.queryModel,
                 parametricFieldsCollection: options.parametricFieldsCollection,
-                selectedParametricValues: this.selectedParametricValues
+                selectedParametricValues: this.selectedParametricValues,
+                showGraphButtons: options.showGraphButtons
             });
 
             Modal.prototype.initialize.call(this, {

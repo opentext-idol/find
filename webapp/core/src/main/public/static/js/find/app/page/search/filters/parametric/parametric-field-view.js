@@ -42,7 +42,8 @@ define([
                     queryModel: this.queryModel,
                     parametricFieldsCollection: this.parametricFieldsCollection,
                     selectedParametricValues: this.selectedParametricValues,
-                    indexesCollection: this.indexesCollection
+                    indexesCollection: this.indexesCollection,
+                    showGraphButtons: this.showGraphButtons
                 });
             }
         },
@@ -52,6 +53,7 @@ define([
             this.indexesCollection = options.indexesCollection;
             this.parametricFieldsCollection = options.parametricFieldsCollection;
             this.queryModel = options.queryModel;
+            this.showGraphButtons = options.showGraphButtons;
 
             this.listView = new ListView({
                 collection: this.collection,
@@ -61,6 +63,7 @@ define([
                 tagName: 'tbody',
                 itemOptions: {
                     selectedValuesCollection: options.selectedValuesCollection,
+                    showGraphButtons: options.showGraphButtons
                 }
             });
         },
@@ -109,7 +112,8 @@ define([
                     parametricFieldsCollection: this.parametricFieldsCollection,
                     queryModel: this.queryModel,
                     selectedParametricValues: this.selectedParametricValues,
-                    indexesCollection: this.indexesCollection
+                    indexesCollection: this.indexesCollection,
+                    showGraphButtons: options.showGraphButtons
                 })
             });
 

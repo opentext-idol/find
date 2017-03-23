@@ -11,6 +11,7 @@ define([
 
         initialize: function (options) {
             this.selectedValuesCollection = options.selectedValuesCollection;
+            this.showGraphButtons = options.showGraphButtons;
 
             this.$el.attr('data-value', this.model.get('value'));
             this.$el.attr('data-display-value', this.model.get('displayValue'));
@@ -20,6 +21,10 @@ define([
 
         render: function () {
             this.$el.html(template);
+
+            if (!this.showGraphButtons) {
+                this.$('.parametric-value-graph-cell').addClass('hide');
+            }
 
             this.$text = this.$('.parametric-value-text');
             this.$name = this.$('.parametric-value-name');

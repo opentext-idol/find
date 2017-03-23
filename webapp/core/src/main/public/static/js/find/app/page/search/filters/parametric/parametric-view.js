@@ -41,7 +41,9 @@ define([
                     type: 'Parametric'
                 };
 
-                if (this.selectedParametricValues.get(attributes)) {
+                if ($(e.target).closest('.parametric-value-graph-cell').length) {
+                    this.selectedParametricValues.trigger('graph', attributes.field, attributes.value);
+                } else if (this.selectedParametricValues.get(attributes)) {
                     this.selectedParametricValues.remove(attributes);
                 } else {
                     this.selectedParametricValues.add(attributes);
@@ -54,6 +56,7 @@ define([
             this.filteredParametricCollection = options.filteredParametricCollection;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.filterModel = options.filterModel;
+            this.showGraphButtons = options.showGraphButtons;
 
             this.initializeProcessingBehaviour();
 
@@ -96,7 +99,8 @@ define([
                         parametricFieldsCollection: options.parametricFieldsCollection,
                         filteredParametricCollection: this.filteredParametricCollection,
                         selectedParametricValues: this.selectedParametricValues,
-                        filterModel: this.filterModel
+                        filterModel: this.filterModel,
+                        showGraphButtons: options.showGraphButtons
                     },
                     numericViewItemOptions: {
                         inputTemplate: options.inputTemplate,
@@ -110,7 +114,8 @@ define([
                         zoomEnabled: options.zoomEnabled,
                         buttonsEnabled: options.buttonsEnabled,
                         coordinatesEnabled: options.coordinatesEnabled,
-                        collapsed: isCollapsed
+                        collapsed: isCollapsed,
+                        showGraphButtons: options.showGraphButtons
                     }
                 }
             });

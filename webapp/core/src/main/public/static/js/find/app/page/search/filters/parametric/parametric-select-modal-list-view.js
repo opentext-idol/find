@@ -42,6 +42,9 @@ define([
                 ItemView: ItemView,
                 collectionChangeEvents: {
                     selected: 'updateSelected'
+                },
+                itemOptions: {
+                    showGraphButtons: options.showGraphButtons
                 }
             });
 
