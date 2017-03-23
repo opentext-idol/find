@@ -17,9 +17,9 @@ define([
         initialize: function(options) {
             Widget.prototype.initialize.apply(this, arguments);
 
-            this.dateFormat = this.widgetSettings && this.widgetSettings.dateFormat ? this.widgetSettings.dateFormat : 'll';
-            this.timeFormat = this.widgetSettings && this.widgetSettings.timeFormat ? this.widgetSettings.timeFormat : 'HH:mm z';
-            this.timeZone = this.widgetSettings && this.widgetSettings.timeZone ? this.widgetSettings.timeZone : moment.tz.guess();
+            this.dateFormat = this.widgetSettings.dateFormat || 'll';
+            this.timeFormat = this.widgetSettings.timeFormat || 'HH:mm z';
+            this.timeZone = this.widgetSettings.timeZone || moment.tz.guess();
         },
 
         render: function() {

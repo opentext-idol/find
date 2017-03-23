@@ -26,9 +26,7 @@ define([
             'click .report-pptx-checkbox': function (event) {
                 event.stopPropagation();
             },
-            'click .report-pptx': function (event) {
-                this.exportDashboard(event);
-            }
+            'click .report-pptx': 'exportDashboard'
         },
 
         initialize: function (options) {

@@ -52,10 +52,6 @@ define([
             );
         },
 
-        postInitialize: function () {
-            return this.getData();
-        },
-
         getData: function () {
             if (!this.hasRendered) {
                 return $.when();

@@ -20,6 +20,24 @@ define([
         'blue': '#37a8da'
     };
 
+    function leftPadHex(str) {
+        return str.length < 2 ? '0' + str : str;
+    }
+
+    function hexColor(str) {
+        let match;
+        if (match = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)/.exec(str)) {
+            return '#' + leftPadHex(Number(match[1]).toString(16))
+                + leftPadHex(Number(match[2]).toString(16))
+                + leftPadHex(Number(match[3]).toString(16));
+        } else if (match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(str)) {
+            return '#' + leftPadHex(Number(match[1]).toString(16))
+                + leftPadHex(Number(match[2]).toString(16))
+                + leftPadHex(Number(match[3]).toString(16));
+        }
+        return str;
+    }
+
     return Backbone.View.extend({
         initialize: function (options) {
             this.addControl = options.addControl || false;
@@ -160,28 +178,10 @@ define([
         exportData: function () {
             const deferred = $.Deferred();
 
-            const map = this.map,
-                mapSize = map.getSize(),
-                $mapEl = $(map.getContainer()),
-                markers = [];
-
-            function lPad(str) {
-                return str.length < 2 ? '0' + str : str;
-            }
-
-            function hexColor(str) {
-                let match;
-                if (match = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)/.exec(str)) {
-                    return '#' + lPad(Number(match[1]).toString(16))
-                        + lPad(Number(match[2]).toString(16))
-                        + lPad(Number(match[3]).toString(16));
-                } else if (match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(str)) {
-                    return '#' + lPad(Number(match[1]).toString(16))
-                        + lPad(Number(match[2]).toString(16))
-                        + lPad(Number(match[3]).toString(16));
-                }
-                return str;
-            }
+            const map = this.map;
+            const mapSize = map.getSize();
+            const $mapEl = $(map.getContainer());
+            const markers = [];
 
             map.eachLayer(function (layer) {
                 if (layer instanceof leaflet.Marker) {

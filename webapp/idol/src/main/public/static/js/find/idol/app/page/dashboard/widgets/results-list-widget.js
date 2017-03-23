@@ -44,10 +44,6 @@ define([
 
         },
 
-        postInitialize: function(){
-            return this.getData();
-        },
-
         render: function() {
             SavedSearchWidget.prototype.render.apply(this);
 

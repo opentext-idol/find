@@ -36,10 +36,7 @@ define([
                 useCORS: true,
                 onrendered: function(canvas) {
                     try {
-                        deferred.resolve({
-                            image: canvas.toDataURL('image/jpeg'),
-                            markers: []
-                        });
+                        deferred.resolve(canvas.toDataURL('image/jpeg'));
                     }
                     catch (e) {
                         // canvas.toDataURL can throw exceptions in IE11 even if there's CORS headers on the background-image
@@ -50,7 +47,10 @@ define([
 
             return deferred.then(function(data){
                 return data && {
-                        data: data,
+                        data: {
+                            image: data,
+                            markers: []
+                        },
                         type: 'map'
                     };
             });
