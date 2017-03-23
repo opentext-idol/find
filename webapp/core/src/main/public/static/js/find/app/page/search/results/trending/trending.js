@@ -122,15 +122,12 @@ define([
                 timeFormat(d.min),
                 timeFormat(d.max)
             );
-
-            $(this).tooltip({
+            $(d3.event.target).tooltip({
                 title: title,
                 container: 'body',
                 placement: 'top',
                 trigger: 'manual'
-            });
-
-            $(this).tooltip('show');
+            }).tooltip('show');
 
             lineAndPointMouseover();
         };
@@ -138,9 +135,7 @@ define([
         const pointMouseout = function () {
             chart.selectAll('.guide-line')
                 .remove();
-            chart.selectAll('.chart-tooltip')
-                .remove();
-            $(this).tooltip('destroy');
+            $(d3.event.target).tooltip('hide');
             mouseout();
         };
 
