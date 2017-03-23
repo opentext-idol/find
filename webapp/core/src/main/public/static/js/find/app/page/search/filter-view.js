@@ -4,9 +4,9 @@
  */
 
 define([
-    'backbone',
-    'jquery',
     'underscore',
+    'jquery',
+    'backbone',
     'find/app/page/search/abstract-section-view',
     'find/app/page/search/filters/date/dates-filter-view',
     'find/app/page/search/filters/parametric/filtered-parametric-fields-collection',
@@ -18,8 +18,9 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
-], function (Backbone, $, _, AbstractSectionView, DateView, FilteredParametricFieldsCollection, ParametricView, NumericParametricFieldView,
-             TextInput, Collapsible, FilteringCollection, configuration, i18n, i18nIndexes) {
+], function(_, $, Backbone, AbstractSectionView, DateView, FilteredParametricFieldsCollection,
+            ParametricView, NumericParametricFieldView, TextInput, Collapsible, FilteringCollection,
+            configuration, i18n, i18nIndexes) {
     'use strict';
 
     const datesTitle = i18n['search.dates'];
@@ -29,7 +30,7 @@ define([
     }
 
     return AbstractSectionView.extend({
-        initialize: function (options) {
+        initialize: function(options) {
             AbstractSectionView.prototype.initialize.apply(this, arguments);
 
             const IndexesView = options.IndexesView;
@@ -37,7 +38,7 @@ define([
 
             const views = [{
                 shown: configuration().enableMetaFilter,
-                initialize: function () {
+                initialize: function() {
                     //Initializing the text with empty string to stop IE11 issue with triggering input event on render
                     this.filterModel = new Backbone.Model({text: ''});
 
@@ -51,30 +52,30 @@ define([
 
                     this.$emptyMessage = $('<p class="hide">' + i18n['search.filters.empty'] + '</p>');
 
-                    this.listenTo(this.filterModel, 'change', function () {
+                    this.listenTo(this.filterModel, 'change', function() {
                         this.updateDatesVisibility();
                         this.updateParametricVisibility();
                         this.updateEmptyMessage();
                     });
                 }.bind(this),
-                get$els: function () {
+                get$els: function() {
                     return [this.filterInput.$el, this.$emptyMessage];
                 }.bind(this),
-                render: function () {
+                render: function() {
                     this.filterInput.render();
                 }.bind(this),
-                postRender: function () {
+                postRender: function() {
                     this.updateParametricVisibility();
                     this.updateDatesVisibility();
                     this.updateIndexesVisibility();
                     this.updateEmptyMessage();
                 }.bind(this),
-                remove: function () {
+                remove: function() {
                     this.filterInput.remove();
                 }.bind(this)
             }, {
                 shown: true,
-                initialize: function () {
+                initialize: function() {
                     this.indexesEmpty = false;
                     this.collapsed.indexes = true;
 
@@ -84,7 +85,7 @@ define([
                         indexesCollection: options.indexesCollection,
                         queryModel: options.queryModel,
                         selectedDatabasesCollection: options.queryState.selectedIndexes,
-                        visibleIndexesCallback: _.bind(function (indexes) {
+                        visibleIndexesCallback: _.bind(function(indexes) {
                             this.indexesEmpty = indexes.length === 0;
                             this.updateIndexesVisibility();
                             this.updateEmptyMessage();
@@ -98,23 +99,23 @@ define([
                     });
 
                     // only track user triggered changes, not automatic ones
-                    this.listenTo(this.indexesViewWrapper, 'toggle', function (newState) {
+                    this.listenTo(this.indexesViewWrapper, 'toggle', function(newState) {
                         this.collapsed.indexes = newState;
                     });
                 }.bind(this),
-                get$els: function () {
+                get$els: function() {
                     return [this.indexesViewWrapper.$el];
                 }.bind(this),
-                render: function () {
+                render: function() {
                     this.indexesViewWrapper.render();
                 }.bind(this),
-                postRender: $.noop,
-                remove: function () {
+                postRender: _.noop,
+                remove: function() {
                     this.indexesViewWrapper.remove();
                 }.bind(this)
             }, {
                 shown: true,
-                initialize: function () {
+                initialize: function() {
                     this.collapsed.dates = true;
 
                     const dateView = new DateView({
@@ -128,23 +129,23 @@ define([
                         title: datesTitle
                     });
 
-                    this.listenTo(this.dateViewWrapper, 'toggle', function (newState) {
+                    this.listenTo(this.dateViewWrapper, 'toggle', function(newState) {
                         this.collapsed.dates = newState;
                     });
                 }.bind(this),
-                get$els: function () {
+                get$els: function() {
                     return [this.dateViewWrapper.$el];
                 }.bind(this),
-                render: function () {
+                render: function() {
                     this.dateViewWrapper.render();
                 }.bind(this),
-                postRender: $.noop,
-                remove: function () {
+                postRender: _.noop,
+                remove: function() {
                     this.dateViewWrapper.remove();
                 }.bind(this)
             }, {
                 shown: true,
-                initialize: function () {
+                initialize: function() {
                     this.parametricFieldsCollection = options.parametricFieldsCollection;
                     const filteredParametricCollection = new FilteringCollection([], {
                         collection: options.parametricCollection,
@@ -158,8 +159,8 @@ define([
                         filteredParametricCollection: filteredParametricCollection
                     });
 
-                    if (this.filterModel) {
-                        this.listenTo(this.filteredParametricFieldsCollection, 'update reset', function () {
+                    if(this.filterModel) {
+                        this.listenTo(this.filteredParametricFieldsCollection, 'update reset', function() {
                             this.updateParametricVisibility();
                             this.updateEmptyMessage();
                         });
@@ -178,14 +179,14 @@ define([
                         filteredParametricCollection: filteredParametricCollection
                     });
                 }.bind(this),
-                get$els: function () {
+                get$els: function() {
                     return [this.parametricView.$el];
                 }.bind(this),
-                render: function () {
+                render: function() {
                     this.parametricView.render();
                 }.bind(this),
-                postRender: $.noop,
-                remove: function () {
+                postRender: _.noop,
+                remove: function() {
                     this.parametricView.remove();
                 }.bind(this)
             }];
@@ -194,12 +195,12 @@ define([
             _.invoke(this.views, 'initialize');
         },
 
-        render: function () {
+        render: function() {
             AbstractSectionView.prototype.render.apply(this);
 
             this.getViewContainer().empty();
-            this.views.forEach(function (view) {
-                view.get$els().forEach(function ($el) {
+            this.views.forEach(function(view) {
+                view.get$els().forEach(function($el) {
                     this.getViewContainer().append($el);
                 }.bind(this));
             }.bind(this));
@@ -210,13 +211,13 @@ define([
             return this;
         },
 
-        remove: function () {
+        remove: function() {
             _.invoke(this.views, 'remove');
 
             AbstractSectionView.prototype.remove.call(this);
         },
 
-        updateEmptyMessage: function () {
+        updateEmptyMessage: function() {
             const noFiltersMatched = !(
                 this.indexesEmpty &&
                 this.hideDates &&
@@ -226,12 +227,12 @@ define([
             this.$emptyMessage.toggleClass('hide', noFiltersMatched);
         },
 
-        updateParametricVisibility: function () {
-            const filterModelSwitch = Boolean(this.filterModel.get('text'));
-            this.parametricView.$el.toggleClass('hide', this.parametricFieldsEmpty() && filterModelSwitch);
+        updateParametricVisibility: function() {
+            this.parametricView.$el.toggleClass('hide',
+                this.parametricFieldsEmpty() && !!(this.filterModel.get('text')));
         },
 
-        updateDatesVisibility: function () {
+        updateDatesVisibility: function() {
             const search = this.filterModel.get('text');
             this.hideDates = !(!search || searchMatches(datesTitle, search));
 
@@ -239,12 +240,12 @@ define([
             this.dateViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.dates);
         },
 
-        updateIndexesVisibility: function () {
+        updateIndexesVisibility: function() {
             this.indexesViewWrapper.$el.toggleClass('hide', this.indexesEmpty);
             this.indexesViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.indexes);
         },
 
-        parametricFieldsEmpty: function () {
+        parametricFieldsEmpty: function() {
             return !this.filteredParametricFieldsCollection || this.filteredParametricFieldsCollection.length === 0;
         }
     });
