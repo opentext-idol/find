@@ -51,8 +51,6 @@ define([
                     }
                 }
             });
-
-            this.getData();
         },
 
         getData: function() {
