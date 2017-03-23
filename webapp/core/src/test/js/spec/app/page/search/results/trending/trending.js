@@ -8,10 +8,12 @@ define([
     'backbone',
     'i18n!find/nls/bundle',
     'find/app/page/search/results/trending/trending'
-], function(_, Backbone, i18n, trending) {
+], function(_, Backbone, i18n, Trending) {
     'use strict';
 
-    const testData = [[{
+    const testData = [{
+        name: 'Dragon',
+        points:[{
         "count": 36,
         "mid": "2009-08-12T18:18:00.000Z",
         "min": "2009-07-19T23:00:00.000Z",
@@ -36,7 +38,9 @@ define([
         "mid": "2010-02-19T04:42:00.000Z",
         "min": "2010-01-26T09:24:00.000Z",
         "max": "2010-03-15T00:00:00.000Z"
-    }], [{
+    }]}, {
+        name: 'Phoenix',
+        points: [{
         "count": 0,
         "mid": "2009-08-12T18:18:00.000Z",
         "min": "2009-07-19T23:00:00.000Z",
@@ -61,7 +65,9 @@ define([
         "mid": "2010-02-19T04:42:00.000Z",
         "min": "2010-01-26T09:24:00.000Z",
         "max": "2010-03-15T00:00:00.000Z"
-    }], [{
+    }]}, {
+        name: 'Griffin',
+        points: [{
         "count": 64,
         "mid": "2009-08-12T18:18:00.000Z",
         "min": "2009-07-19T23:00:00.000Z",
@@ -86,7 +92,9 @@ define([
         "mid": "2010-02-19T04:42:00.000Z",
         "min": "2010-01-26T09:24:00.000Z",
         "max": "2010-03-15T00:00:00.000Z"
-    }], [{
+    }]}, {
+        name: 'Hydra',
+        points: [{
         "count": 3,
         "mid": "2009-08-12T18:18:00.000Z",
         "min": "2009-07-19T23:00:00.000Z",
@@ -111,7 +119,9 @@ define([
         "mid": "2010-02-19T04:42:00.000Z",
         "min": "2010-01-26T09:24:00.000Z",
         "max": "2010-03-15T00:00:00.000Z"
-    }], [{
+    }]}, {
+        name: 'Siren',
+        points: [{
         "count": 0,
         "mid": "2009-08-12T18:18:00.000Z",
         "min": "2009-07-19T23:00:00.000Z",
@@ -136,7 +146,7 @@ define([
         "mid": "2010-02-19T04:42:00.000Z",
         "min": "2010-01-26T09:24:00.000Z",
         "max": "2010-03-15T00:00:00.000Z"
-    }]];
+    }]}];
 
     const testNames = ['Dragon', 'Phoenix', 'Griffin', 'Hydra', 'Siren'];
     const chartWidth = 600;
@@ -146,17 +156,17 @@ define([
 
     function toDateObject(dateString) {
         return new Date(dateString);
-    };
+    }
 
     describe('Trending', function() {
-        it('exposes a draw function', function() {
-            expect(typeof trending.draw).toBe('function');
+        it('exposes a constructor function', function() {
+            expect(typeof Trending).toBe('function');
         });
 
         describe('after the chart is drawn', function() {
             beforeEach(function() {
                 _.each(testData, function (value) {
-                    _.each(value, function (point) {
+                    _.each(value.points, function (point) {
                         point.mid = toDateObject(point.mid);
                         point.min = toDateObject(point.min);
                         point.max = toDateObject(point.max);
@@ -166,10 +176,10 @@ define([
                 this.view.$el.height(chartHeight);
                 this.view.$el.width(chartWidth);
 
-                trending.draw({
-                    el: this.view.$el.get(0),
+                this.trending = new Trending({ el: this.view.$el.get(0)});
+                this.trending.draw({
+                    reloaded: true,
                     data: testData,
-                    names: testNames,
                     maxDate: toDateObject('2012-05-12T05:18:16.000Z'),
                     minDate: toDateObject('2008-07-01T14:39:39.200Z'),
                     tooltipText: i18n['search.resultsView.trending.tooltipText']
@@ -177,9 +187,9 @@ define([
             });
 
             it('has rendered an svg for the chart', function() {
-                expect(this.view.$('svg').length).toBe(1);
-                expect(parseInt(this.view.$('svg').get(0).getAttribute('width'))).toBe(chartWidth);
-                expect(parseInt(this.view.$('svg').get(0).getAttribute('height'))).toBe(chartHeight);
+                expect(this.view.$('svg').length).toEqual(1);
+                expect(parseInt(this.view.$('svg').get(0).getAttribute('width'))).toEqual(chartWidth);
+                expect(parseInt(this.view.$('svg').get(0).getAttribute('height'))).toEqual(chartHeight);
             });
 
             it('has rendered a line with 5 points for each value', function() {
@@ -202,13 +212,12 @@ define([
 
             describe('on redrawing', function() {
                 beforeEach(function() {
-                    this.view.$el.empty();
                     this.view.$el.height(newChartHeight);
                     this.view.$el.width(newChartWidth);
-                    trending.draw({
+                    this.trending.draw({
+                        reloaded: true,
                         el: this.view.$el.get(0),
                         data: testData,
-                        names: testNames,
                         maxDate: toDateObject('2012-05-12T05:18:16.000Z'),
                         minDate: toDateObject('2008-07-01T14:39:39.200Z'),
                         tooltipText: i18n['search.resultsView.trending.tooltipText']
