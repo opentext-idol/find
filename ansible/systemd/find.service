@@ -7,16 +7,17 @@ After=network.target
 User=find
 Group=find
 
-ExecStart={{ JAVA_BIN }} -Xmx{{ JAVA_MAX_HEAP_SIZE }}m -Dhp.find.home={{ FIND_HOME_DIR }} -Dlogging.path={{ FIND_LOGGING_DIR }} -Dserver.port={{ FIND_PORT }} -jar {{ FIND_INSTALL_DIR }}/find.jar >> {{ FIND_SYSLOG }}
+ExecStart={{ JAVA_BIN }} -Xmx{{ JAVA_MAX_HEAP_SIZE }}m -Dhp.find.home={{ FIND_HOME_DIR }} -Dlogging.path={{ FIND_LOGGING_DIR }} -Dserver.port={{ FIND_PORT }} -jar {{ FIND_INSTALL_DIR }}/find.jar
 
-# Ensures stdin, stdout and stderr are all connected to /dev/null
 StandardInput=null
-StandardOutput=null
-StandardError=null
+
+# Log standard error and standard output
+StandardOutput=syslog
+StandardError=syslog
 
 WorkingDirectory=/opt/find
 
-# Waits 60 seconds on startup before considered failed
+# Waits 30 seconds on startup before considered failed
 TimeoutStartSec=30
 # Waits 30 seconds on shutdown before sending a SIGTERM, then a further 30 seconds before sending a SIGKILL
 TimeoutStopSec=30
