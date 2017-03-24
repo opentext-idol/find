@@ -85,4 +85,19 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", not(empty())));
     }
+
+    @Test
+    public void getValueDetails() throws Exception {
+        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.VALUES_PATH + ParametricValuesController.DEPENDENT_VALUES_PATH)
+                .param(ParametricValuesController.FIELD_NAMES_PARAM, mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_FIELDS_PATH))
+                .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
+                .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
+                .param(ParametricValuesController.FIELD_TEXT_PARAM, "")
+                .with(authentication(userAuth()));
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", not(empty())));
+    }
 }

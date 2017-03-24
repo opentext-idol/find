@@ -129,6 +129,12 @@ public abstract class AbstractParametricValuesControllerTest<
     }
 
     @Test
+    public void getValueDetails() throws E {
+        parametricValuesController.getValueDetails(tagNameFactory.getFieldPath("SomeParametricField"), "Some query text", null, Collections.emptyList(), null, null, 0, null);
+        verify(parametricValuesService).getValueDetails(Matchers.any());
+    }
+
+    @Test
     public void getParametricValuesInBuckets() throws UnsupportedEncodingException, E {
         final String fieldName = "birth&death";
 
