@@ -17,13 +17,25 @@ define([
 ], function (_, $, BasePage, vent, widgetRegistry, WidgetNotFoundWidget, UpdateTrackerModel, template, exportFormTemplate, i18n) {
     'use strict';
 
+    const FULLSCREEN_CLASS = 'fullscreen';
+
+    function fullscreenHandlerFactory(fullScreenElement) {
+        return function() {
+            this.toggleKeepAlive(!this.$widgets.hasClass(FULLSCREEN_CLASS));
+            this.$widgets.toggleClass(FULLSCREEN_CLASS, fullScreenElement);
+            this.onResize();
+        }.bind(this);
+    }
+
     return BasePage.extend({
         template: _.template(template),
         formTemplate: _.template(exportFormTemplate),
 
-        events: {
-            'click .fullscreen': 'toggleFullScreen',
-            'click .report-pptx': 'exportDashboard'
+        events: function() {
+            const events = {};
+            events['click .' + FULLSCREEN_CLASS] = 'toggleFullScreen';
+            events['click .report-pptx'] = 'exportDashboard';
+            return events;
         },
 
         initialize: function (options) {
@@ -58,15 +70,10 @@ define([
             this.widthPerUnit = 100 / options.width;
             this.heightPerUnit = 100 / options.height;
 
-            this.mozillaFullscreenEventHandler = function () {
-                this.$('.widgets').toggleClass('fullscreen', document.mozCurrentFullScreenElement);
-                this.onResize();
-            }.bind(this);
-
-            this.ie11FullscreenEventHandler = function () {
-                this.$('.widgets').toggleClass('fullscreen', document.msCurrentFullScreenElement);
-                this.onResize();
-            }.bind(this);
+            this.defaultFullscreenEventHandler = fullscreenHandlerFactory.call(this, document.currentFullScreenElement);
+            this.webkitFullscreenEventHandler = fullscreenHandlerFactory.call(this, document.webkitCurrentFullScreenElement);
+            this.mozillaFullscreenEventHandler = fullscreenHandlerFactory.call(this, document.mozCurrentFullScreenElement);
+            this.ie11FullscreenEventHandler = fullscreenHandlerFactory.call(this, document.msCurrentFullScreenElement);
         },
 
         render: function () {
@@ -74,11 +81,11 @@ define([
                 i18n: i18n
             }));
 
-            const $widgets = this.$('.widgets');
+            this.$widgets = this.$('.widgets');
 
             _.each(this.widgetViews, function (widget) {
                 const $div = this.generateWidgetDiv(widget.position);
-                $widgets.append($div);
+                this.$widgets.append($div);
                 widget.view.setElement($div).render();
             }.bind(this));
 
@@ -88,11 +95,6 @@ define([
             })).done(function () {
                 $exportBtn.removeClass('hide');
             });
-
-            this.addFullScreenListener();
-
-            this.listenTo(vent, 'vent:resize', this.onResize);
-            this.listenTo(this.sidebarModel, 'change:collapsed', this.onResize);
         },
 
         generateWidgetDiv: function (position) {
@@ -118,6 +120,10 @@ define([
             if (this.updateInterval) {
                 this.periodicUpdate = setInterval(this.update, this.updateInterval);
             }
+
+            this.listenTo(vent, 'vent:resize', this.onResize);
+            this.listenTo(this.sidebarModel, 'change:collapsed', this.onResize);
+            this.toggleFullScreenListener(true);
         },
 
         hide: function () {
@@ -129,6 +135,12 @@ define([
             if (this.periodicUpdate) {
                 clearInterval(this.periodicUpdate);
             }
+
+            this.stopListening(vent, 'vent:resize');
+            this.stopListening(this.sidebarModel, 'change:collapsed');
+            this.toggleFullScreenListener(false);
+
+            this.toggleKeepAlive(false);
 
             BasePage.prototype.hide.call(this);
         },
@@ -176,52 +188,66 @@ define([
             }
         },
 
-        remove: function () {
-            BasePage.prototype.remove.call(this);
-            if (this.el.mozRequestFullScreen) {
-                document.removeEventListener('mozfullscreenchange', this.mozillaFullscreenEventHandler);
-            } else if (this.el.msRequestFullscreen) {
-                document.addEventListener('MSFullscreenChange', this.ie11FullscreenEventHandler);
+        toggleFullScreenListener: function(bool) {
+            const onOrOff = bool ? 'on' : 'off';
+            const addOrRemove = bool ? 'addEventListener' : 'removeEventListener';
+
+            if(this.el.requestFullscreen) {
+                this.$widgets[onOrOff]('fullscreenchange', this.defaultFullscreenEventHandler);
+            } else if(this.el.webkitRequestFullscreen) {
+                this.$widgets[onOrOff]('webkitfullscreenchange', this.webkitFullscreenEventHandler);
+            } else if(this.el.mozRequestFullScreen) {
+                document[addOrRemove]('mozfullscreenchange', this.mozillaFullscreenEventHandler);
+            } else if(this.el.msRequestFullscreen) {
+                document[addOrRemove]('MSFullscreenChange', this.ie11FullscreenEventHandler);
             }
         },
 
-        addFullScreenListener: function () {
-            if (this.el.requestFullscreen) {
-                this.$('.widgets').on('fullscreenchange', function () {
-                    this.$('.widgets').toggleClass('fullscreen', document.currentFullScreenElement);
-                    this.onResize();
-                }.bind(this));
-            } else if (this.el.webkitRequestFullscreen) {
-                this.$('.widgets').on('webkitfullscreenchange', function () {
-                    this.$('.widgets').toggleClass('fullscreen', document.webkitCurrentFullScreenElement);
-                    this.onResize();
-                }.bind(this));
-            } else if (this.el.mozRequestFullScreen) {
-                document.addEventListener('mozfullscreenchange', this.mozillaFullscreenEventHandler);
-            } else if (this.el.msRequestFullscreen) {
-                document.addEventListener('MSFullscreenChange', this.ie11FullscreenEventHandler);
+        toggleKeepAlive: function(bool) {
+            if(bool) {
+                this.keepAlivePromise = $.post('/api/bi/dashboards/keep-alive')
+                    .done(function(response) {
+                        const sessionLengthInMs = response * 1000;
+
+                        // Schedule a server call two minutes before scheduled session timeout
+                        this.keepAliveTimeout = setTimeout(function() {
+                            this.keepAliveTimeout = null;
+                            this.toggleKeepAlive(true);
+                        }.bind(this), Math.ceil(sessionLengthInMs * 0.7));
+                    }.bind(this))
+                    .fail(function() {
+                        this.keepAliveTimeout = setTimeout(function() {
+                            this.keepAliveTimeout = null;
+                            this.toggleKeepAlive(true);
+                        }.bind(this), Math.ceil(sessionLengthInMs * 0.05))
+                    }.bind(this))
+                    .always(function() {
+                        this.keepAlivePromise = null;
+                    }.bind(this));
+            } else {
+                if(this.keepAliveTimeout) {
+                    clearTimeout(this.keepAliveTimeout);
+                    this.keepAliveTimeout = null;
+                }
+
+                if(this.keepAlivePromise) {
+                    this.keepAlivePromise.abort();
+                    this.keepAlivePromise = null;
+                }
             }
         },
 
-        toggleFullScreen: function () {
-            const element = this.$('.widgets').get(0);
+        toggleFullScreen: function() {
+            const element = this.$widgets.get(0);
 
-            if (element.requestFullscreen) {
-                if (!document.currentFullScreenElement) {
-                    element.requestFullscreen();
-                }
-            } else if (element.webkitRequestFullscreen) {
-                if (!document.webkitCurrentFullScreenElement) {
-                    element.webkitRequestFullscreen();
-                }
-            } else if (element.mozRequestFullScreen) {
-                if (!document.mozCurrentFullScreenElement) {
-                    element.mozRequestFullScreen();
-                }
-            } else if (element.msRequestFullscreen) {
-                if (!document.msCurrentFullScreenElement) {
-                    element.msRequestFullscreen();
-                }
+            if(element.requestFullscreen && !document.currentFullScreenElement) {
+                element.requestFullscreen();
+            } else if(element.webkitRequestFullscreen && !document.webkitCurrentFullScreenElement) {
+                element.webkitRequestFullscreen();
+            } else if(element.mozRequestFullScreen && !document.mozCurrentFullScreenElement) {
+                element.mozRequestFullScreen();
+            } else if(element.msRequestFullscreen && !document.msCurrentFullScreenElement) {
+                element.msRequestFullscreen();
             }
         },
 

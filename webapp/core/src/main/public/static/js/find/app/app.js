@@ -57,16 +57,15 @@ define([
             'click .navigation-logout': function() {
                 logout('logout');
             },
-            'click a[href]': function(event) {
-                // If not left click (event.which === 1) without the control key, continue with full page redirect
-                if(event.which === 1 && !(event.ctrlKey || event.metaKey)) {
-                    const href = $(event.currentTarget).prop('href');
+            'click a[href]': function(e) {
+                // If not left click (e.which === 1) without the control key, continue with full page redirect
+                if(e.which === 1 && !(e.ctrlKey || e.metaKey)) {
+                    const href = $(e.currentTarget).prop('href');
 
                     // If not an internal route, continue with full page redirect
                     if(this.internalHrefRegexp.test(href)) {
-                        event.preventDefault();
-                        const route = href.replace(this.internalHrefRegexp, '');
-                        vent.navigate(route);
+                        e.preventDefault();
+                        vent.navigate(href.replace(this.internalHrefRegexp, ''));
                     }
                 }
             }
