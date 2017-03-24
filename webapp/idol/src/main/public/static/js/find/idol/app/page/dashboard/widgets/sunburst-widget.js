@@ -230,7 +230,13 @@ define([
                         values: _.pluck(data, 'value'),
                         title: this.firstField.displayName,
                         colors: _.pluck(data, 'color'),
-                        strokeColors: ['#000000']
+                        strokeColors: ['#000000'],
+                        showInLegend: _.reduce(data, function (accumulator, entry, index) {
+                            if (entry.color !== HIDDEN_COLOR) {
+                                accumulator.push(index);
+                            }
+                            return accumulator;
+                        }, [])
                     }
                 } : null;
         },
