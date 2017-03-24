@@ -69,6 +69,8 @@ define([
         'error.details': 'Error details: {0}',
         'error.UUID': 'Error UUID: {0}',
         'error.unknown': 'Unknown error.',
+        'export.powerpoint.single': 'Export to PowerPoint: Single Slide',
+        'export.powerpoint.multiple': 'Export to PowerPoint: Multiple Slides',
         'login.defaultLogin': 'Details for the default login can be found in your config.json file',
         'login.error.auth': 'Please check your username and password.',
         'login.error.connection': 'There was an error authenticating with your Community server. Please check if your Community server is available.',

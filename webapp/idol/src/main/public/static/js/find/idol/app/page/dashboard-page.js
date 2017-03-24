@@ -12,8 +12,9 @@ define([
     './dashboard/widgets/widget-not-found',
     './dashboard/update-tracker-model',
     'text!find/idol/templates/page/dashboards/dashboard-page.html',
+    'text!find/idol/templates/page/dashboards/powerpoint-export-form.html',
     'i18n!find/nls/bundle'
-], function(_, $, BasePage, vent, widgetRegistry, WidgetNotFoundWidget, UpdateTrackerModel, template, i18n) {
+], function (_, $, BasePage, vent, widgetRegistry, WidgetNotFoundWidget, UpdateTrackerModel, template, exportFormTemplate, i18n) {
     'use strict';
 
     const FULLSCREEN_CLASS = 'fullscreen';
@@ -28,14 +29,16 @@ define([
 
     return BasePage.extend({
         template: _.template(template),
+        formTemplate: _.template(exportFormTemplate),
 
         events: function() {
             const events = {};
             events['click .' + FULLSCREEN_CLASS] = 'toggleFullScreen';
+            events['click .report-pptx'] = 'exportDashboard';
             return events;
         },
 
-        initialize: function(options) {
+        initialize: function (options) {
             _.bindAll(this, 'update');
 
             this.dashboardName = options.dashboardName;
@@ -43,7 +46,7 @@ define([
             this.sidebarModel = options.sidebarModel;
             this.displayWidgetNames = options.displayWidgetNames || 'never';
 
-            this.widgetViews = _.map(options.widgets, function(widget) {
+            this.widgetViews = _.map(options.widgets, function (widget) {
                 const widgetDefinition = widgetRegistry(widget.type);
                 const WidgetConstructor = widgetDefinition
                     ? widgetDefinition.Constructor
@@ -73,40 +76,48 @@ define([
             this.ie11FullscreenEventHandler = fullscreenHandlerFactory.call(this, document.msCurrentFullScreenElement);
         },
 
-        render: function() {
-            this.$el.html(this.template({i18n: i18n}));
+        render: function () {
+            this.$el.html(this.template({
+                i18n: i18n
+            }));
 
             this.$widgets = this.$('.widgets');
 
-            _.each(this.widgetViews, function(widget) {
+            _.each(this.widgetViews, function (widget) {
                 const $div = this.generateWidgetDiv(widget.position);
                 this.$widgets.append($div);
                 widget.view.setElement($div).render();
             }.bind(this));
+
+            const $exportBtn = this.$('.report-pptx');
+            $.when.apply($, _.map(this.widgetViews, function (widget) {
+                return widget.view.initialiseWidgetPromise
+            })).done(function () {
+                $exportBtn.removeClass('hide');
+            });
         },
 
-        generateWidgetDiv: function(position) {
-            return $('<div class="widget p-xs widget-name-' + this.displayWidgetNames + '"' + '></div>')
-                .css({
-                    'left': 'calc(' + position.x * this.widthPerUnit + '% + 20px)',
-                    'top': 'calc(' + position.y * this.heightPerUnit + '% + 20px)',
-                    'width': 'calc(' + position.width * this.widthPerUnit + '% - 10px)',
-                    'height': 'calc(' + position.height * this.heightPerUnit + '% - 10px)'
-                });
+        generateWidgetDiv: function (position) {
+            return $('<div class="widget p-xs widget-name-' + this.displayWidgetNames + '"' + '></div>').css({
+                'left': 'calc(' + position.x * this.widthPerUnit + '% + 20px)',
+                'top': 'calc(' + position.y * this.heightPerUnit + '% + 20px)',
+                'width': 'calc(' + position.width * this.widthPerUnit + '% - 10px)',
+                'height': 'calc(' + position.height * this.heightPerUnit + '% - 10px)'
+            });
         },
 
-        onResize: function() {
-            if(this.isVisible()) {
-                _.each(this.widgetViews, function(widget) {
+        onResize: function () {
+            if (this.isVisible()) {
+                _.each(this.widgetViews, function (widget) {
                     widget.view.onResize();
                 });
             }
         },
 
-        show: function() {
+        show: function () {
             BasePage.prototype.show.call(this);
 
-            if(this.updateInterval) {
+            if (this.updateInterval) {
                 this.periodicUpdate = setInterval(this.update, this.updateInterval);
             }
 
@@ -115,13 +126,13 @@ define([
             this.toggleFullScreenListener(true);
         },
 
-        hide: function() {
-            if(this.updateTracker) {
+        hide: function () {
+            if (this.updateTracker) {
                 this.updateTracker.set('cancelled', true);
                 this.stopListening(this.updateTracker);
             }
 
-            if(this.periodicUpdate) {
+            if (this.periodicUpdate) {
                 clearInterval(this.periodicUpdate);
             }
 
@@ -134,10 +145,10 @@ define([
             BasePage.prototype.hide.call(this);
         },
 
-        update: function() {
-            if(this.isVisible()) {
+        update: function () {
+            if (this.isVisible()) {
                 // cancel pending update
-                if(this.updateTracker && !this.updateTracker.get('complete')) {
+                if (this.updateTracker && !this.updateTracker.get('complete')) {
                     this.updateTracker.set('cancelled', true);
                     this.stopListening(this.updateTracker);
                 }
@@ -145,7 +156,7 @@ define([
                 // find updating views
                 const updatingViews = _.chain(this.widgetViews)
                     .pluck('view')
-                    .filter(function(view) {
+                    .filter(function (view) {
                         return view.savedSearch
                             ? view.isUpdating() && view.savedSearch.type === 'QUERY'
                             : view.isUpdating();
@@ -155,17 +166,17 @@ define([
                 // don't set up this listener if no work to do
                 const total = updatingViews.length;
 
-                if(total > 0) {
+                if (total > 0) {
                     // set up tracker
                     this.updateTracker = new UpdateTrackerModel({total: total});
 
-                    _.each(updatingViews, function(view) {
+                    _.each(updatingViews, function (view) {
                         view.update(this.updateTracker)
                     }, this);
 
                     // handle completion
-                    this.listenTo(this.updateTracker, 'change:count', function(model, count) {
-                        if(count === total) {
+                    this.listenTo(this.updateTracker, 'change:count', function (model, count) {
+                        if (count === total) {
                             // publish completion
                             this.updateTracker.set('complete', true);
                             this.stopListening(this.updateTracker);
@@ -237,6 +248,54 @@ define([
                 element.mozRequestFullScreen();
             } else if(element.msRequestFullscreen && !document.msCurrentFullScreenElement) {
                 element.msRequestFullscreen();
+            }
+        },
+
+        exportDashboard: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const reports = [];
+            const scaleX = 0.01 * this.widthPerUnit;
+            const scaleY = 0.01 * this.heightPerUnit;
+            const $el = $(event.currentTarget);
+            const multiPage = $el.is('.report-pptx-multipage');
+            const labels = true;
+            const padding = true;
+
+            this.widgetViews.forEach(function (widget) {
+                if (widget.view.exportData) {
+                    const data = widget.view.exportData();
+
+                    // this may be a promise, or an actual object
+                    if (data) {
+                        reports.push($.when(data).then(function (data) {
+                            const pos = widget.position;
+
+                            return _.defaults(data, {
+                                title: labels ? widget.view.name : undefined,
+                                x: multiPage ? 0 : pos.x * scaleX,
+                                y: multiPage ? 0 : pos.y * scaleY,
+                                width: multiPage ? 1 : pos.width * scaleX,
+                                height: multiPage ? 1 : pos.height * scaleY,
+                                margin: padding ? 3 : 0
+                            })
+                        }));
+                    }
+                }
+            });
+
+            if (reports.length) {
+                $.when.apply($, reports).done(function () {
+                    const children = _.compact(arguments);
+                    const $form = $(this.formTemplate({
+                        data: JSON.stringify({
+                            children: children
+                        }),
+                        multiPage: multiPage
+                    }));
+                    $form.appendTo(document.body).submit().remove()
+                }.bind(this))
             }
         }
     });

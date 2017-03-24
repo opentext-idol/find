@@ -14,46 +14,46 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'iCheck',
     'slider/bootstrap-slider'
-], function(Backbone, _, TopicMapView, EntityCollection, i18n, configuration, generateErrorHtml, template,
-            loadingTemplate) {
+], function (Backbone, _, TopicMapView, EntityCollection, i18n, configuration, generateErrorHtml, template,
+             loadingTemplate) {
     'use strict';
 
-    var loadingHtml = _.template(loadingTemplate)({i18n: i18n, large: true});
+    const loadingHtml = _.template(loadingTemplate)({i18n: i18n, large: true});
 
     /**
      * @readonly
      * @enum {String}
      */
-    var ViewState = {
+    const ViewState = {
         LOADING: 'LOADING',
         ERROR: 'ERROR',
         EMPTY: 'EMPTY',
         MAP: 'MAP'
     };
 
-    var Type = {
+    const Type = {
         QUERY: 'QUERY',
         COMPARISON: 'COMPARISON'
     };
 
-    var CLUSTER_MODE = 'docsWithPhrase';
+    const CLUSTER_MODE = 'docsWithPhrase';
 
     return Backbone.View.extend({
         template: _.template(template),
 
         events: {
-            'slideStop .speed-slider': function(event) {
-                var maxResults = event.value;
+            'slideStop .speed-slider': function (event) {
+                const maxResults = event.value;
 
                 this.model.set('maxResults', maxResults);
             }
         },
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.queryState = options.queryState;
 
             this.entityCollection = new EntityCollection([], {
-                getSelectedRelatedConcepts: function() {
+                getSelectedRelatedConcepts: function () {
                     // Comparison topic view does not have queryState
                     return this.queryState ? _.flatten(this.queryState.conceptGroups.pluck('concepts')) : [];
                 }.bind(this)
@@ -61,7 +61,7 @@ define([
 
             this.queryModel = options.queryModel;
             this.type = options.type;
-            this.showSlider = !_.isUndefined(options.showSlider) ? options.showSlider : true;
+            this.showSlider = _.isUndefined(options.showSlider) || options.showSlider;
 
             this.topicMap = new TopicMapView({
                 clickHandler: options.clickHandler
@@ -81,17 +81,17 @@ define([
             this.listenTo(this.model, 'change:maxResults', this.fetchRelatedConcepts);
             this.listenTo(this.queryModel, 'change', this.fetchRelatedConcepts);
 
-            this.listenTo(this.entityCollection, 'sync', function() {
+            this.listenTo(this.entityCollection, 'sync', function () {
                 this.viewModel.set('state', this.entityCollection.isEmpty() ? ViewState.EMPTY : ViewState.MAP);
                 this.updateTopicMapData();
                 this.update();
             });
 
-            this.listenTo(this.entityCollection, 'request', function() {
+            this.listenTo(this.entityCollection, 'request', function () {
                 this.viewModel.set('state', ViewState.LOADING);
             });
 
-            this.listenTo(this.entityCollection, 'error', function(collection, xhr) {
+            this.listenTo(this.entityCollection, 'error', function (collection, xhr) {
                 this.generateErrorMessage(xhr);
                 // Status of zero means the request has been aborted
                 this.viewModel.set('state', xhr.status === 0 ? ViewState.LOADING : ViewState.ERROR);
@@ -102,32 +102,32 @@ define([
             this.fetchRelatedConcepts();
         },
 
-        update: function() {
+        update: function () {
             // If the view is not visible, update will be called again if the user switches to this tab
-            if(this.$el.is(':visible')) {
+            if (this.$el.is(':visible')) {
                 this.topicMap.draw();
             }
         },
 
-        updateTopicMapData: function() {
-            var data = _.chain(this.entityCollection.groupBy('cluster'))
+        updateTopicMapData: function () {
+            const data = _.chain(this.entityCollection.groupBy('cluster'))
             // Order the concepts in each cluster
-                .map(function(cluster) {
-                    return _.sortBy(cluster, function(model) {
+                .map(function (cluster) {
+                    return _.sortBy(cluster, function (model) {
                         return -model.get(CLUSTER_MODE);
                     });
                 })
                 // For each related concept give the name and size
-                .map(function(cluster) {
-                    return cluster.map(function(model) {
+                .map(function (cluster) {
+                    return cluster.map(function (model) {
                         return {name: model.get('text'), size: model.get(CLUSTER_MODE)};
                     })
                 })
                 // Give each cluster a name (first concept in list), total size and add all concepts to the children attribute to create the topic map double level
-                .map(function(cluster) {
-                    var size = _.chain(cluster)
+                .map(function (cluster) {
+                    const size = _.chain(cluster)
                         .pluck('size')
-                        .reduce(function(a, b) {
+                        .reduce(function (a, b) {
                             return a + b;
                         })
                         .value();
@@ -138,7 +138,7 @@ define([
                         children: cluster
                     };
                 })
-                .sortBy(function(clusterNode) {
+                .sortBy(function (clusterNode) {
                     return -clusterNode.size;
                 })
                 .value();
@@ -146,16 +146,16 @@ define([
             this.topicMap.setData(data);
         },
 
-        updateViewState: function() {
-            var state = this.viewModel.get('state');
+        updateViewState: function () {
+            const state = this.viewModel.get('state');
             this.topicMap.$el.toggleClass('hide', state !== ViewState.MAP);
             this.handleTopicMapError();
             this.$('.entity-topic-map-empty').toggleClass('hide', state !== ViewState.EMPTY);
             this.$('.entity-topic-map-loading').toggleClass('hide', state !== ViewState.LOADING);
         },
 
-        generateErrorMessage: function(xhr) {
-            if(xhr.responseJSON) {
+        generateErrorMessage: function (xhr) {
+            if (xhr.responseJSON) {
                 this.errorTemplate = generateErrorHtml({
                     messageToUser: i18n['search.topicMap.error'],
                     errorDetails: xhr.responseJSON.message,
@@ -170,18 +170,18 @@ define([
             }
         },
 
-        handleTopicMapError: function() {
-            var state = this.viewModel.get('state');
-            if(state === ViewState.ERROR) {
+        handleTopicMapError: function () {
+            const state = this.viewModel.get('state');
+            if (state === ViewState.ERROR) {
                 this.$('.entity-topic-map-error').empty().append(this.errorTemplate);
             }
             this.$('.entity-topic-map-error').toggleClass('hide', state !== ViewState.ERROR);
         },
 
-        fetchRelatedConcepts: function() {
-            var data;
+        fetchRelatedConcepts: function () {
+            let data;
 
-            if(this.type === Type.COMPARISON) {
+            if (this.type === Type.COMPARISON) {
                 data = {
                     queryText: '*',
                     maxResults: this.model.get('maxResults'),
@@ -190,7 +190,7 @@ define([
                     stateDontMatchTokens: this.queryModel.get('stateDontMatchIds')
                 };
 
-            } else if(this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
+            } else if (this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
                 data = {
                     databases: this.queryModel.get('indexes'),
                     queryText: this.queryModel.get('queryText'),
@@ -203,12 +203,10 @@ define([
                 };
             }
 
-            if(data) {
-                return this.entityCollection.fetch({data: data});
-            }
+            return data ? this.entityCollection.fetch({data: data}) : null;
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(this.template({
                 cid: this.cid,
                 errorTemplate: this.errorTemplate,
@@ -230,6 +228,13 @@ define([
             this.topicMap.setElement(this.$('.entity-topic-map')).render();
             this.update();
             this.updateViewState();
-        }
+        },
+
+        exportData: function () {
+            const paths = this.topicMap.exportPaths();
+            return paths ? {
+                    paths: _.flatten(paths.slice(1).reverse())
+                } : null;
+        },
     });
 });

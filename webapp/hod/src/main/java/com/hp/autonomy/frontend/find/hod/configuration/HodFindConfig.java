@@ -19,6 +19,7 @@ import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
+import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.sso.HodSsoConfig;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
@@ -30,6 +31,7 @@ import lombok.EqualsAndHashCode;
 import org.jasypt.util.text.TextEncryptor;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.Set;
 
 @SuppressWarnings({"InstanceVariableOfConcreteClass", "DefaultAnnotationParam"})
@@ -51,6 +53,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodS
     private final UiCustomization uiCustomization;
     private final Integer minScore;
     private final Integer topicMapMaxResults;
+    private final ExportConfig export;
 
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
@@ -71,6 +74,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodS
                 .savedSearchConfig(savedSearchConfig == null ? config.savedSearchConfig : savedSearchConfig.merge(config.savedSearchConfig))
                 .minScore(minScore == null ? config.minScore : minScore)
                 .topicMapMaxResults(topicMapMaxResults == null ? config.topicMapMaxResults : topicMapMaxResults)
+                .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(config.export)).orElse(config.export))
                 .build() : this;
     }
 
@@ -103,6 +107,10 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodS
 
         if (map != null) {
             map.basicValidate("map");
+        }
+
+        if (export != null) {
+            export.basicValidate(SECTION);
         }
 
         if (!"default".equalsIgnoreCase(login.getMethod())) {

@@ -22,6 +22,7 @@ import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
+import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
@@ -63,6 +64,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final Integer minScore;
     private final StatsServerConfig statsServer;
     private final Integer topicMapMaxResults;
+    private final ExportConfig export;
 
     @JsonIgnore
     private volatile Map<String, Map<Integer, String>> productMap;
@@ -84,6 +86,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                         .minScore(minScore == null ? other.minScore : minScore)
                         .statsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
                         .topicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
+                        .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(maybeOther.export)).orElse(maybeOther.export))
                         .build())
                 .orElse(this);
     }
@@ -128,6 +131,10 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
 
         if (map != null) {
             map.basicValidate("map");
+        }
+
+        if (export != null) {
+            export.basicValidate(SECTION);
         }
 
         if (queryManipulation != null) {

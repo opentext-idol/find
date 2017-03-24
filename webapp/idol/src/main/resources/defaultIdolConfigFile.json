@@ -103,6 +103,11 @@
       }
     ]
   },
+  "export": {
+    "powerpoint": {
+      "templateFile": ""
+    }
+  },
   "mmap": {
     "enabled": false,
     "baseUrl": ""
@@ -246,6 +251,7 @@
     },
     "latitude": {
       "names": [
+        "NODE_PLACE/LAT",
         "LAT"
       ],
       "type": "NUMBER",
@@ -253,6 +259,7 @@
     },
     "longitude": {
       "names": [
+        "NODE_PLACE/LON",
         "LON"
       ],
       "type": "NUMBER",

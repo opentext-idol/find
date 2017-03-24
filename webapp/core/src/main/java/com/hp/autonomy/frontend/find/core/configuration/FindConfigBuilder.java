@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
+import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 
 /**
@@ -26,6 +27,8 @@ public interface FindConfigBuilder<C extends FindConfig<C, B>, B extends FindCon
     B uiCustomization(UiCustomization uiCustomization);
 
     B topicMapMaxResults(Integer topicMapMaxResults);
+
+    B export(ExportConfig exportConfig);
 
     C build();
 }

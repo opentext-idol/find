@@ -210,6 +210,29 @@ define([
                     }
                 });
             }
-        }
+        },
+
+        exportData: function () {
+            const data = this.legendColorCollection.map(function (model) {
+                return {
+                    category: model.get('text') || i18n['dashboards.widget.sunburst.legend.hiddenValues'],
+                    value: model.get('count'),
+                    color: model.get('color') || HIDDEN_COLOR
+                };
+            }).sort(function (a, b) {
+                return d3.ascending(a.category, b.category);
+            });
+
+            return data.length ? {
+                    type: 'sunburst',
+                    data: {
+                        categories: _.pluck(data, 'category'),
+                        values: _.pluck(data, 'value'),
+                        title: this.firstField.displayName,
+                        colors: _.pluck(data, 'color'),
+                        strokeColors: ['#000000']
+                    }
+                } : null;
+        },
     });
 });

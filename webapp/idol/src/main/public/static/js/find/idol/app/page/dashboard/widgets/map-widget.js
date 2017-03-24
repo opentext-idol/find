@@ -10,13 +10,13 @@ define([
     'find/app/configuration',
     'find/app/page/search/results/map-view',
     'find/app/model/documents-collection'
-], function(_, $, SavedSearchWidget, configuration, MapView, DocumentsCollection) {
+], function (_, $, SavedSearchWidget, configuration, MapView, DocumentsCollection) {
     'use strict';
 
     return SavedSearchWidget.extend({
         viewType: 'map',
 
-        initialize: function(options) {
+        initialize: function (options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
             this.markers = [];
 
@@ -35,13 +35,13 @@ define([
             });
         },
 
-        render: function() {
+        render: function () {
             SavedSearchWidget.prototype.render.apply(this);
             this.mapView.setElement(this.$content).render();
             this.hasRendered = true;
         },
 
-        getIcon: function() {
+        getIcon: function () {
             const locationField = _.findWhere(configuration().map.locationFields,
                 {displayName: this.locationFieldPair});
 
@@ -52,8 +52,8 @@ define([
             );
         },
 
-        getData: function() {
-            if(!this.hasRendered) {
+        getData: function () {
+            if (!this.hasRendered) {
                 return $.when();
             }
 
@@ -80,18 +80,18 @@ define([
                     max_results: this.maxResults,
                     indexes: this.queryModel.get('indexes'),
                     field_text: newFieldText,
-                    min_date: this.queryModel.get('minDate'),
-                    max_date: this.queryModel.get('maxDate'),
+                    min_date: this.queryModel.getIsoDate('minDate'),
+                    max_date: this.queryModel.getIsoDate('maxDate'),
                     sort: 'relevance',
                     summary: 'context',
                     queryType: 'MODIFIED'
                 },
                 reset: false
-            }).done(function() {
-                this.documentsCollection.each(function(model) {
+            }).done(function () {
+                this.documentsCollection.each(function (model) {
                     const locations = model.get('locations');
                     const location = _.findWhere(locations, {displayName: this.locationFieldPair});
-                    if(location) {
+                    if (location) {
                         const longitude = location.longitude;
                         const latitude = location.latitude;
                         const title = model.get('title');
@@ -99,10 +99,19 @@ define([
                         this.markers.push(marker);
                     }
                 }.bind(this));
-                if(!_.isEmpty(this.markers)) {
+                if (!_.isEmpty(this.markers)) {
                     this.mapView.addMarkers(this.markers, this.clusterMarkers);
                 }
             }.bind(this));
+        },
+
+        exportData: function () {
+            return this.mapView.exportData().then(function (data) {
+                return {
+                    data: data,
+                    type: 'map'
+                }
+            });
         }
     });
 });

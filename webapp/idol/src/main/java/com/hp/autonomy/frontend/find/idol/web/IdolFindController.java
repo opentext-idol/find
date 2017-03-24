@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find.idol.web;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
-import com.hp.autonomy.frontend.find.core.export.MetadataNode;
+import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.core.web.MvcConstants;
@@ -15,7 +15,7 @@ import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
 import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
-import com.hp.autonomy.frontend.find.idol.export.IdolMetadataNode;
+import com.hp.autonomy.frontend.find.idol.export.service.IdolMetadataNode;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import lombok.Getter;
 import org.apache.commons.lang.BooleanUtils;

@@ -135,6 +135,11 @@
             <artifactId>haven-search-components-hod</artifactId>
             <version>${haven.search.components.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.reports.powerpoint</groupId>
+            <artifactId>powerpoint-report</artifactId>
+            <version>${powerpoint.report.version}</version>
+        </dependency>
 
         <!-- It's not clear why, but we need to define dependency here as well, not just at the core level.  Otherwise the hibernate classloader does not pick this up. -->
         <dependency>
