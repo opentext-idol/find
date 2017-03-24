@@ -83,7 +83,10 @@ define([
             if(this.$legendContainer && this.$content) {
                 // Prefer side-by-side layout: widget must be slightly narrower than a square
                 // for legend to be placed underneath Sunburst
-                const narrowWidget = this.contentWidth() * 0.9 < this.contentHeight();
+                // Don't switch to column layout if collection empty, as it interferes
+                // with the placement of the "no results" message
+                const narrowWidget = !this.legendColorCollection.isEmpty() &&
+                    (this.contentWidth() * 0.9 < this.contentHeight());
 
                 this.$legendContainer.toggleClass('legend-one-entry-per-line', !narrowWidget);
                 this.$content.toggleClass('narrow-widget', narrowWidget);
@@ -101,7 +104,11 @@ define([
 
         getData: function() {
             return this.legendColorCollection
-                .fetchDependentFields(this.queryModel, this.firstField.id, this.secondField ? this.secondField.id : null);
+                .fetchDependentFields(
+                    this.queryModel,
+                    this.firstField.id,
+                    this.secondField ? this.secondField.id : null
+                );
         },
 
         drawSunburst: function(data) {
@@ -135,6 +142,9 @@ define([
                 this.$visualizerContainer.toggleClass('hide', empty);
                 this.$legendContainer.toggleClass('hide', empty);
                 this.$emptyMessage.toggleClass('hide', !empty);
+
+                this.updateLayout();
+
                 if(empty) {
                     // Next time we have data, the initialisation animation will run again
                     this.sunburst = null;
@@ -142,7 +152,6 @@ define([
                 } else {
                     const rootData = {children: collection.toJSON()};
 
-                    this.updateLayout();
                     if(this.sunburst) {
                         this.sunburst.resize();
                         this.sunburst.redraw(rootData);
@@ -160,7 +169,9 @@ define([
                 this.$legendContainer
                     .html(this.legendTemplate({
                         innerRingHeader: this.firstField.displayName,
-                        outerRingHeader: this.secondField ? this.secondField.displayName : null
+                        outerRingHeader: this.secondField
+                            ? this.secondField.displayName
+                            : null
                     }));
 
                 this.$innerLegend = this.$legendContainer

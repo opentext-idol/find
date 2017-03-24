@@ -202,7 +202,8 @@ define([
 
                 it('should cancel the tracker', function() {
                     expect(this.dashboardPage.updateTracker.get('cancelled')).toEqual(true);
-                    expect(this.dashboardPage.stopListening.calls.count()).toEqual(1);
+                    expect(this.dashboardPage.stopListening.calls.argsFor(0)[0])
+                        .toBe(this.dashboardPage.updateTracker);
                 });
             });
         });
