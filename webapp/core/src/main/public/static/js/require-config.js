@@ -53,6 +53,9 @@ require.config({
         d3: {
             exports: 'd3'
         },
+        html2canvas: {
+            exports: 'html2canvas'
+        },
         iCheck: ['jquery'],
         peg: {
             exports: 'PEG'

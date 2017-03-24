@@ -7,7 +7,7 @@ define([
     'jquery',
     './widget',
     'html2canvas'
-], function($, Widget) {
+], function($, Widget, html2canvas) {
     'use strict';
 
     return Widget.extend({

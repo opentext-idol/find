@@ -6,28 +6,30 @@
 define([
     'underscore',
     'jquery',
-    'find/idol/app/page/dashboard/widgets/static-image-widget'
-], function(_, $, StaticImageWidget) {
+    'find/idol/app/page/dashboard/widgets/static-image-widget',
+    'html2canvas'
+], function(_, $, StaticImageWidget, html2canvas) {
     "use strict";
 
     describe('Static Image Widget', function() {
-        beforeEach(function (done) {
+        beforeEach(function () {
             this.widget = new StaticImageWidget({
                 name: 'Test Widget',
                 widgetSettings: {
                     url: 'http://placehold.it/800x300'
                 }
             });
-            this.widget.render();
 
-            $.when(this.widget.exportData()).done(function (data) {
-                this.exportData = data;
-                done();
-            }.bind(this))
+            this.widget.render();
+        });
+
+        afterEach(function () {
+            this.widget.remove();
         });
 
         it('should export data', function() {
-            expect(this.exportData.type).toBe('map');
+            this.widget.exportData();
+            expect(html2canvas).toHaveBeenCalled();
         });
     });
 });
