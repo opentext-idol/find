@@ -6,6 +6,7 @@ define([
     'i18n!find/nls/bundle',
     'find/app/util/generate-error-support-message',
     'find/app/page/search/results/parametric-results-view',
+    'find/app/page/search/results/field-selection-view',
     'find/app/page/search/filters/parametric/calibrate-buckets',
     'find/app/model/bucketed-parametric-collection',
     'find/app/model/parametric-field-details-model',
@@ -15,13 +16,15 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/templates/app/page/search/results/trending/trending-results-view.html',
     'find/app/vent'
-], function (Backbone, _, $, d3, i18n, generateErrorHtml, ParametricResultsView, calibrateBuckets, BucketedParametricCollection,
-             ParametricDetailsModel, ParametricCollection, Trending, toFieldTextNode, loadingSpinnerHtml, template, vent) {
+], function (Backbone, _, $, d3, i18n, generateErrorHtml, ParametricResultsView, FieldSelectionView, calibrateBuckets,
+             BucketedParametricCollection, ParametricDetailsModel, ParametricCollection, Trending, toFieldTextNode,
+             loadingSpinnerHtml, template, vent) {
     'use strict';
 
     const MILLISECONDS_TO_SECONDS = 1000;
     const DEBOUNCE_TIME = 500;
     const ERROR_MESSAGE_ARGUMENTS = { messageToUser: i18n['search.resultsView.trending.error.query'] };
+    const SECONDS_IN_ONE_DAY = 86400;
 
     const renderState = {
         RENDERING_NEW_DATA: 'RENDERING NEW DATA',
@@ -39,14 +42,14 @@ define([
     return Backbone.View.extend({
         template: _.template(template),
         loadingHtml: _.template(loadingSpinnerHtml),
-        dateField: 'AUTN_DATE',
-        fieldName: '/DOCUMENT/CATEGORY',
-        targetNumberOfBuckets: 30,
-        numberOfParametricValuesToShow: 20,
 
         initialize: function(options) {
+            this.dateField = options.dateField || 'AUTN_DATE';
+            this.targetNumberOfBuckets = options.targetNumberOfBuckets || 20;
+            this.numberOfValuesToDisplay = options.numberOfValuesToDisplay || 10;
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
+            this.parametricFieldsCollection = options.parametricFieldsCollection;
 
             this.debouncedFetchBucketingData = _.debounce(this.fetchBucketingData, DEBOUNCE_TIME);
             this.bucketedValues = {};
@@ -62,6 +65,9 @@ define([
                 if(this.$el.is(':visible')) { this.updateChart(); }
             });
             this.listenTo(this.viewStateModel, 'change:dataState', this.onDataStateChange);
+            this.listenTo(this.parametricFieldsCollection, 'sync', this.setFieldSelector);
+            this.listenTo(this.parametricFieldsCollection, 'error', this.onDataError);
+            this.listenTo(this.model, 'change:field', this.fetchFieldData);
         },
 
         render: function() {
@@ -71,8 +77,6 @@ define([
             }));
             this.$errorMessage = this.$('.trending-error');
 
-            if(this.$el.is(':visible')) { this.fetchFieldData(); }
-
             if (this.trendingChart) {
                 this.trendingChart.remove();
             }
@@ -80,11 +84,29 @@ define([
                 el: this.$('.trending-chart').get(0),
                 tooltipText: i18n['search.resultsView.trending.tooltipText']
             });
+
+            if(!this.parametricFieldsCollection.isEmpty()) { this.setFieldSelector(); }
         },
 
-        remove() {
+        remove: function() {
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
             Backbone.View.prototype.remove.call(this);
+        },
+
+        setFieldSelector: function() {
+            if(this.$el.is(':visible')) {
+                if (this.fieldSelector) {
+                    this.fieldSelector.remove();
+                }
+                this.fieldSelector = new FieldSelectionView({
+                    model: this.model,
+                    name: 'parametric-fields',
+                    fields: this.parametricFieldsCollection.invoke('pick', 'id', 'displayName').sort(),
+                    allowEmpty: false
+                });
+                this.$('.trending-field-selector').prepend(this.fieldSelector.$el);
+                this.fieldSelector.render();
+            }
         },
 
         fetchFieldData: function() {
@@ -92,7 +114,7 @@ define([
 
             this.trendingFieldsCollection.fetch({
                 data: {
-                    fieldNames: [this.fieldName],
+                    fieldNames: [this.model.get('field')],
                     databases: this.queryModel.get('indexes'),
                     queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery')
                         ? this.queryModel.get('correctedQuery')
@@ -101,11 +123,11 @@ define([
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
                     minScore: this.queryModel.get('minScore'),
-                    maxValues: this.numberOfParametricValuesToShow
+                    maxValues: this.numberOfValuesToDisplay
                 },
                 success: function() {
                     this.selectedField = this.trendingFieldsCollection.filter(function(model) {
-                        return model.get('id') === this.fieldName;
+                        return model.get('id') === this.model.get('field');
                     }, this);
 
                     if (this.selectedField.length === 0) {
@@ -120,9 +142,9 @@ define([
             })
         },
 
-        fetchRangeData: function () {
-            const trendingValues = _.first(this.selectedField[0].get('values'), this.numberOfParametricValuesToShow);
-            const trendingValuesRestriction = 'MATCH{' + _.pluck(trendingValues, 'value').toString() + '}:' + this.fieldName;
+        fetchRangeData: function() {
+            const trendingValues = _.first(this.selectedField[0].get('values'), this.numberOfValuesToDisplay);
+            const trendingValuesRestriction = 'MATCH{' + _.pluck(trendingValues, 'value').toString() + '}:' + this.model.get('field');
             const fieldText = this.getFieldText().length > 0 ? ' AND ' + toFieldTextNode(this.getFieldText()) : '';
 
             this.parametricDetailsModel = new ParametricDetailsModel();
@@ -136,7 +158,7 @@ define([
                     minScore: this.queryModel.get('minScore'),
                     databases: this.queryModel.get('indexes')
                 },
-                success: function () {
+                success: function() {
                     this.setMinMax(this.parametricDetailsModel.get('min'), this.parametricDetailsModel.get('max'));
                     this.fetchBucketingData();
                 }.bind(this),
@@ -149,19 +171,26 @@ define([
         fetchBucketingData: function() {
             this.bucketedValues = {};
 
-            _.each(_.first(this.selectedField[0].get('values'), this.numberOfParametricValuesToShow), function(value) {
+            _.each(_.first(this.selectedField[0].get('values'), this.numberOfValuesToDisplay), function(value) {
                 this.bucketedValues[value.value] = new BucketedParametricCollection.Model({
                     id: this.dateField,
                     valueName: value.value
                 });
             }, this);
 
+            const minDate = this.model.get('currentMin'), maxDate = this.model.get('currentMax');
+
+            if (minDate === maxDate) {
+                this.model.set('currentMin', minDate - SECONDS_IN_ONE_DAY);
+                this.model.set('currentMax', maxDate + SECONDS_IN_ONE_DAY);
+            }
+
             $.when.apply($, _.map(this.bucketedValues, function(model) {
                 const fieldText = this.getFieldText().length > 0 ? ' AND ' + toFieldTextNode(this.getFieldText()) : '';
                 return model.fetch({
                     data: {
                         queryText: this.queryModel.get('queryText'),
-                        fieldText: 'MATCH{' + model.get('valueName') + '}:' + this.fieldName + fieldText,
+                        fieldText: 'MATCH{' + model.get('valueName') + '}:' + this.model.get('field') + fieldText,
                         minDate: this.queryModel.getIsoDate('minDate'),
                         maxDate: this.queryModel.getIsoDate('maxDate'),
                         minScore: this.queryModel.get('minScore'),
@@ -211,7 +240,7 @@ define([
         createChartData: function() {
             let data = [];
 
-            _.each(this.bucketedValues, function (model) {
+            _.each(this.bucketedValues, function(model) {
                 data.push({
                     points: _.map(model.get('values'), function(value) {
                         return {
@@ -225,7 +254,7 @@ define([
                 });
             });
 
-            _.each(data, function (value) {
+            _.each(data, function(value) {
                 _.each(value.points, function (point) {
                     point.mid = new Date(point.mid * MILLISECONDS_TO_SECONDS);
                     point.min = new Date(point.min * MILLISECONDS_TO_SECONDS);
@@ -249,7 +278,7 @@ define([
         },
 
         createCallbacks: function() {
-            const zoomCallback = function (min, max) {
+            const zoomCallback = function(min, max) {
                 this.setMinMax(min, max);
                 this.viewStateModel.set('currentState', renderState.ZOOMING);
                 this.updateChart();
@@ -294,19 +323,21 @@ define([
             this.$('.trending-loading').toggleClass('hide', this.viewStateModel.get('dataState') !== dataState.LOADING);
             this.$('.trending-chart').toggleClass('hide', this.viewStateModel.get('dataState') !== dataState.OK);
 
-            if (this.viewStateModel.get('dataState') !== dataState.ERROR) {
+            if (this.viewStateModel.get('dataState') !== dataState.ERROR && this.$errorMessage) {
                 this.$errorMessage.empty();
             }
         },
 
         onDataError: function(xhr) {
-            this.viewStateModel.set('dataState', dataState.ERROR);
-            const messageArguments = _.extend({
-                errorDetails: xhr.responseJSON.message,
-                errorUUID: xhr.responseJSON.uuid
-            }, ERROR_MESSAGE_ARGUMENTS);
-            const errorMessage = generateErrorHtml(messageArguments);
-            this.$errorMessage.html(errorMessage);
+            if(xhr.status !== 0) {
+                this.viewStateModel.set('dataState', dataState.ERROR);
+                const messageArguments = _.extend({
+                    errorDetails: xhr.responseJSON.message,
+                    errorUUID: xhr.responseJSON.uuid
+                }, ERROR_MESSAGE_ARGUMENTS);
+                const errorMessage = generateErrorHtml(messageArguments);
+                this.$errorMessage.html(errorMessage);
+            }
         }
     });
 });
