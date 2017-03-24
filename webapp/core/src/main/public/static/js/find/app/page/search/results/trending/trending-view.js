@@ -215,26 +215,28 @@ define([
             const data = this.createChartData();
             const callbacks = this.createCallbacks();
 
-            let minDate, maxDate;
-            if (this.viewStateModel.get('currentState') === renderState.RENDERING_NEW_DATA) {
+            if(!_.isEmpty(data[0].points)) {
+                let minDate, maxDate;
+                if (this.viewStateModel.get('currentState') === renderState.RENDERING_NEW_DATA) {
                 minDate = data[0].points[0].mid;
-                maxDate = data[data.length - 1].points[data[0].points.length - 1].mid;
-            } else {
-                minDate = new Date(this.model.get('currentMin') * MILLISECONDS_TO_SECONDS);
-                maxDate = new Date(this.model.get('currentMax') * MILLISECONDS_TO_SECONDS);
-            }
+                    maxDate = data[data.length - 1].points[data[0].points.length - 1].mid;
+                } else {
+                    minDate = new Date(this.model.get('currentMin') * MILLISECONDS_TO_SECONDS);
+                    maxDate = new Date(this.model.get('currentMax') * MILLISECONDS_TO_SECONDS);
+                }
 
-            this.trendingChart.draw({
-                reloaded: this.viewStateModel.get('currentState') === renderState.RENDERING_NEW_DATA,
-                data: data,
-                minDate: minDate,
-                maxDate: maxDate,
-                xAxisLabel: i18n['search.resultsView.trending.xAxis'],
-                yAxisLabel: i18n['search.resultsView.trending.yAxis'],
-                zoomCallback: callbacks.zoomCallback,
-                dragMoveCallback: callbacks.dragMoveCallback,
-                dragEndCallback: callbacks.dragEndCallback
-            });
+                this.trendingChart.draw({
+                    reloaded: this.viewStateModel.get('currentState') === renderState.RENDERING_NEW_DATA,
+                    data: data,
+                    minDate: minDate,
+                    maxDate: maxDate,
+                    xAxisLabel: i18n['search.resultsView.trending.xAxis'],
+                    yAxisLabel: i18n['search.resultsView.trending.yAxis'],
+                    zoomCallback: callbacks.zoomCallback,
+                    dragMoveCallback: callbacks.dragMoveCallback,
+                    dragEndCallback: callbacks.dragEndCallback
+                });
+            }
         },
 
         createChartData: function() {
