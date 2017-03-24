@@ -23,9 +23,6 @@ define([
 
         events: {
             'click .fullscreen': 'toggleFullScreen',
-            'click .report-pptx-checkbox': function (event) {
-                event.stopPropagation();
-            },
             'click .report-pptx': 'exportDashboard'
         },
 
@@ -74,13 +71,7 @@ define([
 
         render: function () {
             this.$el.html(this.template({
-                i18n: i18n,
-                dashboardName: this.dashboardName,
-                powerpointExportButton: i18n['export.powerpoint.button'],
-                powerpointSingle: i18n['export.powerpoint.single'],
-                powerpointMultiple: i18n['export.powerpoint.multiple'],
-                powerpointLabels: i18n['export.powerpoint.labels'],
-                powerpointPadding: i18n['export.powerpoint.padding'],
+                i18n: i18n
             }));
 
             const $widgets = this.$('.widgets');
@@ -91,7 +82,7 @@ define([
                 widget.view.setElement($div).render();
             }.bind(this));
 
-            const $exportBtn = this.$('.report-pptx-group');
+            const $exportBtn = this.$('.report-pptx');
             $.when.apply($, _.map(this.widgetViews, function (widget) {
                 return widget.view.initialiseWidgetPromise
             })).done(function () {
@@ -238,14 +229,13 @@ define([
             event.preventDefault();
             event.stopPropagation();
 
-            const reports = [],
-                scaleX = 0.01 * this.widthPerUnit,
-                scaleY = 0.01 * this.heightPerUnit,
-                $el = $(event.currentTarget),
-                multiPage = $el.is('.report-pptx-multipage'),
-                $group = $el.closest('.btn-group'),
-                labels = $group.find('.report-pptx-labels:checked').length,
-                padding = $group.find('.report-pptx-padding:checked').length;
+            const reports = [];
+            const scaleX = 0.01 * this.widthPerUnit;
+            const scaleY = 0.01 * this.heightPerUnit;
+            const $el = $(event.currentTarget);
+            const multiPage = $el.is('.report-pptx-multipage');
+            const labels = true;
+            const padding = true;
 
             this.widgetViews.forEach(function (widget) {
                 if (widget.view.exportData) {
