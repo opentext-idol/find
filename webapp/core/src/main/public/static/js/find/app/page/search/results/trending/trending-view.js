@@ -120,10 +120,20 @@ define([
                 if(this.fieldSelector) {
                     this.fieldSelector.remove();
                 }
+
+                const fields = this.parametricFieldsCollection
+                    .where({type: 'Parametric'})
+                    .map(function (m) {
+                        return {
+                            id: m.get('id'),
+                            displayName: m.get('displayName')
+                        }
+                    });
+
                 this.fieldSelector = new FieldSelectionView({
                     model: this.model,
                     name: 'parametric-fields',
-                    fields: this.parametricFieldsCollection.invoke('pick', 'id', 'displayName').sort(),
+                    fields: fields,
                     allowEmpty: false
                 });
                 this.$('.trending-field-selector').prepend(this.fieldSelector.$el);
