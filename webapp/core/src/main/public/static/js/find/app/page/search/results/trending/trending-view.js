@@ -44,6 +44,11 @@ define([
         OK: 'OK'
     };
 
+    const fetchState = {
+        FETCHING_BUCKETS: 'FETCHING_BUCKETS',
+        NOT_FETCHING: 'NOT_FETCHING'
+    };
+
     return Backbone.View.extend({
         template: _.template(template),
         loadingHtml: _.template(loadingSpinnerHtml),
@@ -184,6 +189,7 @@ define([
 
         fetchBucketingData: function() {
             this.bucketedValues = {};
+            this.viewStateModel.set('fetchState', fetchState.FETCHING_BUCKETS);
 
             _.each(_.first(this.selectedField[0].get('values'), this.numberOfValuesToDisplay), function(value) {
                 this.bucketedValues[value.value] = new BucketedParametricCollection.Model({
@@ -217,9 +223,11 @@ define([
             }, this)).done(_.bind(function() {
                 this.viewStateModel.set('currentState', renderState.RENDERING_NEW_DATA);
                 this.viewStateModel.set('dataState', dataState.OK);
+                this.viewStateModel.set('fetchState', fetchState.NOT_FETCHING);
                 this.updateChart();
             }, this)).fail(_.bind(function(xhr) {
                 this.onDataError(xhr);
+                this.viewStateModel.set('fetchState', fetchState.NOT_FETCHING);
             }, this));
         },
 
@@ -229,7 +237,7 @@ define([
             const data = this.createChartData();
             const callbacks = this.createCallbacks();
 
-            if(!_.isEmpty(data[0].points)) {
+            if(this.viewStateModel.get('fetchState') !== fetchState.FETCHING_BUCKETS) {
                 let minDate, maxDate;
                 if(this.viewStateModel.get('currentState') === renderState.RENDERING_NEW_DATA) {
                     minDate = data[0].points[0].mid;
