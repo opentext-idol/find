@@ -1162,6 +1162,130 @@ audio.preview-media-player {
   width: @100percent;
 }
 
+@hpeThumbBackground: @hpegreen;
+@hpeThumbBorder: 1px solid shade(@hpeThumbBackground, 5%);
+@hpeThumbBackgroundFocus: tint(@hpeThumbBackground, 1%);
+@hpeThumbBorderFocus: 1px solid tint(@hpeThumbBackground, 4%);
+@hpeTrackBackground: tint(@hpegreen, 80%);
+@hpeTrackBorder: 1px solid @hpegreen;
+@hpeTrackBackgroundFocus: tint(@hpegreen, 90%);
+@hpeThumbShadow: none;
+@hpeTrackShadow: none;
+@hpeThumbBorderRadius: 10px;
+@hpeTrackBorderRadius: 4px;
+@hpeThumbSize: 20px;
+@hpeTrackWidth: 210px;
+@hpeTrackHeight: 10px;
+
+input[type=range].speed-slider {
+  -webkit-appearance: none;
+  width: @hpeTrackWidth;
+  margin: 5px;
+  padding: 1px;
+  cursor: pointer;
+
+  &::-webkit-slider-runnable-track {
+    width: @hpeTrackWidth;
+    height: @hpeTrackHeight;
+    cursor: pointer;
+    box-shadow: @hpeTrackShadow;
+    background: @hpeTrackBackground;
+    border-radius: @hpeTrackBorderRadius;
+    border: @hpeTrackBorder;
+  }
+  &::-moz-range-track {
+    width: @hpeTrackWidth;
+    height: @hpeTrackHeight;
+    cursor: pointer;
+    box-shadow: @hpeTrackShadow;
+    background: @hpeTrackBackground;
+    border-radius: @hpeTrackBorderRadius;
+    border: @hpeTrackBorder;
+  }
+  &::-ms-track {
+    width: @hpeTrackWidth;
+    height: @hpeTrackHeight;
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+  }
+  &::-ms-fill-lower {
+    background: @hpeTrackBackground;
+    border: @hpeTrackBorder;
+    border-radius: @hpeTrackBorderRadius;
+    box-shadow: @hpeTrackShadow;
+  }
+  &::-ms-fill-upper {
+    background: @hpeTrackBackground;
+    border: @hpeTrackBorder;
+    border-radius: @hpeTrackBorderRadius;
+    box-shadow: @hpeTrackShadow;
+  }
+
+  &:focus {
+    outline: none;
+    background: @hpeTrackBackgroundFocus;
+  }
+  &:focus::-webkit-slider-runnable-track {
+    background: @hpeTrackBackgroundFocus;
+  }
+  &:focus::-ms-fill-lower {
+    background: @hpeTrackBackgroundFocus;
+  }
+  &:focus::-ms-fill-upper {
+    background: @hpeTrackBackgroundFocus;
+  }
+
+  &::-webkit-slider-thumb {
+    box-shadow: @hpeThumbShadow;
+    border: @hpeThumbBorder;
+    height: @hpeThumbSize;
+    width: @hpeThumbSize;
+    border-radius: @hpeThumbBorderRadius;
+    background: @hpeThumbBackground;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -6px;
+  }
+  &::-moz-range-thumb {
+    box-shadow: @hpeThumbShadow;
+    border: @hpeThumbBorder;
+    height: @hpeThumbSize;
+    width: @hpeThumbSize;
+    border-radius: @hpeThumbBorderRadius;
+    background: @hpeThumbBackground;
+    cursor: pointer;
+  }
+  &::-ms-thumb {
+    box-shadow: @hpeThumbShadow;
+    border: @hpeThumbBorder;
+    height: @hpeThumbSize;
+    width: @hpeThumbSize;
+    border-radius: @hpeThumbBorderRadius;
+    background: @hpeThumbBackground;
+    cursor: pointer;
+  }
+
+  &:focus::-webkit-slider-thumb {
+    background: @hpeThumbBackgroundFocus;
+    border: @hpeThumbBorderFocus;
+  }
+  &:focus::-moz-range-thumb {
+    background: @hpeThumbBackgroundFocus;
+    border: @hpeThumbBorderFocus;
+  }
+  &:focus::-ms-thumb {
+    background: @hpeThumbBackgroundFocus;
+    border: @hpeThumbBorderFocus;
+  }
+
+  // IE tries to be clever and add a value label of its own
+  &::-ms-tooltip {
+    display: none;
+  }
+}
+
 .parametric-swap {
   margin-left: 3px;
   margin-bottom: 4px;
@@ -2068,7 +2192,7 @@ h4.similar-dates-message {
   }
 
   .btn-group .btn.inline-dropdown.dropdown-toggle > span {
-        border-bottom: none !important;
+    border-bottom: none !important;
   }
 
   .widget.widget-name-always {
@@ -2279,7 +2403,6 @@ h4.similar-dates-message {
   }
 }
 
-
 /*-------Trending----------*/
 
 .trending-chart {
@@ -2308,7 +2431,7 @@ h4.similar-dates-message {
 
 .color1 circle,
 .color1 path,
-.color1 line  {
+.color1 line {
   stroke: #6baed6;
 }
 
@@ -2363,7 +2486,7 @@ h4.similar-dates-message {
 .guide-line {
   opacity: 0.5;
   stroke: black;
-  stroke-dasharray: 3,3;
+  stroke-dasharray: 3, 3;
 }
 
 /*------Media queries------*/
