@@ -19,11 +19,11 @@ define([
         events: {
             'click .side-nav-menu-button': function(event) {
                 event.preventDefault();
-                const collapsed = this.sideBarModel.get('collapsed');
-                this.sideBarModel.set('collapsed', !collapsed);
+                const collapsed = this.sidebarModel.get('collapsed');
+                this.sidebarModel.set('collapsed', !collapsed);
             },
             'click a[data-pagename]': function() {
-                this.sideBarModel.set('collapsed', true);
+                this.sidebarModel.set('collapsed', true);
             }
         },
 
@@ -33,17 +33,16 @@ define([
 
         initialize: function(options) {
             this.pageData = options.pageData;
-            this.sideBarModel = new Backbone.Model({collapsed: false});
+            this.sidebarModel = options.sidebarModel;
             this.listenTo(options.router, 'route:page', this.selectPage);
 
             this.listenTo(vent, 'vent:resize', function() {
-                if($(window).width() <= 785 && !this.sideBarModel.get('collapsed')) {
-                    this.sideBarModel.set('collapsed', true);
-                    this.sideBarModel.set('collapsedFromResize', true);
-                }
-                else if(this.sideBarModel.get('collapsedFromResize')) {
-                    this.sideBarModel.set('collapsed', false);
-                    this.sideBarModel.set('collapsedFromResize', false);
+                if($(window).width() <= 785 && !this.sidebarModel.get('collapsed')) {
+                    this.sidebarModel.set('collapsed', true);
+                    this.sidebarModel.set('collapsedFromResize', true);
+                } else if(this.sidebarModel.get('collapsedFromResize')) {
+                    this.sidebarModel.set('collapsed', false);
+                    this.sidebarModel.set('collapsedFromResize', false);
                 }
             });
         },
@@ -76,19 +75,20 @@ define([
                 activeClass: 'selected'
             });
 
-            this.listenTo(this.sideBarModel, 'change:collapsed', function(model) {
+            this.listenTo(this.sidebarModel, 'change:collapsed', function(model) {
                 this.toggleSideBar(model.get('collapsed'));
             });
 
-            this.sideBarModel.set('collapsed', true);
+            this.sidebarModel.set('collapsed', true);
         },
 
         selectPage: function(pageName) {
-            this.$('li').removeClass('active');
+            this.$('li .active').removeClass('active');
 
-            let $li = this.$('li[data-pagename="' + pageName + '"]');
-            $li.addClass('active');
-            $li.parents('.find-navbar li').addClass('active');
+            this.$('li[data-pagename="' + pageName + '"]')
+                .addClass('active')
+                .parents('.find-navbar li')
+                .addClass('active');
         }
     });
 });

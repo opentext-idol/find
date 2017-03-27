@@ -5,8 +5,9 @@
 
 define([
     'underscore',
+    'backbone',
     'find/idol/app/page/dashboard-page'
-], function(_, DashboardPage) {
+], function(_, Backbone, DashboardPage) {
     'use strict';
 
     function getUpdatingWidgets(dashboardPage) {
@@ -22,37 +23,45 @@ define([
         beforeEach(function() {
             jasmine.clock().install();
 
+            this.sidebarModel = new Backbone.Model({collapsed: false});
+
             this.dashboardPage = new DashboardPage({
-                "dashboardName": "Test Dashboard",
-                "enabled": true,
-                "width": 3,
-                "height": 3,
-                "updateInterval": 60,
-                "widgets": [{
-                    "name": "Not Updating Widget",
-                    "type": "Widget",
-                    "x": 0,
-                    "y": 0,
-                    "width": 1,
-                    "height": 1
-                }, {
-                    "name": "Updating Widget 1",
-                    "type": "UpdatingWidget",
-                    "x": 1,
-                    "y": 0,
-                    "width": 1,
-                    "height": 1
-                }, {
-                    "name": "Updating Widget 2",
-                    "type": "UpdatingWidget",
-                    "x": 2,
-                    "y": 0,
-                    "width": 1,
-                    "height": 1
-                }]
+                dashboardName: 'Test Dashboard',
+                sidebarModel: this.sidebarModel,
+                enabled: true,
+                width: 3,
+                height: 3,
+                updateInterval: 60,
+                widgets: [
+                    {
+                        name: 'Not Updating Widget',
+                        type: 'Widget',
+                        x: 0,
+                        y: 0,
+                        width: 1,
+                        height: 1
+                    },
+                    {
+                        name: 'Updating Widget 1',
+                        type: 'UpdatingWidget',
+                        x: 1,
+                        y: 0,
+                        width: 1,
+                        height: 1
+                    },
+                    {
+                        name: 'Updating Widget 2',
+                        type: 'UpdatingWidget',
+                        x: 2,
+                        y: 0,
+                        width: 1,
+                        height: 1
+                    }
+                ]
             });
 
             spyOn(this.dashboardPage, 'update').and.callThrough();
+            spyOn(this.dashboardPage, 'onResize').and.callThrough();
             spyOn(this.dashboardPage, 'stopListening').and.callThrough();
 
             _.each(getUpdatingWidgets(this.dashboardPage), function(view) {
@@ -85,6 +94,14 @@ define([
                     expect(view.update).not.toHaveBeenCalled();
                 });
             });
+
+            describe('when the sidebar is toggled', function() {
+                it('should not resize', function() {
+                    const callCount = this.dashboardPage.onResize.calls.count();
+                    this.sidebarModel.trigger('change:collapsed');
+                    expect(this.dashboardPage.onResize.calls.count()).toBe(callCount);
+                });
+            });
         });
 
         describe('after the page is shown', function() {
@@ -94,7 +111,7 @@ define([
 
             it('should call update on the updating widgets', function() {
                 _.each(getUpdatingWidgets(this.dashboardPage), function(view) {
-                    expect(view.update.calls.count()).toEqual(1);
+                    expect(view.update.calls.count()).toBe(1);
                 });
             });
 
@@ -105,7 +122,7 @@ define([
                 });
 
                 it('should not mark the tracker complete', function() {
-                    expect(this.dashboardPage.updateTracker.get('complete')).toEqual(false);
+                    expect(this.dashboardPage.updateTracker.get('complete')).toBe(false);
                 });
 
                 describe('after the second widget\'s update completes', function() {
@@ -115,11 +132,11 @@ define([
                     });
 
                     it('should mark the tracker complete', function() {
-                        expect(this.dashboardPage.updateTracker.get('complete')).toEqual(true);
+                        expect(this.dashboardPage.updateTracker.get('complete')).toBe(true);
                     });
 
                     it('should stop listening to the tracker', function() {
-                        expect(this.dashboardPage.stopListening.calls.count()).toEqual(1);
+                        expect(this.dashboardPage.stopListening.calls.count()).toBe(1);
                     });
 
                     describe('then an update interval elapses', function() {
@@ -129,7 +146,7 @@ define([
 
                         it('should call update on the updating widgets', function() {
                             _.each(getUpdatingWidgets(this.dashboardPage), function(view) {
-                                expect(view.update.calls.count()).toEqual(2);
+                                expect(view.update.calls.count()).toBe(2);
                             });
                         });
 
@@ -140,7 +157,7 @@ define([
                             });
 
                             it('should not mark the tracker complete', function() {
-                                expect(this.dashboardPage.updateTracker.get('complete')).toEqual(false);
+                                expect(this.dashboardPage.updateTracker.get('complete')).toBe(false);
                             });
 
                             describe('after the second widget\'s update completes', function() {
@@ -150,11 +167,11 @@ define([
                                 });
 
                                 it('should mark the tracker complete', function() {
-                                    expect(this.dashboardPage.updateTracker.get('complete')).toEqual(true);
+                                    expect(this.dashboardPage.updateTracker.get('complete')).toBe(true);
                                 });
 
                                 it('should stop listening to the tracker', function() {
-                                    expect(this.dashboardPage.stopListening.calls.count()).toEqual(2);
+                                    expect(this.dashboardPage.stopListening.calls.count()).toBe(2);
                                 });
                             });
 
@@ -166,8 +183,8 @@ define([
                                 });
 
                                 it('should cancel the previous tracker', function() {
-                                    expect(this.oldUpdateTracker.get('cancelled')).toEqual(true);
-                                    expect(this.dashboardPage.stopListening.calls.count()).toEqual(2);
+                                    expect(this.oldUpdateTracker.get('cancelled')).toBe(true);
+                                    expect(this.dashboardPage.stopListening.calls.count()).toBe(2);
                                 });
                             });
                         });
@@ -182,9 +199,17 @@ define([
                     });
 
                     it('should cancel the previous tracker', function() {
-                        expect(this.oldUpdateTracker.get('cancelled')).toEqual(true);
-                        expect(this.dashboardPage.stopListening.calls.count()).toEqual(1);
+                        expect(this.oldUpdateTracker.get('cancelled')).toBe(true);
+                        expect(this.dashboardPage.stopListening.calls.count()).toBe(1);
                     });
+                });
+            });
+
+            describe('when the sidebar is toggled', function() {
+                it('should resize', function() {
+                    const callCount = this.dashboardPage.onResize.calls.count();
+                    this.sidebarModel.trigger('change:collapsed');
+                    expect(this.dashboardPage.onResize.calls.count()).toBe(callCount + 1);
                 });
             });
 
@@ -196,14 +221,22 @@ define([
 
                 it('should not update the widgets again', function() {
                     _.each(getUpdatingWidgets(this.dashboardPage), function(view) {
-                        expect(view.update.calls.count()).toEqual(1);
+                        expect(view.update.calls.count()).toBe(1);
                     });
                 });
 
                 it('should cancel the tracker', function() {
-                    expect(this.dashboardPage.updateTracker.get('cancelled')).toEqual(true);
+                    expect(this.dashboardPage.updateTracker.get('cancelled')).toBe(true);
                     expect(this.dashboardPage.stopListening.calls.argsFor(0)[0])
                         .toBe(this.dashboardPage.updateTracker);
+                });
+
+                describe('when the sidebar is toggled', function() {
+                    it('should not resize', function() {
+                        const callCount = this.dashboardPage.onResize.calls.count();
+                        this.sidebarModel.trigger('change:collapsed');
+                        expect(this.dashboardPage.onResize.calls.count()).toBe(callCount);
+                    });
                 });
             });
         });
