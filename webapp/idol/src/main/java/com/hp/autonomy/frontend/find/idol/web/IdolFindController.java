@@ -67,6 +67,7 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
             publicConfig.put(IdolMvcConstants.MMAP_BASE_URL.getName(), mmap.getBaseUrl());
         }
 
+        publicConfig.put(IdolMvcConstants.TRENDING.getName(), config.getTrending());
         publicConfig.put(IdolMvcConstants.VIEW_HIGHLIGHTING.getName(), config.getViewConfig().getHighlighting());
         publicConfig.put(IdolMvcConstants.DASHBOARDS.getName(), dashConfig.getConfig().getDashboards());
         publicConfig.put(IdolMvcConstants.APPLICATIONS.getName(), enabledApps.isEmpty() ? null : enabledApps);
@@ -84,7 +85,8 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
         MMAP_BASE_URL("mmapBaseUrl"),
         VIEW_HIGHLIGHTING("viewHighlighting"),
         DASHBOARDS("dashboards"),
-        APPLICATIONS("applications");
+        APPLICATIONS("applications"),
+        TRENDING("trending");
 
         @Getter
         private final String name;

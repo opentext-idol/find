@@ -11,6 +11,7 @@ import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentica
 import com.hp.autonomy.frontend.configuration.server.ProductType;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
+import com.hp.autonomy.frontend.find.core.configuration.TrendingConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
@@ -44,6 +45,9 @@ public class IdolFindConfigTest {
     @Mock
     private ViewConfig viewConfig;
 
+    @Mock
+    private TrendingConfiguration trending;
+
     private IdolFindConfig idolFindConfig;
 
     @Before
@@ -53,6 +57,7 @@ public class IdolFindConfigTest {
                 .login(communityAuthentication)
                 .queryManipulation(queryManipulation)
                 .savedSearchConfig(savedSearchConfig)
+                .trending(trending)
                 .view(viewConfig)
                 .export(export)
                 .build();
@@ -77,6 +82,7 @@ public class IdolFindConfigTest {
         when(savedSearchConfig.merge(any(SavedSearchConfig.class))).thenReturn(savedSearchConfig);
         when(viewConfig.merge(any(ViewConfig.class))).thenReturn(viewConfig);
         when(export.merge(any(ExportConfig.class))).thenReturn(export);
+        when(trending.merge(any(TrendingConfiguration.class))).thenReturn(trending);
 
         final IdolFindConfig defaults = IdolFindConfig.builder().content(mock(ServerConfig.class)).build();
         final IdolFindConfig mergedConfig = idolFindConfig.merge(defaults);
@@ -86,6 +92,7 @@ public class IdolFindConfigTest {
         assertEquals(savedSearchConfig, mergedConfig.getSavedSearchConfig());
         assertEquals(viewConfig, mergedConfig.getViewConfig());
         assertEquals(export, mergedConfig.getExport());
+        assertEquals(trending, mergedConfig.getTrending());
         assertEquals(idolFindConfig, mergedConfig);
     }
 

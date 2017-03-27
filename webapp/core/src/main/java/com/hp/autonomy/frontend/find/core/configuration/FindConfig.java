@@ -10,8 +10,6 @@ import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfi
 import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 
-import java.util.Collection;
-
 /**
  * Configuration common to both HoD and Idol implementations of Find
  *

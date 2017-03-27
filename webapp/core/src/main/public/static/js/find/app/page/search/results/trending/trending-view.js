@@ -9,6 +9,8 @@ define([
     'd3',
     'backbone',
     'i18n!find/nls/bundle',
+    'find/app/configuration',
+    'find/app/vent',
     'find/app/util/generate-error-support-message',
     'find/app/page/search/results/parametric-results-view',
     'find/app/page/search/results/field-selection-view',
@@ -19,11 +21,11 @@ define([
     'find/app/page/search/results/trending/trending',
     'parametric-refinement/to-field-text-node',
     'text!find/templates/app/page/loading-spinner.html',
-    'text!find/templates/app/page/search/results/trending/trending-results-view.html',
-    'find/app/vent'
-], function(_, $, d3, Backbone, i18n, generateErrorHtml, ParametricResultsView, FieldSelectionView, calibrateBuckets,
-            BucketedParametricCollection, ParametricDetailsModel, ParametricCollection, Trending, toFieldTextNode,
-            loadingSpinnerHtml, template, vent) {
+    'text!find/templates/app/page/search/results/trending/trending-results-view.html'
+
+], function (_, $, d3, Backbone, i18n, configuration, vent, generateErrorHtml, ParametricResultsView, FieldSelectionView,
+             calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel, ParametricCollection, Trending,
+             toFieldTextNode, loadingSpinnerHtml, template) {
     'use strict';
 
     const MILLISECONDS_TO_SECONDS = 1000;
@@ -54,9 +56,10 @@ define([
         loadingHtml: _.template(loadingSpinnerHtml),
 
         initialize: function(options) {
-            this.dateField = options.dateField || 'AUTN_DATE';
-            this.targetNumberOfBuckets = options.targetNumberOfBuckets || 20;
-            this.numberOfValuesToDisplay = options.numberOfValuesToDisplay || 10;
+            let config = configuration();
+            this.dateField = config.trending.dateField;
+            this.targetNumberOfBuckets = config.trending.numberOfBuckets;
+            this.numberOfValuesToDisplay = config.trending.numberOfValues;
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.parametricFieldsCollection = options.parametricFieldsCollection;

@@ -1,0 +1,5 @@
+{
+"dateField" : "AUTN_DATE",
+"numberOfValues": 10,
+"numberOfBuckets": 20
+}
