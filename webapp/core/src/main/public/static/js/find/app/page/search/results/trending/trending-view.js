@@ -58,11 +58,14 @@ define([
         initialize: function(options) {
             let config = configuration();
             this.dateField = config.trending.dateField;
+            //noinspection JSUnresolvedVariable
             this.targetNumberOfBuckets = config.trending.numberOfBuckets;
+            //noinspection JSUnresolvedVariable
             this.numberOfValuesToDisplay = config.trending.numberOfValues;
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.parametricFieldsCollection = options.parametricFieldsCollection;
+            this.parametricCollection = options.parametricCollection;
 
             this.debouncedFetchBucketingData = _.debounce(this.fetchBucketingData, DEBOUNCE_TIME);
             this.bucketedValues = {};
@@ -78,11 +81,14 @@ define([
             });
             this.listenTo(vent, 'vent:resize', this.update);
             this.listenTo(this.viewStateModel, 'change:dataState', this.onDataStateChange);
-            this.listenTo(this.parametricFieldsCollection, 'sync', this.setFieldSelector);
             this.listenTo(this.parametricFieldsCollection, 'error', function(collection, xhr) {
                 this.onDataError(xhr);
             });
             this.listenTo(this.model, 'change:field', this.fetchFieldData);
+            this.listenTo(this.parametricCollection, 'sync', this.setFieldSelector);
+            this.listenTo(this.parametricCollection, 'error', function(collection, xhr) {
+                this.onDataError(xhr);
+            });
         },
 
         render: function() {
@@ -101,7 +107,7 @@ define([
                 tooltipText: i18n['search.resultsView.trending.tooltipText']
             });
 
-            if(!this.parametricFieldsCollection.isEmpty()) {
+            if(!this.parametricCollection.isEmpty()) {
                 this.setFieldSelector();
             }
         },
@@ -126,11 +132,15 @@ define([
                 const fields = this.parametricFieldsCollection
                     .where({type: 'Parametric'})
                     .map(function (m) {
+                        const id = m.get('id');
+                        const totalValues = this.parametricCollection.where({id: id})[0] ?
+                            this.parametricCollection.where({id: id})[0].get('totalValues')
+                            : 0;
                         return {
-                            id: m.get('id'),
-                            displayName: m.get('displayName')
+                            id: id,
+                            displayName: m.get('displayName') + ' (' + totalValues + ')'
                         }
-                    });
+                    }.bind(this));
 
                 this.fieldSelector = new FieldSelectionView({
                     model: this.model,
