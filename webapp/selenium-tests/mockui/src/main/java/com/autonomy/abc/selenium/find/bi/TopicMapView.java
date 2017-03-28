@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -22,6 +22,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TopicMapView {
     private static final By CONCEPT_LOCATOR = By.cssSelector(".entity-topic-map > svg > path[stroke-opacity='0.7']");
@@ -92,12 +94,10 @@ public class TopicMapView {
 
         new WebDriverWait(driver, 10)
                 .withMessage("all entities to have opacity of either 0.2 or 0.7")
-                .until(new ExpectedCondition<Boolean>() {
-                    @Override
-                    public Boolean apply(final WebDriver driver) {
-                        return container.findElements(By.cssSelector(".entity-topic-map > svg > path:not([stroke-opacity='0.2']):not([stroke-opacity='0.7'])")).isEmpty();
-                    }
-                });
+                .until((ExpectedCondition<Boolean>)driver ->
+                        container.findElements(
+                                By.cssSelector(".entity-topic-map > svg > path:not([stroke-opacity='0.2']):not([stroke-opacity='0.7'])")
+                        ).isEmpty());
     }
 
     private List<WebElement> conceptClusters() {
@@ -204,6 +204,19 @@ public class TopicMapView {
         final List<ImmutablePair> childEntitiesOfChosenCluster = childConcepts(clusterIndex);
 
         return namesOfChildConcepts(childEntitiesOfChosenCluster);
+    }
+
+    public Set<String> getGradientIds() {
+        return findElements(By.tagName("linearGradient"))
+                .stream()
+                .map(tag -> tag.getAttribute("id"))
+                .collect(Collectors.toSet());
+    }
+
+    public Set<String> getFills() {
+        return mapEntities().stream()
+                .map(path -> path.getAttribute("fill"))
+                .collect(Collectors.toSet());
     }
 
     private WebElement findElement(final By locator) {
