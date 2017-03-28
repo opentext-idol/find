@@ -5,7 +5,6 @@
 
 define([
     'underscore',
-    'jquery',
     'backbone',
     'i18n!find/nls/bundle',
     'i18n!find/idol/nls/comparisons',
@@ -16,7 +15,7 @@ define([
     'find/app/util/results-view-container',
     'find/app/util/results-view-selection',
     'text!find/idol/templates/comparison/topic-map-comparison-view.html'
-], function(_, $, Backbone, i18n, comparisonsI18n, stateTokenStrategy, searchDataUtil, EntityCollection,
+], function(_, Backbone, i18n, comparisonsI18n, stateTokenStrategy, searchDataUtil, EntityCollection,
             TopicMapView, ResultsViewContainer, ResultsViewSelection, html) {
     'use strict';
 

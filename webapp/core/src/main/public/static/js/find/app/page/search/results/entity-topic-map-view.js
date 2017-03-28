@@ -207,13 +207,20 @@ define([
             const state = this.viewModel.get('state');
             this.topicMap.$el.toggleClass('hide', state !== ViewState.MAP);
 
-            if(state === ViewState.ERROR) {
-                this.$error.html(this.errorTemplate);
+            if(this.$error) {
+                if(state === ViewState.ERROR) {
+                    this.$error.html(this.errorTemplate);
+                }
+                this.$error.toggleClass('hide', state !== ViewState.ERROR);
             }
-            this.$error.toggleClass('hide', state !== ViewState.ERROR);
 
-            this.$empty.toggleClass('hide', state !== ViewState.EMPTY);
-            this.$loading.toggleClass('hide', state !== ViewState.LOADING);
+            if(this.$empty) {
+                this.$empty.toggleClass('hide', state !== ViewState.EMPTY);
+            }
+
+            if(this.$loading) {
+                this.$loading.toggleClass('hide', state !== ViewState.LOADING);
+            }
         },
 
         generateErrorMessage: function(xhr) {

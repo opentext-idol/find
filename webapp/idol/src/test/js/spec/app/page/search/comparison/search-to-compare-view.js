@@ -1,14 +1,14 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'find/idol/app/page/search/comparison/search-to-compare-view',
+    'underscore',
     'jquery',
     'backbone',
-    'underscore'
-], function(SearchToCompareView, $, Backbone, _) {
+    'find/idol/app/page/search/comparison/search-to-compare-view'
+], function(_, $, Backbone, SearchToCompareView) {
     'use strict';
 
     describe('Search To Compare View', function() {
@@ -50,7 +50,7 @@ define([
         });
 
         it('should display only the models other than the primary', function() {
-            var titles = _.map(this.view.$('.secondary-model-title'), function(el) {
+            const titles = _.map(this.view.$('.secondary-model-title'), function(el) {
                 return $(el).text().trim();
             });
 
