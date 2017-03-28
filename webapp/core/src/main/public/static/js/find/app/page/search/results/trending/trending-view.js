@@ -79,7 +79,9 @@ define([
             this.listenTo(vent, 'vent:resize', this.update);
             this.listenTo(this.viewStateModel, 'change:dataState', this.onDataStateChange);
             this.listenTo(this.parametricFieldsCollection, 'sync', this.setFieldSelector);
-            this.listenTo(this.parametricFieldsCollection, 'error', this.onDataError);
+            this.listenTo(this.parametricFieldsCollection, 'error', function(collection, xhr) {
+                this.onDataError(xhr);
+            });
             this.listenTo(this.model, 'change:field', this.fetchFieldData);
         },
 
