@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -11,6 +11,7 @@ import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
+import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
@@ -28,6 +29,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -183,7 +185,8 @@ public class TopicMapITCase extends IdolFindTestBase {
 
     private int sliderToolTipValue(final Slider slider) {
         slider.hover();
-        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(slider.tooltip()));
+        new WebDriverWait(getDriver(), 5)
+                .until(ExpectedConditions.visibilityOf(slider.tooltip()));
         verifyThat("Tooltip appears on hover", slider.tooltip().isDisplayed());
         return slider.getValue();
     }
@@ -208,6 +211,53 @@ public class TopicMapITCase extends IdolFindTestBase {
             results.waitForMapLoaded();
             verifyThat("Map has appeared on tab " + (j + 1), results.mapEntities(), hasSize(greaterThan(0)));
         }
+    }
+
+    @Test
+    @ResolvedBug("FIND-1007")
+    // selenium user must have at least one saved search -- add that to setup once routing is fixed
+    public void testTopicMapRendersColoursOnRouting() {
+        final SearchTabBar searchTabBar = getElementFactory().getSearchTabBar();
+        searchTabBar.waitUntilSavedSearchAppears();
+        searchTabBar.switchTo(searchTabBar.savedTabTitles().get(0));
+        final TopicMapView topicMap = getElementFactory().getTopicMap();
+        topicMap.waitForMapLoaded();
+
+        final List<WebElement> initialEntities = topicMap.mapEntities();
+        verifyThat("Map has appeared", initialEntities, hasSize(greaterThan(0)));
+
+        verifyEntityGradients(topicMap);
+
+        final SunburstView sunburstView = findPage.goToSunburst();
+        sunburstView.waitForSunburst();
+
+        // modify search
+        findService.searchAnyView("cat");
+
+        findPage.goToTopicMap();
+        topicMap.waitForMapLoaded();
+
+        final List<WebElement> newEntities = topicMap.mapEntities();
+        verifyThat("Map has appeared", newEntities, hasSize(greaterThan(0)));
+
+        verifyEntityGradients(topicMap);
+    }
+
+    private void verifyEntityGradients(final TopicMapView topicMap) {
+        final Set<String> newFills = topicMap.getFills();
+        final Set<String> newFiltered = newFills.stream().filter(x -> x.contains("topic-map")).collect(Collectors.toSet());
+
+        verifyThat("Paths are linked to their gradients", topicMap.getGradientIds().containsAll(getIdsFromFillUrls(newFills)));
+        verifyThat("URLs point to topic-map",
+                   newFiltered,
+                   hasSize(newFills.size()));
+    }
+
+    private Set<String> getIdsFromFillUrls(final Set<String> urls) {
+        return urls
+                .stream()
+                .map(fillUrl -> fillUrl.substring(fillUrl.indexOf('#') + 1, fillUrl.length() - 2))
+                .collect(Collectors.toSet());
     }
 
     private void search(final String term) {

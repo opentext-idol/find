@@ -514,8 +514,7 @@ define([
                 this.$('.query-service-view-container').removeClass('hide');
             }
 
-            this.$('.app-logo').toggleClass('hide', bool);
-            this.$('.hp-logo-footer').toggleClass('hide', bool);
+            this.$('.app-logo, .hp-logo-footer, .find-banner-container').toggleClass('hide', bool);
 
             this.removeDocumentDetailView();
             this.removeSuggestView();
@@ -523,8 +522,6 @@ define([
             this.optionalViews.forEach(function(view) {
                 view[bool ? 'onExpand' : 'onReduce'](view.instance);
             });
-
-            this.$('.find-banner-container').toggleClass('hide', bool);
 
             // TODO: somebody else needs to own this
             $('.container-fluid, .find-logo-small').toggleClass('reduced', !bool);
@@ -560,9 +557,8 @@ define([
 
         updateRouting: function(savedSearch, selectedTab) {
             vent.navigate(savedSearch
-                    ? '/search/tab/' + savedSearch + (selectedTab ? '/view/' + selectedTab : '')
-                    : '/search/query',
-                {trigger: false});
+                ? '/search/tab/' + savedSearch + (selectedTab ? '/view/' + selectedTab : '')
+                : '/search/query');
 
             this.currentRoute = Backbone.history.getFragment();
         },

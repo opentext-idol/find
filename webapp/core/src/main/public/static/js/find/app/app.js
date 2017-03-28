@@ -113,7 +113,7 @@ define([
 
                 if(!matchedRoute) {
                     vent.navigate(configuration().hasBiRole
-                        ? 'search/query/*'
+                        ? 'search/query'
                         : 'search/splash');
                 }
 

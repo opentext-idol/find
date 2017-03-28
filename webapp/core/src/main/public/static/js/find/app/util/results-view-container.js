@@ -1,10 +1,16 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'backbone',
     'underscore',
     'jquery',
+    'backbone',
     'i18n!find/nls/bundle',
     'text!find/templates/app/util/content-container.html'
-], function (Backbone, _, $, i18n, contentContainerTemplate) {
+], function(_, $, Backbone, i18n, contentContainerTemplate) {
+    'use strict';
 
     return Backbone.View.extend({
         contentContainerTemplate: _.template(contentContainerTemplate, {variable: 'data'}),
@@ -19,10 +25,10 @@ define([
         render: function() {
             this.$tabContent = $('<div class="tab-content"></div>');
 
-            var selectedTab = this.model.get('selectedTab');
+            const selectedTab = this.model.get('selectedTab');
 
             _.each(this.views, function(viewData) {
-                var $viewElement = $(this.contentContainerTemplate(viewData))
+                const $viewElement = $(this.contentContainerTemplate(viewData))
                     .toggleClass('active', viewData.id === selectedTab)
                     .appendTo(this.$tabContent);
 
@@ -35,34 +41,34 @@ define([
                 viewData.content.setElement($viewElement);
             }, this);
 
-            this.$el.empty().append(this.$tabContent);
+            this.$el.html(this.$tabContent);
             this.selectTab();
         },
 
         selectTab: function() {
-            var tabId = this.model.get('selectedTab');
-            var viewData = _.findWhere(this.views, {id: tabId});
+            const tabId = this.model.get('selectedTab');
+            const viewData = _.findWhere(this.views, {id: tabId});
 
             // Deactivate all tabs and activate the selected tab
             this.$tabContent.find('> .active').removeClass('active');
             this.$tabContent.find('#' + viewData.uniqueId).addClass('active');
 
-            if (viewData) {
-                if (!viewData.rendered) {
+            if(viewData) {
+                if(!viewData.rendered) {
                     viewData.content.render();
                     viewData.rendered = true;
                 }
 
-                if (viewData.content.update) {
+                if(viewData.content.update) {
                     viewData.content.update();
                 }
             }
         },
 
         updateTab: function() {
-            var tabId = this.model.get('selectedTab');
-            var viewData = _.findWhere(this.views, {id: tabId});
-            if (viewData.content.update) {
+            const tabId = this.model.get('selectedTab');
+            const viewData = _.findWhere(this.views, {id: tabId});
+            if(viewData.content.update) {
                 viewData.content.update();
             }
         },
@@ -75,5 +81,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-
 });
