@@ -20,6 +20,7 @@ define([
             FindSearch, AboutPage, DashboardPage, SettingsPage, i18n) {
     'use strict';
 
+    //noinspection JSUnusedGlobalSymbols
     return BaseApp.extend({
         Navigation: Navigation,
         IndexesCollection: IndexesCollection,
@@ -43,7 +44,7 @@ define([
             const dashboards = _.where(configuration().dashboards, {enabled: true});
 
             const pageData = _.reduce(dashboards, function(acc, dash, index) {
-                acc['dashboards/' + dash.dashboardName] = {
+                acc['dashboards/' + encodeURIComponent(dash.dashboardName)] = {
                     Constructor: DashboardPage,
                     icon: 'hp-icon hp-fw hp-dashboard',
                     models: ['sidebarModel'],

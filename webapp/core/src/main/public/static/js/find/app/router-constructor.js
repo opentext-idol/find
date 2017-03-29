@@ -39,7 +39,7 @@ define([
         },
 
         dashboards: function(dashboardName) {
-            this.trigger('route:page', 'dashboards/' + dashboardName);
+            this.trigger('route:page', 'dashboards/' + encodeURIComponent(dashboardName));
         },
 
         savedSearch: function() {
