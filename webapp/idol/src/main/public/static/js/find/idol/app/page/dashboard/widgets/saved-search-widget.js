@@ -9,8 +9,10 @@ define([
     './updating-widget',
     'find/idol/app/model/idol-indexes-collection',
     'find/app/model/saved-searches/saved-search-model',
-    'find/app/vent'
-], function(_, $, UpdatingWidget, IdolIndexesCollection, SavedSearchModel, vent) {
+    'find/app/vent',
+    'text!find/idol/templates/page/dashboards/saved-search-widget-error.html',
+    'i18n!find/nls/bundle'
+], function(_, $, UpdatingWidget, IdolIndexesCollection, SavedSearchModel, vent, errorTemplate, i18n) {
     'use strict';
 
     const DashboardSearchModel = SavedSearchModel.extend({
@@ -22,12 +24,38 @@ define([
         }
     });
 
+    const errorTemplateFn = _.template(errorTemplate);
+
+    function toggleErrorMessage(hasError, msg) {
+        this.$error.toggleClass('hide', !hasError);
+        this.$content.toggleClass('hide', hasError);
+
+        this.$error.html(hasError
+            ? errorTemplateFn({
+                i18n: i18n,
+                errorMessage: msg
+                    ? _.escape(msg)
+                    : ''
+            })
+            : '');
+    }
+
+    function getResponseMessage(error) {
+        return (error && error.responseJSON)
+            ? error.responseJSON.message
+            : ''
+    }
+
     return UpdatingWidget.extend({
         clickable: true,
 
-        // Called once after the first saved search promise resolves. Calls
-        // through to getData; if postInitialize() returns a promise,
-        // this and any future calls to getData() will be contingent on its resolution.
+        // Called after the saved search promise resolves. Calls through to getData();
+        // if postInitialize() returns a promise, this and any future calls to getData()
+        // will be contingent on its resolution.
+        // If the promise returned by postInitialize() is rejected, the widget will retry
+        // calling it on the next update until the promise resolves successfully. Afterwards,
+        // the update cycle will comprise sequential calls to this.savedSearchModel.fetch() and
+        // calls to getData(), but not to postInitialize().
         postInitialize: _.noop,
 
         // Called during every update. Must return a promise.
@@ -40,7 +68,9 @@ define([
                 options.datasource.config.type +
                 ':' +
                 options.datasource.config.id +
-                (this.viewType ? '/view/' + this.viewType : '');
+                (this.viewType
+                    ? '/view/' + this.viewType
+                    : '');
 
             this.savedSearchModel = new DashboardSearchModel({
                 id: options.datasource.config.id,
@@ -52,41 +82,27 @@ define([
         // The argument callback hides the loading spinner -- every execution path that does not call it will
         // result in the loading spinner not disappearing after the update.
         doUpdate: function(done) {
-            // TODO does not fetch saved search again unless widget is fully initialised. This fails to cover the edge case in which:
-            // 1. the widget loads, a saved search is fetched, and its promise resolves
-            // 2. then the postInitialize() promise takes a long time to resolve
-            // 3. then an update happens. A new saved search is not fetched
-            // 4. then the postInitialize() promise resolves and this.getData() is called using the 'old' saved search.
-            // If the saved search was modified between 2. and 4., the first update will happen using stale data.
-            if(this.initialiseWidgetPromise && this.initialiseWidgetPromise.state() !== 'resolved') {
-                done();
-            } else {
-                const savedSearchPromise = this.savedSearchModel.fetch()
-                    .done(function() {
-                        this.queryModel = this.savedSearchModel.toQueryModel(IdolIndexesCollection, false);
-                    }.bind(this));
+            this.savedSearchPromise = this.savedSearchModel.fetch()
+                .then(function() {
+                    this.queryModel = this.savedSearchModel
+                        .toQueryModel(IdolIndexesCollection, false);
 
-                let promise;
-
-                if(this.initialiseWidgetPromise) {
-                    promise = $.when(savedSearchPromise, this.initialiseWidgetPromise);
-                } else {
-                    promise = savedSearchPromise
-                        .then(function() {// TODO handle failure
-                            // postInitialize may not return a promise
-                            return $.when(this.postInitialize());// TODO handle failure
-                        }.bind(this));
-
-                    this.initialiseWidgetPromise = promise;
-                }
-
-                promise
-                    .then(function() {
-                        this.updatePromise = this.getData();// TODO handle failure
-                        return this.updatePromise;
-                    }.bind(this))
-                    .done(done);
-            }
+                    return this.hasInitialized
+                        ? $.when()
+                        : (this.widgetInitialisePromise = $.when(this.postInitialize()));
+                }.bind(this))
+                .then(function() {
+                    this.hasInitialized = true;
+                    return this.updatePromise = this.getData();
+                }.bind(this))
+                .done(function() {
+                    toggleErrorMessage.call(this, false);
+                }.bind(this))
+                .fail(function(error) {
+                    this.queryModel = null;
+                    toggleErrorMessage.call(this, true, getResponseMessage(error));
+                }.bind(this))
+                .always(done);
         },
 
         onClick: function() {
@@ -94,6 +110,12 @@ define([
         },
 
         onCancelled: function() {
+            if(this.savedSearchPromise && this.savedSearchPromise.abort) {
+                this.savedSearchPromise.abort();
+            }
+            if(this.widgetInitialisePromise && this.widgetInitialisePromise.abort) {
+                this.widgetInitialisePromise.abort();
+            }
             if(this.updatePromise && this.updatePromise.abort) {
                 this.updatePromise.abort();
             }

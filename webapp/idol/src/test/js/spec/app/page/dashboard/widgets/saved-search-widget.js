@@ -11,7 +11,343 @@ define([
 ], function(_, $, SavedSearchWidget, vent) {
     'use strict';
 
-    // TODO happy path tests only, dashboards have no error handling at this time
+    function resolveLatest(promiseArray) {
+        promiseArray[promiseArray.length - 1].resolve();
+    }
+
+    function rejectLatest(promiseArray) {
+        promiseArray[promiseArray.length - 1].reject();
+    }
+
+    // This is the scenario where the widget is fully initialized and is undergoing a regular scheduled update
+    // Parameters describe how many times a given fetch (saved search, postInitialize() or getData()) had been done.
+    // Unsuccessful calls count towards these numbers. The parameter depth is a recursion-limiting integer.
+    function updateWithInit(savedSearchCallCount, postInitializeCallCount, getDataCallCount, depth) {
+        return function() {
+            beforeEach(function() {
+                this.widget.update(this.tracker);
+            });
+
+            it('displays a loading spinner', function() {
+                expect(this.widget.$('.widget-loading-spinner')).not.toHaveClass('hide');
+            });
+
+            it('fetches the saved search', function() {
+                expect(this.widget.savedSearchModel.fetch.calls.count()).toEqual(savedSearchCallCount + 1);
+            });
+
+            it('does not call postInitialize() yet', function() {
+                expect(this.widget.postInitialize.calls.count()).toEqual(postInitializeCallCount);
+            });
+
+            it('does not call getData() yet', function() {
+                expect(this.widget.getData.calls.count()).toEqual(getDataCallCount);
+            });
+
+            describe('saved search fetch succeeds -> ', function() {
+                beforeEach(function() {
+                    resolveLatest(this.savedSearchPromises);
+                });
+
+                it('still displays a loading spinner', function() {
+                    expect(this.widget.$('.widget-loading-spinner')).not.toHaveClass('hide');
+                });
+
+                it('calls postInitialize()', function() {
+                    expect(this.widget.postInitialize.calls.count()).toEqual(postInitializeCallCount + 1);
+                });
+
+                it('does not call getData() yet', function() {
+                    expect(this.widget.getData.calls.count()).toEqual(getDataCallCount);
+                });
+
+                describe('postInitialize() succeeds -> ', function() {
+                    beforeEach(function() {
+                        resolveLatest(this.postInitializePromises);
+                    });
+
+                    it('still displays a loading spinner', function() {
+                        expect(this.widget.$('.widget-loading-spinner')).not.toHaveClass('hide');
+                    });
+
+                    it('calls getData()', function() {
+                        expect(this.widget.getData.calls.count()).toEqual(getDataCallCount + 1);
+                    });
+
+                    describe('getData() succeeds -> ', function() {
+                        beforeEach(function() {
+                            resolveLatest(this.getDataPromises);
+                        });
+
+                        it('no longer displays a loading spinner', function() {
+                            expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
+                        });
+
+                        it('does not display an error message', function() {
+                            expect(this.widget.$error).toHaveClass('hide');
+                        });
+
+                        if(depth > 0) {
+                            describe('scheduled update -> ',
+                                updateWithoutInit(
+                                    savedSearchCallCount + 1,
+                                    postInitializeCallCount + 1,
+                                    getDataCallCount + 1,
+                                    depth - 1
+                                ));
+                        }
+                    });
+
+                    describe('getData() fails -> ', function() {
+                        beforeEach(function() {
+                            rejectLatest(this.getDataPromises);
+                        });
+
+                        it('no longer displays a loading spinner', function() {
+                            expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
+                        });
+
+                        it('displays an error message', function() {
+                            expect(this.widget.$error).not.toHaveClass('hide');
+                        });
+
+                        if(depth > 0) {
+                            describe('scheduled update -> ',
+                                updateWithoutInit(
+                                    savedSearchCallCount + 1,
+                                    postInitializeCallCount + 1,
+                                    getDataCallCount + 1,
+                                    depth - 1
+                                ));
+                        }
+                    });
+
+                    if(depth > 0) {
+                        describe('scheduled update before getData() succeeds -> ',
+                            updateWithoutInit(
+                                savedSearchCallCount + 1,
+                                postInitializeCallCount + 1,
+                                getDataCallCount + 1,
+                                depth - 1
+                            ));
+                    }
+                });
+
+                describe('postInitialize() fails -> ', function() {
+                    beforeEach(function() {
+                        rejectLatest(this.postInitializePromises);
+                    });
+
+                    it('no longer displays a loading spinner', function() {
+                        expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
+                    });
+
+                    it('displays an error message', function() {
+                        expect(this.widget.$error).not.toHaveClass('hide');
+                    });
+
+                    it('does not call getData()', function() {
+                        expect(this.widget.getData.calls.count()).toEqual(getDataCallCount);
+                    });
+
+                    if(depth > 0) {
+                        describe('scheduled update -> ',
+                            updateWithInit(
+                                savedSearchCallCount + 1,
+                                postInitializeCallCount + 1,
+                                getDataCallCount,
+                                depth - 1
+                            ));
+                    }
+                });
+
+                if(depth > 0) {
+                    describe('scheduled update before postInitialize() succeeds -> ',
+                        updateWithInit(
+                            savedSearchCallCount + 1,
+                            postInitializeCallCount + 1,
+                            getDataCallCount,
+                            depth - 1
+                        ));
+                }
+            });
+
+            describe('saved search fetch fails -> ', function() {
+                beforeEach(function() {
+                    rejectLatest(this.savedSearchPromises);
+                });
+
+                it('no longer displays a loading spinner', function() {
+                    expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
+                });
+
+                it('displays an error message', function() {
+                    expect(this.widget.$error).not.toHaveClass('hide');
+                });
+
+                it('does not call postInitialize()', function() {
+                    expect(this.widget.postInitialize.calls.count()).toEqual(postInitializeCallCount);
+                });
+
+                it('does not call getData()', function() {
+                    expect(this.widget.getData.calls.count()).toEqual(getDataCallCount);
+                });
+
+                if(depth > 0) {
+                    describe('scheduled update before postInitialize() succeeds -> ',
+                        updateWithInit(
+                            savedSearchCallCount + 1,
+                            postInitializeCallCount,
+                            getDataCallCount,
+                            depth - 1
+                        ));
+                }
+            });
+
+            if(depth > 0) {
+                describe('scheduled update before saved search fetch succeeds -> ',
+                    updateWithInit(
+                        savedSearchCallCount + 1,
+                        postInitializeCallCount,
+                        getDataCallCount,
+                        depth - 1
+                    ));
+            }
+        };
+    }
+
+    // This is the scenario where the widget has not yet executed postInitialize() or the promise was rejected.
+    // A widget should only call postInitialize() once during its lifetime.
+    // Parameters describe how many times a given fetch (saved search, postInitialize() or getData()) had been done.
+    // Unsuccessful calls count towards these numbers. The parameter depth is a recursion-limiting integer.
+    function updateWithoutInit(savedSearchCallCount, postInitializeCallCount, getDataCallCount, depth) {
+        return function() {
+            beforeEach(function() {
+                this.widget.update(this.tracker);
+            });
+
+            it('displays a loading spinner', function() {
+                expect(this.widget.$('.widget-loading-spinner')).not.toHaveClass('hide');
+            });
+
+            it('fetches the saved search', function() {
+                expect(this.widget.savedSearchModel.fetch.calls.count()).toEqual(savedSearchCallCount + 1);
+            });
+
+            it('does not call getData() yet', function() {
+                expect(this.widget.getData.calls.count()).toEqual(getDataCallCount);
+            });
+
+            describe('saved search fetch succeeds -> ', function() {
+                beforeEach(function() {
+                    resolveLatest(this.savedSearchPromises);
+                });
+
+                it('still displays a loading spinner', function() {
+                    expect(this.widget.$('.widget-loading-spinner')).not.toHaveClass('hide');
+                });
+
+                it('does not call postInitialize() again', function() {
+                    expect(this.widget.postInitialize.calls.count()).toEqual(postInitializeCallCount);
+                });
+
+                it('calls getData()', function() {
+                    expect(this.widget.getData.calls.count()).toEqual(getDataCallCount + 1);
+                });
+
+                describe('getData() succeeds -> ', function() {
+                    beforeEach(function() {
+                        resolveLatest(this.getDataPromises);
+                    });
+
+                    it('no longer displays a loading spinner', function() {
+                        expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
+                    });
+
+                    it('does not display an error message', function() {
+                        expect(this.widget.$error).toHaveClass('hide');
+                    });
+
+                    if(depth > 0) {
+                        describe('scheduled update -> ',
+                            updateWithoutInit(
+                                savedSearchCallCount + 1,
+                                postInitializeCallCount,
+                                getDataCallCount + 1,
+                                depth - 1
+                            ));
+                    }
+                });
+
+                describe('getData() fails -> ', function() {
+                    beforeEach(function() {
+                        rejectLatest(this.getDataPromises);
+                    });
+
+                    it('no longer displays a loading spinner', function() {
+                        expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
+                    });
+
+                    it('displays an error message', function() {
+                        expect(this.widget.$error).not.toHaveClass('hide');
+                    });
+
+                    if(depth > 0) {
+                        describe('scheduled update -> ',
+                            updateWithoutInit(
+                                savedSearchCallCount + 1,
+                                postInitializeCallCount,
+                                getDataCallCount + 1,
+                                depth - 1
+                            ));
+                    }
+                });
+
+                if(depth > 0) {
+                    describe('scheduled update before getData() succeeds -> ',
+                        updateWithoutInit(
+                            savedSearchCallCount + 1,
+                            postInitializeCallCount,
+                            getDataCallCount + 1,
+                            depth - 1
+                        ));
+                }
+            });
+
+            describe('saved search fetch fails -> ', function() {
+                beforeEach(function() {
+                    rejectLatest(this.savedSearchPromises);
+                });
+
+                it('no longer displays a loading spinner', function() {
+                    expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
+                });
+
+                it('displays an error message', function() {
+                    expect(this.widget.$error).not.toHaveClass('hide');
+                });
+
+                it('does not call postInitialize() again', function() {
+                    expect(this.widget.postInitialize.calls.count()).toEqual(postInitializeCallCount);
+                });
+
+                it('does not call getData()', function() {
+                    expect(this.widget.getData.calls.count()).toEqual(getDataCallCount);
+                });
+
+                if(depth > 0) {
+                    describe('scheduled update before getData() succeeds -> ',
+                        updateWithoutInit(
+                            savedSearchCallCount + 1,
+                            postInitializeCallCount,
+                            getDataCallCount,
+                            depth - 1
+                        ));
+                }
+            });
+        };
+    }
+
     describe('Saved Search Widget', function() {
         beforeEach(function() {
             this.widget = new SavedSearchWidget({
@@ -63,10 +399,9 @@ define([
             expect(this.widget.postInitialize).not.toHaveBeenCalled();
         });
 
-        describe('when the page renders and updates the widget', function() {
+        describe('when the page renders the widget -> ', function() {
             beforeEach(function() {
                 this.widget.render();
-                this.widget.update(this.tracker);
             });
 
             it('navigates to the saved search when clicked', function() {
@@ -75,146 +410,14 @@ define([
             });
 
             it('displays the widget\'s container without waiting for data to fetch', function() {
+                this.widget.update(this.tracker);
                 expect(this.widget.$content).toBeDefined();
+                expect(this.widget.$content).not.toHaveClass('hide');
             });
 
-            it('fetches its saved search data', function() {
-                expect(this.widget.savedSearchModel.fetch.calls.count()).toEqual(1);
-            });
-
-            it('does not fetch additional initialization data', function() {
-                expect(this.widget.postInitialize).not.toHaveBeenCalled();
-            });
-
-            describe('then the saved search fetch succeeds', function() {
-                beforeEach(function() {
-                    this.savedSearchPromises[0].resolve();
-                });
-
-                it('the widget fetches additional data', function() {
-                    expect(this.widget.postInitialize.calls.count()).toEqual(1);
-                });
-
-                describe('then the postInitialize() promise is resolved', function() {
-                    beforeEach(function() {
-                        this.postInitializePromises[0].resolve();
-                    });
-
-                    it('the widget calls getData() after initialisation', function() {
-                        expect(this.widget.getData.calls.count()).toEqual(1);
-                    });
-
-                    describe('then the widget fetches data and is updated', function() {
-                        beforeEach(function() {
-                            this.getDataPromises[0].resolve();
-                            this.widget.update(this.tracker);
-                        });
-
-                        it('fetches the saved search again', function() {
-                            expect(this.widget.savedSearchModel.fetch.calls.count()).toEqual(2);
-                        });
-
-                        it('does not call postInitialize() again', function() {
-                            expect(this.widget.postInitialize.calls.count()).toEqual(1);
-                        });
-
-                        describe('then the saved search fetch succeeds', function() {
-                            beforeEach(function() {
-                                this.savedSearchPromises[1].resolve();
-                            });
-
-                            it('the widget calls getData() again', function() {
-                                expect(this.widget.getData.calls.count()).toEqual(2);
-                            });
-                        });
-                    });
-
-                    describe('then the widget updates before the first promise resolves', function() {
-                        beforeEach(function() {
-                            this.widget.update(this.tracker);
-                        });
-
-                        it('fetches the saved search again', function() {
-                            expect(this.widget.savedSearchModel.fetch.calls.count()).toEqual(2);
-                        });
-
-                        it('does not call postInitialize() again', function() {
-                            expect(this.widget.postInitialize.calls.count()).toEqual(1);
-                        });
-
-                        describe('then the saved search fetch succeeds', function() {
-                            beforeEach(function() {
-                                this.savedSearchPromises[1].resolve();
-                            });
-
-                            it('the widget calls getData()', function() {
-                                expect(this.widget.getData.calls.count()).toEqual(2);
-                            });
-                        });
-                    });
-                });
-
-                describe('then the widget updates before the postInitialize() promise resolves', function() {
-                    beforeEach(function() {
-                        this.widget.update(this.tracker);
-                    });
-
-                    it('does not call postInitialize() again', function() {
-                        expect(this.widget.postInitialize.calls.count()).toEqual(1);
-                    });
-
-                    // TODO this is not ideal. If saved search is modified between
-                    // the first saved search fetch and the postInitialize() promise resolving, the first update
-                    // will be based on stale data.
-                    it('does not fetch the saved search again', function() {
-                        expect(this.widget.savedSearchModel.fetch.calls.count()).toEqual(1);
-                    });
-
-                    describe('then the postInitialize() promise is resolved', function() {
-                        beforeEach(function() {
-                            this.postInitializePromises[0].resolve();
-                        });
-
-                        it('the widget only calls getData() once', function() {
-                            expect(this.widget.getData.calls.count()).toEqual(1);
-                        });
-                    });
-                });
-            });
-
-            describe('then the widget updates before the saved search returns', function() {
-                beforeEach(function() {
-                    this.widget.update(this.tracker);
-                });
-
-                it('does not fetch the saved search again', function() {
-                    expect(this.widget.savedSearchModel.fetch.calls.count()).toEqual(1);
-                });
-
-                describe('then the saved search fetch succeeds', function() {
-                    beforeEach(function() {
-                        this.savedSearchPromises[0].resolve();
-                    });
-
-                    it('postInitialize() is called', function() {
-                        expect(this.widget.postInitialize.calls.count()).toEqual(1);
-                    });
-
-                    it('getData() is not called', function() {
-                        expect(this.widget.getData).not.toHaveBeenCalled();
-                    });
-
-                    describe('then the postInitialize() promise is resolved', function() {
-                        beforeEach(function() {
-                            this.postInitializePromises[0].resolve();
-                        });
-
-                        it('the widget only calls getData() once', function() {
-                            expect(this.widget.getData.calls.count()).toEqual(1);
-                        });
-                    });
-                });
-            });
+            // No fetches have yet been carried out -- parameters are 0.
+            // Test 3 cycles of initialisation/update
+            describe('initial update -> ', updateWithInit(0, 0, 0, 2));
         });
     });
 });

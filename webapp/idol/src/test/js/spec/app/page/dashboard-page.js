@@ -67,6 +67,7 @@ define([
             _.each(getUpdatingWidgets(this.dashboardPage), function(view) {
                 spyOn(view, 'update').and.callThrough();
 
+                // TODO verify onCancelled spy expectations
                 _.each(['onComplete', 'onIncrement', 'onCancelled', 'doUpdate'], function(spy) {
                     spyOn(view, spy)
                 })

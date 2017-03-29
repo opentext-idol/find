@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -154,9 +155,10 @@ class SavedSnapshotController {
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public SavedSnapshot get(@PathVariable("id") final long id) {
         if(getValidIds().contains(id)) {
-            return service.getDashboardSearch(id);
+            return Optional.ofNullable(service.getDashboardSearch(id))
+                    .orElseThrow(() -> new IllegalArgumentException("ID " + id + " does not match any known Saved Snapshot"));
         } else {
-            throw new IllegalArgumentException("Saved Search Id is not in the dashboards configuration file");
+            throw new IllegalArgumentException("Saved Snapshot ID " + id + " is not in the dashboards configuration file");
         }
     }
 }

@@ -2068,7 +2068,7 @@ h4.similar-dates-message {
   }
 
   .btn-group .btn.inline-dropdown.dropdown-toggle > span {
-        border-bottom: none !important;
+    border-bottom: none !important;
   }
 
   .widget.widget-name-always {
@@ -2078,6 +2078,7 @@ h4.similar-dates-message {
   }
 
   .widget.widget-name-onhover:hover {
+    .widget-error,
     .widget-content {
       filter: blur(5px);
       opacity: 0.5;
@@ -2086,7 +2087,6 @@ h4.similar-dates-message {
     .widget-hover-title-container {
       opacity: 1;
     }
-
   }
 
   .widget.widget-name-never,
@@ -2132,6 +2132,27 @@ h4.similar-dates-message {
       .font-bold;
 
       color: @black;
+    }
+  }
+
+  .widget-error {
+    .no-overflow;
+
+    width: @100percent;
+    height: @100percent;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    i {
+      font-size: calc(2 * @fontSizeXXLarge);
+      margin-bottom: 10px;
+    }
+
+    span {
+      text-align: center;
     }
   }
 
@@ -2279,7 +2300,6 @@ h4.similar-dates-message {
   }
 }
 
-
 /*-------Trending----------*/
 
 .trending-chart {
@@ -2308,7 +2328,7 @@ h4.similar-dates-message {
 
 .color1 circle,
 .color1 path,
-.color1 line  {
+.color1 line {
   stroke: #6baed6;
 }
 
@@ -2363,7 +2383,7 @@ h4.similar-dates-message {
 .guide-line {
   opacity: 0.5;
   stroke: black;
-  stroke-dasharray: 3,3;
+  stroke-dasharray: 3, 3;
 }
 
 /*------Media queries------*/

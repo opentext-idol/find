@@ -36,6 +36,7 @@ define([
             }
 
             this.$content = this.$('.widget-content').addClass(this.viewType);
+            this.$error = this.$('.widget-error');
         },
 
         contentHeight: function() {

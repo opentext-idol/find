@@ -30,7 +30,7 @@ define([
         update: function(updateTracker) {
             this.toggleSpinner(true);
 
-            const listener = function listener(callback) {
+            const listener = function listenerFn(callback) {
                 this.toggleSpinner(false);
 
                 callback.call(this, updateTracker);
