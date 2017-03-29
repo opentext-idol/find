@@ -41,21 +41,26 @@ define([
         },
 
         getPageData: function() {
-            const dashboards = _.where(configuration().dashboards, {enabled: true});
+            const config = configuration();
 
-            const pageData = _.reduce(dashboards, function(acc, dash, index) {
-                acc['dashboards/' + encodeURIComponent(dash.dashboardName)] = {
-                    Constructor: DashboardPage,
-                    icon: 'hp-icon hp-fw hp-dashboard',
-                    models: ['sidebarModel'],
-                    title: i18n[dash.dashboardName] || dash.dashboardName,
-                    order: index,
-                    constructorArguments: dash,
-                    navigation: 'dashboards'
-                };
+            const pageData = {};
+            let dashboards;
+            if (config.enableDashboards) {
+                dashboards = _.where(config.dashboards, {enabled: true});
+                _.extend(pageData, _.reduce(dashboards, function (acc, dash, index) {
+                    acc['dashboards/' + encodeURIComponent(dash.dashboardName)] = {
+                        Constructor: DashboardPage,
+                        icon: 'hp-icon hp-fw hp-dashboard',
+                        models: ['sidebarModel'],
+                        title: i18n[dash.dashboardName] || dash.dashboardName,
+                        order: index,
+                        constructorArguments: dash,
+                        navigation: 'dashboards'
+                    };
 
-                return acc;
-            }, {});
+                    return acc;
+                }, {}));
+            }
 
             const dashboardCount = dashboards ? dashboards.length : 0;
 
@@ -68,7 +73,7 @@ define([
                         'savedQueryCollection',
                         'windowScrollModel'
                     ].concat(
-                        configuration().hasBiRole
+                        config.hasBiRole
                             ? ['savedSnapshotCollection']
                             : []
                     ),
@@ -86,7 +91,7 @@ define([
                 }
             });
 
-            if(_.contains(configuration().roles, 'ROLE_ADMIN')) {
+            if(_.contains(config.roles, 'ROLE_ADMIN')) {
                 pageData.settings = {
                     Constructor: SettingsPage,
                     icon: 'hp-icon hp-fw hp-settings',
