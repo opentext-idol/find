@@ -9,18 +9,18 @@ define([
 ], function($, _) {
     'use strict';
 
-    var config;
+    let config;
 
-    var parseBooleanOption = function(config, uiCustomization, option) {
-        var optionRules = uiCustomization.options[option];
+    function parseBooleanOption(config, uiCustomization, option) {
+        const optionRules = uiCustomization.options[option];
 
         return optionRules.user && !(config.hasBiRole && optionRules.bi === false) ||
             optionRules.bi && config.hasBiRole;
-    };
+    }
 
     return function() {
         if(!config) {
-            var configString = $('#config-json').text();
+            const configString = $('#config-json').text();
 
             if(configString) {
                 config = JSON.parse(configString);
@@ -30,12 +30,14 @@ define([
                 config.hasBiRole = _.contains(config.roles, 'ROLE_BI');
             }
 
-            var uiCustomization = config.uiCustomization;
+            const uiCustomization = config.uiCustomization;
 
             if(uiCustomization) {
                 config.directAccessLink = parseBooleanOption(config, uiCustomization, 'directAccessLink');
+                config.enableDashboards = parseBooleanOption(config, uiCustomization, 'enableDashboards');
                 config.enableMetaFilter = parseBooleanOption(config, uiCustomization, 'enableMetaFilter');
                 config.enableRelatedConcepts = parseBooleanOption(config, uiCustomization, 'enableRelatedConcepts');
+                config.enableSideBar = parseBooleanOption(config, uiCustomization, 'enableSideBar');
                 config.enableTypeAhead = parseBooleanOption(config, uiCustomization, 'enableTypeAhead');
                 config.errorCallSupportString = uiCustomization.errorCallSupportString;
 
