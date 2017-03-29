@@ -123,7 +123,8 @@ define([
         },
 
         loaded: function (markers) {
-            this.map.fitBounds(new leaflet.featureGroup(_.isEmpty(markers) ? this.markers : markers))
+            const group = new leaflet.featureGroup(_.isEmpty(markers) ? this.markers : markers);
+            this.map.fitBounds(group.getBounds());
         },
 
         getMarker: function (latitude, longitude, icon, title, popover) {
