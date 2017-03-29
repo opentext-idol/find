@@ -74,10 +74,12 @@ define([
                 .each(function () {
                     if (this.parentNode.getAttribute('data-name') === valueName) {
                         d3.select(this)
-                            .attr('font-size', '15')
+                            .style('font-size', '15')
+                            .attr('class', 'legend-text bold')
                     } else {
                         d3.select(this)
-                            .attr('font-size', '12')
+                            .style('font-size', LEGEND_TEXT_HEIGHT)
+                            .attr('class', 'legend-text')
                     }
                 });
         };
@@ -90,7 +92,8 @@ define([
                 .attr('r', 4)
                 .attr('opacity', 1);
             d3.selectAll('.legend-text')
-                .attr('font-size', '12')
+                .style('font-size', LEGEND_TEXT_HEIGHT)
+                .attr('class', 'legend-text')
         };
 
         const lineAndPointMouseover = function () {
@@ -433,9 +436,9 @@ define([
                             class: 'legend-text',
                             width: LEGEND_TEXT_WIDTH,
                             height: LEGEND_TEXT_HEIGHT,
-                            cursor: 'default',
-                            'font-size': LEGEND_TEXT_HEIGHT
+                            cursor: 'default'
                         })
+                        .style('font-size', LEGEND_TEXT_HEIGHT)
                         .text(d.name)
                         .on('mouseover', function () {
                             hover.legendMouseover(d.name);
