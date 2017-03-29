@@ -5,16 +5,24 @@
 
 define([
     'underscore',
-    'find/app/router-constructor'
-], function(_, RouterConstructor) {
+    'find/app/router-constructor',
+    'find/app/configuration'
+], function (_, RouterConstructor, configuration) {
 
     const Router = RouterConstructor.extend({
-        routes: _.extend({
-            'dashboards/:dashboardName': 'dashboards',
-            'search/tab/:id(/view/:view)': 'savedSearch',
-            'search/document/:database/:reference': 'documentDetail',
-            'search/suggest/:database/:reference': 'suggest'
-        }, RouterConstructor.prototype.routes)
+        routes: function () {
+            const routes = _.extend({
+                'search/tab/:id(/view/:view)': 'savedSearch',
+                'search/document/:database/:reference': 'documentDetail',
+                'search/suggest/:database/:reference': 'suggest'
+            }, RouterConstructor.prototype.routes);
+
+            if (configuration().enableDashboards) {
+                routes['dashboards/:dashboardName'] = 'dashboards';
+            }
+
+            return routes;
+        }
     });
 
     return new Router();

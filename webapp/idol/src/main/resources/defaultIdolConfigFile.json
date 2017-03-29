@@ -117,6 +117,10 @@
       "directAccessLink": {
         "user": false
       },
+      "enableDashboards": {
+        "user": false,
+        "bi": true
+      },
       "enableMetaFilter": {
         "user": false,
         "bi": true
@@ -124,6 +128,10 @@
       "enableRelatedConcepts": {
         "user": true,
         "bi": false
+      },
+      "enableSideBar": {
+        "user": false,
+        "bi": true
       },
       "enableTypeAhead": {
         "user": true,
