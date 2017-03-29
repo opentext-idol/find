@@ -6,6 +6,7 @@ import com.hp.autonomy.frontend.find.core.export.service.CsvExportStrategy;
 import com.hp.autonomy.frontend.find.core.export.service.ExportServiceFactoryTest;
 import com.hp.autonomy.frontend.find.core.export.service.PowerPointExportService;
 import com.hp.autonomy.searchcomponents.core.config.HavenSearchCapable;
+import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;
 import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
@@ -24,4 +25,6 @@ public class IdolExportServiceFactoryTest extends ExportServiceFactoryTest<IdolQ
     private ConfigService<HavenSearchCapable> configService;
     @MockBean
     private FieldPathNormaliser fieldPathNormaliser;
+    @MockBean
+    private FieldDisplayNameGenerator fieldDisplayNameGenerator;
 }

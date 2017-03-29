@@ -9,6 +9,7 @@ import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ public interface PlatformDataExportStrategy {
     /**
      * Write the headers to the file and do anything else necessary to prepare the file before the results.
      */
-    void writeHeader(OutputStream outputStream, Collection<String> fieldNames) throws IOException;
+    void writeHeader(OutputStream outputStream, Collection<FieldInfo<?>> fieldNames) throws IOException;
 
     /**
      * Retrieves the names of all the fields to export
@@ -30,7 +31,7 @@ public interface PlatformDataExportStrategy {
      * @param selectedFieldIds only export fields with ids in this collection. If empty, export all fields
      * @return the names of all the metadata/fields to export
      */
-    List<String> getFieldNames(MetadataNode[] metadataNodes, final Collection<String> selectedFieldIds);
+    List<FieldInfo<?>> getFieldNames(MetadataNode[] metadataNodes, final Collection<String> selectedFieldIds);
 
     /**
      * Returns the fields configured for export in the config file. Inverse lookup of getConfiguredFieldsByName().
@@ -40,12 +41,31 @@ public interface PlatformDataExportStrategy {
     Map<String, FieldInfo<?>> getConfiguredFieldsById();
 
     /**
-     * Returns field information retrieved from configuration.
+     * Returns field information for metadata.
      *
      * @param nodeName response field node being parsed
+     * @param metadataNodes known metadata information
      * @return field information retrieved from config
      */
-    Optional<FieldInfo<?>> getFieldInfoForNode(final String nodeName);
+    Optional<FieldInfo<Serializable>> getFieldInfoForMetadataNode(final String nodeName, final Map<String, ? extends MetadataNode> metadataNodes, final Collection<String> selectedFieldIds);
+
+    /**
+     * Returns field information retrieved from configuration.
+     *
+     * @param nodePath response field node being parsed
+     * @return field information retrieved from config
+     */
+    Optional<FieldInfo<?>> getFieldInfoForNode(final String nodePath, final Collection<String> selectedFieldIds);
+
+    /**
+     * Returns the display value to use in export
+     *
+     * @param fieldInfo field information
+     * @param value     field value
+     * @param <T>       field type
+     * @return field display value
+     */
+    <T extends Serializable> String getDisplayValue(final FieldInfo<?> fieldInfo, final T value);
 
     /**
      * Exports all the data corresponding to an individual document to the given {@link OutputStream}

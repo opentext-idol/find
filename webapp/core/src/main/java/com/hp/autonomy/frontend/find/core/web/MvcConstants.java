@@ -21,7 +21,7 @@ public enum MvcConstants {
     UI_CUSTOMIZATION("uiCustomization"),
     FIELDS_INFO("fieldsInfo"),
     TOPIC_MAP_MAX_RESULTS("topicMapMaxResults"),
-    METADATA_FIELD_IDS("metadataFieldIds"),
+    METADATA_FIELD_INFO("metadataFieldInfo"),
     ANSWER_SERVER_ENABLED("answerServerEnabled"),
     PUBLIC_INDEXES_ENABLED("publicIndexesEnabled");
 

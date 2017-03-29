@@ -49,16 +49,21 @@ class HodPlatformDataExportService implements PlatformDataExportService<HodQuery
     @Override
     public void exportQueryResults(final OutputStream outputStream, final HodQueryRequest queryRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds, final long totalResults) throws HodErrorException {
         final PlatformDataExportStrategy exportStrategy = exportStrategies.get(exportFormat);
-        final List<String> fieldIds = exportStrategy.getFieldNames(HodMetadataNode.values(), selectedFieldIds);
+        final List<FieldInfo<?>> fieldInfoList = exportStrategy.getFieldNames(HodMetadataNode.values(), selectedFieldIds);
+        final List<String> fieldIds = fieldInfoList.stream()
+                .map(FieldInfo::getId)
+                .collect(Collectors.toList());
 
         try {
-            exportStrategy.writeHeader(outputStream, fieldIds);
+            exportStrategy.writeHeader(outputStream, fieldInfoList);
             for (int i = 0; i < totalResults; i += PAGINATION_SIZE) {
                 final HodQueryRequest paginatedQueryRequest = queryRequest.toBuilder()
                         .start(i + 1)
                         .maxResults(Math.min(i + PAGINATION_SIZE, HodDocumentsService.HOD_MAX_RESULTS))
                         .build();
-                final Documents<HodSearchResult> documents = documentsService.queryTextIndex(paginatedQueryRequest.toBuilder().printFields(fieldIds).build());
+                final Documents<HodSearchResult> documents = documentsService.queryTextIndex(paginatedQueryRequest.toBuilder()
+                        .printFields(fieldIds)
+                        .build());
 
 
                 final List<Function<HodSearchResult, String>> exportMetadataFunctions = Arrays.stream(HodMetadataNode.values())

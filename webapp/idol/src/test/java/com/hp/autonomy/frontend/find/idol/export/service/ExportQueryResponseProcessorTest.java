@@ -9,7 +9,6 @@ import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.ProcessorException;
 import com.autonomy.aci.client.transport.AciResponseInputStream;
 import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportStrategy;
-import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import com.hp.autonomy.searchcomponents.core.test.CoreTestContext;
@@ -25,10 +24,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CLASSES_PROPERTY;
 import static org.mockito.Matchers.any;
@@ -49,14 +49,17 @@ public class ExportQueryResponseProcessorTest {
     @Before
     public void setUp() {
         outputStream = new ByteArrayOutputStream();
-        processor = new ExportQueryResponseProcessor(exportStrategy, outputStream, Collections.emptyList());
-        final List<String> fieldNames = Arrays.asList("Reference", "Database", "Summary", "Date", "categories");
-        when(exportStrategy.getFieldNames(any(MetadataNode[].class), eq(Collections.emptyList()))).thenReturn(fieldNames);
-        when(exportStrategy.getFieldInfoForNode(anyString())).thenReturn(Optional.empty());
-        when(exportStrategy.getFieldInfoForNode("CATEGORY")).thenReturn(Optional.of(FieldInfo.<String>builder()
+        final List<FieldInfo<?>> fieldNames = Stream.of("Reference", "Database", "Summary", "Date", "categories")
+                .map(s -> FieldInfo.builder().id(s).displayName(s).build())
+                .collect(Collectors.toList());
+        processor = new ExportQueryResponseProcessor(exportStrategy, outputStream, fieldNames, Collections.emptyList());
+        when(exportStrategy.getFieldInfoForMetadataNode(anyString(), any(), any())).thenReturn(Optional.empty());
+        when(exportStrategy.getFieldInfoForNode(anyString(), any())).thenReturn(Optional.empty());
+        final Optional<FieldInfo<?>> optional = Optional.of(FieldInfo.<String>builder()
                 .id("categories")
                 .name(fieldPathNormaliser.normaliseFieldPath("CATEGORY"))
-                .build()));
+                .build());
+        when(exportStrategy.getFieldInfoForNode(eq("CATEGORY"), any())).thenReturn(optional);
 
     }
 

@@ -20,7 +20,7 @@ define([
                 template: this.template,
                 templateOptions: {
                     fieldDataId: options.model.id,
-                    fieldPrintedLabel: i18n['search.document.' + options.model.id] || options.model.displayName || options.model.id
+                    fieldPrintedLabel: i18n['search.document.' + options.model.id] || options.model.get('displayName')
                 }
             }, options));
         },

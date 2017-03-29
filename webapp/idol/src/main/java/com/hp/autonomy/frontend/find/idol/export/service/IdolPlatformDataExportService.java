@@ -6,10 +6,12 @@
 package com.hp.autonomy.frontend.find.idol.export.service;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.find.core.export.service.ExportFormat;
 import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportService;
 import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportStrategy;
+import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
@@ -38,33 +40,38 @@ class IdolPlatformDataExportService implements PlatformDataExportService<IdolQue
         this.aciServiceRetriever = aciServiceRetriever;
 
         this.exportStrategies = new EnumMap<>(ExportFormat.class);
-        for(final PlatformDataExportStrategy exportStrategy : exportStrategies) {
+        for (final PlatformDataExportStrategy exportStrategy : exportStrategies) {
             this.exportStrategies.put(exportStrategy.getExportFormat(), exportStrategy);
         }
     }
 
     @Override
     public void exportQueryResults(final OutputStream outputStream, final IdolQueryRequest queryRequest, final ExportFormat exportFormat, final Collection<String> selectedFieldIds, final long totalResults) throws AciErrorException, IOException {
-        final AciParameters aciParameters = new AciParameters(QueryActions.Query.name());
-
-        parameterHandler.addSearchRestrictions(aciParameters, queryRequest.getQueryRestrictions());
-        parameterHandler.addSearchOutputParameters(aciParameters, queryRequest);
-        if(queryRequest.getQueryType() != QueryRequest.QueryType.RAW) {
-            parameterHandler.addQmsParameters(aciParameters, queryRequest.getQueryRestrictions());
-        }
-
         final PlatformDataExportStrategy exportStrategy = exportStrategies.get(exportFormat);
-        final Collection<String> fieldNames = exportStrategy.getFieldNames(IdolMetadataNode.values(), selectedFieldIds);
+        final Collection<FieldInfo<?>> fieldNames = exportStrategy.getFieldNames(IdolMetadataNode.values(), selectedFieldIds);
 
         exportStrategy.writeHeader(outputStream, fieldNames);
 
+        final Processor<Void> processor = new ExportQueryResponseProcessor(exportStrategy, outputStream, fieldNames, selectedFieldIds);
         for (int i = 0; i < totalResults; i += PAGINATION_SIZE) {
             final IdolQueryRequest paginatedQueryRequest = queryRequest.toBuilder()
                     .start(i + 1)
                     .maxResults(i + PAGINATION_SIZE)
                     .build();
-            aciServiceRetriever.getAciService(paginatedQueryRequest.getQueryType()).executeAction(aciParameters, new ExportQueryResponseProcessor(exportStrategy, outputStream, selectedFieldIds));
+            final AciParameters aciParameters = getAciParameters(paginatedQueryRequest);
+            aciServiceRetriever.getAciService(paginatedQueryRequest.getQueryType()).executeAction(aciParameters, processor);
         }
+    }
+
+    private AciParameters getAciParameters(final IdolQueryRequest queryRequest) {
+        final AciParameters aciParameters = new AciParameters(QueryActions.Query.name());
+
+        parameterHandler.addSearchRestrictions(aciParameters, queryRequest.getQueryRestrictions());
+        parameterHandler.addSearchOutputParameters(aciParameters, queryRequest);
+        if (queryRequest.getQueryType() != QueryRequest.QueryType.RAW) {
+            parameterHandler.addQmsParameters(aciParameters, queryRequest.getQueryRestrictions());
+        }
+        return aciParameters;
     }
 
     @Override

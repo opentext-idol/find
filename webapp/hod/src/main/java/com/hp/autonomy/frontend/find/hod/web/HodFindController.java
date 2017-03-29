@@ -14,6 +14,7 @@ import com.hp.autonomy.frontend.find.core.web.MvcConstants;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig.HodFindConfigBuilder;
 import com.hp.autonomy.frontend.find.hod.export.service.HodMetadataNode;
+import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,8 +32,9 @@ public class HodFindController extends FindController<HodFindConfig, HodFindConf
     public HodFindController(final ControllerUtils controllerUtils,
                              final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever,
                              final ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService,
-                             final ConfigService<HodFindConfig> configService) {
-        super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService);
+                             final ConfigService<HodFindConfig> configService,
+                             final FieldDisplayNameGenerator fieldDisplayNameGenerator) {
+        super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService, fieldDisplayNameGenerator);
     }
 
     @Override

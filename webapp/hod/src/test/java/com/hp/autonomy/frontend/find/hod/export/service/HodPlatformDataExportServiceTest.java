@@ -36,6 +36,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CLASSES_PROPERTY;
 import static org.mockito.Matchers.anyListOf;
@@ -70,7 +72,9 @@ public class HodPlatformDataExportServiceTest {
         when(queryRequestBuilder.build()).thenReturn(queryRequest);
 
         when(exportStrategy.getExportFormat()).thenReturn(ExportFormat.CSV);
-        final List<String> fieldNames = Arrays.asList(HodMetadataNode.REFERENCE.getDisplayName(), HodMetadataNode.DATABASE.getDisplayName(), HodMetadataNode.SUMMARY.getDisplayName(), HodMetadataNode.DATE.getDisplayName(), "authors", "categories", "books", "epic", "lastRead");
+        final List<FieldInfo<?>> fieldNames = Stream.of(HodMetadataNode.REFERENCE.getDisplayName(), HodMetadataNode.DATABASE.getDisplayName(), HodMetadataNode.SUMMARY.getDisplayName(), HodMetadataNode.DATE.getDisplayName(), "authors", "categories", "books", "epic", "lastRead")
+                .map(s -> FieldInfo.builder().id(s).displayName(s).build())
+                .collect(Collectors.toList());
         when(exportStrategy.getFieldNames(any(MetadataNode[].class), eq(Collections.emptyList()))).thenReturn(fieldNames);
         final FieldInfo<?> authorInfo = fieldInfo("authors", "author", FieldType.STRING, null);
         final FieldInfo<?> categoryInfo = fieldInfo("categories", "category", FieldType.STRING, null);

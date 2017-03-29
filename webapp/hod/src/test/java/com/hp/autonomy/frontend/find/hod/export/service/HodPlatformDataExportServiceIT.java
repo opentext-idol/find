@@ -11,6 +11,7 @@ import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportServi
 import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportServiceIT;
 import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportStrategy;
 import com.hp.autonomy.hod.client.error.HodErrorException;
+import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;
 import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import com.hp.autonomy.searchcomponents.hod.beanconfiguration.HavenSearchHodConfiguration;
 import com.hp.autonomy.searchcomponents.hod.configuration.HodSearchCapable;
@@ -35,8 +36,10 @@ public class HodPlatformDataExportServiceIT extends PlatformDataExportServiceIT<
         }
 
         @Bean
-        public PlatformDataExportStrategy csvExportStrategy(final ConfigService<HodSearchCapable> configService, final FieldPathNormaliser fieldPathNormaliser) {
-            return new CsvExportStrategy(configService, fieldPathNormaliser);
+        public PlatformDataExportStrategy csvExportStrategy(final ConfigService<HodSearchCapable> configService,
+                                                            final FieldPathNormaliser fieldPathNormaliser,
+                                                            final FieldDisplayNameGenerator fieldDisplayNameGenerator) {
+            return new CsvExportStrategy(configService, fieldPathNormaliser, fieldDisplayNameGenerator);
         }
     }
 }

@@ -16,6 +16,7 @@ import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindC
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
 import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
 import com.hp.autonomy.frontend.find.idol.export.service.IdolMetadataNode;
+import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import lombok.Getter;
 import org.apache.commons.lang.BooleanUtils;
@@ -32,13 +33,14 @@ import java.util.Map;
 public class IdolFindController extends FindController<IdolFindConfig, IdolFindConfigBuilder> {
     private final ConfigService<IdolDashboardConfig> dashConfig;
 
-    @SuppressWarnings("TypeMayBeWeakened")
+    @SuppressWarnings({"TypeMayBeWeakened", "ConstructorWithTooManyParameters"})
     @Autowired
     protected IdolFindController(final ControllerUtils controllerUtils,
                                  final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever,
                                  final ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService,
-                                 final ConfigService<IdolFindConfig> configService, final ConfigService<IdolDashboardConfig> dashConfig) {
-        super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService);
+                                 final ConfigService<IdolFindConfig> configService, final ConfigService<IdolDashboardConfig> dashConfig,
+                                 final FieldDisplayNameGenerator fieldDisplayNameGenerator) {
+        super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService, fieldDisplayNameGenerator);
         this.dashConfig = dashConfig;
     }
 

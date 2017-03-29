@@ -33,10 +33,11 @@ define([
         initialize: function (options) {
             this.queryModel = options.queryModel;
 
-            const fieldsInfo = configuration().fieldsInfo;
+            const config = configuration();
+            const fieldsInfo = config.fieldsInfo;
 
-            const metadataModels = _.values(configuration().metadataFieldIds).map(function (id) {
-                return {id: id, selected: true};
+            const metadataModels = _.map(config.metadataFieldInfo, function (info) {
+                return _.extend({selected: true}, info);
             });
 
             const fieldModels = _.map(fieldsInfo, function (info) {

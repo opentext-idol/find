@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.core.config.HavenSearchCapable;
+import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;
 import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -35,32 +37,38 @@ public class CsvExportStrategy implements PlatformDataExportStrategy {
 
     private final ConfigService<? extends HavenSearchCapable> configService;
     private final FieldPathNormaliser fieldPathNormaliser;
+    private final FieldDisplayNameGenerator fieldDisplayNameGenerator;
 
     @Autowired
     public CsvExportStrategy(final ConfigService<? extends HavenSearchCapable> configService,
-                             final FieldPathNormaliser fieldPathNormaliser) {
+                             final FieldPathNormaliser fieldPathNormaliser,
+                             final FieldDisplayNameGenerator fieldDisplayNameGenerator) {
         this.configService = configService;
         this.fieldPathNormaliser = fieldPathNormaliser;
+        this.fieldDisplayNameGenerator = fieldDisplayNameGenerator;
     }
 
     @Override
-    public void writeHeader(final OutputStream outputStream, final Collection<String> fieldNames) throws IOException {
+    public void writeHeader(final OutputStream outputStream, final Collection<FieldInfo<?>> fieldNames) throws IOException {
         outputStream.write(UTF8_BOM);
-        exportRecord(outputStream, fieldNames);
+        exportRecord(outputStream, fieldNames.stream()
+                .map(FieldInfo::getDisplayName)
+                .collect(Collectors.toList()));
     }
 
     @Override
-    public List<String> getFieldNames(final MetadataNode[] metadataNodes, final Collection<String> selectedFieldIds) {
-        final Stream<String> metadataStream = Arrays.stream(metadataNodes)
+    public List<FieldInfo<?>> getFieldNames(final MetadataNode[] metadataNodes, final Collection<String> selectedFieldIds) {
+        final Stream<FieldInfo<?>> metadataStream = Arrays.stream(metadataNodes)
                 // Filters metadata fields
-                .filter(metadataNode -> selectedFieldIds.isEmpty() || selectedFieldIds.contains(metadataNode.getName()))
-                .map(MetadataNode::getDisplayName);
+                .filter(metadataNode -> selected(selectedFieldIds, metadataNode.getName()))
+                .map(this::metadataNodeToFieldInfo);
 
-        final Stream<String> nonMetadataStream = getFieldsInfo().getFieldConfig()
-                .keySet()
+        final Stream<FieldInfo<?>> nonMetadataStream = getFieldsInfo().getFieldConfig()
+                .values()
                 .stream()
                 // Filters parametric (non-metadata) fields
-                .filter(id -> selectedFieldIds.isEmpty() || selectedFieldIds.contains(id));
+                .filter(fieldInfo -> selected(selectedFieldIds, fieldInfo.getId()))
+                .map(this::populateMissingDisplayNames);
 
         return Stream.concat(metadataStream, nonMetadataStream).collect(Collectors.toList());
     }
@@ -71,8 +79,23 @@ public class CsvExportStrategy implements PlatformDataExportStrategy {
     }
 
     @Override
-    public Optional<FieldInfo<?>> getFieldInfoForNode(final String nodeName) {
-        return Optional.ofNullable(getFieldsInfo().getFieldConfigByName().get(fieldPathNormaliser.normaliseFieldPath(nodeName)));
+    public Optional<FieldInfo<Serializable>> getFieldInfoForMetadataNode(final String nodeName, final Map<String, ? extends MetadataNode> metadataNodes, final Collection<String> selectedFieldIds) {
+        return Optional.ofNullable(metadataNodes.get(nodeName))
+                .map(this::metadataNodeToFieldInfo)
+                .filter(fieldInfo -> selected(selectedFieldIds, fieldInfo.getId()));
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    public Optional<FieldInfo<?>> getFieldInfoForNode(final String nodeName, final Collection<String> selectedFieldIds) {
+        final Optional<FieldInfo<?>> maybeFieldInfo = Optional.ofNullable(getFieldsInfo().getFieldConfigByName().get(fieldPathNormaliser.normaliseFieldPath(nodeName)));
+        return maybeFieldInfo
+                .filter(fieldInfo -> selected(selectedFieldIds, fieldInfo.getId()));
+    }
+
+    @Override
+    public <T extends Serializable> String getDisplayValue(final FieldInfo<?> fieldInfo, final T value) {
+        return fieldDisplayNameGenerator.parseDisplayValue(() -> Optional.of(fieldInfo), value);
     }
 
     @Override
@@ -97,5 +120,25 @@ public class CsvExportStrategy implements PlatformDataExportStrategy {
 
     private FieldsInfo getFieldsInfo() {
         return configService.getConfig().getFieldsInfo();
+    }
+
+    private <T extends Serializable> FieldInfo<T> metadataNodeToFieldInfo(final MetadataNode metadataNode) {
+        return FieldInfo.<T>builder()
+                .id(metadataNode.getName())
+                .displayName(metadataNode.getDisplayName())
+                .type(metadataNode.getFieldType())
+                .build();
+    }
+
+    private <T extends Serializable> FieldInfo<T> populateMissingDisplayNames(final FieldInfo<T> fieldInfo) {
+        return Optional.ofNullable(fieldInfo.getDisplayName())
+                .map(x -> fieldInfo)
+                .orElseGet(() -> fieldInfo.toBuilder()
+                        .displayName(fieldDisplayNameGenerator.prettifyFieldName(fieldInfo.getId()))
+                        .build());
+    }
+
+    private boolean selected(final Collection<String> selectedFieldIds, final String id) {
+        return selectedFieldIds.isEmpty() || selectedFieldIds.contains(id);
     }
 }

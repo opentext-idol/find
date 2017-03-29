@@ -12,22 +12,27 @@ import com.autonomy.aci.client.services.impl.ErrorProcessor;
 import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportStrategy;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldType;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.events.XMLEvent;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Stack;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("serial")
 class ExportQueryResponseProcessor extends AbstractStAXProcessor<Void> {
     private static final String HIT_NODE_NAME = "autn:hit";
+    private static final String CONTENT_NODE_NAME = "autn:content";
 
     private static final Map<String, IdolMetadataNode> METADATA_NODES = new HashMap<>();
 
@@ -39,10 +44,12 @@ class ExportQueryResponseProcessor extends AbstractStAXProcessor<Void> {
 
     private final PlatformDataExportStrategy exportStrategy;
     private final OutputStream outputStream;
+    private final Collection<FieldInfo<?>> fieldInfoList;
     private final Collection<String> selectedFieldIds;
 
-    ExportQueryResponseProcessor(final PlatformDataExportStrategy exportStrategy, final OutputStream outputStream, final Collection<String> selectedFieldIds) {
+    ExportQueryResponseProcessor(final PlatformDataExportStrategy exportStrategy, final OutputStream outputStream, final Collection<FieldInfo<?>> fieldInfoList, final Collection<String> selectedFieldIds) {
         this.outputStream = outputStream;
+        this.fieldInfoList = new ArrayList<>(fieldInfoList);
         this.selectedFieldIds = new ArrayList<>(selectedFieldIds);
 
         this.exportStrategy = exportStrategy;
@@ -56,14 +63,12 @@ class ExportQueryResponseProcessor extends AbstractStAXProcessor<Void> {
                 processErrorResponse(aciResponse);
             }
 
-            final Collection<String> fieldNames = exportStrategy.getFieldNames(IdolMetadataNode.values(), selectedFieldIds);
-
             while (aciResponse.hasNext()) {
-                final int eventType = aciResponse.next();
+                aciResponse.next();
 
-                if (XMLEvent.START_ELEMENT == eventType) {
+                if (aciResponse.isStartElement()) {
                     if (HIT_NODE_NAME.equals(aciResponse.getLocalName())) {
-                        parseHit(fieldNames, aciResponse);
+                        parseHit(aciResponse);
                     }
                 }
             }
@@ -73,51 +78,82 @@ class ExportQueryResponseProcessor extends AbstractStAXProcessor<Void> {
         return null;
     }
 
-    private void parseHit(final Collection<String> fieldNames, final XMLStreamReader aciResponse) throws XMLStreamException, IOException {
+    private void parseHit(final XMLStreamReader aciResponse) throws XMLStreamException, IOException {
         final Map<String, List<String>> valueMap = new HashMap<>();
-        int eventType;
 
-        while (aciResponse.hasNext() && !((eventType = aciResponse.next()) == XMLEvent.END_ELEMENT && HIT_NODE_NAME.equals(aciResponse.getLocalName()))) {
-            if (XMLEvent.START_ELEMENT == eventType) {
+        boolean hitEnd = false;
+        while (aciResponse.hasNext() && !hitEnd) {
+            aciResponse.next();
+            if (aciResponse.isStartElement()) {
                 final String nodeName = aciResponse.getLocalName();
-                final IdolMetadataNode metadataNode = METADATA_NODES.get(nodeName);
-                final Optional<FieldInfo<?>> maybeFieldInfo = exportStrategy.getFieldInfoForNode(nodeName);
-
-                if (metadataNode != null || maybeFieldInfo.isPresent()) {
-                    final FieldType fieldType;
-                    final String id;
-
-                    if (metadataNode != null) {
-                        id = metadataNode.getDisplayName();
-                        fieldType = metadataNode.getFieldType();
-                    } else {
-                        @SuppressWarnings("OptionalGetWithoutIsPresent")
-                        final FieldInfo<?> fieldInfo = maybeFieldInfo.get();
-                        id = fieldInfo.getId();
-                        fieldType = fieldInfo.getType();
-                    }
-
-                    final Object value = fieldType.parseValue(fieldType.getType(), aciResponse.getElementText().trim());
-                    addValueToMap(valueMap, id, value == null ? "" : value.toString());
+                if (CONTENT_NODE_NAME.equals(nodeName)) {
+                    parseContent(aciResponse, valueMap);
+                } else {
+                    conditionallyAddMetadataValueToExportMap(aciResponse, valueMap, nodeName);
                 }
+            } else if (aciResponse.isEndElement()) {
+                hitEnd = HIT_NODE_NAME.equals(aciResponse.getLocalName());
             }
         }
 
-        final Collection<String> values = new ArrayList<>(fieldNames.size());
-
-        for (final String fieldName : fieldNames) {
-            final List<String> fieldValues = valueMap.get(fieldName);
-            values.add(exportStrategy.combineValues(fieldValues));
-        }
-
+        final Collection<String> values = fieldInfoList.stream()
+                .map(fieldInfo -> exportStrategy.combineValues(valueMap.get(fieldInfo.getId())))
+                .collect(Collectors.toList());
         exportStrategy.exportRecord(outputStream, values);
     }
 
-    private void addValueToMap(final Map<String, List<String>> valueMap, final String name, final String value) {
-        if (!valueMap.containsKey(name)) {
-            valueMap.put(name, new ArrayList<>());
+    private void parseContent(final XMLStreamReader aciResponse, final Map<String, List<String>> valueMap) throws XMLStreamException {
+        boolean contentEnd = false;
+        final Stack<String> nodes = new Stack<>();
+        while (aciResponse.hasNext() && !contentEnd) {
+            aciResponse.next();
+            if (aciResponse.isStartElement()) {
+                final String nodeName = aciResponse.getLocalName();
+                nodes.push(nodeName);
+                conditionallyAddFieldValueToExportMap(aciResponse, valueMap, nodeName, nodes);
+            } else if (aciResponse.isEndElement()) {
+                contentEnd = CONTENT_NODE_NAME.equals(aciResponse.getLocalName());
+                if (!contentEnd) {
+                    nodes.pop();
+                }
+            }
+        }
+    }
+
+    private void conditionallyAddMetadataValueToExportMap(final XMLStreamReader aciResponse, final Map<String, List<String>> valueMap, final String nodeName) throws XMLStreamException {
+        final Optional<? extends FieldInfo<?>> maybeFieldInfo = exportStrategy.getFieldInfoForMetadataNode(nodeName, METADATA_NODES, selectedFieldIds);
+
+        if (maybeFieldInfo.isPresent()) {
+            final FieldInfo<?> fieldInfo = maybeFieldInfo.get();
+            addValueToMap(aciResponse, valueMap, fieldInfo);
+        }
+    }
+
+    private void conditionallyAddFieldValueToExportMap(final XMLStreamReader aciResponse, final Map<String, List<String>> valueMap, final String nodeName, final Stack<String> nodes) throws XMLStreamException {
+        final String nodePath = CollectionUtils.isEmpty(nodes) ? nodeName : String.join("/", nodes);
+        final Optional<? extends FieldInfo<?>> maybeFieldInfo = exportStrategy.getFieldInfoForNode(nodePath, selectedFieldIds);
+
+        if (maybeFieldInfo.isPresent()) {
+            final FieldInfo<?> fieldInfo = maybeFieldInfo.get();
+            addValueToMap(aciResponse, valueMap, fieldInfo);
+            nodes.pop();
+        }
+    }
+
+    private void addValueToMap(final XMLStreamReader aciResponse, final Map<String, List<String>> valueMap, final FieldInfo<?> fieldInfo) throws XMLStreamException {
+        final String id = fieldInfo.getId();
+        final FieldType fieldType = fieldInfo.getType();
+        final Object rawValue = parseValue(aciResponse, fieldType);
+        final String value = StringUtils.defaultString(exportStrategy.getDisplayValue(fieldInfo, (Serializable) rawValue));
+
+        if (!valueMap.containsKey(id)) {
+            valueMap.put(id, new ArrayList<>());
         }
 
-        valueMap.get(name).add(value);
+        valueMap.get(id).add(value);
+    }
+
+    private Object parseValue(final XMLStreamReader aciResponse, final FieldType fieldType) throws XMLStreamException {
+        return fieldType.parseValue(fieldType.getType(), aciResponse.getElementText().trim());
     }
 }

@@ -6,6 +6,7 @@ import com.hp.autonomy.frontend.find.core.export.service.ExportServiceFactoryTes
 import com.hp.autonomy.frontend.find.core.export.service.PowerPointExportService;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.config.HavenSearchCapable;
+import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;
 import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
@@ -21,4 +22,6 @@ public class HodExportServiceFactoryTest extends ExportServiceFactoryTest<HodQue
     private ConfigService<HavenSearchCapable> configService;
     @MockBean
     private FieldPathNormaliser fieldPathNormaliser;
+    @MockBean
+    private FieldDisplayNameGenerator fieldDisplayNameGenerator;
 }
