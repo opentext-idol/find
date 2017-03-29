@@ -17,7 +17,7 @@ define([
 
     return Backbone.View.extend({
         events: {
-            'click .side-nav-menu-button': function(event) {
+            'click .nav-menu-toggle-btn': function(event) {
                 event.preventDefault();
                 const collapsed = this.sidebarModel.get('collapsed');
                 this.sidebarModel.set('collapsed', !collapsed);

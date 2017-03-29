@@ -79,7 +79,7 @@ define([
                     ),
                     title: i18n['app.search'],
                     order: dashboardCount,
-                    navigation: 'sidebar'
+                    navigation: config.enableSideBar ? 'sidebar' : 'dropdown'
 
                 },
                 about: {
