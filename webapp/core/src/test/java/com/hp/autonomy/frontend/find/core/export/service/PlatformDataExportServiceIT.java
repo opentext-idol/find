@@ -9,6 +9,9 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.test.TestUtils;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,8 +23,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.*;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
@@ -46,6 +53,21 @@ public abstract class PlatformDataExportServiceIT<R extends QueryRequest<Q>, Q e
 
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         exportService.exportQueryResults(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList(), 1001L);
-        assertNotNull(outputStream.toString());
+        final String output = outputStream.toString();
+        assertNotNull(output);
+
+        try (final CSVParser csvParser = CSVParser.parse(output, CSVFormat.EXCEL)) {
+            final List<CSVRecord> records = csvParser.getRecords();
+            assertThat(records, not(empty()));
+            final CSVRecord headerRecord = records.get(0);
+            assertThat(headerRecord.get(0), endsWith("Reference")); // byte-order mark may get in the way
+            assertEquals("Database", headerRecord.get(1));
+            final CSVRecord firstDataRecord = records.get(1);
+            final String firstDataRecordReference = firstDataRecord.get(0);
+            assertNotNull(firstDataRecordReference);
+            assertFalse(firstDataRecordReference.trim().isEmpty());
+            final String firstDataRecordDatabase = firstDataRecord.get(1);
+            assertFalse(firstDataRecordDatabase.trim().isEmpty());
+        }
     }
 }
