@@ -42,6 +42,7 @@
     "leaflet": "1.0.3",
     "Leaflet.awesome-markers": "2.0.2",
     "leaflet.markercluster": "1.0.4",
+    "leaflet.markercluster.layersupport": "1.0.3",
     "metisMenu": "2.5.2",
     "requirejs": "2.1.22",
     "requirejs-text": "2.0.15",
