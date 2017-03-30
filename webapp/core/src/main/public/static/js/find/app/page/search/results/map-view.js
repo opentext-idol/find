@@ -7,6 +7,7 @@ define([
     'leaflet',
     'Leaflet.awesome-markers',
     'leaflet.markercluster',
+    'leaflet.markercluster.layersupport',
     'html2canvas'
 ], function (Backbone, _, $, configuration, vent, leaflet) {
 
@@ -47,12 +48,8 @@ define([
             this.removeZoomControl = options.removeZoomControl;
             this.disableInteraction = options.disableInteraction || false;
 
-            this.clusterMarkers = leaflet.markerClusterGroup({
-                zoomToBoundsOnClick: !this.disableInteraction,
-                showCoverageOnHover: !this.disableInteraction
-            });
-            this.markerLayerGroup = leaflet.featureGroup();
-            this.markers = [];
+            this.clusterLayers = [];
+            this.markerLayers = [];
 
             this.listenTo(vent, 'vent:resize', function () {
                 if (this.map) {
@@ -98,21 +95,34 @@ define([
             map.setView([initialLatitude, initialLongitude], this.initialZoom ? this.initialZoom : INITIAL_ZOOM);
         },
 
-        addMarkers: function (markers, cluster) {
-            this.markers = markers;
-            if (cluster) {
-                this.clusterMarkers.addLayers(markers);
-                this.map.addLayer(this.clusterMarkers);
-            }
-            else {
-                this.markerLayerGroup = new leaflet.featureGroup(markers);
-                this.map.addLayer(this.markerLayerGroup);
-            }
+        mapRendered: function () {
+            return !!this.map;
         },
 
-        createLayer: function (options) {
-            // This can be changed in the future to create a cluster or normal group if needed.
-            return new leaflet.markerClusterGroup(options);
+        addClusterLayer: function (name, options) {
+            const clusterLayer = leaflet.markerClusterGroup.layerSupport(_.defaults({
+                zoomToBoundsOnClick: !this.disableInteraction,
+                showCoverageOnHover: !this.disableInteraction
+            }, options));
+            this.map.addLayer(clusterLayer, name);
+
+            this.clusterLayers.push(clusterLayer);
+
+            return clusterLayer;
+        },
+
+        addMarkers: function (markers, clusterLayer, name) {
+            let layer;
+            if (clusterLayer) {
+                layer = leaflet.layerGroup(markers);
+                clusterLayer.checkIn(layer);
+            }
+            else {
+                layer = leaflet.featureGroup(markers);
+            }
+
+            this.addLayer(layer, name);
+            this.markerLayers.push(layer);
         },
 
         addLayer: function (layer, name) {
@@ -122,9 +132,13 @@ define([
             }
         },
 
-        loaded: function (markers) {
-            const group = new leaflet.featureGroup(_.isEmpty(markers) ? this.markers : markers);
-            this.map.fitBounds(group.getBounds());
+        fitMapToMarkerBounds: function () {
+            const layers = this.clusterLayers.concat(this.markerLayers);
+            const bounds = _.first(layers).getBounds();
+            _.rest(layers).forEach(function (layer) {
+                bounds.extend(layer.getBounds ? layer.getBounds() : layer);
+            });
+            this.map.fitBounds(bounds);
         },
 
         getMarker: function (latitude, longitude, icon, title, popover) {
@@ -156,13 +170,12 @@ define([
             }
         },
 
-        clearMarkers: function (cluster) {
-            if (cluster) {
-                this.clusterMarkers.clearLayers();
-            } else {
-                this.markerLayerGroup.clearLayers();
-            }
-            this.markers = [];
+        clearMarkers: function () {
+            this.clusterLayers.concat(this.markerLayers).forEach(function (layer) {
+                layer.clearLayers();
+            });
+            this.clusterLayers = [];
+            this.markerLayers = [];
         },
 
         remove: function () {

@@ -17,8 +17,8 @@ define([
     'text!find/templates/app/page/search/results/map-popover.html',
     'text!find/templates/app/page/loading-spinner.html',
     'find/app/vent'
-], function(_, $, Backbone, configuration, FieldSelectionView, MapView, i18n, DocumentsCollection,
-            addLinksToSummary, template, popoverTemplate, loadingSpinnerTemplate, vent) {
+], function (_, $, Backbone, configuration, FieldSelectionView, MapView, i18n, DocumentsCollection,
+             addLinksToSummary, template, popoverTemplate, loadingSpinnerTemplate, vent) {
     'use strict';
 
     return Backbone.View.extend({
@@ -28,15 +28,15 @@ define([
         markers: [],
 
         events: {
-            'click .map-show-more': function() {
+            'click .map-show-more': function () {
                 this.fetchDocumentCollection()
             },
-            'click .map-popup-title': function(e) {
+            'click .map-popup-title': function (e) {
                 vent.navigateToDetailRoute(this.documentsCollection.get(e.currentTarget.getAttribute('cid')));
             }
         },
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.locationFields = configuration().map.locationFields;
             this.resultsStep = options.resultsStep;
             this.allowIncrement = options.allowIncrement;
@@ -52,7 +52,7 @@ define([
             this.fieldSelectionView = new FieldSelectionView({
                 model: this.model,
                 name: 'FieldSelectionView',
-                fields: this.locationFields.map(function(locationField) {
+                fields: this.locationFields.map(function (locationField) {
                     return {
                         id: locationField.displayName,
                         displayName: locationField.displayName
@@ -65,10 +65,10 @@ define([
 
             this.listenTo(this.model, 'change:loading', this.toggleLoading);
 
-            this.listenTo(this.documentsCollection, 'add', function(model) {
+            this.listenTo(this.documentsCollection, 'add', function (model) {
                 const locations = model.get('locations');
                 const location = _.findWhere(locations, {displayName: this.model.get('field')});
-                if(location) {
+                if (location) {
                     const longitude = location.longitude;
                     const latitude = location.latitude;
                     const title = model.get('title');
@@ -83,10 +83,10 @@ define([
                 }
             });
 
-            this.listenTo(this.documentsCollection, 'sync', _.bind(function() {
-                if(!_.isEmpty(this.markers)) {
-                    this.mapResultsView.addMarkers(this.markers, true);
-                    this.mapResultsView.loaded();
+            this.listenTo(this.documentsCollection, 'sync', _.bind(function () {
+                if (!_.isEmpty(this.markers)) {
+                    this.mapResultsView.addMarkers(this.markers, this.clusterLayer);
+                    this.mapResultsView.fitMapToMarkerBounds();
                 }
                 this.$('.map-results-count').html(this.getResultsNoHTML());
                 this.model.set('loading', false);
@@ -96,7 +96,7 @@ define([
             this.listenTo(this.model, 'change:field', this.reloadMarkers);
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(this.template({
                 showMore: i18n['search.resultsView.map.show.more']
             }));
@@ -104,7 +104,7 @@ define([
             this.$el.prepend(this.fieldSelectionView.$el);
             this.$loadingSpinner = $(this.loadingTemplate);
             this.$loadMoreButton = this.$('.map-show-more');
-            if(!this.allowIncrement) {
+            if (!this.allowIncrement) {
                 this.$loadMoreButton.addClass('hide disabled');
             }
             this.fieldSelectionView.$el.after(this.$loadMoreButton);
@@ -114,35 +114,40 @@ define([
             this.$loadMoreButton.prop('disabled', true);
 
             this.fieldSelectionView.render();
+            this.reloadMarkers();
         },
 
-        getResultsNoHTML: function() {
+        getResultsNoHTML: function () {
             return this.documentsCollection.isEmpty()
                 ? i18n['search.resultsView.amount.shown.no.results']
                 : this.allowIncrement
-                       ? i18n['search.resultsView.amount.shown'](1, this.documentsCollection.length, this.documentsCollection.totalResults)
-                       : i18n['search.resultsView.amount.shown.no.increment'](this.resultsStep, this.documentsCollection.totalResults);
+                    ? i18n['search.resultsView.amount.shown'](1, this.documentsCollection.length, this.documentsCollection.totalResults)
+                    : i18n['search.resultsView.amount.shown.no.increment'](this.resultsStep, this.documentsCollection.totalResults);
         },
 
-        reloadMarkers: function() {
-            this.clearMarkers();
-            this.fetchDocumentCollection();
+        reloadMarkers: function () {
+            if (this.mapResultsView.mapRendered()) {
+                this.clearMarkers();
+                this.clusterLayer = this.mapResultsView.addClusterLayer();
+                this.fetchDocumentCollection();
+            }
         },
 
-        clearMarkers: function() {
+        clearMarkers: function () {
             this.documentsCollection.reset();
             this.$('.map-results-count').empty();
-            this.mapResultsView.clearMarkers(true);
+            this.mapResultsView.clearMarkers();
+            this.clusterLayer = null;
             this.markers = [];
         },
 
-        getIcon: function() {
+        getIcon: function () {
             const locationField = _.findWhere(this.locationFields, {displayName: this.model.get('field')});
             return this.mapResultsView.getIcon(locationField.iconName, locationField.iconColor, locationField.markerColor);
         },
 
-        toggleLoading: function() {
-            if(this.$loadingSpinner) {
+        toggleLoading: function () {
+            if (this.$loadingSpinner) {
                 const loading = this.model.get('loading');
                 this.$loadMoreButton.prop('disabled',
                     this.documentsCollection.length === this.documentsCollection.totalResults ||
@@ -151,7 +156,7 @@ define([
             }
         },
 
-        getFetchOptions: function(selectedField) {
+        getFetchOptions: function (selectedField) {
             const locationField = _.findWhere(this.locationFields, {displayName: selectedField});
 
             const latitudeFieldsInfo = configuration().fieldsInfo[locationField.latitudeField];
@@ -191,14 +196,14 @@ define([
             };
         },
 
-        fetchDocumentCollection: function() {
+        fetchDocumentCollection: function () {
             const selectedField = this.model.get('field');
 
             this.model.set('loading', !!selectedField);
-            if(selectedField) {
+            if (selectedField) {
                 const options = this.getFetchOptions(selectedField);
 
-                if(options) {
+                if (options) {
                     this.documentsCollection.fetch(options)
                 }
             }
