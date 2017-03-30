@@ -2306,8 +2306,15 @@ h4.similar-dates-message {
   height: calc(~'100vh - 260px')
 }
 
-.legend-text.bold {
-  font-weight: bold;
+.legend-text p {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legend-text.bold p {
+  font-size: 15px;
 }
 
 .x-axis path,

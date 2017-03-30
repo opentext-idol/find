@@ -11,9 +11,7 @@ define([
     const NUMBER_OF_COLORS = 10;
     const FADE_OUT_OPACITY = 0.3;
     const POINT_RADIUS = 5;
-    const LEGEND_WIDTH = 200;
     const LEGEND_MARKER_WIDTH = 15;
-    const LEGEND_TEXT_WIDTH = 100;
     const LEGEND_TEXT_HEIGHT = 12;
     const LEGEND_TEXT_EMS = 1.1;
     const LEGEND_PADDING = 5;
@@ -40,7 +38,7 @@ define([
 
         const xScale = d3.time.scale()
             .domain([options.minDate, options.maxDate])
-            .range([CHART_PADDING, chartWidth - CHART_PADDING]);
+            .range([CHART_PADDING, chartWidth]);
 
         return {
             yScale: yScale,
@@ -74,11 +72,9 @@ define([
                 .each(function () {
                     if (this.parentNode.getAttribute('data-name') === valueName) {
                         d3.select(this)
-                            .style('font-size', '15')
                             .attr('class', 'legend-text bold')
                     } else {
                         d3.select(this)
-                            .style('font-size', LEGEND_TEXT_HEIGHT)
                             .attr('class', 'legend-text')
                     }
                 });
@@ -92,7 +88,6 @@ define([
                 .attr('r', 4)
                 .attr('opacity', 1);
             d3.selectAll('.legend-text')
-                .style('font-size', LEGEND_TEXT_HEIGHT)
                 .attr('class', 'legend-text')
         };
 
@@ -153,7 +148,6 @@ define([
     }
 
     function setAxes(chart, scales, chartHeight, chartWidth, yAxisLabel, timeFormat) {
-
         chart.selectAll('.y-axis').remove();
         chart.selectAll('.x-axis').remove();
 
@@ -291,7 +285,8 @@ define([
             const data = options.data;
             const minDate = options.minDate;
             const maxDate = options.maxDate;
-            const chartWidth = $(this.el).width() - LEGEND_WIDTH;
+            const legendWidth = $(this.el).width()/7;
+            const chartWidth = $(this.el).width() - legendWidth;
             const chartHeight = $(this.el).height();
             const yAxisLabel = options.yAxisLabel;
             const timeFormat = getTimeFormat(maxDate, minDate);
@@ -399,7 +394,7 @@ define([
                     x: chartWidth,
                     y: 0,
                     height: chartHeight,
-                    width: LEGEND_WIDTH
+                    width: legendWidth
                 });
 
             legend.selectAll('g')
@@ -415,9 +410,9 @@ define([
 
                     g.append('line')
                         .attr({
-                            x1: chartWidth - CHART_PADDING + LEGEND_PADDING,
+                            x1: chartWidth + LEGEND_PADDING,
                             y1: d.dataY,
-                            x2: chartWidth - CHART_PADDING + LEGEND_PADDING + LEGEND_MARKER_WIDTH,
+                            x2: chartWidth + LEGEND_PADDING + LEGEND_MARKER_WIDTH,
                             y2: d.labelY,
                             'stroke-width': 2,
                             'stroke-dasharray': '3,2'
@@ -429,17 +424,17 @@ define([
                             hover.legendMouseout(d.name);
                         });
 
-                    g.append('text')
+                    g.append('foreignObject')
                         .attr({
-                            x: chartWidth - CHART_PADDING + LEGEND_MARKER_WIDTH + LEGEND_PADDING,
-                            y: d.labelY + 4 - (LEGEND_PADDING / 2),
+                            x: chartWidth + LEGEND_MARKER_WIDTH + LEGEND_PADDING,
+                            y: d.labelY - (2 * LEGEND_PADDING),
                             class: 'legend-text',
-                            width: LEGEND_TEXT_WIDTH,
+                            width: legendWidth - LEGEND_MARKER_WIDTH - LEGEND_PADDING,
                             height: LEGEND_TEXT_HEIGHT,
                             cursor: 'default'
                         })
-                        .style('font-size', LEGEND_TEXT_HEIGHT)
-                        .text(d.name)
+                        .append('xhtml:p')
+                        .html(d.name)
                         .on('mouseover', function () {
                             hover.legendMouseover(d.name);
                         })
