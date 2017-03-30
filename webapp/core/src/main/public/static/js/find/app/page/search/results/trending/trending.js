@@ -153,12 +153,14 @@ define([
 
         const yAxisScale = d3.svg.axis()
             .scale(scales.yScale)
-            .orient('left');
+            .orient('left')
+            .outerTickSize(0);
 
         const xAxisScale = d3.svg.axis()
             .scale(scales.xScale)
             .orient('bottom')
-            .tickFormat(timeFormat);
+            .tickFormat(timeFormat)
+            .outerTickSize(0);
 
         const yAxis = chart.append('g')
             .attr({
