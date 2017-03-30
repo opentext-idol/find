@@ -7,8 +7,9 @@ define([
 ], function (_, $, d3, widgetZoom, widgetDrag) {
     'use strict';
 
-    const CHART_PADDING = 70;
+    const CHART_PADDING = 80;
     const NUMBER_OF_COLORS = 10;
+    const AXIS_DASHED_LINE_LENGTH = 15;
     const FADE_OUT_OPACITY = 0.3;
     const POINT_RADIUS = 5;
     const LEGEND_MARKER_WIDTH = 15;
@@ -165,14 +166,14 @@ define([
         const yAxis = chart.append('g')
             .attr({
                 'class': 'y-axis',
-                transform: 'translate(' + CHART_PADDING + ',0)'
+                transform: 'translate(' + (CHART_PADDING - AXIS_DASHED_LINE_LENGTH) + ',0)'
             })
             .call(yAxisScale);
 
         yAxis.append('text')
             .attr({
                 x: -(chartHeight / 2),
-                y: -(CHART_PADDING / 5 * 4),
+                y: -(CHART_PADDING / 3 * 2),
                 transform: 'rotate(270)'
             })
             .text(yAxisLabel);
@@ -186,6 +187,18 @@ define([
 
         xAxis.selectAll('.tick text')
             .call(labelWrap, chartWidth);
+
+        chart.append('line')
+            .attr({
+                x1: CHART_PADDING - AXIS_DASHED_LINE_LENGTH,
+                y1: chartHeight - CHART_PADDING,
+                x2: CHART_PADDING,
+                y2: chartHeight - CHART_PADDING,
+                'stroke-width': 2,
+                'stroke-dasharray': '2,2',
+                'stroke': 'gray',
+                'class': 'dashed-axis-line'
+            });
     }
 
     function labelWrap(labels, width) {
