@@ -98,21 +98,25 @@ define([
             
             if (configuration().map.enabled) {
                 response.locations = _.chain(configuration().map.locationFields)
-                    .filter(function (field) {
-                        const latitude = getFieldValue(response.fieldMap[field.latitudeField]);
-                        const longitude = getFieldValue(response.fieldMap[field.longitudeField]);
-                        return longitude && latitude;
-                    })
                     .map(function (field) {
-                        const latitude = getFieldValue(response.fieldMap[field.latitudeField]);
-                        const longitude = getFieldValue(response.fieldMap[field.longitudeField]);
+                        const latitudes = getFieldValues(response.fieldMap[field.latitudeField]);
+                        const longitudes = getFieldValues(response.fieldMap[field.longitudeField]);
 
-                        return {
-                            displayName: field.displayName,
-                            latitude: latitude,
-                            longitude: longitude
+                        const locations = [];
+                        for (let i = 0; i < latitudes.length && i < longitudes.length; i++) {
+                            locations.push({
+                                displayName: field.displayName,
+                                latitude: latitudes[i],
+                                longitude: longitudes[i],
+                                iconName: field.iconName,
+                                iconColor: field.iconColor,
+                                markerColor: field.markerColor
+                            })
                         }
+                        return locations;
                     })
+                    .flatten()
+                    .groupBy('displayName')
                     .value()
             }
 
