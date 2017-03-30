@@ -99,7 +99,7 @@ define([
         const pointMouseover = function (d) {
             chart.append('line')
                 .attr({
-                    class: 'guide-line',
+                    'class': 'guide-line',
                     x1: CHART_PADDING,
                     y1: scales.yScale(d.count),
                     x2: scales.xScale(d.mid) - POINT_RADIUS / 2,
@@ -107,7 +107,7 @@ define([
                 });
             chart.append('line')
                 .attr({
-                    class: 'guide-line',
+                    'class': 'guide-line',
                     x1: scales.xScale(d.mid),
                     y1: scales.yScale(d.count) + POINT_RADIUS / 2,
                     x2: scales.xScale(d.mid),
@@ -164,7 +164,7 @@ define([
 
         const yAxis = chart.append('g')
             .attr({
-                class: 'y-axis',
+                'class': 'y-axis',
                 transform: 'translate(' + CHART_PADDING + ',0)'
             })
             .call(yAxisScale);
@@ -179,7 +179,7 @@ define([
 
         const xAxis = chart.append('g')
             .attr({
-                class: 'x-axis',
+                'class': 'x-axis',
                 transform: 'translate(0,' + (chartHeight - CHART_PADDING) + ')'
             })
             .call(xAxisScale);
@@ -341,7 +341,7 @@ define([
 
             this.dataJoin.select('path')
                 .attr({
-                    class: 'line',
+                    'class': 'line',
                     'stroke-width': 2,
                     fill: 'none'
                 })
@@ -392,7 +392,7 @@ define([
 
             const legend = this.chart.append('g')
                 .attr({
-                    class: 'legend',
+                    'class': 'legend',
                     x: chartWidth,
                     y: 0,
                     height: chartHeight,
@@ -407,7 +407,7 @@ define([
                     const g = d3.select(this)
                         .attr({
                             'data-name': d.name,
-                            class: 'color' + (d.index % NUMBER_OF_COLORS)
+                            'class': 'color' + (d.index % NUMBER_OF_COLORS)
                         });
 
                     g.append('line')
@@ -430,7 +430,7 @@ define([
                         .attr({
                             x: chartWidth + LEGEND_MARKER_WIDTH + LEGEND_PADDING,
                             y: d.labelY - (2 * LEGEND_PADDING),
-                            class: 'legend-text',
+                            'class': 'legend-text',
                             width: legendWidth - LEGEND_MARKER_WIDTH - LEGEND_PADDING,
                             height: LEGEND_TEXT_HEIGHT,
                             cursor: 'default'
