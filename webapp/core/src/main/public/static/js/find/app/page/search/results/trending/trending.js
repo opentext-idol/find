@@ -101,7 +101,7 @@ define([
             chart.append('line')
                 .attr({
                     'class': 'guide-line',
-                    x1: CHART_PADDING,
+                    x1: CHART_PADDING - AXIS_DASHED_LINE_LENGTH,
                     y1: scales.yScale(d.count),
                     x2: scales.xScale(d.mid) - POINT_RADIUS / 2,
                     y2: scales.yScale(d.count)
