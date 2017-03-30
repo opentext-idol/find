@@ -74,6 +74,7 @@ define([
                 loadingHtml: this.loadingHtml
             }));
             this.$errorMessage = this.$('.trending-error');
+            this.viewStateModel.set('dataState', dataState.LOADING);
 
             if (this.trendingChart) {
                 this.trendingChart.remove();
