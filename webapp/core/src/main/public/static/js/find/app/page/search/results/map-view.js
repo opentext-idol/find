@@ -160,7 +160,7 @@ define([
 
         getIcon: function (iconName, iconColor, markerColor) {
             return leaflet.AwesomeMarkers.icon({
-                icon: iconName || 'compass',
+                icon: iconName || 'hp-record',
                 iconColor: iconColor || 'white',
                 markerColor: markerColor || 'blue',
                 prefix: 'hp',
