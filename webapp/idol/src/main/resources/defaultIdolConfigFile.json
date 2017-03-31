@@ -99,7 +99,10 @@
       {
         "displayName": "DefaultLocation",
         "latitudeField": "latitude",
-        "longitudeField": "longitude"
+        "longitudeField": "longitude",
+        "iconName": "hp-record",
+        "iconColor": "white",
+        "markerColor": "blue"
       }
     ]
   },
