@@ -9,8 +9,9 @@ define([
     './saved-search-widget',
     'find/app/configuration',
     'find/app/page/search/results/map-view',
-    'find/app/model/documents-collection'
-], function (_, $, SavedSearchWidget, configuration, MapView, DocumentsCollection) {
+    'find/app/model/documents-collection',
+    'i18n!find/nls/bundle',
+], function (_, $, SavedSearchWidget, configuration, MapView, DocumentsCollection, i18n) {
     'use strict';
 
     return SavedSearchWidget.extend({
@@ -18,9 +19,8 @@ define([
 
         initialize: function (options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
-            this.markers = [];
 
-            this.locationFieldPair = this.widgetSettings.locationFieldPair;
+            this.locationFieldPairs = this.widgetSettings.locationFieldPairs;
             this.maxResults = this.widgetSettings.maxResults || 1000;
             this.clusterMarkers = this.widgetSettings.clusterMarkers || false;
 
@@ -41,39 +41,36 @@ define([
             this.hasRendered = true;
         },
 
-        getIcon: function () {
-            const locationField = _.findWhere(configuration().map.locationFields,
-                {displayName: this.locationFieldPair});
-
-            return this.mapView.getIcon(
-                locationField.iconName,
-                locationField.iconColor,
-                locationField.markerColor
-            );
-        },
-
         getData: function () {
             if (!this.hasRendered) {
                 return $.when();
             }
 
-            this.markers = [];
-            this.mapView.clearMarkers(this.clusterMarkers);
-            const locationField = _.findWhere(configuration().map.locationFields,
-                {displayName: this.locationFieldPair});
+            const config = configuration();
 
-            const latitudeFieldsInfo = configuration().fieldsInfo[locationField.latitudeField];
-            const longitudeFieldsInfo = configuration().fieldsInfo[locationField.longitudeField];
+            this.mapView.clearMarkers();
+            const locationFields = config.map.locationFields.filter(function (locationField) {
+                return _.contains(this.locationFieldPairs, locationField.displayName);
+            }, this);
 
-            const latitudesFieldsString = latitudeFieldsInfo.names.join(':');
-            const longitudeFieldsString = longitudeFieldsInfo.names.join(':');
+            if (_.isEmpty(locationFields)) {
+                return $.when();
+            }
 
-            const exists = 'EXISTS{}:' + latitudesFieldsString + ' AND EXISTS{}:' + longitudeFieldsString;
+            const fieldText = locationFields.map(function (locationField) {
+                //noinspection JSUnresolvedVariable
+                return '(EXISTS{}:' + config.fieldsInfo[locationField.latitudeField].names.join(':') +
+                    ' AND EXISTS{}:' + config.fieldsInfo[locationField.longitudeField].names.join(':') + ')';
+            }).join(' OR ');
 
             const newFieldText = this.queryModel.get('fieldText')
-                ? this.queryModel.get('fieldText') + ' AND ' + exists
-                : exists;
+                ? '(' + this.queryModel.get('fieldText') + ') AND (' + fieldText + ')'
+                : fieldText;
 
+            return this.fetchDocumentCollection(newFieldText);
+        },
+
+        fetchDocumentCollection: function (newFieldText) {
             return this.documentsCollection.fetch({
                 data: {
                     text: this.queryModel.get('queryText'),
@@ -88,19 +85,37 @@ define([
                 },
                 reset: false
             }).done(function () {
+                const markers = {};
+
                 this.documentsCollection.each(function (model) {
                     const locations = model.get('locations');
-                    const location = _.findWhere(locations, {displayName: this.locationFieldPair});
-                    if (location) {
-                        const longitude = location.longitude;
-                        const latitude = location.latitude;
-                        const title = model.get('title');
-                        const marker = this.mapView.getMarker(latitude, longitude, this.getIcon(), title);
-                        this.markers.push(marker);
-                    }
+                    Object.keys(locations).forEach(function (locationName) {
+                        locations[locationName].forEach(function (location) {
+                            const longitude = location.longitude;
+                            const latitude = location.latitude;
+                            const title = i18n['search.resultsView.map.field'] + ': ' + locationName + '\n' + i18n['search.resultsView.map.title'] + ': ' + model.get('title');
+                            const icon = this.mapView.getIcon(location.iconName, location.iconColor, location.markerColor);
+                            const marker = this.mapView.getMarker(latitude, longitude, icon, title);
+
+                            if (markers[location.displayName]) {
+                                markers[location.displayName].push(marker);
+                            } else {
+                                markers[location.displayName] = [marker];
+                            }
+                        }, this);
+                    }, this);
                 }.bind(this));
-                if (!_.isEmpty(this.markers)) {
-                    this.mapView.addMarkers(this.markers, this.clusterMarkers);
+
+                if (!_.isEmpty(markers)) {
+                    const clusterLayer = this.clusterMarkers ? this.mapView.addClusterLayer() : null;
+
+                    Object.keys(markers).forEach(function (markerName) {
+                        this.mapView.addMarkers(markers[markerName], {
+                            clusterLayer: clusterLayer
+                        });
+                    }, this);
+
+                    this.mapView.fitMapToMarkerBounds();
                 }
             }.bind(this));
         },
