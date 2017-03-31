@@ -138,7 +138,7 @@ define([
                                 summary: addLinksToSummary(model.get('summary')),
                                 cidForClickRouting: model.cid
                             });
-                            const icon = this.mapView.getIcon(location.iconName || 'hp-record', location.iconColor || 'white', comparison.color);
+                            const icon = this.mapView.getIcon(location.iconName, location.iconColor, comparison.color);
                             const marker = this.mapView.getMarker(latitude, longitude, icon, title, popover);
 
                             if (comparison.markers[location.displayName]) {
