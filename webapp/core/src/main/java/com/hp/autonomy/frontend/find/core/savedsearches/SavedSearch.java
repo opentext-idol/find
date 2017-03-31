@@ -1,7 +1,8 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -146,7 +147,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
      */
     @SuppressWarnings("OverlyComplexMethod")
     public void merge(final T other) {
-        if (other != null) {
+        if(other != null) {
             mergeInternal(other);
 
             title = other.getTitle() == null ? title : other.getTitle();
@@ -159,7 +160,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             parametricValues = other.getParametricValues() == null ? parametricValues : other.getParametricValues();
             parametricRanges = other.getParametricRanges() == null ? parametricRanges : other.getParametricRanges();
 
-            if (other.getConceptClusterPhrases() != null) {
+            if(other.getConceptClusterPhrases() != null) {
                 conceptClusterPhrases.clear();
                 conceptClusterPhrases.addAll(other.getConceptClusterPhrases());
             }
@@ -182,7 +183,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     // WARNING: This logic is duplicated in the client-side search-data-util
     // Caution: Method has multiple exit points.
     public String toQueryText() {
-        if (conceptClusterPhrases.isEmpty()) {
+        if(conceptClusterPhrases.isEmpty()) {
             return "*";
         } else {
             final Collection<List<ConceptClusterPhrase>> groupedClusters = conceptClusterPhrases.stream()

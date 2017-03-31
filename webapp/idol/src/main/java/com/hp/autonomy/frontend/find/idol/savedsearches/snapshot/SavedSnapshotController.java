@@ -156,7 +156,7 @@ class SavedSnapshotController {
     public SavedSnapshot get(@PathVariable("id") final long id) {
         if(getValidIds().contains(id)) {
             return Optional.ofNullable(service.getDashboardSearch(id))
-                    .orElseThrow(() -> new IllegalArgumentException("ID " + id + " does not match any known Saved Snapshot"));
+                    .orElseThrow(() -> new IllegalArgumentException("Configured ID " + id + " does not match any known Saved Snapshot"));
         } else {
             throw new IllegalArgumentException("Saved Snapshot ID " + id + " is not in the dashboards configuration file");
         }

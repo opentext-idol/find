@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -9,14 +9,21 @@ import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryControll
 import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodErrorException;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.hod.search.*;
+import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
+import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
 import org.mockito.Mock;
 import org.springframework.beans.factory.ObjectFactory;
 
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-public class HodSavedSearchQueryControllerTest extends SavedQueryControllerTest<HodQueryRequest, ResourceName, HodQueryRestrictions, HodSearchResult, HodErrorException> {
+public class HodSavedQueryControllerTest extends SavedQueryControllerTest<HodQueryRequest, ResourceName, HodQueryRestrictions, HodSearchResult, HodErrorException, HodSavedQueryController> {
     @Mock
     private HodDocumentsService hodDocumentsService;
 

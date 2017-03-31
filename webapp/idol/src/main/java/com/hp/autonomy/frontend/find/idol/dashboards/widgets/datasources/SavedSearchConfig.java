@@ -1,3 +1,8 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -27,7 +32,7 @@ public class SavedSearchConfig extends SimpleComponent<SavedSearchConfig> implem
 
     @Override
     public void basicValidate(final String section) throws ConfigException {
-        if (id == null || type == null) {
+        if(id == null || type == null) {
             throw new ConfigException(section, "Dashboard SavedSearch datasource config must contain an id and a type");
         }
 

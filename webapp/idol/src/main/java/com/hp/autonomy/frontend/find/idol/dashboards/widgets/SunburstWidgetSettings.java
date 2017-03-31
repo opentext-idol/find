@@ -1,3 +1,8 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -22,14 +27,13 @@ import java.util.Map;
 @JsonDeserialize(builder = SunburstWidgetSettings.SunburstWidgetSettingsBuilder.class)
 public class SunburstWidgetSettings extends SimpleComponent<SunburstWidgetSettings> implements WidgetSettings<SunburstWidgetSettings> {
     private static final String SECTION = "Sunburst Dashboard";
-
     private final Map<String, Object> widgetSettings;
     private final TagName firstField;
     private final TagName secondField;
 
     @Override
     public void basicValidate(final String section) throws ConfigException {
-        if (firstField == null) {
+        if(firstField == null) {
             throw new ConfigException(SECTION, "Sunburst dashboard config must specify a first field");
         }
 

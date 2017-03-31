@@ -1,7 +1,8 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
@@ -87,7 +88,7 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
 
         final SavedQuery savedQuery = service.get(id);
         final DateTime dateDocsLastFetched = savedQuery.getDateDocsLastFetched();
-        if (savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
+        if(savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
             final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                     .queryText(savedQuery.toQueryText())
                     .fieldText(fieldTextParser.toFieldText(savedQuery))
@@ -112,8 +113,8 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
 
     private Collection<S> convertEmbeddableIndexes(final Iterable<EmbeddableIndex> embeddableIndexes) {
         final Collection<S> indexes = new ArrayList<>(CollectionUtils.size(embeddableIndexes));
-        if (embeddableIndexes != null) {
-            for (final EmbeddableIndex embeddableIndex : embeddableIndexes) {
+        if(embeddableIndexes != null) {
+            for(final EmbeddableIndex embeddableIndex : embeddableIndexes) {
                 indexes.add(convertEmbeddableIndex(embeddableIndex));
             }
         }
