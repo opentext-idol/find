@@ -9,7 +9,6 @@ define([
     'find/idol/app/model/comparison/comparison-documents-collection',
     'find/app/page/search/results/state-token-strategy',
     'find/app/page/search/results/map-view',
-    'find/app/page/search/results/field-selection-view',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/idol/nls/comparisons',
@@ -22,18 +21,9 @@ define([
     'underscore',
     'iCheck'
 ], function ($, Backbone, ComparisonDocumentsCollection, stateTokenStrategy, MapView,
-             FieldSelectionView, configuration, i18n, comparisonsI18n, addLinksToSummary,
+             configuration, i18n, comparisonsI18n, addLinksToSummary,
              searchDataUtil, loadingSpinnerTemplate, template, popoverTemplate, vent, _) {
     'use strict';
-
-    function locationFieldsToSelectionFields(locationFields) {
-        return locationFields.map(function (locationField) {
-            return {
-                id: locationField.displayName,
-                displayName: locationField.displayName
-            }
-        })
-    }
 
     return Backbone.View.extend({
         className: 'service-view-container',
@@ -50,7 +40,6 @@ define([
 
         initialize: function (options) {
             this.searchModels = options.searchModels;
-            this.locationFields = configuration().map.locationFields;
             this.resultsStep = configuration().map.resultsStep;
 
             this.mapView = new MapView({addControl: true});
@@ -59,64 +48,43 @@ define([
             const bothQueryModel = this.createQueryModel(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]);
             const secondQueryModel = this.createQueryModel(this.model.get('secondText'), this.model.get('onlyInSecond'), [this.searchModels.second]);
 
-            const selectionFields = locationFieldsToSelectionFields(this.locationFields);
-            this.firstSelectionView = new FieldSelectionView({
-                model: firstQueryModel,
-                name: 'FirstFieldSelectionView',
-                width: '100%',
-                fields: selectionFields,
-                allowEmpty: false
-            });
-
-            this.bothSelectionView = new FieldSelectionView({
-                model: bothQueryModel,
-                name: 'BothFieldSelectionView',
-                width: '100%',
-                fields: selectionFields,
-                allowEmpty: false
-            });
-
-            this.secondSelectionView = new FieldSelectionView({
-                model: secondQueryModel,
-                name: 'SecondFieldSelectionView',
-                width: '100%',
-                fields: selectionFields,
-                allowEmpty: false
-            });
-
             this.comparisons = [
                 {
                     name: comparisonsI18n['list.title.first'](this.searchModels.first.get('title')),
                     collection: new ComparisonDocumentsCollection(),
-                    layer: this.mapView.createLayer({
+                    layerOptions: {
                         iconCreateFunction: this.mapView.getDivIconCreateFunction('first-location-cluster')
-                    }),
+                    },
                     model: firstQueryModel,
-                    color: 'green'
+                    color: 'green',
+                    markers: {}
                 },
                 {
                     name: comparisonsI18n['list.title.both'],
                     collection: new ComparisonDocumentsCollection(),
-                    layer: this.mapView.createLayer({
+                    layerOptions: {
                         iconCreateFunction: this.mapView.getDivIconCreateFunction('both-location-cluster')
-                    }),
+                    },
                     model: bothQueryModel,
-                    color: 'orange'
+                    color: 'orange',
+                    markers: {}
                 },
                 {
                     name: comparisonsI18n['list.title.second'](this.searchModels.second.get('title')),
                     collection: new ComparisonDocumentsCollection(),
-                    layer: this.mapView.createLayer({
+                    layerOptions: {
                         iconCreateFunction: this.mapView.getDivIconCreateFunction('second-location-cluster')
-                    }),
+                    },
                     model: secondQueryModel,
-                    color: 'red'
+                    color: 'red',
+                    markers: {}
                 }
             ];
 
-            this.createAddListeners(this.comparisons);
-            this.createSyncListeners(this.comparisons);
-            this.createModelListeners(this.comparisons);
+            this.parentLayerModel = new Backbone.Model();
+
+            this.createAddListeners();
+            this.createSyncListeners();
         },
 
         render: function () {
@@ -130,26 +98,14 @@ define([
             this.$loadingSpinner = $(this.loadingTemplate);
             this.$('.map-loading-spinner').html(this.$loadingSpinner);
 
-            this.$('.first-select-label').append(this.firstSelectionView.$el);
-            this.$('.both-select-label').append(this.bothSelectionView.$el);
-            this.$('.second-select-label').append(this.secondSelectionView.$el);
-
-            this.firstSelectionView.render();
-            this.bothSelectionView.render();
-            this.secondSelectionView.render();
-
             this.mapView.setElement(this.$('.location-comparison-map')).render();
 
-            this.$('.location-comparison-show-more').click(_.bind(function () {
-                _.each(this.comparisons, function (comparison) {
-                    this.fetchDocuments(comparison.model, comparison.collection);
-                }, this);
-                this.toggleLoading();
-            }, this));
-
-            this.addLayers();
+            this.$('.location-comparison-show-more').click(function () {
+                this.fetchDocuments();
+            }.bind(this));
 
             this.toggleLoading();
+            this.reloadMarkers();
         },
 
         createQueryModel: function (queryText, stateTokens, searchModels) {
@@ -167,60 +123,76 @@ define([
             }, stateTokens));
         },
 
-        createAddListeners: function (comparisons) {
-            _.each(comparisons, function (comparison) {
+        createAddListeners: function () {
+            this.comparisons.forEach(function (comparison) {
                 this.listenTo(comparison.collection, 'add', function (model) {
-                    const location = _.findWhere(model.get('locations'), {displayName: comparison.model.get('field')});
-                    if (location) {
-                        const title = model.get('title');
-                        const popover = this.popoverTemplate({
-                            title: title,
-                            i18n: i18n,
-                            summary: addLinksToSummary(model.get('summary')),
-                            cidForClickRouting: model.cid
-                        });
-                        const icon = this.mapView.getIcon('hp-record', 'white', comparison.color);
-                        const marker = this.mapView.getMarker(location.latitude, location.longitude, icon, title, popover);
-                        model.set('marker', marker);
-                        comparison.layer.addLayer(marker);
-                    }
+                    const locations = model.get('locations');
+                    Object.keys(locations).forEach(function (locationName) {
+                        locations[locationName].forEach(function (location) {
+                            const longitude = location.longitude;
+                            const latitude = location.latitude;
+                            const title = model.get('title');
+                            const popover = this.popoverTemplate({
+                                title: title,
+                                i18n: i18n,
+                                summary: addLinksToSummary(model.get('summary')),
+                                cidForClickRouting: model.cid
+                            });
+                            const icon = this.mapView.getIcon(location.iconName || 'hp-record', location.iconColor || 'white', comparison.color);
+                            const marker = this.mapView.getMarker(latitude, longitude, icon, title, popover);
+
+                            if (comparison.markers[location.displayName]) {
+                                comparison.markers[location.displayName].push(marker);
+                            } else {
+                                comparison.markers[location.displayName] = [marker];
+                            }
+                        }, this);
+                    }, this);
                 });
             }, this);
         },
 
-        createSyncListeners: function (comparisons) {
-            _.each(comparisons, function (comparison) {
+        createSyncListeners: function () {
+            this.comparisons.forEach(function (comparison) {
                 this.listenTo(comparison.collection, 'sync', function () {
-                    const allMarkers = _.chain(this.comparisons).pluck('layer').invoke('getLayers').flatten().value();
-                    if (!_.isEmpty(allMarkers) && !this.collectionsFetching()) {
-                        this.mapView.loaded(allMarkers);
+                    if (!_.isEmpty(comparison.markers)) {
+                        Object.keys(comparison.markers).forEach(function (markerName) {
+                            let parentLayer = this.parentLayerModel.get(markerName);
+                            if (!parentLayer) {
+                                parentLayer = this.mapView.addGroupingLayer(markerName);
+                                this.parentLayerModel.set(markerName, parentLayer);
+                            }
+                            this.mapView.addMarkers(comparison.markers[markerName], {
+                                clusterLayer: comparison.clusterLayer,
+                                groupingLayer: parentLayer
+                            });
+                        }, this);
+                        this.mapView.fitMapToMarkerBounds();
                     }
                     this.toggleLoading()
                 });
             }, this)
         },
 
-        createModelListeners: function (comparisons) {
-            _.each(comparisons, function (comparison) {
-                this.listenTo(comparison.model, 'change:field', _.bind(this.reloadMarkers, this, comparison));
-            }, this)
+        reloadMarkers: function () {
+            if (this.mapView.mapRendered()) {
+                this.clearMarkers();
+                this.comparisons.forEach(function (comparison) {
+                    comparison.clusterLayer = this.mapView.addClusterLayer(comparison.name, comparison.layerOptions);
+                }, this);
+                this.fetchDocuments();
+            }
         },
 
-        addLayers: function () {
-            _.each(this.comparisons, function (comparison) {
-                this.mapView.addLayer(comparison.layer, comparison.name)
-            }, this);
-        },
-
-        reloadMarkers: function (comparison) {
-            this.clearMarkers(comparison.collection, comparison.layer);
-            this.fetchDocuments(comparison.model, comparison.collection);
-            this.toggleLoading();
-        },
-
-        clearMarkers: function (collection, layer) {
-            collection.reset();
-            layer.clearLayers();
+        clearMarkers: function () {
+            this.$('.map-results-count').empty();
+            this.mapView.clearMarkers();
+            this.comparisons.forEach(function (comparison) {
+                comparison.collection.reset();
+                comparison.clusterLayer = null;
+                comparison.markers = {};
+            });
+            this.parentLayerModel.clear();
         },
 
         collectionsFetching: function () {
@@ -242,18 +214,10 @@ define([
             this.$('.location-comparison-show-more').prop('disabled', this.collectionsFetching() || this.collectionsFull());
         },
 
-        getFetchOptions: function (queryModel, selectedField, length) {
-            const locationField = _.findWhere(this.locationFields, {displayName: selectedField});
-
-            const latitudeFieldsInfo = configuration().fieldsInfo[locationField.latitudeField];
-            const longitudeFieldsInfo = configuration().fieldsInfo[locationField.longitudeField];
-
-            const latitudesFieldsString = latitudeFieldsInfo.names.join(':');
-            const longitudeFieldsString = longitudeFieldsInfo.names.join(':');
-
-            const exists = 'EXISTS{}:' + latitudesFieldsString + ' AND EXISTS{}:' + longitudeFieldsString;
-
-            const newFieldText = queryModel.get('fieldText') ? queryModel.get('fieldText') + ' AND ' + exists : exists;
+        getFetchOptions: function (queryModel, fieldText, length) {
+            const newFieldText = queryModel.get('fieldText')
+                ? '(' + queryModel.get('fieldText') + ') AND (' + fieldText + ')'
+                : fieldText;
 
             return {
                 data: _.extend({
@@ -268,13 +232,22 @@ define([
             };
         },
 
-        fetchDocuments: function (queryModel, collection) {
-            if (collection.length !== collection.totalResults) {
-                const selectedField = queryModel.get('field');
+        fetchDocuments: function () {
+            const config = configuration();
 
-                const options = this.getFetchOptions(queryModel, selectedField, collection.length);
+            const locationFields = config.map.locationFields;
+            if (!_.isEmpty(locationFields)) {
+                const fieldText = locationFields.map(function (locationField) {
+                    //noinspection JSUnresolvedVariable
+                    return '(EXISTS{}:' + config.fieldsInfo[locationField.latitudeField].names.join(':') +
+                        ' AND EXISTS{}:' + config.fieldsInfo[locationField.longitudeField].names.join(':') + ')';
+                }).join(' OR ');
 
-                collection.fetch(options)
+                this.comparisons.forEach(function (comparison) {
+                    const options = this.getFetchOptions(comparison.model, fieldText, comparison.collection.length);
+                    comparison.collection.fetch(options);
+                }, this);
+                this.toggleLoading();
             }
         }
     });

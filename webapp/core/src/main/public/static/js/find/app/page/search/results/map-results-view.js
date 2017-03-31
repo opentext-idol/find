@@ -80,7 +80,10 @@ define([
             this.listenTo(this.documentsCollection, 'sync', _.bind(function () {
                 if (!_.isEmpty(this.markers)) {
                     Object.keys(this.markers).forEach(function (markerName) {
-                        this.mapResultsView.addMarkers(this.markers[markerName], this.clusterLayer, markerName);
+                        this.mapResultsView.addMarkers(this.markers[markerName], {
+                            clusterLayer: this.clusterLayer,
+                            name: markerName
+                        });
                     }, this);
                     this.mapResultsView.fitMapToMarkerBounds();
                 }

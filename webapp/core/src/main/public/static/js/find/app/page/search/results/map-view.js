@@ -48,8 +48,7 @@ define([
             this.removeZoomControl = options.removeZoomControl;
             this.disableInteraction = options.disableInteraction || false;
 
-            this.clusterLayers = [];
-            this.markerLayers = [];
+            this.layers = [];
 
             this.listenTo(vent, 'vent:resize', function () {
                 if (this.map) {
@@ -104,39 +103,48 @@ define([
                 zoomToBoundsOnClick: !this.disableInteraction,
                 showCoverageOnHover: !this.disableInteraction
             }, options));
-            this.map.addLayer(clusterLayer, name);
-
-            this.clusterLayers.push(clusterLayer);
+            this.addLayer(clusterLayer, name);
 
             return clusterLayer;
         },
 
-        addMarkers: function (markers, clusterLayer, name) {
+        addGroupingLayer: function (name) {
+            const layer = leaflet.layerGroup();
+            this.addLayer(layer, name);
+            return layer;
+        },
+
+        addMarkers: function (markers, options) {
             let layer;
-            if (clusterLayer) {
+            if (options.clusterLayer) {
                 layer = leaflet.layerGroup(markers);
-                clusterLayer.checkIn(layer);
-            }
-            else {
+                options.clusterLayer.checkIn(layer);
+            } else {
                 layer = leaflet.featureGroup(markers);
             }
 
-            this.addLayer(layer, name);
-            this.markerLayers.push(layer);
+            if (options.groupingLayer) {
+                options.groupingLayer.addLayer(layer);
+            }
+
+            this.addLayer(layer, options.name);
         },
 
         addLayer: function (layer, name) {
             this.map.addLayer(layer);
-            if (this.control) {
+            this.layers.push(layer);
+            if (this.control && name) {
                 this.control.addOverlay(layer, name);
             }
         },
 
         fitMapToMarkerBounds: function () {
-            const layers = this.clusterLayers.concat(this.markerLayers);
+            const layers = this.layers.filter(function (layer) {
+                return layer.getBounds;
+            });
             const bounds = _.first(layers).getBounds();
             _.rest(layers).forEach(function (layer) {
-                bounds.extend(layer.getBounds ? layer.getBounds() : layer);
+                bounds.extend(layer.getBounds());
             });
             this.map.fitBounds(bounds);
         },
@@ -171,11 +179,10 @@ define([
         },
 
         clearMarkers: function () {
-            this.clusterLayers.concat(this.markerLayers).forEach(function (layer) {
+            this.layers.forEach(function (layer) {
                 layer.clearLayers();
             });
-            this.clusterLayers = [];
-            this.markerLayers = [];
+            this.layers = [];
         },
 
         remove: function () {
