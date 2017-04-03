@@ -1,11 +1,15 @@
+/*
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'moment',
-    'underscore',
-    'jquery',
     'find/app/page/search/filters/date/dates-filter-view',
     'find/app/model/dates-filter-model'
-], function(Backbone, moment, _, $, DatesFilterView, DatesFilterModel) {
+], function(Backbone, moment, DatesFilterView, DatesFilterModel) {
+    'use strict';
 
     describe('Dates Filter View', function() {
         beforeEach(function() {
@@ -49,11 +53,11 @@ define([
             });
 
             it('only ticks the "Custom" option', function() {
-                var $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
+                const $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
                 expect($tickedItems).toHaveLength(1);
                 expect($tickedItems.closest('[data-filter-id]')).toHaveAttr('data-filter-id', DatesFilterModel.DateRange.CUSTOM);
             });
-            
+
             it('shows the min and max date inputs', function() {
                 expect(this.view.$('.search-dates-wrapper')).not.toHaveClass('hide');
             });
@@ -68,7 +72,7 @@ define([
                 });
 
                 it('un-ticks all date ranges', function() {
-                    var $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
+                    const $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
                     expect($tickedItems).toHaveLength(0);
                 });
 
@@ -94,11 +98,11 @@ define([
             });
 
             it('only ticks the "Last Week" option', function() {
-                var $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
+                const $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
                 expect($tickedItems).toHaveLength(1);
                 expect($tickedItems.closest('[data-filter-id]')).toHaveAttr('data-filter-id', DatesFilterModel.DateRange.WEEK);
             });
-            
+
             it('does not show the min and max date inputs', function() {
                 expect(this.view.$('.search-dates-wrapper')).toHaveClass('hide');
             });
@@ -113,7 +117,7 @@ define([
                 });
 
                 it('un-ticks all date ranges', function() {
-                    var $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
+                    const $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
                     expect($tickedItems).toHaveLength(0);
                 });
             });
@@ -135,10 +139,10 @@ define([
             });
 
             it('does not tick any date range', function() {
-                var $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
+                const $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
                 expect($tickedItems).toHaveLength(0);
             });
-            
+
             it('does not show the min and max date inputs', function() {
                 expect(this.view.$('.search-dates-wrapper')).toHaveClass('hide');
             });
@@ -153,7 +157,7 @@ define([
                 });
 
                 it('only ticks the "Last Week" option', function() {
-                    var $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
+                    const $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
                     expect($tickedItems).toHaveLength(1);
                     expect($tickedItems.closest('[data-filter-id]')).toHaveAttr('data-filter-id', DatesFilterModel.DateRange.WEEK);
                 });
@@ -189,7 +193,7 @@ define([
                 });
 
                 it('only ticks the "Since Last Time" option', function() {
-                    var $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
+                    const $tickedItems = this.view.$('[data-filter-id] i:not(.hide)');
                     expect($tickedItems).toHaveLength(1);
                     expect($tickedItems.closest('[data-filter-id]')).toHaveAttr('data-filter-id', DatesFilterModel.DateRange.NEW);
                 });

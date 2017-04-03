@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -129,19 +129,19 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         content.basicValidate("content");
         savedSearchConfig.basicValidate(SECTION);
 
-        if (map != null) {
+        if(map != null) {
             map.basicValidate("map");
         }
 
-        if (export != null) {
+        if(export != null) {
             export.basicValidate(SECTION);
         }
 
-        if (queryManipulation != null) {
+        if(queryManipulation != null) {
             queryManipulation.basicValidate(SECTION);
         }
 
-        if (answerServer != null) {
+        if(answerServer != null) {
             answerServer.basicValidate("AnswerServer");
         }
     }
@@ -160,24 +160,24 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
 
     @Override
     public String lookupComponentNameByHostAndPort(final String hostName, final int port) {
-        if (productMap == null) {
+        if(productMap == null) {
             final Map<String, Map<Integer, String>> tempProductMap = new HashMap<>();
             addEntriesToProductMap(tempProductMap, ProductType.AXE.getFriendlyName(), content.getHost(), content.getPort(), content.getServicePort());
             addEntriesToProductMap(tempProductMap, ProductType.VIEW.getFriendlyName(), view.getHost(), view.getPort(), view.getServicePort());
 
-            if (!"default".equals(login.getMethod())) {
+            if(!"default".equals(login.getMethod())) {
                 addEntriesToProductMap(tempProductMap, ProductType.UASERVER.getFriendlyName(), login.getCommunity().getHost(), login.getCommunity().getPort(), login.getCommunity().getServicePort());
             }
 
-            if (isOptionalComponentEnabled(queryManipulation)) {
+            if(isOptionalComponentEnabled(queryManipulation)) {
                 addEntriesToProductMap(tempProductMap, ProductType.QMS.getFriendlyName(), queryManipulation.getServer().getHost(), queryManipulation.getServer().getPort(), queryManipulation.getServer().getServicePort());
             }
 
-            if (isOptionalComponentEnabled(answerServer)) {
+            if(isOptionalComponentEnabled(answerServer)) {
                 addEntriesToProductMap(tempProductMap, ProductType.ANSWERSERVER.getFriendlyName(), answerServer.getServer().getHost(), answerServer.getServer().getPort(), answerServer.getServer().getServicePort());
             }
 
-            if (isOptionalComponentEnabled(statsServer)) {
+            if(isOptionalComponentEnabled(statsServer)) {
                 addEntriesToProductMap(tempProductMap, statsServer.getServer().getHost(), ProductType.STATS.getFriendlyName(), statsServer.getServer().getPort(), statsServer.getServer().getServicePort());
             }
 

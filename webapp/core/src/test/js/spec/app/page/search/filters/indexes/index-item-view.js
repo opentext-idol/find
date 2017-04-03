@@ -1,12 +1,13 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'find/app/page/search/filters/indexes/index-item-view',
-    'backbone'
-], function(IndexItemView, Backbone) {
+    'backbone',
+    'find/app/page/search/filters/indexes/index-item-view'
+], function(Backbone, IndexItemView) {
+    'use strict';
 
     describe('IndexItemView with a valid database', function() {
         beforeEach(function() {
@@ -29,5 +30,4 @@ define([
             expect(this.view.$el).toHaveClass('disabled-index');
         });
     });
-
 });

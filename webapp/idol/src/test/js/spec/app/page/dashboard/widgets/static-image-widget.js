@@ -4,15 +4,13 @@
  */
 
 define([
-    'underscore',
-    'jquery',
     'find/idol/app/page/dashboard/widgets/static-image-widget',
     'html2canvas'
-], function(_, $, StaticImageWidget, html2canvas) {
-    "use strict";
+], function(StaticImageWidget, html2canvas) {
+    'use strict';
 
     describe('Static Image Widget', function() {
-        beforeEach(function () {
+        beforeEach(function() {
             this.widget = new StaticImageWidget({
                 name: 'Test Widget',
                 widgetSettings: {
@@ -23,7 +21,7 @@ define([
             this.widget.render();
         });
 
-        afterEach(function () {
+        afterEach(function() {
             this.widget.remove();
         });
 

@@ -28,7 +28,6 @@ define([
     };
 
     return ParametricResultsView.extend({
-
         tableTemplate: _.template(tableTemplate),
 
         initialize: function(options) {
@@ -75,7 +74,7 @@ define([
                         language: strings
                     });
                 } else {
-                    var columns = _.map(this.dependentParametricCollection.columnNames, function(name) {
+                    const columns = _.map(this.dependentParametricCollection.columnNames, function(name) {
                         return {
                             data: name,
                             defaultContent: 0,

@@ -254,7 +254,7 @@ define([
         },
 
         createChartData: function() {
-            let data = [];
+            const data = [];
 
             _.each(this.bucketedValues, function(model) {
                 data.push({

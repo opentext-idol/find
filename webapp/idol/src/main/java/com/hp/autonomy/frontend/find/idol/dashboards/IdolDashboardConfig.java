@@ -22,7 +22,6 @@ import java.util.Collection;
 @Builder(toBuilder = true)
 @JsonDeserialize(builder = IdolDashboardConfig.IdolDashboardConfigBuilder.class)
 public class IdolDashboardConfig extends AbstractConfig<IdolDashboardConfig> {
-
     @Singular
     private final Collection<Dashboard> dashboards;
 

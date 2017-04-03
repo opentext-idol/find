@@ -35,7 +35,7 @@ define([
         const color = d3.scale.category20c();
         $el.empty();
 
-        const sunburst = new Sunburst($el, {
+        return new Sunburst($el, {
             animate: false,
             nameAttr: 'text',
             sizeAttr: 'count',
@@ -106,8 +106,6 @@ define([
                     });
             }
         });
-
-        return sunburst;
     }
 
     return ParametricResultsView.extend({

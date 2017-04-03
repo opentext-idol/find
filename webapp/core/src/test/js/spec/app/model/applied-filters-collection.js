@@ -1,8 +1,10 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
+    'backbone',
     'js-testing/backbone-mock-factory',
     'find/app/model/dates-filter-model',
     'find/app/model/applied-filters-collection',
@@ -10,9 +12,9 @@ define([
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
     'find/app/util/database-name-resolver',
-    'backbone',
     'moment'
-], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, i18n, fieldTextParser, databaseNameResolver, Backbone, moment) {
+], function(Backbone, mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues,
+            i18n, fieldTextParser, databaseNameResolver, moment) {
     'use strict';
 
     const WOOKIEPEDIA = {
@@ -256,7 +258,13 @@ define([
         describe('after adding a selected parametric value with a displayName in the configuration', function() {
             beforeEach(function() {
                 this.selectedParametricValues.add([
-                    {field: 'FELINES', displayName: 'cats', value: 'MR_MISTOFFELEES', displayValue: 'Mr. Mistoffelees, the magical cat', type: 'Parametric'}
+                    {
+                        field: 'FELINES',
+                        displayName: 'cats',
+                        value: 'MR_MISTOFFELEES',
+                        displayValue: 'Mr. Mistoffelees, the magical cat',
+                        type: 'Parametric'
+                    }
                 ]);
             });
 
@@ -334,7 +342,13 @@ define([
             describe('then the selected parametric values collection is reset with a new selected field', function() {
                 beforeEach(function() {
                     this.selectedParametricValues.reset([
-                        {field: 'VEHICLE', displayName: 'Vehicle', value: 'car', displayValue: 'car', type: 'Parametric'}
+                        {
+                            field: 'VEHICLE',
+                            displayName: 'Vehicle',
+                            value: 'car',
+                            displayValue: 'car',
+                            type: 'Parametric'
+                        }
                     ]);
                 });
 

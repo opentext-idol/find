@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -41,7 +41,6 @@ import java.util.Set;
 @JsonDeserialize(builder = HodFindConfig.HodFindConfigBuilder.class)
 public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodSearchCapable, PasswordsConfig<HodFindConfig>, HodSsoConfig, FindConfig<HodFindConfig, HodFindConfig.HodFindConfigBuilder> {
     private static final String SECTION = "Hod Config";
-
     private final Authentication<?> login;
     private final HsodConfig hsod;
     private final HodConfig hod;
@@ -105,15 +104,15 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodS
         queryManipulation.basicValidate(SECTION);
         savedSearchConfig.basicValidate(SECTION);
 
-        if (map != null) {
+        if(map != null) {
             map.basicValidate("map");
         }
 
-        if (export != null) {
+        if(export != null) {
             export.basicValidate(SECTION);
         }
 
-        if (!"default".equalsIgnoreCase(login.getMethod())) {
+        if(!"default".equalsIgnoreCase(login.getMethod())) {
             login.basicValidate(SECTION);
         }
     }

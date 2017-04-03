@@ -1,15 +1,15 @@
 /*
- * Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
     'underscore',
+    'backbone',
     'i18n!find/nls/bundle',
     'find/idol/app/page/search/results/idol-questions-view',
     'find/idol/app/model/answer-bank/idol-answered-questions-collection'
-], function(Backbone, _, i18n, IdolQuestionsView, IdolAnsweredQuestionsCollection) {
+], function(_, Backbone, i18n, IdolQuestionsView, IdolAnsweredQuestionsCollection) {
     'use strict';
 
     describe('Idol Questions View', function() {

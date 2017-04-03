@@ -22,7 +22,7 @@ define([
     // This is the scenario where the widget is fully initialized and is undergoing a regular scheduled update
     // Parameters describe how many times a given fetch (saved search, postInitialize() or getData()) had been done.
     // Unsuccessful calls count towards these numbers. The parameter depth is a recursion-limiting integer.
-    function updateWithInit(savedSearchCallCount, postInitializeCallCount, getDataCallCount, depth) {
+    function updateCycleWithInit(savedSearchCallCount, postInitializeCallCount, getDataCallCount, depth) {
         return function() {
             beforeEach(function() {
                 this.widget.update(this.tracker);
@@ -93,7 +93,7 @@ define([
 
                         if(depth > 0) {
                             describe('scheduled update -> ',
-                                updateWithoutInit(
+                                updateCycle(
                                     savedSearchCallCount + 1,
                                     postInitializeCallCount + 1,
                                     getDataCallCount + 1,
@@ -117,7 +117,7 @@ define([
 
                         if(depth > 0) {
                             describe('scheduled update -> ',
-                                updateWithoutInit(
+                                updateCycle(
                                     savedSearchCallCount + 1,
                                     postInitializeCallCount + 1,
                                     getDataCallCount + 1,
@@ -128,7 +128,7 @@ define([
 
                     if(depth > 0) {
                         describe('scheduled update before getData() succeeds -> ',
-                            updateWithoutInit(
+                            updateCycle(
                                 savedSearchCallCount + 1,
                                 postInitializeCallCount + 1,
                                 getDataCallCount + 1,
@@ -156,7 +156,7 @@ define([
 
                     if(depth > 0) {
                         describe('scheduled update -> ',
-                            updateWithInit(
+                            updateCycleWithInit(
                                 savedSearchCallCount + 1,
                                 postInitializeCallCount + 1,
                                 getDataCallCount,
@@ -167,7 +167,7 @@ define([
 
                 if(depth > 0) {
                     describe('scheduled update before postInitialize() succeeds -> ',
-                        updateWithInit(
+                        updateCycleWithInit(
                             savedSearchCallCount + 1,
                             postInitializeCallCount + 1,
                             getDataCallCount,
@@ -199,7 +199,7 @@ define([
 
                 if(depth > 0) {
                     describe('scheduled update before postInitialize() succeeds -> ',
-                        updateWithInit(
+                        updateCycleWithInit(
                             savedSearchCallCount + 1,
                             postInitializeCallCount,
                             getDataCallCount,
@@ -210,7 +210,7 @@ define([
 
             if(depth > 0) {
                 describe('scheduled update before saved search fetch succeeds -> ',
-                    updateWithInit(
+                    updateCycleWithInit(
                         savedSearchCallCount + 1,
                         postInitializeCallCount,
                         getDataCallCount,
@@ -224,7 +224,7 @@ define([
     // A widget should only call postInitialize() once during its lifetime.
     // Parameters describe how many times a given fetch (saved search, postInitialize() or getData()) had been done.
     // Unsuccessful calls count towards these numbers. The parameter depth is a recursion-limiting integer.
-    function updateWithoutInit(savedSearchCallCount, postInitializeCallCount, getDataCallCount, depth) {
+    function updateCycle(savedSearchCallCount, postInitializeCallCount, getDataCallCount, depth) {
         return function() {
             beforeEach(function() {
                 this.widget.update(this.tracker);
@@ -274,7 +274,7 @@ define([
 
                     if(depth > 0) {
                         describe('scheduled update -> ',
-                            updateWithoutInit(
+                            updateCycle(
                                 savedSearchCallCount + 1,
                                 postInitializeCallCount,
                                 getDataCallCount + 1,
@@ -298,7 +298,7 @@ define([
 
                     if(depth > 0) {
                         describe('scheduled update -> ',
-                            updateWithoutInit(
+                            updateCycle(
                                 savedSearchCallCount + 1,
                                 postInitializeCallCount,
                                 getDataCallCount + 1,
@@ -309,7 +309,7 @@ define([
 
                 if(depth > 0) {
                     describe('scheduled update before getData() succeeds -> ',
-                        updateWithoutInit(
+                        updateCycle(
                             savedSearchCallCount + 1,
                             postInitializeCallCount,
                             getDataCallCount + 1,
@@ -341,7 +341,7 @@ define([
 
                 if(depth > 0) {
                     describe('scheduled update before getData() succeeds -> ',
-                        updateWithoutInit(
+                        updateCycle(
                             savedSearchCallCount + 1,
                             postInitializeCallCount,
                             getDataCallCount,
@@ -421,7 +421,7 @@ define([
 
             // No fetches have yet been carried out -- parameters are 0.
             // Test 3 cycles of initialisation/update
-            describe('initial update -> ', updateWithInit(0, 0, 0, 2));
+            describe('initial update -> ', updateCycleWithInit(0, 0, 0, 2));
         });
     });
 });

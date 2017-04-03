@@ -1,56 +1,58 @@
 <table class="table table-hover metadata-table">
     <% if(model.get('thumbnail')) { %>
-    <tr>
-        <th><%-i18n['search.document.thumbnail']%></th>
-        <td>
-            <img class="document-thumbnail m-r-sm pull-left" src="data:image/jpeg;base64,<%=model.get('thumbnail')%>">
-        </td>
-    </tr>
+        <tr>
+            <th><%-i18n['search.document.thumbnail']%></th>
+            <td>
+                <img class="document-thumbnail m-r-sm pull-left" src="data:image/jpeg;base64,<%=model.get('thumbnail')%>">
+            </td>
+        </tr>
     <% } %>
     <% _.each(importantFields, function(field) { %>
-    <% if (field.value) { %>
-    <tr>
-        <th><%-i18n['search.document.' + field.key] || i18nIndexes['search.document.' + field.key]%></th>
-        <td><%-field.value%></td>
-    </tr>
-    <% } %>
+        <% if (field.value) { %>
+            <tr>
+                <th>
+                    <%- i18n['search.document.' + field.key] || i18nIndexes['search.document.' + field.key] %>
+                </th>
+                <td><%- field.value %></td>
+            </tr>
+        <% } %>
     <% }); %>
     <% if (model.get('date')) { %>
-    <tr>
-        <th><%-i18n['search.document.date']%></th>
-        <td><%-model.get('date').fromNow()%></td>
-    </tr>
+        <tr>
+            <th><%-i18n['search.document.date']%></th>
+            <td><%-model.get('date').fromNow()%></td>
+        </tr>
     <% } %>
     <% basicFields.forEach(function(field) { %>
-    <tr>
-        <th class="break-all"><%-field.displayName%></th>
-        <td>
-            <ul class="list-unstyled m-b-nil">
-                <% _.each(field.values, function(value) { %>
-                <li><%-value%></li>
-                <% }); %>
-            </ul>
-        </td>
-    </tr>
+        <tr>
+            <th class="break-all"><%- field.displayName %></th>
+            <td>
+                <ul class="list-unstyled m-b-nil">
+                    <% _.each(field.values, function(value) { %>
+                        <li><%-value%></li>
+                    <% }); %>
+                </ul>
+            </td>
+        </tr>
     <% }); %>
     <% advancedFields.forEach(function(field) { %>
-    <tr class="advanced-field hide">
-        <th class="break-all"><%-field.displayName%></th>
-        <td>
-            <ul class="list-unstyled m-b-nil">
-                <% _.each(field.values, function(value) { %>
-                <li><%-value%></li>
-                <% }); %>
-            </ul>
-        </td>
-    </tr>
+        <tr class="advanced-field hide">
+            <th class="break-all"><%-field.displayName%></th>
+            <td>
+                <ul class="list-unstyled m-b-nil">
+                    <% _.each(field.values, function(value) { %>
+                        <li><%- value %></li>
+                    <% }); %>
+                </ul>
+            </td>
+        </tr>
     <% }); %>
 </table>
 <div>
     <button class="btn button-secondary metadata-tab-see-more">
-        <%-i18n['search.document.detail.tabs.metadata.showAdvanced']%>
+        <%- i18n['search.document.detail.tabs.metadata.showAdvanced'] %>
     </button>
     <button class="btn button-secondary metadata-tab-see-less hide">
-        <%-i18n['search.document.detail.tabs.metadata.hideAdvanced']%>
+        <%- i18n['search.document.detail.tabs.metadata.hideAdvanced'] %>
     </button>
 </div>

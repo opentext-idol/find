@@ -48,7 +48,6 @@ public class IdolDashboardConfigService extends BaseConfigFileService<IdolDashbo
     public void init() throws Exception {
         // need to make sure the sub directory exists
         Files.createDirectories(Paths.get(getConfigFileLocation()).getParent());
-
         super.init();
     }
 
@@ -83,10 +82,8 @@ public class IdolDashboardConfigService extends BaseConfigFileService<IdolDashbo
     }
 
     @Override
-    public void postInitialise(final IdolDashboardConfig config) {
-    }
+    public void postInitialise(final IdolDashboardConfig config) {}
 
     @Override
-    public void postUpdate(final IdolDashboardConfig idolDashboardConfig) {
-    }
+    public void postUpdate(final IdolDashboardConfig idolDashboardConfig) {}
 }

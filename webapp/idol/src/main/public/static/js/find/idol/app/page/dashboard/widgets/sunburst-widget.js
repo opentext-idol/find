@@ -212,14 +212,14 @@ define([
             }
         },
 
-        exportData: function () {
-            const data = this.legendColorCollection.map(function (model) {
+        exportData: function() {
+            const data = this.legendColorCollection.map(function(model) {
                 return {
                     category: model.get('text') || i18n['dashboards.widget.sunburst.legend.hiddenValues'],
                     value: model.get('count'),
                     color: model.get('color') || HIDDEN_COLOR
                 };
-            }).sort(function (a, b) {
+            }).sort(function(a, b) {
                 return d3.ascending(a.category, b.category);
             });
 
@@ -231,8 +231,8 @@ define([
                         title: this.firstField.displayName,
                         colors: _.pluck(data, 'color'),
                         strokeColors: ['#000000'],
-                        showInLegend: _.reduce(data, function (accumulator, entry, index) {
-                            if (entry.color !== HIDDEN_COLOR) {
+                        showInLegend: _.reduce(data, function(accumulator, entry, index) {
+                            if(entry.color !== HIDDEN_COLOR) {
                                 accumulator.push(index);
                             }
                             return accumulator;

@@ -22,7 +22,6 @@ import java.util.Collection;
 @Builder(toBuilder = true)
 @JsonDeserialize(builder = Dashboard.DashboardBuilder.class)
 public class Dashboard extends SimpleComponent<Dashboard> implements OptionalConfigurationComponent<Dashboard> {
-
     private final String dashboardName;
     private final WidgetNameSetting displayWidgetNames;
     private final Boolean enabled;

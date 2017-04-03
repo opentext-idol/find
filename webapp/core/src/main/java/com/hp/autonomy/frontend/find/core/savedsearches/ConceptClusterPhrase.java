@@ -1,7 +1,8 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -19,7 +20,6 @@ import javax.persistence.Embeddable;
 @Data
 @NoArgsConstructor
 public class ConceptClusterPhrase implements Comparable<ConceptClusterPhrase> {
-
     @Column(name = SavedSearch.ConceptClusterPhraseTable.Column.PHRASE)
     private String phrase;
 
@@ -45,12 +45,10 @@ public class ConceptClusterPhrase implements Comparable<ConceptClusterPhrase> {
     public int compareTo(final ConceptClusterPhrase o) {
         if(this.primary == o.primary) {
             return 0;
-        }
-
-        if(this.primary) {
-            return -1;
         } else {
-            return 1;
+            return this.primary
+                    ? -1
+                    : 1;
         }
     }
 }

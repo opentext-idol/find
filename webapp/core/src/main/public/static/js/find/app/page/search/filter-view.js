@@ -246,7 +246,7 @@ define([
         },
 
         parametricFieldsEmpty: function() {
-            return !this.filteredParametricFieldsCollection || this.filteredParametricFieldsCollection.length === 0;
+            return !this.filteredParametricFieldsCollection || this.filteredParametricFieldsCollection.isEmpty();
         }
     });
 });

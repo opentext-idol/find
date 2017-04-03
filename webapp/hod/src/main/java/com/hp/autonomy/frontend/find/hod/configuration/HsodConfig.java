@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -28,13 +28,12 @@ public class HsodConfig extends SimpleComponent<HsodConfig> implements Configura
 
     @Override
     public void basicValidate(final String section) throws ConfigException {
-        if (landingPageUrl == null) {
+        if(landingPageUrl == null) {
             throw new ConfigException(section, "Landing page URL must be provided");
         }
     }
 
     @SuppressWarnings("WeakerAccess")
     @JsonPOJOBuilder(withPrefix = "")
-    public static class HsodConfigBuilder {
-    }
+    public static class HsodConfigBuilder {}
 }
