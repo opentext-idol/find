@@ -11,6 +11,7 @@ define([
     return FindBaseCollection.extend({
         model: DocumentModel,
         url: 'api/bi/comparison/results',
+        totalResults: 0,
 
         parse: function(response) {
             this.totalResults = response.totalResults;

@@ -98,21 +98,23 @@ define([
             
             if (configuration().map.enabled) {
                 response.locations = _.chain(configuration().map.locationFields)
-                    .filter(function (field) {
-                        const latitude = getFieldValue(response.fieldMap[field.latitudeField]);
-                        const longitude = getFieldValue(response.fieldMap[field.longitudeField]);
-                        return longitude && latitude;
-                    })
                     .map(function (field) {
-                        const latitude = getFieldValue(response.fieldMap[field.latitudeField]);
-                        const longitude = getFieldValue(response.fieldMap[field.longitudeField]);
+                        const latitudes = getFieldValues(response.fieldMap[field.latitudeField]);
+                        const longitudes = getFieldValues(response.fieldMap[field.longitudeField]);
 
-                        return {
-                            displayName: field.displayName,
-                            latitude: latitude,
-                            longitude: longitude
-                        }
+                        return _.zip(latitudes, longitudes).map(function (coordinates) {
+                            return {
+                                displayName: field.displayName,
+                                latitude: coordinates[0],
+                                longitude: coordinates[1],
+                                iconName: field.iconName,
+                                iconColor: field.iconColor,
+                                markerColor: field.markerColor
+                            }
+                        });
                     })
+                    .flatten()
+                    .groupBy('displayName')
                     .value()
             }
 

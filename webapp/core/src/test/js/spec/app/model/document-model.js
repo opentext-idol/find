@@ -124,9 +124,11 @@ define([
 
             it('parses the locations from the field map', function() {
                 const locations = this.parse(fullResponse()).locations;
-                expect(locations.length).toBe(1);
+                expect(locations).toBeDefined();
+                expect(locations.test).toBeDefined();
+                expect(locations.test.length).toBe(1);
 
-                const location = locations[0];
+                const location = locations.test[0];
 
                 expect(location).toBeDefined();
                 expect(location.displayName).toBe('test');

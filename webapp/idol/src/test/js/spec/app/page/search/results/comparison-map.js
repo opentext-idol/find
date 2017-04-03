@@ -11,11 +11,11 @@ define([
     'backbone',
     'underscore',
     'jasmine-jquery'
-], function($, ComparisonMap, MockMapView, configuration, Backbone, _) {
+], function ($, ComparisonMap, MockMapView, configuration, Backbone, _) {
     'use strict';
 
-    describe('Comparison Map view', function() {
-        beforeEach(function() {
+    describe('Comparison Map view', function () {
+        beforeEach(function () {
             configuration.and.returnValue({
                 map: {
                     enabled: true,
@@ -82,28 +82,25 @@ define([
 
             this.mapView = MockMapView.instances[0];
 
+            _.each(this.view.resultSets, function (resultSet) {
+                resultSet.collection.totalResults = 0;
+            });
+
             this.view.render();
         });
 
-        it('displays three dropdown boxes with the correct field names', function() {
-            const $selects = this.view.$('.chosen-select');
-            expect($selects).toHaveLength(3);
-            expect($selects[0]).toHaveText('Test');
-            expect($selects[1]).toHaveText('Test');
-            expect($selects[2]).toHaveText('Test');
-        });
-
-        it('should show the show more button but it should be disabled', function() {
+        it('should show the show more button but it should be disabled', function () {
             const $showMore = this.view.$('.location-comparison-show-more');
 
             expect($showMore).toExist();
             expect($showMore).toBeDisabled();
         });
 
-        it('should enable the show more button when the collections are not fetching', function() {
-            _.each(this.view.comparisons, function(comparison) {
-                comparison.collection.fetching = false;
-                comparison.collection.trigger('sync');
+        it('should enable the show more button when the collections are not fetching', function () {
+            _.each(this.view.resultSets, function (resultSet) {
+                resultSet.collection.fetching = false;
+                resultSet.collection.totalResults = 5;
+                resultSet.collection.trigger('sync');
             });
 
             const $showMore = this.view.$('.location-comparison-show-more');
@@ -111,58 +108,45 @@ define([
             expect($showMore).not.toBeDisabled();
         });
 
-        describe('after triggering a fetch', function() {
-            beforeEach(function() {
-                _.each(this.view.comparisons, function(comparison) {
-                    comparison.collection.fetching = true;
-                    comparison.model.trigger('change:field');
-                });
-
-            });
-
-            it('should disable the show more button when the collections are fetching', function() {
-                const $showMore = this.view.$('.location-comparison-show-more');
-                expect($showMore).toExist();
-                expect($showMore).toBeDisabled();
-            });
-
-            it('should show the loading spinner when the collections are fetching', function() {
-                const $showMore = this.view.$('.location-comparison-show-more');
-                expect($showMore).toExist();
-                expect($showMore).toBeDisabled();
-            });
-        });
-
-        describe('after adding a model', function() {
-            beforeEach(function() {
-                this.view.comparisons[0].collection.add(new Backbone.Model({
+        describe('after adding a model', function () {
+            beforeEach(function () {
+                this.view.resultSets[0].collection.add(new Backbone.Model({
                     summary: 'Here be dragons',
                     title: 'testTitle',
-                    locations: [{
-                        displayName: 'Test',
-                        latitude: 100,
-                        longitude: 42
-                    }]
+                    locations: {
+                        Test: [{
+                            displayName: 'Test',
+                            latitude: 100,
+                            longitude: 42
+                        }]
+                    }
                 }));
             });
 
-            it('should add a marker to the map', function() {
-                expect(this.view.comparisons[0].layer.addLayer.calls.count()).toEqual(1);
-                expect(this.view.mapView.getIcon.calls.count()).toEqual(1);
-                expect(this.view.mapView.getMarker.calls.count()).toEqual(1);
+            it('should add a marker to the map', function () {
+                expect(this.view.mapResultsViewStrategy.mapView.getIcon.calls.count()).toEqual(1);
+                expect(this.view.mapResultsViewStrategy.mapView.getMarker.calls.count()).toEqual(1);
             });
-        });
 
-        describe('after a sync', function() {
-            beforeEach(function() {
-                _.each(this.view.comparisons, function(comparison) {
-                    comparison.collection.fetching = false;
+            describe('after a sync', function () {
+                beforeEach(function () {
+                    _.each(this.view.resultSets, function (resultSet) {
+                        resultSet.collection.fetching = false;
+                    });
+                    this.view.resultSets[0].collection.trigger('sync');
                 });
-                this.view.comparisons[0].collection.trigger('sync');
-            });
 
-            it('should call loaded on the map view', function() {
-                expect(this.view.mapView.loaded.calls.count()).toEqual(1);
+                it('should call addGroupingLayer on the map view', function () {
+                    expect(this.view.mapResultsViewStrategy.mapView.addGroupingLayer.calls.count()).toEqual(1);
+                });
+
+                it('should call addMarkers on the map view', function () {
+                    expect(this.view.mapResultsViewStrategy.mapView.addMarkers.calls.count()).toEqual(1);
+                });
+
+                it('should call fitMapToMarkerBounds on the map view', function () {
+                    expect(this.view.mapResultsViewStrategy.mapView.fitMapToMarkerBounds.calls.count()).toEqual(1);
+                });
             });
         });
     });

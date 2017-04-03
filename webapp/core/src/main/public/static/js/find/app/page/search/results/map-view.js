@@ -7,6 +7,7 @@ define([
     'leaflet',
     'Leaflet.awesome-markers',
     'leaflet.markercluster',
+    'leaflet.markercluster.layersupport',
     'html2canvas'
 ], function (Backbone, _, $, configuration, vent, leaflet) {
 
@@ -47,12 +48,7 @@ define([
             this.removeZoomControl = options.removeZoomControl;
             this.disableInteraction = options.disableInteraction || false;
 
-            this.clusterMarkers = leaflet.markerClusterGroup({
-                zoomToBoundsOnClick: !this.disableInteraction,
-                showCoverageOnHover: !this.disableInteraction
-            });
-            this.markerLayerGroup = leaflet.featureGroup();
-            this.markers = [];
+            this.layers = [];
 
             this.listenTo(vent, 'vent:resize', function () {
                 if (this.map) {
@@ -98,32 +94,59 @@ define([
             map.setView([initialLatitude, initialLongitude], this.initialZoom ? this.initialZoom : INITIAL_ZOOM);
         },
 
-        addMarkers: function (markers, cluster) {
-            this.markers = markers;
-            if (cluster) {
-                this.clusterMarkers.addLayers(markers);
-                this.map.addLayer(this.clusterMarkers);
-            }
-            else {
-                this.markerLayerGroup = new leaflet.featureGroup(markers);
-                this.map.addLayer(this.markerLayerGroup);
-            }
+        mapRendered: function () {
+            return !!this.map;
         },
 
-        createLayer: function (options) {
-            // This can be changed in the future to create a cluster or normal group if needed.
-            return new leaflet.markerClusterGroup(options);
+        addClusterLayer: function (name, options) {
+            const clusterLayer = leaflet.markerClusterGroup.layerSupport(_.defaults({
+                zoomToBoundsOnClick: !this.disableInteraction,
+                showCoverageOnHover: !this.disableInteraction
+            }, options));
+            this.addLayer(clusterLayer, name);
+
+            return clusterLayer;
+        },
+
+        addGroupingLayer: function (name) {
+            const layer = leaflet.layerGroup();
+            this.addLayer(layer, name);
+            return layer;
+        },
+
+        addMarkers: function (markers, options) {
+            let layer;
+            if (options.clusterLayer) {
+                layer = leaflet.layerGroup(markers);
+                options.clusterLayer.checkIn(layer);
+            } else {
+                layer = leaflet.featureGroup(markers);
+            }
+
+            if (options.groupingLayer) {
+                options.groupingLayer.addLayer(layer);
+            }
+
+            this.addLayer(layer, options.name);
         },
 
         addLayer: function (layer, name) {
             this.map.addLayer(layer);
-            if (this.control) {
+            this.layers.push(layer);
+            if (this.control && name) {
                 this.control.addOverlay(layer, name);
             }
         },
 
-        loaded: function (markers) {
-            this.map.fitBounds(new leaflet.featureGroup(_.isEmpty(markers) ? this.markers : markers))
+        fitMapToMarkerBounds: function () {
+            const layers = this.layers.filter(function (layer) {
+                return layer.getBounds;
+            });
+            const bounds = _.first(layers).getBounds();
+            _.rest(layers).forEach(function (layer) {
+                bounds.extend(layer.getBounds());
+            });
+            this.map.fitBounds(bounds);
         },
 
         getMarker: function (latitude, longitude, icon, title, popover) {
@@ -137,7 +160,7 @@ define([
 
         getIcon: function (iconName, iconColor, markerColor) {
             return leaflet.AwesomeMarkers.icon({
-                icon: iconName || 'compass',
+                icon: iconName || 'hp-record',
                 iconColor: iconColor || 'white',
                 markerColor: markerColor || 'blue',
                 prefix: 'hp',
@@ -155,13 +178,11 @@ define([
             }
         },
 
-        clearMarkers: function (cluster) {
-            if (cluster) {
-                this.clusterMarkers.clearLayers();
-            } else {
-                this.markerLayerGroup.clearLayers();
-            }
-            this.markers = [];
+        clearMarkers: function () {
+            this.layers.forEach(function (layer) {
+                layer.clearLayers();
+            });
+            this.layers = [];
         },
 
         remove: function () {

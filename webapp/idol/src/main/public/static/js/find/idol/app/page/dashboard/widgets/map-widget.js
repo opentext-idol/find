@@ -7,10 +7,10 @@ define([
     'underscore',
     'jquery',
     './saved-search-widget',
-    'find/app/configuration',
+    'find/app/page/search/results/map-results-view-strategy',
     'find/app/page/search/results/map-view',
     'find/app/model/documents-collection'
-], function (_, $, SavedSearchWidget, configuration, MapView, DocumentsCollection) {
+], function (_, $, SavedSearchWidget, mapResultsViewStrategy, MapView, DocumentsCollection) {
     'use strict';
 
     return SavedSearchWidget.extend({
@@ -18,95 +18,54 @@ define([
 
         initialize: function (options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
-            this.markers = [];
 
-            this.locationFieldPair = this.widgetSettings.locationFieldPair;
-            this.maxResults = this.widgetSettings.maxResults || 1000;
-            this.clusterMarkers = this.widgetSettings.clusterMarkers || false;
+            this.resultSets = [{
+                collection: new DocumentsCollection(),
+                markers: {}
+            }];
 
-            this.documentsCollection = new DocumentsCollection();
-
-            this.mapView = new MapView({
-                addControl: false,
-                centerCoordinates: this.widgetSettings.centerCoordinates,
-                initialZoom: this.widgetSettings.zoomLevel,
-                removeZoomControl: true,
-                disableInteraction: true
+            this.mapResultsViewStrategy = mapResultsViewStrategy({
+                allowIncrement: false,
+                resultsStep: this.widgetSettings.maxResults || 1000,
+                clusterMarkers: this.widgetSettings.clusterMarkers || false,
+                locationFields: this.widgetSettings.locationFieldPairs,
+                mapViewOptions: {
+                    addControl: false,
+                    centerCoordinates: this.widgetSettings.centerCoordinates,
+                    initialZoom: this.widgetSettings.zoomLevel,
+                    removeZoomControl: true,
+                    disableInteraction: true
+                },
+                resultSets: this.resultSets,
+                toggleLoading: $.noop
             });
         },
 
         render: function () {
             SavedSearchWidget.prototype.render.apply(this);
-            this.mapView.setElement(this.$content).render();
-            this.hasRendered = true;
-        },
-
-        getIcon: function () {
-            const locationField = _.findWhere(configuration().map.locationFields,
-                {displayName: this.locationFieldPair});
-
-            return this.mapView.getIcon(
-                locationField.iconName,
-                locationField.iconColor,
-                locationField.markerColor
-            );
+            this.mapResultsViewStrategy.mapView.setElement(this.$content).render();
         },
 
         getData: function () {
-            if (!this.hasRendered) {
+            const resultSet = this.resultSets[0];
+            resultSet.model = this.queryModel;
+            const maybePromise = this.mapResultsViewStrategy.reloadMarkers();
+            if (!maybePromise) {
                 return $.when();
             }
 
-            this.markers = [];
-            this.mapView.clearMarkers(this.clusterMarkers);
-            const locationField = _.findWhere(configuration().map.locationFields,
-                {displayName: this.locationFieldPair});
-
-            const latitudeFieldsInfo = configuration().fieldsInfo[locationField.latitudeField];
-            const longitudeFieldsInfo = configuration().fieldsInfo[locationField.longitudeField];
-
-            const latitudesFieldsString = latitudeFieldsInfo.names.join(':');
-            const longitudeFieldsString = longitudeFieldsInfo.names.join(':');
-
-            const exists = 'EXISTS{}:' + latitudesFieldsString + ' AND EXISTS{}:' + longitudeFieldsString;
-
-            const newFieldText = this.queryModel.get('fieldText')
-                ? this.queryModel.get('fieldText') + ' AND ' + exists
-                : exists;
-
-            return this.documentsCollection.fetch({
-                data: {
-                    text: this.queryModel.get('queryText'),
-                    max_results: this.maxResults,
-                    indexes: this.queryModel.get('indexes'),
-                    field_text: newFieldText,
-                    min_date: this.queryModel.getIsoDate('minDate'),
-                    max_date: this.queryModel.getIsoDate('maxDate'),
-                    sort: 'relevance',
-                    summary: 'context',
-                    queryType: 'MODIFIED'
-                },
-                reset: false
-            }).done(function () {
-                this.documentsCollection.each(function (model) {
+            return maybePromise.done(function () {
+                resultSet.collection.each(function (model) {
+                    this.mapResultsViewStrategy.getMarkersFromDocumentModel(model, resultSet.markers);
                     const locations = model.get('locations');
-                    const location = _.findWhere(locations, {displayName: this.locationFieldPair});
-                    if (location) {
-                        const longitude = location.longitude;
-                        const latitude = location.latitude;
-                        const title = model.get('title');
-                        const marker = this.mapView.getMarker(latitude, longitude, this.getIcon(), title);
-                        this.markers.push(marker);
-                    }
                 }.bind(this));
-                if (!_.isEmpty(this.markers)) {
-                    this.mapView.addMarkers(this.markers, this.clusterMarkers);
-                }
+
+                this.mapResultsViewStrategy.addMarkersToMap(resultSet.markers, resultSet.clusterLayer, false);
             }.bind(this));
         },
 
         exportData: function () {
-            return this.mapView.exportData().then(function (data) {
+            return this.mapResultsViewStrategy.mapView.exportData().then(function (data) {
                 return {
                     data: data,
                     type: 'map'
