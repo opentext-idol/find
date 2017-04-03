@@ -1,10 +1,15 @@
+/*
+ *  Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ *  Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'underscore',
     'jquery',
     'd3',
     'find/app/util/widget-zoom',
     'find/app/util/widget-drag'
-], function (_, $, d3, widgetZoom, widgetDrag) {
+], function(_, $, d3, widgetZoom, widgetDrag) {
     'use strict';
 
     const CHART_PADDING = 80;
@@ -20,36 +25,29 @@ define([
     const SECONDS_IN_ONE_WEEK = 604800;
     const SECONDS_IN_ONE_DAY = 86400;
 
-
     function setScales(options, chartHeight, chartWidth) {
-        const data = options.data;
-
-        const maxValue = _.max(_.flatten(_.map(_.pluck(data, 'points'), function (point) {
-            return _.pluck(point, 'count');
-        })));
-        const minValue = _.min(_.flatten(_.map(_.pluck(data, 'points'), function (point) {
-            return _.pluck(point, 'count');
-        })));
-
-        const yScale = d3.scale.linear()
-            .domain([minValue, maxValue])
-            .range([chartHeight - CHART_PADDING, CHART_PADDING / 2]);
-
-        const xScale = d3.time.scale()
-            .domain([options.minDate, options.maxDate])
-            .range([CHART_PADDING, chartWidth]);
+        const flatCountsChain = _.chain(options.data)
+            .pluck('points')
+            .map(function(point) {
+                return _.pluck(point, 'count');
+            })
+            .flatten();
 
         return {
-            yScale: yScale,
-            xScale: xScale
+            xScale: d3.time.scale()
+                .domain([options.minDate, options.maxDate])
+                .range([CHART_PADDING, chartWidth]),
+            yScale: d3.scale.linear()
+                .domain([flatCountsChain.min().value(), flatCountsChain.max().value()])
+                .range([chartHeight - CHART_PADDING, CHART_PADDING / 2])
         };
     }
 
     function setHoverFunctionality(chart, scales, chartHeight, tooltipText, timeFormat) {
-        const mouseover = function (valueName) {
+        const mouseover = function(valueName) {
             d3.selectAll('.line')
-                .each(function () {
-                    if (this.parentNode.getAttribute('data-name') === valueName) {
+                .each(function() {
+                    if(this.parentNode.getAttribute('data-name') === valueName) {
                         d3.select(this)
                             .attr('stroke-width', POINT_RADIUS);
                     } else {
@@ -58,8 +56,8 @@ define([
                     }
                 });
             d3.selectAll('circle')
-                .each(function () {
-                    if (this.parentNode.getAttribute('data-name') === valueName) {
+                .each(function() {
+                    if(this.parentNode.getAttribute('data-name') === valueName) {
                         d3.select(this)
                             .attr('r', 5);
                     } else {
@@ -68,8 +66,8 @@ define([
                     }
                 });
             d3.selectAll('.legend-text')
-                .each(function () {
-                    if (this.parentNode.getAttribute('data-name') === valueName) {
+                .each(function() {
+                    if(this.parentNode.getAttribute('data-name') === valueName) {
                         d3.select(this)
                             .attr('class', 'legend-text bold')
                     } else {
@@ -79,7 +77,7 @@ define([
                 });
         };
 
-        const mouseout = function () {
+        const mouseout = function() {
             d3.selectAll('.line')
                 .attr('stroke-width', 2)
                 .attr('opacity', 1);
@@ -90,12 +88,12 @@ define([
                 .attr('class', 'legend-text')
         };
 
-        const lineAndPointMouseover = function () {
+        const lineAndPointMouseover = function() {
             let valueName = d3.event.target.parentNode.getAttribute('data-name');
             mouseover(valueName);
         };
 
-        const pointMouseover = function (d) {
+        const pointMouseover = function(d) {
             chart.append('line')
                 .attr({
                     'class': 'guide-line',
@@ -130,7 +128,7 @@ define([
             lineAndPointMouseover();
         };
 
-        const pointMouseout = function () {
+        const pointMouseout = function() {
             chart.selectAll('.guide-line')
                 .remove();
             $(d3.event.target).tooltip('hide');
@@ -205,20 +203,20 @@ define([
         const tickPadding = 5;
         const labels = labelWrapper[0];
         const numberOfTicks = labels.length;
-        const getTickTranslation = function (label) {
+        const getTickTranslation = function(label) {
             return d3.transform(label.node().parentNode.getAttribute('transform')).translate[0];
         };
 
         let prevLabelTick = 0;
         let currentLabel = d3.select(labels[0]);
-        for (let i = 0; i < numberOfTicks; i++) {
+        for(let i = 0; i < numberOfTicks; i++) {
             const currentLabelTick = getTickTranslation(currentLabel);
             const text = currentLabel.text();
 
             let nextLabel;
             let nextLabelTick;
             let widthToDouble;
-            if (i == numberOfTicks - 1) {
+            if(i == numberOfTicks - 1) {
                 widthToDouble = (currentLabelTick - prevLabelTick);
             } else {
                 nextLabel = d3.select(labels[i + 1]);
@@ -246,7 +244,7 @@ define([
     }
 
     function getAdjustedLegendData(data, scales) {
-        const labelData = _.map(data, function (datum, i) {
+        const labelData = _.map(data, function(datum, i) {
             return {
                 index: i,
                 name: datum.name,
@@ -255,12 +253,12 @@ define([
             }
         });
 
-        labelData.sort(function (a, b) {
+        labelData.sort(function(a, b) {
             const difference = a.labelY - b.labelY;
             return difference === 0 ? a.index - b.index : difference;
         });
 
-        const maxScaledY = _.max(labelData, function (datum) {
+        const maxScaledY = _.max(labelData, function(datum) {
             return datum.labelY;
         }).labelY;
         adjustLabelPositions(labelData, maxScaledY);
@@ -268,18 +266,18 @@ define([
     }
 
     function adjustLabelPositions(legendData, maxScaledY) {
-        _.each(legendData, function (d, i) {
-            if (i >= 1) {
+        _.each(legendData, function(d, i) {
+            if(i >= 1) {
                 const prevVal = legendData[i - 1].labelY + LEGEND_TEXT_HEIGHT;
                 d.labelY = d.labelY < prevVal ? prevVal : d.labelY;
             }
         });
 
-        if (!_.isEmpty(legendData) && legendData[legendData.length - 1].labelY > maxScaledY) {
+        if(!_.isEmpty(legendData) && legendData[legendData.length - 1].labelY > maxScaledY) {
             legendData[legendData.length - 1].labelY = maxScaledY;
             legendData.reverse();
-            _.each(legendData, function (d, i) {
-                if (i >= 1) {
+            _.each(legendData, function(d, i) {
+                if(i >= 1) {
                     const prevVal = legendData[i - 1].labelY - LEGEND_TEXT_HEIGHT;
                     d.labelY = d.labelY > prevVal ? prevVal : d.labelY;
                 }
@@ -290,13 +288,13 @@ define([
 
     function getTimeFormat(max, min) {
         const range = max.getTime() / MILLISECONDS_TO_SECONDS - min.getTime() / MILLISECONDS_TO_SECONDS;
-        if (range > SECONDS_IN_ONE_YEAR) {
+        if(range > SECONDS_IN_ONE_YEAR) {
             return d3.time.format("%B %Y");
         }
-        if (range < SECONDS_IN_ONE_DAY) {
+        if(range < SECONDS_IN_ONE_DAY) {
             return d3.time.format("%H:%M:%S %d&nbsp;%B %Y");
         }
-        if (range < SECONDS_IN_ONE_WEEK) {
+        if(range < SECONDS_IN_ONE_WEEK) {
             return d3.time.format("%H:%M %d&nbsp;%B %Y");
         }
         return d3.time.format("%d&nbsp;%B %Y");
@@ -311,7 +309,7 @@ define([
     }
 
     _.extend(Trending.prototype, {
-        draw: function (options) {
+        draw: function(options) {
             const reloaded = options.reloaded;
             const data = options.data;
             const minDate = options.minDate;
@@ -326,15 +324,15 @@ define([
 
             const hover = setHoverFunctionality(this.chart, scales, chartHeight, this.tooltipText, timeFormat);
 
-            const getIndexOfValueName = function (name) {
+            const getIndexOfValueName = function(name) {
                 return _.pluck(data, 'name').indexOf(name);
             };
 
             const line = d3.svg.line()
-                .x(function (d) {
+                .x(function(d) {
                     return scales.xScale(d.mid)
                 })
-                .y(function (d) {
+                .y(function(d) {
                     return scales.yScale(d.count)
                 })
                 .interpolate('linear');
@@ -344,27 +342,27 @@ define([
                 height: $(this.el).height()
             });
 
-            if (this.dataJoin) {
+            if(this.dataJoin) {
                 this.dataJoin = this.dataJoin
-                    .data(data, function (d) {
+                    .data(data, function(d) {
                         return d.name;
                     });
             } else {
                 this.dataJoin = this.chart.selectAll('.value')
-                    .data(data, function (d) {
+                    .data(data, function(d) {
                         return d.name;
                     });
             }
 
             this.dataJoin.enter()
                 .append('g')
-                .attr('data-name', function (d) {
+                .attr('data-name', function(d) {
                     return d.name;
                 })
                 .append('path');
 
             this.dataJoin
-                .attr('class', function (d) {
+                .attr('class', function(d) {
                     return 'value color' + (getIndexOfValueName(d.name) % NUMBER_OF_COLORS);
                 });
 
@@ -374,7 +372,7 @@ define([
                     'stroke-width': 2,
                     fill: 'none'
                 })
-                .attr('d', function (d) {
+                .attr('d', function(d) {
                     return line(d.points);
                 })
                 .on('mouseover', hover.lineAndPointMouseover)
@@ -382,14 +380,14 @@ define([
 
             this.dataJoin.exit().remove();
 
-            if (this.pointsJoin && !reloaded) {
+            if(this.pointsJoin && !reloaded) {
                 this.pointsJoin = this.pointsJoin
-                    .data(function (d) {
+                    .data(function(d) {
                         return d.points;
                     });
             } else {
                 this.pointsJoin = this.dataJoin.selectAll('circle')
-                    .data(function (d) {
+                    .data(function(d) {
                         return d.points;
                     });
             }
@@ -404,10 +402,10 @@ define([
                 });
 
             this.pointsJoin
-                .attr('cy', function (d) {
+                .attr('cy', function(d) {
                     return scales.yScale(d.count);
                 })
-                .attr('cx', function (d) {
+                .attr('cx', function(d) {
                     return scales.xScale(d.mid);
                 })
                 .on('mouseover', hover.pointMouseover)
@@ -432,7 +430,7 @@ define([
                 .data(getAdjustedLegendData(data, scales))
                 .enter()
                 .append('g')
-                .each(function (d) {
+                .each(function(d) {
                     const g = d3.select(this)
                         .attr({
                             'data-name': d.name,
@@ -448,10 +446,10 @@ define([
                             'stroke-width': 2,
                             'stroke-dasharray': '3,2'
                         })
-                        .on('mouseover', function () {
+                        .on('mouseover', function() {
                             hover.legendMouseover(d.name);
                         })
-                        .on('mouseout', function () {
+                        .on('mouseout', function() {
                             hover.legendMouseout(d.name);
                         });
 
@@ -466,10 +464,10 @@ define([
                         })
                         .append('xhtml:p')
                         .html(d.name)
-                        .on('mouseover', function () {
+                        .on('mouseover', function() {
                             hover.legendMouseover(d.name);
                         })
-                        .on('mouseout', function () {
+                        .on('mouseout', function() {
                             hover.legendMouseout(d.name);
                         });
                 });
