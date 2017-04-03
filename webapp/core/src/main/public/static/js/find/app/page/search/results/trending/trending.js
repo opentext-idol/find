@@ -14,9 +14,7 @@ define([
     const POINT_RADIUS = 5;
     const LEGEND_MARKER_WIDTH = 15;
     const LEGEND_TEXT_HEIGHT = 12;
-    const LEGEND_TEXT_EMS = 1.1;
     const LEGEND_PADDING = 5;
-    const LEGEND_TICK_PADDING = 15;
     const MILLISECONDS_TO_SECONDS = 1000;
     const SECONDS_IN_ONE_YEAR = 31556926;
     const SECONDS_IN_ONE_WEEK = 604800;
@@ -117,7 +115,7 @@ define([
 
             const title = tooltipText(
                 d.count,
-                this.parentNode.getAttribute('data-name'),
+                _.escape(this.parentNode.getAttribute('data-name')),
                 timeFormat(d.min),
                 timeFormat(d.max)
             );
@@ -125,7 +123,8 @@ define([
                 title: title,
                 container: 'body',
                 placement: 'top',
-                trigger: 'manual'
+                trigger: 'manual',
+                html: true
             }).tooltip('show');
 
             lineAndPointMouseover();
@@ -148,9 +147,10 @@ define([
         }
     }
 
-    function setAxes(chart, scales, chartHeight, chartWidth, yAxisLabel, timeFormat) {
+    function setAxes(chart, scales, chartHeight, yAxisLabel, timeFormat) {
         chart.selectAll('.y-axis').remove();
         chart.selectAll('.x-axis').remove();
+        chart.selectAll('.dashed-axis-line').remove();
 
         const yAxisScale = d3.svg.axis()
             .scale(scales.yScale)
@@ -186,7 +186,7 @@ define([
             .call(xAxisScale);
 
         xAxis.selectAll('.tick text')
-            .call(labelWrap, chartWidth);
+            .call(labelWrap);
 
         chart.append('line')
             .attr({
@@ -201,32 +201,48 @@ define([
             });
     }
 
-    function labelWrap(labels, width) {
-        const tickWidth = width / labels[0].length;
+    function labelWrap(labelWrapper) {
+        const tickPadding = 5;
+        const labels = labelWrapper[0];
+        const numberOfTicks = labels.length;
+        const getTickTranslation = function (label) {
+            return d3.transform(label.node().parentNode.getAttribute('transform')).translate[0];
+        };
 
-        labels.each(function () {
-            const label = d3.select(this);
-            const words = label.text().split(/\s+/).reverse();
-            const y = label.attr("y");
-            const dy = parseFloat(label.attr("dy"));
-            let word;
-            let lineNumber = 0;
-            let line = [];
-            let tspan = label.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+        let prevLabelTick = 0;
+        let currentLabel = d3.select(labels[0]);
+        for (let i = 0; i < numberOfTicks; i++) {
+            const currentLabelTick = getTickTranslation(currentLabel);
+            const text = currentLabel.text();
 
-            //noinspection AssignmentResultUsedJS
-            while (word = words.pop()) {
-                line.push(word);
-                tspan.text(line.join(" "));
-                //noinspection JSUnresolvedFunction
-                if (tspan.node().getComputedTextLength() > tickWidth - LEGEND_TICK_PADDING) {
-                    line.pop();
-                    tspan.text(line.join(" "));
-                    line = [word];
-                    tspan = label.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * LEGEND_TEXT_EMS + dy + "em").text(word);
-                }
+            let nextLabel;
+            let nextLabelTick;
+            let widthToDouble;
+            if (i == numberOfTicks - 1) {
+                widthToDouble = (currentLabelTick - prevLabelTick);
+            } else {
+                nextLabel = d3.select(labels[i + 1]);
+                nextLabelTick = getTickTranslation(nextLabel);
+                widthToDouble = prevLabelTick ? Math.min((nextLabelTick - currentLabelTick), (currentLabelTick - prevLabelTick)) : nextLabelTick - currentLabelTick;
             }
-        });
+
+            d3.select(currentLabel.node().parentNode)
+                .append('foreignObject')
+                .attr({
+                    'class': 'x-axis-label',
+                    width: widthToDouble - tickPadding,
+                    cursor: 'default'
+                })
+                .append('xhtml:p')
+                .style('margin-left', -(widthToDouble - tickPadding) / 2 + 'px')
+                .style('margin-right', (widthToDouble - tickPadding) / 2 + 'px')
+                .html(text);
+
+            prevLabelTick = currentLabelTick;
+            currentLabel = nextLabel;
+        }
+
+        d3.selectAll('.x-axis text').remove();
     }
 
     function getAdjustedLegendData(data, scales) {
@@ -278,12 +294,12 @@ define([
             return d3.time.format("%B %Y");
         }
         if (range < SECONDS_IN_ONE_DAY) {
-            return d3.time.format("%H:%M:%S %d %B %Y");
+            return d3.time.format("%H:%M:%S %d&nbsp;%B %Y");
         }
         if (range < SECONDS_IN_ONE_WEEK) {
-            return d3.time.format("%H:%M %d %B %Y");
+            return d3.time.format("%H:%M %d&nbsp;%B %Y");
         }
-        return d3.time.format("%d %B %Y");
+        return d3.time.format("%d&nbsp;%B %Y");
     }
 
     function Trending(settings) {
@@ -300,7 +316,7 @@ define([
             const data = options.data;
             const minDate = options.minDate;
             const maxDate = options.maxDate;
-            const legendWidth = $(this.el).width()/7;
+            const legendWidth = $(this.el).width() / 7;
             const chartWidth = $(this.el).width() - legendWidth;
             const chartHeight = $(this.el).height();
             const yAxisLabel = options.yAxisLabel;
@@ -310,7 +326,7 @@ define([
 
             const hover = setHoverFunctionality(this.chart, scales, chartHeight, this.tooltipText, timeFormat);
 
-            const getIndexOfValueName = function(name) {
+            const getIndexOfValueName = function (name) {
                 return _.pluck(data, 'name').indexOf(name);
             };
 
@@ -399,7 +415,7 @@ define([
 
             this.pointsJoin.exit().remove();
 
-            setAxes(this.chart, scales, chartHeight, chartWidth, yAxisLabel, timeFormat);
+            setAxes(this.chart, scales, chartHeight, yAxisLabel, timeFormat);
 
             this.chart.selectAll('.legend').remove();
 
