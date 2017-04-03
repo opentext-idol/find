@@ -21,6 +21,7 @@ require.config({
             'find/idol/app/model/comparison/comparison-model': 'mock/idol/model/comparison/comparison-model',
             'find/app/page/search/results/map-view': 'mock/page/search/results/map-view',
             'find/idol/app/model/answer-bank/idol-answered-questions-collection': 'mock/idol/model/answer-bank/idol-answered-questions-collection',
+            'find/idol/app/model/comparison/comparison-documents-collection': 'mock/idol/app/model/comparison/comparison-documents-collection',
             'find/idol/app/page/dashboard/widget-registry': 'mock/idol/app/page/dashboard/widget-registry'
         }
     }

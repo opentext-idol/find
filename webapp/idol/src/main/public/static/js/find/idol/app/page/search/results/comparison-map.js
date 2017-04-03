@@ -47,7 +47,7 @@ define([
             const bothQueryModel = this.createQueryModel(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]);
             const secondQueryModel = this.createQueryModel(this.model.get('secondText'), this.model.get('onlyInSecond'), [this.searchModels.second]);
 
-            const resultSets = [
+            this.resultSets = [
                 {
                     name: comparisonsI18n['list.title.first'](this.searchModels.first.get('title')),
                     iconClass: 'first-location-cluster',
@@ -74,11 +74,11 @@ define([
                 clusterMarkers: true,
                 popoverTemplate: this.popoverTemplate,
                 mapViewOptions: {addControl: true},
-                resultSets: resultSets,
+                resultSets: this.resultSets,
                 toggleLoading: this.toggleLoading.bind(this)
             });
 
-            resultSets.forEach(function (resultSet) {
+            this.resultSets.forEach(function (resultSet) {
                 resultSet.collection = new ComparisonDocumentsCollection();
                 resultSet.layerOptions = {
                     iconCreateFunction: this.mapResultsViewStrategy.mapView.getDivIconCreateFunction(resultSet.iconClass)

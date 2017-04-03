@@ -8,11 +8,10 @@ define([
 ], function(mockFactory) {
     'use strict';
 
-    var layer = jasmine.createSpyObj('layer', ['addLayer', 'clearLayers', 'getLayers']);
-    var createLayerSpy = jasmine.createSpy('createLayer').and.returnValue(layer);
-    var getMarkerSpy = jasmine.createSpy('getMarker').and.returnValue('testMarker');
-    return mockFactory.getView(['getDivIconCreateFunction', 'getIcon', 'loaded', 'addLayer'], {
-        createLayer: createLayerSpy,
-        getMarker: getMarkerSpy
+    const getMarkerSpy = jasmine.createSpy('getMarker').and.returnValue('testMarker');
+    const mapRenderedSpy = jasmine.createSpy('mapRendered').and.returnValue(true);
+    return mockFactory.getView(['getDivIconCreateFunction', 'getIcon', 'fitMapToMarkerBounds', 'addClusterLayer', 'clearMarkers', 'addGroupingLayer', 'addMarkers'], {
+        getMarker: getMarkerSpy,
+        mapRendered: mapRenderedSpy
     });
 });
