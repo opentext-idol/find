@@ -61,9 +61,7 @@ define([
             this.listenTo(this.queryModel, 'change', function() {
                 if(this.$el.is(':visible')) { this.fetchFieldData(); }
             });
-            this.listenTo(vent, 'vent:resize', function() {
-                if(this.$el.is(':visible')) { this.updateChart(); }
-            });
+            this.listenTo(vent, 'vent:resize', this.update);
             this.listenTo(this.viewStateModel, 'change:dataState', this.onDataStateChange);
             this.listenTo(this.parametricFieldsCollection, 'sync', this.setFieldSelector);
             this.listenTo(this.parametricFieldsCollection, 'error', this.onDataError);
@@ -76,6 +74,7 @@ define([
                 loadingHtml: this.loadingHtml
             }));
             this.$errorMessage = this.$('.trending-error');
+            this.viewStateModel.set('dataState', dataState.LOADING);
 
             if (this.trendingChart) {
                 this.trendingChart.remove();
@@ -91,6 +90,12 @@ define([
         remove: function() {
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
             Backbone.View.prototype.remove.call(this);
+        },
+
+        update: function() {
+            if(this.$el.is(':visible')) {
+                this.updateChart();
+            }
         },
 
         setFieldSelector: function() {

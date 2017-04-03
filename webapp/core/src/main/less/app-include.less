@@ -2306,6 +2306,17 @@ h4.similar-dates-message {
   height: calc(~'100vh - 260px')
 }
 
+.legend-text p {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legend-text.bold p {
+  font-size: 15px;
+}
+
 .x-axis path,
 .y-axis path,
 .x-axis line,
@@ -2315,9 +2326,8 @@ h4.similar-dates-message {
   shape-rendering: cripsEdges;
 }
 
-.axis text {
-  font-family: sans-serif;
-  font-size: 11px;
+.tick p {
+  text-align: center;
 }
 
 .color0 circle,
