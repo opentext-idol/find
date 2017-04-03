@@ -196,7 +196,6 @@ define([
                     entityCollection: this.entityCollection,
                     clickHandler: relatedConceptsClickHandler
                 }, subViewArguments));
-                this.fetchEntities();
             }
 
             this.middleColumnScrollModel = new Backbone.Model();

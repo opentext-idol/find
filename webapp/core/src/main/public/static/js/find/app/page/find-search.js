@@ -557,8 +557,9 @@ define([
 
         updateRouting: function(savedSearch, selectedTab) {
             vent.navigate(savedSearch
-                ? '/search/tab/' + savedSearch + (selectedTab ? '/view/' + selectedTab : '')
-                : '/search/query');
+                    ? '/search/tab/' + savedSearch + (selectedTab ? '/view/' + selectedTab : '')
+                    : '/search/query',
+                {trigger: false});
 
             this.currentRoute = Backbone.history.getFragment();
         },
