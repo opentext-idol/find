@@ -72,11 +72,16 @@ define([
             this.trendingFieldsCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
 
             this.model = new Backbone.Model();
-            this.viewStateModel = new Backbone.Model({currentState: renderState.RENDERING_NEW_DATA});
+            this.viewStateModel = new Backbone.Model({
+                currentState: renderState.RENDERING_NEW_DATA,
+                searchStateChanged: false
+            });
 
             this.listenTo(this.queryModel, 'change', function() {
                 if(this.$el.is(':visible')) {
                     this.fetchFieldData();
+                } else {
+                    this.viewStateModel.set('searchStateChanged', true);
                 }
             });
             this.listenTo(vent, 'vent:resize', this.update);
@@ -119,7 +124,15 @@ define([
 
         update: function() {
             if(this.$el.is(':visible')) {
-                this.updateChart();
+                if(this.viewStateModel.get('searchStateChanged')) {
+                    this.setFieldSelector();
+                    this.fetchFieldData();
+                    this.viewStateModel.set('searchStateChanged', false);
+                } else {
+                    if(!_.isEmpty(this.bucketedValues)) {
+                        this.updateChart();
+                    }
+                }
             }
         },
 
