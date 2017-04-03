@@ -1,46 +1,43 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
     'underscore',
     'jquery',
+    'backbone',
     'js-whatever/js/list-view',
     'find/app/util/csv-field-selection-list-item',
     'find/app/configuration',
     'text!find/templates/app/util/csv-export-form-template.html'
-], function (Backbone, _, $, ListView, ItemView, configuration, exportFormTemplate) {
+], function(_, $, Backbone, ListView, ItemView, configuration, exportFormTemplate) {
     'use strict';
 
     return Backbone.View.extend({
         formTemplate: _.template(exportFormTemplate),
 
         events: {
-            'ifClicked .csv-field-label': function (e) {
-                const $currentTarget = $(e.currentTarget);
-                const fieldName = $currentTarget.attr('data-field-id');
-
-                const selectedFieldsModel = this.exportFieldCollection.get(fieldName);
-
+            'ifClicked .csv-field-label': function(e) {
+                const selectedFieldsModel = this.exportFieldCollection.get(
+                    $(e.currentTarget).attr('data-field-id')
+                );
                 // checked is the old value
-                const selected = !$(e.target).prop('checked');
-                selectedFieldsModel.set('selected', selected);
+                selectedFieldsModel.set('selected', !$(e.target).prop('checked'));
             }
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.queryModel = options.queryModel;
 
             const config = configuration();
             const fieldsInfo = config.fieldsInfo;
 
-            const metadataModels = _.map(config.metadataFieldInfo, function (info) {
+            const metadataModels = _.map(config.metadataFieldInfo, function(info) {
                 return _.extend({selected: true}, info);
             });
 
-            const fieldModels = _.map(fieldsInfo, function (info) {
+            const fieldModels = _.map(fieldsInfo, function(info) {
                 return _.extend({selected: true}, info);
             });
 
@@ -54,9 +51,9 @@ define([
                 }
             });
 
-            this.listenTo(this.exportFieldCollection, 'update change', function () {
+            this.listenTo(this.exportFieldCollection, 'update change', function() {
                 // TODO: Inelegant, event is triggered every time a checkbox is clicked.
-                if (this.exportFieldCollection.where({selected: true}).length === 0) {
+                if(this.exportFieldCollection.where({selected: true}).length === 0) {
                     this.trigger('primary-button-disable');
                 } else {
                     this.trigger('primary-button-enable');
@@ -64,19 +61,20 @@ define([
             });
         },
 
-        render: function () {
+        render: function() {
             this.listView.render();
-            this.$el.empty().append(this.listView.el);
+            this.$el.html(this.listView.el);
         },
 
-        requestCsv: function () {
+        requestCsv: function() {
             const selectedFields = _.pluck(this.exportFieldCollection.where({selected: true}), 'id');
 
-            //noinspection AmdModulesDependencies
             const queryRequest = JSON.stringify({
                 queryRestrictions: {
                     text: this.queryModel.get('queryText'),
-                    field_text: this.queryModel.get('fieldText') ? this.queryModel.get('fieldText').toString() : '',
+                    field_text: this.queryModel.get('fieldText')
+                        ? this.queryModel.get('fieldText').toString()
+                        : '',
                     indexes: this.queryModel.get('indexes'),
                     min_date: this.queryModel.getIsoDate('minDate'),
                     max_date: this.queryModel.getIsoDate('maxDate'),
@@ -92,8 +90,8 @@ define([
                 queryType: 'MODIFIED'
             });
 
-            const $form = $(this.formTemplate({queryRequest: queryRequest, fields: selectedFields}));
-            $form.appendTo('body').submit().remove();
+            $(this.formTemplate({queryRequest: queryRequest, fields: selectedFields}))
+                .appendTo('body').submit().remove();
         }
     });
 });

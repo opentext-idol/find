@@ -1,10 +1,11 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
-    'backbone',
     'underscore',
+    'backbone',
     'find/app/util/topic-map-view',
     'find/app/model/entity-collection',
     'i18n!find/nls/bundle',
@@ -14,7 +15,7 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'iCheck',
     'slider/bootstrap-slider'
-], function(Backbone, _, TopicMapView, EntityCollection, i18n, configuration, generateErrorHtml, template,
+], function(_, Backbone, TopicMapView, EntityCollection, i18n, configuration, generateErrorHtml, template,
             loadingTemplate) {
     'use strict';
 
@@ -171,7 +172,7 @@ define([
         handleTopicMapError: function() {
             const state = this.viewModel.get('state');
             if(state === ViewState.ERROR) {
-                this.$('.entity-topic-map-error').empty().append(this.errorTemplate);
+                this.$('.entity-topic-map-error').html(this.errorTemplate);
             }
             this.$('.entity-topic-map-error').toggleClass('hide', state !== ViewState.ERROR);
         },
