@@ -102,18 +102,16 @@ define([
                         const latitudes = getFieldValues(response.fieldMap[field.latitudeField]);
                         const longitudes = getFieldValues(response.fieldMap[field.longitudeField]);
 
-                        const locations = [];
-                        for (let i = 0; i < latitudes.length && i < longitudes.length; i++) {
-                            locations.push({
+                        return _.zip(latitudes, longitudes).map(function (coordinates) {
+                            return {
                                 displayName: field.displayName,
-                                latitude: latitudes[i],
-                                longitude: longitudes[i],
+                                latitude: coordinates[0],
+                                longitude: coordinates[1],
                                 iconName: field.iconName,
                                 iconColor: field.iconColor,
                                 markerColor: field.markerColor
-                            })
-                        }
-                        return locations;
+                            }
+                        });
                     })
                     .flatten()
                     .groupBy('displayName')
