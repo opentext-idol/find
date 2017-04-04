@@ -20,7 +20,6 @@ define([
             FindSearch, AboutPage, DashboardPage, SettingsPage, i18n) {
     'use strict';
 
-    //noinspection JSUnusedGlobalSymbols
     return BaseApp.extend({
         Navigation: Navigation,
         IndexesCollection: IndexesCollection,
@@ -45,9 +44,9 @@ define([
 
             const pageData = {};
             let dashboards;
-            if (config.enableDashboards) {
+            if(config.enableDashboards) {
                 dashboards = _.where(config.dashboards, {enabled: true});
-                _.extend(pageData, _.reduce(dashboards, function (acc, dash, index) {
+                _.extend(pageData, _.reduce(dashboards, function(acc, dash, index) {
                     acc['dashboards/' + encodeURIComponent(dash.dashboardName)] = {
                         Constructor: DashboardPage,
                         icon: 'hp-icon hp-fw hp-dashboard',
@@ -80,7 +79,6 @@ define([
                     title: i18n['app.search'],
                     order: dashboardCount,
                     navigation: config.enableSideBar ? 'sidebar' : 'dropdown'
-
                 },
                 about: {
                     Constructor: AboutPage,

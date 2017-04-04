@@ -273,7 +273,8 @@ define([
 
         handleError: function(xhr) {
             this.toggleError(true);
-            this.$('.main-results-content .results-view-error').empty().append(this.generateErrorMessage(xhr));
+            this.$('.main-results-content .results-view-error')
+                .html(this.generateErrorMessage(xhr));
         },
 
         toggleError: function(on) {

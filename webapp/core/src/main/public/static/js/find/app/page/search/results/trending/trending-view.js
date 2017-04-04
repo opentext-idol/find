@@ -1,8 +1,13 @@
+/*
+ *  Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ *  Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'backbone',
     'underscore',
     'jquery',
     'd3',
+    'backbone',
     'i18n!find/nls/bundle',
     'find/app/util/generate-error-support-message',
     'find/app/page/search/results/parametric-results-view',
@@ -16,14 +21,14 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/templates/app/page/search/results/trending/trending-results-view.html',
     'find/app/vent'
-], function (Backbone, _, $, d3, i18n, generateErrorHtml, ParametricResultsView, FieldSelectionView, calibrateBuckets,
-             BucketedParametricCollection, ParametricDetailsModel, ParametricCollection, Trending, toFieldTextNode,
-             loadingSpinnerHtml, template, vent) {
+], function(_, $, d3, Backbone, i18n, generateErrorHtml, ParametricResultsView, FieldSelectionView, calibrateBuckets,
+            BucketedParametricCollection, ParametricDetailsModel, ParametricCollection, Trending, toFieldTextNode,
+            loadingSpinnerHtml, template, vent) {
     'use strict';
 
     const MILLISECONDS_TO_SECONDS = 1000;
     const DEBOUNCE_TIME = 500;
-    const ERROR_MESSAGE_ARGUMENTS = { messageToUser: i18n['search.resultsView.trending.error.query'] };
+    const ERROR_MESSAGE_ARGUMENTS = {messageToUser: i18n['search.resultsView.trending.error.query']};
     const SECONDS_IN_ONE_DAY = 86400;
 
     const renderState = {
@@ -56,10 +61,12 @@ define([
             this.trendingFieldsCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
 
             this.model = new Backbone.Model();
-            this.viewStateModel = new Backbone.Model({ currentState: renderState.RENDERING_NEW_DATA });
+            this.viewStateModel = new Backbone.Model({currentState: renderState.RENDERING_NEW_DATA});
 
             this.listenTo(this.queryModel, 'change', function() {
-                if(this.$el.is(':visible')) { this.fetchFieldData(); }
+                if(this.$el.is(':visible')) {
+                    this.fetchFieldData();
+                }
             });
             this.listenTo(vent, 'vent:resize', this.update);
             this.listenTo(this.viewStateModel, 'change:dataState', this.onDataStateChange);
@@ -76,7 +83,7 @@ define([
             this.$errorMessage = this.$('.trending-error');
             this.viewStateModel.set('dataState', dataState.LOADING);
 
-            if (this.trendingChart) {
+            if(this.trendingChart) {
                 this.trendingChart.remove();
             }
             this.trendingChart = new Trending({
@@ -84,7 +91,9 @@ define([
                 tooltipText: i18n['search.resultsView.trending.tooltipText']
             });
 
-            if(!this.parametricFieldsCollection.isEmpty()) { this.setFieldSelector(); }
+            if(!this.parametricFieldsCollection.isEmpty()) {
+                this.setFieldSelector();
+            }
         },
 
         remove: function() {
@@ -100,7 +109,7 @@ define([
 
         setFieldSelector: function() {
             if(this.$el.is(':visible')) {
-                if (this.fieldSelector) {
+                if(this.fieldSelector) {
                     this.fieldSelector.remove();
                 }
                 this.fieldSelector = new FieldSelectionView({
@@ -135,7 +144,7 @@ define([
                         return model.get('id') === this.model.get('field');
                     }, this);
 
-                    if (this.selectedField.length === 0) {
+                    if(this.selectedField.length === 0) {
                         this.viewStateModel.set('dataState', dataState.EMPTY);
                     } else {
                         this.fetchRangeData();
@@ -185,7 +194,7 @@ define([
 
             const minDate = this.model.get('currentMin'), maxDate = this.model.get('currentMax');
 
-            if (minDate === maxDate) {
+            if(minDate === maxDate) {
                 this.model.set('currentMin', minDate - SECONDS_IN_ONE_DAY);
                 this.model.set('currentMax', maxDate + SECONDS_IN_ONE_DAY);
             }
@@ -222,8 +231,8 @@ define([
 
             if(!_.isEmpty(data[0].points)) {
                 let minDate, maxDate;
-                if (this.viewStateModel.get('currentState') === renderState.RENDERING_NEW_DATA) {
-                minDate = data[0].points[0].mid;
+                if(this.viewStateModel.get('currentState') === renderState.RENDERING_NEW_DATA) {
+                    minDate = data[0].points[0].mid;
                     maxDate = data[data.length - 1].points[data[0].points.length - 1].mid;
                 } else {
                     minDate = new Date(this.model.get('currentMin') * MILLISECONDS_TO_SECONDS);
@@ -245,14 +254,14 @@ define([
         },
 
         createChartData: function() {
-            let data = [];
+            const data = [];
 
             _.each(this.bucketedValues, function(model) {
                 data.push({
                     points: _.map(model.get('values'), function(value) {
                         return {
                             count: value.count,
-                            mid: Math.floor(value.min + ((value.max - value.min)/2)),
+                            mid: Math.floor(value.min + ((value.max - value.min) / 2)),
                             min: value.min,
                             max: value.max
                         };
@@ -262,7 +271,7 @@ define([
             });
 
             _.each(data, function(value) {
-                _.each(value.points, function (point) {
+                _.each(value.points, function(point) {
                     point.mid = new Date(point.mid * MILLISECONDS_TO_SECONDS);
                     point.min = new Date(point.min * MILLISECONDS_TO_SECONDS);
                     point.max = new Date(point.max * MILLISECONDS_TO_SECONDS);
@@ -273,10 +282,10 @@ define([
         },
 
         adjustBuckets: function(values, min, max) {
-            return _.map(values, function (value) {
+            return _.map(values, function(value) {
                 return {
                     name: value.name,
-                    points: _.filter(value.points, function (point) {
+                    points: _.filter(value.points, function(point) {
                         const date = new Date(point.mid).getTime() / MILLISECONDS_TO_SECONDS;
                         return date >= min && date <= max;
                     })
@@ -312,7 +321,7 @@ define([
         },
 
         getFieldText: function() {
-            return this.selectedParametricValues.map(function (model) {
+            return this.selectedParametricValues.map(function(model) {
                 return model.toJSON();
             });
         },
@@ -330,7 +339,7 @@ define([
             this.$('.trending-loading').toggleClass('hide', this.viewStateModel.get('dataState') !== dataState.LOADING);
             this.$('.trending-chart').toggleClass('hide', this.viewStateModel.get('dataState') !== dataState.OK);
 
-            if (this.viewStateModel.get('dataState') !== dataState.ERROR && this.$errorMessage) {
+            if(this.viewStateModel.get('dataState') !== dataState.ERROR && this.$errorMessage) {
                 this.$errorMessage.empty();
             }
         },

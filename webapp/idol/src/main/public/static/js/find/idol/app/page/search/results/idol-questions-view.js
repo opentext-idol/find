@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -20,20 +20,17 @@ define([
     return Backbone.View.extend({
         events: {
             'click .read-more': function(e) {
-                let $target = $(e.currentTarget);
-                let $summary = $target.siblings('.summary-text');
-                let $extendedAnswer = $summary.children('.extended-answer');
-
+                const $target = $(e.currentTarget);
+                const $summary = $target.siblings('.summary-text');
                 $summary.toggleClass('result-summary');
-                if($summary.hasClass('result-summary')) {
-                    $target.text(i18n['app.more']);
-                    $extendedAnswer.addClass('hide');
-                    $target.siblings('.summary-text').children('.ellipsis').removeClass('hide');
-                } else {
-                    $target.text(i18n['app.less']);
-                    $extendedAnswer.removeClass('hide');
-                    $target.siblings('.summary-text').children('.ellipsis').addClass('hide');
-                }
+
+                const isResultSummary = $summary.hasClass('result-summary');
+                $target.text(isResultSummary ? i18n['app.more'] : i18n['app.less']);
+                $summary.children('.extended-answer')
+                    .toggleClass('hide', isResultSummary);
+                $target.siblings('.summary-text')
+                    .children('.ellipsis')
+                    .toggleClass('hide', !isResultSummary);
             }
         },
 
@@ -47,9 +44,11 @@ define([
         },
 
         render: function() {
+            this.$('[data-toggle="tooltip"]').tooltip('destroy');
+
             const html = this.answeredQuestionsCollection.map(function(answeredQuestion) {
-                let croppedAnswer = answeredQuestion.get('answer').slice(0, CROPPED_SUMMARY_CHAR_LENGTH);
-                let extendedAnswer = answeredQuestion.get('answer').slice(CROPPED_SUMMARY_CHAR_LENGTH);
+                const croppedAnswer = answeredQuestion.get('answer').slice(0, CROPPED_SUMMARY_CHAR_LENGTH);
+                const extendedAnswer = answeredQuestion.get('answer').slice(CROPPED_SUMMARY_CHAR_LENGTH);
 
                 return this.template({
                     i18n: i18n,
@@ -65,6 +64,7 @@ define([
                 container: 'body',
                 placement: 'top'
             });
+
             return this;
         },
 
@@ -72,13 +72,11 @@ define([
             this.loadingTracker.questionsFinished = false;
             this.$el.empty();
 
-            let questionsRequestData = {
-                text: this.queryModel.get('queryText'),
-                maxResults: MAX_SIZE
-            };
-
             this.answeredQuestionsCollection.fetch({
-                data: questionsRequestData,
+                data: {
+                    text: this.queryModel.get('queryText'),
+                    maxResults: MAX_SIZE
+                },
                 reset: true,
                 success: _.bind(function() {
                     this.render();

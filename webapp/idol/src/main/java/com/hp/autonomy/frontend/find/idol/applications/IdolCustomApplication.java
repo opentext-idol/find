@@ -3,36 +3,32 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.idol.dashboards;
+package com.hp.autonomy.frontend.find.idol.applications;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.SimpleComponent;
 import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.Widget;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Singular;
 
-import java.util.Collection;
-
+@SuppressWarnings("WeakerAccess")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Builder(toBuilder = true)
-@JsonDeserialize(builder = Dashboard.DashboardBuilder.class)
-public class Dashboard extends SimpleComponent<Dashboard> implements OptionalConfigurationComponent<Dashboard> {
-    private final String dashboardName;
-    private final WidgetNameSetting displayWidgetNames;
+@JsonDeserialize(builder = IdolCustomApplication.IdolCustomApplicationBuilder.class)
+public class IdolCustomApplication extends SimpleComponent<IdolCustomApplication> implements OptionalConfigurationComponent<IdolCustomApplication> {
+    private final String applicationName;
+    private final String url;
+    private final String icon;
     private final Boolean enabled;
-    private final Integer width;
-    private final Integer height;
-    private final Integer updateInterval;
-
-    @Singular
-    private final Collection<Widget<?, ?>> widgets;
+    private final boolean openInNewTab;
 
     @SuppressWarnings("WeakerAccess")
     @JsonPOJOBuilder(withPrefix = "")
-    public static class DashboardBuilder {}
+    public static class IdolCustomApplicationBuilder {
+        private String icon = "";
+        private Boolean enabled = true;
+    }
 }

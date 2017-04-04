@@ -1,0 +1,7 @@
+{
+  "applicationName": "Application name",
+  "url": "http://example.url.com",
+  "icon": "hp-monitor",
+  "openInNewTab": true,
+  "enabled": true
+}

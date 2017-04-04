@@ -19,8 +19,7 @@ define([
         events: {
             'click .nav-menu-toggle-btn': function(event) {
                 event.preventDefault();
-                const collapsed = this.sidebarModel.get('collapsed');
-                this.sidebarModel.set('collapsed', !collapsed);
+                this.sidebarModel.set('collapsed', !this.sidebarModel.get('collapsed'));
             },
             'click a[data-pagename]': function() {
                 this.sidebarModel.set('collapsed', true);
@@ -68,6 +67,7 @@ define([
                 hasAdminRole: _.contains(configuration().roles, 'ROLE_ADMIN'),
                 menuItems: this.menuItems,
                 pages: pages,
+                applications: configuration().applications,
                 username: configuration().username
             }));
 

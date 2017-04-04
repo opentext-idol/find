@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -79,7 +79,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
     public void index(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         final String contextPath = request.getContextPath();
 
-        if (LoginTypes.DEFAULT.equals(authenticationConfigService.getConfig().getAuthentication().getMethod())) {
+        if(LoginTypes.DEFAULT.equals(authenticationConfigService.getConfig().getAuthentication().getMethod())) {
             response.sendRedirect(contextPath + DEFAULT_LOGIN_PAGE);
         } else {
             response.sendRedirect(contextPath + APP_PATH);
@@ -93,7 +93,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
         final Collection<String> roles = authenticationInformationRetriever.getAuthentication()
                 .getAuthorities()
                 .stream()
-                .map((Function<GrantedAuthority, String>) GrantedAuthority::getAuthority)
+                .map((Function<GrantedAuthority, String>)GrantedAuthority::getAuthority)
                 .collect(Collectors.toCollection(LinkedList::new));
 
         final FindConfig<C, B> findConfig = configService.getConfig();
@@ -149,7 +149,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
         return findConfig.getFieldsInfo().getFieldConfig().entrySet().stream()
                 .collect(toLinkedMap(Map.Entry::getKey, entry -> entry.getValue().toBuilder()
                         .displayName(Optional.ofNullable(entry.getValue().getDisplayName())
-                                .orElseGet(() -> fieldDisplayNameGenerator.prettifyFieldName(entry.getValue().getId())))
+                                             .orElseGet(() -> fieldDisplayNameGenerator.prettifyFieldName(entry.getValue().getId())))
                         .build()));
     }
 
@@ -157,9 +157,9 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
             final Function<? super T, ? extends K> keyMapper,
             final Function<? super T, ? extends U> valueMapper) {
         return Collectors.toMap(keyMapper, valueMapper,
-                (u, v) -> {
-                    throw new IllegalStateException(String.format("Duplicate key %s", u));
-                },
-                LinkedHashMap::new);
+                                (u, v) -> {
+                                    throw new IllegalStateException(String.format("Duplicate key %s", u));
+                                },
+                                LinkedHashMap::new);
     }
 }

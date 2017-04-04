@@ -1,7 +1,13 @@
+/*
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'find/app/page/search/filters/parametric/parametric-value-view',
-    'backbone'
-], function(ValueView, Backbone) {
+    'backbone',
+    'find/app/page/search/filters/parametric/parametric-value-view'
+], function(Backbone, ValueView) {
+    'use strict';
 
     describe('Parametric value view', function() {
         beforeEach(function() {
@@ -14,9 +20,9 @@ define([
 
             this.selectedValuesCollection = new Backbone.Collection();
             this.view = new ValueView({
-                    model: this.model,
-                    selectedValuesCollection: this.selectedValuesCollection
-                });
+                model: this.model,
+                selectedValuesCollection: this.selectedValuesCollection
+            });
             this.view.render();
 
             this.$check = this.view.$('.parametric-value-icon');

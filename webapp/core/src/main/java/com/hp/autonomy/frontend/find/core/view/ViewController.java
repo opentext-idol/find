@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -25,9 +25,9 @@ import java.io.Serializable;
 public abstract class ViewController<R extends ViewRequest<S>, S extends Serializable, E extends Exception> {
     public static final String VIEW_PATH = "/api/public/view";
     public static final String VIEW_DOCUMENT_PATH = "/viewDocument";
-    private static final String VIEW_STATIC_CONTENT_PROMOTION_PATH = "/viewStaticContentPromotion";
     public static final String REFERENCE_PARAM = "reference";
     public static final String DATABASE_PARAM = "index";
+    private static final String VIEW_STATIC_CONTENT_PROMOTION_PATH = "/viewStaticContentPromotion";
     private static final String HIGHLIGHT_PARAM = "highlightExpressions";
 
     private final ViewServerService<R, S, E> viewServerService;

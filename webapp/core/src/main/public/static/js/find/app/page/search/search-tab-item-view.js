@@ -13,8 +13,8 @@ define([
 ], function(_, ListItemView, i18n, SavedSearchModel, template) {
     'use strict';
 
-    var templateFunction = _.template(template);
-    var NEW_DOCS_LIMIT = 1000;
+    const templateFunction = _.template(template);
+    const NEW_DOCS_LIMIT = 1000;
 
     return ListItemView.extend({
         className: 'search-tab',
@@ -22,7 +22,7 @@ define([
         queryState: null,
 
         initialize: function(options) {
-            var cid = this.model.cid;
+            const cid = this.model.cid;
             this.queryStates = options.queryStates;
 
             ListItemView.prototype.initialize.call(this, _.defaults({
@@ -47,6 +47,10 @@ define([
         render: function() {
             ListItemView.prototype.render.apply(this);
 
+            if(this.$tooltip) {
+                this.$tooltip.tooltip('destroy');
+            }
+
             this.updateSavedness();
             this.updateTabBadge();
 
@@ -58,8 +62,13 @@ define([
             });
         },
 
+        remove: function() {
+            this.$tooltip.tooltip('destroy');
+            ListItemView.prototype.remove.call(this);
+        },
+
         updateTabBadge: function() {
-            var newDocuments = this.model.get('newDocuments');
+            const newDocuments = this.model.get('newDocuments');
 
             if(newDocuments > 0) {
                 this.$('.new-document-label')
@@ -72,14 +81,16 @@ define([
         },
 
         updateSavedness: function() {
-            var changed = this.queryState ? !this.model.equalsQueryState(this.queryState) : false;
+            const changed = this.queryState
+                ? !this.model.equalsQueryState(this.queryState)
+                : false;
             const differentFromServer = this.model.isNew() || changed;
             this.$('.search-tab-anchor').toggleClass('bold', differentFromServer);
             this.$('.search-tab-anchor .hp-new').toggleClass('hide', !differentFromServer);
         },
 
         updateQueryStateListeners: function() {
-            var newQueryState = this.queryStates.get(this.model.cid);
+            const newQueryState = this.queryStates.get(this.model.cid);
 
             if(this.queryState) {
                 this.stopListening(this.queryState.selectedIndexes);

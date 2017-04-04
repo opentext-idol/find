@@ -1,0 +1,11 @@
+{
+  "applications": [
+    {
+      "applicationName": "IDOL Data Admin",
+      "url": "http://localhost:8080",
+      "icon": "hp-monitor",
+      "openInNewTab": false,
+      "enabled": true
+    }
+  ]
+}

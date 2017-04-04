@@ -18,6 +18,7 @@ define([
         'about.search': 'Search',
         'about.tagLine': 'Handcrafted in Cambridge.',
         'about.versionString': '{0} commit {1}',
+        'applications': 'Applications',
         'app.about': 'About',
         'app.apply': 'Apply',
         'app.backToSearch': 'Back to search',

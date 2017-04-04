@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -44,7 +44,10 @@ import java.util.stream.Stream;
 import static com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricValuesControllerTest.ParametricRequestMatcher.matchesParametricRequest;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
@@ -203,11 +206,11 @@ public abstract class AbstractParametricValuesControllerTest<
 
         @Override
         public boolean matches(final Object item) {
-            if (!(item instanceof ParametricRequest)) {
+            if(!(item instanceof ParametricRequest)) {
                 return false;
             }
 
-            final ParametricRequest<?> request = (ParametricRequest<?>) item;
+            final ParametricRequest<?> request = (ParametricRequest<?>)item;
 
             return request.getFieldNames().equals(expectedFieldNames)
                     && request.getQueryRestrictions().getQueryText().equals(expectedQueryText)

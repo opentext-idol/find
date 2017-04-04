@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -40,10 +40,8 @@ import java.util.Set;
 public abstract class ParametricValuesController<Q extends QueryRestrictions<S>, R extends ParametricRequest<Q>, S extends Serializable, E extends Exception> {
     @SuppressWarnings("WeakerAccess")
     public static final String PARAMETRIC_PATH = "/api/public/parametric";
-    private static final String VALUE_DETAILS_PATH = "/value-details";
     public static final String DEPENDENT_VALUES_PATH = "/dependent-values";
     public static final String FIELD_NAMES_PARAM = "fieldNames";
-    private static final String FIELD_NAME_PARAM = "fieldName";
     public static final String QUERY_TEXT_PARAM = "queryText";
     public static final String FIELD_TEXT_PARAM = "fieldText";
     public static final String DATABASES_PARAM = "databases";
@@ -52,6 +50,8 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     static final String TARGET_NUMBER_OF_BUCKETS_PARAM = "targetNumberOfBuckets";
     static final String BUCKET_MIN_PARAM = "bucketMin";
     static final String BUCKET_MAX_PARAM = "bucketMax";
+    private static final String VALUE_DETAILS_PATH = "/value-details";
+    private static final String FIELD_NAME_PARAM = "fieldName";
     private static final String MIN_DATE_PARAM = "minDate";
     private static final String MAX_DATE_PARAM = "maxDate";
     private static final String MIN_SCORE = "minScore";
@@ -106,15 +106,15 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
                 .sort(SortParam.DocumentCount);
 
         // Don't override defaults set in the request builder
-        if (start != null) {
+        if(start != null) {
             builder.start(start);
         }
 
-        if (maxValues != null) {
+        if(maxValues != null) {
             builder.maxValues(maxValues);
         }
 
-        if (valueRestriction != null) {
+        if(valueRestriction != null) {
             builder.valueRestriction(valueRestriction);
         }
 

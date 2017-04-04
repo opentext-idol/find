@@ -4,14 +4,13 @@
  */
 
 define([
-    'underscore',
     'jquery',
     'find/idol/app/page/dashboard/widgets/static-content-widget'
-], function(_, $, StaticContentWidget) {
-    "use strict";
+], function($, StaticContentWidget) {
+    'use strict';
 
     describe('Static Content Widget', function() {
-        beforeEach(function (done) {
+        beforeEach(function(done) {
             this.widget = new StaticContentWidget({
                 name: 'Test Widget',
                 widgetSettings: {
@@ -20,7 +19,7 @@ define([
             });
             this.widget.render();
 
-            $.when(this.widget.exportData()).done(function (data) {
+            $.when(this.widget.exportData()).done(function(data) {
                 this.exportData = data;
                 done();
             }.bind(this))
