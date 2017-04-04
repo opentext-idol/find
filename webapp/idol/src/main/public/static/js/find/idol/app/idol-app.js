@@ -79,7 +79,6 @@ define([
                     title: i18n['app.search'],
                     order: dashboardCount,
                     navigation: config.enableSideBar ? 'sidebar' : 'dropdown'
-
                 },
                 about: {
                     Constructor: AboutPage,

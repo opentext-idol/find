@@ -4,9 +4,9 @@
  */
 
 define([
-    'jquery',
-    'underscore'
-], function($, _) {
+    'underscore',
+    'jquery'
+], function(_, $) {
     'use strict';
 
     let config;
@@ -46,6 +46,7 @@ define([
                     uiCustomization.options.resultViewOrder.user;
             }
         }
+
         return config;
     }
 });

@@ -11,6 +11,8 @@ import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.core.web.MvcConstants;
+import com.hp.autonomy.frontend.find.idol.applications.IdolCustomApplication;
+import com.hp.autonomy.frontend.find.idol.applications.IdolCustomApplicationsConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
@@ -28,26 +30,36 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class IdolFindController extends FindController<IdolFindConfig, IdolFindConfigBuilder> {
     private final ConfigService<IdolDashboardConfig> dashConfig;
+    private final ConfigService<IdolCustomApplicationsConfig> appsConfig;
 
     @SuppressWarnings({"TypeMayBeWeakened", "ConstructorWithTooManyParameters"})
     @Autowired
     protected IdolFindController(final ControllerUtils controllerUtils,
                                  final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever,
                                  final ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService,
-                                 final ConfigService<IdolFindConfig> configService, final ConfigService<IdolDashboardConfig> dashConfig,
+                                 final ConfigService<IdolFindConfig> configService,
+                                 final ConfigService<IdolDashboardConfig> dashConfig,
+                                 final ConfigService<IdolCustomApplicationsConfig> appsConfig,
                                  final FieldDisplayNameGenerator fieldDisplayNameGenerator) {
         super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService, fieldDisplayNameGenerator);
         this.dashConfig = dashConfig;
+        this.appsConfig = appsConfig;
     }
 
     @Override
     protected Map<String, Object> getPublicConfig() {
         final Map<String, Object> publicConfig = new HashMap<>();
         final IdolFindConfig config = configService.getConfig();
+        final List<IdolCustomApplication> enabledApps = appsConfig.getConfig()
+                .getApplications()
+                .stream()
+                .filter(IdolCustomApplication::getEnabled)
+                .collect(Collectors.toList());
 
         final MMAP mmap = config.getMmap();
 
@@ -57,6 +69,7 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
 
         publicConfig.put(IdolMvcConstants.VIEW_HIGHLIGHTING.getName(), config.getViewConfig().getHighlighting());
         publicConfig.put(IdolMvcConstants.DASHBOARDS.getName(), dashConfig.getConfig().getDashboards());
+        publicConfig.put(IdolMvcConstants.APPLICATIONS.getName(), enabledApps.isEmpty() ? null : enabledApps);
         publicConfig.put(MvcConstants.ANSWER_SERVER_ENABLED.value(), config.getAnswerServer().getEnabled());
 
         return publicConfig;
@@ -70,7 +83,8 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
     private enum IdolMvcConstants {
         MMAP_BASE_URL("mmapBaseUrl"),
         VIEW_HIGHLIGHTING("viewHighlighting"),
-        DASHBOARDS("dashboards");
+        DASHBOARDS("dashboards"),
+        APPLICATIONS("applications");
 
         @Getter
         private final String name;

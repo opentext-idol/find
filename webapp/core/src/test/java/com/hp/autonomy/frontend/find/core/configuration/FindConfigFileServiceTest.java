@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -34,10 +34,11 @@ import java.io.File;
 import java.io.IOException;
 
 import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CLASSES_PROPERTY;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
-@SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @JsonTest
 @AutoConfigureJsonTesters(enabled = false)
 @SpringBootTest(classes = CoreTestContext.class, properties = CORE_CLASSES_PROPERTY)
@@ -113,6 +114,7 @@ public abstract class FindConfigFileServiceTest<C extends FindConfig<C, B>, B ex
 
     @Test
     public void postInitialise() {
+        // Check no exceptions are thrown
         final C config = findConfigFileService.getConfig();
         findConfigFileService.postInitialise(config);
     }
@@ -125,6 +127,7 @@ public abstract class FindConfigFileServiceTest<C extends FindConfig<C, B>, B ex
 
     @Test
     public void postUpdate() {
+        // Check no exceptions are thrown
         final C config = findConfigFileService.getConfig();
         findConfigFileService.postUpdate(config);
     }
