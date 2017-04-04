@@ -4,6 +4,7 @@ public enum ViewTab {
     LIST("list"),
     TOPIC_MAP("topic-map"),
     SUNBURST("sunburst"),
+    TRENDING("trending"),
     TABLE("table"),
     MAP("map");
 
