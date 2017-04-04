@@ -43,6 +43,7 @@ define([
 
         render: function () {
             SavedSearchWidget.prototype.render.apply(this);
+            this.initialised();
             this.mapResultsViewStrategy.mapView.setElement(this.$content).render();
         },
 

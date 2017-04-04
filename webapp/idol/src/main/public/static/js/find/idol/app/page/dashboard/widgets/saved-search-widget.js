@@ -93,6 +93,7 @@ define([
                 }.bind(this))
                 .then(function() {
                     this.hasInitialized = true;
+                    this.initialised();
                     return this.updatePromise = this.getData();
                 }.bind(this))
                 .done(function() {

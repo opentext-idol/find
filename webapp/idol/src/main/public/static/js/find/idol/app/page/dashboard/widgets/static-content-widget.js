@@ -20,6 +20,7 @@ define([
             Widget.prototype.render.apply(this);
 
             this.$content.html(this.html);
+            this.initialised();
         },
 
         exportData: function(){

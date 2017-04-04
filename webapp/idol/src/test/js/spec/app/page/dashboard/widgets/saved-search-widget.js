@@ -29,7 +29,8 @@ define([
             });
 
             it('displays a loading spinner', function() {
-                expect(this.widget.$('.widget-loading-spinner')).not.toHaveClass('hide');
+                expect(this.widget.$('.widget-loading')).not.toHaveClass('hide');
+                expect(this.widget.$('.widget-content')).toHaveClass('hide');
             });
 
             it('fetches the saved search', function() {
@@ -50,7 +51,8 @@ define([
                 });
 
                 it('still displays a loading spinner', function() {
-                    expect(this.widget.$('.widget-loading-spinner')).not.toHaveClass('hide');
+                    expect(this.widget.$('.widget-loading')).not.toHaveClass('hide');
+                    expect(this.widget.$('.widget-content')).toHaveClass('hide');
                 });
 
                 it('calls postInitialize()', function() {
@@ -67,6 +69,8 @@ define([
                     });
 
                     it('still displays a loading spinner', function() {
+                        expect(this.widget.$('.widget-loading')).toHaveClass('hide');
+                        expect(this.widget.$('.widget-content')).not.toHaveClass('hide');
                         expect(this.widget.$('.widget-loading-spinner')).not.toHaveClass('hide');
                     });
 
@@ -412,7 +416,7 @@ define([
             it('displays the widget\'s container without waiting for data to fetch', function() {
                 this.widget.update(this.tracker);
                 expect(this.widget.$content).toBeDefined();
-                expect(this.widget.$content).not.toHaveClass('hide');
+                expect(this.widget.$loading).not.toHaveClass('hide');
             });
 
             // No fetches have yet been carried out -- parameters are 0.

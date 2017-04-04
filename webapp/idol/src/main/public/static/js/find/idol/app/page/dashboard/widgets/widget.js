@@ -37,6 +37,7 @@ define([
 
             this.$content = this.$('.widget-content').addClass(this.viewType);
             this.$error = this.$('.widget-error');
+            this.$loading = this.$('.widget-loading');
         },
 
         contentHeight: function() {
@@ -45,6 +46,11 @@ define([
 
         contentWidth: function() {
             return this.$content.width();
+        },
+
+        initialised: function () {
+            this.$loading.addClass('hide');
+            this.$content.removeClass('hide');
         }
     });
 });

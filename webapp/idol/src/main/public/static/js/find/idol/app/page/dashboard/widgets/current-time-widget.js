@@ -32,6 +32,7 @@ define([
             this.$date = this.$('.date');
 
             this.updateTime();
+            this.initialised();
 
             setInterval(this.updateTime.bind(this), 250);
         },
