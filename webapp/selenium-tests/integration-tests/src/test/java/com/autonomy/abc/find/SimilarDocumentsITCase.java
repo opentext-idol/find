@@ -2,9 +2,7 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.selenium.element.DocumentViewer;
-import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
-import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.FindElementFactory;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
@@ -26,7 +24,7 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 import java.text.ParseException;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
@@ -190,11 +188,11 @@ public class SimilarDocumentsITCase extends FindTestBase {
         similarDocuments.sortByDate();
         final List<FindResult> searchResults = similarDocuments.getResults();
 
-        Date previousDate = null;
+        final ZonedDateTime timeNow = ZonedDateTime.now();
 
+        ZonedDateTime previousDate = null;
         for (int i = 0; i <= 10; i++) {
-            final String date = searchResults.get(i).convertDate();
-            final Date currentDate = SimilarDocumentsView.DATE_FORMAT.parse(date);
+            final ZonedDateTime currentDate = searchResults.get(i).convertRelativeDate(timeNow);
 
             if (previousDate != null) {
                 verifyThat(currentDate, lessThanOrEqualTo(previousDate));

@@ -1,26 +1,26 @@
 package com.autonomy.abc.selenium.find.results;
 
+import com.google.common.base.Function;
 import com.hp.autonomy.frontend.selenium.util.AppPage;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class SimilarDocumentsView implements AppPage {
+    private static final int SIMILAR_DOCUMENTS_TIMEOUT = 20;
+
     private final WebDriver driver;
     private final WebElement container;
 
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE MMMMM dd kk:mm:ss zzz yyyy");
-
     private SimilarDocumentsView(final WebDriver driver) {
         this.driver = driver;
-        this.container = driver.findElement(By.className("suggest-service-view-container"));
+        container = driver.findElement(By.className("suggest-service-view-container"));
     }
 
     public WebElement backButton() {
@@ -32,13 +32,13 @@ public class SimilarDocumentsView implements AppPage {
     }
 
     private WebElement title() {
-        if (resultsMessageContainerExists()){
+        if (resultsMessageContainerExists()) {
             return findElement(By.cssSelector(".results-message-container h4"));
         }
         return findElement(By.tagName("h1"));
     }
 
-    private Boolean resultsMessageContainerExists(){
+    private Boolean resultsMessageContainerExists() {
         return !findElements(By.cssSelector(".results-message-container h4")).isEmpty();
     }
 
@@ -46,11 +46,11 @@ public class SimilarDocumentsView implements AppPage {
         return title().getText();
     }
 
-    public WebElement loadingIndicator(){
-            return findElement(By.className("view-server-loading-indicator"));
+    public WebElement loadingIndicator() {
+        return findElement(By.className("view-server-loading-indicator"));
     }
 
-    public WebElement previewContents(){
+    public WebElement previewContents() {
         return findElement(By.className("preview-mode-container"));
     }
 
@@ -65,9 +65,9 @@ public class SimilarDocumentsView implements AppPage {
         return Integer.valueOf(findElement(By.className("total-results-number")).getText());
     }
 
-    public List<FindResult> getResults(){
+    public List<FindResult> getResults() {
         final List<FindResult> results = new ArrayList<>();
-        for(final WebElement result : findElements(By.className("main-results-container"))){
+        for (final WebElement result : findElements(By.className("main-results-container"))) {
             results.add(new FindResult(result, driver));
         }
         return results;
@@ -84,22 +84,17 @@ public class SimilarDocumentsView implements AppPage {
 
     @Override
     public void waitForLoad() {
-        new WebDriverWait(driver, 20)
+        new WebDriverWait(driver, SIMILAR_DOCUMENTS_TIMEOUT)
                 .withMessage("loading similar results view")
-                .until(new ExpectedCondition<Boolean>() {
-                    @Override
-                    public Boolean apply(final WebDriver driver) {
-                        return findElement(By.cssSelector(".main-results-list.results")).isDisplayed() ||
-                                findElement(By.cssSelector(".results-view-error")).isDisplayed();
-                    }
-                });
+                .until((Function<? super WebDriver, Boolean>) webDriver -> findElement(By.cssSelector(".main-results-list.results")).isDisplayed() ||
+                        findElement(By.cssSelector(".results-view-error")).isDisplayed());
     }
 
     private WebElement findElement(final By locator) {
         return container.findElement(locator);
     }
 
-    private List<WebElement> findElements(final By locator) {
+    private Collection<WebElement> findElements(final By locator) {
         return container.findElements(locator);
     }
 
@@ -111,7 +106,8 @@ public class SimilarDocumentsView implements AppPage {
         sortBy(1);
     }
 
-    private void sortBy(final int dropdownRow){
+    @SuppressWarnings("SameParameterValue")
+    private void sortBy(final int dropdownRow) {
         findElement(By.className("current-search-sort")).click();
         findElement(By.cssSelector(".search-results-sort li:nth-child(" + dropdownRow + ')')).click();
     }

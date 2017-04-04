@@ -11,7 +11,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.Calendar;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 
 public class FindResult extends QueryResult {
     FindResult(final WebElement result, final WebDriver driver) {
@@ -36,7 +38,9 @@ public class FindResult extends QueryResult {
         return findElement(By.className("document-reference")).getText();
     }
 
-    public String getDate() {return findElement(By.className("document-date")).getText();}
+    public String getDate() {
+        return findElement(By.className("document-date")).getText();
+    }
 
     public WebElement similarDocuments() {
         return findElement(By.className("similar-documents-trigger"));
@@ -52,7 +56,7 @@ public class FindResult extends QueryResult {
 
     @Override
     public InlinePreview openDocumentPreview() {
-        if(previewButtonExists()) {
+        if (previewButtonExists()) {
             previewButton().click();
         } else {
             title().click();
@@ -61,48 +65,59 @@ public class FindResult extends QueryResult {
         return InlinePreview.make(getDriver());
     }
 
-    public String convertDate() {
-        final String badFormatDate = getDate();
-        final String[] words = badFormatDate.split(" ");
+    public ZonedDateTime convertRelativeDate(final ZonedDateTime timeNow) {
+        final String vagueDate = getDate();
+        final String[] words = vagueDate.split(" ");
+
         final int timeAmount;
         final String timeUnit;
-        if(words[0].equals("a") || words[0].equals("an")) {
-            timeAmount = 1;
+        if ("a".equals(words[0]) || "an".equals(words[0])) {
+            // e.g. a year ago
+            timeAmount = -1;
             timeUnit = words[1];
+        } else if ("in".equals(words[0])) {
+            // e.g. in 6 months
+            timeAmount = "a".equals(words[1]) || "an".equals(words[1]) ? -1 : Integer.parseInt(words[1]);
+            timeUnit = words[2];
         } else {
-            timeAmount = Integer.parseInt(words[0]);
+            // e.g. 2 months ago
+            timeAmount = -Integer.parseInt(words[0]);
             timeUnit = words[1];
         }
 
-        final Calendar date = Calendar.getInstance();
+        return parseRelativeTime(timeNow, timeAmount, timeUnit);
+    }
 
-        switch(timeUnit) {
+    @SuppressWarnings("TypeMayBeWeakened")
+    private ZonedDateTime parseRelativeTime(final ZonedDateTime timeNow, final int timeAmount, final String timeUnit) {
+        TemporalUnit temporalUnit = ChronoUnit.SECONDS;
+        switch (timeUnit) {
             case "minute":
             case "minutes":
-                date.add(Calendar.MINUTE, -timeAmount);
+                temporalUnit = ChronoUnit.MINUTES;
                 break;
 
             case "hour":
             case "hours":
-                date.add(Calendar.HOUR_OF_DAY, -timeAmount);
+                temporalUnit = ChronoUnit.HOURS;
                 break;
 
             case "day":
             case "days":
-                date.add(Calendar.DAY_OF_MONTH, -timeAmount);
+                temporalUnit = ChronoUnit.DAYS;
                 break;
 
             case "month":
             case "months":
-                date.add(Calendar.MONTH, -timeAmount);
+                temporalUnit = ChronoUnit.MONTHS;
                 break;
 
             case "year":
             case "years":
-                date.add(Calendar.YEAR, -timeAmount);
+                temporalUnit = ChronoUnit.YEARS;
                 break;
         }
-        date.set(Calendar.SECOND, 0);
-        return date.getTime().toString();
+
+        return timeNow.plus(timeAmount, temporalUnit);
     }
 }
