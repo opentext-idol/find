@@ -9,6 +9,8 @@ define([
     'd3',
     'backbone',
     'i18n!find/nls/bundle',
+    'find/app/configuration',
+    'find/app/vent',
     'find/app/util/generate-error-support-message',
     'find/app/page/search/results/parametric-results-view',
     'find/app/page/search/results/field-selection-view',
@@ -19,11 +21,11 @@ define([
     'find/app/page/search/results/trending/trending',
     'parametric-refinement/to-field-text-node',
     'text!find/templates/app/page/loading-spinner.html',
-    'text!find/templates/app/page/search/results/trending/trending-results-view.html',
-    'find/app/vent'
-], function(_, $, d3, Backbone, i18n, generateErrorHtml, ParametricResultsView, FieldSelectionView, calibrateBuckets,
-            BucketedParametricCollection, ParametricDetailsModel, ParametricCollection, Trending, toFieldTextNode,
-            loadingSpinnerHtml, template, vent) {
+    'text!find/templates/app/page/search/results/trending/trending-results-view.html'
+
+], function (_, $, d3, Backbone, i18n, configuration, vent, generateErrorHtml, ParametricResultsView, FieldSelectionView,
+             calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel, ParametricCollection, Trending,
+             toFieldTextNode, loadingSpinnerHtml, template) {
     'use strict';
 
     const MILLISECONDS_TO_SECONDS = 1000;
@@ -44,35 +46,54 @@ define([
         OK: 'OK'
     };
 
+    const fetchState = {
+        FETCHING_BUCKETS: 'FETCHING_BUCKETS',
+        NOT_FETCHING: 'NOT_FETCHING'
+    };
+
     return Backbone.View.extend({
         template: _.template(template),
         loadingHtml: _.template(loadingSpinnerHtml),
 
         initialize: function(options) {
-            this.dateField = options.dateField || 'AUTN_DATE';
-            this.targetNumberOfBuckets = options.targetNumberOfBuckets || 20;
-            this.numberOfValuesToDisplay = options.numberOfValuesToDisplay || 10;
+            let config = configuration();
+            this.dateField = config.trending.dateField;
+            //noinspection JSUnresolvedVariable
+            this.targetNumberOfBuckets = config.trending.numberOfBuckets;
+            //noinspection JSUnresolvedVariable
+            this.numberOfValuesToDisplay = config.trending.numberOfValues;
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.parametricFieldsCollection = options.parametricFieldsCollection;
+            this.parametricCollection = options.parametricCollection;
 
             this.debouncedFetchBucketingData = _.debounce(this.fetchBucketingData, DEBOUNCE_TIME);
             this.bucketedValues = {};
             this.trendingFieldsCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
 
             this.model = new Backbone.Model();
-            this.viewStateModel = new Backbone.Model({currentState: renderState.RENDERING_NEW_DATA});
+            this.viewStateModel = new Backbone.Model({
+                currentState: renderState.RENDERING_NEW_DATA,
+                searchStateChanged: false
+            });
 
             this.listenTo(this.queryModel, 'change', function() {
                 if(this.$el.is(':visible')) {
                     this.fetchFieldData();
+                } else {
+                    this.viewStateModel.set('searchStateChanged', true);
                 }
             });
             this.listenTo(vent, 'vent:resize', this.update);
             this.listenTo(this.viewStateModel, 'change:dataState', this.onDataStateChange);
-            this.listenTo(this.parametricFieldsCollection, 'sync', this.setFieldSelector);
-            this.listenTo(this.parametricFieldsCollection, 'error', this.onDataError);
+            this.listenTo(this.parametricFieldsCollection, 'error', function(collection, xhr) {
+                this.onDataError(xhr);
+            });
             this.listenTo(this.model, 'change:field', this.fetchFieldData);
+            this.listenTo(this.parametricCollection, 'sync', this.setFieldSelector);
+            this.listenTo(this.parametricCollection, 'error', function(collection, xhr) {
+                this.onDataError(xhr);
+            });
         },
 
         render: function() {
@@ -91,7 +112,7 @@ define([
                 tooltipText: i18n['search.resultsView.trending.tooltipText']
             });
 
-            if(!this.parametricFieldsCollection.isEmpty()) {
+            if(!this.parametricCollection.isEmpty()) {
                 this.setFieldSelector();
             }
         },
@@ -103,7 +124,15 @@ define([
 
         update: function() {
             if(this.$el.is(':visible')) {
-                this.updateChart();
+                if(this.viewStateModel.get('searchStateChanged')) {
+                    this.setFieldSelector();
+                    this.fetchFieldData();
+                    this.viewStateModel.set('searchStateChanged', false);
+                } else {
+                    if(!_.isEmpty(this.bucketedValues)) {
+                        this.updateChart();
+                    }
+                }
             }
         },
 
@@ -112,10 +141,24 @@ define([
                 if(this.fieldSelector) {
                     this.fieldSelector.remove();
                 }
+
+                const fields = this.parametricFieldsCollection
+                    .where({type: 'Parametric'})
+                    .map(function (m) {
+                        const id = m.get('id');
+                        const totalValues = this.parametricCollection.where({id: id})[0] ?
+                            this.parametricCollection.where({id: id})[0].get('totalValues')
+                            : 0;
+                        return {
+                            id: id,
+                            displayName: m.get('displayName') + ' (' + totalValues + ')'
+                        }
+                    }.bind(this));
+
                 this.fieldSelector = new FieldSelectionView({
                     model: this.model,
                     name: 'parametric-fields',
-                    fields: this.parametricFieldsCollection.invoke('pick', 'id', 'displayName').sort(),
+                    fields: fields,
                     allowEmpty: false
                 });
                 this.$('.trending-field-selector').prepend(this.fieldSelector.$el);
@@ -184,6 +227,7 @@ define([
 
         fetchBucketingData: function() {
             this.bucketedValues = {};
+            this.viewStateModel.set('fetchState', fetchState.FETCHING_BUCKETS);
 
             _.each(_.first(this.selectedField[0].get('values'), this.numberOfValuesToDisplay), function(value) {
                 this.bucketedValues[value.value] = new BucketedParametricCollection.Model({
@@ -217,9 +261,11 @@ define([
             }, this)).done(_.bind(function() {
                 this.viewStateModel.set('currentState', renderState.RENDERING_NEW_DATA);
                 this.viewStateModel.set('dataState', dataState.OK);
+                this.viewStateModel.set('fetchState', fetchState.NOT_FETCHING);
                 this.updateChart();
             }, this)).fail(_.bind(function(xhr) {
                 this.onDataError(xhr);
+                this.viewStateModel.set('fetchState', fetchState.NOT_FETCHING);
             }, this));
         },
 
@@ -229,7 +275,7 @@ define([
             const data = this.createChartData();
             const callbacks = this.createCallbacks();
 
-            if(!_.isEmpty(data[0].points)) {
+            if(this.viewStateModel.get('fetchState') !== fetchState.FETCHING_BUCKETS) {
                 let minDate, maxDate;
                 if(this.viewStateModel.get('currentState') === renderState.RENDERING_NEW_DATA) {
                     minDate = data[0].points[0].mid;

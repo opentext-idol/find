@@ -11,8 +11,10 @@ define([
     'use strict';
 
     var modelSyncSpy = jasmine.createSpy('sync');
-    var Model = backboneMockFactory.getModel([], {sync: modelSyncSpy});
+    var modelFetchSpy = jasmine.createSpy('fetch');
+    var Model = backboneMockFactory.getModel([], {sync: modelSyncSpy, fetch: modelFetchSpy});
     Model.syncPromises = [];
+    Model.fetchPromises = [];
 
     modelSyncSpy.and.callFake(function() {
         var promise = _.extend({
@@ -23,12 +25,21 @@ define([
         return promise;
     });
 
+    modelFetchSpy.and.callFake(function() {
+        var promise = $.Deferred();
+
+        Model.fetchPromises.push(promise);
+        return promise;
+    });
+
     var originalReset = Model.reset;
 
     Model.reset = function() {
         originalReset();
         modelSyncSpy.calls.reset();
+        modelFetchSpy.calls.reset();
         Model.syncPromises = [];
+        Model.fetchPromises = [];
     };
 
     var Collection = backboneMockFactory.getCollection(['sync'], {model: Model});

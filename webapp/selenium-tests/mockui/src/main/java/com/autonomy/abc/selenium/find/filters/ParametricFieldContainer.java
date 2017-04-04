@@ -35,6 +35,11 @@ public class ParametricFieldContainer extends ListFilterContainer implements Ite
         return filters.stream().map(FindParametricFilter::new).collect(Collectors.toList());
     }
 
+    public List<WebElement> filters() {
+        expand();
+        return getContainer().findElements(By.cssSelector(".parametric-value-element:not(.hide)"));
+    }
+
     @Override
     public List<String> getFilterNames() {
         final boolean startedCollapsed = isCollapsed();

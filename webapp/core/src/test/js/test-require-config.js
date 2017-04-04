@@ -25,7 +25,10 @@ require.config({
             'find/app/page/search/document/location-tab': 'mock/page/search/document/location-tab',
             'find/app/util/topic-map-view': 'mock/util/topic-map-view',
             'find/app/model/bucketed-parametric-collection': 'mock/model/bucketed-parametric-collection',
-            'css/result-highlighting.css': 'mock/css/result-highlighting.css'
+            'css/result-highlighting.css': 'mock/css/result-highlighting.css',
+            'find/app/model/parametric-collection': 'mock/model/parametric-collection',
+            'find/app/model/parametric-field-details-model': 'mock/model/parametric-details-model',
+
         },
         'find/app/page/search/related-concepts/related-concepts-view': {
             'find/app/model/documents-collection': 'mock/model/documents-collection'
@@ -43,14 +46,14 @@ require.config({
         'find/app/page/search/results/entity-topic-map-view': {
             'find/app/model/entity-collection': 'mock/model/entity-collection'
         },
-        'find/app/page/search/filters/parametric/filtered-parametric-fields-collection': {
-            'find/app/model/parametric-collection': 'mock/model/parametric-collection'
-        },
         'find/app/page/search/filters/parametric/parametric-select-modal-view': {
             'find/app/page/search/filters/parametric/parametric-paginator': 'mock/page/search/filters/parametric/parametric-paginator'
         },
         'find/app/page/search/filters/parametric/parametric-select-modal': {
             'find/app/page/search/filters/parametric/parametric-paginator': 'mock/page/search/filters/parametric/parametric-paginator'
+        },
+        'find/app/page/search/results/trending/trending-view': {
+            'find/app/page/search/results/trending/trending': 'mock/page/results/trending'
         }
     }
 });
