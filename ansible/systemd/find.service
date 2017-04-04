@@ -7,7 +7,7 @@ After=network.target
 User=find
 Group=find
 
-ExecStart={{ JAVA_BIN }} -Xmx{{ JAVA_MAX_HEAP_SIZE }}m -Dhp.find.home={{ FIND_HOME_DIR }} -Dlogging.path={{ FIND_LOGGING_DIR }} -Dserver.port={{ FIND_PORT }} -jar {{ FIND_INSTALL_DIR }}/find.jar
+ExecStart={{ JAVA_BIN }} -Xmx{{ JAVA_MAX_HEAP_SIZE }}m -Dhp.find.home={{ FIND_HOME_DIR }} -Dlogging.path={{ FIND_LOGGING_DIR }} -Dserver.port={{ FIND_PORT }} -jar {{ FIND_INSTALL_DIR }}/find.war
 
 StandardInput=null
 
