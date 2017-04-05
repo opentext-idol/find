@@ -128,7 +128,10 @@ define([
 
             this.trendingChart = new Trending({
                 el: this.$('.trending-chart').get(0),
-                tooltipText: i18n['search.resultsView.trending.tooltipText']
+                tooltipText: i18n['search.resultsView.trending.tooltipText'],
+                zoomEnabled: true,
+                dragEnabled: true,
+                hoverEnabled: true
             });
 
             if(!this.parametricCollection.isEmpty()) {

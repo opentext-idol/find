@@ -43,7 +43,18 @@ define([
         };
     }
 
-    function createHoverCallbacks(chart, scales, chartHeight, tooltipText, timeFormat) {
+    function createHoverCallbacks(hoverEnabled, chart, scales, chartHeight, tooltipText, timeFormat) {
+        if (!hoverEnabled) {
+            return {
+                lineAndPointMouseover: _.noop,
+                lineAndPointMouseout: _.noop,
+                pointMouseover: _.noop,
+                pointMouseout: _.noop,
+                legendMouseover: _.noop,
+                legendMouseout: _.noop
+            }
+        }
+
         const mouseover = function mouseoverFn(valueName) {
             d3.selectAll('.line')
                 .each(function() {
@@ -299,6 +310,9 @@ define([
     function Trending(settings) {
         this.el = settings.el;
         this.tooltipText = settings.tooltipText;
+        this.zoomEnabled = settings.zoomEnabled;
+        this.dragEnabled = settings.dragEnabled;
+        this.hoverEnabled = settings.hoverEnabled;
 
         this.chart = d3.select(this.el)
             .append('svg');
@@ -321,7 +335,7 @@ define([
 
             const scales = setScales(options, chartHeight, chartWidth);
 
-            const hoverCallbacks = createHoverCallbacks(this.chart, scales, chartHeight, this.tooltipText, timeFormat);
+            const hoverCallbacks = createHoverCallbacks(this.hoverEnabled, this.chart, scales, chartHeight, this.tooltipText, timeFormat);
 
             const getIndexOfValueName = function getIndexOfValueNameFn(name) {
                 return _.pluck(data, 'name').indexOf(name);
@@ -467,14 +481,18 @@ define([
                 max: maxDate.getTime() / MILLISECONDS_TO_SECONDS
             };
 
-            widgetZoom.addZoomBehaviour(_.extend(behaviourOptions, {
-                callback: options.zoomCallback
-            }));
+            if (this.zoomEnabled) {
+                widgetZoom.addZoomBehaviour(_.extend(behaviourOptions, {
+                    callback: options.zoomCallback
+                }));
+            }
 
-            widgetDrag.addDragBehaviour(_.extend(behaviourOptions, {
-                dragMoveCallback: options.dragMoveCallback,
-                dragEndCallback: options.dragEndCallback
-            }));
+            if (this.dragEnabled) {
+                widgetDrag.addDragBehaviour(_.extend(behaviourOptions, {
+                    dragMoveCallback: options.dragMoveCallback,
+                    dragEndCallback: options.dragEndCallback
+                }));
+            }
         }
     });
 
