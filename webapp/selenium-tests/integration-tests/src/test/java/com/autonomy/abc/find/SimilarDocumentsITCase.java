@@ -1,11 +1,11 @@
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
-import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.application.FindElementFactory;
 import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
+import com.autonomy.abc.selenium.find.results.DocumentViewer;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ListView;
 import com.autonomy.abc.selenium.find.results.SimilarDocumentsView;
@@ -21,6 +21,7 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.text.ParseException;
@@ -217,15 +218,14 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
             assertThat("Have opened preview container", docPreview.previewPresent());
             verifyThat("Preview not stuck loading", !similarDocuments.loadingIndicator().isDisplayed());
-            verifyThat("There is content in preview", similarDocuments.previewContents().getText(), not(isEmptyOrNullString()));
             verifyThat("Index displayed", docPreview.getIndexName(), not(nullValue()));
             verifyThat("Reference displayed", docPreview.getReference(), not(nullValue()));
 
             final Frame previewFrame = new Frame(getWindow(), docPreview.frame());
             final String frameText = previewFrame.getText();
 
-            verifyThat("Preview document has content", frameText, not(isEmptyOrNullString()));
-            assertThat("Preview document has no error", previewFrame.getText(), not(containsString("encountered an error")));
+            verifyThat("Preview document has content", previewFrame.operateOnContent(x -> x.findElements(By.cssSelector("*"))), not(empty()));
+            assertThat("Preview document has no error", frameText, not(containsString("encountered an error")));
 
             docPreview.close();
         }

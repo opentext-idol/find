@@ -1,6 +1,6 @@
 package com.autonomy.abc.selenium.find.preview;
 
-import com.autonomy.abc.selenium.element.DocumentViewer;
+import com.autonomy.abc.selenium.find.results.DocumentViewer;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -10,7 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class InlinePreview extends DocumentViewer {
     private static final By LOCATOR = By.cssSelector(".preview-mode-wrapper:not(.hide) .preview-mode-container");
-    private WebElement preview;
+    private final WebElement preview;
 
     private InlinePreview(final WebDriver driver){
         super(driver, driver.findElement(LOCATOR));
@@ -48,23 +48,6 @@ public class InlinePreview extends DocumentViewer {
     public WebElement loadingIndicator(){
         return findElement(By.className("view-server-loading-indicator"));
     }
-
-    @Override
-    public String getReference() {
-        if (getField("URL") == null) {
-            return getField("Reference");
-        }
-        return getField("URL");
-    }
-
-    @Override
-    public void next(){ throw new UnsupportedOperationException("Idol-Find DocPreview has no 'next'");}
-
-    @Override
-    public void previous(){throw new UnsupportedOperationException("Idol-Find DocPreview has no 'previous'");}
-
-    @Override
-    public int getTotalDocumentsNumber() {throw new UnsupportedOperationException("Idol-Find DocPreview doesn't have number of docs");}
 
     @Override
     public boolean previewPresent(){return !findElements(By.className("preview-mode-document")).isEmpty();}

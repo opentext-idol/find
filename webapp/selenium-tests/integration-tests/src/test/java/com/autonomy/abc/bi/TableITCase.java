@@ -82,8 +82,8 @@ public class TableITCase extends IdolFindTestBase {
         tableView = findPage.goToTable();
 
         final WebElement message = tableView.message();
-        final String correctMessage = "Could not display Table View: your search returned no parametric values";
         assertThat("Message appearing when no sunburst & search from Sunburst", message, displayed());
+        final String correctMessage = "Could not display Table View: your search returned no parametric values";
         verifyThat("Message is: " + correctMessage, message, containsText(correctMessage));
     }
 
@@ -115,11 +115,11 @@ public class TableITCase extends IdolFindTestBase {
         tableView.firstParametricSelectionDropdown().select(WordUtils.capitalize(categoryName.toLowerCase()));
         tableView.waitForTable();
 
-        for(final String key : filterCounts.keySet()) {
-            tableView.secondParametricSelectionDropdown().select(WordUtils.capitalize(key.toLowerCase()));
+        for(final Map.Entry<String, Integer> stringIntegerEntry : filterCounts.entrySet()) {
+            tableView.secondParametricSelectionDropdown().select(WordUtils.capitalize(stringIntegerEntry.getKey().toLowerCase()));
             tableView.waitForTable();
-            verifyThat("Number of columns is: " + tableView.columnCount() + " for main category " + categoryName + " with second category " + key
-                    , tableView.columnCount(), greaterThan(filterCounts.get(key)));
+            verifyThat("Number of columns is: " + tableView.columnCount() + " for main category " + categoryName + " with second category " + stringIntegerEntry.getKey()
+                    , tableView.columnCount(), greaterThan(stringIntegerEntry.getValue()));
         }
 
         checkRowNumber(goodCategory);
@@ -144,8 +144,8 @@ public class TableITCase extends IdolFindTestBase {
                 final String filterCat = cont.filterCategoryName();
                 if(!filterCat.equals(categoryName)) {
                     final Integer filterNum = filterCounts.get(filterCat);
-                    if(filterNum == null || filterNum < cont.getFilterNumber()) {
-                        filterCounts.put(filterCat, cont.getFilterNumber());
+                    if(filterNum == null || filterNum < cont.getFilterCount()) {
+                        filterCounts.put(filterCat, cont.getFilterCount());
                     }
                 }
             }
@@ -156,7 +156,7 @@ public class TableITCase extends IdolFindTestBase {
     }
 
     private void checkRowNumber(final int index) {
-        final int filterNumber = filters().parametricField(index).getFilterNumber();
+        final int filterNumber = filters().parametricField(index).getFilterCount();
         verifyThat("Number of rows equals number of filters in filter type (or max per page)",
                    tableView.rowCount(),
                    anyOf(is(NUMBER_PER_PAGE), is(filterNumber)));

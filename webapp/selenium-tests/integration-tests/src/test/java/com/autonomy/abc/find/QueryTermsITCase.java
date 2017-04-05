@@ -7,6 +7,7 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.base.Role;
+import com.autonomy.abc.queryHelper.IdolQueryTermResult;
 import com.autonomy.abc.queryHelper.IdolQueryTestHelper;
 import com.autonomy.abc.selenium.error.Errors.Search;
 import com.autonomy.abc.selenium.find.FindPage;
@@ -20,7 +21,6 @@ import com.autonomy.abc.shared.QueryTestHelper;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
-import com.hp.autonomy.frontend.selenium.framework.environment.Deployment;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.apache.commons.collections4.ListUtils;
@@ -31,24 +31,14 @@ import org.openqa.selenium.WebDriverException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class QueryTermsITCase extends FindTestBase {
@@ -162,7 +152,7 @@ public class QueryTermsITCase extends FindTestBase {
         return searchResults;
     }
 
-    private void checkANotB(final String term, final Set<String> uniqueResults, final List<String> notIncludeResults) {
+    private void checkANotB(final String term, final Set<String> uniqueResults, final Collection<String> notIncludeResults) {
         final List<String> notTermOne = getResultsList(term);
         uniqueResults.removeAll(notIncludeResults);
         assertThat(notTermOne.size(), is(uniqueResults.size()));
@@ -177,20 +167,30 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     @Test
-    @ActiveBug({"CORE-2925","FIND-853"})
+    @ActiveBug({"CORE-2925", "FIND-853"})
     public void testCorrectErrorMessageDisplayed() {
         ensureOnCorrectView();
         new QueryTestHelper<>(findService)
-                .booleanOperatorQueryText(Search.OPERATORS, Search.OPENING_BOOL, Search.GENERIC_HOSTED_ERROR);
+                .booleanOperatorQueryText(Search.OPERATORS, Search.OPENING_BOOL, Search.BOOL_AFTER_BRACKET, Search.GENERIC_HOSTED_ERROR);
         new QueryTestHelper<>(findService)
                 .emptyQueryText(Search.STOPWORDS, Search.NO_TEXT, Search.GENERIC_HOSTED_ERROR, Search.HOSTED_INVALID);
     }
 
     @Test
     @ResolvedBug("FIND-151")
+    @Role(UserRole.FIND)
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
         ensureOnCorrectView();
-        new IdolQueryTestHelper<ListView>(findService).hiddenQueryOperatorText(getElementFactory());
+        new IdolQueryTestHelper<>(findService).hiddenQueryOperatorText(getElementFactory());
+    }
+
+    @Test
+    @ResolvedBug("FIND-151")
+    @ActiveBug("FIND-1122")
+    @Role(UserRole.BIFHI)
+    public void testAllowSearchOfStringsThatContainBooleansWithinThemNoAutoCorrect() {
+        ensureOnCorrectView();
+        new IdolQueryTestHelper<>(findService).hiddenQueryOperatorTextNoAutoCorrect(getElementFactory());
     }
 
     @Test
@@ -215,11 +215,13 @@ public class QueryTermsITCase extends FindTestBase {
     @ResolvedBug("HOD-2170")
     @ActiveBug("CCUK-3634")
     public void testSearchQuotationMarks() {
-        new QueryTestHelper<>(findService).mismatchedQuoteQueryText(Search.QUOTES);
+        ensureOnCorrectView();
+        new QueryTestHelper<>(findService).mismatchedQuoteQueryText(Search.QUOTES, Search.BRACKETS_BOOLEAN_OPEN);
     }
 
     @Test
-    @ActiveBug(value = "CCUK-3700", type = ApplicationType.ON_PREM)
+    @ActiveBug(value = {"CCUK-3700", "FIND-1120"}, type = ApplicationType.ON_PREM)
+    @Role(UserRole.FIND)
     public void testWhitespaceSearch() {
         assumeThat("Currently should only run on prem - requires role infrastructure", !isHosted());
 
@@ -227,7 +229,7 @@ public class QueryTermsITCase extends FindTestBase {
 
         try {
             findService.search("       ");
-        } catch(final WebDriverException ignored) { /* Expected behaviour */ }
+        } catch (final WebDriverException ignored) { /* Expected behaviour */ }
 
         assertThat(findPage.footerLogo(), displayed());
 

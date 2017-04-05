@@ -54,7 +54,6 @@ public class FindResult extends QueryResult {
         return !findElements(By.className("preview-link")).isEmpty();
     }
 
-    @Override
     public InlinePreview openDocumentPreview() {
         if (previewButtonExists()) {
             previewButton().click();

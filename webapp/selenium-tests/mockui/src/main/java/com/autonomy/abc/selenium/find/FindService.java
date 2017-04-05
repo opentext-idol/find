@@ -44,7 +44,7 @@ public class FindService implements QueryService<ListView> {
         elementFactory.getFilterPanel().waitForIndexes();
         findPage.filterBy(new AggregateQueryFilter(query.getFilters()));
         LoggerFactory.getLogger(getClass()).info("'search' expects you to already be on the listview, if it fails " +
-                                                         "try 'searchAnyView'.");
+                "try 'searchAnyView'.");
         return elementFactory.getListView();
     }
 
@@ -73,13 +73,14 @@ public class FindService implements QueryService<ListView> {
     }
 
     public String termWithBetween1And30Results(final List<String> candidates) {
-        for(final String term : candidates) {
+        for (final String term : candidates) {
             final ListView results = search(term);
+            findPage.ensureTermNotAutoCorrected();
             findPage.waitForLoad();
             final int resultsNum = results.getTotalResultsNum();
             elementFactory.getConceptsPanel().removeAllConcepts();
 
-            if(resultsNum > 0 && resultsNum <= 30) {
+            if (resultsNum > 0 && resultsNum <= 30) {
                 candidates.subList(0, candidates.indexOf(term) + 1).clear();
                 return term;
             }
@@ -89,17 +90,17 @@ public class FindService implements QueryService<ListView> {
 
     public ImmutablePair<String, String> getPairOfTermsThatDoNotShareResults() {
         final List<ImmutablePair<String, String>> potentialTerms = Arrays.asList(
-                new ImmutablePair("\"polar bear\"", "\"opposable thumbs\""),
-                new ImmutablePair("\"upshot\"", "\"space invaders\""),
-                new ImmutablePair("\"animalistic\"", "\"freefall\""));
+                new ImmutablePair<>("\"polar bear\"", "\"opposable thumbs\""),
+                new ImmutablePair<>("\"upshot\"", "\"space invaders\""),
+                new ImmutablePair<>("\"animalistic\"", "\"freefall\""));
 
-        for(final ImmutablePair<String, String> pair : potentialTerms) {
+        for (final ImmutablePair<String, String> pair : potentialTerms) {
             final Set<String> results1 = searchAndGetResults(pair.getLeft());
             final Set<String> results2 = searchAndGetResults(pair.getRight());
 
-            if(results1.size() > 0 && results2.size() > 0) {
+            if (!results1.isEmpty() && !results2.isEmpty()) {
                 results1.retainAll(results2);
-                if(results1.size() == 0) {
+                if (results1.isEmpty()) {
                     return pair;
                 }
             }
@@ -125,7 +126,7 @@ public class FindService implements QueryService<ListView> {
     public String getQueryUrl(final String query) {
         try {
             return "public/search/query/" + URLEncoder.encode(query, StandardCharsets.UTF_8.name());
-        } catch(final UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException e) {
             throw new IllegalStateException("UTF-8 not supported", e);
         }
     }

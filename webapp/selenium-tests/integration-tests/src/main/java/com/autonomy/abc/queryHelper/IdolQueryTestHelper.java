@@ -7,6 +7,7 @@ package com.autonomy.abc.queryHelper;
 
 import com.autonomy.abc.selenium.error.Errors.Search;
 import com.autonomy.abc.selenium.find.application.FindElementFactory;
+import com.autonomy.abc.selenium.query.QueryResultsPage;
 import com.autonomy.abc.selenium.query.QueryService;
 import com.autonomy.abc.shared.QueryTestHelper;
 import org.slf4j.Logger;
@@ -16,21 +17,31 @@ import java.util.Arrays;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.stringContainingAnyOf;
+import static org.hamcrest.Matchers.is;
 
-public class IdolQueryTestHelper<T> extends QueryTestHelper {
+public class IdolQueryTestHelper<T extends QueryResultsPage> extends QueryTestHelper<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryTestHelper.class);
 
-    public IdolQueryTestHelper(final QueryService queryService) {super(queryService);}
+    public IdolQueryTestHelper(final QueryService<T> queryService) {
+        super(queryService);
+    }
 
     public void hiddenQueryOperatorText(final FindElementFactory elementFactory) {
-        for(final IdolQueryTermResult result : IdolQueryTermResult.idolResultsFor(getHiddenBooleans(), getService())) {
-            if(result.errorWellExists() && result.errorContainer().isDisplayed()) {
+        for (final IdolQueryTermResult result : IdolQueryTermResult.idolResultsFor(getHiddenBooleans(), getService())) {
+            if (result.errorWellExists() && result.errorContainer().isDisplayed()) {
                 verifyThat("Query auto-corrected so sees the Boolean",
-                           result.getErrorMessage(),
-                           stringContainingAnyOf(Arrays.asList(Search.GENERAL_BOOLEAN)));
+                        result.getErrorMessage(),
+                        stringContainingAnyOf(Arrays.asList(Search.GENERAL_BOOLEAN.toString(), Search.GENERAL_BOOLEAN.toString().toLowerCase())));
             } else {
                 LOGGER.info("The error message is not displayed.");
             }
+            elementFactory.getConceptsPanel().removeAllConcepts();
+        }
+    }
+
+    public void hiddenQueryOperatorTextNoAutoCorrect(final FindElementFactory elementFactory) {
+        for (final IdolQueryTermResult result : IdolQueryTermResult.idolResultsFor(getHiddenBooleans(), getService())) {
+            verifyThat("No auto-correction", result.errorWellExists(), is(false));
             elementFactory.getConceptsPanel().removeAllConcepts();
         }
     }

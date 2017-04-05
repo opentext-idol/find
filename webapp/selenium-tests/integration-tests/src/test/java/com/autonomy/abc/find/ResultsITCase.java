@@ -171,7 +171,7 @@ public class ResultsITCase extends FindTestBase {
                    is("( " + termAutoCorrected + " )"));
 
         findPage.waitForParametricValuesToLoad();
-        verifyThat("Still has parametric fields", getElementFactory().getFilterPanel().parametricField(indexOfCategoryWFilters).getFilterNumber(), not(0));
+        verifyThat("Still has parametric fields", getElementFactory().getFilterPanel().parametricField(indexOfCategoryWFilters).getFilterCount(), not(0));
         verifyThat("Still has related concepts", !getElementFactory().getRelatedConceptsPanel().noConceptsPresent());
     }
 

@@ -93,7 +93,7 @@ public class FilterPanel {
     }
 
     public int nonZeroParamFieldContainer(final int n) {
-        return nthParametricThatSatisfiedCondition(n, (x) -> 0 != (x));
+        return nthParametricThatSatisfiedCondition(n, x -> 0 != x);
     }
 
     public int nthParametricThatSatisfiedCondition(final int n, final Predicate<Integer> op) {
@@ -101,7 +101,7 @@ public class FilterPanel {
         int nonZeroCount = 0;
         for(final WebElement container : getParametricFilters()) {
             final ParametricFieldContainer candidate = new ParametricFieldContainer(container, driver);
-            if(op.test(candidate.getFilterNumber())) {
+            if(op.test(candidate.getFilterCount())) {
                 if(nonZeroCount >= n) {
                     return index;
                 } else {
@@ -186,7 +186,7 @@ public class FilterPanel {
         final int tooManyFiltersToBother = 600;
 
         final ParametricFieldContainer container = parametricField(index);
-        if(container.getFilterNumber() > tooManyFiltersToBother) {
+        if(container.getFilterCount() > tooManyFiltersToBother) {
             return true;
         }
         container.expand();

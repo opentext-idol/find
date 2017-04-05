@@ -5,6 +5,7 @@
 
 package com.autonomy.abc.selenium.find.filters;
 
+import com.google.common.base.Function;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
@@ -13,7 +14,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
     }
 
     private static boolean isBigEnough(final int thisCount, final int totalResults) {
-        return (double)thisCount / totalResults >= 0.05;
+        return (double) thisCount / totalResults >= 0.05;
     }
 
     public boolean isCurrentTabLoading() {
@@ -59,7 +59,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
     public void waitForLoad() {
         new WebDriverWait(getDriver(), 15)
                 .withMessage("loading indicator to disappear")
-                .until((ExpectedCondition<Boolean>) webDriver -> !isCurrentTabLoading());
+                .until((Function<? super WebDriver, Boolean>) webDriver -> !isCurrentTabLoading());
     }
 
     public void cancel() {
@@ -113,16 +113,16 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
         int previousNumber = -1;
         int twicePreviousNumber = -1;
 
-        while(i < limit && filtersWithNoResults(pane) < 1 && twicePreviousNumber < numberOfValues) {
+        while (i < limit && filtersWithNoResults(pane) < 1 && twicePreviousNumber < numberOfValues) {
             DriverUtil.scrollToBottom(driver);
             twicePreviousNumber = previousNumber;
             previousNumber = numberOfValues;
             numberOfValues = pane.findElements(By.cssSelector(".checkbox.parametric-value-label")).size();
             i++;
         }
-        if(i >= limit) {
+        if (i >= limit) {
             LOGGER.info("Loop reached limit of " + limit + " , " +
-                                "but if there is v large number of categories the limit may need to be higher");
+                    "but if there is v large number of categories the limit may need to be higher");
         }
     }
 
@@ -147,7 +147,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
 
     public List<String> checkedFiltersAllPanes() {
         final List<String> allCheckedFilters = new ArrayList<>();
-        for(final WebElement tab : tabs()) {
+        for (final WebElement tab : tabs()) {
             tab.click();
             allCheckedFilters.addAll(ElementUtil.getTexts(activePane().findElements(
                     By.cssSelector(".icheckbox-hp.checked + span")))
@@ -168,8 +168,8 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
     private int totalResultsInPane(final Iterable<ParametricModalCheckbox> checkboxes) {
         int totalResults = 0;
 
-        for(final ParametricModalCheckbox checkbox : checkboxes) {
-            if(checkbox.getResultsCount() != 0) {
+        for (final ParametricModalCheckbox checkbox : checkboxes) {
+            if (checkbox.getResultsCount() != 0) {
                 totalResults += checkbox.getResultsCount();
             } else {
                 break;
@@ -199,9 +199,9 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
 
         final int totalResults = totalResultsInPane(checkboxes);
 
-        for(final ParametricModalCheckbox checkbox : checkboxes) {
+        for (final ParametricModalCheckbox checkbox : checkboxes) {
             final int thisCount = checkbox.getResultsCount();
-            if((expected.size() < VISIBLE_SEGMENTS || isBigEnough(thisCount, totalResults)) && thisCount != 0) {
+            if ((expected.size() < VISIBLE_SEGMENTS || isBigEnough(thisCount, totalResults)) && thisCount != 0) {
                 expected.add(checkbox.getName());
             } else {
                 break;
