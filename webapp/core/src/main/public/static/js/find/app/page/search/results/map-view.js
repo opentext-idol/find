@@ -259,7 +259,7 @@ define([
                 }
             });
 
-            const $objs = $mapEl.find('.leaflet-objects-pane').addClass('hide');
+            const $objs = $mapEl.find('.leaflet-objects-pane, .leaflet-marker-pane, .leaflet-shadow-pane').addClass('hide');
 
             html2canvas($mapEl, {
                 // This seems to avoid issues with IE11 only rendering a small portion of the map the size of the window
