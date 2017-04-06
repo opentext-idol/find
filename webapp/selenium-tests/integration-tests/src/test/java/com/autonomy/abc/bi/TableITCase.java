@@ -97,6 +97,7 @@ public class TableITCase extends IdolFindTestBase {
         checkRowNumber(0);
     }
 
+    // TODO: test contains potentially unreasonable assumption of filter with 1 - 10 values
     @Test
     public void testTwoFieldsGiveCorrectTableValues() {
         tableView = elementFactory.getFindPage().goToTable();

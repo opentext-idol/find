@@ -165,6 +165,7 @@ public class FilterITCase extends FindTestBase {
         verifyThat("Filter: " + checkedFilterName + " is now checked on panel", panelBox.isChecked());
     }
 
+    //TODO this test makes many unreasonable assumptions
     @Test
     @ResolvedBug({"FIND-242", "FIND-406"})
     public void testModalShowsALLFiltersRegardlessOfQuery() {
