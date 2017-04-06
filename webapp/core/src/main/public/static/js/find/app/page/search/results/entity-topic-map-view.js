@@ -50,12 +50,15 @@ define([
             'change .speed-slider': function(e) {
                 const $target = $(e.target);
                 const value = $target.val();
-                $target
-                    .data('bs.tooltip')
-                    .options.title = value;
+                $target.attr('data-original-title', value);
                 $target.tooltip('show');
                 $target.blur();
                 this.model.set('maxResults', value);
+            },
+            'input .speed-slider': function(e) {
+                const $target = $(e.target);
+                const value = $target.val();
+                this.$('.tooltip-inner').text(value);
             }
         },
 
