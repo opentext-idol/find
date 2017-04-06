@@ -232,9 +232,14 @@ define([
                                 color = leafletMarkerColorMap[match[1]]
                             }
 
-                            const popup = layer.getPopup();
-                            if (popup && popup._content) {
-                                text = $(popup._content).find('.map-popup-title').text()
+                            if (layer.options.title) {
+                                text = layer.options.title
+                            }
+                            else {
+                                const popup = layer.getPopup();
+                                if (popup && popup._content) {
+                                    text = $(popup._content).find('.map-popup-title').text()
+                                }
                             }
                         }
 
