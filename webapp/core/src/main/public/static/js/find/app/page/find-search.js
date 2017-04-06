@@ -339,6 +339,12 @@ define([
                     this.suggestView.render();
                 }.bind(this));
             }, this);
+
+            this.listenTo(this.savedSearchCollection, 'sync', function() {
+                const savedSearchModel = this.savedSearchCollection.get(this.selectedTabModel.get('selectedSearchCid'));
+                const selectedResultsView = this.selectedTabModel.get('selectedResultsView');
+                this.updateRouting(savedSearchModel, selectedResultsView);
+            }.bind(this));
         },
 
         render: function() {
