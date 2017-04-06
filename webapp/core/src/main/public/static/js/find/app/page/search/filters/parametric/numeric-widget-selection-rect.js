@@ -33,7 +33,7 @@ define([
 
             return {
                 x1: x,
-                x2: x + this.element.attr('width')
+                x2: x + (+this.element.attr('width'))
             };
         },
 
@@ -67,18 +67,19 @@ define([
         },
 
         remove: function() {
-            if(this.element) {
+            if (this.element) {
                 this.element.remove();
                 this.element = null;
             }
         },
 
         removePrevious: function() {
-            if(this.previousElement) {
+            if (this.previousElement) {
                 this.previousElement.remove();
             }
         }
     });
 
     return SelectionRect;
+
 });
