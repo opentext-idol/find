@@ -28,25 +28,16 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsItems;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 @Role(UserRole.BIFHI)
@@ -64,7 +55,7 @@ public class TopicMapITCase extends IdolFindTestBase {
 
     @Override
     public BIIdolFindElementFactory getElementFactory() {
-        return (BIIdolFindElementFactory)super.getElementFactory();
+        return (BIIdolFindElementFactory) super.getElementFactory();
     }
 
     @Before
@@ -114,7 +105,7 @@ public class TopicMapITCase extends IdolFindTestBase {
         verifyThat("Same number of text elements as map pieces", textElements.size(), is(numberEntities));
 
         results.waitForMapLoaded();
-        for(final WebElement textElement : textElements) {
+        for (final WebElement textElement : textElements) {
             verifyThat("Text element not empty", textElement.getText(), not(""));
         }
     }
@@ -142,7 +133,7 @@ public class TopicMapITCase extends IdolFindTestBase {
 
         assumeThat("Search has results for this data", results.emptyMessage(), not(displayed()));
         final List<String> clusterNames = results.conceptClusterNames();
-        final List<String> addedConcepts = new ArrayList<>();
+        final Collection<String> addedConcepts = new ArrayList<>();
 
         addedConcepts.add(results.clickConceptAndAddText(clusterNames.size()));
         results.waitForMapLoaded();
@@ -150,7 +141,7 @@ public class TopicMapITCase extends IdolFindTestBase {
         addedConcepts.add(results.clickConceptAndAddText(results.conceptClusterNames().size()));
         Waits.loadOrFadeWait();
 
-        for(final String concept : addedConcepts) {
+        for (final String concept : addedConcepts) {
             verifyThat("Concept " + concept + " was added to the Concepts Panel", selectedConcepts(), hasItem(concept));
         }
     }
@@ -169,8 +160,8 @@ public class TopicMapITCase extends IdolFindTestBase {
         results.waitForMapLoaded();
         final List<String> changedParentNames = results.conceptClusterNames();
         assertThat("Changing the slider has changed the map", changedParentNames,
-                   anyOf(not(hasSize(originalParentEntityNames.size())),
-                         not(containsItems(originalParentEntityNames))));
+                anyOf(not(hasSize(originalParentEntityNames.size())),
+                        not(containsItems(originalParentEntityNames))));
 
         slider.dragBy(-30);
         results.waitForMapLoaded();
@@ -178,8 +169,8 @@ public class TopicMapITCase extends IdolFindTestBase {
         //Selenium Actions.moveByOffset takes int -> cannot move by <1%
         //Getting within 1 doc of the original value is permissible
         assumeThat("Have returned tooltip to original value", sliderToolTipValue(slider),
-                   anyOf(greaterThanOrEqualTo(originalToolTipValue - 1),
-                         lessThanOrEqualTo(originalToolTipValue + 1)));
+                anyOf(greaterThanOrEqualTo(originalToolTipValue - 1),
+                        lessThanOrEqualTo(originalToolTipValue + 1)));
         verifyThat("Same parent concepts as when originally loaded", results.conceptClusterNames(), containsItems(originalParentEntityNames));
     }
 
@@ -194,18 +185,18 @@ public class TopicMapITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-650")
     public void testTopicMapRendersWhenManyNewTabs() {
-        final int numberTabs = 8;
         search("grey");
 
         final SearchTabBar tabBar = getElementFactory().getSearchTabBar();
-        for(int i = 0; i < numberTabs; i++) {
+        final int numberTabs = 8;
+        for (int i = 0; i < numberTabs; i++) {
             tabBar.newTab();
         }
 
         tabBar.switchTo(numberTabs / 2);
         results.waitForMapLoaded();
 
-        for(int j = 0; j < numberTabs; j++) {
+        for (int j = 0; j < numberTabs; j++) {
             tabBar.switchTo(j);
             results = getElementFactory().getTopicMap();
             results.waitForMapLoaded();
@@ -249,11 +240,11 @@ public class TopicMapITCase extends IdolFindTestBase {
 
         verifyThat("Paths are linked to their gradients", topicMap.getGradientIds().containsAll(getIdsFromFillUrls(newFills)));
         verifyThat("URLs point to topic-map",
-                   newFiltered,
-                   hasSize(newFills.size()));
+                newFiltered,
+                hasSize(newFills.size()));
     }
 
-    private Set<String> getIdsFromFillUrls(final Set<String> urls) {
+    private Collection<String> getIdsFromFillUrls(final Collection<String> urls) {
         return urls
                 .stream()
                 .map(fillUrl -> fillUrl.substring(fillUrl.indexOf('#') + 1, fillUrl.length() - 2))

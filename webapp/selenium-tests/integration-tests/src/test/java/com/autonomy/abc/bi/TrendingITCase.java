@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class TrendingITCase extends IdolFindTestBase {
 
     @Override
     public BIIdolFindElementFactory getElementFactory() {
-        return (BIIdolFindElementFactory)super.getElementFactory();
+        return (BIIdolFindElementFactory) super.getElementFactory();
     }
 
     @Before
@@ -142,7 +143,7 @@ public class TrendingITCase extends IdolFindTestBase {
     }
 
 
-    private List<String> getDataNames(final List<WebElement> elements) {
+    private List<String> getDataNames(final Collection<WebElement> elements) {
         return elements.stream()
                 .map(v -> v.getAttribute("data-name"))
                 .collect(Collectors.toList());
