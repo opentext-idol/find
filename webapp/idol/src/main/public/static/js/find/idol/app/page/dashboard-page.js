@@ -108,10 +108,10 @@ define([
         generateWidgetDiv: function(position) {
             return $('<div class="widget p-xs widget-name-' + this.displayWidgetNames + '"' + '></div>')
                 .css({
-                    'left': 'calc(' + position.x * this.widthPerUnit + '% + 20px)',
-                    'top': 'calc(' + position.y * this.heightPerUnit + '% + 20px)',
-                    'width': 'calc(' + position.width * this.widthPerUnit + '% - 10px)',
-                    'height': 'calc(' + position.height * this.heightPerUnit + '% - 10px)'
+                    'left': 'calc(' + position.x * this.widthPerUnit + '% + 10px)',
+                    'top': 'calc(' + position.y * this.heightPerUnit + '% + 10px)',
+                    'width': 'calc(' + position.width * this.widthPerUnit + '% - 20px)',
+                    'height': 'calc(' + position.height * this.heightPerUnit + '% - 20px)'
                 });
         },
 
