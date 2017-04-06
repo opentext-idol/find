@@ -25,20 +25,25 @@ import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.WebElement;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class DocumentPreviewITCase extends FindTestBase {
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile(" ", Pattern.LITERAL);
+    private static final Pattern PROTOCOL_SUFFIX = Pattern.compile("://");
     private FindPage findPage;
     private FindService findService;
 
@@ -57,11 +62,11 @@ public class DocumentPreviewITCase extends FindTestBase {
     public void testShowDocumentPreview() {
         final ListView results = findService.search("cake");
         filters().indexesTreeContainer().expand();
-        findPage.filterBy(new IndexFilter(filters().getIndex(1)));
+        findPage.filterBy(new IndexFilter(filters().getIndex(0)));
 
         final InlinePreview docPreview = results.searchResult(1).openDocumentPreview();
 
-        if(docPreview.loadingIndicatorExists()) {
+        if (docPreview.loadingIndicatorExists()) {
             assertThat("Preview not stuck loading", docPreview.loadingIndicator(), not(displayed()));
         }
 
@@ -71,8 +76,8 @@ public class DocumentPreviewITCase extends FindTestBase {
         final Frame previewFrame = new Frame(getWindow(), docPreview.frame());
         final String frameText = previewFrame.getText();
 
-        verifyThat("Preview document has content", frameText, not(isEmptyOrNullString()));
-        assertThat("Preview document has no error", previewFrame.getText(), not(containsString("encountered an error")));
+        verifyThat("Preview document has content", previewFrame.operateOnContent(WebElement::getTagName), is("body"));
+        assertThat("Preview document has no error", frameText, not(containsString("encountered an error")));
 
         docPreview.close();
     }
@@ -86,7 +91,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         final ListView results = findService.search("general");
         results.waitForResultsToLoad();
 
-        for(final FindResult queryResult : results.getResults(4)) {
+        for (final FindResult queryResult : results.getResults(4)) {
             final InlinePreview docViewer = queryResult.openDocumentPreview();
 
             final String reference = docViewer.getReference();
@@ -114,14 +119,14 @@ public class DocumentPreviewITCase extends FindTestBase {
     private String decodeURL(final String encoded) {
         try {
             return URLDecoder.decode(encoded, "UTF8");
-        } catch(final UnsupportedEncodingException e) {
-            LOGGER.info("Could not unencode the URL");
+        } catch (final UnsupportedEncodingException e) {
+            LOGGER.info("Could not decode the URL", e);
             return encoded;
         }
     }
 
-    private String reformatReference(final String badFormatReference) {
-        return badFormatReference.replace(" ", "_").split("://")[1].split("/")[0];
+    private Serializable reformatReference(final CharSequence badFormatReference) {
+        return PROTOCOL_SUFFIX.split(WHITESPACE_PATTERN.matcher(badFormatReference).replaceAll(Matcher.quoteReplacement("_")))[1].split("/")[0];
     }
 
     @Test
@@ -129,7 +134,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         final ListView results = findService.search("m");
 
         filters().indexesTreeContainer().expand();
-        findPage.filterBy(new IndexFilter(filters().getIndex(1)));
+        findPage.filterBy(new IndexFilter(filters().getIndex(0)));
         findPage.waitForLoad();
 
         final InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
@@ -144,7 +149,7 @@ public class DocumentPreviewITCase extends FindTestBase {
 
         checkSimilarDocuments(detailedPreviewPage);
 
-        if(getApplication().getClass() == BIIdolFind.class) {
+        if (Objects.equals(getApplication().getClass(), BIIdolFind.class)) {
             checkSimilarDates(detailedPreviewPage);
         }
         detailedPreviewPage.goBackToSearch();
@@ -154,7 +159,7 @@ public class DocumentPreviewITCase extends FindTestBase {
     private void checkHasMetaDataFields(final DetailedPreviewPage detailedPreviewPage) {
         verifyThat("Tab loads", !detailedPreviewPage.loadingIndicator().isDisplayed());
         verifyThat("Detailed Preview has reference", detailedPreviewPage.getReference(), not(nullValue()));
-        if(isHosted()) {
+        if (isHosted()) {
             verifyThat("Detailed Preview has index", detailedPreviewPage.getIndex(), not(nullValue()));
         } else {
             verifyThat("Detailed Preview has database", detailedPreviewPage.getDatabase(), not(nullValue()));

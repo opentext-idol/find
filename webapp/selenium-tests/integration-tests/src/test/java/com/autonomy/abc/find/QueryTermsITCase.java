@@ -7,7 +7,6 @@ package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.base.Role;
-import com.autonomy.abc.queryHelper.IdolQueryTermResult;
 import com.autonomy.abc.queryHelper.IdolQueryTestHelper;
 import com.autonomy.abc.selenium.error.Errors.Search;
 import com.autonomy.abc.selenium.find.FindPage;
@@ -170,10 +169,10 @@ public class QueryTermsITCase extends FindTestBase {
     @ActiveBug({"CORE-2925", "FIND-853"})
     public void testCorrectErrorMessageDisplayed() {
         ensureOnCorrectView();
-        new QueryTestHelper<>(findService)
-                .booleanOperatorQueryText(Search.OPERATORS, Search.OPENING_BOOL, Search.BOOL_AFTER_BRACKET, Search.GENERIC_HOSTED_ERROR);
-        new QueryTestHelper<>(findService)
-                .emptyQueryText(Search.STOPWORDS, Search.NO_TEXT, Search.GENERIC_HOSTED_ERROR, Search.HOSTED_INVALID);
+        new IdolQueryTestHelper(findService)
+                .booleanOperatorQueryText(getElementFactory(), Search.OPERATORS, Search.OPENING_BOOL, Search.BOOL_AFTER_BRACKET, Search.GENERIC_HOSTED_ERROR);
+        new IdolQueryTestHelper(findService)
+                .emptyQueryText(getElementFactory(), Search.STOPWORDS, Search.NO_TEXT, Search.GENERIC_HOSTED_ERROR, Search.HOSTED_INVALID);
     }
 
     @Test
@@ -181,7 +180,7 @@ public class QueryTermsITCase extends FindTestBase {
     @Role(UserRole.FIND)
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
         ensureOnCorrectView();
-        new IdolQueryTestHelper<>(findService).hiddenQueryOperatorText(getElementFactory());
+        new IdolQueryTestHelper(findService).hiddenQueryOperatorText(getElementFactory());
     }
 
     @Test
@@ -190,7 +189,7 @@ public class QueryTermsITCase extends FindTestBase {
     @Role(UserRole.BIFHI)
     public void testAllowSearchOfStringsThatContainBooleansWithinThemNoAutoCorrect() {
         ensureOnCorrectView();
-        new IdolQueryTestHelper<>(findService).hiddenQueryOperatorTextNoAutoCorrect(getElementFactory());
+        new IdolQueryTestHelper(findService).hiddenQueryOperatorTextNoAutoCorrect(getElementFactory());
     }
 
     @Test
@@ -216,7 +215,7 @@ public class QueryTermsITCase extends FindTestBase {
     @ActiveBug("CCUK-3634")
     public void testSearchQuotationMarks() {
         ensureOnCorrectView();
-        new QueryTestHelper<>(findService).mismatchedQuoteQueryText(Search.QUOTES, Search.BRACKETS_BOOLEAN_OPEN);
+        new IdolQueryTestHelper(findService).mismatchedQuoteQueryText(getElementFactory(), Search.QUOTES, Search.BRACKETS_BOOLEAN_OPEN);
     }
 
     @Test

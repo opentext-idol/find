@@ -21,7 +21,6 @@ import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.text.ParseException;
@@ -158,7 +157,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     @Test
     @ResolvedBug("FIND-496")
     @ActiveBug(value = "FIND-626", type = ApplicationType.HOSTED)
-    public void testInfiniteScroll(){
+    public void testInfiniteScroll() {
         findService.search(new Query("blast"));
 
         similarDocuments = findService.goToSimilarDocuments(1);
@@ -167,15 +166,15 @@ public class SimilarDocumentsITCase extends FindTestBase {
 
         final int limit = 240;
         int i = 30;
-        while(i <= limit && i <= totalNumberDocs) {
+        while (i <= limit && i <= totalNumberDocs) {
             verifyThat(similarDocuments.getVisibleResultsCount(), is(i));
             final DocumentViewer documentViewer = similarDocuments.getResult(i).openDocumentPreview();
             assertThat("Have opened preview container", documentViewer.previewPresent());
             documentViewer.close();
-            verifyThat(similarDocuments.getVisibleResultsCount(), anyOf(is(i + 30),is(totalNumberDocs)));
+            verifyThat(similarDocuments.getVisibleResultsCount(), anyOf(is(i + 30), is(totalNumberDocs)));
             similarDocuments.waitForLoad();
 
-            i+=30;
+            i += 30;
         }
     }
 
@@ -206,7 +205,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     @Test
     @ResolvedBug("FIND-496")
     @ActiveBug(value = "FIND-626", type = ApplicationType.HOSTED)
-    public void testDocumentPreview(){
+    public void testDocumentPreview() {
         findService.search(new Query("stars"));
         similarDocuments = findService.goToSimilarDocuments(1);
         testDocPreview(similarDocuments.getResults(5));
@@ -224,7 +223,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
             final Frame previewFrame = new Frame(getWindow(), docPreview.frame());
             final String frameText = previewFrame.getText();
 
-            verifyThat("Preview document has content", previewFrame.operateOnContent(x -> x.findElements(By.cssSelector("*"))), not(empty()));
+            verifyThat("Preview document has content", previewFrame.operateOnContent(WebElement::getTagName), Matchers.is("body"));
             assertThat("Preview document has no error", frameText, not(containsString("encountered an error")));
 
             docPreview.close();
@@ -234,7 +233,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
     @Test
     @ResolvedBug("FIND-496")
     @ActiveBug(value = "FIND-626", type = ApplicationType.HOSTED)
-    public void testDetailedDocumentPreviewFromSimilar(){
+    public void testDetailedDocumentPreviewFromSimilar() {
         findService.search(new Query("stars"));
         similarDocuments = findService.goToSimilarDocuments(1);
 
