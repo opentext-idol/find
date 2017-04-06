@@ -73,9 +73,9 @@ define([
                 this.set('minScore', this.queryState.minScoreModel.get('minScore'));
             });
 
-            this.listenTo(this.queryState.selectedIndexes, 'update reset', _.debounce(_.bind(function() {
+            this.listenTo(this.queryState.selectedIndexes, 'update reset', _.bind(function() {
                 this.set('indexes', collectionBuildIndexes(this.queryState.selectedIndexes));
-            }, this), DEBOUNCE_WAIT_MILLISECONDS));
+            }, this));
 
             this.listenTo(this.queryState.selectedParametricValues, 'add remove reset change', _.debounce(_.bind(function() {
                 var fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();

@@ -11,6 +11,7 @@ define([
     'databases-view/js/idol-databases-collection',
     'jasmine-jquery'
 ], function(Backbone, _, $, IndexesView, DatabasesCollection) {
+    'use strict';
 
     describe('Indexes View', function() {
         var INDEXES = _.map(['a','b','c'], function(name) {
@@ -18,6 +19,13 @@ define([
         });
 
         beforeEach(function() {
+            jasmine.clock().install();
+            jasmine.clock().mockDate();
+
+            // underscore has already cached Date.now, so isn't using the fake version
+            this.originalNow = _.now;
+            _.now = Date.now;
+
             this.indexesCollection = new DatabasesCollection();
             this.selectedIndexesCollection = new DatabasesCollection();
 
@@ -37,6 +45,11 @@ define([
 
             this.indexesCollection.reset(INDEXES);
             this.queryModel.set('indexes', _.pluck(INDEXES, 'id'));
+        });
+
+        afterEach(function() {
+            jasmine.clock().uninstall();
+            _.now = this.originalNow;
         });
 
         describe('after initialization', function() {
@@ -65,9 +78,11 @@ define([
                     this.idElement(INDEXES[0]).click();
                 });
 
-                it('updates the selected indexes collection', function() {
-                    expect(this.selectedIndexesCollection).toHaveLength(1);
-                    expect(this.selectedIndexesCollection.first().get('name')).toEqual(INDEXES[0].name);
+                it('should not update the selected indexes collection', function() {
+                    expect(this.selectedIndexesCollection.length).toBe(3);
+                    expect(this.selectedIndexesCollection.at(0).get('name')).toEqual(INDEXES[0].name);
+                    expect(this.selectedIndexesCollection.at(1).get('name')).toEqual(INDEXES[1].name);
+                    expect(this.selectedIndexesCollection.at(2).get('name')).toEqual(INDEXES[2].name);
                 });
 
                 it('should check the clicked index', function() {
@@ -79,11 +94,34 @@ define([
                     expect(uncheckedCheckboxOne).not.toHaveClass('hp-check');
                     expect(uncheckedCheckboxTwo).not.toHaveClass('hp-check');
                 });
+
+                describe('then the debounce timeout elapses', function() {
+                    beforeEach(function() {
+                        jasmine.clock().tick(1000);
+                    });
+
+                    it('updates the selected indexes collection', function() {
+                        expect(this.selectedIndexesCollection.length).toBe(1);
+                        expect(this.selectedIndexesCollection.first().get('name')).toEqual(INDEXES[0].name);
+                    });
+
+                    it('should check the clicked index', function() {
+                        var checkedCheckbox = this.idElement(INDEXES[0]).find('i');
+                        var uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
+                        var uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
+
+                        expect(checkedCheckbox).toHaveClass('hp-check');
+                        expect(uncheckedCheckboxOne).not.toHaveClass('hp-check');
+                        expect(uncheckedCheckboxTwo).not.toHaveClass('hp-check');
+                    });
+                });
             });
 
             describe('clicking an index twice', function() {
                 beforeEach(function() {
                     this.idElement(INDEXES[0]).click().click();
+
+                    jasmine.clock().tick(1000);
                 });
 
                 it('updates the selected indexes collection with all of the indexes', function() {
