@@ -8,7 +8,9 @@
 <%}%>
 <% if (showSaveAs) { %>
     <% _.each(searchTypes, function(type, typeName){%>
-        <button type="button" class="btn button-primary popover-control show-save-as save-button" data-search-type="<%-typeName%>" aria-pressed="false"></button>
+        <% if (typeName !== 'READ_ONLY') { %>
+            <button type="button" class="btn button-primary popover-control show-save-as save-button" data-search-type="<%-typeName%>" aria-pressed="false"></button>
+        <% } %>
     <% }) %>
 <% } %>
 <% if (showCompare) { %>
