@@ -153,7 +153,7 @@ define([
                 savedQueryCollection: configuration().hasBiRole
                     ? {
                         Constructor: SavedQueryCollection,
-                        fetchOptions: {remove: false}
+                        fetchOptions: {remove: false, reset: false}
                     }
                     : {
                         Constructor: Backbone.Collection,

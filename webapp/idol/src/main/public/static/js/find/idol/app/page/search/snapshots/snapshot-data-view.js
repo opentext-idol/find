@@ -25,7 +25,7 @@ define([
         initialize: function(options) {
             this.collapsibles = [
                 new Collapsible({
-                    title: snapshotsI18n['detailTitle'],
+                    title: options.savedSearchModel.get('type') === 'SNAPSHOT' ? snapshotsI18n['detailTitle.snapshot']: snapshotsI18n['detailTitle.readonly'],
                     view: new DataPanelView(_.extend({
                         model: options.savedSearchModel
                     }, snapshotDetail))

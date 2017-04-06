@@ -26,6 +26,7 @@ define([
         'app.compare': 'Compare',
         'app.conceptBoxPlaceholder': 'Add a Concept',
         'app.delete': 'Delete\u2026',
+        'app.close': 'Close\u2026',
         'app.button.delete': 'Delete',
         'app.exportToCsv': 'Export Results to CSV\u2026',
         'app.exportToCsv.modal.title': 'Select the fields you would like to export',

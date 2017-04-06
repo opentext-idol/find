@@ -15,14 +15,16 @@ define([
     'find/idol/app/page/search/snapshots/snapshot-data-view',
     'find/idol/app/page/search/comparison/comparison-view',
     'find/app/page/search/results/state-token-strategy',
+    'find/app/page/search/results/query-strategy',
     'find/idol/app/model/comparison/comparison-documents-collection',
+    'find/app/model/documents-collection',
     'find/app/page/search/related-concepts/related-concepts-click-handlers',
     'find/idol/app/page/search/idol-query-left-side-view',
     'find/idol/app/page/search/comparison/compare-modal',
     'find/app/configuration'
 ], function(_, FindSearch, i18n, snapshotsI18n, SavedSearchModel, IndexesCollection, ServiceView, SuggestView,
-            SnapshotDataView, ComparisonView, stateTokenStrategy, ComparisonDocumentsCollection,
-            relatedConceptsClickHandlers, IdolQueryLeftSideView, CompareModal, configuration) {
+            SnapshotDataView, ComparisonView, stateTokenStrategy, queryStrategy, ComparisonDocumentsCollection,
+            DocumentsCollection, relatedConceptsClickHandlers, IdolQueryLeftSideView, CompareModal, configuration) {
     'use strict';
 
     return FindSearch.extend({
@@ -35,25 +37,43 @@ define([
             return _.extend(FindSearch.prototype.getSearchTypes.call(this),
                 configuration().hasBiRole
                     ? {
-                        SNAPSHOT: {
-                            cssClass: 'snapshot',
-                            autoCorrect: false,
-                            queryTextModelChange: _.constant(_.noop),
-                            collection: 'savedSnapshotCollection',
-                            icon: 'hp-camera',
-                            isMutable: false,
-                            fetchStrategy: stateTokenStrategy,
-                            showTimeBar: false,
-                            DocumentsCollection: ComparisonDocumentsCollection,
-                            LeftSideFooterView: SnapshotDataView,
-                            MiddleColumnHeaderView: null,
-                            relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
-                            openEditText: {
-                                create: snapshotsI18n['openEdit.create'],
-                                edit: snapshotsI18n['openEdit.edit']
-                            }
+                    SNAPSHOT: {
+                        cssClass: 'snapshot',
+                        autoCorrect: false,
+                        queryTextModelChange: _.constant(_.noop),
+                        collection: 'savedSnapshotCollection',
+                        icon: 'hp-camera',
+                        isMutable: false,
+                        fetchStrategy: stateTokenStrategy,
+                        showTimeBar: false,
+                        DocumentsCollection: ComparisonDocumentsCollection,
+                        LeftSideFooterView: SnapshotDataView,
+                        MiddleColumnHeaderView: null,
+                        relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
+                        openEditText: {
+                            create: snapshotsI18n['openEdit.create'],
+                            edit: snapshotsI18n['openEdit.edit']
+                        }
+                    },
+                    READ_ONLY: {
+                        cssClass: 'readonly',
+                        autoCorrect: false,
+                        queryTextModelChange: _.constant(_.noop),
+                        collection: 'readOnlySearchCollection',
+                        icon: 'hp-dashboard',
+                        isMutable: false,
+                        fetchStrategy: queryStrategy,
+                        showTimeBar: false,
+                        DocumentsCollection: DocumentsCollection,
+                        LeftSideFooterView: SnapshotDataView,
+                        MiddleColumnHeaderView: null,
+                        relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
+                        openEditText: {
+                            create: snapshotsI18n['openEdit.create'],
+                            edit: snapshotsI18n['openEdit.edit']
                         }
                     }
+                }
                     : {});
         },
 

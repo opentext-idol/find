@@ -237,22 +237,60 @@ define([
             }, this);
 
             this.listenTo(router, 'route:savedSearch', function(tab, resultsView) {
-                if(this.savedSearchCollection.get(tab)) {
-                    this.selectedTabModel.set({
-                        selectedSearchCid: this.savedSearchCollection.get(tab).cid,
-                        selectedResultsView: resultsView || ''
-                    });
-                } else {
-                    // TODO promise surrogate? Clean this up.
-                    this.listenToOnce(options.savedQueryCollection, 'update', function() {
-                        if(this.savedSearchCollection.get(tab)) {
-                            this.selectedTabModel.set({
-                                'selectedSearchCid': this.savedSearchCollection.get(tab).cid,
-                                'selectedResultsView': resultsView || ''
-                            });
-                        }
-                    });
+                const split = tab.split(':');
+                const type = split[0];
+                const id = split[1];
+
+                let collection;
+                switch(type) {
+                    case 'QUERY':
+                        collection = options.savedQueryCollection;
+                        break;
+                    case 'SNAPSHOT':
+                        collection = options.savedSnapshotCollection;
+                        break;
+                    case 'READ_ONLY':
+                        collection = options.readOnlySearchCollection;
+                        break;
                 }
+
+                const getModel = function () {
+                    return new SavedSearchModel({
+                        id: id,
+                        type: type
+                    });
+                };
+
+                const setSelectedTab = _.bind(function () {
+                    if (collection.get(id)) {
+                        this.selectedTabModel.set({
+                            selectedSearchCid: collection.get(id).cid,
+                            selectedResultsView: resultsView || ''
+                        });
+                    } else {
+                        const newModel = getModel();
+                        newModel.fetch().done(function () {
+                            collection = options.readOnlySearchCollection;
+                            newModel.set('searchType', newModel.get('type'));
+                            newModel.set('type', 'READ_ONLY');
+                            newModel.set('validForSave', false);
+                            collection.add(newModel);
+                            this.selectedTabModel.set({
+                                selectedSearchCid: collection.get(id).cid,
+                                selectedResultsView: resultsView || ''
+                            });
+                        }.bind(this));
+                    }
+                }, this);
+
+                if (collection.fetching) {
+                    collection.currentRequest.done(function() {
+                        setSelectedTab();
+                    }.bind(this));
+                } else {
+                    setSelectedTab();
+                }
+
             }, this);
 
             this.listenTo(router, 'route:documentDetail', function() {
@@ -456,7 +494,7 @@ define([
                     this.$('.query-service-view-container').append(viewData.view.$el);
                     viewData.view.render();
 
-                    this.listenTo(viewData.view, 'updateRouting', _.bind(this.updateRouting, this, modelId));
+                    this.listenTo(viewData.view, 'updateRouting', _.bind(this.updateRouting, this, savedSearchModel));
                 }
 
                 if(this.searchModel) {
@@ -484,7 +522,7 @@ define([
                     this.selectedTabModel.set('selectedResultsView', '');
                 }
 
-                this.updateRouting(modelId, viewData.view.getSelectedTab());
+                this.updateRouting(savedSearchModel, viewData.view.getSelectedTab());
             }
         },
 
@@ -555,11 +593,12 @@ define([
             Backbone.View.prototype.remove.call(this);
         },
 
-        updateRouting: function(savedSearch, selectedTab) {
-            vent.navigate(savedSearch
-                    ? '/search/tab/' + savedSearch + (selectedTab ? '/view/' + selectedTab : '')
-                    : '/search/query',
-                {trigger: false});
+        updateRouting: function(savedSearchModel, selectedTab) {
+            const type = savedSearchModel.get('type') === 'READ_ONLY' ? savedSearchModel.get('searchType') : savedSearchModel.get('type');
+            const id = savedSearchModel.get('id');
+            const modelId = type + ':' + id;
+            vent.navigate(savedSearchModel.isNew() ? '/search/query' : '/search/tab/' + modelId + (selectedTab ? '/view/' + selectedTab : '')
+                ,{trigger: false});
 
             this.currentRoute = Backbone.history.getFragment();
         },

@@ -5,12 +5,13 @@
 
 define([
     'backbone',
+    'find/app/model/find-base-collection',
     'find/app/model/saved-searches/saved-search-model',
     'underscore'
-], function(Backbone, SavedSearchModel, _) {
+], function(Backbone, FindBaseCollection, SavedSearchModel, _) {
     'use strict';
 
-    return Backbone.Collection.extend({
+    return FindBaseCollection.extend({
         url: 'api/bi/saved-snapshot',
 
         model: SavedSearchModel.extend({

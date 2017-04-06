@@ -178,6 +178,13 @@ define([
             }));
         },
 
+        urlRoot: function() {
+            return 'api/bi/' +
+                (this.get('type') === 'QUERY'
+                    ? 'saved-query'
+                    : 'saved-snapshot');
+        },
+
         /**
          * Does this model represent the same search as the given query state?
          * @param {QueryState} queryState

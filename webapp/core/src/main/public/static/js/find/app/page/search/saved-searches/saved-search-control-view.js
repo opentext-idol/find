@@ -141,6 +141,11 @@ define([
                     }, this)
                 });
             },
+            'click .saved-search-close-option': function() {
+                this.model.set({error: null, loading: true});
+
+                this.savedSearchModel.collection.remove(this.savedSearchModel);
+            },
             'click .search-reset-option': function() {
                 this.model.set('error', null);
 
@@ -232,7 +237,8 @@ define([
                 showCompare: Boolean(this.comparisonModalCallback),
                 showSaveAs: isMutable,
                 searchTypes: this.searchTypes,
-                showOpenAsQuery: !isMutable
+                showOpenAsQuery: !isMutable,
+                readOnly: this.savedSearchModel.get('type') === 'READ_ONLY'
             }));
 
             this.renderTitleInput();

@@ -26,7 +26,7 @@ public abstract class ClickableDashboardITCase extends DashboardITCase {
     @Test
     public void testClickThrough() {
         Assume.assumeNotNull(resultsViewType, savedSearchName);
-        getDriver().findElement(By.cssSelector(".widget-content")).click();
+        getDriver().findElement(By.cssSelector(".widget-hover-title-container")).click();
         final FindPage findPage = getElementFactory().getFindPage();
         findPage.waitForLoad();
         final String savedSearchName = getDriver().findElement(By.cssSelector(".search-tabs-list .search-tab.active .search-tab-anchor .search-tab-title")).getText();

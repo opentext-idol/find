@@ -1,9 +1,11 @@
 <button type="button" class="btn button-primary save-search-button save-button">
     <%- i18n['search.savedSearchControl.update'] %>
 </button>
+<% if (!readOnly) { %>
 <button type="button" class="btn btn-secondary popover-control show-rename-button" aria-pressed="false">
     <%- i18n['search.savedSearchControl.rename'] %>
 </button>
+<%}%>
 <% if (showSaveAs) { %>
     <% _.each(searchTypes, function(type, typeName){%>
         <button type="button" class="btn button-primary popover-control show-save-as save-button" data-search-type="<%-typeName%>" aria-pressed="false"></button>
@@ -28,9 +30,15 @@
         <li class="export-csv-option">
             <a><%-i18n['app.exportToCsv']%></a>
         </li>
+        <% if (readOnly) { %>
+        <li class="saved-search-close-option">
+            <a><%-i18n['app.close']%></a>
+        </li>
+        <% } else { %>
         <li class="saved-search-delete-option">
             <a><%-i18n['app.delete']%></a>
         </li>
+        <% }%>
     </ul>
 </div>
 <span class="search-controls-error-message"></span>
