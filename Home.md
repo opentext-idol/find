@@ -28,7 +28,6 @@ Find is an end-user search interface for [HPE IDOL](http://www8.hp.com/uk/en/sof
 ## Configuring Find for HavenOnDemand
 
 - [[Find Java System Properties]] - changing some runtime settings
-- [[Configuring Find for Haven OnDemand]] - guide to the Find for Haven OnDemand config file
 
 # Modifying Find
 
