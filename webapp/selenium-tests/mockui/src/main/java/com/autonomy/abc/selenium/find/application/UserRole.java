@@ -20,10 +20,6 @@ public enum UserRole {
         this.configId = configId;
     }
 
-    public String getConfigId() {
-        return configId;
-    }
-
     public static Optional<UserRole> fromString(final String value) {
         final String lowerCaseValue = value.toLowerCase();
 
@@ -33,9 +29,15 @@ public enum UserRole {
     }
 
     public static UserRole activeRole() {
-        final String property = System.getProperty("userRole");
+        final String maybeProperty = System.getProperty("userRole");
 
-        return fromString(property)
-                .orElseThrow(() -> new IllegalStateException("Unrecognised role \"" + property + "\" read from userRole system property"));
+        return Optional.ofNullable(maybeProperty)
+                .map(property -> fromString(property)
+                        .orElseThrow(() -> new IllegalStateException("Unrecognised role \"" + property + "\" read from userRole system property")))
+                .orElse(BIFHI);
+    }
+
+    public String getConfigId() {
+        return configId;
     }
 }
