@@ -5,22 +5,37 @@
 
 package com.autonomy.abc.selenium.find.application;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 public enum UserRole {
-    BIFHI,
-    FIND,
-    BOTH;
+    BIFHI("bifhi"), FIND("find");
 
-    public static UserRole fromString(final String value) {
-        if(value == null) {
-            return null;
-        }
+    /**
+     * The id in the config file of the user with this role.
+     */
+    private final String configId;
 
-        switch(value.toLowerCase()) {
-            case "find":
-                return FIND;
-            case "bifhi":
-            default:
-                return BIFHI;
-        }
+    UserRole(final String configId) {
+        this.configId = configId;
+    }
+
+    public String getConfigId() {
+        return configId;
+    }
+
+    public static Optional<UserRole> fromString(final String value) {
+        final String lowerCaseValue = value.toLowerCase();
+
+        return Arrays.stream(values())
+                .filter(role -> role.name().toLowerCase().equals(lowerCaseValue))
+                .findFirst();
+    }
+
+    public static UserRole activeRole() {
+        final String property = System.getProperty("userRole");
+
+        return fromString(property)
+                .orElseThrow(() -> new IllegalStateException("Unrecognised role \"" + property + "\" read from userRole system property"));
     }
 }

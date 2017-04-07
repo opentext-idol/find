@@ -166,7 +166,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
         final BIIdolFind other = new BIIdolFind();
         launchInNewSession(other);
-        other.loginService().login(getConfig().getUserWithRole("BIFHI"));
+        other.loginService().login(getInitialUser());
         other.findService().searchAnyView("blur");
 
         final BIIdolFindElementFactory factory = other.elementFactory();

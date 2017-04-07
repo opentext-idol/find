@@ -11,9 +11,14 @@
     "url": "http://localhost:4444/wd/hub"
   },
   "users": {
-    "default": {
-      "role": "Admin",
+    "bifhi": {
+      "role": "BIFHI",
       "username": "selenium",
+      "password": "q"
+    },
+    "find": {
+      "role": "USER",
+      "username": "tellurium",
       "password": "q"
     }
   }

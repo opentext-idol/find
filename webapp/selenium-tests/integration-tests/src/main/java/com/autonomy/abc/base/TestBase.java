@@ -5,8 +5,8 @@
 
 package com.autonomy.abc.base;
 
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.hp.autonomy.frontend.selenium.application.Application;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.application.ElementFactoryBase;
 import com.hp.autonomy.frontend.selenium.base.SeleniumTest;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -14,29 +14,19 @@ import com.hp.autonomy.frontend.selenium.framework.inclusion.RunOnlyIfDescriptio
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class TestBase<A extends Application<? extends F>, F extends ElementFactoryBase> extends HybridAppTestBase<A, F> {
-
-    protected TestBase(final TestConfig config, final A appUnderTest) {
-        super(config, appUnderTest, role(config));
+    TestBase(final TestConfig config, final A appUnderTest) {
+        this(config, appUnderTest, null);
     }
 
-    private static String role(final TestConfig config) {
-        final String userRole = System.getProperty("userRole");
-
-        if(userRole == null) {
-            if(config.getType() == ApplicationType.HOSTED) {
-                return "find";
-            }
-
-            return "bifhi";
-        }
-
-        return userRole;
+    TestBase(final TestConfig config, final A appUnderTest, final UserRole initialUserRole) {
+        super(config, appUnderTest, Optional.ofNullable(initialUserRole).map(UserRole::getConfigId).orElse("default"));
     }
 
     @Override
     protected List<Acceptable> rules(final SeleniumTest<A, F> test) {
-        return Collections.singletonList(new UserRoleStrategy(test));
+        return Collections.singletonList(new UserRoleStrategy(UserRole.activeRole()));
     }
 }

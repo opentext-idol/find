@@ -6,49 +6,37 @@
 package com.autonomy.abc.base;
 
 import com.autonomy.abc.selenium.find.application.UserRole;
-import com.hp.autonomy.frontend.selenium.application.ApplicationType;
-import com.hp.autonomy.frontend.selenium.base.SeleniumTest;
 import com.hp.autonomy.frontend.selenium.framework.inclusion.RunOnlyIfDescription.Acceptable;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.runner.Description;
 
+import java.util.Optional;
+
 public class UserRoleStrategy implements Acceptable {
+    private final UserRole activeRole;
 
-    private final SeleniumTest<?, ?> test;
-    private final UserRole configUserRole;
-
-    public UserRoleStrategy(final SeleniumTest<?, ?> test) {
-        this.test = test;
-        final String userRole = System.getProperty("userRole");
-        configUserRole = userRole == null ? null : UserRole.fromString(userRole);
+    UserRoleStrategy(final UserRole activeRole) {
+        this.activeRole = activeRole;
     }
 
     @Override
     public Matcher<? super Description> asMatcher() {
-
         return new TypeSafeMatcher<Description>() {
             @Override
-            protected boolean matchesSafely(final Description item) {
-                final TestUserRole userRole = new TestUserRole();
-                userRole.starting(item);
+            protected boolean matchesSafely(final Description description) {
+                final Optional<Role> maybeMethodAnnotation = Optional.ofNullable(description.getAnnotation(Role.class));
 
-                final ApplicationType applicationType = test.getConfig().getType();
+                final Optional<Role> maybeAnnotation = maybeMethodAnnotation.isPresent()
+                        ? maybeMethodAnnotation
+                        : Optional.ofNullable(description.getTestClass().getAnnotation(Role.class));
 
-                //Test not annotated
-                if(userRole.isNull()) {
+                if (maybeAnnotation.isPresent()) {
+                    final UserRole requiredRole = maybeAnnotation.get().value();
+                    return requiredRole == activeRole;
+                } else {
                     return true;
                 }
-                final UserRole testUserRole = userRole.getUserRoleValue();
-
-                return runAgainst(testUserRole, applicationType.equals(ApplicationType.HOSTED) ? UserRole.FIND : UserRole.BIFHI);
-
-            }
-
-            private boolean runAgainst(final UserRole testUserRole, final UserRole against) {
-                return (configUserRole == null && testUserRole.equals(against)) ||
-                        (configUserRole != null && configUserRole.equals(testUserRole)) ||
-                        testUserRole.equals(UserRole.BOTH);
             }
 
             @Override

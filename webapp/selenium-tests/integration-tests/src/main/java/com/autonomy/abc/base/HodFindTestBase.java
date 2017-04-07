@@ -14,7 +14,7 @@ import java.util.Collections;
 @RunWith(Parameterized.class)
 public abstract class HodFindTestBase extends TestBase<HodFind<? extends HodFindElementFactory>, HodFindElementFactory> {
     protected HodFindTestBase(final TestConfig config) {
-        super(config, HodFind.withRole(UserRole.fromString(System.getProperty("userRole"))));
+        super(config, HodFind.withRole(UserRole.activeRole()));
     }
 
     @Parameterized.Parameters
