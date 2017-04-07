@@ -148,7 +148,7 @@ define([
                     .attr('value', this.model.get('maxResults'))
                     .tooltip({
                         title: this.model.get('maxResults'),
-                        placement: 'top'
+                        placement: 'right'
                     });
             }
 
