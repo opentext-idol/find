@@ -1,18 +1,18 @@
 <div class="col-md-12">
     <% if (showSlider) { %>
-        <form class="flex-row m-b-sm">
+        <div class="flex-row m-b-sm">
             <div class="m-r-lg flex-row slider-block">
                 <div class="m-r-md">
-                    <label for="<%=cid%>-speed-slider"><%-i18n['search.topicMap.fast']%></label>
+                    <label><%-i18n['search.topicMap.fast']%></label>
                 </div>
                 <div>
-                    <input id="<%=cid%>-speed-slider" class="speed-slider" type="text">
+                    <input class="speed-slider" type="range" min="<%- min %>" max="<%- max %>" step="<%- step %>">
                 </div>
                 <div class="m-l-md">
-                    <label for="<%=cid%>-speed-slider"><%-i18n['search.topicMap.accurate']%></label>
+                    <label><%-i18n['search.topicMap.accurate']%></label>
                 </div>
             </div>
-        </form>
+        </div>
     <% } %>
     <div class="entity-topic-map-error hide">
         <%= errorTemplate %>

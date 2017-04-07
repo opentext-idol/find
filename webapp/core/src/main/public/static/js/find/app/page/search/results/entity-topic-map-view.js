@@ -5,6 +5,7 @@
 
 define([
     'underscore',
+    'jquery',
     'backbone',
     'find/app/util/topic-map-view',
     'find/app/model/entity-collection',
@@ -13,10 +14,9 @@ define([
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/search/results/entity-topic-map-view.html',
     'text!find/templates/app/page/loading-spinner.html',
-    'iCheck',
-    'slider/bootstrap-slider'
-], function(_, Backbone, TopicMapView, EntityCollection, i18n, configuration, generateErrorHtml, template,
-            loadingTemplate) {
+    'iCheck'
+], function(_, $, Backbone, TopicMapView, EntityCollection, i18n, configuration, generateErrorHtml,
+            template, loadingTemplate) {
     'use strict';
 
     const loadingHtml = _.template(loadingTemplate)({i18n: i18n, large: true});
@@ -39,14 +39,26 @@ define([
 
     const CLUSTER_MODE = 'docsWithPhrase';
 
+    function sum(a, b) {
+        return a + b;
+    }
+
     return Backbone.View.extend({
         template: _.template(template),
 
         events: {
-            'slideStop .speed-slider': function(event) {
-                const maxResults = event.value;
-
-                this.model.set('maxResults', maxResults);
+            'change .speed-slider': function(e) {
+                const $target = $(e.target);
+                const value = $target.val();
+                $target.attr('data-original-title', value);
+                $target.tooltip('show');
+                $target.blur();
+                this.model.set('maxResults', value);
+            },
+            'input .speed-slider': function(e) {
+                const $target = $(e.target);
+                const value = $target.val();
+                this.$('.tooltip-inner').text(value);
             }
         },
 
@@ -56,9 +68,13 @@ define([
             this.entityCollection = new EntityCollection([], {
                 getSelectedRelatedConcepts: function() {
                     // Comparison topic view does not have queryState
-                    return this.queryState ? _.flatten(this.queryState.conceptGroups.pluck('concepts')) : [];
+                    return this.queryState
+                        ? _.flatten(this.queryState.conceptGroups.pluck('concepts'))
+                        : [];
                 }.bind(this)
             });
+
+            this.throttledFetchRelatedConcepts = _.debounce(this.fetchRelatedConcepts.bind(this), 500);
 
             this.queryModel = options.queryModel;
             this.type = options.type;
@@ -79,11 +95,13 @@ define([
                 maxResults: options.maxResults || 300
             });
 
-            this.listenTo(this.model, 'change:maxResults', this.fetchRelatedConcepts);
+            this.listenTo(this.model, 'change:maxResults', this.throttledFetchRelatedConcepts);
             this.listenTo(this.queryModel, 'change', this.fetchRelatedConcepts);
 
             this.listenTo(this.entityCollection, 'sync', function() {
-                this.viewModel.set('state', this.entityCollection.isEmpty() ? ViewState.EMPTY : ViewState.MAP);
+                this.viewModel.set('state', this.entityCollection.isEmpty()
+                    ? ViewState.EMPTY
+                    : ViewState.MAP);
                 this.updateTopicMapData();
                 this.update();
             });
@@ -95,7 +113,9 @@ define([
             this.listenTo(this.entityCollection, 'error', function(collection, xhr) {
                 this.generateErrorMessage(xhr);
                 // Status of zero means the request has been aborted
-                this.viewModel.set('state', xhr.status === 0 ? ViewState.LOADING : ViewState.ERROR);
+                this.viewModel.set('state', xhr.status === 0
+                    ? ViewState.LOADING
+                    : ViewState.ERROR);
             });
 
             this.listenTo(this.viewModel, 'change', this.updateViewState);
@@ -103,8 +123,53 @@ define([
             this.fetchRelatedConcepts();
         },
 
+        render: function() {
+            if(this.showSlider) {
+                this.$('.speed-slider').tooltip('destroy');
+            }
+
+            this.$el.html(this.template({
+                cid: this.cid,
+                errorTemplate: this.errorTemplate,
+                i18n: i18n,
+                loadingHtml: loadingHtml,
+                showSlider: this.showSlider,
+                min: 50,
+                max: configuration().topicMapMaxResults,
+                step: 1
+            }));
+
+            this.$error = this.$('.entity-topic-map-error');
+            this.$empty = this.$('.entity-topic-map-empty');
+            this.$loading = this.$('.entity-topic-map-loading');
+
+            if(this.showSlider) {
+                this.$('.speed-slider')
+                    .attr('value', this.model.get('maxResults'))
+                    .tooltip({
+                        title: this.model.get('maxResults'),
+                        placement: 'right'
+                    });
+            }
+
+            this.topicMap.setElement(this.$('.entity-topic-map')).render();
+            this.update();
+            this.updateViewState();
+        },
+
+        remove: function() {
+            if(this.showSlider) {
+                this.$('.speed-slider').tooltip('destroy');
+            }
+
+            Backbone.View.prototype.remove.call(this);
+        },
+
         update: function() {
-            this.topicMap.draw();
+            // If the view is not visible, update will be called again if the user switches to this tab
+            if(this.$el.is(':visible')) {
+                this.topicMap.draw();
+            }
         },
 
         updateTopicMapData: function() {
@@ -122,18 +187,14 @@ define([
                     })
                 })
                 // Give each cluster a name (first concept in list), total size and add all
-                // concepts to the children attribute to create the topic map double level
+                // concepts to the children attribute to create the topic map double level.
                 .map(function(cluster) {
-                    const size = _.chain(cluster)
-                        .pluck('size')
-                        .reduce(function(a, b) {
-                            return a + b;
-                        })
-                        .value();
-
                     return {
                         name: cluster[0].name,
-                        size: size,
+                        size: _.chain(cluster)
+                            .pluck('size')
+                            .reduce(sum)
+                            .value(),
                         children: cluster
                     };
                 })
@@ -148,9 +209,21 @@ define([
         updateViewState: function() {
             const state = this.viewModel.get('state');
             this.topicMap.$el.toggleClass('hide', state !== ViewState.MAP);
-            this.handleTopicMapError();
-            this.$('.entity-topic-map-empty').toggleClass('hide', state !== ViewState.EMPTY);
-            this.$('.entity-topic-map-loading').toggleClass('hide', state !== ViewState.LOADING);
+
+            if(this.$error) {
+                if(state === ViewState.ERROR) {
+                    this.$error.html(this.errorTemplate);
+                }
+                this.$error.toggleClass('hide', state !== ViewState.ERROR);
+            }
+
+            if(this.$empty) {
+                this.$empty.toggleClass('hide', state !== ViewState.EMPTY);
+            }
+
+            if(this.$loading) {
+                this.$loading.toggleClass('hide', state !== ViewState.LOADING);
+            }
         },
 
         generateErrorMessage: function(xhr) {
@@ -169,14 +242,6 @@ define([
             }
         },
 
-        handleTopicMapError: function() {
-            const state = this.viewModel.get('state');
-            if(state === ViewState.ERROR) {
-                this.$('.entity-topic-map-error').html(this.errorTemplate);
-            }
-            this.$('.entity-topic-map-error').toggleClass('hide', state !== ViewState.ERROR);
-        },
-
         fetchRelatedConcepts: function() {
             let data;
 
@@ -188,51 +253,29 @@ define([
                     stateMatchTokens: this.queryModel.get('stateMatchIds'),
                     stateDontMatchTokens: this.queryModel.get('stateDontMatchIds')
                 };
-
-            } else if(this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
+            } else if(this.queryModel.get('queryText') && this.queryModel.get('indexes').length > 0) {
                 data = {
-                    databases: this.queryModel.get('indexes'),
                     queryText: this.queryModel.get('queryText'),
+                    maxResults: this.model.get('maxResults'),
+                    databases: this.queryModel.get('indexes'),
                     fieldText: this.queryModel.get('fieldText'),
+                    stateMatchTokens: this.queryModel.get('stateMatchIds'),
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
-                    minScore: this.queryModel.get('minScore'),
-                    stateMatchTokens: this.queryModel.get('stateMatchIds'),
-                    maxResults: this.model.get('maxResults')
+                    minScore: this.queryModel.get('minScore')
                 };
             }
 
-            return data ? this.entityCollection.fetch({data: data}) : null;
-        },
-
-        render: function() {
-            this.$el.html(this.template({
-                cid: this.cid,
-                errorTemplate: this.errorTemplate,
-                i18n: i18n,
-                loadingHtml: loadingHtml,
-                showSlider: this.showSlider
-            }));
-
-            if(this.showSlider) {
-                this.$('.speed-slider')
-                    .slider({
-                        id: this.cid + '-speed-slider',
-                        min: 50,
-                        max: configuration().topicMapMaxResults,
-                        value: this.model.get('maxResults')
-                    });
-            }
-
-            this.topicMap.setElement(this.$('.entity-topic-map')).render();
-            this.updateViewState();
+            return data
+                ? this.entityCollection.fetch({data: data})
+                : null;
         },
 
         exportData: function() {
             const paths = this.topicMap.exportPaths();
-            return paths ? {
-                    paths: _.flatten(paths.slice(1).reverse())
-                } : null;
+            return paths
+                ? {paths: _.flatten(paths.slice(1).reverse())}
+                : null;
         },
     });
 });
