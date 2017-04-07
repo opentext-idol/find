@@ -79,7 +79,7 @@ define([
             this.queryModel = options.queryModel;
             this.type = options.type;
             this.showSlider = _.isUndefined(options.showSlider) || options.showSlider;
-            this.fullHeight = options.fullHeight;
+            this.fixedHeight = _.isUndefined(options.fixedHeight) || options.fixedHeight;
 
             this.topicMap = new TopicMapView({
                 clickHandler: options.clickHandler
@@ -135,7 +135,7 @@ define([
                 i18n: i18n,
                 loadingHtml: loadingHtml,
                 showSlider: this.showSlider,
-                fullHeight: this.fullHeight,
+                fixedHeight: this.fixedHeight,
                 min: 50,
                 max: configuration().topicMapMaxResults,
                 step: 1

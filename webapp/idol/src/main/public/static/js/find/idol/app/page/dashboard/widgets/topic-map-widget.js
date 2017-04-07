@@ -25,7 +25,7 @@ define([
                 queryModel: this.queryModel,
                 queryState: this.queryModel.queryState,
                 showSlider: false,
-                fullHeight: true,
+                fixedHeight: false,
                 type: 'QUERY'
             });
 

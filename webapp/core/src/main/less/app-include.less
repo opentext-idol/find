@@ -1164,6 +1164,7 @@ audio.preview-media-player {
 
 .entity-topic-map {
   width: @100percent;
+  height: @100percent;
 }
 
 @hpeThumbBackground: @hpegreen;
@@ -2604,19 +2605,19 @@ h4.similar-dates-message {
 }
 
 @media @smHeightScreen {
-  .entity-topic-map:not(.full-height) {
+  .entity-topic-map.fixed-height {
     height: @custom4;
   }
 }
 
 @media @mHeightScreen {
-  .entity-topic-map:not(.full-height) {
+  .entity-topic-map.fixed-height {
     height: 500px;
   }
 }
 
 @media @lgHeightScreen {
-  .entity-topic-map:not(.full-height) {
+  .entity-topic-map.fixed-height {
     height: @lgHeightScreenTopicMapHeight;
   }
 }
