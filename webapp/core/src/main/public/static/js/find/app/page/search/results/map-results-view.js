@@ -42,9 +42,10 @@ define([
                 markers: {}
             }];
 
+            this.allowIncrement = options.allowIncrement;
             this.resultsStep = options.resultsStep;
             this.mapResultsViewStrategy = mapResultsViewStrategy({
-                allowIncrement: options.allowIncrement,
+                allowIncrement: this.allowIncrement,
                 resultsStep: this.resultsStep,
                 clusterMarkers: true,
                 popoverTemplate: this.popoverTemplate,
