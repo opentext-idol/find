@@ -96,6 +96,7 @@ public class SearchTabBar implements Iterable<SearchTab> {
         new WebDriverWait(driver, 300).withMessage("deleted tab to disappear").until(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(final WebDriver driver) {
+                // TODO: this is not good enough; may time out because of existence of similar tab names
                 return bar.findElements(By.xpath(".//*[contains(normalize-space(),'" + title + "')]")).isEmpty();
             }
         });
