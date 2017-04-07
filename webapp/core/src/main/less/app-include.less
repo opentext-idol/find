@@ -262,6 +262,10 @@ body {
   width: @100percent;
 }
 
+.full-height {
+  height: @100percent;
+}
+
 .full-height-viewport {
   height: @100vh;
 }
@@ -2600,19 +2604,19 @@ h4.similar-dates-message {
 }
 
 @media @smHeightScreen {
-  .entity-topic-map {
+  .entity-topic-map:not(.full-height) {
     height: @custom4;
   }
 }
 
 @media @mHeightScreen {
-  .entity-topic-map {
+  .entity-topic-map:not(.full-height) {
     height: 500px;
   }
 }
 
 @media @lgHeightScreen {
-  .entity-topic-map {
+  .entity-topic-map:not(.full-height) {
     height: @lgHeightScreenTopicMapHeight;
   }
 }
