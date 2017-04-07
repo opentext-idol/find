@@ -11,7 +11,6 @@ import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.IdolFindPage;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
-import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
@@ -35,9 +34,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsItems;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.AllOf.allOf;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 @Role(UserRole.BIFHI)
@@ -55,7 +65,7 @@ public class TopicMapITCase extends IdolFindTestBase {
 
     @Override
     public BIIdolFindElementFactory getElementFactory() {
-        return (BIIdolFindElementFactory) super.getElementFactory();
+        return (BIIdolFindElementFactory)super.getElementFactory();
     }
 
     @Before
@@ -105,7 +115,7 @@ public class TopicMapITCase extends IdolFindTestBase {
         verifyThat("Same number of text elements as map pieces", textElements.size(), is(numberEntities));
 
         results.waitForMapLoaded();
-        for (final WebElement textElement : textElements) {
+        for(final WebElement textElement : textElements) {
             verifyThat("Text element not empty", textElement.getText(), not(""));
         }
     }
@@ -141,7 +151,7 @@ public class TopicMapITCase extends IdolFindTestBase {
         addedConcepts.add(results.clickConceptAndAddText(results.conceptClusterNames().size()));
         Waits.loadOrFadeWait();
 
-        for (final String concept : addedConcepts) {
+        for(final String concept : addedConcepts) {
             verifyThat("Concept " + concept + " was added to the Concepts Panel", selectedConcepts(), hasItem(concept));
         }
     }
@@ -159,9 +169,10 @@ public class TopicMapITCase extends IdolFindTestBase {
         slider.dragBy(30);
         results.waitForMapLoaded();
         final List<String> changedParentNames = results.conceptClusterNames();
-        assertThat("Changing the slider has changed the map", changedParentNames,
-                anyOf(not(hasSize(originalParentEntityNames.size())),
-                        not(containsItems(originalParentEntityNames))));
+        assertThat("Changing the slider has changed the map",
+                   changedParentNames,
+                   not(allOf(hasSize(originalParentEntityNames.size()),
+                         containsItems(originalParentEntityNames))));
 
         slider.dragBy(-30);
         results.waitForMapLoaded();
@@ -169,8 +180,8 @@ public class TopicMapITCase extends IdolFindTestBase {
         //Selenium Actions.moveByOffset takes int -> cannot move by <1%
         //Getting within 1 doc of the original value is permissible
         assumeThat("Have returned tooltip to original value", sliderToolTipValue(slider),
-                anyOf(greaterThanOrEqualTo(originalToolTipValue - 1),
-                        lessThanOrEqualTo(originalToolTipValue + 1)));
+                   anyOf(greaterThanOrEqualTo(originalToolTipValue - 1),
+                         lessThanOrEqualTo(originalToolTipValue + 1)));
         verifyThat("Same parent concepts as when originally loaded", results.conceptClusterNames(), containsItems(originalParentEntityNames));
     }
 
@@ -189,66 +200,19 @@ public class TopicMapITCase extends IdolFindTestBase {
 
         final SearchTabBar tabBar = getElementFactory().getSearchTabBar();
         final int numberTabs = 8;
-        for (int i = 0; i < numberTabs; i++) {
+        for(int i = 0; i < numberTabs; i++) {
             tabBar.newTab();
         }
 
         tabBar.switchTo(numberTabs / 2);
         results.waitForMapLoaded();
 
-        for (int j = 0; j < numberTabs; j++) {
+        for(int j = 0; j < numberTabs; j++) {
             tabBar.switchTo(j);
             results = getElementFactory().getTopicMap();
             results.waitForMapLoaded();
             verifyThat("Map has appeared on tab " + (j + 1), results.mapEntities(), hasSize(greaterThan(0)));
         }
-    }
-
-    @Test
-    @ResolvedBug("FIND-1007")
-    // selenium user must have at least one saved search -- add that to setup once routing is fixed
-    public void testTopicMapRendersColoursOnRouting() {
-        final SearchTabBar searchTabBar = getElementFactory().getSearchTabBar();
-        searchTabBar.waitUntilSavedSearchAppears();
-        searchTabBar.switchTo(searchTabBar.savedTabTitles().get(0));
-        final TopicMapView topicMap = getElementFactory().getTopicMap();
-        topicMap.waitForMapLoaded();
-
-        final List<WebElement> initialEntities = topicMap.mapEntities();
-        verifyThat("Map has appeared", initialEntities, hasSize(greaterThan(0)));
-
-        verifyEntityGradients(topicMap);
-
-        final SunburstView sunburstView = findPage.goToSunburst();
-        sunburstView.waitForSunburst();
-
-        // modify search
-        findService.searchAnyView("cat");
-
-        findPage.goToTopicMap();
-        topicMap.waitForMapLoaded();
-
-        final List<WebElement> newEntities = topicMap.mapEntities();
-        verifyThat("Map has appeared", newEntities, hasSize(greaterThan(0)));
-
-        verifyEntityGradients(topicMap);
-    }
-
-    private void verifyEntityGradients(final TopicMapView topicMap) {
-        final Set<String> newFills = topicMap.getFills();
-        final Set<String> newFiltered = newFills.stream().filter(x -> x.contains("topic-map")).collect(Collectors.toSet());
-
-        verifyThat("Paths are linked to their gradients", topicMap.getGradientIds().containsAll(getIdsFromFillUrls(newFills)));
-        verifyThat("URLs point to topic-map",
-                newFiltered,
-                hasSize(newFills.size()));
-    }
-
-    private Collection<String> getIdsFromFillUrls(final Collection<String> urls) {
-        return urls
-                .stream()
-                .map(fillUrl -> fillUrl.substring(fillUrl.indexOf('#') + 1, fillUrl.length() - 2))
-                .collect(Collectors.toSet());
     }
 
     private void search(final String term) {
