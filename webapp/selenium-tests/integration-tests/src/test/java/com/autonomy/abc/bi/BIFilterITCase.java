@@ -41,7 +41,7 @@ public class BIFilterITCase extends IdolFindTestBase {
     @Before
     public void setUp() {
         findService = getApplication().findService();
-        findPage = ((BIIdolFindElementFactory)getElementFactory()).getFindPage();
+        findPage = ((BIIdolFindElementFactory) getElementFactory()).getFindPage();
         findPage.goToListView();
     }
 
@@ -88,8 +88,8 @@ public class BIFilterITCase extends IdolFindTestBase {
         final int max = filters.parametricFieldContainers().size() - 1;
         int index = 0;
 
-        while(filters.containerContainsFilter(target, index) && index <= max) {
-            if(index == (alreadyUsedIndex - 1)) {
+        while (filters.containerContainsFilter(target, index) && index <= max) {
+            if (index == alreadyUsedIndex - 1) {
                 index += 2;
             }
             index++;
@@ -120,19 +120,21 @@ public class BIFilterITCase extends IdolFindTestBase {
     public void testSearchForNonExistentFilter() {
         findService.search("face");
 
-        filters().searchFilters("garbageasfsefeff");
-        assertThat(filters().getErrorMessage(), is("No filters matched"));
+        final IdolFilterPanel filterPanel = filters();
+        filterPanel.searchFilters("garbageasfsefeff");
+        filterPanel.waitForParametricFields();
+        assertThat(filterPanel.getErrorMessage(), is("No filters matched"));
 
-        filters().clearMetaFilter();
+        filterPanel.clearMetaFilter();
         findPage.waitForParametricValuesToLoad();
-        assertThat(filters().getErrorMessage(), isEmptyOrNullString());
+        assertThat(filterPanel.getErrorMessage(), isEmptyOrNullString());
     }
 
     @Test
     public void testNumericWidgetsDefaultCollapsed() {
         findService.search("swim");
 
-        for(final GraphFilterContainer container : filters().graphContainers()) {
+        for (final GraphFilterContainer container : filters().graphContainers()) {
             verifyThat("Widget is collapsed", container.isCollapsed());
         }
     }
@@ -166,6 +168,7 @@ public class BIFilterITCase extends IdolFindTestBase {
         verifyThat(filterPanel.parametricField(index).isCollapsed(), is(false));
 
         filterPanel.searchFilters(firstValue);
+        filterPanel.waitForParametricFields();
         verifyThat(filterPanel.parametricField(index).isCollapsed(), is(false));
 
         filterPanel.clearMetaFilter();
