@@ -22,10 +22,9 @@ define([
     'parametric-refinement/to-field-text-node',
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/templates/app/page/search/results/trending/trending-results-view.html'
-
-], function (_, $, d3, Backbone, i18n, configuration, vent, generateErrorHtml, ParametricResultsView, FieldSelectionView,
-             calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel, ParametricCollection, Trending,
-             toFieldTextNode, loadingSpinnerHtml, template) {
+], function(_, $, d3, Backbone, i18n, configuration, vent, generateErrorHtml, ParametricResultsView, FieldSelectionView,
+            calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel, ParametricCollection, Trending,
+            toFieldTextNode, loadingSpinnerHtml, template) {
     'use strict';
 
     const MILLISECONDS_TO_SECONDS = 1000;
@@ -50,6 +49,25 @@ define([
         FETCHING_BUCKETS: 'FETCHING_BUCKETS',
         NOT_FETCHING: 'NOT_FETCHING'
     };
+
+    function zoomCallback(min, max) {
+        this.setMinMax(min, max);
+        this.viewStateModel.set('currentState', renderState.ZOOMING);
+        this.updateChart();
+        this.debouncedFetchBucketingData();
+    }
+
+    function dragMoveCallback(min, max) {
+        this.setMinMax(min, max);
+        this.viewStateModel.set('currentState', renderState.DRAGGING);
+        this.updateChart();
+    }
+
+    function dragEndCallback(min, max) {
+        this.setMinMax(min, max);
+        this.viewStateModel.set('currentState', renderState.DRAGGING);
+        this.debouncedFetchBucketingData();
+    }
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -107,6 +125,7 @@ define([
             if(this.trendingChart) {
                 this.trendingChart.remove();
             }
+
             this.trendingChart = new Trending({
                 el: this.$('.trending-chart').get(0),
                 tooltipText: i18n['search.resultsView.trending.tooltipText']
@@ -144,10 +163,10 @@ define([
 
                 const fields = this.parametricFieldsCollection
                     .where({type: 'Parametric'})
-                    .map(function (m) {
+                    .map(function(m) {
                         const id = m.get('id');
                         const totalValues = this.parametricCollection.where({id: id})[0] ?
-                            this.parametricCollection.where({id: id})[0].get('totalValues')
+                                            this.parametricCollection.where({id: id})[0].get('totalValues')
                             : 0;
                         return {
                             id: id,
@@ -243,37 +262,41 @@ define([
                 this.model.set('currentMax', maxDate + SECONDS_IN_ONE_DAY);
             }
 
-            $.when.apply($, _.map(this.bucketedValues, function(model) {
-                const fieldText = this.getFieldText().length > 0 ? ' AND ' + toFieldTextNode(this.getFieldText()) : '';
-                return model.fetch({
-                    data: {
-                        queryText: this.queryModel.get('queryText'),
-                        fieldText: 'MATCH{' + model.get('valueName') + '}:' + this.model.get('field') + fieldText,
-                        minDate: this.queryModel.getIsoDate('minDate'),
-                        maxDate: this.queryModel.getIsoDate('maxDate'),
-                        minScore: this.queryModel.get('minScore'),
-                        databases: this.queryModel.get('indexes'),
-                        targetNumberOfBuckets: this.targetNumberOfBuckets,
-                        bucketMin: this.model.get('currentMin'),
-                        bucketMax: this.model.get('currentMax')
-                    }
-                });
-            }, this)).done(_.bind(function() {
-                this.viewStateModel.set('currentState', renderState.RENDERING_NEW_DATA);
-                this.viewStateModel.set('dataState', dataState.OK);
-                this.viewStateModel.set('fetchState', fetchState.NOT_FETCHING);
-                this.updateChart();
-            }, this)).fail(_.bind(function(xhr) {
-                this.onDataError(xhr);
-                this.viewStateModel.set('fetchState', fetchState.NOT_FETCHING);
-            }, this));
+            $.when
+                .apply($, _.map(this.bucketedValues, function(model) {
+                    const fieldText = this.getFieldText().length > 0
+                        ? ' AND ' + toFieldTextNode(this.getFieldText())
+                        : '';
+                    return model.fetch({
+                        data: {
+                            queryText: this.queryModel.get('queryText'),
+                            fieldText: 'MATCH{' + model.get('valueName') + '}:' + this.model.get('field') + fieldText,
+                            minDate: this.queryModel.getIsoDate('minDate'),
+                            maxDate: this.queryModel.getIsoDate('maxDate'),
+                            minScore: this.queryModel.get('minScore'),
+                            databases: this.queryModel.get('indexes'),
+                            targetNumberOfBuckets: this.targetNumberOfBuckets,
+                            bucketMin: this.model.get('currentMin'),
+                            bucketMax: this.model.get('currentMax')
+                        }
+                    });
+                }, this))
+                .done(_.bind(function() {
+                    this.viewStateModel.set('currentState', renderState.RENDERING_NEW_DATA);
+                    this.viewStateModel.set('dataState', dataState.OK);
+                    this.viewStateModel.set('fetchState', fetchState.NOT_FETCHING);
+                    this.updateChart();
+                }, this))
+                .fail(_.bind(function(xhr) {
+                    this.onDataError(xhr);
+                    this.viewStateModel.set('fetchState', fetchState.NOT_FETCHING);
+                }, this));
         },
 
         updateChart: function() {
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
 
             const data = this.createChartData();
-            const callbacks = this.createCallbacks();
 
             if(this.viewStateModel.get('fetchState') !== fetchState.FETCHING_BUCKETS) {
                 let minDate, maxDate;
@@ -292,9 +315,9 @@ define([
                     maxDate: maxDate,
                     xAxisLabel: i18n['search.resultsView.trending.xAxis'],
                     yAxisLabel: i18n['search.resultsView.trending.yAxis'],
-                    zoomCallback: callbacks.zoomCallback,
-                    dragMoveCallback: callbacks.dragMoveCallback,
-                    dragEndCallback: callbacks.dragEndCallback
+                    zoomCallback: zoomCallback.bind(this),
+                    dragMoveCallback: dragMoveCallback.bind(this),
+                    dragEndCallback: dragEndCallback.bind(this)
                 });
             }
         },
@@ -337,33 +360,6 @@ define([
                     })
                 }
             });
-        },
-
-        createCallbacks: function() {
-            const zoomCallback = function(min, max) {
-                this.setMinMax(min, max);
-                this.viewStateModel.set('currentState', renderState.ZOOMING);
-                this.updateChart();
-                this.debouncedFetchBucketingData();
-            }.bind(this);
-
-            const dragMoveCallback = function(min, max) {
-                this.setMinMax(min, max);
-                this.viewStateModel.set('currentState', renderState.DRAGGING);
-                this.updateChart();
-            }.bind(this);
-
-            const dragEndCallback = function(min, max) {
-                this.setMinMax(min, max);
-                this.viewStateModel.set('currentState', renderState.DRAGGING);
-                this.debouncedFetchBucketingData();
-            }.bind(this);
-
-            return {
-                zoomCallback: zoomCallback,
-                dragMoveCallback: dragMoveCallback,
-                dragEndCallback: dragEndCallback
-            }
         },
 
         getFieldText: function() {
