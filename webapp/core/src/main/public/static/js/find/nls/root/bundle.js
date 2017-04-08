@@ -61,7 +61,6 @@ define([
         'dashboards.widget.sunburst.noResults': 'The query did not match any documents',
         'dashboards.widget.sunburst.legend.hiddenValues': 'Other',
         'dashboards.widget.sunburst.legend.noValues': 'No values to display',
-        'dashboards.reloadConfiguration': 'Reload configuration',
         'dashboards.fullscreen': 'Full Screen',
         'datepicker.language': 'en',
         'default.title': 'Page Unavailable',

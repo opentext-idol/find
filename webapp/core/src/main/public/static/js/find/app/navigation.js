@@ -64,7 +64,6 @@ define([
 
             this.$el.html(this.template({
                 i18n: i18n,
-                hasAdminRole: _.contains(configuration().roles, 'ROLE_ADMIN'),
                 menuItems: this.menuItems,
                 pages: pages,
                 applications: configuration().applications,

@@ -53,14 +53,6 @@
                                 <i class="hp-icon hp-collapse arrow"></i>
                             </a>
                             <ul class="nav nav-second-level collapse">
-                                <% if(data.hasAdminRole === true) { %>
-                                    <li>
-                                        <a href="api/admin/dashboards/reload">
-                                            <i class="hp-icon hp-refresh"></i>
-                                            <%- data.i18n['dashboards.reloadConfiguration'] %>
-                                        </a>
-                                    </li>
-                                <% } %>
                                 <% _.each(data.pages.dashboards, function(page, index) { %>
                                     <li data-pagename="<%- page.pageName %>" <%- index === 0 ? 'class="active"' : '' %>>
                                         <a href="public/<%- page.pageName %>" data-pagename="<%- page.pageName %>">
