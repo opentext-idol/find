@@ -1,3 +1,8 @@
+/*
+ *  Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ *  Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'underscore',
     'jquery',
@@ -10,8 +15,8 @@ define([
     'find/app/model/bucketed-parametric-collection',
     'find/app/page/search/results/trending/trending-view',
     'mock/page/results/trending'
-], function (_, $, Backbone, i18n, backboneMockFactory, configuration, ParametricCollection, ParametricDetailsModel,
-             BucketedParametricCollection, TrendingView, Trending) {
+], function(_, $, Backbone, i18n, backboneMockFactory, configuration, ParametricCollection,
+            ParametricDetailsModel, BucketedParametricCollection, TrendingView, Trending) {
     'use strict';
 
     const originalDebounce = _.debounce;
@@ -24,8 +29,8 @@ define([
         }
     };
 
-    describe('Trending view', function () {
-        beforeEach(function () {
+    describe('Trending view', function() {
+        beforeEach(function() {
             _.debounce = function(callback) {
                 return function() {
                     callback.apply(this, arguments);
@@ -64,6 +69,7 @@ define([
                     totalValues: 223
                 }
             ]);
+
             this.parametricFieldsCollection = new Backbone.Collection([
                 {
                     id: 'cheeses',
@@ -112,7 +118,7 @@ define([
             this.view.render();
         });
 
-        afterEach(function () {
+        afterEach(function() {
             this.view.remove();
             _.debounce = originalDebounce;
             ParametricCollection.reset();
@@ -121,71 +127,76 @@ define([
             Trending.reset();
         });
 
-        it('should render the template html', function () {
-            expect(this.view.$('.trending-chart').length).toBe(1);
+        it('should render the template html', function() {
+            expect(this.view.$('.trending-chart')).toHaveLength(1);
         });
 
-        describe('and when the parametric collection syncs', function () {
-            beforeEach(function () {
+        describe('and when the parametric collection syncs', function() {
+            beforeEach(function() {
                 this.parametricCollection.trigger('sync');
             });
 
-            it('should render and populate the field selector', function () {
+            it('should render and populate the field selector', function() {
                 const $option = this.view.$('.trending-field-selector option');
-                expect($option.length).toBe(4);
+                expect($option).toHaveLength(4);
                 expect($option[0].text).toBe('Cheeses (200)');
                 expect($option[1].text).toBe('Breads (450)');
                 expect($option[2].text).toBe('Meats (140)');
                 expect($option[3].text).toBe('Veg (223)');
             });
 
-            it('should call fetch on the parametric collection with the correct arguments', function () {
+            it('should call fetch on the parametric collection with the correct arguments', function() {
                 expect(ParametricCollection.instances[0].fetch).toHaveBeenCalled();
                 // fieldNames set from the automatically selected first field in dropdown
                 expect(ParametricCollection.instances[0].fetch.calls.argsFor(0)[0].data.fieldNames).toEqual(['cheeses']);
                 expect(ParametricCollection.instances[0].fetch.calls.argsFor(0)[0].data.queryText).toBe(this.queryModel.get('queryText'));
             });
 
-            describe('and the fetch fails', function () {
-                beforeEach(function () {
+            describe('and the fetch fails', function() {
+                beforeEach(function() {
                     ParametricCollection.instances[0].fetch.calls.argsFor(0)[0].error([], xhr);
                 });
 
-                it('should display an error message', function () {
+                it('should display an error message', function() {
                     expect(this.view.$('.trending-error')).not.toHaveClass('hide');
                 });
 
-                it('should hide the chart', function () {
+                it('should hide the chart', function() {
                     expect(this.view.$('.trending-chart')).toHaveClass('hide');
                 });
             });
 
-            describe('and the fetch succeeds', function () {
-                beforeEach(function () {
+            describe('and the fetch succeeds', function() {
+                beforeEach(function() {
                     ParametricCollection.instances[0].set({
                         id: 'cheeses',
-                        values: [{
-                            count: 2,
-                            displayValue: 'CHEDDAR',
-                            value: 'CHEDDAR'
-                        }, {
-                            count: 4,
-                            displayValue: 'STILTON',
-                            value: 'STILTON'
-                        }, {
-                            count: 2,
-                            displayValue: 'BRIE',
-                            value: 'BRIE'
-                        }, {
-                            count: 0,
-                            displayValue: 'RED LEICESTER',
-                            value: 'RED LEICESTER'
-                        }]
+                        values: [
+                            {
+                                count: 2,
+                                displayValue: 'CHEDDAR',
+                                value: 'CHEDDAR'
+                            },
+                            {
+                                count: 4,
+                                displayValue: 'STILTON',
+                                value: 'STILTON'
+                            },
+                            {
+                                count: 2,
+                                displayValue: 'BRIE',
+                                value: 'BRIE'
+                            },
+                            {
+                                count: 0,
+                                displayValue: 'RED LEICESTER',
+                                value: 'RED LEICESTER'
+                            }
+                        ]
                     });
                     ParametricCollection.instances[0].fetch.calls.argsFor(0)[0].success();
                 });
 
-                it('should fetch range data with the correct arguments', function () {
+                it('should fetch range data with the correct arguments', function() {
                     expect(ParametricDetailsModel.instances[0].fetch).toHaveBeenCalled();
                     expect(ParametricDetailsModel.instances[0].fetch.calls.argsFor(0)[0].data.fieldName)
                         .toBe('AUTN_DATE');
@@ -193,22 +204,22 @@ define([
                         .toBe('MATCH{CHEDDAR,STILTON,BRIE,RED LEICESTER}:cheeses');
                 });
 
-                describe('and the fetch for range details fails', function () {
-                    beforeEach(function () {
+                describe('and the fetch for range details fails', function() {
+                    beforeEach(function() {
                         ParametricDetailsModel.instances[0].fetch.calls.argsFor(0)[0].error([], xhr);
                     });
 
-                    it('should display an error message', function () {
+                    it('should display an error message', function() {
                         expect(this.view.$('.trending-error')).not.toHaveClass('hide');
                     });
 
-                    it('should hide the chart', function () {
+                    it('should hide the chart', function() {
                         expect(this.view.$('.trending-chart')).toHaveClass('hide');
                     });
                 });
 
-                describe('and the fetch for range details succeeds', function () {
-                    beforeEach(function () {
+                describe('and the fetch for range details succeeds', function() {
+                    beforeEach(function() {
                         ParametricDetailsModel.instances[0].set({
                             min: 0,
                             max: 20
@@ -216,8 +227,8 @@ define([
                         ParametricDetailsModel.instances[0].fetch.calls.argsFor(0)[0].success();
                     });
 
-                    it('should make the correct number of bucketed values models', function () {
-                        expect(BucketedParametricCollection.Model.instances.length).toBe(4);
+                    it('should make the correct number of bucketed values models', function() {
+                        expect(BucketedParametricCollection.Model.instances).toHaveLength(4);
                         expect(BucketedParametricCollection.Model.instances[0].constructorArgs[0]).toEqual({
                             id: 'AUTN_DATE',
                             valueName: 'CHEDDAR'
@@ -236,27 +247,27 @@ define([
                         });
                     });
 
-                    it('should trigger a fetch on each of these models', function () {
-                        expect(BucketedParametricCollection.Model.fetchPromises.length).toBe(4);
+                    it('should trigger a fetch on each of these models', function() {
+                        expect(BucketedParametricCollection.Model.fetchPromises).toHaveLength(4);
                     });
 
-                    describe('and one bucketed values fetch fails', function () {
-                        beforeEach(function () {
+                    describe('and one bucketed values fetch fails', function() {
+                        beforeEach(function() {
                             BucketedParametricCollection.Model.fetchPromises[0].reject(xhr);
                         });
 
-                        it('should display an error message', function () {
+                        it('should display an error message', function() {
                             expect(this.view.$('.trending-error')).not.toHaveClass('hide');
                         });
 
-                        it('should hide the chart', function () {
+                        it('should hide the chart', function() {
                             expect(this.view.$('.trending-chart')).toHaveClass('hide');
                         });
                     });
 
-                    describe('and all the bucketed values fetches return successfully', function () {
-                        beforeEach(function () {
-                            _.each(BucketedParametricCollection.Model.instances, function (model) {
+                    describe('and all the bucketed values fetches return successfully', function() {
+                        beforeEach(function() {
+                            _.each(BucketedParametricCollection.Model.instances, function(model) {
                                 model.set({
                                     count: 2,
                                     displayName: model.get('valueName'),
@@ -267,15 +278,18 @@ define([
                                             count: 1,
                                             max: 20,
                                             min: 15
-                                        }, {
+                                        },
+                                        {
                                             count: 1,
                                             max: 15,
                                             min: 10
-                                        }, {
+                                        },
+                                        {
                                             count: 0,
                                             max: 10,
                                             min: 5
-                                        }, {
+                                        },
+                                        {
                                             count: 0,
                                             max: 5,
                                             min: 0
@@ -283,55 +297,55 @@ define([
                                     ]
                                 })
                             });
-                            _.each(BucketedParametricCollection.Model.fetchPromises, function (promise) {
+                            _.each(BucketedParametricCollection.Model.fetchPromises, function(promise) {
                                 promise.resolve();
                             });
                         });
 
-                        it('should create the trending chart', function () {
-                            expect(Trending.instances.length).toBe(1);
+                        it('should create the trending chart', function() {
+                            expect(Trending.instances).toHaveLength(1);
                         });
 
-                        it('should draw the trending chart with the correct data', function () {
-                            expect(Trending.instances[0].draw.calls.all().length).toBe(1);
-                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].data.length).toBe(4);
-                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].data[0].points.length).toBe(4);
+                        it('should draw the trending chart with the correct data', function() {
+                            expect(Trending.instances[0].draw.calls.count()).toBe(1);
+                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].data).toHaveLength(4);
+                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].data[0].points).toHaveLength(4);
                             expect(typeof Trending.instances[0].draw.calls.argsFor(0)[0].zoomCallback).toBe('function');
                             expect(typeof Trending.instances[0].draw.calls.argsFor(0)[0].dragMoveCallback).toBe('function');
                             expect(typeof Trending.instances[0].draw.calls.argsFor(0)[0].dragEndCallback).toBe('function');
                         });
 
-                        describe('after calling the zoom callback', function () {
-                            beforeEach(function () {
+                        describe('after calling the zoom callback', function() {
+                            beforeEach(function() {
                                 Trending.instances[0].draw.calls.argsFor(0)[0].zoomCallback(1, 22);
                             });
 
-                            it('should re-draw the graph', function () {
-                                expect(Trending.instances[0].draw.calls.all().length).toBe(2);
+                            it('should re-draw the graph', function() {
+                                expect(Trending.instances[0].draw.calls.count()).toBe(2);
                             });
 
-                            it('should trigger a new fetch for bucketed values', function () {
-                                expect(BucketedParametricCollection.Model.instances.length).toBe(8);
+                            it('should trigger a new fetch for bucketed values', function() {
+                                expect(BucketedParametricCollection.Model.instances).toHaveLength(8);
                             });
                         });
 
-                        describe('after calling the drag move callback', function () {
-                            beforeEach(function () {
+                        describe('after calling the drag move callback', function() {
+                            beforeEach(function() {
                                 Trending.instances[0].draw.calls.argsFor(0)[0].dragMoveCallback(1, 22);
                             });
 
-                            it('should re-draw the graph', function () {
-                                expect(Trending.instances[0].draw.calls.all().length).toBe(2);
+                            it('should re-draw the graph', function() {
+                                expect(Trending.instances[0].draw.calls.count()).toBe(2);
                             });
                         });
 
-                        describe('after calling the drag end callback', function () {
-                            beforeEach(function () {
+                        describe('after calling the drag end callback', function() {
+                            beforeEach(function() {
                                 Trending.instances[0].draw.calls.argsFor(0)[0].dragEndCallback(1, 22);
                             });
 
-                            it('should trigger a new fetch for bucketed values', function () {
-                                expect(BucketedParametricCollection.Model.instances.length).toBe(8);
+                            it('should trigger a new fetch for bucketed values', function() {
+                                expect(BucketedParametricCollection.Model.instances).toHaveLength(8);
                             });
                         });
                     });
