@@ -108,13 +108,15 @@ define([
                 }
             });
 
+            this.throttledFetchBuckets = _.throttle(this.fetchBuckets, 500);
+
             addChangeListener(this, this.model, ['currentMin', 'currentMax'], function() {
                 // Immediately update the graph for the new range; we calibrate
                 // the buckets to remove buckets outside of the range
                 this.updateGraph();
 
                 // Fetch new buckets when the range changes
-                this.fetchBuckets();
+                this.throttledFetchBuckets();
             });
 
             addChangeListener(this, this.queryModel,
@@ -284,7 +286,9 @@ define([
                 type: this.type,
                 range: _.map(newRange, function(value, index) {
                     // Explicitly check null since 0 is falsy
-                    return value === null ? existingRange[index] : value;
+                    return value === null
+                        ? existingRange[index]
+                        : value;
                 })
             };
 
