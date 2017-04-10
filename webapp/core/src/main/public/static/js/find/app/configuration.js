@@ -34,10 +34,10 @@ define([
 
             if(uiCustomization) {
                 config.directAccessLink = parseBooleanOption(config, uiCustomization, 'directAccessLink');
-                config.enableDashboards = parseBooleanOption(config, uiCustomization, 'enableDashboards');
+                config.enableDashboards = parseBooleanOption(config, uiCustomization, 'enableDashboards') && !_.isEmpty(config.dashboards);
                 config.enableMetaFilter = parseBooleanOption(config, uiCustomization, 'enableMetaFilter');
                 config.enableRelatedConcepts = parseBooleanOption(config, uiCustomization, 'enableRelatedConcepts');
-                config.enableSideBar = parseBooleanOption(config, uiCustomization, 'enableSideBar');
+                config.enableSideBar = parseBooleanOption(config, uiCustomization, 'enableSideBar') && (config.enableDashboards || !_.isEmpty(config.applications));
                 config.enableTypeAhead = parseBooleanOption(config, uiCustomization, 'enableTypeAhead');
                 config.errorCallSupportString = uiCustomization.errorCallSupportString;
 

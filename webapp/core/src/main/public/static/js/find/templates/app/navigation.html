@@ -34,7 +34,7 @@
             <% } %>
             <span class="find-logo-small side-nav navbar-brand m-l-sm m-t-sm navbar-hidden"></span>
         </div>
-        <% if (data.pages.sidebar || data.pages.dashboards || data.applications) { %>
+        <% if (data.pages.sidebar || data.pages.dashboards || !_.isEmpty(data.applications)) { %>
             <nav class="navbar-default navbar-static-side navbar-static-side-dark" role="navigation">
                 <ul class="nav side-menu metismenu">
                     <li></li><% /* this is added to allow for the logo elements expects which we don't use. (logo goes here when implemented) */ %>
@@ -63,7 +63,7 @@
                             </ul>
                         </li>
                     <% } %>
-                    <% if(data.applications) { %>
+                    <% if (!_.isEmpty(data.applications)) { %>
                         <li data-pagename="custom-applications">
                             <a>
                                 <i class="hp-icon hp-app"></i>
