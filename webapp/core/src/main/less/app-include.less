@@ -262,6 +262,10 @@ body {
   width: @100percent;
 }
 
+.full-height {
+  height: @100percent;
+}
+
 .full-height-viewport {
   height: @100vh;
 }
@@ -1167,6 +1171,7 @@ audio.preview-media-player {
 
 .entity-topic-map {
   width: @100percent;
+  height: @100percent;
 }
 
 @hpeThumbBackground: @hpegreen;
@@ -2620,19 +2625,19 @@ h4.similar-dates-message {
 }
 
 @media @smHeightScreen {
-  .entity-topic-map {
+  .entity-topic-map.fixed-height {
     height: @custom4;
   }
 }
 
 @media @mHeightScreen {
-  .entity-topic-map {
+  .entity-topic-map.fixed-height {
     height: 500px;
   }
 }
 
 @media @lgHeightScreen {
-  .entity-topic-map {
+  .entity-topic-map.fixed-height {
     height: @lgHeightScreenTopicMapHeight;
   }
 }

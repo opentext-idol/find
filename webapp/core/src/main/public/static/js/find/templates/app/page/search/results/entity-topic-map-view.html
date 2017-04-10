@@ -1,4 +1,4 @@
-<div class="col-md-12">
+<div class="col-md-12 <%- fixedHeight ? '': 'full-height' %>">
     <% if (showSlider) { %>
         <div class="flex-row m-b-sm">
             <div class="m-r-lg flex-row slider-block">
@@ -23,5 +23,5 @@
     <div class="entity-topic-map-loading m-t-lg">
         <%= loadingHtml %>
     </div>
-    <div class="entity-topic-map"></div>
+    <div class="entity-topic-map <%- fixedHeight ? 'fixed-height': '' %>"></div>
 </div>
