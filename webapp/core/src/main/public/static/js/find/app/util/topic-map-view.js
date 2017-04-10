@@ -54,7 +54,6 @@ define([
             }
 
             this.$el.topicmap(topicMapOptions);
-            this.draw();
         },
 
         /**

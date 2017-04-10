@@ -31,6 +31,36 @@ define([
         return a + b;
     }
 
+    // Update the inputs as the user drags a selection on the graph.
+    // Note that this means the value in the input does not depend
+    // on just the selected parametric range model.
+    function updateCallback(x1, x2) {
+        // rounding to one decimal place
+        this.updateMinInput(x1);
+        this.updateMaxInput(x2);
+    }
+
+    function selectionCallback(x1, x2) {
+        const newMin = this.parseBoundarySelection(x1);
+        const newMax = this.parseBoundarySelection(x2);
+        this.updateRestrictions([newMin, newMax]);
+    }
+
+    function mouseMoveCallback(x) {
+        this.$numericParametricCoords.text(this.formatValue(x));
+    }
+
+    function mouseLeaveCallback() {
+        this.$numericParametricCoords.text('');
+    }
+
+    function zoomCallback(min, max) {
+        this.model.set({
+            currentMin: min,
+            currentMax: max
+        });
+    }
+
     // This view must be visible before it is rendered
     const NumericParametricFieldView = Backbone.View.extend({
         className: 'animated fadeIn',
@@ -108,13 +138,15 @@ define([
                 }
             });
 
+            this.throttledFetchBuckets = _.throttle(this.fetchBuckets, 500);
+
             addChangeListener(this, this.model, ['currentMin', 'currentMax'], function() {
                 // Immediately update the graph for the new range; we calibrate
                 // the buckets to remove buckets outside of the range
                 this.updateGraph();
 
                 // Fetch new buckets when the range changes
-                this.fetchBuckets();
+                this.throttledFetchBuckets();
             });
 
             addChangeListener(this, this.queryModel,
@@ -158,6 +190,8 @@ define([
                 this.$maxInput = this.$('.numeric-parametric-max-input');
             }
 
+            this.$numericParametricCoords = this.$('.numeric-parametric-co-ordinates');
+
             this.updateGraph();
 
             // Width may have changed, re-fetch the buckets
@@ -191,45 +225,15 @@ define([
                     [this.model.get('currentMin'), this.model.get('currentMax')]
                 );
 
-                // Update the inputs as the user drags a selection on the graph.
-                // Note that this means the value in the input does not depend
-                // on just the selected parametric range model.
-                const updateCallback = function(x1, x2) {
-                    // rounding to one decimal place
-                    this.updateMinInput(x1);
-                    this.updateMaxInput(x2);
-                }.bind(this);
-
-                const selectionCallback = function(x1, x2) {
-                    const newMin = this.parseBoundarySelection(x1);
-                    const newMax = this.parseBoundarySelection(x2);
-                    this.updateRestrictions([newMin, newMax]);
-                }.bind(this);
-
-                const mouseMoveCallback = function(x) {
-                    this.$('.numeric-parametric-co-ordinates').text(this.formatValue(x));
-                }.bind(this);
-
-                const mouseLeaveCallback = function() {
-                    this.$('.numeric-parametric-co-ordinates').text('');
-                }.bind(this);
-
-                const zoomCallback = function(min, max) {
-                    this.model.set({
-                        currentMin: min,
-                        currentMax: max
-                    });
-                }.bind(this);
-
                 this.graph = this.widget.drawGraph({
                     chart: $chart.get(0),
                     data: buckets,
-                    updateCallback: updateCallback,
-                    selectionCallback: selectionCallback,
+                    updateCallback: updateCallback.bind(this),
+                    selectionCallback: selectionCallback.bind(this),
                     deselectionCallback: this.clearRestrictions.bind(this),
-                    mouseMoveCallback: mouseMoveCallback,
-                    mouseLeaveCallback: mouseLeaveCallback,
-                    zoomCallback: zoomCallback,
+                    mouseMoveCallback: mouseMoveCallback.bind(this),
+                    mouseLeaveCallback: mouseLeaveCallback.bind(this),
+                    zoomCallback: zoomCallback.bind(this),
                     xRange: width,
                     yRange: $chart.height(),
                     tooltip: i18n['search.numericParametricFields.tooltip'],
@@ -284,11 +288,13 @@ define([
                 type: this.type,
                 range: _.map(newRange, function(value, index) {
                     // Explicitly check null since 0 is falsy
-                    return value === null ? existingRange[index] : value;
+                    return value === null
+                        ? existingRange[index]
+                        : value;
                 })
             };
 
-            // Fixes error where user could manually input min > max or max < min
+            // Prevet user from manually setting min > max or max < min
             if(newAttributes.range[0] > newAttributes.range[1]) {
                 if(existingRange.reduce(sum) - newAttributes.range.reduce(sum) > 0) { // if max was decreased
                     newAttributes.range[0] = newAttributes.range[1]; //set min to equal max

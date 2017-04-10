@@ -74,7 +74,7 @@ define([
                 }.bind(this)
             });
 
-            this.throttledFetchRelatedConcepts = _.debounce(this.fetchRelatedConcepts.bind(this), 500);
+            this.debouncedFetchRelatedConcepts = _.debounce(this.fetchRelatedConcepts.bind(this), 500);
 
             this.queryModel = options.queryModel;
             this.type = options.type;
@@ -95,7 +95,7 @@ define([
                 maxResults: options.maxResults || 300
             });
 
-            this.listenTo(this.model, 'change:maxResults', this.throttledFetchRelatedConcepts);
+            this.listenTo(this.model, 'change:maxResults', this.debouncedFetchRelatedConcepts);
             this.listenTo(this.queryModel, 'change', this.fetchRelatedConcepts);
 
             this.listenTo(this.entityCollection, 'sync', function() {
@@ -119,7 +119,6 @@ define([
             });
 
             this.listenTo(this.viewModel, 'change', this.updateViewState);
-
             this.fetchRelatedConcepts();
         },
 
@@ -144,16 +143,16 @@ define([
             this.$loading = this.$('.entity-topic-map-loading');
 
             if(this.showSlider) {
+                const maxResults = this.model.get('maxResults');
                 this.$('.speed-slider')
-                    .attr('value', this.model.get('maxResults'))
+                    .attr('value', maxResults)
                     .tooltip({
-                        title: this.model.get('maxResults'),
+                        title: maxResults,
                         placement: 'right'
                     });
             }
 
             this.topicMap.setElement(this.$('.entity-topic-map')).render();
-            this.update();
             this.updateViewState();
         },
 
@@ -166,10 +165,7 @@ define([
         },
 
         update: function() {
-            // If the view is not visible, update will be called again if the user switches to this tab
-            if(this.$el.is(':visible')) {
-                this.topicMap.draw();
-            }
+            this.topicMap.draw();
         },
 
         updateTopicMapData: function() {
@@ -248,18 +244,12 @@ define([
             if(this.type === Type.COMPARISON) {
                 data = {
                     queryText: '*',
-                    maxResults: this.model.get('maxResults'),
-                    databases: this.queryModel.get('indexes'),
-                    stateMatchTokens: this.queryModel.get('stateMatchIds'),
                     stateDontMatchTokens: this.queryModel.get('stateDontMatchIds')
                 };
             } else if(this.queryModel.get('queryText') && this.queryModel.get('indexes').length > 0) {
                 data = {
                     queryText: this.queryModel.get('queryText'),
-                    maxResults: this.model.get('maxResults'),
-                    databases: this.queryModel.get('indexes'),
                     fieldText: this.queryModel.get('fieldText'),
-                    stateMatchTokens: this.queryModel.get('stateMatchIds'),
                     minDate: this.queryModel.getIsoDate('minDate'),
                     maxDate: this.queryModel.getIsoDate('maxDate'),
                     minScore: this.queryModel.get('minScore')
@@ -267,7 +257,13 @@ define([
             }
 
             return data
-                ? this.entityCollection.fetch({data: data})
+                ? this.entityCollection.fetch({
+                    data: _.extend(data, {
+                        databases: this.queryModel.get('indexes'),
+                        maxResults: this.model.get('maxResults'),
+                        stateMatchTokens: this.queryModel.get('stateMatchIds')
+                    })
+                })
                 : null;
         },
 
