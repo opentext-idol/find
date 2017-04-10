@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -39,7 +39,7 @@ public class TrendingITCase extends IdolFindTestBase {
 
     @Override
     public BIIdolFindElementFactory getElementFactory() {
-        return (BIIdolFindElementFactory) super.getElementFactory();
+        return (BIIdolFindElementFactory)super.getElementFactory();
     }
 
     @Before
@@ -65,7 +65,7 @@ public class TrendingITCase extends IdolFindTestBase {
         findPage.waitForParametricValuesToLoad();
         final List<String> fieldsInLeftHandSide = trendingService.filterFields();
         assertThat("The fields in the field selector are all contained in the left hand side list",
-                fieldsInLeftHandSide.containsAll(fields));
+                   fieldsInLeftHandSide.containsAll(fields));
     }
 
     @Test
@@ -87,8 +87,8 @@ public class TrendingITCase extends IdolFindTestBase {
         trendingView.waitForChartToLoad();
 
         assertThat("Either the y-axis values or the x-axis values have changed after adding a filter",
-                !trendingService.yAxisLabelRange(trendingView).equals(startingRange)
-                        || !trendingService.finalXAxisLabel(trendingView).equals(startingFinalXLabel));
+                   !trendingService.yAxisLabelRange(trendingView).equals(startingRange)
+                           || !trendingService.finalXAxisLabel(trendingView).equals(startingFinalXLabel));
     }
 
     @Test
@@ -101,8 +101,8 @@ public class TrendingITCase extends IdolFindTestBase {
         trendingView.waitForChartToLoad();
 
         assertThat("Either the y-axis values or the x-axis values have changed after adding a filter",
-                !trendingService.yAxisLabelRange(trendingView).equals(startingRange)
-                        || !trendingService.finalXAxisLabel(trendingView).equals(startingFinalXLabel));
+                   !trendingService.yAxisLabelRange(trendingView).equals(startingRange)
+                           || !trendingService.finalXAxisLabel(trendingView).equals(startingFinalXLabel));
     }
 
     @Test
@@ -138,16 +138,13 @@ public class TrendingITCase extends IdolFindTestBase {
         trendingView.waitForChartToLoad();
 
         assertThat("Either the y-axis values or the x-axis values have changed after adding a filter",
-                !trendingService.yAxisLabelRange(trendingView).equals(startingRange)
-                        || !trendingService.finalXAxisLabel(trendingView).equals(startingFinalXLabel));
+                   !trendingService.yAxisLabelRange(trendingView).equals(startingRange)
+                           || !trendingService.finalXAxisLabel(trendingView).equals(startingFinalXLabel));
     }
-
 
     private List<String> getDataNames(final Collection<WebElement> elements) {
         return elements.stream()
                 .map(v -> v.getAttribute("data-name"))
                 .collect(Collectors.toList());
     }
-
-
 }

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find.bi;
 
 import com.autonomy.abc.selenium.find.application.FindApplication;
@@ -50,7 +55,7 @@ public class TrendingService {
                 .collect(Collectors.toList());
     }
 
-    public void dragRight(final TrendingView trendingView , final WebDriver driver) {
+    public void dragRight(final TrendingView trendingView, final WebDriver driver) {
         final String firstValue = trendingView.chartValueGroups().get(0).getAttribute("data-name");
         final List<WebElement> points = trendingView.pointsForNamedValue(firstValue);
         new Actions(driver).dragAndDrop(points.get(1), points.get(3)).perform();
