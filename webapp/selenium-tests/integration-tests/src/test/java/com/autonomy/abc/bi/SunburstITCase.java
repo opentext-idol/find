@@ -96,7 +96,8 @@ public class SunburstITCase extends IdolFindTestBase {
         Waits.loadOrFadeWait();
 
         final int correctNumberSegments = getFilterResultsBigEnoughToDisplay(filterCategory).size();
-        assertThat("Correct number (" + correctNumberSegments + ") of sunburst segments ", results.numberOfSunburstSegments(), is(correctNumberSegments));
+        final int actualNumberOfSegments = results.numberOfSunburstSegments();
+        assertThat("Correct number (" + correctNumberSegments + ") of sunburst segments ", actualNumberOfSegments, is(correctNumberSegments));
     }
 
     @Test
@@ -230,7 +231,7 @@ public class SunburstITCase extends IdolFindTestBase {
         verifyThat("Same number of segments after 2nd selector", segNumberAfter, is(segNumberBefore));
         verifyThat("Message displayed", results.message(), displayed());
         final String sensibleMessage = "no documents with values for both fields";
-        verifyThat("Message contains \"" + sensibleMessage + "\"", results.message().getText(), containsString(sensibleMessage));
+        verifyThat("Message contains \"" + sensibleMessage + '"', results.message().getText(), containsString(sensibleMessage));
     }
 
     private SunburstView search(final String searchTerm) {
