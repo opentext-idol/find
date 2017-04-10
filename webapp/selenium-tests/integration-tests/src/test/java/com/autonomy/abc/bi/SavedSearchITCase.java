@@ -255,7 +255,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         assertThat(searchTabBar.currentTab(), not(modified()));
         final List<String> finalConceptHeaders = conceptsPanel.selectedConceptHeaders();
         assertThat(finalConceptHeaders, hasSize(1));
-        assertThat(finalConceptHeaders, hasItem('"' + selectedConcept.toLowerCase() + '"'));
+        assertThat(finalConceptHeaders, hasItem('"' + selectedConcept + '"'));
     }
 
     @Test
