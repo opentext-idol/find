@@ -70,7 +70,7 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
         publicConfig.put(IdolMvcConstants.TRENDING.getName(), config.getTrending());
         publicConfig.put(IdolMvcConstants.VIEW_HIGHLIGHTING.getName(), config.getViewConfig().getHighlighting());
         publicConfig.put(IdolMvcConstants.DASHBOARDS.getName(), dashConfig.getConfig().getDashboards());
-        publicConfig.put(IdolMvcConstants.APPLICATIONS.getName(), enabledApps.isEmpty() ? null : enabledApps);
+        publicConfig.put(IdolMvcConstants.APPLICATIONS.getName(), enabledApps);
         publicConfig.put(MvcConstants.ANSWER_SERVER_ENABLED.value(), config.getAnswerServer().getEnabled());
 
         return publicConfig;
