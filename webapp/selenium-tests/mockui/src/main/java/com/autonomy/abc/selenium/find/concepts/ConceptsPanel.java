@@ -24,6 +24,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
  */
 public class ConceptsPanel {
     private static final String SELECTED_RELATED_CONCEPT_CLASS = "selected-related-concept";
+    private static final Pattern MULTIPLE_WHITESPACE = Pattern.compile("\\s+");
     final By POPOVER_LOCATOR = By.cssSelector(".selected-concept-container .popover");
 
     private final WebElement panel;
@@ -170,7 +172,7 @@ public class ConceptsPanel {
         }
 
         public boolean containsValue(final String value) {
-            return editBox.getValue().replaceAll("\\s+", "").contains(value);
+            return MULTIPLE_WHITESPACE.matcher(editBox.getValue()).replaceAll(" ").contains(value);
         }
 
         public void setValue(final String value) {

@@ -23,11 +23,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class TopicMapView {
     private static final By CONCEPT_LOCATOR = By.cssSelector(".entity-topic-map > svg > path[stroke-opacity='0.7']");
     private static final By CONCEPT_CLUSTER_LOCATOR = By.cssSelector(".entity-topic-map > svg > path[stroke-opacity='0.2']");
+    private static final Pattern MULTIPLE_WHITESPACE = Pattern.compile("\\s+");
     private final WebDriver driver;
     private final WebElement container;
 
@@ -194,7 +196,7 @@ public class TopicMapView {
         final List<String> childConcepts = new ArrayList<>();
         for(final ImmutablePair path : childConceptsOfChosenCluster) {
             final int indexOfText = concepts().size() - 1 - (int)path.getRight();
-            childConcepts.add(mapEntityTextElements().get(indexOfText).getText().replaceAll("\\s+", ""));
+            childConcepts.add(MULTIPLE_WHITESPACE.matcher(mapEntityTextElements().get(indexOfText).getText()).replaceAll(" "));
         }
 
         return childConcepts;
