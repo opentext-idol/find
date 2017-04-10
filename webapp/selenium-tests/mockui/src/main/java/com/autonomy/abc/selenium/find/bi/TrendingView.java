@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -61,10 +61,10 @@ public class TrendingView {
     }
 
     List<String> fieldsList() {
-         return fields()
-                 .stream()
-                 .map(WebElement::getText)
-                 .collect(Collectors.toList());
+        return fields()
+                .stream()
+                .map(WebElement::getText)
+                .collect(Collectors.toList());
     }
 
     public List<WebElement> chartValueGroups() {
@@ -86,7 +86,6 @@ public class TrendingView {
     public List<WebElement> legendValueGroups() {
         return findElements(cssSelector(".legend > g"));
     }
-
 
     private WebElement findElement(final By locator) {
         return container.findElement(locator);

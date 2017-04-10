@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -25,15 +25,15 @@ public class TrendingConfiguration extends SimpleComponent<TrendingConfiguration
 
     @Override
     public void basicValidate(final String configSection) throws ConfigException {
-        if (dateField == null || dateField.getNormalisedPath().isEmpty()) {
+        if(dateField == null || dateField.getNormalisedPath().isEmpty()) {
             throw new ConfigException(configSection, "dateField must be provided");
         }
 
-        if (numberOfBuckets <= 0) {
+        if(numberOfBuckets <= 0) {
             throw new ConfigException(configSection, "numberOfBuckets must be provided and greater than 0");
         }
 
-        if (numberOfValues <= 0) {
+        if(numberOfValues <= 0) {
             throw new ConfigException(configSection, "numberOfValues must be provided and greater than 0");
         }
     }
