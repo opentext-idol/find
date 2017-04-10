@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -18,6 +18,7 @@ define([
             const mouseValue = scaleType === 'date'
                 ? new Date(scale.invert(p[0])).getTime() / MILLISECONDS_TO_SECONDS
                 : scale.invert(p[0]);
+
             if(mouseValue <= max) {
                 const zoomScale = d3.event.scale;
                 const totalXDiff = (max - min) / zoomScale - (max - min);
@@ -31,7 +32,7 @@ define([
 
     function addZoomBehaviour(options) {
         const zoomBehaviour = d3.behavior.zoom()
-            .on('zoom', zoom(options.xScale, options.scaleType, options.minValue, options.maxValue, options.callback))
+            .on('zoom', zoom(options.xScale, options.scaleType, options.min, options.max, options.callback))
             .scaleExtent(options.zoomExtent || ZOOM_EXTENT);
 
         options.chart

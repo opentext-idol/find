@@ -1,8 +1,12 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'underscore',
-    'find/app/page/search/filters/parametric/numeric-widget-selection-rect',
     'd3'
-], function(_, SelectionRect, d3) {
+], function(_, d3) {
     'use strict';
 
     const MILLIS_TO_SECONDS = 1000;
@@ -15,35 +19,31 @@ define([
             startMin = min;
             startMax = max;
             d3.event.sourceEvent.stopPropagation();
-            if (scaleType === 'date') {
-                dragStartX = Math.floor(new Date(scale.invert(d3.event.sourceEvent.x)).getTime()/MILLIS_TO_SECONDS);
-            } else {
-                dragStartX = scale.invert(d3.mouse(this)[0]);
-            }
+
+            dragStartX = scaleType === 'date'
+                ? Math.floor(new Date(scale.invert(d3.event.sourceEvent.x)).getTime() / MILLIS_TO_SECONDS)
+                : scale.invert(d3.mouse(this)[0]);
+
         }
     }
 
     function dragMove(scale, scaleType, dragMoveCallback) {
         return function() {
-            let mouseValue;
-            if (scaleType === 'date') {
-                mouseValue = Math.floor(new Date(scale.invert(d3.event.sourceEvent.x)).getTime()/MILLIS_TO_SECONDS);
-            } else {
-                mouseValue = scale.invert(d3.mouse(this)[0]);
-            }
-            const dragXDifference =  dragStartX - mouseValue;
+            const mouseValue = scaleType === 'date'
+                ? Math.floor(new Date(scale.invert(d3.event.sourceEvent.x)).getTime() / MILLIS_TO_SECONDS)
+                : scale.invert(d3.mouse(this)[0]);
+
+            const dragXDifference = dragStartX - mouseValue;
             dragMoveCallback(startMin + dragXDifference, startMax + dragXDifference);
         }
     }
 
     function dragEnd(scale, scaleType, dragEndCallback) {
         return function() {
-            let mouseValue;
-            if (scaleType === 'date') {
-                mouseValue = Math.floor(new Date(scale.invert(d3.event.sourceEvent.x)).getTime()/MILLIS_TO_SECONDS);
-            } else {
-                mouseValue = scale.invert(d3.mouse(this)[0]);
-            }
+            const mouseValue = scaleType === 'date'
+                ? Math.floor(new Date(scale.invert(d3.event.sourceEvent.x)).getTime() / MILLIS_TO_SECONDS)
+                : scale.invert(d3.mouse(this)[0]);
+
             const dragXDifference = dragStartX - mouseValue;
             dragEndCallback(startMin + dragXDifference, startMax + dragXDifference);
         }

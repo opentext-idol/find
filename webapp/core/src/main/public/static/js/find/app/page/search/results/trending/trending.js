@@ -463,8 +463,8 @@ define([
                 chart: this.chart,
                 xScale: scales.xScale,
                 scaleType: 'date',
-                minValue: minDate.getTime() / MILLISECONDS_TO_SECONDS,
-                maxValue: maxDate.getTime() / MILLISECONDS_TO_SECONDS
+                min: minDate.getTime() / MILLISECONDS_TO_SECONDS,
+                max: maxDate.getTime() / MILLISECONDS_TO_SECONDS
             };
 
             widgetZoom.addZoomBehaviour(_.extend(behaviourOptions, {
