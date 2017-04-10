@@ -62,7 +62,6 @@
 @filterDisplayLabelWidth: 120px;
 
 /*------Height variables------*/
-@lgHeightScreenTopicMapHeight: 750px;
 @locationTabMaxHeight: 750px;
 @locationTabMinHeight: 400px;
 @sunburstHeight: 600px;
@@ -260,10 +259,6 @@ body {
 
 .full-width {
   width: @100percent;
-}
-
-.full-height {
-  height: @100percent;
 }
 
 .full-height-viewport {
@@ -1172,6 +1167,10 @@ audio.preview-media-player {
 .entity-topic-map {
   width: @100percent;
   height: @100percent;
+}
+
+.entity-topic-map.fixed-height {
+  height: calc(100vh - 265px);
 }
 
 @hpeThumbBackground: @hpegreen;
@@ -2621,23 +2620,5 @@ h4.similar-dates-message {
   .find-input {
     height: 25px;
     font-size: @fontSizeExtraLarge;
-  }
-}
-
-@media @smHeightScreen {
-  .entity-topic-map.fixed-height {
-    height: @custom4;
-  }
-}
-
-@media @mHeightScreen {
-  .entity-topic-map.fixed-height {
-    height: 500px;
-  }
-}
-
-@media @lgHeightScreen {
-  .entity-topic-map.fixed-height {
-    height: @lgHeightScreenTopicMapHeight;
   }
 }
