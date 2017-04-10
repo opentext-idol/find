@@ -108,7 +108,8 @@ public class TopicMapView {
 
     //TODO: In IE this does not always reveal the lower layer
     private void clickConceptClusters() {
-        conceptClusters().stream().forEach(this::offCentreClick);
+        //TODO: this won't work for any topic map with medium or small sized polygons (or long topic titles)
+        conceptClusters().forEach(this::offCentreClick);
     }
 
     public List<String> conceptClusterNames() {
