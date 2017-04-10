@@ -15,11 +15,11 @@ First, we use Git to clone Find from GitHub.  From your command line (hint: Git 
 
 `git clone https://github.com/hpe-idol/find.git`
 
-By default, this will create a folder called `find` with the `master` branch checked out.
+By default, this will create a folder called `find` with the `master` branch checked out. Inside this folder will be a webapp directory containing the Maven project.
 
-Change your current directory to be the new `find` folder:
+Change your current directory to be the new `webapp` folder:
 
-`cd find`
+`cd find/webapp`
 
 Store the Git Commit Hash
 -------------------------
@@ -42,7 +42,9 @@ Build the Application
 
 Run the following command:
 
-    mvn package -Dapplication.buildNumber=$GIT_COMMIT
+    mvn package -pl <module> -am -Dapplication.buildNumber=$GIT_COMMIT
+
+where <module> is either "idol" or "hod" depending on the version of Find you're interested in.
 
 (`$GIT_COMMIT` assumes that you followed the steps in the "Store the Git Commit Hash" section and chose to call your variable `GIT_COMMIT`)
 
