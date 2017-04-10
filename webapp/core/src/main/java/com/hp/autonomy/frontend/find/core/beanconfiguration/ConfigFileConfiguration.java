@@ -47,8 +47,7 @@ public class ConfigFileConfiguration {
                 "productTypeRegex",
                 "indexErrorMessage",
                 "plaintextPassword",
-                "currentPassword",
-                "fieldsInfo"
+                "currentPassword"
         );
 
         final SimpleBeanPropertyFilter.SerializeExceptFilter filter = new SimpleBeanPropertyFilter.SerializeExceptFilter(set);
