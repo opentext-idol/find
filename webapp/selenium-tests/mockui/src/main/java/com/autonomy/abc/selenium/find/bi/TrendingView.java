@@ -7,6 +7,7 @@ package com.autonomy.abc.selenium.find.bi;
 
 import com.autonomy.abc.selenium.find.Container;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -14,11 +15,17 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.openqa.selenium.By.cssSelector;
 
 public class TrendingView {
+    private static final int TRENDING_VIEW_LOAD_TIMEOUT = 30;
+    private static final int TRENDING_VIEW_FIELD_DROPDOWN_TIMEOUT = 30;
+    private static final Pattern FIELD_SELECTOR_TEXT = Pattern.compile("^.* \\((?<count>\\d+)\\)");
+
     private final WebDriver driver;
     private final WebElement container;
 
@@ -36,12 +43,12 @@ public class TrendingView {
     }
 
     public void waitForChartToLoad() {
-        new WebDriverWait(driver, 30).withMessage("Trending never stopped loading")
+        new WebDriverWait(driver, TRENDING_VIEW_LOAD_TIMEOUT).withMessage("Trending never stopped loading")
                 .until(ExpectedConditions.presenceOfElementLocated(cssSelector(".trending-loading.hide")));
     }
 
     private void waitForDropdownToOpen() {
-        new WebDriverWait(driver, 30).withMessage("Field selector never opened")
+        new WebDriverWait(driver, TRENDING_VIEW_FIELD_DROPDOWN_TIMEOUT).withMessage("Field selector never opened")
                 .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(cssSelector(".active-result")));
     }
 
@@ -53,7 +60,7 @@ public class TrendingView {
         return findElement(cssSelector(".chosen-single span"));
     }
 
-    public List<WebElement> fields() {
+    List<WebElement> fields() {
         final WebElement dropdown = findElement(cssSelector(".chosen-single"));
         dropdown.click();
         waitForDropdownToOpen();
@@ -85,6 +92,13 @@ public class TrendingView {
 
     public List<WebElement> legendValueGroups() {
         return findElements(cssSelector(".legend > g"));
+    }
+
+    int getSelectedFieldCount(final WebElement fieldElement) {
+        final String selectorText = fieldElement.getText();
+        final Matcher matcher = FIELD_SELECTOR_TEXT.matcher(selectorText);
+
+        return matcher.find() ? NumberUtils.toInt(matcher.group("count")) : 0;
     }
 
     private WebElement findElement(final By locator) {

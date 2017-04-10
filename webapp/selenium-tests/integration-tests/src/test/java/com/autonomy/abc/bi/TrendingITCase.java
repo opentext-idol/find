@@ -48,8 +48,10 @@ public class TrendingITCase extends IdolFindTestBase {
         findService = getApplication().findService();
         trendingService = new TrendingService(getApplication());
 
+        findPage.waitForParametricValuesToLoad();
         trendingView = findPage.goToTrending();
         trendingView.waitForChartToLoad();
+        trendingService.selectNonZeroField(trendingView);
     }
 
     @Test
