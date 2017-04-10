@@ -297,6 +297,13 @@ dt {
   position: absolute;
 }
 
+.crisp-edges {
+  image-rendering: -moz-crisp-edges;         /* Firefox */
+  image-rendering:   -o-crisp-edges;         /* Opera */
+  image-rendering: -webkit-optimize-contrast;/* Webkit */
+  image-rendering: crisp-edges;
+}
+
 .flex {
   display: flex;
 }
@@ -2333,6 +2340,12 @@ h4.similar-dates-message {
       }
     }
 
+    &.map {
+      img{
+        .crisp-edges;
+      }
+    }
+
     .results-list {
       display: flex;
       &.results-list-row {
@@ -2357,6 +2370,8 @@ h4.similar-dates-message {
     }
 
     div.static-image {
+      .crisp-edges;
+
       background: no-repeat center;
       height: 100%;
       background-size: contain;
