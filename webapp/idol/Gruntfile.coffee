@@ -105,6 +105,11 @@ module.exports = (grunt) ->
         ]
         spawn: false
         tasks: ['sync:devResources', 'less:build']
+      fieldtext:
+        files: [
+          '../core/src/main/public/static/bower_components/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
+        ],
+        tasks: ['peg:fieldtext']
     sync:
       devResources:
         files: [
@@ -120,6 +125,13 @@ module.exports = (grunt) ->
           }
         ]
         verbose: true
+    peg:
+      fieldtext:
+        src: '../core/src/main/public/static/bower_components/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
+        dest: 'target/classes/static/js/pegjs/fieldtext/parser.js'
+        options:
+          format: 'amd'
+          trackLineAndColumn: true
 
   grunt.loadNpmTasks 'grunt-babel'
   grunt.loadNpmTasks 'grunt-contrib-clean'
@@ -128,6 +140,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-sync'
+  grunt.loadNpmTasks 'grunt-peg'
 
   grunt.registerTask 'default', ['test']
   grunt.registerTask 'test', ['babel:transform', 'jasmine:test']

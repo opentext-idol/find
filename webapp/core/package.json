@@ -14,6 +14,7 @@
     "grunt-contrib-jasmine": "^1.0.0",
     "grunt-contrib-less": "^1.4.0",
     "grunt-contrib-watch": "^0.6.1",
+    "grunt-peg": "github:jdesrosiers/grunt-peg#11252e0",
     "grunt-template-jasmine-requirejs": "^0.2.3"
   }
 }

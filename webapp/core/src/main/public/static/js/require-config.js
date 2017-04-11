@@ -16,9 +16,9 @@ require.config({
         'datatables.net-bs': '../bower_components/datatables.net-bs/js/dataTables.bootstrap',
         'datatables.net-fixedColumns': '../bower_components/datatables.net-fixedcolumns/js/dataTables.fixedColumns',
         'd3': '../bower_components/d3/d3',
+        'fieldtext/js/parser': 'pegjs/fieldtext/parser',
         'html2canvas': '../bower_components/html2canvas/build/html2canvas',
         i18n: '../bower_components/requirejs-i18n/i18n',
-        'peg': '../bower_components/pegjs/peg-0.10.0',
         'fieldtext': '../bower_components/hp-autonomy-fieldtext-js/src',
         'parametric-refinement': '../bower_components/hp-autonomy-js-parametric-refinement/src',
         iCheck: '../bower_components/iCheck/icheck',
@@ -58,9 +58,6 @@ require.config({
             exports: 'html2canvas'
         },
         iCheck: ['jquery'],
-        peg: {
-            exports: 'PEG'
-        },
         underscore: {
             exports: '_'
         },

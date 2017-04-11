@@ -99,6 +99,20 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>pegjs</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${project.basedir}/node_modules/.bin/grunt${npm.binExtension}</executable>
+                            <workingDirectory>${basedir}</workingDirectory>
+                            <arguments>
+                                <argument>peg</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>jasmine</id>
                         <phase>test</phase>
                         <goals>
