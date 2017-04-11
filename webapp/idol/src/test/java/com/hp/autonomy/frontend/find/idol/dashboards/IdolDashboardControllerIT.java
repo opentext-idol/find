@@ -101,7 +101,7 @@ public class IdolDashboardControllerIT extends AbstractFindIT {
         final Path toPath = Paths.get(to);
         try {
             Files.copy(fromPath, toPath, StandardCopyOption.REPLACE_EXISTING);
-        } catch(final IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException("Could not replace current dashboard config file", e);
         }
     }
@@ -111,7 +111,7 @@ public class IdolDashboardControllerIT extends AbstractFindIT {
         final Path toPath = Paths.get(to);
         try {
             Files.move(fromPath, toPath, StandardCopyOption.REPLACE_EXISTING);
-        } catch(final IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException("Could not replace current dashboard config file", e);
         }
     }

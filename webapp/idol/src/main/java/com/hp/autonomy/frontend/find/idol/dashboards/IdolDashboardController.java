@@ -47,10 +47,11 @@ public class IdolDashboardController {
     // Reinitialise dashboards config and attempt to redirect user to where they were according to the
     // request's "referer" header, or defaults to application root.
     // Detects case in which user renamed or deleted current dashboard, and redirects to app root.
+    @SuppressWarnings("ProhibitedExceptionDeclared")
     @RequestMapping(method = RequestMethod.GET, value = DASHBOARD_CONFIG_RELOAD_PATH)
     public void reloadConfig(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         log.info(Markers.AUDIT, "Reloading dashboards configuration file {}",
-                 dashConfig.getConfigResponse().getConfigPath());
+                dashConfig.getConfigResponse().getConfigPath());
 
         // Pull in config changes
         dashConfig.init();
@@ -73,7 +74,7 @@ public class IdolDashboardController {
     // Endpoint for fullscreen dashboards to poll when they want to extend the session [FIND-983].
     @RequestMapping(method = RequestMethod.POST, value = DASHBOARD_KEEP_ALIVE)
     @ResponseBody
-    public int keepAlive(final HttpServletRequest request, HttpSession session) {
+    public int keepAlive(final HttpServletRequest request, final HttpSession session) {
         final String logMessage = Optional
                 // "referer" will be null if the config was reloaded by typing the endpoint URL
                 // into the browser, rather than by clicking the reload button
@@ -89,12 +90,12 @@ public class IdolDashboardController {
 
     private Optional<String> getDecodedDashboardNameFromUrl(final String url) {
         final String[] split = url.split("/public/dashboards/");
-        if(split.length == 1) {
+        if (split.length == 1) {
             return Optional.empty();
         } else {
             try {
                 return Optional.of(URLDecoder.decode(split[split.length - 1], StandardCharsets.UTF_8.name()));
-            } catch(UnsupportedEncodingException e) {
+            } catch (UnsupportedEncodingException e) {
                 throw new IllegalStateException("UTF-8 should be supported on all JVMs", e);
             }
         }
