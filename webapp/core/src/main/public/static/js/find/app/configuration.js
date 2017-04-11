@@ -24,26 +24,29 @@ define([
 
             if(configString) {
                 config = JSON.parse(configString);
+
+                if(!config.hasBiRole) {
+                    config.hasBiRole = _.contains(config.roles, 'ROLE_BI');
+                }
+
+                const uiCustomization = config.uiCustomization;
+
+                if(uiCustomization) {
+                    config.directAccessLink = parseBooleanOption(config, uiCustomization, 'directAccessLink');
+                    config.enableDashboards = parseBooleanOption(config, uiCustomization, 'enableDashboards') && !_.isEmpty(config.dashboards);
+                    config.enableMetaFilter = parseBooleanOption(config, uiCustomization, 'enableMetaFilter');
+                    config.enableRelatedConcepts = parseBooleanOption(config, uiCustomization, 'enableRelatedConcepts');
+                    config.enableSideBar = parseBooleanOption(config, uiCustomization, 'enableSideBar') && (config.enableDashboards || !_.isEmpty(config.applications));
+                    config.enableTypeAhead = parseBooleanOption(config, uiCustomization, 'enableTypeAhead');
+                    config.errorCallSupportString = uiCustomization.errorCallSupportString;
+
+                    config.resultViewOrder = config.hasBiRole &&
+                        uiCustomization.options.resultViewOrder.bi ||
+                        uiCustomization.options.resultViewOrder.user;
+                }
             }
-
-            if(!config.hasBiRole) {
-                config.hasBiRole = _.contains(config.roles, 'ROLE_BI');
-            }
-
-            const uiCustomization = config.uiCustomization;
-
-            if(uiCustomization) {
-                config.directAccessLink = parseBooleanOption(config, uiCustomization, 'directAccessLink');
-                config.enableDashboards = parseBooleanOption(config, uiCustomization, 'enableDashboards') && !_.isEmpty(config.dashboards);
-                config.enableMetaFilter = parseBooleanOption(config, uiCustomization, 'enableMetaFilter');
-                config.enableRelatedConcepts = parseBooleanOption(config, uiCustomization, 'enableRelatedConcepts');
-                config.enableSideBar = parseBooleanOption(config, uiCustomization, 'enableSideBar') && (config.enableDashboards || !_.isEmpty(config.applications));
-                config.enableTypeAhead = parseBooleanOption(config, uiCustomization, 'enableTypeAhead');
-                config.errorCallSupportString = uiCustomization.errorCallSupportString;
-
-                config.resultViewOrder = config.hasBiRole &&
-                    uiCustomization.options.resultViewOrder.bi ||
-                    uiCustomization.options.resultViewOrder.user;
+            else {
+                config = {};
             }
         }
 
