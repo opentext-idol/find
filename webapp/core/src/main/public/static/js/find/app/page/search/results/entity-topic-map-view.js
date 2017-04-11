@@ -150,7 +150,7 @@ define([
                     .attr('value', maxResults)
                     .tooltip({
                         title: maxResults,
-                        placement: 'right'
+                        placement: 'top'
                     });
             }
 
