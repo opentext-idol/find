@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.idol.dashboards;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.SimpleWidget;
@@ -24,6 +25,7 @@ import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
 import com.hp.autonomy.searchcomponents.idol.beanconfiguration.HavenSearchIdolConfiguration;
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import org.apache.commons.io.IOUtils;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -63,6 +65,63 @@ public class DashboardTest extends ConfigurationComponentTest<Dashboard> {
         json = new JacksonTester<>(getClass(), ResolvableType.forClass(getType()), objectMapper);
     }
 
+    @Test(expected = ConfigException.class)
+    public void widgetWithoutCoordinates() throws ConfigException {
+        Dashboard.builder()
+                .dashboardName("My First Dashboard")
+                .enabled(true)
+                .width(5)
+                .height(5)
+                .widget(SimpleWidget.builder()
+                        .name("Sample Widget")
+                        .build())
+                .build()
+                .basicValidate(null);
+    }
+
+    @Test(expected = ConfigException.class)
+    public void widgetOutsideBounds() throws ConfigException {
+        Dashboard.builder()
+                .dashboardName("My First Dashboard")
+                .enabled(true)
+                .width(5)
+                .height(5)
+                .widget(SimpleWidget.builder()
+                        .name("Sample Widget")
+                        .x(1)
+                        .y(1)
+                        .width(4)
+                        .height(5)
+                        .build())
+                .build()
+                .basicValidate(null);
+    }
+
+    @Test(expected = ConfigException.class)
+    public void overlappingWidgets() throws ConfigException {
+        Dashboard.builder()
+                .dashboardName("My First Dashboard")
+                .enabled(true)
+                .width(5)
+                .height(5)
+                .widget(SimpleWidget.builder()
+                        .name("Sample Widget")
+                        .x(0)
+                        .y(0)
+                        .width(2)
+                        .height(2)
+                        .build())
+                .widget(SimpleWidget.builder()
+                        .name("Sample Widget 2")
+                        .x(1)
+                        .y(1)
+                        .width(2)
+                        .height(2)
+                        .build())
+                .build()
+                .basicValidate(null);
+    }
+
     @Override
     protected Class<Dashboard> getType() {
         return Dashboard.class;
@@ -77,6 +136,10 @@ public class DashboardTest extends ConfigurationComponentTest<Dashboard> {
                 .height(5)
                 .widget(SimpleWidget.builder()
                         .name("Sample Widget")
+                        .x(0)
+                        .y(0)
+                        .width(1)
+                        .height(1)
                         .build())
                 .build();
     }
@@ -132,7 +195,7 @@ public class DashboardTest extends ConfigurationComponentTest<Dashboard> {
                                 .widgetSettings(SunburstWidgetSettings.builder()
                                         .firstField(tagNameFactory.buildTagName("CONTENT-TYPE"))
                                         .secondField(tagNameFactory.buildTagName("AUTHOR"))
-                                        .widgetSetting("maxLegendEntries", 7)
+                                        .maxLegendEntries(7)
                                         .build())
                                 .build())
                         .build()
@@ -149,6 +212,10 @@ public class DashboardTest extends ConfigurationComponentTest<Dashboard> {
                         .height(5)
                         .widget(SimpleWidget.builder()
                                 .name("Sample Widget")
+                                .x(0)
+                                .y(0)
+                                .width(1)
+                                .height(1)
                                 .build())
                         .build()
         );
