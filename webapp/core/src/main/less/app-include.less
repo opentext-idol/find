@@ -106,6 +106,22 @@
 @findInputZIndex: 1020;
 @tooltipZIndex: 10000;
 
+/*------Speed slider variables------*/
+@hpeThumbBackground: @hpegreen;
+@hpeThumbBorder: 1px solid shade(@hpeThumbBackground, 5%);
+@hpeThumbBackgroundFocus: tint(@hpeThumbBackground, 1%);
+@hpeThumbBorderFocus: 1px solid tint(@hpeThumbBackground, 4%);
+@hpeTrackBackground: tint(@hpegreen, 80%);
+@hpeTrackBorder: 1px solid @hpegreen;
+@hpeTrackBackgroundFocus: tint(@hpegreen, 90%);
+@hpeThumbShadow: none;
+@hpeTrackShadow: none;
+@hpeThumbBorderRadius: 10px;
+@hpeTrackBorderRadius: 4px;
+@hpeThumbSize: 20px;
+@hpeTrackWidth: 210px;
+@hpeTrackHeight: 10px;
+
 /*------Selectors and declarations-------*/
 html,
 body {
@@ -1172,21 +1188,6 @@ audio.preview-media-player {
 .entity-topic-map.fixed-height {
   height: calc(100vh - 265px);
 }
-
-@hpeThumbBackground: @hpegreen;
-@hpeThumbBorder: 1px solid shade(@hpeThumbBackground, 5%);
-@hpeThumbBackgroundFocus: tint(@hpeThumbBackground, 1%);
-@hpeThumbBorderFocus: 1px solid tint(@hpeThumbBackground, 4%);
-@hpeTrackBackground: tint(@hpegreen, 80%);
-@hpeTrackBorder: 1px solid @hpegreen;
-@hpeTrackBackgroundFocus: tint(@hpegreen, 90%);
-@hpeThumbShadow: none;
-@hpeTrackShadow: none;
-@hpeThumbBorderRadius: 10px;
-@hpeTrackBorderRadius: 4px;
-@hpeThumbSize: 20px;
-@hpeTrackWidth: 210px;
-@hpeTrackHeight: 10px;
 
 input[type=range].speed-slider {
   -webkit-appearance: none;
