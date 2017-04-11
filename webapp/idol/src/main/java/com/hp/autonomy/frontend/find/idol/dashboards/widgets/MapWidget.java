@@ -13,10 +13,10 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonDeserialize(builder = MapWidget.MapWidgetBuilder.class)
-public class MapWidget extends Widget<MapWidget, MapWidgetSettings> {
+public class MapWidget extends DatasourceDependentWidgetBase<MapWidget, MapWidgetSettings> {
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public MapWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetDatasource<?, ?> datasource, final MapWidgetSettings widgetSettings) {
+    public MapWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetDatasource<?> datasource, final MapWidgetSettings widgetSettings) {
         super(name, type, x, y, width, height, datasource, widgetSettings);
     }
 

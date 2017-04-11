@@ -18,10 +18,10 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonDeserialize(builder = SunburstWidget.SunburstWidgetBuilder.class)
-public class SunburstWidget extends Widget<SunburstWidget, SunburstWidgetSettings> {
+public class SunburstWidget extends DatasourceDependentWidgetBase<SunburstWidget, SunburstWidgetSettings> {
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public SunburstWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetDatasource<?, ?> datasource, final SunburstWidgetSettings widgetSettings) {
+    public SunburstWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetDatasource<?> datasource, final SunburstWidgetSettings widgetSettings) {
         super(name, type, x, y, width, height, datasource, widgetSettings);
     }
 

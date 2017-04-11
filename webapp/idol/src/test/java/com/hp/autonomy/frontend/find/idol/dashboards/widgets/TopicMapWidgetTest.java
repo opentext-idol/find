@@ -5,32 +5,19 @@
 
 package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearch;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchConfig;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasourceMixins;
 import org.apache.commons.io.IOUtils;
-import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
 import org.springframework.boot.test.json.ObjectContent;
-import org.springframework.core.ResolvableType;
 
 import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class TopicMapWidgetTest extends ConfigurationComponentTest<TopicMapWidget> {
-    @Override
-    public void setUp() {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.addMixIn(WidgetDatasource.class, WidgetDatasourceMixins.class);
-        json = new JacksonTester<>(getClass(), ResolvableType.forClass(getType()), objectMapper);
-    }
-
+public class TopicMapWidgetTest extends DatasourceDependentWidgetTest<TopicMapWidget, TopicMapWidgetSettings> {
     @Override
     protected Class<TopicMapWidget> getType() {
         return TopicMapWidget.class;
@@ -128,5 +115,17 @@ public class TopicMapWidgetTest extends ConfigurationComponentTest<TopicMapWidge
     @Override
     protected void validateString(final String s) {
         assertThat(s, containsString("name"));
+    }
+
+    @Override
+    TopicMapWidget constructComponentWithoutDatasource() {
+        return TopicMapWidget.builder()
+                .name("Test Widget")
+                .type("TopicMapWidget")
+                .x(1)
+                .y(1)
+                .width(1)
+                .height(1)
+                .build();
     }
 }

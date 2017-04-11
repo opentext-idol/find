@@ -13,10 +13,10 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonDeserialize(builder = TopicMapWidget.TopicMapWidgetBuilder.class)
-public class TopicMapWidget extends Widget<TopicMapWidget, TopicMapWidgetSettings> {
+public class TopicMapWidget extends DatasourceDependentWidgetBase<TopicMapWidget, TopicMapWidgetSettings> {
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public TopicMapWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetDatasource<?, ?> datasource, final TopicMapWidgetSettings widgetSettings) {
+    public TopicMapWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetDatasource<?> datasource, final TopicMapWidgetSettings widgetSettings) {
         super(name, type, x, y, width, height, datasource, widgetSettings);
     }
 

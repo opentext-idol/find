@@ -7,7 +7,6 @@ package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearch;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchConfig;
@@ -40,7 +39,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @AutoConfigureJsonTesters(enabled = false)
 @SpringBootTest(classes = HavenSearchIdolConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @DirtiesContext
-public class SunburstWidgetTest extends ConfigurationComponentTest<SunburstWidget> {
+public class SunburstWidgetTest extends DatasourceDependentWidgetTest<SunburstWidget, SunburstWidgetSettings> {
     @Autowired
     private TagNameFactory tagNameFactory;
     @Autowired
@@ -78,7 +77,7 @@ public class SunburstWidgetTest extends ConfigurationComponentTest<SunburstWidge
                         .build())
                 .widgetSettings(SunburstWidgetSettings.builder()
                         .firstField(tagNameFactory.buildTagName("CONTENT_TYPE"))
-                        .widgetSetting("maxLegendEntries", 5)
+                        .maxLegendEntries(5)
                         .build())
                 .build();
     }
@@ -125,7 +124,8 @@ public class SunburstWidgetTest extends ConfigurationComponentTest<SunburstWidge
                         .widgetSettings(SunburstWidgetSettings.builder()
                                 .firstField(tagNameFactory.buildTagName("CONTENT-TYPE"))
                                 .secondField(tagNameFactory.buildTagName("AUTHOR"))
-                                .widgetSetting("maxLegendEntries", 7)
+                                .maxLegendEntries(7)
+                                .widgetSetting("testing", "testing")
                                 .build())
                         .build()
         );
@@ -151,7 +151,8 @@ public class SunburstWidgetTest extends ConfigurationComponentTest<SunburstWidge
                         .widgetSettings(SunburstWidgetSettings.builder()
                                 .firstField(tagNameFactory.buildTagName("CONTENT_TYPE"))
                                 .secondField(tagNameFactory.buildTagName("AUTHOR"))
-                                .widgetSetting("maxLegendEntries", 5)
+                                .maxLegendEntries(5)
+                                .widgetSetting("testing", "testing")
                                 .build())
                         .build()
         );
@@ -160,5 +161,21 @@ public class SunburstWidgetTest extends ConfigurationComponentTest<SunburstWidge
     @Override
     protected void validateString(final String s) {
         assertThat(s, containsString("name"));
+    }
+
+    @Override
+    SunburstWidget constructComponentWithoutDatasource() {
+        return SunburstWidget.builder()
+                .name("Test Widget")
+                .type("SunburstWidget")
+                .x(1)
+                .y(1)
+                .width(1)
+                .height(1)
+                .widgetSettings(SunburstWidgetSettings.builder()
+                        .firstField(tagNameFactory.buildTagName("CONTENT_TYPE"))
+                        .maxLegendEntries(5)
+                        .build())
+                .build();
     }
 }

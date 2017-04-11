@@ -6,7 +6,6 @@
 package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
 import com.hp.autonomy.frontend.configuration.SimpleComponent;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,7 +18,5 @@ public abstract class Widget<W extends Widget<W, WS>, WS extends WidgetSettings<
     protected final Integer y;
     protected final Integer width;
     protected final Integer height;
-    @SuppressWarnings("InstanceVariableOfConcreteClass")
-    protected final WidgetDatasource<?, ?> datasource;
     protected final WS widgetSettings;
 }

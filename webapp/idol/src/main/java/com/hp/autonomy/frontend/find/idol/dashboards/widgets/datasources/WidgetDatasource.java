@@ -5,13 +5,8 @@
 
 package com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources;
 
-import com.hp.autonomy.frontend.configuration.SimpleComponent;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+public interface WidgetDatasource<C extends WidgetDatasourceConfig<C>> {
+    String getSource();
 
-@Data
-@EqualsAndHashCode(callSuper = false)
-public abstract class WidgetDatasource<W extends WidgetDatasource<W, C>, C extends WidgetDatasourceConfig<C>> extends SimpleComponent<WidgetDatasource<W, C>> {
-    protected final String source;
-    protected final C config;
+    C getConfig();
 }

@@ -13,10 +13,10 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonDeserialize(builder = VideoWidget.VideoWidgetBuilder.class)
-public class VideoWidget extends Widget<VideoWidget, VideoWidgetSettings> {
+public class VideoWidget extends DatasourceDependentWidgetBase<VideoWidget, VideoWidgetSettings> {
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public VideoWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetDatasource<?, ?> datasource, final VideoWidgetSettings widgetSettings) {
+    public VideoWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetDatasource<?> datasource, final VideoWidgetSettings widgetSettings) {
         super(name, type, x, y, width, height, datasource, widgetSettings);
     }
 

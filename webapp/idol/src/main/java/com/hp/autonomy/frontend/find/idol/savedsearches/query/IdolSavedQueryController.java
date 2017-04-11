@@ -16,6 +16,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery.Builder;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
 import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.DatasourceDependentWidget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchDatasource;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
@@ -77,6 +78,8 @@ class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, St
     private Collection<Long> getValidIds() {
         return dashboardConfigService.getConfig().getDashboards().stream()
                 .flatMap(dashboard -> dashboard.getWidgets().stream()
+                        .filter(widget -> widget instanceof DatasourceDependentWidget)
+                        .map(widget -> (DatasourceDependentWidget) widget)
                         .filter(widget -> widget.getDatasource() instanceof SavedSearchDatasource)
                         .map(widget -> (SavedSearchDatasource)widget.getDatasource())
                         .filter(datasource -> datasource.getConfig().getType() == SavedSearchType.QUERY)

@@ -17,7 +17,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonDeserialize(builder = SavedSearch.SavedSearchBuilder.class)
-public class SavedSearch extends WidgetDatasource<SavedSearch, SavedSearchConfig> implements SavedSearchDatasource {
+public class SavedSearch extends WidgetDatasourceBase<SavedSearch, SavedSearchConfig> implements SavedSearchDatasource {
     @Builder
     public SavedSearch(final String source, final SavedSearchConfig config) {
         super(source, config);

@@ -13,10 +13,10 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonDeserialize(builder = ResultsListWidget.ResultsListWidgetBuilder.class)
-public class ResultsListWidget extends Widget<ResultsListWidget, ResultsListWidgetSettings> {
+public class ResultsListWidget extends DatasourceDependentWidgetBase<ResultsListWidget, ResultsListWidgetSettings> {
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public ResultsListWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetDatasource<?, ?> datasource, final ResultsListWidgetSettings widgetSettings) {
+    public ResultsListWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetDatasource<?> datasource, final ResultsListWidgetSettings widgetSettings) {
         super(name, type, x, y, width, height, datasource, widgetSettings);
     }
 

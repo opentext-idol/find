@@ -32,7 +32,7 @@ public class SavedSearchConfig extends SimpleComponent<SavedSearchConfig> implem
 
     @Override
     public void basicValidate(final String section) throws ConfigException {
-        if(id == null || type == null) {
+        if (id == null || type == null) {
             throw new ConfigException(section, "Dashboard SavedSearch datasource config must contain an id and a type");
         }
 

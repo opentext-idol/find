@@ -8,7 +8,6 @@ import com.hp.autonomy.frontend.configuration.SimpleComponent;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.util.Collections;
 import java.util.HashMap;

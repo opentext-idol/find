@@ -7,9 +7,6 @@ package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
-import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearch;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchConfig;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.springframework.boot.test.json.JsonContent;
