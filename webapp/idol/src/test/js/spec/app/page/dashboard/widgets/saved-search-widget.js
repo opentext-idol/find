@@ -28,11 +28,6 @@ define([
                 this.widget.update(this.tracker);
             });
 
-            it('displays a loading spinner', function() {
-                expect(this.widget.$('.widget-loading')).not.toHaveClass('hide');
-                expect(this.widget.$('.widget-content')).toHaveClass('hide');
-            });
-
             it('fetches the saved search', function() {
                 expect(this.widget.savedSearchModel.fetch.calls.count()).toEqual(savedSearchCallCount + 1);
             });
@@ -48,11 +43,6 @@ define([
             describe('saved search fetch succeeds -> ', function() {
                 beforeEach(function() {
                     resolveLatest(this.savedSearchPromises);
-                });
-
-                it('still displays a loading spinner', function() {
-                    expect(this.widget.$('.widget-loading')).not.toHaveClass('hide');
-                    expect(this.widget.$('.widget-content')).toHaveClass('hide');
                 });
 
                 it('calls postInitialize()', function() {
@@ -108,6 +98,7 @@ define([
                         });
 
                         it('no longer displays a loading spinner', function() {
+                            expect(this.widget.$('.widget-loading')).toHaveClass('hide');
                             expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
                         });
 
@@ -182,6 +173,7 @@ define([
                 });
 
                 it('no longer displays a loading spinner', function() {
+                    expect(this.widget.$('.widget-loading')).toHaveClass('hide');
                     expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
                 });
 
@@ -289,6 +281,7 @@ define([
                     });
 
                     it('no longer displays a loading spinner', function() {
+                        expect(this.widget.$('.widget-loading')).toHaveClass('hide');
                         expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
                     });
 
@@ -324,6 +317,7 @@ define([
                 });
 
                 it('no longer displays a loading spinner', function() {
+                    expect(this.widget.$('.widget-loading')).toHaveClass('hide');
                     expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
                 });
 
@@ -417,6 +411,11 @@ define([
                 this.widget.update(this.tracker);
                 expect(this.widget.$content).toBeDefined();
                 expect(this.widget.$loading).not.toHaveClass('hide');
+            });
+
+            it('displays a loading spinner', function () {
+                expect(this.widget.$('.widget-loading')).not.toHaveClass('hide');
+                expect(this.widget.$('.widget-content')).toHaveClass('hide');
             });
 
             // No fetches have yet been carried out -- parameters are 0.

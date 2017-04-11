@@ -101,6 +101,7 @@ define([
                 }.bind(this))
                 .fail(function(error) {
                     this.queryModel = null;
+                    this.initialised();
                     toggleErrorMessage.call(this, true, getResponseMessage(error));
                 }.bind(this))
                 .always(done);
