@@ -4,8 +4,28 @@
  */
 
 define([
+    'jquery',
     'js-testing/backbone-mock-factory'
-], function(backboneMockFactory) {
+], function($, backboneMockFactory) {
 
-    return backboneMockFactory.getCollection(['fetch']);
+    const collectionFetchSpy = jasmine.createSpy('fetch');
+    const Collection = backboneMockFactory.getCollection([], {fetch: collectionFetchSpy});
+    Collection.fetchPromises = [];
+
+    collectionFetchSpy.and.callFake(function() {
+        const promise = $.Deferred();
+
+        Collection.fetchPromises.push(promise);
+        return promise;
+    });
+
+    const originalReset = Collection.reset;
+
+    Collection.reset = function() {
+        originalReset();
+        collectionFetchSpy.calls.reset();
+        Collection.fetchPromises = [];
+    };
+
+    return Collection;
 });
