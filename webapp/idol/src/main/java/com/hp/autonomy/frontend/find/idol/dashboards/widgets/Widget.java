@@ -23,8 +23,8 @@ public abstract class Widget<W extends Widget<W, WS>, WS extends WidgetSettings<
 
     @Override
     public void basicValidate(final String section) throws ConfigException {
-        if (x == null || y == null || width == null || height == null) {
-            throw new ConfigException(type, "widget with name " + name + " and type " + type + " does not have valid coordinates and dimensions");
+        if (x == null || x < 0 || y == null || y < 0 || width == null || width <= 0 || height == null || height <= 0) {
+            throw new ConfigException(type, "Widget with name " + name + " and type " + type + " does not have valid coordinates and dimensions");
         }
 
         super.basicValidate(section);

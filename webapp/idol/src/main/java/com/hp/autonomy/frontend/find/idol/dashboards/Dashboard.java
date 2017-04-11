@@ -40,6 +40,14 @@ public class Dashboard extends SimpleComponent<Dashboard> implements OptionalCon
     public void basicValidate(final String section) throws ConfigException {
         super.basicValidate(section);
 
+        if (width == null || width <= 0 || height == null || height <= 0) {
+            throw new ConfigException("Dashboard Config", "Dashboard with name " + dashboardName + " does not have valid dimensions");
+        }
+
+        validateWidgets(section);
+    }
+
+    private void validateWidgets(final String section) throws ConfigException {
         final Map<Coordinate, Widget<?, ?>> gridCoordinates = new HashMap<>(width * height);
         for (final Widget<?, ?> widget : widgets) {
             widget.basicValidate(section);

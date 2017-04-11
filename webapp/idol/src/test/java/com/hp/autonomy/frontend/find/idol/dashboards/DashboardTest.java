@@ -66,6 +66,22 @@ public class DashboardTest extends ConfigurationComponentTest<Dashboard> {
     }
 
     @Test(expected = ConfigException.class)
+    public void dashboardWithoutCoordinates() throws ConfigException {
+        Dashboard.builder()
+                .dashboardName("My First Dashboard")
+                .enabled(true)
+                .widget(SimpleWidget.builder()
+                        .name("Sample Widget")
+                        .x(1)
+                        .y(1)
+                        .width(1)
+                        .height(1)
+                        .build())
+                .build()
+                .basicValidate(null);
+    }
+
+    @Test(expected = ConfigException.class)
     public void widgetWithoutCoordinates() throws ConfigException {
         Dashboard.builder()
                 .dashboardName("My First Dashboard")
