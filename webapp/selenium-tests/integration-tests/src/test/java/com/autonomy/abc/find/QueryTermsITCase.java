@@ -28,12 +28,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.openqa.selenium.WebDriverException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
@@ -184,8 +179,7 @@ public class QueryTermsITCase extends FindTestBase {
     }
 
     @Test
-    @ResolvedBug("FIND-151")
-    @ActiveBug("FIND-1122")
+    @ResolvedBug({"FIND-151", "FIND-1122"})
     @Role(UserRole.BIFHI)
     public void testAllowSearchOfStringsThatContainBooleansWithinThemNoAutoCorrect() {
         ensureOnCorrectView();
