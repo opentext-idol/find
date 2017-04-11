@@ -10,7 +10,8 @@ require.config({
         'jasmine-jquery': '../bower_components/jasmine-jquery/lib/jasmine-jquery',
         'js-testing': '../bower_components/hp-autonomy-js-testing-utils/src/js',
         'mock': '../../../../test/js/mock',
-        'resources': '../../../../test/js/resources'
+        'resources': '../../../../test/js/resources',
+        'fieldtext/js/parser': '../../../../../target/classes/static/js/pegjs/fieldtext/parser'
     },
     shim: {
         'jasmine-jquery': ['jquery']

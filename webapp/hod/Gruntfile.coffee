@@ -138,6 +138,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-sync'
+  grunt.loadNpmTasks 'grunt-peg'
 
   grunt.registerTask 'default', ['test']
   grunt.registerTask 'test', ['babel:transform', 'jasmine:test']
