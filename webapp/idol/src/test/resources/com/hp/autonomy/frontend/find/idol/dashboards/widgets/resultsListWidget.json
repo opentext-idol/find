@@ -1,0 +1,21 @@
+{
+  "name": "List",
+  "type": "ResultsListWidget",
+  "x": 1,
+  "y": 1,
+  "width": 2,
+  "height": 2,
+  "datasource": {
+    "source": "SavedSearch",
+    "config": {
+      "id": 97,
+      "type": "QUERY"
+    }
+  },
+  "widgetSettings": {
+    "maxResults": 6,
+    "sort": "random",
+    "columnLayout": true,
+    "testing": "testing"
+  }
+}

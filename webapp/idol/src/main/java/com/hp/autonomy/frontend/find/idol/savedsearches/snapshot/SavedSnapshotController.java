@@ -15,6 +15,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot.Builder;
 import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.DatasourceDependentWidget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchDatasource;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -66,11 +68,13 @@ class SavedSnapshotController {
         this.dashboardConfigService = dashboardConfigService;
     }
 
-    private Set<Long> getValidIds() {
+    private Collection<Long> getValidIds() {
         return dashboardConfigService.getConfig().getDashboards().stream()
                 .flatMap(dashboard -> dashboard.getWidgets().stream()
+                        .filter(widget -> widget instanceof DatasourceDependentWidget)
+                        .map(widget -> (DatasourceDependentWidget) widget)
                         .filter(widget -> widget.getDatasource() instanceof SavedSearchDatasource)
-                        .map(widget -> (SavedSearchDatasource)widget.getDatasource())
+                        .map(widget -> (SavedSearchDatasource) widget.getDatasource())
                         .filter(datasource -> datasource.getConfig().getType() == SavedSearchType.SNAPSHOT)
                         .map(datasource -> datasource.getConfig().getId()))
                 .collect(Collectors.toSet());

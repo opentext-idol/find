@@ -30,10 +30,11 @@ public class SunburstWidgetSettings extends SimpleComponent<SunburstWidgetSettin
     private final Map<String, Object> widgetSettings;
     private final TagName firstField;
     private final TagName secondField;
+    private final Integer maxLegendEntries;
 
     @Override
     public void basicValidate(final String section) throws ConfigException {
-        if(firstField == null) {
+        if (firstField == null) {
             throw new ConfigException(SECTION, "Sunburst dashboard config must specify a first field");
         }
 
@@ -52,6 +53,7 @@ public class SunburstWidgetSettings extends SimpleComponent<SunburstWidgetSettin
         private Map<String, Object> widgetSettings = new HashMap<>();
         private TagName firstField;
         private TagName secondField;
+        private Integer maxLegendEntries;
 
         @SuppressWarnings("unused")
         @JsonAnySetter

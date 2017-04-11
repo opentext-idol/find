@@ -12,18 +12,15 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@JsonDeserialize(builder = SimpleWidget.SimpleWidgetBuilder.class)
-public class SimpleWidget extends Widget<SimpleWidget, SimpleWidgetSettings> implements DatasourceDependentWidget {
-    private final WidgetDatasource<?> datasource;
-
+@JsonDeserialize(builder = TopicMapWidget.TopicMapWidgetBuilder.class)
+public class TopicMapWidget extends DatasourceDependentWidgetBase<TopicMapWidget, TopicMapWidgetSettings> {
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public SimpleWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetDatasource<?> datasource, final SimpleWidgetSettings widgetSettings) {
-        super(name, type, x, y, width, height, widgetSettings);
-        this.datasource = datasource;
+    public TopicMapWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetDatasource<?> datasource, final TopicMapWidgetSettings widgetSettings) {
+        super(name, type, x, y, width, height, datasource, widgetSettings);
     }
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static class SimpleWidgetBuilder {
+    public static class TopicMapWidgetBuilder {
     }
 }

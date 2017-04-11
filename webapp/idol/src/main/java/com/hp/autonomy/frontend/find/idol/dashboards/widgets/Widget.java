@@ -5,8 +5,8 @@
 
 package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
+import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.SimpleComponent;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,7 +19,14 @@ public abstract class Widget<W extends Widget<W, WS>, WS extends WidgetSettings<
     protected final Integer y;
     protected final Integer width;
     protected final Integer height;
-    @SuppressWarnings("InstanceVariableOfConcreteClass")
-    protected final WidgetDatasource<?, ?> datasource;
     protected final WS widgetSettings;
+
+    @Override
+    public void basicValidate(final String section) throws ConfigException {
+        if (x == null || x < 0 || y == null || y < 0 || width == null || width <= 0 || height == null || height <= 0) {
+            throw new ConfigException(type, "Widget with name " + name + " and type " + type + " does not have valid coordinates and dimensions");
+        }
+
+        super.basicValidate(section);
+    }
 }

@@ -15,6 +15,7 @@
   "widgetSettings": {
     "firstField": "/DOCUMENT/CONTENT-TYPE",
     "secondField": "/DOCUMENT/AUTHOR",
-    "maxLegendEntries": 7
+    "maxLegendEntries": 7,
+    "testing": "testing"
   }
 }

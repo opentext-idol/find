@@ -12,7 +12,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryControllerTest;
 import com.hp.autonomy.frontend.find.idol.dashboards.Dashboard;
 import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.SimpleWidget;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.ResultsListWidget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearch;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchConfig;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
@@ -33,9 +33,7 @@ import java.util.List;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -96,18 +94,19 @@ public class IdolSavedQueryControllerTest extends SavedQueryControllerTest<IdolQ
                 .setId(123L)
                 .build();
 
-        mockQueryDashboard = Collections
-                .singletonList(
-                        Dashboard.builder()
-                                .widget(SimpleWidget.builder()
-                                                .datasource(SavedSearch.builder()
-                                                                    .source("SavedSearch")
-                                                                    .config(SavedSearchConfig.builder()
-                                                                                    .id(savedQuery.getId())
-                                                                                    .type(SavedSearchType.QUERY)
-                                                                                    .build())
-                                                                    .build()).build()).build()
-                );
+        mockQueryDashboard = Collections.singletonList(
+                Dashboard.builder()
+                        .widget(ResultsListWidget.builder()
+                                .datasource(SavedSearch.builder()
+                                        .source("SavedSearch")
+                                        .config(SavedSearchConfig.builder()
+                                                .id(savedQuery.getId())
+                                                .type(SavedSearchType.QUERY)
+                                                .build())
+                                        .build())
+                                .build())
+                        .build()
+        );
     }
 
     @Override
@@ -134,11 +133,11 @@ public class IdolSavedQueryControllerTest extends SavedQueryControllerTest<IdolQ
         try {
             savedQueryController.get(savedQuery.getId());
             fail("Call to get() was expected to throw exception");
-        } catch(final IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             verify(savedQueryService).getDashboardSearch(savedQuery.getId());
             assertThat("Exception has the correct message",
-                       e.getMessage(),
-                       is("Configured ID " + savedQuery.getId() + " does not match any known Saved Query"));
+                    e.getMessage(),
+                    is("Configured ID " + savedQuery.getId() + " does not match any known Saved Query"));
         }
     }
 }

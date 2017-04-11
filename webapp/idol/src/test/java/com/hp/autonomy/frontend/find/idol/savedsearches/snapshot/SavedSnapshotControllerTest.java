@@ -14,7 +14,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.frontend.find.idol.dashboards.Dashboard;
 import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.SimpleWidget;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.ResultsListWidget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearch;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchConfig;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
@@ -36,11 +36,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -88,18 +84,19 @@ public class SavedSnapshotControllerTest {
                 .setConceptClusterPhrases(Collections.singleton(new ConceptClusterPhrase("*", true, -1)))
                 .build();
 
-        mockSnapshotDashboard = Collections
-                .singletonList(
-                        Dashboard.builder()
-                                .widget(SimpleWidget.builder()
-                                                .datasource(SavedSearch.builder()
-                                                                    .source("SavedSearch")
-                                                                    .config(SavedSearchConfig.builder()
-                                                                                    .id(savedSnapshot.getId())
-                                                                                    .type(SavedSearchType.SNAPSHOT)
-                                                                                    .build())
-                                                                    .build()).build()).build()
-                );
+        mockSnapshotDashboard = Collections.singletonList(
+                Dashboard.builder()
+                        .widget(ResultsListWidget.builder()
+                                .datasource(SavedSearch.builder()
+                                        .source("SavedSearch")
+                                        .config(SavedSearchConfig.builder()
+                                                .id(savedSnapshot.getId())
+                                                .type(SavedSearchType.SNAPSHOT)
+                                                .build())
+                                        .build())
+                                .build())
+                        .build()
+        );
 
         savedSnapshotController = new SavedSnapshotController(documentsService, savedSnapshotService, fieldTextParser, queryRestrictionsBuilderFactory, idolDashboardConfigService);
     }
@@ -153,11 +150,11 @@ public class SavedSnapshotControllerTest {
         try {
             savedSnapshotController.get(savedSnapshot.getId());
             fail("Call to get() was expected to throw exception");
-        } catch(final IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             verify(savedSnapshotService).getDashboardSearch(savedSnapshot.getId());
             assertThat("Exception has the correct message",
-                       e.getMessage(),
-                       is("Configured ID " + savedSnapshot.getId() + " does not match any known Saved Snapshot"));
+                    e.getMessage(),
+                    is("Configured ID " + savedSnapshot.getId() + " does not match any known Saved Snapshot"));
         }
     }
 }
