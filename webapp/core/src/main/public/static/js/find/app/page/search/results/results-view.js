@@ -7,6 +7,7 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'js-whatever/js/model-any-changed-attribute-listener',
     'find/app/vent',
     'find/app/model/document-model',
     'find/app/model/promotions-collection',
@@ -24,7 +25,7 @@ define([
     'moment',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
-], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
+], function(Backbone, $, _, addChangeListener, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
             ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, configuration,
             generateErrorHtml, html, loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
     'use strict';
@@ -33,7 +34,7 @@ define([
     const INFINITE_SCROLL_POSITION_PIXELS = 500;
 
     function infiniteScroll() {
-        var resultsPresent = this.documentsCollection.size() > 0 && this.fetchStrategy.validateQuery(this.queryModel);
+        const resultsPresent = this.documentsCollection.size() > 0 && this.fetchStrategy.validateQuery(this.queryModel);
 
         if(resultsPresent && this.loadingTracker.resultsFinished && !this.endOfResults) {
             this.start = this.maxResults + 1;
@@ -53,27 +54,27 @@ define([
         messageTemplate: _.template('<div class="result-message span10"><%-message%></div>'),
 
         events: function() {
-            var events = {
+            const events = {
                 'click .document-detail-mode [data-cid]': function(e) {
-                    var $target = $(e.currentTarget);
-                    var cid = $target.data('cid');
-                    var isPromotion = $target.closest('.main-results-list').hasClass('promotions');
-                    var collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
-                    var model = collection.get(cid);
+                    const $target = $(e.currentTarget);
+                    const cid = $target.data('cid');
+                    const isPromotion = $target.closest('.main-results-list').hasClass('promotions');
+                    const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
+                    const model = collection.get(cid);
                     vent.navigateToDetailRoute(model);
                 },
                 'click .similar-documents-trigger': function(event) {
                     event.stopPropagation();
-                    var cid = $(event.target).closest('[data-cid]').data('cid');
-                    var documentModel = this.documentsCollection.get(cid);
-                    if(!documentModel) {
+                    const cid = $(event.target).closest('[data-cid]').data('cid');
+                    let documentModel = this.documentsCollection.get(cid);
+                    if (!documentModel) {
                         documentModel = this.promotionsCollection.get(cid);
                     }
                     vent.navigateToSuggestRoute(documentModel);
                 }
             };
 
-            var selector = configuration().directAccessLink ? '.preview-link' : '.preview-mode [data-cid]:not(.answered-question)';
+            const selector = configuration().directAccessLink ? '.preview-link' : '.preview-mode [data-cid]:not(.answered-question)';
             events['click ' + selector] = 'openPreview';
 
             return events;
@@ -127,7 +128,7 @@ define([
                 documentsCollection: this.documentsCollection
             });
 
-            this.listenTo(this.queryModel, 'change refresh', this.refreshResults);
+            addChangeListener(this, this.queryModel, ['sort', 'autoCorrect'].concat(this.fetchStrategy.queryModelAttributes), this.refreshResults);
 
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
 
@@ -241,7 +242,7 @@ define([
         },
 
         updateSelectedDocument: function() {
-            var documentModel = this.previewModeModel.get('document');
+            const documentModel = this.previewModeModel.get('document');
             this.$('.main-results-container').removeClass('selected-document');
 
             if(documentModel !== null) {
@@ -250,7 +251,7 @@ define([
         },
 
         formatResult: function(model, isPromotion) {
-            var $newResult = this.resultRenderer.getResult(model, isPromotion, Boolean(this.previewModeModel), configuration().directAccessLink);
+            const $newResult = this.resultRenderer.getResult(model, isPromotion, Boolean(this.previewModeModel), configuration().directAccessLink);
 
             if(isPromotion) {
                 this.$('.main-results-content .promotions').append($newResult);
@@ -298,7 +299,7 @@ define([
 
             this.loadingTracker.resultsFinished = false;
 
-            var requestData = _.extend({
+            const requestData = _.extend({
                 start: this.start,
                 max_results: this.maxResults,
                 sort: this.queryModel.get('sort'),
@@ -320,7 +321,7 @@ define([
                     if(this.indexesCollection && this.documentsCollection.warnings && this.documentsCollection.warnings.invalidDatabases) {
                         // Invalid databases have been deleted from IDOL; mark them as such in the indexes collection
                         this.documentsCollection.warnings.invalidDatabases.forEach(function(name) {
-                            var indexModel = this.indexesCollection.findWhere({name: name});
+                            const indexModel = this.indexesCollection.findWhere({name: name});
 
                             if(indexModel) {
                                 indexModel.set('deleted', true);
@@ -335,7 +336,7 @@ define([
             if(!infiniteScroll && this.showPromotions) {
                 this.loadingTracker.promotionsFinished = false;
 
-                var promotionsRequestData = _.extend({
+                const promotionsRequestData = _.extend({
                     start: this.start,
                     max_results: this.maxResults,
                     sort: this.queryModel.get('sort'),
@@ -353,17 +354,17 @@ define([
         },
 
         openPreview: function(e) {
-            var $target = $(e.currentTarget).closest('.main-results-container');
+            const $target = $(e.currentTarget).closest('.main-results-container');
 
             if($target.hasClass('selected-document')) {
                 // disable preview mode
                 this.previewModeModel.set({document: null});
             } else {
                 //enable/choose another preview view
-                var cid = $target.data('cid');
-                var isPromotion = $target.closest('.main-results-list').hasClass('promotions');
-                var collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
-                var model = collection.get(cid);
+                const cid = $target.data('cid');
+                const isPromotion = $target.closest('.main-results-list').hasClass('promotions');
+                const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
+                const model = collection.get(cid);
                 this.previewModeModel.set({document: model});
 
                 if(!isPromotion) {
