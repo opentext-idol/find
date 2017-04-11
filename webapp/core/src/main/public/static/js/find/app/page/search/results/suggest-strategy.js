@@ -8,6 +8,11 @@ define(['underscore'], function(_) {
     return {
         promotions: _.constant(false),
 
+        queryModelAttributes: [
+            'indexes',
+            'reference'
+        ],
+
         waitForIndexes: function(queryModel) {
             return _.isEmpty(queryModel.get('indexes'));
         },

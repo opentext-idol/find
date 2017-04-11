@@ -5,15 +5,23 @@
 
 define(['underscore'], function(_) {
 
-    var baseParams = function(queryModel) {
+    'use strict';
+
+    const baseParams = function(queryModel) {
         return {
             text: queryModel.get('queryText'),
             summary: 'context'
         }
     };
-    
+
     return {
         waitForIndexes: _.constant(false),
+
+        queryModelAttributes: [
+            'stateMatchIds',
+            'stateDontMatchIds',
+            'promotionsStateMatchIds'
+        ],
 
         // Query for promotions only if the snapshot has a promotions state token.
         // Necessary to accommodate legacy snapshots predating QMS integration (FIND-30).

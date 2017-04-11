@@ -86,7 +86,10 @@ define([
                 autoCorrect: this.searchTypes[searchType].autoCorrect,
                 stateMatchIds: this.savedSearchModel.get('queryStateTokens'),
                 promotionsStateMatchIds: this.savedSearchModel.get('promotionsStateTokens')
-            }, {queryState: this.queryState});
+            }, {
+                enableAutoCorrect: this.searchTypes[searchType].autoCorrect,
+                queryState: this.queryState
+            });
 
             this.listenTo(this.savedSearchModel, 'refresh', function() {
                 this.queryModel.trigger('refresh');

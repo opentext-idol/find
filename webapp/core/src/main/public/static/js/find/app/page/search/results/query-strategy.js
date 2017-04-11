@@ -8,7 +8,16 @@ define(['underscore'], function(_) {
 
     return {
         promotions: _.constant(true),
-    
+
+        queryModelAttributes: [
+            'indexes',
+            'fieldText',
+            'minDate',
+            'maxDate',
+            'minScore',
+            'queryText'
+        ],
+
         requestParams: function(queryModel) {
             return {
                 indexes: queryModel.get('indexes'),
@@ -22,10 +31,8 @@ define(['underscore'], function(_) {
         },
 
         promotionsRequestParams: function(queryModel){
-            var params = this.requestParams(queryModel);
-            
+            const params = this.requestParams(queryModel);
             delete params.indexes;
-            
             return params;
         },
 
