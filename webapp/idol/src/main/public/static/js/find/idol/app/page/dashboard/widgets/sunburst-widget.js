@@ -26,6 +26,10 @@ define([
     const HIDDEN_COLOR = '#ffffff';
     const SUNBURST_CLASS = 'sunburst-widget';
 
+    function byAlphabeticalText(datumA, datumB) {
+        return d3.ascending(datumA.text, datumB.text);
+    }
+
     function composeLegendHtml(datum) {
         return legendEntryTemplateFn({
             text: datum.text,
@@ -118,9 +122,7 @@ define([
                     animate: true,
                     sizeAttr: 'count',
                     nameAttr: 'text',
-                    comparator: function(datumA, datumB) {
-                        return d3.ascending(datumA.text, datumB.text);
-                    },
+                    comparator: byAlphabeticalText,
                     data: data,
                     fillColorFn: function(datum) {
                         if(!datum.parent) {
@@ -214,14 +216,12 @@ define([
         },
 
         exportData: function() {
-            const data = this.legendColorCollection.map(function(model) {
+            const data = this.legendColorCollection.toJSON().sort(byAlphabeticalText).map(function(legend) {
                 return {
-                    category: model.get('text') || i18n['dashboards.widget.sunburst.legend.hiddenValues'],
-                    value: model.get('count'),
-                    color: model.get('color') || HIDDEN_COLOR
+                    category: legend.text || i18n['dashboards.widget.sunburst.legend.hiddenValues'],
+                    value: legend.count,
+                    color: legend.color || HIDDEN_COLOR
                 };
-            }).sort(function(a, b) {
-                return d3.ascending(a.category, b.category);
             });
 
             return data.length ? {
