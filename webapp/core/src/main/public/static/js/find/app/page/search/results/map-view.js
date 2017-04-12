@@ -232,9 +232,14 @@ define([
                                 color = leafletMarkerColorMap[match[1]]
                             }
 
-                            const popup = layer.getPopup();
-                            if (popup && popup._content) {
-                                text = $(popup._content).find('.map-popup-title').text()
+                            if (layer.options.title) {
+                                text = layer.options.title
+                            }
+                            else {
+                                const popup = layer.getPopup();
+                                if (popup && popup._content) {
+                                    text = $(popup._content).find('.map-popup-title').text()
+                                }
                             }
                         }
 
@@ -254,7 +259,7 @@ define([
                 }
             });
 
-            const $objs = $mapEl.find('.leaflet-objects-pane').addClass('hide');
+            const $objs = $mapEl.find('.leaflet-objects-pane, .leaflet-marker-pane, .leaflet-shadow-pane').addClass('hide');
 
             html2canvas($mapEl, {
                 // This seems to avoid issues with IE11 only rendering a small portion of the map the size of the window
