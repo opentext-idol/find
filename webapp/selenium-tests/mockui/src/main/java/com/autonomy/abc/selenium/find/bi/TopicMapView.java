@@ -7,7 +7,7 @@ package com.autonomy.abc.selenium.find.bi;
 
 import com.autonomy.abc.selenium.find.Container;
 import com.google.common.base.Function;
-import com.hp.autonomy.frontend.selenium.element.Slider;
+import com.hp.autonomy.frontend.selenium.element.RangeInput;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -58,8 +58,8 @@ public class TopicMapView {
         return findElement(By.cssSelector(".entity-topic-map-empty p"));
     }
 
-    public Slider speedVsAccuracySlider() {
-        return new Slider(findElement(By.className("slider")), driver);
+    public RangeInput speedVsAccuracySlider() {
+        return new RangeInput(findElement(By.className("speed-slider")), driver, 10);
     }
 
     private void offCentreClick(final WebElement element) {
@@ -112,7 +112,7 @@ public class TopicMapView {
 
         new WebDriverWait(driver, 10)
                 .withMessage("all entities to have opacity of either 0.2 or 0.7")
-                .until((Function<? super WebDriver, Boolean>) x ->
+                .until((Function<? super WebDriver, Boolean>)x ->
                         container.findElements(
                                 By.cssSelector(".entity-topic-map > svg > path:not([stroke-opacity='0.2']):not([stroke-opacity='0.7'])")
                         ).isEmpty());
@@ -134,7 +134,7 @@ public class TopicMapView {
         final int max = entityText.size() - 1;
 
         final List<String> clusterNames = new ArrayList<>(numberOfClusters);
-        for (int i = 0; i < numberOfClusters; i++) {
+        for(int i = 0; i < numberOfClusters; i++) {
             clusterNames.add(entityText.get(max - i));
         }
 
@@ -193,7 +193,7 @@ public class TopicMapView {
         final List<ImmutablePair<WebElement, Integer>> childConceptsOfChosenCluster = new ArrayList<>();
 
         int entityIndex = 0;
-        for (final WebElement concepts : concepts()) {
+        for(final WebElement concepts : concepts()) {
             final Dimension entitySize = concepts.getSize();
             final Point absolutePosition = concepts.getLocation();
 
@@ -201,7 +201,7 @@ public class TopicMapView {
             final int centreY = absolutePosition.y - mapCoordinates.y + entitySize.getHeight() / 2;
             final Point centre = new Point(centreX, centreY);
 
-            if (boundariesOfChosenCluster[0][0] <= centre.x && centre.x <= boundariesOfChosenCluster[0][1]
+            if(boundariesOfChosenCluster[0][0] <= centre.x && centre.x <= boundariesOfChosenCluster[0][1]
                     && boundariesOfChosenCluster[1][0] <= centre.y && centre.y <= boundariesOfChosenCluster[1][1]) {
                 childConceptsOfChosenCluster.add(new ImmutablePair<>(concepts, entityIndex));
             }

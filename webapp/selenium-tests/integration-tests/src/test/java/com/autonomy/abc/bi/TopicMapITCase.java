@@ -17,31 +17,39 @@ import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.FindParametricFilter;
 import com.autonomy.abc.selenium.find.save.SearchTabBar;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.element.Slider;
+import com.hp.autonomy.frontend.selenium.element.RangeInput;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.CommonMatchers.containsItems;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.not;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 @Role(UserRole.BIFHI)
 public class TopicMapITCase extends IdolFindTestBase {
     private static final Pattern QUOTE_PATTERN = Pattern.compile("\"", Pattern.LITERAL);
-
     private IdolFindPage findPage;
     private TopicMapView results;
     private FindService findService;
@@ -53,7 +61,7 @@ public class TopicMapITCase extends IdolFindTestBase {
 
     @Override
     public BIIdolFindElementFactory getElementFactory() {
-        return (BIIdolFindElementFactory) super.getElementFactory();
+        return (BIIdolFindElementFactory)super.getElementFactory();
     }
 
     @Before
@@ -68,31 +76,32 @@ public class TopicMapITCase extends IdolFindTestBase {
     @Test
     public void testTopicMapTabShowsTopicMap() {
         findService.searchAnyView("m");
-        verifyThat("Topic map element displayed", results.topicMapVisible());
+        verifyThat("Topic map element displayed",
+                   results.topicMapVisible());
     }
 
     @Test
     public void testNumbersForMapInSliders() {
-        search("gove");
-
-        slidingIncreasesNumber(results.speedVsAccuracySlider());
-    }
-
-    private void slidingIncreasesNumber(final Slider slider) {
+        final RangeInput slider = results.speedVsAccuracySlider();
         final int firstNumber = sliderToolTipValue(slider);
 
-        slider.dragBy(100);
-        slider.hover();
-        assertThat("Tooltip reappears after dragging", slider.tooltip().isDisplayed());
+        search("dog");
 
-        verifyThat("New tooltip value bigger than old", slider.getValue(), greaterThanOrEqualTo(firstNumber));
+        slider.dragBy(10);
+        slider.hover();
+
+        assertThat("Tooltip reappears after dragging",
+                   slider.tooltip().isDisplayed());
+        verifyThat("New tooltip value bigger than old",
+                   sliderToolTipValue(slider),
+                   greaterThanOrEqualTo(firstNumber));
     }
 
     @Test
     public void testEveryMapEntityHasText() {
         search("trouble");
 
-        results.speedVsAccuracySlider().dragBy(100);
+        results.speedVsAccuracySlider().dragBy(10);
         Waits.loadOrFadeWait();
         results.waitForMapLoaded();
 
@@ -103,8 +112,10 @@ public class TopicMapITCase extends IdolFindTestBase {
         verifyThat("Same number of text elements as map pieces", textElements.size(), is(numberEntities));
 
         results.waitForMapLoaded();
-        for (final String textElement : textElements) {
-            verifyThat("Text element not empty", textElement, not(""));
+        for(final String textElement : textElements) {
+            verifyThat("Text element not empty",
+                       textElement,
+                       not(""));
         }
     }
 
@@ -122,7 +133,9 @@ public class TopicMapITCase extends IdolFindTestBase {
         filter.check();
 
         results.waitForMapLoaded();
-        verifyThat("The correct filter label has appeared", findPage.filterLabelsText(), hasItem(containsString(filterName)));
+        verifyThat("The correct filter label has appeared",
+                   findPage.filterLabelsText(),
+                   hasItem(containsString(filterName)));
     }
 
     @Test
@@ -140,8 +153,10 @@ public class TopicMapITCase extends IdolFindTestBase {
         Waits.loadOrFadeWait();
 
         final List<String> selectedConcepts = selectedConcepts();
-        for (final String concept : addedConcepts) {
-            verifyThat("Concept " + concept + " was added to the Concepts Panel", selectedConcepts, hasItem(concept));
+        for(final String concept : addedConcepts) {
+            verifyThat("Concept " + concept + " was added to the Concepts Panel",
+                       selectedConcepts,
+                       hasItem(concept));
         }
     }
 
@@ -150,36 +165,39 @@ public class TopicMapITCase extends IdolFindTestBase {
     public void testToolTipNotLyingAboutNumberDocsUsed() {
         search("thing");
 
-        final Slider slider = results.speedVsAccuracySlider();
+        final RangeInput slider = results.speedVsAccuracySlider();
         final int originalToolTipValue = sliderToolTipValue(slider);
 
         final List<String> originalParentEntityNames = results.conceptClusterNames();
 
-        slider.dragBy(30);
+        slider.dragBy(-10);
         results.waitForMapLoaded();
         final List<String> changedParentNames = results.conceptClusterNames();
         assertThat("Changing the slider has changed the map",
                    changedParentNames,
                    not(allOf(hasSize(originalParentEntityNames.size()),
-                         containsItems(originalParentEntityNames))));
+                             containsItems(originalParentEntityNames))));
 
-        slider.dragBy(-30);
+        slider.dragBy(10);
         results.waitForMapLoaded();
 
         //Selenium Actions.moveByOffset takes int -> cannot move by <1%
         //Getting within 1 doc of the original value is permissible
-        assumeThat("Have returned tooltip to original value", sliderToolTipValue(slider),
-                anyOf(greaterThanOrEqualTo(originalToolTipValue - 1),
-                        lessThanOrEqualTo(originalToolTipValue + 1)));
-        verifyThat("Same parent concepts as when originally loaded", results.conceptClusterNames(), containsItems(originalParentEntityNames));
+        assumeThat("Have returned tooltip to original value",
+                   sliderToolTipValue(slider),
+                   anyOf(greaterThanOrEqualTo(originalToolTipValue - 1),
+                         lessThanOrEqualTo(originalToolTipValue + 1)));
+        verifyThat("Same parent concepts as when originally loaded",
+                   results.conceptClusterNames(),
+                   containsItems(originalParentEntityNames));
     }
 
-    private int sliderToolTipValue(final Slider slider) {
+    private int sliderToolTipValue(final RangeInput slider) {
         slider.hover();
         new WebDriverWait(getDriver(), 5)
                 .until(ExpectedConditions.visibilityOf(slider.tooltip()));
         verifyThat("Tooltip appears on hover", slider.tooltip().isDisplayed());
-        return slider.getValue();
+        return slider.getTooltipValue();
     }
 
     @Test
@@ -189,18 +207,20 @@ public class TopicMapITCase extends IdolFindTestBase {
 
         final SearchTabBar tabBar = getElementFactory().getSearchTabBar();
         final int numberTabs = 8;
-        for (int i = 0; i < numberTabs; i++) {
+        for(int i = 0; i < numberTabs; i++) {
             tabBar.newTab();
         }
 
         tabBar.switchTo(numberTabs / 2);
         results.waitForMapLoaded();
 
-        for (int j = 0; j < numberTabs; j++) {
+        for(int j = 0; j < numberTabs; j++) {
             tabBar.switchTo(j);
             results = getElementFactory().getTopicMap();
             results.waitForMapLoaded();
-            verifyThat("Map has appeared on tab " + (j + 1), results.mapEntities(), hasSize(greaterThan(0)));
+            verifyThat("Map has appeared on tab " + (j + 1),
+                       results.mapEntities(),
+                       hasSize(greaterThan(0)));
         }
     }
 

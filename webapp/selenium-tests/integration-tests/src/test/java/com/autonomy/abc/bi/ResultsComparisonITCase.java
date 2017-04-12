@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -95,7 +95,7 @@ public class ResultsComparisonITCase extends IdolFindTestBase {
         final TopicMapView mapView = compareAndGetTopicMap(firstSearch, "unmellow");
 
         final WebElement mapEntity = mapView.mapEntities().get(0);
-        mapView.speedVsAccuracySlider().dragBy(100);
+        mapView.speedVsAccuracySlider().dragBy(10);
         mapView.waitForMapLoaded();
         try {
             mapEntity.click();
