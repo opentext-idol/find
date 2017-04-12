@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,12 +16,11 @@
     <version>11.3.1-SNAPSHOT</version>
 
     <properties>
-        <qa.infrastructure.version>2.9.1</qa.infrastructure.version>
+        <qa.infrastructure.version>2.10.0</qa.infrastructure.version>
     </properties>
 
     <modules>
         <module>integration-tests</module>
         <module>mockui</module>
     </modules>
-
 </project>
