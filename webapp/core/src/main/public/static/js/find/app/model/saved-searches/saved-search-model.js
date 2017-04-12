@@ -64,11 +64,13 @@ define([
             if (model.has('value')) {
                 parametricValues.push({
                     field: model.get('field'),
+                    displayName: model.get('displayName'),
                     value: model.get('value')
                 });
             } else if (model.has('range')) {
                 parametricRanges.push({
                     field: model.get('field'),
+                    displayName: model.get('displayName'),
                     min: model.get('range')[0],
                     max: model.get('range')[1],
                     type: model.get('type') === 'Numeric' ? 'Numeric' : 'Date'
@@ -80,6 +82,10 @@ define([
             parametricValues: parametricValues,
             parametricRanges: parametricRanges
         };
+    }
+
+    function compareWithoutDisplayNames(x, y) {
+        return _.isEqual(_.omit(x, 'displayName'), _.omit(y, 'displayName'));
     }
 
     function nullOrUndefined(input) {
@@ -198,8 +204,8 @@ define([
                 && arraysEqual(this.get('relatedConcepts'), queryState.conceptGroups.pluck('concepts'), arrayEqualityPredicate)
                 && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
                 && this.get('minScore') === queryState.minScoreModel.get('minScore')
-                && arraysEqual(this.get('parametricValues'), parametricRestrictions.parametricValues, _.isEqual)
-                && arraysEqual(this.get('parametricRanges'), parametricRestrictions.parametricRanges, _.isEqual);
+                && arraysEqual(this.get('parametricValues'), parametricRestrictions.parametricValues, compareWithoutDisplayNames)
+                && arraysEqual(this.get('parametricRanges'), parametricRestrictions.parametricRanges, compareWithoutDisplayNames);
         },
 
         equalsQueryStateDateFilters: function (queryState) {
