@@ -88,6 +88,12 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
         return findElement(By.cssSelector(".fields-list li.active span")).getText();
     }
 
+    public List<String> tabNames() {
+        return findElements(By.cssSelector(".fields-list a span")).stream()
+                .map(WebElement::getText)
+                .collect(Collectors.toList());
+    }
+
     //input 0-indexed like panel
     public void goToTab(final int tabNumber) {
         tabs().get(tabNumber).click();
@@ -182,8 +188,8 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
         final Iterable<ParametricModalCheckbox> checkboxes = values();
         int count = 0;
 
-        for(final ParametricModalCheckbox checkbox : checkboxes) {
-            if(checkbox.getResultsCount() != 0) {
+        for (final ParametricModalCheckbox checkbox : checkboxes) {
+            if (checkbox.getResultsCount() != 0) {
                 count++;
             } else {
                 break;

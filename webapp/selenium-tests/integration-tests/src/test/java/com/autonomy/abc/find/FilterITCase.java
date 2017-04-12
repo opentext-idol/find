@@ -37,6 +37,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
@@ -132,11 +134,31 @@ public class FilterITCase extends FindTestBase {
     }
 
     @Test
+    public void testModalOnlyContainsParametricFields() {
+        searchAndWait("cheese");
+        final FilterPanel filterPanel = filters();
+        final Set<String> parametricFields = filterPanel.parametricFieldContainers().stream()
+                .map(ParametricFieldContainer::filterCategoryName)
+                .collect(Collectors.toSet());
+
+        final ParametricFieldContainer firstField = filterPanel.parametricField(0);
+        firstField.expand();
+        firstField.seeAll();
+
+        final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
+        filterModal.waitForLoad();
+        filterModal.tabNames()
+                .stream()
+                .map(String::toUpperCase)
+                .forEach(tabName -> verifyThat("Modal field with name " + tabName + " is parametric", parametricFields, hasItem(tabName)));
+        filterModal.cancel();
+    }
+
+    @Test
     public void testFilterPanelAndModalLinked() {
         searchAndWait("cats");
         final FilterPanel filterPanel = filters();
 
-        findPage.waitForParametricValuesToLoad();
         final ParametricFieldContainer container = filterPanel.parametricField(1);
         final String filterCategory = container.filterCategoryName();
 

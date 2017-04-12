@@ -36,7 +36,7 @@ define([
                 return model.pick('domain', 'name');
             }));
 
-            this.fieldData = options.parametricFieldsCollection.map(function (fieldModel) {
+            this.fieldData = options.parametricFieldsCollection.where({type: 'Parametric'}).map(function (fieldModel) {
                 const paginator = new ParametricPaginator({
                     fieldName: fieldModel.id,
                     fieldDisplayName: fieldModel.get('displayName'),
