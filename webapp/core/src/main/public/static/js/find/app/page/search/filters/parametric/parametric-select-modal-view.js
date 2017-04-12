@@ -68,7 +68,7 @@ define([
         render: function () {
             this.$el.html(this.template({
                 initialField: this.initialField,
-                fields: _.sortBy(this.fieldData, 'id')
+                fields: this.fieldData
             }));
 
             const $tabContent = this.$('.tab-content');

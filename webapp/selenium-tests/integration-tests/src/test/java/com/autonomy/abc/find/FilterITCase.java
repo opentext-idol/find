@@ -37,7 +37,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
@@ -137,9 +136,9 @@ public class FilterITCase extends FindTestBase {
     public void testModalOnlyContainsParametricFields() {
         searchAndWait("cheese");
         final FilterPanel filterPanel = filters();
-        final Set<String> parametricFields = filterPanel.parametricFieldContainers().stream()
+        final List<String> parametricFields = filterPanel.parametricFieldContainers().stream()
                 .map(ParametricFieldContainer::filterCategoryName)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
         final ParametricFieldContainer firstField = filterPanel.parametricField(0);
         firstField.expand();
@@ -147,10 +146,14 @@ public class FilterITCase extends FindTestBase {
 
         final ParametricFilterModal filterModal = ParametricFilterModal.getParametricModal(getDriver());
         filterModal.waitForLoad();
-        filterModal.tabNames()
+        final List<String> modalFields = filterModal.tabNames()
                 .stream()
                 .map(String::toUpperCase)
-                .forEach(tabName -> verifyThat("Modal field with name " + tabName + " is parametric", parametricFields, hasItem(tabName)));
+                .collect(Collectors.toList());
+        modalFields.forEach(tabName -> verifyThat("Modal field with name " + tabName + " is parametric", parametricFields, hasItem(tabName)));
+
+        verifyThat("Parametric filter and modal field ordering identical", modalFields, equalTo(parametricFields));
+
         filterModal.cancel();
     }
 
