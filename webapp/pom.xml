@@ -31,12 +31,11 @@
         <haven.search.components.version>0.44.0</haven.search.components.version>
         <powerpoint.report.version>1.0.0-SNAPSHOT</powerpoint.report.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
-        <!-- Disabling integration tests by default until we figure out how to run them on the build servers (CCUK-3480) -->
-        <skipITs>true</skipITs>
         <h2.version>1.3.176</h2.version>
         <mariaClient.version>1.4.2</mariaClient.version>
         <npm.binExtension/>
-        <skipTests/>
+        <skipITs>false</skipITs>
+        <skipTests>false</skipTests>
         <selenium.version>2.46.0</selenium.version>
     </properties>
 

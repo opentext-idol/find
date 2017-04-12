@@ -51,8 +51,8 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     static final String TARGET_NUMBER_OF_BUCKETS_PARAM = "targetNumberOfBuckets";
     static final String BUCKET_MIN_PARAM = "bucketMin";
     static final String BUCKET_MAX_PARAM = "bucketMax";
-    private static final String VALUE_DETAILS_PATH = "/value-details";
-    private static final String FIELD_NAME_PARAM = "fieldName";
+    static final String VALUE_DETAILS_PATH = "/value-details";
+    static final String FIELD_NAME_PARAM = "fieldName";
     private static final String MIN_DATE_PARAM = "minDate";
     private static final String MAX_DATE_PARAM = "maxDate";
     private static final String MIN_SCORE = "minScore";

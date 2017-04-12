@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.find.core.web.FindController;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.RequestBuilder;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@DirtiesContext
 public class IdolDashboardControllerIT extends AbstractFindIT {
     private static final String UUID = "b1c71fad-a52d-47bf-a121-f71500bd7ddb";
     private static final String DASHBOARD_CONFIG = TEST_DIR + "/customization/dashboards.json";

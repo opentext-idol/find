@@ -48,7 +48,7 @@ public class IdolMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
 
     @Override
     public EmbeddableIndex getEmbeddableIndex() {
-        return new EmbeddableIndex("Wookiepedia", null);
+        return new EmbeddableIndex(getDatabases()[0], null);
     }
 
     @Override
