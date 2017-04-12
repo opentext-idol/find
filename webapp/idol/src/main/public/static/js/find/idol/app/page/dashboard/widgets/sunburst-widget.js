@@ -24,6 +24,7 @@ define([
         _.escape(i18n['dashboards.widget.sunburst.noResults']) +
         '</span>';
     const HIDDEN_COLOR = '#ffffff';
+    const SUNBURST_CLASS = 'sunburst-widget';
 
     function composeLegendHtml(datum) {
         return legendEntryTemplateFn({
@@ -69,7 +70,7 @@ define([
 
         render: function() {
             SavedSearchWidget.prototype.render.apply(this);
-
+            this.$content.addClass(SUNBURST_CLASS)
             this.$legendContainer = $('<div class="sunburst-legend"></div>');
             this.$visualizerContainer = $('<div class="sunburst-visualizer-container"></div>');
             this.$emptyMessage = $(noResultsMessage);

@@ -47,6 +47,7 @@ define([
     }
 
     return UpdatingWidget.extend({
+        viewType: '', // which view to load when navigating to the saved search on click
         clickable: true,
 
         // Called after the saved search promise resolves. Calls through to getData();

@@ -12,7 +12,6 @@ define([
     'use strict';
 
     return Backbone.View.extend({
-        viewType: '',
         clickable: false,
         template: _.template(template),
 
@@ -35,7 +34,7 @@ define([
                 this.$el.click(this.onClick.bind(this));
             }
 
-            this.$content = this.$('.widget-content').addClass(this.viewType);
+            this.$content = this.$('.widget-content');
             this.$error = this.$('.widget-error');
             this.$loading = this.$('.widget-loading');
         },
