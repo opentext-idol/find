@@ -14,9 +14,10 @@ define([
     'find/app/model/parametric-field-details-model',
     'find/app/model/bucketed-parametric-collection',
     'find/app/page/search/results/trending/trending-view',
+    'mock/page/results/trending-strategy',
     'mock/page/results/trending'
-], function(_, $, Backbone, i18n, backboneMockFactory, configuration, ParametricCollection,
-            ParametricDetailsModel, BucketedParametricCollection, TrendingView, Trending) {
+], function (_, $, Backbone, i18n, backboneMockFactory, configuration, ParametricCollection, ParametricDetailsModel,
+             BucketedParametricCollection, TrendingView, TrendingStrategy, Trending) {
     'use strict';
 
     const originalDebounce = _.debounce;
@@ -124,6 +125,7 @@ define([
             ParametricCollection.reset();
             ParametricDetailsModel.reset();
             BucketedParametricCollection.Model.reset();
+            TrendingStrategy.reset();
             Trending.reset();
         });
 
@@ -145,16 +147,13 @@ define([
                 expect($option[3].text).toBe('Veg (223)');
             });
 
-            it('should call fetch on the parametric collection with the correct arguments', function() {
-                expect(ParametricCollection.instances[0].fetch).toHaveBeenCalled();
-                // fieldNames set from the automatically selected first field in dropdown
-                expect(ParametricCollection.instances[0].fetch.calls.argsFor(0)[0].data.fieldNames).toEqual(['cheeses']);
-                expect(ParametricCollection.instances[0].fetch.calls.argsFor(0)[0].data.queryText).toBe(this.queryModel.get('queryText'));
+            it('should call fetch field on the trending strategy', function() {
+                expect(TrendingStrategy.fetchFieldPromises).toHaveLength(1);
             });
 
             describe('and the fetch fails', function() {
-                beforeEach(function() {
-                    ParametricCollection.instances[0].fetch.calls.argsFor(0)[0].error([], xhr);
+                beforeEach(function () {
+                    TrendingStrategy.fetchFieldPromises[0].reject(xhr);
                 });
 
                 it('should display an error message', function() {
@@ -168,45 +167,33 @@ define([
 
             describe('and the fetch succeeds', function() {
                 beforeEach(function() {
-                    ParametricCollection.instances[0].set({
-                        id: 'cheeses',
-                        values: [
-                            {
-                                count: 2,
-                                displayValue: 'CHEDDAR',
-                                value: 'CHEDDAR'
-                            },
-                            {
-                                count: 4,
-                                displayValue: 'STILTON',
-                                value: 'STILTON'
-                            },
-                            {
-                                count: 2,
-                                displayValue: 'BRIE',
-                                value: 'BRIE'
-                            },
-                            {
-                                count: 0,
-                                displayValue: 'RED LEICESTER',
-                                value: 'RED LEICESTER'
-                            }
-                        ]
-                    });
-                    ParametricCollection.instances[0].fetch.calls.argsFor(0)[0].success();
+                    TrendingStrategy.fetchFieldPromises[0].resolve([
+                        {
+                            count: 2,
+                            displayValue: 'CHEDDAR',
+                            value: 'CHEDDAR'
+                        }, {
+                            count: 4,
+                            displayValue: 'STILTON',
+                            value: 'STILTON'
+                        }, {
+                            count: 2,
+                            displayValue: 'BRIE',
+                            value: 'BRIE'
+                        }, {
+                            count: 0,
+                            displayValue: 'RED LEICESTER',
+                            value: 'RED LEICESTER'
+                        }]);
                 });
 
-                it('should fetch range data with the correct arguments', function() {
-                    expect(ParametricDetailsModel.instances[0].fetch).toHaveBeenCalled();
-                    expect(ParametricDetailsModel.instances[0].fetch.calls.argsFor(0)[0].data.fieldName)
-                        .toBe('AUTN_DATE');
-                    expect(ParametricDetailsModel.instances[0].fetch.calls.argsFor(0)[0].data.fieldText)
-                        .toBe('MATCH{CHEDDAR,STILTON,BRIE,RED LEICESTER}:cheeses');
+                it('should fetch range data', function() {
+                    expect(TrendingStrategy.fetchRangeDataPromises).toHaveLength(1);
                 });
 
                 describe('and the fetch for range details fails', function() {
-                    beforeEach(function() {
-                        ParametricDetailsModel.instances[0].fetch.calls.argsFor(0)[0].error([], xhr);
+                    beforeEach(function () {
+                        TrendingStrategy.fetchRangeDataPromises[0].reject(xhr);
                     });
 
                     it('should display an error message', function() {
@@ -220,40 +207,19 @@ define([
 
                 describe('and the fetch for range details succeeds', function() {
                     beforeEach(function() {
-                        ParametricDetailsModel.instances[0].set({
+                        TrendingStrategy.fetchRangeDataPromises[0].resolve({
                             min: 0,
                             max: 20
                         });
-                        ParametricDetailsModel.instances[0].fetch.calls.argsFor(0)[0].success();
                     });
 
-                    it('should make the correct number of bucketed values models', function() {
-                        expect(BucketedParametricCollection.Model.instances).toHaveLength(4);
-                        expect(BucketedParametricCollection.Model.instances[0].constructorArgs[0]).toEqual({
-                            id: 'AUTN_DATE',
-                            valueName: 'CHEDDAR'
-                        });
-                        expect(BucketedParametricCollection.Model.instances[1].constructorArgs[0]).toEqual({
-                            id: 'AUTN_DATE',
-                            valueName: 'STILTON'
-                        });
-                        expect(BucketedParametricCollection.Model.instances[2].constructorArgs[0]).toEqual({
-                            id: 'AUTN_DATE',
-                            valueName: 'BRIE'
-                        });
-                        expect(BucketedParametricCollection.Model.instances[3].constructorArgs[0]).toEqual({
-                            id: 'AUTN_DATE',
-                            valueName: 'RED LEICESTER'
-                        });
+                    it('should call the trending strategy fetch buckets method', function() {
+                        expect(TrendingStrategy.fetchBucketedDataPromises).toHaveLength(1);
                     });
 
-                    it('should trigger a fetch on each of these models', function() {
-                        expect(BucketedParametricCollection.Model.fetchPromises).toHaveLength(4);
-                    });
-
-                    describe('and one bucketed values fetch fails', function() {
+                    describe('and at least one of the fetches fails', function() {
                         beforeEach(function() {
-                            BucketedParametricCollection.Model.fetchPromises[0].reject(xhr);
+                            TrendingStrategy.fetchBucketedDataPromises[0].reject(xhr);
                         });
 
                         it('should display an error message', function() {
@@ -267,49 +233,18 @@ define([
 
                     describe('and all the bucketed values fetches return successfully', function() {
                         beforeEach(function() {
-                            _.each(BucketedParametricCollection.Model.instances, function(model) {
-                                model.set({
-                                    count: 2,
-                                    displayName: model.get('valueName'),
-                                    max: 20,
-                                    min: 0,
-                                    values: [
-                                        {
-                                            count: 1,
-                                            max: 20,
-                                            min: 15
-                                        },
-                                        {
-                                            count: 1,
-                                            max: 15,
-                                            min: 10
-                                        },
-                                        {
-                                            count: 0,
-                                            max: 10,
-                                            min: 5
-                                        },
-                                        {
-                                            count: 0,
-                                            max: 5,
-                                            min: 0
-                                        }
-                                    ]
-                                })
-                            });
-                            _.each(BucketedParametricCollection.Model.fetchPromises, function(promise) {
-                                promise.resolve();
-                            });
+                            TrendingStrategy.fetchBucketedDataPromises[0].resolve();
                         });
 
-                        it('should create the trending chart', function() {
+                        it('should create the trending chart data', function() {
+                            expect(TrendingStrategy.createChartData.calls.count()).toBe(1);
                             expect(Trending.instances).toHaveLength(1);
                         });
 
                         it('should draw the trending chart with the correct data', function() {
                             expect(Trending.instances[0].draw.calls.count()).toBe(1);
-                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].data).toHaveLength(4);
-                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].data[0].points).toHaveLength(4);
+                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].data.length).toBe(2);
+                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].data[0].points.length).toBe(1);
                             expect(typeof Trending.instances[0].draw.calls.argsFor(0)[0].zoomCallback).toBe('function');
                             expect(typeof Trending.instances[0].draw.calls.argsFor(0)[0].dragMoveCallback).toBe('function');
                             expect(typeof Trending.instances[0].draw.calls.argsFor(0)[0].dragEndCallback).toBe('function');
@@ -325,7 +260,7 @@ define([
                             });
 
                             it('should trigger a new fetch for bucketed values', function() {
-                                expect(BucketedParametricCollection.Model.instances).toHaveLength(8);
+                                expect(TrendingStrategy.fetchBucketedDataPromises).toHaveLength(2);
                             });
                         });
 
@@ -345,7 +280,7 @@ define([
                             });
 
                             it('should trigger a new fetch for bucketed values', function() {
-                                expect(BucketedParametricCollection.Model.instances).toHaveLength(8);
+                                expect(TrendingStrategy.fetchBucketedDataPromises).toHaveLength(2)
                             });
                         });
                     });

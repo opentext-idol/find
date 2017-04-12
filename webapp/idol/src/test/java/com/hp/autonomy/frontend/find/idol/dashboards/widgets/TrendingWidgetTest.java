@@ -17,17 +17,18 @@ import java.io.IOException;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class SunburstWidgetTest extends ComplexWidgetTest<SunburstWidget, SunburstWidgetSettings> {
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
+public class TrendingWidgetTest extends ComplexWidgetTest<TrendingWidget, TrendingWidgetSettings> {
     @Override
-    protected Class<SunburstWidget> getType() {
-        return SunburstWidget.class;
+    protected Class<TrendingWidget> getType() {
+        return TrendingWidget.class;
     }
 
     @Override
-    protected SunburstWidget constructComponent() {
-        return SunburstWidget.builder()
+    protected TrendingWidget constructComponent() {
+        return TrendingWidget.builder()
                 .name("Test Widget")
-                .type("SunburstWidget")
+                .type("TrendingWidget")
                 .x(1)
                 .y(1)
                 .width(1)
@@ -39,9 +40,11 @@ public class SunburstWidgetTest extends ComplexWidgetTest<SunburstWidget, Sunbur
                                 .type(SavedSearchType.QUERY)
                                 .build())
                         .build())
-                .widgetSettings(SunburstWidgetSettings.builder()
-                        .firstField(tagNameFactory.buildTagName("CONTENT_TYPE"))
-                        .maxLegendEntries(5)
+                .widgetSettings(TrendingWidgetSettings.builder()
+                        .parametricField(tagNameFactory.buildTagName("CONTENT_TYPE"))
+                        .dateField(tagNameFactory.buildTagName("AUTN_DATE"))
+                        .maxValues(5)
+                        .numberOfBuckets(12)
                         .build())
                 .build();
     }
@@ -49,31 +52,33 @@ public class SunburstWidgetTest extends ComplexWidgetTest<SunburstWidget, Sunbur
     @Override
     protected String sampleJson() throws IOException {
         return IOUtils.toString(
-                getClass().getResourceAsStream("/com/hp/autonomy/frontend/find/idol/dashboards/widgets/sunburstWidget.json")
+                getClass().getResourceAsStream("/com/hp/autonomy/frontend/find/idol/dashboards/widgets/trendingWidget.json")
         );
     }
 
     @Override
-    protected void validateJson(final JsonContent<SunburstWidget> jsonContent) {
+    protected void validateJson(final JsonContent<TrendingWidget> jsonContent) {
         jsonContent.assertThat()
                 .hasJsonPathStringValue("$.name", "Test Widget")
-                .hasJsonPathStringValue("$.type", "SunburstWidget")
+                .hasJsonPathStringValue("$.type", "TrendingWidget")
                 .hasJsonPathNumberValue("$.x", 1)
                 .hasJsonPathNumberValue("$.y", 1)
                 .hasJsonPathNumberValue("$.width", 1)
                 .hasJsonPathNumberValue("$.height", 1)
                 .hasJsonPathNumberValue("$.datasource.config.id", 123)
                 .hasJsonPathStringValue("$.datasource.config.type", "QUERY")
-                .hasJsonPathStringValue("$.widgetSettings.firstField", "/DOCUMENT/CONTENT_TYPE")
-                .hasJsonPathNumberValue("$.widgetSettings.maxLegendEntries", 5);
+                .hasJsonPathStringValue("$.widgetSettings.parametricField", "/DOCUMENT/CONTENT_TYPE")
+                .hasJsonPathStringValue("$.widgetSettings.dateField", "/DOCUMENT/AUTN_DATE")
+                .hasJsonPathNumberValue("$.widgetSettings.maxValues", 5)
+                .hasJsonPathNumberValue("$.widgetSettings.numberOfBuckets", 12);
     }
 
     @Override
-    protected void validateParsedComponent(final ObjectContent<SunburstWidget> objectContent) {
+    protected void validateParsedComponent(final ObjectContent<TrendingWidget> objectContent) {
         objectContent.assertThat().isEqualTo(
-                SunburstWidget.builder()
-                        .name("star 769 (content type/author) 7 entries")
-                        .type("SunburstWidget")
+                TrendingWidget.builder()
+                        .name("Test trending chart")
+                        .type("TrendingWidget")
                         .x(0)
                         .y(4)
                         .width(5)
@@ -85,22 +90,22 @@ public class SunburstWidgetTest extends ComplexWidgetTest<SunburstWidget, Sunbur
                                         .type(SavedSearchType.QUERY)
                                         .build())
                                 .build())
-                        .widgetSettings(SunburstWidgetSettings.builder()
-                                .firstField(tagNameFactory.buildTagName("CONTENT-TYPE"))
-                                .secondField(tagNameFactory.buildTagName("AUTHOR"))
-                                .maxLegendEntries(7)
-                                .widgetSetting("testing", "testing")
+                        .widgetSettings(TrendingWidgetSettings.builder()
+                                .parametricField(tagNameFactory.buildTagName("OVERALL_VIBE"))
+                                .dateField(tagNameFactory.buildTagName("AUTN_DATE"))
+                                .maxValues(7)
+                                .numberOfBuckets(10)
                                 .build())
                         .build()
         );
     }
 
     @Override
-    protected void validateMergedComponent(final ObjectContent<SunburstWidget> objectContent) {
+    protected void validateMergedComponent(final ObjectContent<TrendingWidget> objectContent) {
         objectContent.assertThat().isEqualTo(
-                SunburstWidget.builder()
+                TrendingWidget.builder()
                         .name("Test Widget")
-                        .type("SunburstWidget")
+                        .type("TrendingWidget")
                         .x(1)
                         .y(1)
                         .width(1)
@@ -112,11 +117,11 @@ public class SunburstWidgetTest extends ComplexWidgetTest<SunburstWidget, Sunbur
                                         .type(SavedSearchType.QUERY)
                                         .build())
                                 .build())
-                        .widgetSettings(SunburstWidgetSettings.builder()
-                                .firstField(tagNameFactory.buildTagName("CONTENT_TYPE"))
-                                .secondField(tagNameFactory.buildTagName("AUTHOR"))
-                                .maxLegendEntries(5)
-                                .widgetSetting("testing", "testing")
+                        .widgetSettings(TrendingWidgetSettings.builder()
+                                .parametricField(tagNameFactory.buildTagName("CONTENT_TYPE"))
+                                .dateField(tagNameFactory.buildTagName("AUTN_DATE"))
+                                .maxValues(5)
+                                .numberOfBuckets(12)
                                 .build())
                         .build()
         );
@@ -128,17 +133,19 @@ public class SunburstWidgetTest extends ComplexWidgetTest<SunburstWidget, Sunbur
     }
 
     @Override
-    SunburstWidget constructComponentWithoutDatasource() {
-        return SunburstWidget.builder()
+    TrendingWidget constructComponentWithoutDatasource() {
+        return TrendingWidget.builder()
                 .name("Test Widget")
-                .type("SunburstWidget")
+                .type("TrendingWidget")
                 .x(1)
                 .y(1)
                 .width(1)
                 .height(1)
-                .widgetSettings(SunburstWidgetSettings.builder()
-                        .firstField(tagNameFactory.buildTagName("CONTENT_TYPE"))
-                        .maxLegendEntries(5)
+                .widgetSettings(TrendingWidgetSettings.builder()
+                        .parametricField(tagNameFactory.buildTagName("CONTENT_TYPE"))
+                        .dateField(tagNameFactory.buildTagName("AUTN_DATE"))
+                        .maxValues(5)
+                        .numberOfBuckets(12)
                         .build())
                 .build();
     }

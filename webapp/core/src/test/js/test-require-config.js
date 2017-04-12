@@ -54,6 +54,7 @@ require.config({
             'find/app/page/search/filters/parametric/parametric-paginator': 'mock/page/search/filters/parametric/parametric-paginator'
         },
         'find/app/page/search/results/trending/trending-view': {
+            'find/app/page/search/results/trending/trending-strategy': 'mock/page/results/trending-strategy',
             'find/app/page/search/results/trending/trending': 'mock/page/results/trending'
         }
     }
