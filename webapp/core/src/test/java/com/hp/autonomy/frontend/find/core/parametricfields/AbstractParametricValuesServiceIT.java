@@ -91,7 +91,7 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
     @Test
     public void getValueDetails() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.VALUES_PATH + ParametricValuesController.DEPENDENT_VALUES_PATH)
-                .param(ParametricValuesController.FIELD_NAMES_PARAM, mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_FIELDS_PATH))
+                .param(ParametricValuesController.FIELD_NAMES_PARAM, mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_FIELDS_PATH, FieldTypeParam.Numeric.name(), FieldTypeParam.NumericDate.name()))
                 .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
                 .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
                 .param(ParametricValuesController.FIELD_TEXT_PARAM, "")

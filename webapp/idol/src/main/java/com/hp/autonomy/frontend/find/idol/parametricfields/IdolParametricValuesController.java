@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.parametricfields;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.find.core.fields.FieldComparatorFactory;
 import com.hp.autonomy.frontend.find.core.parametricfields.ParametricValuesController;
 import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequest;
 import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricRequestBuilder;
@@ -25,8 +26,9 @@ class IdolParametricValuesController extends ParametricValuesController<IdolQuer
     public IdolParametricValuesController(
             final IdolParametricValuesService parametricValuesService,
             final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
-            final ObjectFactory<IdolParametricRequestBuilder> parametricRequestBuilderFactory
+            final ObjectFactory<IdolParametricRequestBuilder> parametricRequestBuilderFactory,
+            final FieldComparatorFactory fieldComparatorFactory
     ) {
-        super(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
+        super(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory, fieldComparatorFactory);
     }
 }

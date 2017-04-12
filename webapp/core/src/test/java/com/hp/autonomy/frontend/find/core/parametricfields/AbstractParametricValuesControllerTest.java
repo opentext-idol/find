@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
+import com.hp.autonomy.frontend.find.core.fields.FieldComparatorFactory;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.BucketingParams;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
@@ -13,6 +14,7 @@ import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesSe
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
+import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
 import com.hp.autonomy.types.requests.idol.actions.tags.RangeInfo;
 import lombok.Data;
 import org.hamcrest.BaseMatcher;
@@ -28,12 +30,14 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -71,6 +75,9 @@ public abstract class AbstractParametricValuesControllerTest<
     private final Function<ControllerArguments<PS, R, RB, Q, QB, S, E>, C> constructController;
     private final Supplier<PS> mockService;
 
+    @MockBean
+    private FieldComparatorFactory fieldComparatorFactory;
+
     @Autowired
     private TagNameFactory tagNameFactory;
 
@@ -90,8 +97,10 @@ public abstract class AbstractParametricValuesControllerTest<
 
     @Before
     public void setUp() {
+        when(fieldComparatorFactory.parametricFieldAndValuesComparator()).thenReturn(Comparator.comparing(QueryTagInfo::getId));
+
         parametricValuesService = mockService.get();
-        parametricValuesController = constructController.apply(new ControllerArguments<>(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory));
+        parametricValuesController = constructController.apply(new ControllerArguments<>(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory, fieldComparatorFactory));
     }
 
     @Test
@@ -183,6 +192,7 @@ public abstract class AbstractParametricValuesControllerTest<
         private final PS parametricValuesService;
         private final ObjectFactory<QB> queryRestrictionsBuilderFactory;
         private final ObjectFactory<RB> parametricRequestBuilderFactory;
+        private final FieldComparatorFactory fieldComparatorFactory;
     }
 
     static class ParametricRequestMatcher<R extends ParametricRequest<?>> extends BaseMatcher<R> {

@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.hod.parametricfields;
 
+import com.hp.autonomy.frontend.find.core.fields.FieldComparatorFactory;
 import com.hp.autonomy.frontend.find.core.parametricfields.ParametricValuesController;
 import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodErrorException;
@@ -26,8 +27,9 @@ class HodParametricValuesController extends ParametricValuesController<HodQueryR
     public HodParametricValuesController(
             final HodParametricValuesService parametricValuesService,
             final ObjectFactory<HodQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
-            final ObjectFactory<HodParametricRequestBuilder> parametricRequestBuilderFactory
+            final ObjectFactory<HodParametricRequestBuilder> parametricRequestBuilderFactory,
+            final FieldComparatorFactory fieldComparatorFactory
     ) {
-        super(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory);
+        super(parametricValuesService, queryRestrictionsBuilderFactory, parametricRequestBuilderFactory, fieldComparatorFactory);
     }
 }

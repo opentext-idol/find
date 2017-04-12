@@ -68,7 +68,7 @@ public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolF
         when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
         when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
 
-        return new IdolFieldsController(idolFieldsService, idolParametricValuesService, parametricRequestBuilderFactory, tagNameFactory, configService, fieldsRequestBuilderFactory, queryRestrictionsBuilderFactory);
+        return new IdolFieldsController(idolFieldsService, idolParametricValuesService, parametricRequestBuilderFactory, fieldComparatorFactory, tagNameFactory, configService, fieldsRequestBuilderFactory, queryRestrictionsBuilderFactory);
     }
 
     @Override

@@ -30,11 +30,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +59,9 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
 
     @Mock
     protected ConfigFileService<F> configService;
+
+    @MockBean
+    protected FieldComparatorFactory fieldComparatorFactory;
 
     @Autowired
     protected TagNameFactory tagNameFactory;
@@ -81,6 +86,8 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         config = mockConfig();
         when(configService.getConfig()).thenReturn(config);
         when(config.getUiCustomization()).thenReturn(UiCustomization.builder().parametricAlwaysShow(Collections.emptyList()).build());
+
+        when(fieldComparatorFactory.parametricFieldComparator()).thenReturn(Comparator.comparing(FieldAndValueDetails::getId));
 
         controller = constructController();
         service = constructService();
@@ -224,46 +231,6 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
         assertThat(fields, hasSize(1));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField2").getNormalisedPath()))));
-    }
-
-    @Test
-    public void getParametricFieldsWithDefaultSorting() throws E {
-        mockSimpleParametricResponse();
-
-        final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
-        assertThat(fields.get(0), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField1").getNormalisedPath())));
-        assertThat(fields.get(1), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField2").getNormalisedPath())));
-        assertThat(fields.get(2), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField3").getNormalisedPath())));
-    }
-
-    @Test
-    public void getParametricFieldsWithExplicitOrder() throws E {
-        mockSimpleParametricResponse();
-
-        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .parametricOrderItem(tagNameFactory.getFieldPath("ParametricField3"))
-                .parametricOrderItem(tagNameFactory.getFieldPath("ParametricField2"))
-                .parametricOrderItem(tagNameFactory.getFieldPath("ParametricField1"))
-                .build());
-
-        final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
-        assertThat(fields.get(0), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField3").getNormalisedPath())));
-        assertThat(fields.get(1), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField2").getNormalisedPath())));
-        assertThat(fields.get(2), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField1").getNormalisedPath())));
-    }
-
-    @Test
-    public void getParametricFieldsWithSomeExplicitOrdering() throws E {
-        mockSimpleParametricResponse();
-
-        when(config.getUiCustomization()).thenReturn(UiCustomization.builder()
-                .parametricOrderItem(tagNameFactory.getFieldPath("ParametricField3"))
-                .build());
-
-        final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
-        assertThat(fields.get(0), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField3").getNormalisedPath())));
-        assertThat(fields.get(1), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField1").getNormalisedPath())));
-        assertThat(fields.get(2), hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField2").getNormalisedPath())));
     }
 
     private void mockSimpleParametricResponse() throws E {

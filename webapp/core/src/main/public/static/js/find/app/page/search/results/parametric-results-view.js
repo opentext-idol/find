@@ -202,7 +202,7 @@ define([
                 name: 'first',
                 fields: this.parametricCollection.invoke('pick', 'id', 'displayName').filter(function (data) {
                     return !selectedFieldsAndValues[data.id];
-                }.bind(this)).sort(),
+                }.bind(this)),
                 allowEmpty: false
             });
 

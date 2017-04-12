@@ -81,7 +81,7 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
         when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
         when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
 
-        return new HodFieldsController(hodFieldsService, hodParametricValuesService, parametricRequestBuilderFactory, tagNameFactory, configService, fieldsRequestBuilderFactory, queryRestrictionsBuilderFactory);
+        return new HodFieldsController(hodFieldsService, hodParametricValuesService, parametricRequestBuilderFactory, fieldComparatorFactory, tagNameFactory, configService, fieldsRequestBuilderFactory, queryRestrictionsBuilderFactory);
     }
 
     @Override

@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.hod.fields;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
+import com.hp.autonomy.frontend.find.core.fields.FieldComparatorFactory;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodErrorException;
@@ -48,11 +49,12 @@ class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorExc
             final HodFieldsService fieldsService,
             final HodParametricValuesService parametricValuesService,
             final ObjectFactory<HodParametricRequestBuilder> parametricRequestBuilderFactory,
+            final FieldComparatorFactory fieldComparatorFactory,
             final TagNameFactory tagNameFactory,
             final ConfigService<? extends FindConfig<?, ?>> configService,
             final ObjectFactory<HodFieldsRequestBuilder> fieldsRequestBuilderFactory,
             final ObjectFactory<HodQueryRestrictionsBuilder> queryRestrictionsBuilderFactory) {
-        super(fieldsService, parametricValuesService, parametricRequestBuilderFactory, tagNameFactory, configService);
+        super(fieldsService, parametricValuesService, parametricRequestBuilderFactory, fieldComparatorFactory, tagNameFactory, configService);
         this.fieldsRequestBuilderFactory = fieldsRequestBuilderFactory;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
     }

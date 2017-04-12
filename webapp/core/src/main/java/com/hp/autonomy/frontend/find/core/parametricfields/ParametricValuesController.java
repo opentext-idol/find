@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
+import com.hp.autonomy.frontend.find.core.fields.FieldComparatorFactory;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.BucketingParams;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.DependentParametricField;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
@@ -33,7 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(ParametricValuesController.PARAMETRIC_PATH)
@@ -63,21 +64,24 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     private final ParametricValuesService<R, Q, E> parametricValuesService;
     private final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory;
     private final ObjectFactory<? extends ParametricRequestBuilder<R, Q, ?>> parametricRequestBuilderFactory;
+    private final FieldComparatorFactory fieldComparatorFactory;
 
     protected ParametricValuesController(
             final ParametricValuesService<R, Q, E> parametricValuesService,
             final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory,
-            final ObjectFactory<? extends ParametricRequestBuilder<R, Q, ?>> parametricRequestBuilderFactory
+            final ObjectFactory<? extends ParametricRequestBuilder<R, Q, ?>> parametricRequestBuilderFactory,
+            final FieldComparatorFactory fieldComparatorFactory
     ) {
         this.parametricValuesService = parametricValuesService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
         this.parametricRequestBuilderFactory = parametricRequestBuilderFactory;
+        this.fieldComparatorFactory = fieldComparatorFactory;
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(method = RequestMethod.GET, path = VALUES_PATH)
     @ResponseBody
-    public Set<QueryTagInfo> getParametricValues(
+    public List<QueryTagInfo> getParametricValues(
             @RequestParam(FIELD_NAMES_PARAM) final List<FieldPath> fieldNames,
             @RequestParam(value = START_PARAM, required = false) final Integer start,
             @RequestParam(value = MAX_VALUES_PARAM, required = false) final Integer maxValues,
@@ -106,19 +110,21 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
                 .sort(SortParam.DocumentCount);
 
         // Don't override defaults set in the request builder
-        if(start != null) {
+        if (start != null) {
             builder.start(start);
         }
 
-        if(maxValues != null) {
+        if (maxValues != null) {
             builder.maxValues(maxValues);
         }
 
-        if(valueRestriction != null) {
+        if (valueRestriction != null) {
             builder.valueRestriction(valueRestriction);
         }
 
-        return parametricValuesService.getParametricValues(builder.build());
+        return parametricValuesService.getParametricValues(builder.build()).stream()
+                .sorted(fieldComparatorFactory.parametricFieldAndValuesComparator())
+                .collect(Collectors.toList());
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")

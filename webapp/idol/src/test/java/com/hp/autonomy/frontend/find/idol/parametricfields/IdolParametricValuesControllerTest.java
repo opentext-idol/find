@@ -33,7 +33,8 @@ public class IdolParametricValuesControllerTest extends AbstractParametricValues
         super(args -> new IdolParametricValuesController(
                 args.getParametricValuesService(),
                 args.getQueryRestrictionsBuilderFactory(),
-                args.getParametricRequestBuilderFactory()
+                args.getParametricRequestBuilderFactory(),
+                args.getFieldComparatorFactory()
         ), () -> mock(IdolParametricValuesService.class));
     }
 }

@@ -34,7 +34,8 @@ public class HodParametricValuesControllerTest extends AbstractParametricValuesC
         super(args -> new HodParametricValuesController(
                 args.getParametricValuesService(),
                 args.getQueryRestrictionsBuilderFactory(),
-                args.getParametricRequestBuilderFactory()
+                args.getParametricRequestBuilderFactory(),
+                args.getFieldComparatorFactory()
         ), () -> mock(HodParametricValuesService.class));
     }
 }

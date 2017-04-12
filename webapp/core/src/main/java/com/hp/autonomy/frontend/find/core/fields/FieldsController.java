@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -41,6 +40,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
     private final FieldsService<R, E> fieldsService;
     private final ParametricValuesService<P, Q, E> parametricValuesService;
     private final ObjectFactory<? extends ParametricRequestBuilder<P, Q, ?>> parametricRequestBuilderFactory;
+    private final FieldComparatorFactory fieldComparatorFactory;
     private final TagNameFactory tagNameFactory;
     private final ConfigService<? extends FindConfig<?, ?>> configService;
 
@@ -49,12 +49,14 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
             final FieldsService<R, E> fieldsService,
             final ParametricValuesService<P, Q, E> parametricValuesService,
             final ObjectFactory<? extends ParametricRequestBuilder<P, Q, ?>> parametricRequestBuilderFactory,
+            final FieldComparatorFactory fieldComparatorFactory,
             final TagNameFactory tagNameFactory,
             final ConfigService<? extends FindConfig<?, ?>> configService
     ) {
         this.fieldsService = fieldsService;
         this.parametricValuesService = parametricValuesService;
         this.parametricRequestBuilderFactory = parametricRequestBuilderFactory;
+        this.fieldComparatorFactory = fieldComparatorFactory;
         this.tagNameFactory = tagNameFactory;
         this.configService = configService;
     }
@@ -83,7 +85,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
         output.addAll(fetchNumericParametricFieldAndValueDetails(request, FieldTypeParam.NumericDate, response));
         output.addAll(fetchNumericParametricFieldAndValueDetails(request, FieldTypeParam.Numeric, response));
         output.addAll(fetchParametricFieldAndValueDetails(FieldTypeParam.Parametric, response));
-        output.sort(parametricFieldComparator());
+        output.sort(fieldComparatorFactory.parametricFieldComparator());
 
         return output;
     }
@@ -161,16 +163,6 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
                 .orElse(Collections.emptyList());
 
         return tagName -> (parametricAlwaysShow.isEmpty() || parametricAlwaysShow.contains(tagName.getId())) && !parametricNeverShow.contains(tagName.getId());
-    }
-
-    private Comparator<FieldAndValueDetails> parametricFieldComparator() {
-        final UiCustomization maybeUiCustomization = configService.getConfig().getUiCustomization();
-        final int[] counter = new int[]{0};
-        final Map<FieldPath, Integer> orderMap = Optional.ofNullable(maybeUiCustomization)
-                .map(uiCustomization -> uiCustomization.getParametricOrder().stream().collect(Collectors.toMap(x -> x, x -> counter[0]++)))
-                .orElse(Collections.emptyMap());
-        return Comparator.<FieldAndValueDetails, Integer>comparing(x -> orderMap.getOrDefault(tagNameFactory.getFieldPath(x.getId()), Integer.MAX_VALUE))
-                .thenComparing(FieldAndValueDetails::getDisplayName);
     }
 
     @FunctionalInterface
