@@ -120,6 +120,8 @@ define([
                 loadingHtml: this.loadingHtml
             }));
             this.$errorMessage = this.$('.trending-error');
+            this.$chart = this.$('.trending-chart');
+
             this.viewStateModel.set('dataState', dataState.LOADING);
 
             if(this.trendingChart) {
@@ -127,7 +129,7 @@ define([
             }
 
             this.trendingChart = new Trending({
-                el: this.$('.trending-chart').get(0),
+                el: this.$chart.get(0),
                 tooltipText: i18n['search.resultsView.trending.tooltipText'],
                 zoomEnabled: true,
                 dragEnabled: true,
@@ -257,15 +259,17 @@ define([
         },
 
         updateChart: function() {
-            this.$('[data-toggle="tooltip"]').tooltip('destroy');
+            if (this.viewStateModel.get('fetchState') !== fetchState.FETCHING_BUCKETS
+                && !this.$chart.hasClass('hide')) {
 
-            const data = trendingStrategy.createChartData({
-                bucketedValues: this.bucketedValues,
-                currentMin: this.model.get('currentMin'),
-                currentMax: this.model.get('currentMax')
-            });
+                this.$('[data-toggle="tooltip"]').tooltip('destroy');
 
-            if(this.viewStateModel.get('fetchState') !== fetchState.FETCHING_BUCKETS) {
+                const data = trendingStrategy.createChartData({
+                    bucketedValues: this.bucketedValues,
+                    currentMin: this.model.get('currentMin'),
+                    currentMax: this.model.get('currentMax')
+                });
+
                 const reloaded = this.viewStateModel.get('currentState') === renderState.RENDERING_NEW_DATA;
 
                 this.trendingChart.draw({
@@ -299,7 +303,7 @@ define([
             this.$errorMessage.toggleClass('hide', state !== dataState.ERROR);
             this.$('.trending-empty').toggleClass('hide', state !== dataState.EMPTY);
             this.$('.trending-loading').toggleClass('hide', state !== dataState.LOADING);
-            this.$('.trending-chart').toggleClass('hide', state !== dataState.OK);
+            this.$chart.toggleClass('hide', state !== dataState.OK);
 
             if(state !== dataState.ERROR && this.$errorMessage) {
                 this.$errorMessage.empty();
