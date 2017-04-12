@@ -23,18 +23,18 @@ define([
     ];
 
     const PARAMETRIC_VALUES = [
-        {field: 'CATEGORY', value: 'person'},
-        {field: 'CATEGORY', value: 'film'}
+        {field: 'CATEGORY', displayName: 'Category', value: 'person', displayValue: 'Person'},
+        {field: 'CATEGORY', displayName: 'Category', value: 'film', displayValue: 'Film'}
     ];
 
     const PARAMETRIC_RANGES_CLIENT = [
-        {field: 'YEAR', range: [1066, 1485], type: 'Numeric'},
-        {field: 'DATE', range: [123456789000, 123456791000], type: 'NumericDate'}
+        {field: 'YEAR', displayName: 'Year', range: [1066, 1485], type: 'Numeric'},
+        {field: 'DATE', displayName: 'Date', range: [123456789000, 123456791000], type: 'NumericDate'}
     ];
 
     const PARAMETRIC_RANGES_SERVER = [
-        {field: 'YEAR', min: 1066, max: 1485, type: 'Numeric'},
-        {field: 'DATE', min: 123456789000, max: 123456791000, type: 'Date'}
+        {field: 'YEAR', displayName: 'Year', min: 1066, max: 1485, type: 'Numeric'},
+        {field: 'DATE', displayName: 'Date', min: 123456789000, max: 123456791000, type: 'Date'}
     ];
 
     describe('SavedSearchModel', function() {
@@ -71,11 +71,7 @@ define([
             });
 
             // The real selected parametric values collection also contains display names
-            this.selectedParametricValues = new Backbone.Collection(_.map(PARAMETRIC_VALUES.concat(PARAMETRIC_RANGES_CLIENT), function(data, index) {
-                return _.extend({
-                    displayName: 'MY_DISPLAY_NAME_' + index
-                }, data);
-            }));
+            this.selectedParametricValues = new Backbone.Collection(PARAMETRIC_VALUES.concat(PARAMETRIC_RANGES_CLIENT));
 
             this.queryState = {
                 conceptGroups: this.conceptGroups,

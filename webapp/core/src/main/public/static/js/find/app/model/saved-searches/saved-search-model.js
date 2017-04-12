@@ -65,7 +65,8 @@ define([
                 parametricValues.push({
                     field: model.get('field'),
                     displayName: model.get('displayName'),
-                    value: model.get('value')
+                    value: model.get('value'),
+                    displayValue: model.get('displayValue')
                 });
             } else if (model.has('range')) {
                 parametricRanges.push({
@@ -85,7 +86,7 @@ define([
     }
 
     function compareWithoutDisplayNames(x, y) {
-        return _.isEqual(_.omit(x, 'displayName'), _.omit(y, 'displayName'));
+        return _.isEqual(_.omit(x, ['displayName', 'displayValue']), _.omit(y, 'displayName', 'displayValue'));
     }
 
     function nullOrUndefined(input) {

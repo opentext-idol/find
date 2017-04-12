@@ -41,8 +41,8 @@ define([
             const $tabs = this.modal.$('.fields-list a');
             expect($tabs).toHaveLength(3);
             expect($tabs.eq(0)).toContainText('Author');
-            expect($tabs.eq(1)).toContainText('Category');
-            expect($tabs.eq(2)).toContainText('Place');
+            expect($tabs.eq(1)).toContainText('Place');
+            expect($tabs.eq(2)).toContainText('Category');
         });
     });
 
