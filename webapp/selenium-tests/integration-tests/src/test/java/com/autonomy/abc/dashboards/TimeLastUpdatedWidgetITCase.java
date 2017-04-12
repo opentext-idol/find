@@ -18,7 +18,7 @@ import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.
 
 public class TimeLastUpdatedWidgetITCase extends DashboardITCase {
     public TimeLastUpdatedWidgetITCase(final TestConfig config) {
-        super(config, 9, "Time Last Refreshed Dashboard");
+        super(config, 2, "Time Last Refreshed Dashboard");
     }
 
     @Test

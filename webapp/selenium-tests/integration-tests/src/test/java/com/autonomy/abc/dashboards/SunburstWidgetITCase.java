@@ -16,6 +16,7 @@ public class SunburstWidgetITCase extends ClickableDashboardITCase {
     @Override
     @Before
     public void setUp() {
+        super.setUp();
         page.waitForSunburstWidgetToRender();
     }
 

@@ -6,13 +6,16 @@
 package com.autonomy.abc.dashboards;
 
 import com.autonomy.abc.base.IdolFindTestBase;
+import com.autonomy.abc.base.Role;
 import com.autonomy.abc.selenium.find.DashboardPage;
+import com.autonomy.abc.selenium.find.application.UserRole;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import org.junit.Before;
 import org.junit.Test;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 
+@Role(UserRole.BIFHI)
 public abstract class DashboardITCase extends IdolFindTestBase {
     private final int numberOfWidgets;
     private final String dashboardName;

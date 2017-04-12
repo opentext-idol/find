@@ -11,15 +11,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.time.format.DateTimeFormatter;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.time.format.DateTimeFormatterBuilder;
 
 public class CurrentTimeWidgetITCase extends DashboardITCase {
-    private static final Pattern AM = Pattern.compile("am", Pattern.LITERAL);
-    private static final Pattern PM = Pattern.compile("pm", Pattern.LITERAL);
-
     public CurrentTimeWidgetITCase(final TestConfig config) {
-
         super(config, 1, "Current Time Date Dashboard");
     }
 
@@ -27,15 +22,20 @@ public class CurrentTimeWidgetITCase extends DashboardITCase {
     public void testTimeFormat() {
         final WebElement webElement = page.getWidgets().get(0);
         final String currentTime = webElement.findElement(By.cssSelector(".current-time")).getText();
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("hh:mma z");
-        dateTimeFormatter.parse(PM.matcher(AM.matcher(currentTime).replaceAll(Matcher.quoteReplacement("AM"))).replaceAll(Matcher.quoteReplacement("PM")));
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm z");
+        dateTimeFormatter.parse(currentTime);
     }
 
     @Test
     public void testDayFormat() {
         final WebElement webElement = page.getWidgets().get(0);
         final String currentDay = webElement.findElement(By.cssSelector(".day")).getText();
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("EEEE");
+
+        final DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
+                .parseCaseInsensitive()
+                .appendPattern("EEEE")
+                .toFormatter();
+
         dateTimeFormatter.parse(currentDay);
     }
 
@@ -43,7 +43,12 @@ public class CurrentTimeWidgetITCase extends DashboardITCase {
     public void testDateFormat() {
         final WebElement webElement = page.getWidgets().get(0);
         final String currentDate = webElement.findElement(By.cssSelector(".date")).getText();
-        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("MMM dd, uuuu");
+
+        final DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
+                .parseCaseInsensitive()
+                .appendPattern("MMM dd, uuuu")
+                .toFormatter();
+
         dateTimeFormatter.parse(currentDate);
     }
 }
