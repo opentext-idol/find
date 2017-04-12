@@ -41,8 +41,8 @@ define([
                 queryModel: this.queryModel,
                 selectedParametricValues: this.queryModel.queryState.selectedParametricValues,
                 model: this.model,
-                field: this.widgetSettings.parametricField,
-                dateField: this.widgetSettings.dateField,
+                field: this.widgetSettings.parametricField.id,
+                dateField: this.widgetSettings.dateField.id,
                 numberOfValuesToDisplay: this.widgetSettings.maxValues,
             };
 
