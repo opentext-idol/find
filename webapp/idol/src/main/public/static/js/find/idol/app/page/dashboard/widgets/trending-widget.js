@@ -15,6 +15,8 @@ define([
 ], function (_, $, Backbone, i18n, SavedSearchWidget, trendingStrategy, Trending) {
     'use strict';
 
+    const colours = ['#1f77b4', '#6baed6', '#ff7f0e', '#e377c2', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#e7ba52'];
+
     //noinspection JSUnresolvedFunction
     return SavedSearchWidget.extend({
         viewType: 'trending',
@@ -24,7 +26,7 @@ define([
             SavedSearchWidget.prototype.render.call(this);
 
             // TODO Implement consistent dashboard widget empty handling
-            this.$emptyMessage = $('<div class="hide">'+ i18n['search.resultsView.trending.empty'] +'</div>').appendTo(this.$content);
+            this.$emptyMessage = $('<div class="hide">' + i18n['search.resultsView.trending.empty'] + '</div>').appendTo(this.$content);
 
             this.$chart = $('<div class="full-height"></div>').appendTo(this.$content);
 
@@ -65,13 +67,14 @@ define([
                             }.bind(this));
                     }
                 }.bind(this))
-                .done(function() {
-                    this.drawTrendingChart(Array.prototype.slice.call(arguments));
+                .done(function () {
+                    this.bucketedValues = Array.prototype.slice.call(arguments);
+                    this.drawTrendingChart(this.bucketedValues);
                 }.bind(this));
         },
 
         drawTrendingChart: function (bucketedValues) {
-            if(_.isEmpty(bucketedValues)) {
+            if (_.isEmpty(bucketedValues)) {
                 this.$emptyMessage.removeClass('hide');
                 this.$chart.addClass('hide');
             } else {
@@ -94,6 +97,32 @@ define([
                     maxDate: maxDate,
                     yAxisLabel: i18n['search.resultsView.trending.yAxis']
                 });
+            }
+        },
+
+        exportData: function () {
+            if (_.isEmpty(this.bucketedValues)) {
+                return null;
+            } else {
+                const timestamps = this.bucketedValues[0].values.map(function (value) {
+                    return (value.min + value.max) / 2;
+                });
+                const rows = this.bucketedValues.map(function (bucketInfo, index) {
+                    return {
+                        color: colours[index % colours.length],
+                        label: bucketInfo.valueName,
+                        secondaryAxis: false,
+                        values: _.pluck(bucketInfo.values, 'count')
+                    }
+                });
+
+                return {
+                    type: 'dategraph',
+                    data: {
+                        timestamps: timestamps,
+                        rows: rows
+                    }
+                }
             }
         }
     });

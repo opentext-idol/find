@@ -36,6 +36,7 @@ public class PowerPointExportServiceIT {
     private static final String SUNBURST_DATA = "/com/hp/autonomy/frontend/find/core/export/sunburst-data.json";
     private static final String MAP_DATA = "/com/hp/autonomy/frontend/find/core/export/map-data.json";
     private static final String LIST_DATA = "/com/hp/autonomy/frontend/find/core/export/list-data.json";
+    private static final String DATE_GRAPH_DATA = "/com/hp/autonomy/frontend/find/core/export/date-graph-data.json";
     private static final String REPORT_DATA = "/com/hp/autonomy/frontend/find/core/export/report-data.json";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -92,12 +93,10 @@ public class PowerPointExportServiceIT {
         });
     }
 
-    @Ignore
     @Test
     public void dateGraph() throws IOException {
-        //TODO determine good test data
         simpleDataTest(outputStream -> {
-            final DategraphData dategraphData = new DategraphData();
+            final DategraphData dategraphData = getData(DATE_GRAPH_DATA, DategraphData.class);
             powerPointExportService.dateGraph(outputStream, dategraphData);
         });
     }

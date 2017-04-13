@@ -24,6 +24,7 @@ public abstract class ExportControllerIT extends AbstractFindIT {
     private static final String SUNBURST_DATA = "/com/hp/autonomy/frontend/find/core/export/sunburst-data.json";
     private static final String MAP_DATA = "/com/hp/autonomy/frontend/find/core/export/map-data.json";
     private static final String LIST_DATA = "/com/hp/autonomy/frontend/find/core/export/list-data.json";
+    private static final String DATE_GRAPH_DATA = "/com/hp/autonomy/frontend/find/core/export/date-graph-data.json";
     private static final String REPORT_DATA = "/com/hp/autonomy/frontend/find/core/export/report-data.json";
 
     @Test
@@ -108,12 +109,10 @@ public abstract class ExportControllerIT extends AbstractFindIT {
                 .andExpect(content().string(notNullValue()));
     }
 
-    @Ignore
     @Test
     public void exportDateGraphToPptx() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.DATE_GRAPH_PATH).with(authentication(biAuth()));
-        //TODO determine good test data
-        requestBuilder.param(ExportController.DATA_PARAM, "{}");
+        requestBuilder.param(ExportController.DATA_PARAM, getData(DATE_GRAPH_DATA));
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
