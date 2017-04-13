@@ -64,7 +64,7 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
 
     @Override
     public T getDashboardSearch(final long id) {
-        return crudRepository.findOne(id);
+        return crudRepository.findByActiveTrueAndId(id);
     }
 
     private T getSearch(final long id) throws IllegalArgumentException {
