@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
@@ -18,6 +19,7 @@ import lombok.EqualsAndHashCode;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
@@ -32,6 +34,7 @@ public class TrendingWidgetSettings extends SimpleComponent<TrendingWidgetSettin
     private final TagName dateField;
     private final Integer maxValues;
     private final Integer numberOfBuckets;
+    private final List<TrendingValue> values;
 
     @Override
     public void basicValidate(final String section) throws ConfigException {
@@ -48,6 +51,13 @@ public class TrendingWidgetSettings extends SimpleComponent<TrendingWidgetSettin
         return Collections.unmodifiableMap(widgetSettings);
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    @Data
+    public static class TrendingValue {
+        @JsonProperty("name")
+        private final String name;
+    }
+
     @SuppressWarnings({"FieldMayBeFinal", "WeakerAccess", "unused"})
     @JsonPOJOBuilder(withPrefix = "")
     public static class TrendingWidgetSettingsBuilder {
@@ -56,6 +66,7 @@ public class TrendingWidgetSettings extends SimpleComponent<TrendingWidgetSettin
         private TagName dateField;
         private Integer maxValues;
         private Integer numberOfBuckets;
+        private List<TrendingValue> values;
 
         @SuppressWarnings("unused")
         @JsonAnySetter

@@ -15,13 +15,14 @@ define([
 ], function (_, $, Backbone, i18n, SavedSearchWidget, trendingStrategy, Trending) {
     'use strict';
 
+    const SECONDS_IN_ONE_DAY = 86400;
     const colours = ['#1f77b4', '#6baed6', '#ff7f0e', '#e377c2', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#e7ba52'];
 
     //noinspection JSUnresolvedFunction
     return SavedSearchWidget.extend({
         viewType: 'trending',
 
-        render: function () {
+        render: function() {
             //noinspection JSUnresolvedVariable
             SavedSearchWidget.prototype.render.call(this);
 
@@ -38,7 +39,7 @@ define([
             });
         },
 
-        getData: function () {
+        getData: function() {
             const fetchOptions = {
                 queryModel: this.queryModel,
                 selectedParametricValues: this.queryModel.queryState.selectedParametricValues,
@@ -46,6 +47,7 @@ define([
                 field: this.widgetSettings.parametricField.id,
                 dateField: this.widgetSettings.dateField.id,
                 numberOfValuesToDisplay: this.widgetSettings.maxValues,
+                values: this.widgetSettings.values
             };
 
             return trendingStrategy.fetchField(fetchOptions)
@@ -54,9 +56,14 @@ define([
                         return $.when();
                     } else {
                         return trendingStrategy.fetchRange(selectedFieldValues, fetchOptions)
-                            .then(function (model) {
-                                this.currentMax = model.max;
-                                this.currentMin = model.min;
+                            .then(function (range) {
+                                if (range.min === range.max) {
+                                    this.currentMax = range.max + SECONDS_IN_ONE_DAY;
+                                    this.currentMin = range.min - SECONDS_IN_ONE_DAY;
+                                } else {
+                                    this.currentMax = range.max;
+                                    this.currentMin = range.min;
+                                }
 
                                 return trendingStrategy.fetchBucketedData(_.extend(fetchOptions, {
                                     selectedFieldValues: selectedFieldValues,
@@ -67,7 +74,7 @@ define([
                             }.bind(this));
                     }
                 }.bind(this))
-                .done(function () {
+                .done(function() {
                     this.bucketedValues = Array.prototype.slice.call(arguments);
                     this.drawTrendingChart(this.bucketedValues);
                 }.bind(this));
@@ -98,6 +105,10 @@ define([
                     yAxisLabel: i18n['search.resultsView.trending.yAxis']
                 });
             }
+        },
+
+        onResize: function() {
+            this.drawTrendingChart(this.bucketedValues);
         },
 
         exportData: function () {

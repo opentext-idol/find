@@ -16,6 +16,14 @@
     "parametricField": "/DOCUMENT/OVERALL_VIBE",
     "dateField": "AUTN_DATE",
     "maxValues": 7,
-    "numberOfBuckets": 10
+    "numberOfBuckets": 10,
+    "values": [
+      {
+        "name": "POSITIVE"
+      },
+      {
+        "name": "NEGATIVE"
+      }
+    ]
   }
 }

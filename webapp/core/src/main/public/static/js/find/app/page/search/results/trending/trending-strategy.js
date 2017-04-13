@@ -41,7 +41,8 @@ define([
                 minDate: options.queryModel.getIsoDate('minDate'),
                 maxDate: options.queryModel.getIsoDate('maxDate'),
                 minScore: options.queryModel.get('minScore'),
-                maxValues: options.numberOfValuesToDisplay
+                maxValues: options.values ? null : options.numberOfValuesToDisplay,
+                valueRestrictions: options.values ? _.pluck(options.values, 'name') : null
             }
         }).then(function (fieldList) {
             const field = fieldList.filter(function (fieldData) {

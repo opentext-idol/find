@@ -13,6 +13,7 @@ import org.springframework.boot.test.json.JsonContent;
 import org.springframework.boot.test.json.ObjectContent;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -95,6 +96,7 @@ public class TrendingWidgetTest extends ComplexWidgetTest<TrendingWidget, Trendi
                                 .dateField(tagNameFactory.buildTagName("AUTN_DATE"))
                                 .maxValues(7)
                                 .numberOfBuckets(10)
+                                .values(Arrays.asList(new TrendingWidgetSettings.TrendingValue("POSITIVE"), new TrendingWidgetSettings.TrendingValue("NEGATIVE")))
                                 .build())
                         .build()
         );
@@ -122,6 +124,7 @@ public class TrendingWidgetTest extends ComplexWidgetTest<TrendingWidget, Trendi
                                 .dateField(tagNameFactory.buildTagName("AUTN_DATE"))
                                 .maxValues(5)
                                 .numberOfBuckets(12)
+                                .values(Arrays.asList(new TrendingWidgetSettings.TrendingValue("POSITIVE"), new TrendingWidgetSettings.TrendingValue("NEGATIVE")))
                                 .build())
                         .build()
         );
