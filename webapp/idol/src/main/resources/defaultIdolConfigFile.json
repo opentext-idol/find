@@ -137,6 +137,10 @@
         "user": true,
         "bi": false
       },
+      "enableSavedSearch": {
+        "user": false,
+        "bi": true
+      },
       "enableSideBar": {
         "user": false,
         "bi": true

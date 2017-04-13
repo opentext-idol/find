@@ -12,10 +12,13 @@ define([
     const Router = RouterConstructor.extend({
         routes: function () {
             const routes = _.extend({
-                'search/tab/:id(/view/:view)': 'savedSearch',
                 'search/document/:database/:reference': 'documentDetail',
                 'search/suggest/:database/:reference': 'suggest'
             }, RouterConstructor.prototype.routes);
+
+            if (configuration().enableSavedSearch) {
+                routes['search/tab/:id(/view/:view)'] = 'savedSearch';
+            }
 
             if (configuration().enableDashboards) {
                 routes['dashboards/:dashboardName'] = 'dashboards';

@@ -74,6 +74,10 @@
                 "user": true,
                 "bi": false
             },
+            "enableSavedSearch": {
+                "user": false,
+                "bi": true
+            },
             "enableTypeAhead": {
                 "user": true,
                 "bi": true
