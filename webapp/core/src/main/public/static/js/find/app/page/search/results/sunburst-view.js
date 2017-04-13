@@ -39,7 +39,19 @@ define([
             animate: false,
             nameAttr: 'text',
             sizeAttr: 'count',
-            comparator: null,
+            comparator: function (x, y) {
+                const hiddenComparison = x.hidden - y.hidden;
+                if (hiddenComparison !== 0) {
+                    return hiddenComparison;
+                }
+
+                const valueComparison = y.value - x.value;
+                if (valueComparison !== 0) {
+                    return valueComparison;
+                }
+
+                return d3.ascending(x, y);
+            },
             clickCallback: onClick,
             outerRingAnimateSize: 15,
             data: data,

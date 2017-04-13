@@ -119,6 +119,11 @@ define([
                     sizeAttr: 'count',
                     nameAttr: 'text',
                     comparator: function(datumA, datumB) {
+                        const hiddenComparison = datumA.hidden - datumB.hidden;
+                        if (hiddenComparison !== 0) {
+                            return hiddenComparison;
+                        }
+
                         return d3.ascending(datumA.text, datumB.text);
                     },
                     data: data,
@@ -221,6 +226,11 @@ define([
                     color: model.get('color') || HIDDEN_COLOR
                 };
             }).sort(function(a, b) {
+                const hiddenComparison = a.color === HIDDEN_COLOR - b.color === HIDDEN_COLOR;
+                if (hiddenComparison !== 0) {
+                    return hiddenComparison;
+                }
+
                 return d3.ascending(a.category, b.category);
             });
 
