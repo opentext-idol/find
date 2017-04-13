@@ -19,10 +19,12 @@
     "numberOfBuckets": 10,
     "values": [
       {
-        "name": "POSITIVE"
+        "name": "POSITIVE",
+        "color": "green"
       },
       {
-        "name": "NEGATIVE"
+        "name": "NEGATIVE",
+        "color": "red"
       }
     ]
   }

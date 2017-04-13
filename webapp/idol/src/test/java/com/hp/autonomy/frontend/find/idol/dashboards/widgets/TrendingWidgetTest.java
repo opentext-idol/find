@@ -5,21 +5,79 @@
 
 package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
+import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearch;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchConfig;
 import org.apache.commons.io.IOUtils;
+import org.junit.Test;
 import org.springframework.boot.test.json.JsonContent;
 import org.springframework.boot.test.json.ObjectContent;
 
 import java.io.IOException;
 import java.util.Arrays;
 
+import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public class TrendingWidgetTest extends ComplexWidgetTest<TrendingWidget, TrendingWidgetSettings> {
+    @Test(expected = ConfigException.class)
+    public void missingField() throws ConfigException {
+        TrendingWidget.builder()
+                .name("Test Widget")
+                .type("TrendingWidget")
+                .x(1)
+                .y(1)
+                .width(1)
+                .height(1)
+                .datasource(SavedSearch.builder()
+                        .source("SavedSearch")
+                        .config(SavedSearchConfig.builder()
+                                .id(123L)
+                                .type(SavedSearchType.QUERY)
+                                .build())
+                        .build())
+                .widgetSettings(TrendingWidgetSettings.builder()
+                        .build())
+                .build()
+                .basicValidate(null);
+    }
+
+    @Test
+    public void invalidColor() throws ConfigException {
+        try {
+            TrendingWidget.builder()
+                    .name("Test Widget")
+                    .type("TrendingWidget")
+                    .x(1)
+                    .y(1)
+                    .width(1)
+                    .height(1)
+                    .datasource(SavedSearch.builder()
+                            .source("SavedSearch")
+                            .config(SavedSearchConfig.builder()
+                                    .id(123L)
+                                    .type(SavedSearchType.QUERY)
+                                    .build())
+                            .build())
+                    .widgetSettings(TrendingWidgetSettings.builder()
+                            .parametricField(tagNameFactory.buildTagName("CONTENT_TYPE"))
+                            .values(Arrays.asList(new TrendingWidgetSettings.TrendingValue("POSITIVE", "green"),
+                                    new TrendingWidgetSettings.TrendingValue("NEGATIVE", "cucumber")))
+                            .build())
+                    .build()
+                    .basicValidate(null);
+
+            fail("Exception should have been thrown");
+        } catch (final ConfigException e) {
+            assertThat(e.getMessage(), containsString("cucumber"));
+            assertThat(e.getMessage(), not(containsString("green")));
+        }
+    }
+
     @Override
     protected Class<TrendingWidget> getType() {
         return TrendingWidget.class;
@@ -96,7 +154,8 @@ public class TrendingWidgetTest extends ComplexWidgetTest<TrendingWidget, Trendi
                                 .dateField(tagNameFactory.buildTagName("AUTN_DATE"))
                                 .maxValues(7)
                                 .numberOfBuckets(10)
-                                .values(Arrays.asList(new TrendingWidgetSettings.TrendingValue("POSITIVE"), new TrendingWidgetSettings.TrendingValue("NEGATIVE")))
+                                .values(Arrays.asList(new TrendingWidgetSettings.TrendingValue("POSITIVE", "green"),
+                                        new TrendingWidgetSettings.TrendingValue("NEGATIVE", "red")))
                                 .build())
                         .build()
         );
@@ -124,7 +183,8 @@ public class TrendingWidgetTest extends ComplexWidgetTest<TrendingWidget, Trendi
                                 .dateField(tagNameFactory.buildTagName("AUTN_DATE"))
                                 .maxValues(5)
                                 .numberOfBuckets(12)
-                                .values(Arrays.asList(new TrendingWidgetSettings.TrendingValue("POSITIVE"), new TrendingWidgetSettings.TrendingValue("NEGATIVE")))
+                                .values(Arrays.asList(new TrendingWidgetSettings.TrendingValue("POSITIVE", "green"),
+                                        new TrendingWidgetSettings.TrendingValue("NEGATIVE", "red")))
                                 .build())
                         .build()
         );

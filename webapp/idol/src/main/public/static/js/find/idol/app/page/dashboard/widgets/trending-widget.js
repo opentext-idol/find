@@ -16,7 +16,6 @@ define([
     'use strict';
 
     const SECONDS_IN_ONE_DAY = 86400;
-    const colours = ['#1f77b4', '#6baed6', '#ff7f0e', '#e377c2', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#e7ba52'];
 
     //noinspection JSUnresolvedFunction
     return SavedSearchWidget.extend({
@@ -112,6 +111,8 @@ define([
         },
 
         exportData: function () {
+            const colors = this.trendingChart.colors;
+
             if (_.isEmpty(this.bucketedValues)) {
                 return null;
             } else {
@@ -119,8 +120,12 @@ define([
                     return (value.min + value.max) / 2;
                 });
                 const rows = this.bucketedValues.map(function (bucketInfo, index) {
+                    const color = bucketInfo.color ?
+                        _.findWhere(colors, { name: bucketInfo.color })
+                        : colors[index % colors.length];
+
                     return {
-                        color: colours[index % colours.length],
+                        color: color.hex,
                         label: bucketInfo.valueName,
                         secondaryAxis: false,
                         values: _.pluck(bucketInfo.values, 'count')
