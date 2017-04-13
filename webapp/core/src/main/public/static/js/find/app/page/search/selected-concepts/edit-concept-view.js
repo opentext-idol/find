@@ -65,7 +65,7 @@ define([
         },
 
         updateConfirmButton: function() {
-            var disabled = !this.$('.edit-concept-input').val();
+            var disabled = !this.$('.edit-concept-input').val().trim();
             this.$confirmButton.toggleClass('disabled not-clickable', disabled).prop('disabled', disabled);
         }
     });
