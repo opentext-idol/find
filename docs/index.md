@@ -28,7 +28,7 @@ Find is an end-user search interface for [HPE IDOL](http://www8.hp.com/uk/en/sof
 
 ## Configuring Find for IDOL
 <ul>
-{% for item in site.configurations %}
+{% for item in site.configuration %}
 <li>
 <a href="{{ site.baseurl }}{{item.url}}">{{item.title}}</a>
 </li>

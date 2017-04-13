@@ -1,3 +1,8 @@
+---
+title: Find Java System Properties
+layout: default
+---
+
 # What are Java System Properties?
 
 Java System Properties are command line arguments that are provided to a Java application.  They are identified by a `-D`.  If you run the command `java -jar myprogram.jar -Dsomeproperty=somevalue`, you are setting the value of `someproperty` to `somevalue` for the application.

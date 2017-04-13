@@ -1,3 +1,9 @@
+---
+layout: default
+level: advanced
+title: Heroku Deployment
+---
+
 # Heroku Deployment Guide
 
 This guide assumes that you have experience of building Java applications with maven and deploying to Heroku. For more information, see https://devcenter.heroku.com/articles/getting-started-with-java.

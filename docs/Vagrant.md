@@ -1,3 +1,9 @@
+---
+layout: default
+level: advanced
+title: Vagrant
+---
+
 ## What is it?
 
 HPE Find includes a [Vagrant](http://vagrantup.com) file, which will provision an Ubuntu 12.04 VM running a [Redis](http://redis.io/) server for storing user sessions.

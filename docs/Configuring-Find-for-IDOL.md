@@ -1,3 +1,8 @@
+---
+title: Configuring Find for IDOL
+layout: default
+---
+
 # Getting Started
 
 - First, follow the [[Building Find]] guide

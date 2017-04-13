@@ -1,3 +1,9 @@
+---
+layout: default
+level: basic
+title: Building Find
+---
+
 Requirements
 ------------
 

@@ -1,3 +1,8 @@
+---
+title: Custom Document Templates
+layout: default
+---
+
 As of b1ab79fabda58e007ea14f915b385a7a8def26f0, Find has support for easy customisation of results templates.
 
 Let's start with some documentation:

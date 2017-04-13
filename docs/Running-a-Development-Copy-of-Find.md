@@ -1,3 +1,9 @@
+---
+layout: default
+level: basic
+title: Running a Development Copy of Find
+---
+
 # Getting Started
 
 So you've made some changes to Find and want to test them.  This is the page for you!

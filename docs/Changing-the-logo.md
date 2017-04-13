@@ -1,3 +1,8 @@
+---
+title: Changing the Logo
+layout: default
+---
+
 Find has a couple of "HPE Find" logos.  Let's look at how to change them.
 
 # 1. Find the image files

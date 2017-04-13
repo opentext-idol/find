@@ -1,3 +1,9 @@
+---
+layout: default
+level: advanced
+title: Understanding the Code Structure
+---
+
 # Tools
 
 - [Maven](https://maven.apache.org/) is used for Java compilation and constructing the .war files

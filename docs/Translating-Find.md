@@ -1,3 +1,8 @@
+---
+title: Translating Find
+layout: default
+---
+
 If you want to translate/localize/internationalize Find into another language, this article is for you!
 
 # How language bundles in Find work

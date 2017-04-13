@@ -5,3 +5,5 @@ collections:
     output: true
   building:
     output: true
+  configuration:
+    output: true
