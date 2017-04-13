@@ -112,20 +112,22 @@ define([
                 );
         },
 
+        comparator: function(datumA, datumB) {
+            const hiddenComparison = datumA.hidden - datumB.hidden;
+            if (hiddenComparison !== 0) {
+                return hiddenComparison;
+            }
+
+            return d3.ascending(datumA.text, datumB.text);
+        },
+
         drawSunburst: function(data) {
             return this.$content && this.$visualizerContainer
                 ? new Sunburst(this.$visualizerContainer, {
                     animate: true,
                     sizeAttr: 'count',
                     nameAttr: 'text',
-                    comparator: function(datumA, datumB) {
-                        const hiddenComparison = datumA.hidden - datumB.hidden;
-                        if (hiddenComparison !== 0) {
-                            return hiddenComparison;
-                        }
-
-                        return d3.ascending(datumA.text, datumB.text);
-                    },
+                    comparator: this.comparator,
                     data: data,
                     fillColorFn: function(datum) {
                         if(!datum.parent) {
@@ -219,19 +221,12 @@ define([
         },
 
         exportData: function() {
-            const data = this.legendColorCollection.map(function(model) {
+            const data = this.legendColorCollection.toJSON().sort(this.comparator).map(function(legendEntry) {
                 return {
-                    category: model.get('text') || i18n['dashboards.widget.sunburst.legend.hiddenValues'],
-                    value: model.get('count'),
-                    color: model.get('color') || HIDDEN_COLOR
+                    category: legendEntry.text || i18n['dashboards.widget.sunburst.legend.hiddenValues'],
+                    value: legendEntry.count,
+                    color: legendEntry.color || HIDDEN_COLOR
                 };
-            }).sort(function(a, b) {
-                const hiddenComparison = a.color === HIDDEN_COLOR - b.color === HIDDEN_COLOR;
-                if (hiddenComparison !== 0) {
-                    return hiddenComparison;
-                }
-
-                return d3.ascending(a.category, b.category);
             });
 
             return data.length ? {
