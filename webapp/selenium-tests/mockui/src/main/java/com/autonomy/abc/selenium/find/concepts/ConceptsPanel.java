@@ -154,8 +154,12 @@ public class ConceptsPanel {
         }
 
         public void saveEdit() {
-            findElement(By.cssSelector(".edit-concept-confirm-button")).click();
+            saveButton().click();
             new WebDriverWait(driver, 5).until((Function<? super WebDriver, Boolean>) x -> popOverGone());
+        }
+
+        public WebElement saveButton() {
+            return findElement(By.cssSelector(".edit-concept-confirm-button"));
         }
 
         public boolean containsValue(final CharSequence value) {

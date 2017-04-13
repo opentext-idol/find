@@ -31,6 +31,7 @@ import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasAttribute;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -92,6 +93,18 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
                     resultCountList.get(i),
                     greaterThanOrEqualTo(resultCountList.get(i + 1)));
         }
+    }
+
+    @Test
+    public void editConceptToWhitespaceNotAllowed() {
+        final String concept = "cheese";
+        searchAndWait(concept);
+        final EditPopover popover = openEditPopOverForConcept(0, concept);
+        popover.setValue("");
+        verifyThat("Not possible to save concept as empty space", popover.saveButton(), hasAttribute("disabled"));
+        popover.setValue("\n     ");
+        verifyThat("Not possible to save concept as whitespace", popover.saveButton(), hasAttribute("disabled"));
+        popover.cancelEdit();
     }
 
     @Test
