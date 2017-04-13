@@ -25,7 +25,7 @@ Simply put, widgets are configurable components that make up a Dashboard. Widget
 
 ![Topic Map Widget][topic-map]
 
-Here we have the Topic Map Widget. This is one of the standard built in widgets which is backed by a saved search (explained [here][SavedSearchWidget]). In a running instance of Find, this widget will automatically resize when the window size changes and it will update the saved search and Topic Map after a specified interval. There can be multiple of these on a single dashboard without them conflicting with each other. 
+Here we have the Topic Map Widget. This is one of the standard built in widgets which is backed by a saved search (explained [here][SavedSearchWidget]).
 
 #### Current Time and Date Widget
 
@@ -37,7 +37,7 @@ The Current Time and Date Widget is an example of a standard widget (explained [
 
 ![Results List Widget][results-list]
 
-Like the [Topic Map Widget][TopicMapWidget] the Results List Widget is backed by a saved search and will display the top `n` results as specified in the configuration file. The Results List Widget will alter its layout to accommodate it's shape and size. If the configured widget size is too small to display all the requested results, excess entries will be hidden.
+Like the [Topic Map Widget][TopicMapWidget] the Results List Widget is backed by a saved search and will display the top `n` results as specified in the configuration file. The Results List Widget will alter its layout to accommodate its shape and size. If the configured widget size is too small to display all the requested results, excess entries will be hidden.
 
 ## Widget Types
 
