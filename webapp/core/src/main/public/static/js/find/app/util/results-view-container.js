@@ -58,8 +58,7 @@ define([
                     viewData.content.render();
                     viewData.rendered = true;
                 }
-
-                if(viewData.content.update) {
+                else if(viewData.content.update) {
                     viewData.content.update();
                 }
             }

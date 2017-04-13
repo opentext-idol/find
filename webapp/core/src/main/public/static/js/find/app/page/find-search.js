@@ -453,9 +453,12 @@ define([
 
                 events(cid);
 
-                const modelId = this.savedSearchCollection.modelId(savedSearchModel.attributes);
+                let creating;
+
                 if(this.serviceViews[cid]) {
                     viewData = this.serviceViews[cid];
+
+                    creating = false;
                 } else {
                     const documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
                     const savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
@@ -501,6 +504,8 @@ define([
                     viewData.view.render();
 
                     this.listenTo(viewData.view, 'updateRouting', _.bind(this.updateRouting, this, savedSearchModel));
+
+                    creating = true;
                 }
 
                 if(this.searchModel) {
@@ -519,7 +524,7 @@ define([
 
                 viewData.view.$el.removeClass('hide');
 
-                if(viewData.view.update) {
+                if(!creating && viewData.view.update) {
                     viewData.view.update();
                 }
 
@@ -603,8 +608,11 @@ define([
             const type = savedSearchModel.get('type') === 'READ_ONLY' ? savedSearchModel.get('searchType') : savedSearchModel.get('type');
             const id = savedSearchModel.get('id');
             const modelId = type + ':' + id;
-            vent.navigate(savedSearchModel.isNew() ? '/search/query' : '/search/tab/' + modelId + (selectedTab ? '/view/' + selectedTab : '')
-                ,{trigger: false});
+
+            vent.navigate(
+                savedSearchModel.isNew() ? '/search/query' : '/search/tab/' + modelId + (selectedTab ? '/view/' + selectedTab : ''),
+                {trigger: false}
+            );
 
             this.currentRoute = Backbone.history.getFragment();
         },

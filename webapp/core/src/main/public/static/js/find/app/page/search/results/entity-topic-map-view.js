@@ -155,6 +155,7 @@ define([
             }
 
             this.topicMap.setElement(this.$('.entity-topic-map')).render();
+            this.update();
             this.updateViewState();
         },
 
