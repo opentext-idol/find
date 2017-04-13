@@ -68,6 +68,7 @@
     "hp-autonomy-js-whatever": "2.12.1",
     "jquery": "1.10.2",
     "requirejs": "2.1.22",
+    "requirejs-text": "2.0.15",
     "underscore": "1.8.3",
     "bootstrap": "3.3.7",
     "hp-autonomy-fieldtext-js": "1.5.0"
