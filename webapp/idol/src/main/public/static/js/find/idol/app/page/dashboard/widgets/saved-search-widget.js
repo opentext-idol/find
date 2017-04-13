@@ -79,6 +79,11 @@ define([
             });
         },
 
+        render: function () {
+            UpdatingWidget.prototype.render.apply(this, arguments);
+            this.$el.addClass('datasource-dependent-widget');
+        },
+
         // Called by the widget's update() method, which in turn is called by the dashboard-page's update().
         // The argument callback hides the loading spinner -- every execution path that does not call it will
         // result in the loading spinner not disappearing after the update.
