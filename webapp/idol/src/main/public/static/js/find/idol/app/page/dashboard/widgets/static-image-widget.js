@@ -13,7 +13,6 @@ define([
     return Widget.extend({
         initialize: function(options) {
             Widget.prototype.initialize.apply(this, arguments);
-
             this.url = this.widgetSettings.url;
         },
 
@@ -23,7 +22,7 @@ define([
             const html = $('<div class="static-image" style=\'background-image: url("' + this.url + '")\'></div>');
 
             this.$content.html(html);
-            this.initialised();
+            this.initialized();
         },
 
         exportData: function(){

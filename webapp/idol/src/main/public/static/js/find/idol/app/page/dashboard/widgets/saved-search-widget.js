@@ -95,11 +95,11 @@ define([
 
                     return this.hasInitialized
                         ? $.when()
-                        : (this.widgetInitialisePromise = $.when(this.postInitialize()));
+                        : (this.widgetInitializePromise = $.when(this.postInitialize()));
                 }.bind(this))
                 .then(function() {
                     this.hasInitialized = true;
-                    this.initialised();
+                    this.initialized();
                     return this.updatePromise = this.getData();
                 }.bind(this))
                 .done(function() {
@@ -107,7 +107,7 @@ define([
                 }.bind(this))
                 .fail(function(error) {
                     this.queryModel = null;
-                    this.initialised();
+                    this.initialized();
                     toggleErrorMessage.call(this, true, getResponseMessage(error));
                 }.bind(this))
                 .always(done);
@@ -121,8 +121,8 @@ define([
             if(this.savedSearchPromise && this.savedSearchPromise.abort) {
                 this.savedSearchPromise.abort();
             }
-            if(this.widgetInitialisePromise && this.widgetInitialisePromise.abort) {
-                this.widgetInitialisePromise.abort();
+            if(this.widgetInitializePromise && this.widgetInitializePromise.abort) {
+                this.widgetInitializePromise.abort();
             }
             if(this.updatePromise && this.updatePromise.abort) {
                 this.updatePromise.abort();

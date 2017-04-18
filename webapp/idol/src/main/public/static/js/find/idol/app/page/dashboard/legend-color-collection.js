@@ -40,11 +40,11 @@ define([
     }
 
     // Sets default colour for each new result
-    function initialiseResults(results, defaultColor) {
+    function initializeResults(results, defaultColor) {
         return _.map(results, function(result) {
             const children = result.children;
             if(children) {
-                result.children = initialiseResults(children, defaultColor);
+                result.children = initializeResults(children, defaultColor);
             }
 
             return _.extend(result,
@@ -198,7 +198,7 @@ define([
         parse: function(results) {
             let uncoloredResults = DependentParametricCollection.prototype.parse.apply(this, arguments);
 
-            return initialiseResults(uncoloredResults, this.hiddenColor);
+            return initializeResults(uncoloredResults, this.hiddenColor);
         }
     });
 });

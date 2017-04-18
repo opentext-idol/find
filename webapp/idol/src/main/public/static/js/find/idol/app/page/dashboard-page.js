@@ -98,7 +98,7 @@ define([
 
             $.when
                 .apply($, _.map(this.widgetViews, function(widget) {
-                    return widget.view.initialiseWidgetPromise
+                    return widget.view.initializeWidgetPromise
                 }))
                 .done(function() {
                     this.$('.report-pptx').removeClass('hide');

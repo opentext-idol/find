@@ -32,7 +32,7 @@ define([
             this.$date = this.$('.date');
 
             this.updateTime();
-            this.initialised();
+            this.initialized();
 
             setInterval(this.updateTime.bind(this), 250);
         },
@@ -45,12 +45,12 @@ define([
             this.$date.text(time.format(this.dateFormat));
         },
 
-        exportData: function(){
+        exportData: function() {
             const fontScale = 10 / 16;
 
             return {
                 data: {
-                    text: _.map([this.$time, this.$day, this.$date], function($el){
+                    text: _.map([this.$time, this.$day, this.$date], function($el) {
                         return {
                             text: $el.text().toUpperCase() + '\n',
                             fontSize: Math.round(parseInt($el.css('font-size')) * fontScale)

@@ -10,13 +10,13 @@ define([
     'find/app/page/search/results/map-results-view-strategy',
     'find/app/page/search/results/map-view',
     'find/app/model/documents-collection'
-], function (_, $, SavedSearchWidget, mapResultsViewStrategy, MapView, DocumentsCollection) {
+], function(_, $, SavedSearchWidget, mapResultsViewStrategy, MapView, DocumentsCollection) {
     'use strict';
 
     return SavedSearchWidget.extend({
         viewType: 'map',
 
-        initialize: function (options) {
+        initialize: function(options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
 
             this.resultSets = [{
@@ -37,41 +37,41 @@ define([
                     disableInteraction: true
                 },
                 resultSets: this.resultSets,
-                toggleLoading: $.noop
+                toggleLoading: _.noop
             });
         },
 
-        render: function () {
+        render: function() {
             SavedSearchWidget.prototype.render.apply(this);
-            this.initialised();
+            this.initialized();
             this.mapResultsViewStrategy.mapView.setElement(this.$content).render();
         },
 
-        getData: function () {
+        getData: function() {
             const resultSet = this.resultSets[0];
             resultSet.model = this.queryModel;
             const maybePromise = this.mapResultsViewStrategy.reloadMarkers();
-            if (!maybePromise) {
+            if(!maybePromise) {
                 return $.when();
             }
 
-            return maybePromise.done(function () {
-                resultSet.collection.each(function (model) {
+            return maybePromise.done(function() {
+                resultSet.collection.each(function(model) {
                     this.mapResultsViewStrategy.getMarkersFromDocumentModel(model, resultSet.markers);
-                    const locations = model.get('locations');
                 }.bind(this));
 
                 this.mapResultsViewStrategy.addMarkersToMap(resultSet.markers, resultSet.clusterLayer, false);
             }.bind(this));
         },
 
-        exportData: function () {
-            return this.mapResultsViewStrategy.mapView.exportData().then(function (data) {
-                return {
-                    data: data,
-                    type: 'map'
-                }
-            });
+        exportData: function() {
+            return this.mapResultsViewStrategy.mapView.exportData()
+                .then(function(data) {
+                    return {
+                        data: data,
+                        type: 'map'
+                    }
+                });
         }
     });
 });

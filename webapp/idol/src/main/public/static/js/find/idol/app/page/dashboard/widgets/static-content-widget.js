@@ -12,7 +12,6 @@ define([
     return Widget.extend({
         initialize: function(options) {
             Widget.prototype.initialize.apply(this, arguments);
-
             this.html = this.widgetSettings.html;
         },
 
@@ -20,10 +19,10 @@ define([
             Widget.prototype.render.apply(this);
 
             this.$content.html(this.html);
-            this.initialised();
+            this.initialized();
         },
 
-        exportData: function(){
+        exportData: function() {
             const nodes = [];
 
             const fontScale = 10 / 16;
@@ -31,18 +30,18 @@ define([
             // Try to traverse the content in a similar way that HTML would parse it, making bold text etc.
             // We can't just use $el.text() since that loses all the formatting.
             function traverse($el) {
-                _.each(_.filter($el.contents(), function(dom){
+                _.each(_.filter($el.contents(), function(dom) {
                     return dom.nodeType === Node.TEXT_NODE || dom.nodeType === Node.ELEMENT_NODE
-                }), function(dom){
-                    if (dom.nodeType === Node.TEXT_NODE) {
+                }), function(dom) {
+                    if(dom.nodeType === Node.TEXT_NODE) {
                         const last = _.last(nodes);
-                        if (last && last.text.slice(-1) !== '\n' && $el.css('display') !== 'inline') {
+                        if(last && last.text.slice(-1) !== '\n' && $el.css('display') !== 'inline') {
                             last.text += '\n';
                         }
 
                         const trimmedText = dom.nodeValue.trim();
 
-                        if (trimmedText) {
+                        if(trimmedText) {
                             // text node, add with the current CSS
                             const fontFamily = $el.css('font-family');
                             const fontWeight = $el.css('font-weight');
@@ -57,7 +56,7 @@ define([
                             })
                         }
                     }
-                    else if (dom.nodeType === Node.ELEMENT_NODE) {
+                    else if(dom.nodeType === Node.ELEMENT_NODE) {
                         traverse($(dom))
                     }
                 })

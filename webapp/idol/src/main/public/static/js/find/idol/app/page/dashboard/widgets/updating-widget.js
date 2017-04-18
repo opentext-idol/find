@@ -19,7 +19,6 @@ define([
 
         render: function() {
             Widget.prototype.render.apply(this);
-
             this.$('.title').append(loadingTemplate);
         },
 

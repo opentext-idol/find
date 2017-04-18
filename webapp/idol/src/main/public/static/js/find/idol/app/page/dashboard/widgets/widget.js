@@ -47,7 +47,7 @@ define([
             return this.$content.width();
         },
 
-        initialised: function () {
+        initialized: function() {
             this.$loading.addClass('hide');
             this.$content.removeClass('hide');
         }
