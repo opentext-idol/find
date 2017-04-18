@@ -1,3 +1,8 @@
+/*
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.core.map;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
@@ -14,6 +19,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.regex.Pattern;
 
+import static junit.framework.TestCase.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -42,14 +50,28 @@ public class MapControllerTest {
         assertTrue(EXPECTED_SUCCESS_PATTERN.matcher(controller.getMapData(URL, "fn")).matches());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void getMapDataInvalidCallback() {
-        controller.getMapData(URL, "0 BAD 0");
+        try {
+            controller.getMapData(URL, "0 BAD 0");
+            fail("Exception should have been thrown");
+        } catch(final IllegalArgumentException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       is("Invalid callback function name"));
+        }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void getMapDataInvalidUrl() {
-        controller.getMapData("http://bad", "fn");
+        try {
+            controller.getMapData("http://bad", "fn");
+            fail("Exception should have been thrown");
+        } catch(final IllegalArgumentException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       is("We only allow proxying to the tile server"));
+        }
     }
 
     @Test

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.core.configuration.export;
 
 import com.hp.autonomy.frontend.configuration.ConfigException;
@@ -10,31 +15,46 @@ import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.fail;
 
 public class PowerPointConfigTest extends ConfigurationComponentTest<PowerPointConfig> {
-    @Test(expected = ConfigException.class)
+    @Test
     public void invalidMargin() throws Exception {
-        PowerPointConfig.builder()
+        try {
+            PowerPointConfig.builder()
                 .marginLeft(1D)
                 .build()
                 .basicValidate(null);
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       containsString("All specified margin settings must be populated with values between 0 (inclusive) and 1 (exclusive)"));
+        }
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void invalidMarginDifference() throws Exception {
-        PowerPointConfig.builder()
+        try {
+            PowerPointConfig.builder()
                 .marginLeft(0.5)
                 .marginRight(0.5)
                 .build()
                 .basicValidate(null);
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       containsString("Top/bottom and left/right margin setting pairs should sum to less than 1"));
+        }
     }
 
     @Test(expected = ConfigException.class)
     public void nonExistentTemplate() throws Exception {
         PowerPointConfig.builder()
-                .templateFile("./customTemplate.pptx")
-                .build()
-                .basicValidate(null);
+            .templateFile("./customTemplate.pptx")
+            .build()
+            .basicValidate(null);
     }
 
     @Override
@@ -45,11 +65,11 @@ public class PowerPointConfigTest extends ConfigurationComponentTest<PowerPointC
     @Override
     protected PowerPointConfig constructComponent() {
         return PowerPointConfig.builder()
-                .marginLeft(0.1)
-                .marginRight(0.1)
-                .marginTop(0.1)
-                .marginBottom(0.1)
-                .build();
+            .marginLeft(0.1)
+            .marginRight(0.1)
+            .marginTop(0.1)
+            .marginBottom(0.1)
+            .build();
     }
 
     @Override
