@@ -161,35 +161,17 @@ public class TopicMapITCase extends IdolFindTestBase {
     }
 
     @Test
-    @ResolvedBug("FIND-620")
-    public void testToolTipNotLyingAboutNumberDocsUsed() {
+    public void testDraggingSliderLoadsNewResults() {
         search("thing");
-
         final RangeInput slider = results.speedVsAccuracySlider();
-        final int originalToolTipValue = sliderToolTipValue(slider);
-
         final List<String> originalParentEntityNames = results.conceptClusterNames();
 
-        slider.dragBy(-10);
+        slider.dragBy(50);
         results.waitForMapLoaded();
-        final List<String> changedParentNames = results.conceptClusterNames();
         assertThat("Changing the slider has changed the map",
-                   changedParentNames,
+                   results.conceptClusterNames(),
                    not(allOf(hasSize(originalParentEntityNames.size()),
                              containsItems(originalParentEntityNames))));
-
-        slider.dragBy(10);
-        results.waitForMapLoaded();
-
-        //Selenium Actions.moveByOffset takes int -> cannot move by <1%
-        //Getting within 1 doc of the original value is permissible
-        assumeThat("Have returned tooltip to original value",
-                   sliderToolTipValue(slider),
-                   anyOf(greaterThanOrEqualTo(originalToolTipValue - 1),
-                         lessThanOrEqualTo(originalToolTipValue + 1)));
-        verifyThat("Same parent concepts as when originally loaded",
-                   results.conceptClusterNames(),
-                   containsItems(originalParentEntityNames));
     }
 
     private int sliderToolTipValue(final RangeInput slider) {

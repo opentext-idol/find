@@ -7,19 +7,19 @@ define([
     './saved-search-widget',
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/vent'
-], function (SavedSearchWidget, EntityTopicMapView, vent) {
+], function(SavedSearchWidget, EntityTopicMapView, vent) {
     'use strict';
 
     return SavedSearchWidget.extend({
         viewType: 'topic-map',
 
-        initialize: function (options) {
+        initialize: function(options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
 
-            this.maxResults = this.widgetSettings.maxResults;
+            this.maxResults = this.widgetSettings.maxResults || 300;
         },
 
-        postInitialize: function () {
+        postInitialize: function() {
             this.entityTopicMap = new EntityTopicMapView({
                 maxResults: this.maxResults,
                 queryModel: this.queryModel,
@@ -29,7 +29,7 @@ define([
                 type: 'QUERY'
             });
 
-            if (this.$content) {
+            if(this.$content) {
                 this.entityTopicMap.setElement(this.$content).render();
             }
 
@@ -38,31 +38,33 @@ define([
             this.entityTopicMap.topicMap.stopListening(vent, 'vent:resize');
         },
 
-        render: function () {
+        render: function() {
             SavedSearchWidget.prototype.render.apply(this);
 
-            if (this.entityTopicMap) {
+            if(this.entityTopicMap) {
                 this.entityTopicMap.setElement(this.$content).render();
             }
         },
 
-        onResize: function () {
-            if (this.entityTopicMap) {
+        onResize: function() {
+            if(this.entityTopicMap) {
                 this.entityTopicMap.update();
             }
         },
 
-        getData: function () {
+        getData: function() {
             return this.entityTopicMap.fetchRelatedConcepts();
         },
 
-        exportData: function () {
-            if (this.entityTopicMap) {
+        exportData: function() {
+            if(this.entityTopicMap) {
                 const data = this.entityTopicMap.exportData();
-                return data ? {
+                return data
+                    ? {
                         data: data,
                         type: 'topicmap'
-                    } : null;
+                    }
+                    : null;
             }
 
             return null;

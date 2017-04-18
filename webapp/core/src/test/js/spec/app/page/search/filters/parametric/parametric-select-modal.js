@@ -1,7 +1,13 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'find/app/page/search/filters/parametric/parametric-select-modal',
-    'backbone'
-], function(ParametricSelectModal, Backbone) {
+    'backbone',
+    'find/app/page/search/filters/parametric/parametric-select-modal'
+], function(Backbone, ParametricSelectModal) {
+    'use strict';
 
     describe('Parametric Select Modal', function() {
         beforeEach(function() {
@@ -37,6 +43,10 @@ define([
             })
         });
 
+        afterEach(function() {
+            this.modal.hide()
+        });
+
         it('initializes correctly', function() {
             const $tabs = this.modal.$('.fields-list a');
             expect($tabs).toHaveLength(3);
@@ -45,5 +55,4 @@ define([
             expect($tabs.eq(2)).toContainText('Category');
         });
     });
-
 });

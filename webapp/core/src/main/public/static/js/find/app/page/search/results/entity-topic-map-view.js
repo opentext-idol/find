@@ -10,12 +10,11 @@ define([
     'find/app/util/topic-map-view',
     'find/app/model/entity-collection',
     'i18n!find/nls/bundle',
-    'find/app/configuration',
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/search/results/entity-topic-map-view.html',
     'text!find/templates/app/page/loading-spinner.html',
     'iCheck'
-], function(_, $, Backbone, TopicMapView, EntityCollection, i18n, configuration, generateErrorHtml,
+], function(_, $, Backbone, TopicMapView, EntityCollection, i18n, generateErrorHtml,
             template, loadingTemplate) {
     'use strict';
 
@@ -38,6 +37,9 @@ define([
     };
 
     const CLUSTER_MODE = 'docsWithPhrase';
+
+    const SPEED_SLIDER_MIN = 50;
+    const DEFAULT_MAX_RESULTS = 300;
 
     function sum(a, b) {
         return a + b;
@@ -91,9 +93,19 @@ define([
                 state: ViewState.EMPTY
             });
 
+            const configuredMaxResults = options.configuration && _.isNumber(options.configuration.topicMapMaxResults)
+                ? Math.max(options.configuration.topicMapMaxResults, SPEED_SLIDER_MIN + 1)
+                : 0;
+
+            const constructorMaxResults = _.isNumber(options.maxResults)
+                ? Math.max(options.maxResults, SPEED_SLIDER_MIN + 1)
+                : 0;
+
+            this.maximumMaxResults = constructorMaxResults || configuredMaxResults || DEFAULT_MAX_RESULTS;
+
             this.model = new Backbone.Model({
                 maxCount: 10,
-                maxResults: options.maxResults || 300
+                maxResults: constructorMaxResults || Math.min(this.maximumMaxResults, DEFAULT_MAX_RESULTS)
             });
 
             this.listenTo(this.model, 'change:maxResults', this.debouncedFetchRelatedConcepts);
@@ -134,10 +146,7 @@ define([
                 i18n: i18n,
                 loadingHtml: loadingHtml,
                 showSlider: this.showSlider,
-                fixedHeight: this.fixedHeight,
-                min: 50,
-                max: configuration().topicMapMaxResults,
-                step: 1
+                fixedHeight: this.fixedHeight
             }));
 
             this.$error = this.$('.entity-topic-map-error');
@@ -147,7 +156,12 @@ define([
             if(this.showSlider) {
                 const maxResults = this.model.get('maxResults');
                 this.$('.speed-slider')
-                    .attr('value', maxResults)
+                    .attr({
+                        min: SPEED_SLIDER_MIN,
+                        max: this.maximumMaxResults,
+                        step: 1
+                    })
+                    .val(maxResults)
                     .tooltip({
                         title: maxResults,
                         placement: 'top'

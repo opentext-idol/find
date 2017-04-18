@@ -14,9 +14,10 @@ define([
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/util/results-view-container',
     'find/app/util/results-view-selection',
+    'find/app/configuration',
     'text!find/idol/templates/comparison/topic-map-comparison-view.html'
 ], function(_, Backbone, i18n, comparisonsI18n, stateTokenStrategy, searchDataUtil, EntityCollection,
-            TopicMapView, ResultsViewContainer, ResultsViewSelection, html) {
+            TopicMapView, ResultsViewContainer, ResultsViewSelection, configuration, html) {
     'use strict';
 
     return Backbone.View.extend({
@@ -29,16 +30,19 @@ define([
             const firstQueryModel = this.createQueryModel(this.model.get('firstText'), this.model.get('onlyInFirst'), [this.searchModels.first]);
             const secondQueryModel = this.createQueryModel(this.model.get('secondText'), this.model.get('onlyInSecond'), [this.searchModels.second]);
 
+            const commonContructorArguments = {
+                clickHandler: _.noop,
+                type: 'COMPARISON',
+                configuration: configuration()
+            };
+
             const resultsViews = [
                 {
                     Constructor: TopicMapView,
                     id: 'first',
                     uniqueId: _.uniqueId('results-view-item-'),
-                    constructorArguments: {
-                        clickHandler: _.noop,
-                        queryModel: firstQueryModel,
-                        type: 'COMPARISON'
-                    },
+                    constructorArguments: _.extend({queryModel: firstQueryModel},
+                        commonContructorArguments),
                     selector: {
                         displayName: comparisonsI18n['list.title.first'](this.searchModels.first.get('title')),
                         icon: 'hp-divide-in-right'
@@ -48,11 +52,8 @@ define([
                     Constructor: TopicMapView,
                     id: 'both',
                     uniqueId: _.uniqueId('results-view-item-'),
-                    constructorArguments: {
-                        clickHandler: _.noop,
-                        queryModel: bothQueryModel,
-                        type: 'COMPARISON'
-                    },
+                    constructorArguments: _.extend({queryModel: bothQueryModel},
+                        commonContructorArguments),
                     selector: {
                         displayName: comparisonsI18n['list.title.both'],
                         icon: 'hp-divide-in-center'
@@ -62,11 +63,8 @@ define([
                     Constructor: TopicMapView,
                     id: 'second',
                     uniqueId: _.uniqueId('results-view-item-'),
-                    constructorArguments: {
-                        clickHandler: _.noop,
-                        queryModel: secondQueryModel,
-                        type: 'COMPARISON'
-                    },
+                    constructorArguments: _.extend({queryModel: secondQueryModel},
+                        commonContructorArguments),
                     selector: {
                         displayName: comparisonsI18n['list.title.second'](this.searchModels.second.get('title')),
                         icon: 'hp-divide-in-right hp-flip-horizontal'
