@@ -82,7 +82,7 @@ define([
                 i18n: i18n
             }));
 
-           const $widgets = $(document.createDocumentFragment());
+            const $widgets = $(document.createDocumentFragment());
 
             _.each(this.widgetViews, function(widget) {
                 const $div = this.generateWidgetDiv(widget.position);
@@ -98,7 +98,7 @@ define([
 
             $.when
                 .apply($, _.map(this.widgetViews, function(widget) {
-                    return widget.view.initializeWidgetPromise
+                    return widget.view.widgetInitializePromise;
                 }))
                 .done(function() {
                     this.$('.report-pptx').removeClass('hide');
@@ -198,8 +198,12 @@ define([
         },
 
         toggleFullScreenListener: function(bool) {
-            const onOrOff = bool ? 'on' : 'off';
-            const addOrRemove = bool ? 'addEventListener' : 'removeEventListener';
+            const onOrOff = bool
+                ? 'on'
+                : 'off';
+            const addOrRemove = bool
+                ? 'addEventListener'
+                : 'removeEventListener';
 
             if(this.el.requestFullscreen) {
                 this.$widgets[onOrOff]('fullscreenchange', this.defaultFullscreenEventHandler);
