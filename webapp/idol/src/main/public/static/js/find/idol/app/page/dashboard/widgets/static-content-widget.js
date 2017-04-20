@@ -55,8 +55,7 @@ define([
                                 italic: /italic/.test($el.css('font-style')) || /Italic/i.test(fontFamily)
                             })
                         }
-                    }
-                    else if(dom.nodeType === Node.ELEMENT_NODE) {
+                    } else if(dom.nodeType === Node.ELEMENT_NODE) {
                         traverse($(dom))
                     }
                 })

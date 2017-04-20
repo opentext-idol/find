@@ -33,7 +33,6 @@ define([
                 this.toggleSpinner(false);
 
                 callback.call(this, updateTracker);
-
                 this.stopListening(updateTracker);
             };
 
@@ -50,7 +49,8 @@ define([
             }.bind(this), updateTracker);
         },
 
-        // override this with your update code
+        // To be overridden; every execution path should include calling done(), so
+        // that the update loading spinner is toggled.
         doUpdate: function(done, updateTracker) {
             done();
         }

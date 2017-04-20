@@ -85,7 +85,7 @@ define([
             const $widgets = $(document.createDocumentFragment());
 
             _.each(this.widgetViews, function(widget) {
-                const $div = this.generateWidgetDiv(widget.position);
+                const $div = this.generateWidgetDiv(widget);
                 $widgets.append($div);
                 widget.view.setElement($div);
             }.bind(this));
@@ -105,13 +105,15 @@ define([
                 }.bind(this));
         },
 
-        generateWidgetDiv: function(position) {
-            return $('<div class="widget p-xs widget-name-' + this.displayWidgetNames + '"' + '></div>')
+        generateWidgetDiv: function(widget) {
+            return $('<div class="widget p-xs"></div>')
+                .addClass('widget-name-' + this.displayWidgetNames)
+                .toggleClass('clickable', widget.view.clickable)
                 .css({
-                    'left': 'calc(' + position.x * this.widthPerUnit + '% + 10px)',
-                    'top': 'calc(' + position.y * this.heightPerUnit + '% + 10px)',
-                    'width': 'calc(' + position.width * this.widthPerUnit + '% - 20px)',
-                    'height': 'calc(' + position.height * this.heightPerUnit + '% - 20px)'
+                    'left': 'calc(' + widget.position.x * this.widthPerUnit + '% + 10px)',
+                    'top': 'calc(' + widget.position.y * this.heightPerUnit + '% + 10px)',
+                    'width': 'calc(' + widget.position.width * this.widthPerUnit + '% - 20px)',
+                    'height': 'calc(' + widget.position.height * this.heightPerUnit + '% - 20px)'
                 });
         },
 
@@ -271,8 +273,7 @@ define([
             const reports = [];
             const scaleX = 0.01 * this.widthPerUnit;
             const scaleY = 0.01 * this.heightPerUnit;
-            const $el = $(event.currentTarget);
-            const multiPage = $el.is('.report-pptx-multipage');
+            const multiPage = $(event.currentTarget).is('.report-pptx-multipage');
             const labels = true;
             const padding = true;
 

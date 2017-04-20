@@ -47,7 +47,7 @@ define([
     }
 
     return UpdatingWidget.extend({
-        viewType: '', // which view to load when navigating to the saved search on click
+        viewType: '', // determines which results view is loaded when navigating to the saved search on click
         clickable: true,
 
         // Called after the saved search promise resolves. Calls through to getData();
@@ -77,11 +77,6 @@ define([
                 id: options.datasource.config.id,
                 type: options.datasource.config.type
             });
-        },
-
-        render: function () {
-            UpdatingWidget.prototype.render.apply(this, arguments);
-            this.$el.addClass('datasource-dependent-widget');
         },
 
         // Called by the widget's update() method, which in turn is called by the dashboard-page's update().

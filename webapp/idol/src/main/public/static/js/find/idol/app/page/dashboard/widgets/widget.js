@@ -21,7 +21,7 @@ define([
 
         initialize: function(options) {
             this.name = options.name;
-            this.widgetSettings = options.widgetSettings || {}
+            this.widgetSettings = options.widgetSettings || {};
         },
 
         render: function() {
