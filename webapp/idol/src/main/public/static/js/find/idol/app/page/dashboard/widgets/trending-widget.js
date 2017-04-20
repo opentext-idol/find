@@ -11,18 +11,15 @@ define([
     './saved-search-widget',
     'find/app/page/search/results/trending/trending-strategy',
     'find/app/page/search/results/trending/trending'
-
-], function (_, $, Backbone, i18n, SavedSearchWidget, trendingStrategy, Trending) {
+], function(_, $, Backbone, i18n, SavedSearchWidget, trendingStrategy, Trending) {
     'use strict';
 
     const colours = ['#1f77b4', '#6baed6', '#ff7f0e', '#e377c2', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#e7ba52'];
 
-    //noinspection JSUnresolvedFunction
     return SavedSearchWidget.extend({
         viewType: 'trending',
 
-        render: function () {
-            //noinspection JSUnresolvedVariable
+        render: function() {
             SavedSearchWidget.prototype.render.call(this);
 
             // TODO Implement consistent dashboard widget empty handling
@@ -38,7 +35,7 @@ define([
             });
         },
 
-        getData: function () {
+        getData: function() {
             const fetchOptions = {
                 queryModel: this.queryModel,
                 selectedParametricValues: this.queryModel.queryState.selectedParametricValues,
@@ -49,12 +46,12 @@ define([
             };
 
             return trendingStrategy.fetchField(fetchOptions)
-                .then(function (selectedFieldValues) {
-                    if (selectedFieldValues.length === 0) {
+                .then(function(selectedFieldValues) {
+                    if(selectedFieldValues.length === 0) {
                         return $.when();
                     } else {
                         return trendingStrategy.fetchRange(selectedFieldValues, fetchOptions)
-                            .then(function (model) {
+                            .then(function(model) {
                                 this.currentMax = model.max;
                                 this.currentMin = model.min;
 
@@ -67,22 +64,15 @@ define([
                             }.bind(this));
                     }
                 }.bind(this))
-                .done(function () {
+                .done(function() {
                     this.bucketedValues = Array.prototype.slice.call(arguments);
-                    this.drawTrendingChart(this.bucketedValues);
                 }.bind(this));
         },
 
-        drawTrendingChart: function (bucketedValues) {
-            if (_.isEmpty(bucketedValues)) {
-                this.$emptyMessage.removeClass('hide');
-                this.$chart.addClass('hide');
-            } else {
-                this.$chart.removeClass('hide');
-                this.$emptyMessage.addClass('hide');
-
+        updateVisualizer: function() {
+            if(!_.isEmpty(this.bucketedValues)) {
                 const data = trendingStrategy.createChartData({
-                    bucketedValues: bucketedValues,
+                    bucketedValues: this.bucketedValues,
                     currentMax: this.currentMax,
                     currentMin: this.currentMin
                 });
@@ -100,14 +90,14 @@ define([
             }
         },
 
-        exportData: function () {
+        exportData: function() {
             if (_.isEmpty(this.bucketedValues)) {
                 return null;
             } else {
-                const timestamps = this.bucketedValues[0].values.map(function (value) {
+                const timestamps = this.bucketedValues[0].values.map(function(value) {
                     return (value.min + value.max) / 2;
                 });
-                const rows = this.bucketedValues.map(function (bucketInfo, index) {
+                const rows = this.bucketedValues.map(function(bucketInfo, index) {
                     return {
                         color: colours[index % colours.length],
                         label: bucketInfo.valueName,

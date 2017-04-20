@@ -64,13 +64,11 @@ define([
                 hiddenColor: HIDDEN_COLOR,
                 maxLegendEntries: this.maxLegendEntries
             });
-
-            this.listenTo(this.legendColorCollection, 'update reset', this.updateSunburstAndLegend);
         },
 
         render: function() {
             SavedSearchWidget.prototype.render.apply(this);
-            this.$content.addClass(SUNBURST_CLASS)
+            this.$content.addClass(SUNBURST_CLASS);
             this.$legendContainer = $('<div class="sunburst-legend"></div>');
             this.$visualizerContainer = $('<div class="sunburst-visualizer-container"></div>');
             this.$emptyMessage = $(noResultsMessage);
@@ -108,13 +106,15 @@ define([
                 .fetchDependentFields(
                     this.queryModel,
                     this.firstField.id,
-                    this.secondField ? this.secondField.id : null
+                    this.secondField
+                        ? this.secondField.id
+                        : null
                 );
         },
 
         comparator: function(datumA, datumB) {
             const hiddenComparison = datumA.hidden - datumB.hidden;
-            if (hiddenComparison !== 0) {
+            if(hiddenComparison !== 0) {
                 return hiddenComparison;
             }
 
@@ -144,9 +144,9 @@ define([
                 : null;
         },
 
-        updateSunburstAndLegend: function(collection) {
+        updateVisualizer: function() {
             if(this.$visualizerContainer && this.$legendContainer && this.$emptyMessage) {
-                const empty = collection.isEmpty();
+                const empty = this.legendColorCollection.isEmpty();
                 this.$visualizerContainer.toggleClass('hide', empty);
                 this.$legendContainer.toggleClass('hide', empty);
                 this.$emptyMessage.toggleClass('hide', !empty);
@@ -158,7 +158,7 @@ define([
                     this.sunburst = null;
                     this.$visualizerContainer.empty();
                 } else {
-                    const rootData = {children: collection.toJSON()};
+                    const rootData = {children: this.legendColorCollection.toJSON()};
 
                     if(this.sunburst) {
                         this.sunburst.resize();

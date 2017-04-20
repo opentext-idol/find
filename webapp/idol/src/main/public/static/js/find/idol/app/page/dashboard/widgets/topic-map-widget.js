@@ -4,10 +4,11 @@
  */
 
 define([
+    'underscore',
     './saved-search-widget',
-    'find/app/page/search/results/entity-topic-map-view',
-    'find/app/vent'
-], function(SavedSearchWidget, EntityTopicMapView, vent) {
+    'find/app/util/topic-map-view',
+    'find/app/model/entity-collection',
+], function(_, SavedSearchWidget, TopicMapView, EntityCollection) {
     'use strict';
 
     return SavedSearchWidget.extend({
@@ -15,50 +16,49 @@ define([
 
         initialize: function(options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
-
             this.maxResults = this.widgetSettings.maxResults || 300;
-        },
 
-        postInitialize: function() {
-            this.entityTopicMap = new EntityTopicMapView({
-                maxResults: this.maxResults,
-                queryModel: this.queryModel,
-                queryState: this.queryModel.queryState,
-                showSlider: false,
-                fixedHeight: false,
-                type: 'QUERY'
+            this.entityCollection = new EntityCollection([], {
+                getSelectedRelatedConcepts: function() {
+                    return _.flatten(this.queryModel.queryState.conceptGroups.pluck('concepts'));
+                }.bind(this)
             });
-
-            if(this.$content) {
-                this.entityTopicMap.setElement(this.$content).render();
-            }
-
-            // use the dashboard resize handler instead of the built in one
-            // contrary to the Backbone docs we do need to specify vent here
-            this.entityTopicMap.topicMap.stopListening(vent, 'vent:resize');
         },
 
         render: function() {
             SavedSearchWidget.prototype.render.apply(this);
 
-            if(this.entityTopicMap) {
-                this.entityTopicMap.setElement(this.$content).render();
-            }
+            this.$content.addClass('fixed-height');
+
+            this.topicMap = new TopicMapView({
+                clickHandler: _.noop,
+                autoResize: false
+            });
+
+            this.topicMap.setElement(this.$content).render();
         },
 
         onResize: function() {
-            if(this.entityTopicMap) {
-                this.entityTopicMap.update();
+            if(this.topicMap) {
+                this.topicMap.draw();
+            }
+        },
+
+        updateVisualizer: function(){
+            if(this.topicMap && !this.entityCollection.isEmpty()) {
+                this.topicMap.setData(this.entityCollection.processDataForTopicMap());
+                this.topicMap.draw();
             }
         },
 
         getData: function() {
-            return this.entityTopicMap.fetchRelatedConcepts();
+            return this.entityCollection
+                .fetchRelatedConcepts(this.queryModel, 'QUERY', this.maxResults);
         },
 
         exportData: function() {
-            if(this.entityTopicMap) {
-                const data = this.entityTopicMap.exportData();
+            if(this.topicMap) {
+                const data = this.topicMap.exportData();
                 return data
                     ? {
                         data: data,

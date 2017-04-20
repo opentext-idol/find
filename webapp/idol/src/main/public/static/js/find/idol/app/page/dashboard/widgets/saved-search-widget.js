@@ -50,6 +50,9 @@ define([
         viewType: '', // determines which results view is loaded when navigating to the saved search on click
         clickable: true,
 
+        // Update visualizer if necessary _before_ $content is shown toggled into view
+        updateVisualizer: _.noop,
+
         // Called after the saved search promise resolves. Calls through to getData();
         // if postInitialize() returns a promise, this and any future calls to getData()
         // will be contingent on its resolution.
@@ -99,6 +102,7 @@ define([
                 }.bind(this))
                 .done(function() {
                     toggleErrorMessage.call(this, false);
+                    this.updateVisualizer();
                 }.bind(this))
                 .fail(function(error) {
                     this.queryModel = null;

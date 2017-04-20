@@ -8,5 +8,5 @@ define([
 ], function(mockFactory) {
     'use strict';
 
-    return mockFactory.getView(['draw', 'setData', 'exportPaths']);
+    return mockFactory.getView(['draw', 'setData']);
 });
