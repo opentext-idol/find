@@ -109,9 +109,21 @@ public class QueryTermsITCase extends FindTestBase {
     public void testBooleanOperators() {
         findPage.goToListView();
 
-        final List<String> potentialTerms = new ArrayList<>(Arrays.asList("brevity", "tessellate", "hydrangea", "\"dearly departed\"", "abstruse", "lobotomy"));
+        final List<String> potentialTerms = new ArrayList<>(Arrays.asList(
+                "mabuya",
+                "margita",
+                "overtrain",
+                "brevity",
+                "tessellate",
+                "hydrangea",
+                "\"dearly departed\"",
+                "abstruse",
+                "lobotomy"
+        ));
+
         final String termOne = findService.termWithBetween1And30Results(potentialTerms);
         final String termTwo = findService.termWithBetween1And30Results(potentialTerms);
+
         assertThat("Test only works if query terms both have <=30 results ", "", not(anyOf(is(termOne), is(termTwo))));
 
         final List<String> resultsTermOne = getResultsList(termOne);
@@ -143,7 +155,7 @@ public class QueryTermsITCase extends FindTestBase {
     private List<String> getResultsList(final String term) {
         final ListView results = findService.search(term);
         results.waitForResultsToLoad();
-        final List<String> searchResults = results.getResultTitles();
+        final List<String> searchResults = results.getResultsReferences();
         removeAllConcepts();
         return searchResults;
     }

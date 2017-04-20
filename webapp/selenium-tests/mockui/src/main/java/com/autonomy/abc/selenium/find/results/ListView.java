@@ -10,6 +10,7 @@ import com.autonomy.abc.selenium.query.QueryResultsPage;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -17,6 +18,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ListView extends AppElement implements QueryResultsPage {
 
@@ -43,7 +45,7 @@ public class ListView extends AppElement implements QueryResultsPage {
 
     public boolean errorContainerShown() {
         final List<WebElement> errorWells = findElements(By.cssSelector(".well"));
-        return errorWells.size() > 0 && errorWells.get(0).isDisplayed();
+        return !errorWells.isEmpty() && errorWells.get(0).isDisplayed();
     }
 
     public List<String> getResultTitles() {
@@ -52,6 +54,12 @@ public class ListView extends AppElement implements QueryResultsPage {
             titles.add(result.getTitleString());
         }
         return titles;
+    }
+
+    public List<String> getResultsReferences() {
+        return getResults().stream()
+                .map(FindResult::getReference)
+                .collect(Collectors.toList());
     }
 
     public WebElement resultsDiv() {
@@ -101,7 +109,7 @@ public class ListView extends AppElement implements QueryResultsPage {
             return resultsLoaded(input);
         }
 
-        private boolean resultsLoaded(final WebDriver driver) {
+        private boolean resultsLoaded(final SearchContext driver) {
             int loadingSpinners = driver.findElements(By.cssSelector(".loading-spinner:not(.hide)")).size();
             loadingSpinners -= driver.findElements(By.cssSelector(".hide .loading-spinner")).size();
 
