@@ -75,7 +75,7 @@ public class TrendingView {
     }
 
     public List<WebElement> chartValueGroups() {
-        return findElements(cssSelector("g.value"));
+        return findElements(cssSelector("svg > g[data-name]"));
     }
 
     List<WebElement> pointsForNamedValue(final String valueName) {
