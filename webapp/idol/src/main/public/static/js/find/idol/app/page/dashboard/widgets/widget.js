@@ -36,7 +36,7 @@ define([
 
             this.$content = this.$('.widget-content');
             this.$error = this.$('.widget-error');
-            this.$loading = this.$('.widget-loading');
+            this.$loading = this.$('.widget-init-spinner');
         },
 
         contentHeight: function() {

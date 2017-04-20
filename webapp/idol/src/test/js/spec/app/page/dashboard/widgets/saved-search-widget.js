@@ -59,7 +59,7 @@ define([
                     });
 
                     it('still displays a loading spinner', function() {
-                        expect(this.widget.$('.widget-loading')).toHaveClass('hide');
+                        expect(this.widget.$('.widget-init-spinner')).toHaveClass('hide');
                         expect(this.widget.$('.widget-content')).not.toHaveClass('hide');
                         expect(this.widget.$('.widget-loading-spinner')).not.toHaveClass('hide');
                     });
@@ -98,7 +98,7 @@ define([
                         });
 
                         it('no longer displays a loading spinner', function() {
-                            expect(this.widget.$('.widget-loading')).toHaveClass('hide');
+                            expect(this.widget.$('.widget-init-spinner')).toHaveClass('hide');
                             expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
                         });
 
@@ -173,7 +173,7 @@ define([
                 });
 
                 it('no longer displays a loading spinner', function() {
-                    expect(this.widget.$('.widget-loading')).toHaveClass('hide');
+                    expect(this.widget.$('.widget-init-spinner')).toHaveClass('hide');
                     expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
                 });
 
@@ -281,7 +281,7 @@ define([
                     });
 
                     it('no longer displays a loading spinner', function() {
-                        expect(this.widget.$('.widget-loading')).toHaveClass('hide');
+                        expect(this.widget.$('.widget-init-spinner')).toHaveClass('hide');
                         expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
                     });
 
@@ -317,7 +317,7 @@ define([
                 });
 
                 it('no longer displays a loading spinner', function() {
-                    expect(this.widget.$('.widget-loading')).toHaveClass('hide');
+                    expect(this.widget.$('.widget-init-spinner')).toHaveClass('hide');
                     expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
                 });
 
@@ -414,7 +414,7 @@ define([
             });
 
             it('displays a loading spinner', function () {
-                expect(this.widget.$('.widget-loading')).not.toHaveClass('hide');
+                expect(this.widget.$('.widget-init-spinner')).not.toHaveClass('hide');
                 expect(this.widget.$('.widget-content')).toHaveClass('hide');
             });
 
