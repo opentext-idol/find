@@ -45,8 +45,6 @@ define([
             this.$updateProgress = this.$('.update-progress');
 
             this.hasRendered = true;
-
-            this.initialized();
         },
 
         doUpdate: function(done, updateTracker) {

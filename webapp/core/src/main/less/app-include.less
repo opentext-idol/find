@@ -2267,13 +2267,15 @@ h4.similar-dates-message {
   }
 }
 
+@widgetPadding: 0.5em;
+
 .widget {
   .absolute;
   .flex;
 
   background-color: @white;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
-  padding: 0.5em;
+  padding: @widgetPadding;
   flex-direction: column;
 
   &:hover {
@@ -2285,6 +2287,17 @@ h4.similar-dates-message {
     .m-t-nil;
     flex: 0 0 auto;
     font-size: @fontSizeLarge;
+  }
+
+  .widget-spinner-container {
+    position: absolute;
+    z-index: 1000;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
+    display: inline;
+    padding: @widgetPadding;
+    background-color: white;
+    top: 0;
+    right: 0;
   }
 
   .widget-init-spinner {

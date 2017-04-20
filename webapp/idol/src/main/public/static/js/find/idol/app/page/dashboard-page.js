@@ -54,7 +54,8 @@ define([
                     : WidgetNotFoundWidget;
 
                 const widgetOptions = _.extend({
-                    updateInterval: this.updateInterval
+                    updateInterval: this.updateInterval,
+                    displayWidgetNames: this.displayWidgetNames
                 }, widget);
 
                 return {

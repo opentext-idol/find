@@ -5,11 +5,35 @@
 
 define([
     'underscore',
+    'jquery',
     './widget'
-], function(_, Widget) {
+], function(_, $, Widget) {
     'use strict';
 
-    const loadingTemplate = '<i class="widget-loading-spinner fa fa-spinner fa-spin pull-right hide"></i>';
+    const loadingHtml = '<i class="widget-update-spinner fa fa-spinner fa-spin"></i>';
+
+    function beginInitialization() {
+        // display initialisation loading spinner
+        this.toggleContent(false);
+        this.$loadingSpinner = this.$('.widget-init-spinner').removeClass('hide');
+    }
+
+    function completeInitialization() {
+        this.toggleContent(true);
+        // Need a loading spinner in order to show that an update is ongoing -- put it in
+        // title bar if one is shown, or in the corner of the widget if it is hidden.
+        // The new spinner replaces central initialisation loading spinner, which may be removed.
+        this.$loadingSpinner.remove();
+        const loadingEl = $(loadingHtml);
+        if(this.widgetHasTitleBar) {
+            this.$loadingSpinner = loadingEl.addClass('pull-right', 'hide');
+            this.$('.title').append(this.$loadingSpinner);
+        } else {
+            this.$loadingSpinner = $('<div class="widget-spinner-container hide"></div>')
+                .append(loadingEl);
+            this.$content.after(this.$loadingSpinner);
+        }
+    }
 
     return Widget.extend({
         isUpdating: _.constant(true),
@@ -17,9 +41,11 @@ define([
         onIncrement: _.noop,
         onCancelled: _.noop,
 
-        render: function() {
-            Widget.prototype.render.apply(this);
-            this.$('.title').append(loadingTemplate);
+        initialize: function(options) {
+            Widget.prototype.initialize.apply(this, arguments);
+            this.widgetHasTitleBar = options.displayWidgetNames === 'always';
+            this.beginInitialization = _.once(beginInitialization.bind(this));
+            this.completeInitialization = _.once(completeInitialization.bind(this));
         },
 
         toggleContent: function(show) {
@@ -27,18 +53,19 @@ define([
         },
 
         toggleSpinner: function(show) {
-            this.$('.widget-loading-spinner').toggleClass('hide', !show);
+            this.$loadingSpinner.toggleClass('hide', !show);
         },
 
         update: function(updateTracker) {
+            this.beginInitialization();
             this.toggleSpinner(true);
 
-            const listener = function listenerFn(callback) {
+            const listener = function(callback) {
                 this.toggleSpinner(false);
-
+                this.completeInitialization();
                 callback.call(this, updateTracker);
                 this.stopListening(updateTracker);
-            };
+            }.bind(this);
 
             this.listenTo(updateTracker, 'change:complete', _.partial(listener, this.onComplete));
             this.listenTo(updateTracker, 'change:cancelled', _.partial(listener, this.onCancelled));
@@ -48,7 +75,7 @@ define([
 
             this.doUpdate(function() {
                 this.toggleSpinner(false);
-
+                this.completeInitialization();
                 updateTracker.increment();
             }.bind(this), updateTracker);
         },

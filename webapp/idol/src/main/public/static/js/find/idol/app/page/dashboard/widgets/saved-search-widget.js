@@ -104,9 +104,10 @@ define([
                 }.bind(this))
                 .then(function() {
                     this.hasInitialized = true;
-                    this.initialized();
                     return this.updatePromise = this.getData();
                 }.bind(this))
+                // Call done() before other callbacks to make sure this.$content correctly shown/hidden
+                .always(done)
                 .done(function() {
                     const empty = this.isEmpty();
                     toggleEmptyMessage.call(this, empty);
@@ -116,12 +117,10 @@ define([
                 }.bind(this))
                 .fail(function(error) {
                     this.queryModel = null;
-                    this.initialized();
                     this.toggleContent(false);
                     toggleEmptyMessage.call(this, false);
                     toggleErrorMessage.call(this, true, getResponseMessage(error));
-                }.bind(this))
-                .always(done);
+                }.bind(this));
         },
 
         onClick: function() {

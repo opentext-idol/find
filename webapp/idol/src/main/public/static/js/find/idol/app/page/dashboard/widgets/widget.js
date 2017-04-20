@@ -37,7 +37,6 @@ define([
             this.$content = this.$('.widget-content');
             this.$error = this.$('.widget-error');
             this.$empty = this.$('.widget-empty');
-            this.$loading = this.$('.widget-init-spinner');
         },
 
         contentHeight: function() {
@@ -46,11 +45,6 @@ define([
 
         contentWidth: function() {
             return this.$content.width();
-        },
-
-        initialized: function() {
-            this.$loading.addClass('hide');
-            this.$content.removeClass('hide');
         }
     });
 });

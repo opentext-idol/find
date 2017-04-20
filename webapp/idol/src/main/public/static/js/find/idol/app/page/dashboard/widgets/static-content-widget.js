@@ -19,7 +19,6 @@ define([
             Widget.prototype.render.apply(this);
 
             this.$content.html(this.html);
-            this.initialized();
         },
 
         exportData: function() {
