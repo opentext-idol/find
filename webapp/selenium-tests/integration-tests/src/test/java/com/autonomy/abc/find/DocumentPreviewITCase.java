@@ -61,9 +61,6 @@ public class DocumentPreviewITCase extends FindTestBase {
     @Test
     public void testShowDocumentPreview() {
         final ListView results = findService.search("cake");
-        filters().indexesTreeContainer().expand();
-        findPage.filterBy(new IndexFilter(filters().getIndex(0)));
-
         final InlinePreview docPreview = results.searchResult(1).openDocumentPreview();
 
         if (docPreview.loadingIndicatorExists()) {

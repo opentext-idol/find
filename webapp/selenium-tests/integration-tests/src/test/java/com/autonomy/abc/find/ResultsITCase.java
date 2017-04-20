@@ -98,7 +98,7 @@ public class ResultsITCase extends FindTestBase {
     @Test
     @ResolvedBug("CCUK-3647")
     public void testNoMoreResultsFoundAtEnd() {
-        final ListView results = findService.search(new Query("Cheese AND Onion AND Carrot"));
+        final ListView results = findService.search(new Query("Cheese AND Onion AND Carrot AND Coriander"));
         results.waitForResultsToLoad();
 
         verifyThat(results.getTotalResultsNum(), lessThanOrEqualTo(30));
