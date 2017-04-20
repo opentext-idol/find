@@ -15,6 +15,7 @@ import org.springframework.boot.test.json.JsonContent;
 import org.springframework.boot.test.json.ObjectContent;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 
 import static junit.framework.TestCase.fail;
@@ -78,6 +79,39 @@ public class TrendingWidgetTest extends ComplexWidgetTest<TrendingWidget, Trendi
         }
     }
 
+    @Test
+    public void invalidDates() throws ConfigException {
+        try {
+            TrendingWidget.builder()
+                    .name("Test Widget")
+                    .type("TrendingWidget")
+                    .x(1)
+                    .y(1)
+                    .width(1)
+                    .height(1)
+                    .datasource(SavedSearch.builder()
+                            .source("SavedSearch")
+                            .config(SavedSearchConfig.builder()
+                                    .id(123L)
+                                    .type(SavedSearchType.QUERY)
+                                    .build())
+                            .build())
+                    .widgetSettings(TrendingWidgetSettings.builder()
+                            .parametricField(tagNameFactory.buildTagName("CONTENT_TYPE"))
+                            .minDate(ZonedDateTime.parse("2010-04-05T00:00:00Z"))
+                            .maxDate(ZonedDateTime.parse("2009-04-05T00:00:00Z"))
+                            .values(Arrays.asList(new TrendingWidgetSettings.TrendingValue("POSITIVE", "green"),
+                                    new TrendingWidgetSettings.TrendingValue("NEGATIVE", "blue")))
+                            .build())
+                    .build()
+                    .basicValidate(null);
+
+            fail("Exception should have been thrown");
+        } catch (final ConfigException e) {
+            assertThat(e.getMessage(), containsString("Invalid date range"));
+        }
+    }
+
     @Override
     protected Class<TrendingWidget> getType() {
         return TrendingWidget.class;
@@ -104,6 +138,8 @@ public class TrendingWidgetTest extends ComplexWidgetTest<TrendingWidget, Trendi
                         .dateField(tagNameFactory.buildTagName("AUTN_DATE"))
                         .maxValues(5)
                         .numberOfBuckets(12)
+                        .minDate(ZonedDateTime.parse("2009-04-05T00:00:00Z"))
+                        .maxDate(ZonedDateTime.parse("2010-04-05T00:00:00Z"))
                         .build())
                 .build();
     }
@@ -129,6 +165,8 @@ public class TrendingWidgetTest extends ComplexWidgetTest<TrendingWidget, Trendi
                 .hasJsonPathStringValue("$.widgetSettings.parametricField", "/DOCUMENT/CONTENT_TYPE")
                 .hasJsonPathStringValue("$.widgetSettings.dateField", "/DOCUMENT/AUTN_DATE")
                 .hasJsonPathNumberValue("$.widgetSettings.maxValues", 5)
+                .hasJsonPathStringValue("$.widgetSettings.maxDate", "2010-04-05T00:00:00Z")
+                .hasJsonPathStringValue("$.widgetSettings.minDate", "2009-04-05T00:00:00Z")
                 .hasJsonPathNumberValue("$.widgetSettings.numberOfBuckets", 12);
     }
 
@@ -154,6 +192,8 @@ public class TrendingWidgetTest extends ComplexWidgetTest<TrendingWidget, Trendi
                                 .dateField(tagNameFactory.buildTagName("AUTN_DATE"))
                                 .maxValues(7)
                                 .numberOfBuckets(10)
+                                .minDate(ZonedDateTime.parse("2009-04-05T00:00:00Z[UTC]"))
+                                .maxDate(ZonedDateTime.parse("2010-04-05T00:00:00Z[UTC]"))
                                 .values(Arrays.asList(new TrendingWidgetSettings.TrendingValue("POSITIVE", "green"),
                                         new TrendingWidgetSettings.TrendingValue("NEGATIVE", "red")))
                                 .build())
@@ -183,6 +223,8 @@ public class TrendingWidgetTest extends ComplexWidgetTest<TrendingWidget, Trendi
                                 .dateField(tagNameFactory.buildTagName("AUTN_DATE"))
                                 .maxValues(5)
                                 .numberOfBuckets(12)
+                                .minDate(ZonedDateTime.parse("2009-04-05T00:00:00Z"))
+                                .maxDate(ZonedDateTime.parse("2010-04-05T00:00:00Z"))
                                 .values(Arrays.asList(new TrendingWidgetSettings.TrendingValue("POSITIVE", "green"),
                                         new TrendingWidgetSettings.TrendingValue("NEGATIVE", "red")))
                                 .build())
@@ -212,4 +254,9 @@ public class TrendingWidgetTest extends ComplexWidgetTest<TrendingWidget, Trendi
                         .build())
                 .build();
     }
+
+
+    // Jackson's serialization and deserialization of the max and min dates is not symmetrical.
+    @Override
+    public void jsonSymmetry() throws IOException {}
 }

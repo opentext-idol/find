@@ -21,7 +21,7 @@ define([
     return SavedSearchWidget.extend({
         viewType: 'trending',
 
-        render: function() {
+        render: function () {
             //noinspection JSUnresolvedVariable
             SavedSearchWidget.prototype.render.call(this);
 
@@ -38,7 +38,7 @@ define([
             });
         },
 
-        getData: function() {
+        getData: function () {
             const fetchOptions = {
                 queryModel: this.queryModel,
                 selectedParametricValues: this.queryModel.queryState.selectedParametricValues,
@@ -54,26 +54,45 @@ define([
                     if (selectedFieldValues.length === 0) {
                         return $.when();
                     } else {
-                        return trendingStrategy.fetchRange(selectedFieldValues, fetchOptions)
-                            .then(function (range) {
-                                if (range.min === range.max) {
-                                    this.currentMax = range.max + SECONDS_IN_ONE_DAY;
-                                    this.currentMin = range.min - SECONDS_IN_ONE_DAY;
-                                } else {
-                                    this.currentMax = range.max;
-                                    this.currentMin = range.min;
-                                }
+                        let rangePromise;
 
-                                return trendingStrategy.fetchBucketedData(_.extend(fetchOptions, {
-                                    selectedFieldValues: selectedFieldValues,
-                                    targetNumberOfBuckets: this.widgetSettings.numberOfBuckets,
-                                    currentMax: this.currentMax,
-                                    currentMin: this.currentMin
-                                }));
-                            }.bind(this));
+                        if (this.widgetSettings.minDate && this.widgetSettings.maxDate) {
+                            rangePromise = $.when({
+                                currentMax: this.widgetSettings.maxDate,
+                                currentMin: this.widgetSettings.minDate
+                            });
+                        } else {
+                            rangePromise = trendingStrategy.fetchRange(selectedFieldValues, fetchOptions)
+                                .then(function(range) {
+                                    let currentMax = this.widgetSettings.maxDate ? this.widgetSettings.maxDate : range.max;
+                                    let currentMin = this.widgetSettings.minDate ? this.widgetSettings.minDate : range.min;
+
+                                    if (currentMin === currentMax) {
+                                        currentMax += SECONDS_IN_ONE_DAY;
+                                        currentMin -= SECONDS_IN_ONE_DAY;
+                                    }
+
+                                    return {
+                                        currentMax: currentMax,
+                                        currentMin: currentMin
+                                    }
+                                }.bind(this));
+                        }
+
+                        return rangePromise.then(function(range) {
+                            this.currentMin = range.currentMin;
+                            this.currentMax = range.currentMax;
+
+                            return trendingStrategy.fetchBucketedData(_.extend(fetchOptions, {
+                                selectedFieldValues: selectedFieldValues,
+                                targetNumberOfBuckets: this.widgetSettings.numberOfBuckets,
+                                currentMax: range.currentMax,
+                                currentMin: range.currentMin
+                            }));
+                        }.bind(this));
                     }
                 }.bind(this))
-                .done(function() {
+                .done(function () {
                     this.bucketedValues = Array.prototype.slice.call(arguments);
                     this.drawTrendingChart(this.bucketedValues);
                 }.bind(this));
@@ -106,7 +125,7 @@ define([
             }
         },
 
-        onResize: function() {
+        onResize: function () {
             this.drawTrendingChart(this.bucketedValues);
         },
 
@@ -121,7 +140,7 @@ define([
                 });
                 const rows = this.bucketedValues.map(function (bucketInfo, index) {
                     const color = bucketInfo.color ?
-                        _.findWhere(colors, { name: bucketInfo.color })
+                        _.findWhere(colors, {name: bucketInfo.color})
                         : colors[index % colors.length];
 
                     return {

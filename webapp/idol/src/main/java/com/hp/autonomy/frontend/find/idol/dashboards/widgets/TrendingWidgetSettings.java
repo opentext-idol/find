@@ -18,6 +18,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,8 @@ public class TrendingWidgetSettings extends SimpleComponent<TrendingWidgetSettin
     private final TagName dateField;
     private final Integer maxValues;
     private final Integer numberOfBuckets;
+    private final ZonedDateTime minDate;
+    private final ZonedDateTime maxDate;
     private final List<TrendingValue> values;
 
     @Override
@@ -55,6 +58,11 @@ public class TrendingWidgetSettings extends SimpleComponent<TrendingWidgetSettin
             }
         }
 
+        if (minDate != null && maxDate != null) {
+            if (minDate.isAfter(maxDate)) {
+                throw new ConfigException(SECTION, "Invalid date range. Configured min date is greater than max date.");
+            }
+        }
         super.basicValidate(section);
     }
 
@@ -81,6 +89,8 @@ public class TrendingWidgetSettings extends SimpleComponent<TrendingWidgetSettin
         private TagName dateField;
         private Integer maxValues;
         private Integer numberOfBuckets;
+        private ZonedDateTime minDate;
+        private ZonedDateTime maxDate;
         private List<TrendingValue> values;
 
         @SuppressWarnings("unused")
