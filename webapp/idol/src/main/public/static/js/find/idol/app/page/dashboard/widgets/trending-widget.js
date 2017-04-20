@@ -22,9 +22,6 @@ define([
         render: function() {
             SavedSearchWidget.prototype.render.call(this);
 
-            // TODO Implement consistent dashboard widget empty handling
-            this.$emptyMessage = $('<div class="hide">' + i18n['search.resultsView.trending.empty'] + '</div>').appendTo(this.$content);
-
             this.$chart = $('<div class="full-height"></div>').appendTo(this.$content);
 
             this.trendingChart = new Trending({
@@ -69,8 +66,12 @@ define([
                 }.bind(this));
         },
 
+        isEmpty: function() {
+            return _.isEmpty(this.bucketedValues);
+        },
+
         updateVisualizer: function() {
-            if(!_.isEmpty(this.bucketedValues)) {
+            if(!this.isEmpty()) {
                 const data = trendingStrategy.createChartData({
                     bucketedValues: this.bucketedValues,
                     currentMax: this.currentMax,
@@ -91,7 +92,7 @@ define([
         },
 
         exportData: function() {
-            if (_.isEmpty(this.bucketedValues)) {
+            if(this.isEmpty()) {
                 return null;
             } else {
                 const timestamps = this.bucketedValues[0].values.map(function(value) {

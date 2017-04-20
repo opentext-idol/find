@@ -22,6 +22,10 @@ define([
             this.$('.title').append(loadingTemplate);
         },
 
+        toggleContent: function(show) {
+            this.$content.toggleClass('hide', !show);
+        },
+
         toggleSpinner: function(show) {
             this.$('.widget-loading-spinner').toggleClass('hide', !show);
         },

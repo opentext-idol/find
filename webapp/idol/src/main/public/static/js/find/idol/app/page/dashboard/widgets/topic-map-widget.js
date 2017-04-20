@@ -45,7 +45,7 @@ define([
         },
 
         updateVisualizer: function(){
-            if(this.topicMap && !this.entityCollection.isEmpty()) {
+            if(this.topicMap && !this.isEmpty()) {
                 this.topicMap.setData(this.entityCollection.processDataForTopicMap());
                 this.topicMap.draw();
             }
@@ -54,6 +54,10 @@ define([
         getData: function() {
             return this.entityCollection
                 .fetchRelatedConcepts(this.queryModel, 'QUERY', this.maxResults);
+        },
+
+        isEmpty: function(){
+            return this.entityCollection.isEmpty();
         },
 
         exportData: function() {

@@ -36,6 +36,7 @@ define([
 
             this.$content = this.$('.widget-content');
             this.$error = this.$('.widget-error');
+            this.$empty = this.$('.widget-empty');
             this.$loading = this.$('.widget-init-spinner');
         },
 

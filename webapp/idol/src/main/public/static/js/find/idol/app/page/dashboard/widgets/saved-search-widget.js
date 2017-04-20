@@ -26,9 +26,12 @@ define([
 
     const errorTemplateFn = _.template(errorTemplate);
 
+    function toggleEmptyMessage(isEmpty) {
+        this.$empty.toggleClass('hide', !isEmpty);
+    }
+
     function toggleErrorMessage(hasError, msg) {
         this.$error.toggleClass('hide', !hasError);
-        this.$content.toggleClass('hide', hasError);
 
         this.$error.html(hasError
             ? errorTemplateFn({
@@ -49,6 +52,10 @@ define([
     return UpdatingWidget.extend({
         viewType: '', // determines which results view is loaded when navigating to the saved search on click
         clickable: true,
+
+        // May be overridden. Return true if the query returned no data to display, false otherwise.
+        // Only called if data fetch was successful.
+        isEmpty: _.constant(false),
 
         // Update visualizer if necessary _before_ $content is shown toggled into view
         updateVisualizer: _.noop,
@@ -101,12 +108,17 @@ define([
                     return this.updatePromise = this.getData();
                 }.bind(this))
                 .done(function() {
+                    const empty = this.isEmpty();
+                    toggleEmptyMessage.call(this, empty);
                     toggleErrorMessage.call(this, false);
                     this.updateVisualizer();
+                    this.toggleContent(!empty);
                 }.bind(this))
                 .fail(function(error) {
                     this.queryModel = null;
                     this.initialized();
+                    this.toggleContent(false);
+                    toggleEmptyMessage.call(this, false);
                     toggleErrorMessage.call(this, true, getResponseMessage(error));
                 }.bind(this))
                 .always(done);

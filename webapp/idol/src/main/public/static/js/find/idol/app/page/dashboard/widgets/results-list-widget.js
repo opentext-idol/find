@@ -15,6 +15,22 @@ define([
             ListItemView, resultsListTemplateItemView) {
     'use strict';
 
+    function hideOverflow() {
+        const containerBounds = this.listView.el.getBoundingClientRect();
+
+        this.$('.search-result').each(function(index, element) {
+            const boundingClientRect = element.getBoundingClientRect();
+            $(element).toggleClass('out-of-view',
+                this.columnLayout
+                    ? boundingClientRect.right > containerBounds.right
+                    : boundingClientRect.bottom > containerBounds.bottom);
+        }.bind(this));
+    }
+
+    function deferredHideOverflow() {
+        _.defer(hideOverflow.bind(this));
+    }
+
     return SavedSearchWidget.extend({
         viewType: 'list',
 
@@ -37,22 +53,24 @@ define([
                     template: _.template(resultsListTemplateItemView)
                 }
             });
-
-            this.listenTo(this.documentsCollection, 'update', function() {
-                _.defer(_.bind(this.hideOverflow, this));
-            });
-
         },
 
         render: function() {
             SavedSearchWidget.prototype.render.apply(this);
-
             this.listView.render();
             this.$content.html(this.listView.$el);
         },
 
         onResize: function() {
-            _.defer(_.bind(this.hideOverflow, this));
+            deferredHideOverflow.call(this);
+        },
+
+        updateVisualizer: function() {
+            deferredHideOverflow.call(this);
+        },
+
+        isEmpty: function() {
+            return this.documentsCollection.isEmpty();
         },
 
         getData: function() {
@@ -73,23 +91,11 @@ define([
             });
         },
 
-        hideOverflow: function() {
-            const containerBounds = this.listView.el.getBoundingClientRect();
-
-            this.$('.search-result').each(function(index, element) {
-                const boundingClientRect = element.getBoundingClientRect();
-                $(element).toggleClass('out-of-view',
-                    this.columnLayout
-                        ? boundingClientRect.right > containerBounds.right
-                        : boundingClientRect.bottom > containerBounds.bottom);
-            }.bind(this));
-        },
-
-        exportData: function(){
+        exportData: function() {
             return {
                 data: {
                     drawIcons: false,
-                    docs: this.documentsCollection.map(function(model){
+                    docs: this.documentsCollection.map(function(model) {
                         return {
                             title: model.get('title'),
                             summary: model.get('summary'),

@@ -20,9 +20,7 @@ define([
 
     const otherHtml = _.template(legendOtherEntryTemplate)({i18n: i18n});
     const legendEntryTemplateFn = _.template(legendEntryTemplate);
-    const noResultsMessage = '<span class="sunburst-widget-no-results-text hide">' +
-        _.escape(i18n['dashboards.widget.sunburst.noResults']) +
-        '</span>';
+
     const HIDDEN_COLOR = '#ffffff';
     const SUNBURST_CLASS = 'sunburst-widget';
 
@@ -71,9 +69,8 @@ define([
             this.$content.addClass(SUNBURST_CLASS);
             this.$legendContainer = $('<div class="sunburst-legend"></div>');
             this.$visualizerContainer = $('<div class="sunburst-visualizer-container"></div>');
-            this.$emptyMessage = $(noResultsMessage);
 
-            this.$content.append(this.$emptyMessage.add(this.$visualizerContainer.add(this.$legendContainer)));
+            this.$content.append(this.$visualizerContainer.add(this.$legendContainer));
             this.updateLayout();
         },
 
@@ -84,12 +81,16 @@ define([
                 // for legend to be placed underneath Sunburst
                 // Don't switch to column layout if collection empty, as it interferes
                 // with the placement of the "no results" message
-                const narrowWidget = !this.legendColorCollection.isEmpty() &&
+                const narrowWidget = !this.isEmpty() &&
                     (this.contentWidth() * 0.9 < this.contentHeight());
 
                 this.$legendContainer.toggleClass('legend-one-entry-per-line', !narrowWidget);
                 this.$content.toggleClass('narrow-widget', narrowWidget);
             }
+        },
+
+        isEmpty: function() {
+            return this.legendColorCollection.isEmpty();
         },
 
         onResize: function() {
@@ -145,11 +146,10 @@ define([
         },
 
         updateVisualizer: function() {
-            if(this.$visualizerContainer && this.$legendContainer && this.$emptyMessage) {
-                const empty = this.legendColorCollection.isEmpty();
+            if(this.$visualizerContainer && this.$legendContainer) {
+                const empty = this.isEmpty();
                 this.$visualizerContainer.toggleClass('hide', empty);
                 this.$legendContainer.toggleClass('hide', empty);
-                this.$emptyMessage.toggleClass('hide', !empty);
 
                 this.updateLayout();
 

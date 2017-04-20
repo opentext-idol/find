@@ -1,7 +1,12 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'backbone',
     'underscore',
     'jquery',
+    'backbone',
     'find/app/configuration',
     'find/app/vent',
     'leaflet',
@@ -9,9 +14,9 @@ define([
     'leaflet.markercluster',
     'leaflet.markercluster.layersupport',
     'html2canvas'
-], function (Backbone, _, $, configuration, vent, leaflet) {
-
+], function(_, $, Backbone, configuration, vent, leaflet) {
     'use strict';
+
     const INITIAL_ZOOM = 3;
 
     const leafletMarkerColorMap = {
@@ -22,25 +27,30 @@ define([
     };
 
     function leftPadHex(str) {
-        return str.length < 2 ? '0' + str : str;
+        return str.length < 2
+            ? '0' + str
+            : str;
+    }
+
+    function leftPadMatch(match) {
+        return leftPadHex(Number(match[1]).toString(16))
+            + leftPadHex(Number(match[2]).toString(16))
+            + leftPadHex(Number(match[3]).toString(16));
     }
 
     function hexColor(str) {
         let match;
-        if (match = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)/.exec(str)) {
-            return '#' + leftPadHex(Number(match[1]).toString(16))
-                + leftPadHex(Number(match[2]).toString(16))
-                + leftPadHex(Number(match[3]).toString(16));
-        } else if (match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(str)) {
-            return '#' + leftPadHex(Number(match[1]).toString(16))
-                + leftPadHex(Number(match[2]).toString(16))
-                + leftPadHex(Number(match[3]).toString(16));
+        if(match = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)/.exec(str)) {
+            return '#' + leftPadMatch(match);
+        } else if(match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(str)) {
+            return '#' + leftPadMatch(match);
+        } else {
+            return str;
         }
-        return str;
     }
 
     return Backbone.View.extend({
-        initialize: function (options) {
+        initialize: function(options) {
             this.addControl = options.addControl || false;
 
             this.centerCoordinates = options.centerCoordinates;
@@ -50,14 +60,14 @@ define([
 
             this.layers = [];
 
-            this.listenTo(vent, 'vent:resize', function () {
-                if (this.map) {
+            this.listenTo(vent, 'vent:resize', function() {
+                if(this.map) {
                     this.map.invalidateSize();
                 }
             });
         },
 
-        render: function () {
+        render: function() {
             this.removeMap();
             const map = this.map = leaflet.map(this.$el.get(0), {
                 attributionControl: false,
@@ -78,11 +88,11 @@ define([
 
             const attributionText = configuration().map.attribution;
 
-            if (this.addControl) {
+            if(this.addControl) {
                 this.control = leaflet.control.layers().addTo(map);
             }
 
-            if (attributionText) {
+            if(attributionText) {
                 leaflet.control.attribution({prefix: false})
                     .addAttribution(attributionText)
                     .addTo(map);
@@ -94,11 +104,11 @@ define([
             map.setView([initialLatitude, initialLongitude], this.initialZoom ? this.initialZoom : INITIAL_ZOOM);
         },
 
-        mapRendered: function () {
+        mapRendered: function() {
             return !!this.map;
         },
 
-        addClusterLayer: function (name, options) {
+        addClusterLayer: function(name, options) {
             const clusterLayer = leaflet.markerClusterGroup.layerSupport(_.defaults({
                 zoomToBoundsOnClick: !this.disableInteraction,
                 showCoverageOnHover: !this.disableInteraction
@@ -108,49 +118,49 @@ define([
             return clusterLayer;
         },
 
-        addGroupingLayer: function (name) {
+        addGroupingLayer: function(name) {
             const layer = leaflet.layerGroup();
             this.addLayer(layer, name);
             return layer;
         },
 
-        addMarkers: function (markers, options) {
+        addMarkers: function(markers, options) {
             let layer;
-            if (options.clusterLayer) {
+            if(options.clusterLayer) {
                 layer = leaflet.layerGroup(markers);
                 options.clusterLayer.checkIn(layer);
             } else {
                 layer = leaflet.featureGroup(markers);
             }
 
-            if (options.groupingLayer) {
+            if(options.groupingLayer) {
                 options.groupingLayer.addLayer(layer);
             }
 
             this.addLayer(layer, options.name);
         },
 
-        addLayer: function (layer, name) {
+        addLayer: function(layer, name) {
             this.map.addLayer(layer);
             this.layers.push(layer);
-            if (this.control && name) {
+            if(this.control && name) {
                 this.control.addOverlay(layer, name);
             }
         },
 
-        fitMapToMarkerBounds: function () {
-            const layers = this.layers.filter(function (layer) {
+        fitMapToMarkerBounds: function() {
+            const layers = this.layers.filter(function(layer) {
                 return layer.getBounds;
             });
             const bounds = _.first(layers).getBounds();
-            _.rest(layers).forEach(function (layer) {
+            _.rest(layers).forEach(function(layer) {
                 bounds.extend(layer.getBounds());
             });
             this.map.fitBounds(bounds);
         },
 
-        getMarker: function (latitude, longitude, icon, title, popover) {
-            if (popover) {
+        getMarker: function(latitude, longitude, icon, title, popover) {
+            if(popover) {
                 return leaflet.marker([latitude, longitude], {icon: icon, title: title})
                     .bindPopup(popover);
             } else {
@@ -158,7 +168,7 @@ define([
             }
         },
 
-        getIcon: function (iconName, iconColor, markerColor) {
+        getIcon: function(iconName, iconColor, markerColor) {
             return leaflet.AwesomeMarkers.icon({
                 icon: iconName || 'hp-record',
                 iconColor: iconColor || 'white',
@@ -168,8 +178,8 @@ define([
             });
         },
 
-        getDivIconCreateFunction: function (className) {
-            return function (cluster) {
+        getDivIconCreateFunction: function(className) {
+            return function(cluster) {
                 return new leaflet.DivIcon({
                     html: '<div><span>' + cluster.getChildCount() + '</span></div>',
                     className: 'marker-cluster ' + className,
@@ -178,25 +188,25 @@ define([
             }
         },
 
-        clearMarkers: function () {
-            this.layers.forEach(function (layer) {
+        clearMarkers: function() {
+            this.layers.forEach(function(layer) {
                 layer.clearLayers();
             });
             this.layers = [];
         },
 
-        remove: function () {
+        remove: function() {
             this.removeMap();
             Backbone.View.prototype.remove.call(this);
         },
 
-        removeMap: function () {
-            if (this.map) {
+        removeMap: function() {
+            if(this.map) {
                 this.map.remove();
             }
         },
 
-        exportData: function () {
+        exportData: function() {
             const deferred = $.Deferred();
 
             const map = this.map;
@@ -204,8 +214,8 @@ define([
             const $mapEl = $(map.getContainer());
             const markers = [];
 
-            map.eachLayer(function (layer) {
-                if (layer instanceof leaflet.Marker) {
+            map.eachLayer(function(layer) {
+                if(layer instanceof leaflet.Marker) {
                     const pos = map.latLngToContainerPoint(layer.getLatLng());
 
                     const isCluster = layer.getChildCount;
@@ -214,7 +224,7 @@ define([
                     const yFraction = pos.y / mapSize.y;
                     const tolerance = 0.001;
 
-                    if (xFraction > -tolerance && xFraction < 1 + tolerance && yFraction > -tolerance && yFraction < 1 + tolerance) {
+                    if(xFraction > -tolerance && xFraction < 1 + tolerance && yFraction > -tolerance && yFraction < 1 + tolerance) {
                         let fontColor = '#000000',
                             color = '#37a8da',
                             match,
@@ -222,22 +232,21 @@ define([
                             text = '';
 
                         const $iconEl = $(layer._icon);
-                        if (isCluster) {
+                        if(isCluster) {
                             color = hexColor($iconEl.css('background-color'));
                             fontColor = hexColor($iconEl.children('div').css('color'));
                             fade = +$iconEl.css('opacity') < 1;
                             text = layer.getChildCount();
-                        } else if (match = /awesome-marker-icon-(\w+)/.exec(layer._icon.classList)) {
-                            if (leafletMarkerColorMap.hasOwnProperty(match[1])) {
+                        } else if(match = /awesome-marker-icon-(\w+)/.exec(layer._icon.classList)) {
+                            if(leafletMarkerColorMap.hasOwnProperty(match[1])) {
                                 color = leafletMarkerColorMap[match[1]]
                             }
 
-                            if (layer.options.title) {
+                            if(layer.options.title) {
                                 text = layer.options.title
-                            }
-                            else {
+                            } else {
                                 const popup = layer.getPopup();
-                                if (popup && popup._content) {
+                                if(popup && popup._content) {
                                     text = $(popup._content).find('.map-popup-title').text()
                                 }
                             }
@@ -259,7 +268,8 @@ define([
                 }
             });
 
-            const $objs = $mapEl.find('.leaflet-objects-pane, .leaflet-marker-pane, .leaflet-shadow-pane').addClass('hide');
+            const $objs = $mapEl.find('.leaflet-objects-pane, .leaflet-marker-pane, .leaflet-shadow-pane')
+                .addClass('hide');
 
             html2canvas($mapEl, {
                 // This seems to avoid issues with IE11 only rendering a small portion of the map the size of the window
@@ -269,15 +279,15 @@ define([
                 height: $(document).height(),
                 proxy: 'api/public/map/proxy',
                 useCORS: true,
-                onrendered: function (canvas) {
+                onrendered: function(canvas) {
                     $objs.removeClass('hide');
 
                     deferred.resolve({
                         // ask for lossless PNG image
                         image: canvas.toDataURL('image/png'),
-                        markers: markers.sort(function (a, b) {
+                        markers: markers.sort(function(a, b) {
                             return a.z - b.z;
-                        }).map(function (a) {
+                        }).map(function(a) {
                             return _.omit(a, 'z')
                         })
                     });
