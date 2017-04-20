@@ -19,13 +19,18 @@ define([
         promiseArray[promiseArray.length - 1].reject();
     }
 
-    // This is the scenario where the widget is fully initialized and is undergoing a regular scheduled update
+    // This is the scenario where the widget has not yet executed postInitialize() or the promise was rejected.
+    // A widget should only call postInitialize() once during its lifetime.
     // Parameters describe how many times a given fetch (saved search, postInitialize() or getData()) had been done.
     // Unsuccessful calls count towards these numbers. The parameter depth is a recursion-limiting integer.
     function updateCycleWithInit(savedSearchCallCount, postInitializeCallCount, getDataCallCount, depth) {
         return function() {
             beforeEach(function() {
                 this.widget.update(this.tracker);
+            });
+
+            it('displays a loading spinner', function() {
+                expect(this.widget).toShowLoadingSpinner();
             });
 
             it('fetches the saved search', function() {
@@ -45,6 +50,10 @@ define([
                     resolveLatest(this.savedSearchPromises);
                 });
 
+                it('still displays a loading spinner', function() {
+                    expect(this.widget).toShowLoadingSpinner();
+                });
+
                 it('calls postInitialize()', function() {
                     expect(this.widget.postInitialize.calls.count()).toEqual(postInitializeCallCount + 1);
                 });
@@ -59,9 +68,7 @@ define([
                     });
 
                     it('still displays a loading spinner', function() {
-                        expect(this.widget.$('.widget-init-spinner')).toHaveClass('hide');
-                        expect(this.widget.$('.widget-content')).not.toHaveClass('hide');
-                        expect(this.widget.$('.widget-loading-spinner')).not.toHaveClass('hide');
+                        expect(this.widget).toShowLoadingSpinner();
                     });
 
                     it('calls getData()', function() {
@@ -69,52 +76,139 @@ define([
                     });
 
                     describe('getData() succeeds -> ', function() {
-                        beforeEach(function() {
-                            resolveLatest(this.getDataPromises);
+                        describe('result set is empty -> ', function() {
+                            beforeEach(function() {
+                                this.widget.isEmpty.and.returnValue(true);
+                                resolveLatest(this.getDataPromises);
+                            });
+
+                            it('no longer displays a loading spinner', function() {
+                                expect(this.widget).not.toShowLoadingSpinner();
+                            });
+
+                            it('does not display the visualizer', function() {
+                                expect(this.widget.$content).toHaveClass('hide');
+                            });
+
+                            it('does not display an error message', function() {
+                                expect(this.widget.$error).toHaveClass('hide');
+                            });
+
+                            it('displays the "no results" message', function() {
+                                expect(this.widget.$empty).not.toHaveClass('hide');
+                            });
+
+                            if(depth > 0) {
+                                describe('scheduled update -> ',
+                                    updateCycle(
+                                        savedSearchCallCount + 1,
+                                        postInitializeCallCount + 1,
+                                        getDataCallCount + 1,
+                                        depth - 1
+                                    ));
+                            }
                         });
 
-                        it('no longer displays a loading spinner', function() {
-                            expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
-                        });
+                        describe('result set is not empty -> ', function() {
+                            beforeEach(function() {
+                                this.widget.isEmpty.and.returnValue(false);
+                                resolveLatest(this.getDataPromises);
+                            });
 
-                        it('does not display an error message', function() {
-                            expect(this.widget.$error).toHaveClass('hide');
-                        });
+                            it('no longer displays a loading spinner', function() {
+                                expect(this.widget).not.toShowLoadingSpinner();
+                            });
 
-                        if(depth > 0) {
-                            describe('scheduled update -> ',
-                                updateCycle(
-                                    savedSearchCallCount + 1,
-                                    postInitializeCallCount + 1,
-                                    getDataCallCount + 1,
-                                    depth - 1
-                                ));
-                        }
+                            it('displays the visualizer', function() {
+                                expect(this.widget.$content).not.toHaveClass('hide');
+                            });
+
+                            it('does not display an error message', function() {
+                                expect(this.widget.$error).toHaveClass('hide');
+                            });
+
+                            it('does not display the "no results" message', function() {
+                                expect(this.widget.$empty).toHaveClass('hide');
+                            });
+
+                            if(depth > 0) {
+                                describe('scheduled update -> ',
+                                    updateCycle(
+                                        savedSearchCallCount + 1,
+                                        postInitializeCallCount + 1,
+                                        getDataCallCount + 1,
+                                        depth - 1
+                                    ));
+                            }
+                        });
                     });
 
                     describe('getData() fails -> ', function() {
-                        beforeEach(function() {
-                            rejectLatest(this.getDataPromises);
+                        describe('result set is empty -> ', function() {
+                            beforeEach(function() {
+                                this.widget.isEmpty.and.returnValue(true);
+                                rejectLatest(this.getDataPromises);
+                            });
+
+                            it('no longer displays a loading spinner', function() {
+                                expect(this.widget).not.toShowLoadingSpinner();
+                            });
+
+                            it('does not display the visualizer', function() {
+                                expect(this.widget.$content).toHaveClass('hide');
+                            });
+
+                            it('displays an error message', function() {
+                                expect(this.widget.$error).not.toHaveClass('hide');
+                            });
+
+                            it('does not display the "no results" message', function() {
+                                expect(this.widget.$empty).toHaveClass('hide');
+                            });
+
+                            if(depth > 0) {
+                                describe('scheduled update -> ',
+                                    updateCycle(
+                                        savedSearchCallCount + 1,
+                                        postInitializeCallCount + 1,
+                                        getDataCallCount + 1,
+                                        depth - 1
+                                    ));
+                            }
                         });
 
-                        it('no longer displays a loading spinner', function() {
-                            expect(this.widget.$('.widget-init-spinner')).toHaveClass('hide');
-                            expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
-                        });
+                        describe('result set is not empty -> ', function() {
+                            beforeEach(function() {
+                                this.widget.isEmpty.and.returnValue(false);
+                                rejectLatest(this.getDataPromises);
+                            });
 
-                        it('displays an error message', function() {
-                            expect(this.widget.$error).not.toHaveClass('hide');
-                        });
+                            it('no longer displays a loading spinner', function() {
+                                expect(this.widget).not.toShowLoadingSpinner();
+                            });
 
-                        if(depth > 0) {
-                            describe('scheduled update -> ',
-                                updateCycle(
-                                    savedSearchCallCount + 1,
-                                    postInitializeCallCount + 1,
-                                    getDataCallCount + 1,
-                                    depth - 1
-                                ));
-                        }
+                            it('does not display the visualizer', function() {
+                                expect(this.widget.$content).toHaveClass('hide');
+                            });
+
+                            it('displays an error message', function() {
+                                expect(this.widget.$error).not.toHaveClass('hide');
+                            });
+
+                            it('does not display the "no results" message', function() {
+                                expect(this.widget.$empty).toHaveClass('hide');
+                            });
+
+                            if(depth > 0) {
+                                describe('scheduled update -> ',
+                                    updateCycle(
+                                        savedSearchCallCount + 1,
+                                        postInitializeCallCount + 1,
+                                        getDataCallCount + 1,
+                                        depth - 1
+                                    ));
+                            }
+                        });
                     });
 
                     if(depth > 0) {
@@ -134,11 +228,19 @@ define([
                     });
 
                     it('no longer displays a loading spinner', function() {
-                        expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
+                        expect(this.widget).not.toShowLoadingSpinner();
+                    });
+
+                    it('does not display the visualizer', function() {
+                        expect(this.widget.$content).toHaveClass('hide');
                     });
 
                     it('displays an error message', function() {
                         expect(this.widget.$error).not.toHaveClass('hide');
+                    });
+
+                    it('does not display the "no results" message', function() {
+                        expect(this.widget.$empty).toHaveClass('hide');
                     });
 
                     it('does not call getData()', function() {
@@ -173,12 +275,19 @@ define([
                 });
 
                 it('no longer displays a loading spinner', function() {
-                    expect(this.widget.$('.widget-init-spinner')).toHaveClass('hide');
-                    expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
+                    expect(this.widget).not.toShowLoadingSpinner();
+                });
+
+                it('does not display the visualizer', function() {
+                    expect(this.widget.$content).toHaveClass('hide');
                 });
 
                 it('displays an error message', function() {
                     expect(this.widget.$error).not.toHaveClass('hide');
+                });
+
+                it('does not display the "no results" message', function() {
+                    expect(this.widget.$empty).toHaveClass('hide');
                 });
 
                 it('does not call postInitialize()', function() {
@@ -212,8 +321,7 @@ define([
         };
     }
 
-    // This is the scenario where the widget has not yet executed postInitialize() or the promise was rejected.
-    // A widget should only call postInitialize() once during its lifetime.
+    // This is the scenario where the widget is fully initialized and is undergoing a regular scheduled update
     // Parameters describe how many times a given fetch (saved search, postInitialize() or getData()) had been done.
     // Unsuccessful calls count towards these numbers. The parameter depth is a recursion-limiting integer.
     function updateCycle(savedSearchCallCount, postInitializeCallCount, getDataCallCount, depth) {
@@ -223,7 +331,7 @@ define([
             });
 
             it('displays a loading spinner', function() {
-                expect(this.widget.$('.widget-loading-spinner')).not.toHaveClass('hide');
+                expect(this.widget).toShowLoadingSpinner();
             });
 
             it('fetches the saved search', function() {
@@ -240,7 +348,7 @@ define([
                 });
 
                 it('still displays a loading spinner', function() {
-                    expect(this.widget.$('.widget-loading-spinner')).not.toHaveClass('hide');
+                    expect(this.widget).toShowLoadingSpinner();
                 });
 
                 it('does not call postInitialize() again', function() {
@@ -252,52 +360,139 @@ define([
                 });
 
                 describe('getData() succeeds -> ', function() {
-                    beforeEach(function() {
-                        resolveLatest(this.getDataPromises);
+                    describe('result set is empty -> ', function() {
+                        beforeEach(function() {
+                            this.widget.isEmpty.and.returnValue(true);
+                            resolveLatest(this.getDataPromises);
+                        });
+
+                        it('no longer displays a loading spinner', function() {
+                            expect(this.widget).not.toShowLoadingSpinner();
+                        });
+
+                        it('does not display the visualizer', function() {
+                            expect(this.widget.$content).toHaveClass('hide');
+                        });
+
+                        it('does not display an error message', function() {
+                            expect(this.widget.$error).toHaveClass('hide');
+                        });
+
+                        it('displays the "no results" message', function() {
+                            expect(this.widget.$empty).not.toHaveClass('hide');
+                        });
+
+                        if(depth > 0) {
+                            describe('scheduled update -> ',
+                                updateCycle(
+                                    savedSearchCallCount + 1,
+                                    postInitializeCallCount,
+                                    getDataCallCount + 1,
+                                    depth - 1
+                                ));
+                        }
                     });
 
-                    it('no longer displays a loading spinner', function() {
-                        expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
-                    });
+                    describe('result set is not empty -> ', function() {
+                        beforeEach(function() {
+                            this.widget.isEmpty.and.returnValue(false);
+                            resolveLatest(this.getDataPromises);
+                        });
 
-                    it('does not display an error message', function() {
-                        expect(this.widget.$error).toHaveClass('hide');
-                    });
+                        it('no longer displays a loading spinner', function() {
+                            expect(this.widget).not.toShowLoadingSpinner();
+                        });
 
-                    if(depth > 0) {
-                        describe('scheduled update -> ',
-                            updateCycle(
-                                savedSearchCallCount + 1,
-                                postInitializeCallCount,
-                                getDataCallCount + 1,
-                                depth - 1
-                            ));
-                    }
+                        it('displays the visualizer', function() {
+                            expect(this.widget.$content).not.toHaveClass('hide');
+                        });
+
+                        it('does not display an error message', function() {
+                            expect(this.widget.$error).toHaveClass('hide');
+                        });
+
+                        it('does not display the "no results" message', function() {
+                            expect(this.widget.$empty).toHaveClass('hide');
+                        });
+
+                        if(depth > 0) {
+                            describe('scheduled update -> ',
+                                updateCycle(
+                                    savedSearchCallCount + 1,
+                                    postInitializeCallCount,
+                                    getDataCallCount + 1,
+                                    depth - 1
+                                ));
+                        }
+                    });
                 });
 
                 describe('getData() fails -> ', function() {
-                    beforeEach(function() {
-                        rejectLatest(this.getDataPromises);
+                    describe('result set is empty -> ', function() {
+                        beforeEach(function() {
+                            this.widget.isEmpty.and.returnValue(true);
+                            rejectLatest(this.getDataPromises);
+                        });
+
+                        it('no longer displays a loading spinner', function() {
+                            expect(this.widget).not.toShowLoadingSpinner();
+                        });
+
+                        it('does not display the visualizer', function() {
+                            expect(this.widget.$content).toHaveClass('hide');
+                        });
+
+                        it('displays an error message', function() {
+                            expect(this.widget.$error).not.toHaveClass('hide');
+                        });
+
+                        it('does not display the "no results" message', function() {
+                            expect(this.widget.$empty).toHaveClass('hide');
+                        });
+
+                        if(depth > 0) {
+                            describe('scheduled update -> ',
+                                updateCycle(
+                                    savedSearchCallCount + 1,
+                                    postInitializeCallCount,
+                                    getDataCallCount + 1,
+                                    depth - 1
+                                ));
+                        }
                     });
 
-                    it('no longer displays a loading spinner', function() {
-                        expect(this.widget.$('.widget-init-spinner')).toHaveClass('hide');
-                        expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
-                    });
+                    describe('result set is not empty -> ', function() {
+                        beforeEach(function() {
+                            this.widget.isEmpty.and.returnValue(false);
+                            rejectLatest(this.getDataPromises);
+                        });
 
-                    it('displays an error message', function() {
-                        expect(this.widget.$error).not.toHaveClass('hide');
-                    });
+                        it('no longer displays a loading spinner', function() {
+                            expect(this.widget).not.toShowLoadingSpinner();
+                        });
 
-                    if(depth > 0) {
-                        describe('scheduled update -> ',
-                            updateCycle(
-                                savedSearchCallCount + 1,
-                                postInitializeCallCount,
-                                getDataCallCount + 1,
-                                depth - 1
-                            ));
-                    }
+                        it('does not display the visualizer', function() {
+                            expect(this.widget.$content).toHaveClass('hide');
+                        });
+
+                        it('displays an error message', function() {
+                            expect(this.widget.$error).not.toHaveClass('hide');
+                        });
+
+                        it('does not display the "no results" message', function() {
+                            expect(this.widget.$empty).toHaveClass('hide');
+                        });
+
+                        if(depth > 0) {
+                            describe('scheduled update -> ',
+                                updateCycle(
+                                    savedSearchCallCount + 1,
+                                    postInitializeCallCount,
+                                    getDataCallCount + 1,
+                                    depth - 1
+                                ));
+                        }
+                    });
                 });
 
                 if(depth > 0) {
@@ -317,12 +512,19 @@ define([
                 });
 
                 it('no longer displays a loading spinner', function() {
-                    expect(this.widget.$('.widget-init-spinner')).toHaveClass('hide');
-                    expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
+                    expect(this.widget).not.toShowLoadingSpinner();
+                });
+
+                it('does not display the visualizer', function() {
+                    expect(this.widget.$content).toHaveClass('hide');
                 });
 
                 it('displays an error message', function() {
                     expect(this.widget.$error).not.toHaveClass('hide');
+                });
+
+                it('does not display the "no results" message', function() {
+                    expect(this.widget.$empty).toHaveClass('hide');
                 });
 
                 it('does not call postInitialize() again', function() {
@@ -348,6 +550,22 @@ define([
 
     describe('Saved Search Widget', function() {
         beforeEach(function() {
+            jasmine.addMatchers({
+                toShowLoadingSpinner: function() {
+                    return {
+                        compare: function(actual) {
+                            const pass = !actual.$loadingSpinner.hasClass('hide');
+                            return {
+                                pass: pass,
+                                message: 'Expected the view ' +
+                                (pass ? 'not ' : '') +
+                                'to show a loading spinner'
+                            };
+                        }
+                    }
+                }
+            });
+
             this.widget = new SavedSearchWidget({
                 name: 'Test Widget',
                 datasource: {
@@ -388,6 +606,7 @@ define([
             }.bind(this));
 
             spyOn(vent, 'navigate');
+            spyOn(this.widget, 'isEmpty');
 
             this.tracker = jasmine.createSpyObj('mockTracker', ['increment']);
         });
@@ -407,15 +626,116 @@ define([
                 expect(vent.navigate).toHaveBeenCalledWith('/search/tab/QUERY-or-SNAPSHOT:123');
             });
 
-            it('displays the widget\'s container without waiting for data to fetch', function() {
-                this.widget.update(this.tracker);
-                expect(this.widget.$content).toBeDefined();
-                expect(this.widget.$loading).not.toHaveClass('hide');
+            it('does not display an error message', function() {
+                expect(this.widget.$error).toHaveClass('hide');
             });
 
-            it('displays a loading spinner', function () {
-                expect(this.widget.$('.widget-init-spinner')).not.toHaveClass('hide');
-                expect(this.widget.$('.widget-content')).toHaveClass('hide');
+            it('does not display a "no results" message', function() {
+                expect(this.widget.$empty).toHaveClass('hide');
+            });
+
+            // test initialisation spinner behaviour ()
+            describe('on first update', function() {
+                beforeEach(function() {
+                    this.widget.update(this.tracker);
+                });
+
+                it('does not display an error message', function() {
+                    expect(this.widget.$error).toHaveClass('hide');
+                });
+
+                it('does not display a "no results" message', function() {
+                    expect(this.widget.$empty).toHaveClass('hide');
+                });
+
+                it('does not display the visualizer', function() {
+                    expect(this.widget.$content).toHaveClass('hide');
+                });
+
+                it('displays an initialisation spinner instead of the usual update spinner', function() {
+                    expect(this.widget.$('.widget-init-spinner')).toHaveLength(1);
+                    expect(this.widget.$loadingSpinner.is(this.widget.$('.widget-init-spinner'))).toBe(true);
+                    expect(this.widget).toShowLoadingSpinner();
+                });
+
+                describe('the update succeeds', function() {
+                    beforeEach(function() {
+                        this.widget.isEmpty.and.returnValue(false);
+                        resolveLatest(this.savedSearchPromises);
+                        resolveLatest(this.postInitializePromises);
+                        resolveLatest(this.getDataPromises);
+                    });
+
+                    it('the initialisation spinner is removed from the DOM', function() {
+                        expect(this.widget.$('.widget-init-spinner')).toHaveLength(0);
+                    });
+
+                    it('the $loadingSpinner reference is reassigned to the update spinner', function() {
+                        expect(this.widget.$loadingSpinner).toHaveLength(1);
+                    });
+                });
+
+                describe('the update succeeds, but returns no data', function() {
+                    beforeEach(function() {
+                        this.widget.isEmpty.and.returnValue(true);
+                        resolveLatest(this.savedSearchPromises);
+                        resolveLatest(this.postInitializePromises);
+                        resolveLatest(this.getDataPromises);
+                    });
+
+                    it('the initialisation spinner is removed from the DOM', function() {
+                        expect(this.widget.$('.widget-init-spinner')).toHaveLength(0);
+                    });
+
+                    it('the $loadingSpinner reference is reassigned to the update spinner', function() {
+                        expect(this.widget.$loadingSpinner).toHaveLength(1);
+                    });
+                });
+
+                describe('the update fails to fetch the saved search', function() {
+                    beforeEach(function() {
+                        rejectLatest(this.savedSearchPromises);
+                    });
+
+                    it('the initialisation spinner is removed from the DOM', function() {
+                        expect(this.widget.$('.widget-init-spinner')).toHaveLength(0);
+                    });
+
+                    it('the $loadingSpinner reference is reassigned to the update spinner', function() {
+                        expect(this.widget.$loadingSpinner).toHaveLength(1);
+                    });
+                });
+
+                describe('the update fails to resolve postInitialize()', function() {
+                    beforeEach(function() {
+                        resolveLatest(this.savedSearchPromises);
+                        rejectLatest(this.postInitializePromises);
+                    });
+
+                    it('the initialisation spinner is removed from the DOM', function() {
+                        expect(this.widget.$('.widget-init-spinner')).toHaveLength(0);
+                    });
+
+                    it('the $loadingSpinner reference is reassigned to the update spinner', function() {
+                        expect(this.widget.$loadingSpinner).toHaveLength(1);
+                    });
+                });
+
+                describe('the update fails to resolve getData()', function() {
+                    beforeEach(function() {
+                        resolveLatest(this.savedSearchPromises);
+                        resolveLatest(this.postInitializePromises);
+                        rejectLatest(this.getDataPromises);
+                    });
+
+                    it('the initialisation spinner is removed from the DOM', function() {
+                        expect(this.widget.$('.widget-init-spinner')).toHaveLength(0);
+                    });
+
+                    it('the $loadingSpinner reference is reassigned to the update spinner', function() {
+                        expect(this.widget.$loadingSpinner).toHaveLength(1);
+                    });
+                });
             });
 
             // No fetches have yet been carried out -- parameters are 0.

@@ -17,6 +17,22 @@ define([
 
     describe('Updating Widget', function() {
         beforeEach(function() {
+            jasmine.addMatchers({
+                toShowLoadingSpinner: function() {
+                    return {
+                        compare: function(actual) {
+                            const pass = !actual.$loadingSpinner.hasClass('hide');
+                            return {
+                                pass: pass,
+                                message: 'Expected the view ' +
+                                (pass ? 'not ' : '') +
+                                'to show a loading spinner'
+                            };
+                        }
+                    }
+                }
+            });
+
             this.widget = new TestUpdatingWidget({
                 name: 'Test Widget'
             });
@@ -48,7 +64,7 @@ define([
             });
 
             it('should call onIncrement when the count increases', function() {
-                // count was increases when the widget updated
+                // count increased when the widget updated
                 expect(this.widget.onIncrement.calls.count()).toBe(1);
             });
 
@@ -74,21 +90,17 @@ define([
 
             });
 
-            it('should not show the loading spinner until the update begins', function() {
-                expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
-            });
-
             describe('and the model updates', function() {
                 beforeEach(function() {
                     this.widget.update(this.updateTrackerModel);
                 });
 
                 it('should show the loading spinner until the update completes', function() {
-                    expect(this.widget.$('.widget-loading-spinner')).not.toHaveClass('hide');
+                    expect(this.widget).toShowLoadingSpinner();
 
                     this.updateDeferred.resolve();
 
-                    expect(this.widget.$('.widget-loading-spinner')).toHaveClass('hide');
+                    expect(this.widget).not.toShowLoadingSpinner();
                 });
 
                 it('should not increment the model until the update is complete', function() {
