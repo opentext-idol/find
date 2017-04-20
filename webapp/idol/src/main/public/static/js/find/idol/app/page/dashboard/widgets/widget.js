@@ -21,7 +21,7 @@ define([
 
         initialize: function(options) {
             this.name = options.name;
-            this.widgetSettings = options.widgetSettings || {}
+            this.widgetSettings = options.widgetSettings || {};
         },
 
         render: function() {
@@ -36,7 +36,7 @@ define([
 
             this.$content = this.$('.widget-content');
             this.$error = this.$('.widget-error');
-            this.$loading = this.$('.widget-loading');
+            this.$empty = this.$('.widget-empty');
         },
 
         contentHeight: function() {
@@ -45,11 +45,6 @@ define([
 
         contentWidth: function() {
             return this.$content.width();
-        },
-
-        initialized: function() {
-            this.$loading.addClass('hide');
-            this.$content.removeClass('hide');
         }
     });
 });

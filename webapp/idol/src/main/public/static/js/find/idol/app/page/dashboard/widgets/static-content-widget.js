@@ -19,7 +19,6 @@ define([
             Widget.prototype.render.apply(this);
 
             this.$content.html(this.html);
-            this.initialized();
         },
 
         exportData: function() {
@@ -55,8 +54,7 @@ define([
                                 italic: /italic/.test($el.css('font-style')) || /Italic/i.test(fontFamily)
                             })
                         }
-                    }
-                    else if(dom.nodeType === Node.ELEMENT_NODE) {
+                    } else if(dom.nodeType === Node.ELEMENT_NODE) {
                         traverse($(dom))
                     }
                 })

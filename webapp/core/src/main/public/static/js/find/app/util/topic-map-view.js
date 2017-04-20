@@ -20,9 +20,11 @@ define([
         initialize: function(options) {
             this.data = options.data || [];
             this.clickHandler = options.clickHandler;
-            this.titleClickHandler = options.titleClickHandler;
 
-            this.listenTo(vent, 'vent:resize', this.draw);
+            const autoResize = _.isUndefined(options.autoResize) || options.autoResize;
+            if(autoResize) {
+                this.listenTo(vent, 'vent:resize', this.draw);
+            }
         },
 
         render: function() {
@@ -68,7 +70,9 @@ define([
          */
         draw: function() {
             if(this.$el.is(':visible')) {
-                this.$('svg').attr('width', this.$el.width()).attr('height', this.$el.height());
+                this.$('svg')
+                    .attr('width', this.$el.width())
+                    .attr('height', this.$el.height());
                 this.$el.topicmap('renderData', {
                     size: 1.0,
                     children: this.data
@@ -76,8 +80,11 @@ define([
             }
         },
 
-        exportPaths: function() {
-            return this.$el.topicmap('exportPaths');
+        exportData: function() {
+            const paths = this.$el.topicmap('exportPaths');
+            return paths
+                ? {paths: _.flatten(paths.slice(1).reverse())}
+                : null;
         }
     });
 });

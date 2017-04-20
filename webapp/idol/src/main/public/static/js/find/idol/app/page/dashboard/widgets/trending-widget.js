@@ -11,22 +11,16 @@ define([
     './saved-search-widget',
     'find/app/page/search/results/trending/trending-strategy',
     'find/app/page/search/results/trending/trending'
-
-], function (_, $, Backbone, i18n, SavedSearchWidget, trendingStrategy, Trending) {
+], function(_, $, Backbone, i18n, SavedSearchWidget, trendingStrategy, Trending) {
     'use strict';
 
     const SECONDS_IN_ONE_DAY = 86400;
 
-    //noinspection JSUnresolvedFunction
     return SavedSearchWidget.extend({
         viewType: 'trending',
 
-        render: function () {
-            //noinspection JSUnresolvedVariable
+        render: function() {
             SavedSearchWidget.prototype.render.call(this);
-
-            // TODO Implement consistent dashboard widget empty handling
-            this.$emptyMessage = $('<div class="hide">' + i18n['search.resultsView.trending.empty'] + '</div>').appendTo(this.$content);
 
             this.$chart = $('<div class="full-height"></div>').appendTo(this.$content);
 
@@ -38,7 +32,7 @@ define([
             });
         },
 
-        getData: function () {
+        getData: function() {
             const fetchOptions = {
                 queryModel: this.queryModel,
                 selectedParametricValues: this.queryModel.queryState.selectedParametricValues,
@@ -50,13 +44,13 @@ define([
             };
 
             return trendingStrategy.fetchField(fetchOptions)
-                .then(function (selectedFieldValues) {
-                    if (selectedFieldValues.length === 0) {
+                .then(function(selectedFieldValues) {
+                    if(selectedFieldValues.length === 0) {
                         return $.when();
                     } else {
                         let rangePromise;
 
-                        if (this.widgetSettings.minDate && this.widgetSettings.maxDate) {
+                        if(this.widgetSettings.minDate && this.widgetSettings.maxDate) {
                             rangePromise = $.when({
                                 currentMax: this.widgetSettings.maxDate,
                                 currentMin: this.widgetSettings.minDate
@@ -64,10 +58,14 @@ define([
                         } else {
                             rangePromise = trendingStrategy.fetchRange(selectedFieldValues, fetchOptions)
                                 .then(function(range) {
-                                    let currentMax = this.widgetSettings.maxDate ? this.widgetSettings.maxDate : range.max;
-                                    let currentMin = this.widgetSettings.minDate ? this.widgetSettings.minDate : range.min;
+                                    let currentMax = this.widgetSettings.maxDate
+                                        ? this.widgetSettings.maxDate
+                                        : range.max;
+                                    let currentMin = this.widgetSettings.minDate
+                                        ? this.widgetSettings.minDate
+                                        : range.min;
 
-                                    if (currentMin === currentMax) {
+                                    if(currentMin === currentMax) {
                                         currentMax += SECONDS_IN_ONE_DAY;
                                         currentMin -= SECONDS_IN_ONE_DAY;
                                     }
@@ -92,22 +90,19 @@ define([
                         }.bind(this));
                     }
                 }.bind(this))
-                .done(function () {
+                .done(function() {
                     this.bucketedValues = Array.prototype.slice.call(arguments);
-                    this.drawTrendingChart(this.bucketedValues);
                 }.bind(this));
         },
 
-        drawTrendingChart: function (bucketedValues) {
-            if (_.isEmpty(bucketedValues)) {
-                this.$emptyMessage.removeClass('hide');
-                this.$chart.addClass('hide');
-            } else {
-                this.$chart.removeClass('hide');
-                this.$emptyMessage.addClass('hide');
+        isEmpty: function() {
+            return _.isEmpty(this.bucketedValues);
+        },
 
+        updateVisualizer: function() {
+            if(!this.isEmpty()) {
                 const data = trendingStrategy.createChartData({
-                    bucketedValues: bucketedValues,
+                    bucketedValues: this.bucketedValues,
                     currentMax: this.currentMax,
                     currentMin: this.currentMin
                 });
@@ -125,22 +120,22 @@ define([
             }
         },
 
-        onResize: function () {
-            this.drawTrendingChart(this.bucketedValues);
+        onResize: function() {
+            this.updateVisualizer();
         },
 
-        exportData: function () {
+        exportData: function() {
             const colors = this.trendingChart.colors;
 
-            if (_.isEmpty(this.bucketedValues)) {
+            if(this.isEmpty()) {
                 return null;
             } else {
-                const timestamps = this.bucketedValues[0].values.map(function (value) {
+                const timestamps = this.bucketedValues[0].values.map(function(value) {
                     return (value.min + value.max) / 2;
                 });
-                const rows = this.bucketedValues.map(function (bucketInfo, index) {
-                    const color = bucketInfo.color ?
-                        _.findWhere(colors, {name: bucketInfo.color})
+                const rows = this.bucketedValues.map(function(bucketInfo, index) {
+                    const color = bucketInfo.color
+                        ? _.findWhere(colors, {name: bucketInfo.color})
                         : colors[index % colors.length];
 
                     return {

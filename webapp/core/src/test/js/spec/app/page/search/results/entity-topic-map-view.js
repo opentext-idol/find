@@ -234,18 +234,6 @@ define([
                     expect(this.view.model.get('maxResults')).toBe((currentSliderValue - 50) + '');
                 });
 
-                it('renders a topic map with data from the entity collection', function() {
-                    expect(this.topicMap.setData).toHaveBeenCalled();
-                    expect(this.topicMap.draw).toHaveBeenCalled();
-
-                    expect(this.topicMap.setData.calls.mostRecent().args[0]).toEqual([
-                        {name: 'gin', size: 8, children: [{name: 'gin', size: 7}, {name: 'siege', size: 1}]},
-                        {name: 'pneumatic', size: 2, children: [{name: 'pneumatic', size: 2}]}
-                    ]);
-
-                    expect(this.view.$('.entity-topic-map')).not.toHaveClass('hide');
-                });
-
                 describe('when the entities collection is fetched', function() {
                     beforeEach(function() {
                         this.entityCollection.trigger('request');
@@ -341,11 +329,6 @@ define([
                             expect(this.view.$('.entity-topic-map')).toHaveClass('hide');
                         });
                     });
-                });
-
-                it('exports data', function() {
-                    this.view.exportData();
-                    expect(this.topicMap.exportPaths).toHaveBeenCalled();
                 });
             });
         });

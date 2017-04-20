@@ -26,9 +26,12 @@ define([
 
     const errorTemplateFn = _.template(errorTemplate);
 
+    function toggleEmptyMessage(isEmpty) {
+        this.$empty.toggleClass('hide', !isEmpty);
+    }
+
     function toggleErrorMessage(hasError, msg) {
         this.$error.toggleClass('hide', !hasError);
-        this.$content.toggleClass('hide', hasError);
 
         this.$error.html(hasError
             ? errorTemplateFn({
@@ -47,8 +50,15 @@ define([
     }
 
     return UpdatingWidget.extend({
-        viewType: '', // which view to load when navigating to the saved search on click
+        viewType: '', // determines which results view is loaded when navigating to the saved search on click
         clickable: true,
+
+        // May be overridden. Return true if the query returned no data to display, false otherwise.
+        // Only called if data fetch was successful.
+        isEmpty: _.constant(false),
+
+        // Update visualizer if necessary _before_ $content is shown toggled into view
+        updateVisualizer: _.noop,
 
         // Called after the saved search promise resolves. Calls through to getData();
         // if postInitialize() returns a promise, this and any future calls to getData()
@@ -79,11 +89,6 @@ define([
             });
         },
 
-        render: function () {
-            UpdatingWidget.prototype.render.apply(this, arguments);
-            this.$el.addClass('datasource-dependent-widget');
-        },
-
         // Called by the widget's update() method, which in turn is called by the dashboard-page's update().
         // The argument callback hides the loading spinner -- every execution path that does not call it will
         // result in the loading spinner not disappearing after the update.
@@ -99,18 +104,25 @@ define([
                 }.bind(this))
                 .then(function() {
                     this.hasInitialized = true;
-                    this.initialized();
                     return this.updatePromise = this.getData();
                 }.bind(this))
+                // Call done() before other callbacks to make sure this.$content correctly shown/hidden
+                .always(done)
                 .done(function() {
+                    const empty = this.isEmpty();
+                    toggleEmptyMessage.call(this, empty);
                     toggleErrorMessage.call(this, false);
+                    this.toggleContent(!empty);
+                    if(!empty) {
+                        this.updateVisualizer();
+                    }
                 }.bind(this))
                 .fail(function(error) {
                     this.queryModel = null;
-                    this.initialized();
+                    this.toggleContent(false);
+                    toggleEmptyMessage.call(this, false);
                     toggleErrorMessage.call(this, true, getResponseMessage(error));
-                }.bind(this))
-                .always(done);
+                }.bind(this));
         },
 
         onClick: function() {

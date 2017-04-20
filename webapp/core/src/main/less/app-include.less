@@ -123,6 +123,8 @@
 @hpeTrackWidth: 210px;
 @hpeTrackHeight: 10px;
 
+@widgetUpdateSpinnerZIndex: 2;
+
 // Mixins
 .text-clamp(@maxNumberOfLines, @maxHeight) {
   .no-overflow;
@@ -153,9 +155,9 @@
 }
 
 .crisp-edges {
-  image-rendering: -moz-crisp-edges;         /* Firefox */
-  image-rendering:   -o-crisp-edges;         /* Opera */
-  image-rendering: -webkit-optimize-contrast;/* Webkit */
+  image-rendering: -moz-crisp-edges; /* Firefox */
+  image-rendering: -o-crisp-edges; /* Opera */
+  image-rendering: -webkit-optimize-contrast; /* Webkit */
   image-rendering: crisp-edges;
 }
 
@@ -2235,6 +2237,8 @@ h4.similar-dates-message {
 
   .widget.widget-name-onhover:hover {
     .widget-error,
+    .widget-empty,
+    .widget-init-spinner,
     .widget-content {
       filter: blur(5px);
       opacity: 0.5;
@@ -2253,13 +2257,16 @@ h4.similar-dates-message {
   }
 }
 
+// Need equal padding on .widget and .widget-spinner-container for alignment purposes
+@widgetPadding: 0.5em;
+
 .widget {
   .absolute;
   .flex;
 
   background-color: @white;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
-  padding: 0.5em;
+  padding: @widgetPadding;
   flex-direction: column;
 
   &:hover {
@@ -2273,7 +2280,18 @@ h4.similar-dates-message {
     font-size: @fontSizeLarge;
   }
 
-  .widget-loading {
+  .widget-spinner-container {
+    position: absolute;
+    z-index: @widgetUpdateSpinnerZIndex;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
+    display: inline;
+    padding: @widgetPadding;
+    background-color: white;
+    top: 0;
+    right: 0;
+  }
+
+  .widget-init-spinner {
     .flex;
 
     justify-content: center;
@@ -2288,6 +2306,7 @@ h4.similar-dates-message {
     .flex;
 
     justify-content: center;
+    z-index: calc(@widgetUpdateSpinnerZIndex - 1);
     align-content: center;
     flex-direction: column;
     height: @100percent;
@@ -2302,6 +2321,7 @@ h4.similar-dates-message {
     }
   }
 
+  .widget-empty,
   .widget-error {
     .no-overflow;
     .flex;
@@ -2309,6 +2329,7 @@ h4.similar-dates-message {
     width: @100percent;
     height: @100percent;
 
+    z-index: calc(@widgetUpdateSpinnerZIndex - 1);
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -2328,6 +2349,7 @@ h4.similar-dates-message {
 
     flex: 1 0 80%;
 
+    z-index: calc(@widgetUpdateSpinnerZIndex - 1);
     h2 {
       font-size: 1.5vw;
     }
@@ -2364,7 +2386,7 @@ h4.similar-dates-message {
     }
 
     &.map {
-      img{
+      img {
         .crisp-edges;
       }
     }
@@ -2388,7 +2410,7 @@ h4.similar-dates-message {
       }
       .search-result {
         flex: 1 1 auto;
-        &.out-of-view {
+        &:not(.in-view) {
           visibility: hidden;
         }
       }
@@ -2416,9 +2438,6 @@ h4.similar-dates-message {
       }
     }
   }
-}
-.datasource-dependent-widget {
-  cursor: pointer;
 }
 
 .sunburst-visualizer-container {

@@ -8,9 +8,8 @@ define([
     'jquery',
     './saved-search-widget',
     'find/app/page/search/results/map-results-view-strategy',
-    'find/app/page/search/results/map-view',
     'find/app/model/documents-collection'
-], function(_, $, SavedSearchWidget, mapResultsViewStrategy, MapView, DocumentsCollection) {
+], function(_, $, SavedSearchWidget, mapResultsViewStrategy, DocumentsCollection) {
     'use strict';
 
     return SavedSearchWidget.extend({
@@ -19,10 +18,10 @@ define([
         initialize: function(options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
 
-            this.resultSets = [{
+            this.resultSet = {
                 collection: new DocumentsCollection(),
                 markers: {}
-            }];
+            };
 
             this.mapResultsViewStrategy = mapResultsViewStrategy({
                 allowIncrement: false,
@@ -36,31 +35,33 @@ define([
                     removeZoomControl: true,
                     disableInteraction: true
                 },
-                resultSets: this.resultSets,
+                resultSets: [this.resultSet],
                 toggleLoading: _.noop
             });
         },
 
         render: function() {
             SavedSearchWidget.prototype.render.apply(this);
-            this.initialized();
             this.mapResultsViewStrategy.mapView.setElement(this.$content).render();
         },
 
+        isEmpty: function() {
+            return this.resultSet.collection.isEmpty();
+        },
+
         getData: function() {
-            const resultSet = this.resultSets[0];
-            resultSet.model = this.queryModel;
+            this.resultSet.model = this.queryModel;
             const maybePromise = this.mapResultsViewStrategy.reloadMarkers();
             if(!maybePromise) {
                 return $.when();
             }
 
             return maybePromise.done(function() {
-                resultSet.collection.each(function(model) {
-                    this.mapResultsViewStrategy.getMarkersFromDocumentModel(model, resultSet.markers);
+                this.resultSet.collection.each(function(model) {
+                    this.mapResultsViewStrategy.getMarkersFromDocumentModel(model, this.resultSet.markers);
                 }.bind(this));
 
-                this.mapResultsViewStrategy.addMarkersToMap(resultSet.markers, resultSet.clusterLayer, false);
+                this.mapResultsViewStrategy.addMarkersToMap(this.resultSet.markers, this.resultSet.clusterLayer, false);
             }.bind(this));
         },
 

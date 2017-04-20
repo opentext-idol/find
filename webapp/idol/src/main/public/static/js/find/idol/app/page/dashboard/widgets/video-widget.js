@@ -9,13 +9,13 @@ define([
     'find/app/configuration',
     'find/app/model/documents-collection',
     'text!find/idol/templates/page/dashboards/widgets/video-widget.html'
-], function (_, SavedSearchWidget, configuration, DocumentsCollection, template) {
+], function(_, SavedSearchWidget, configuration, DocumentsCollection, template) {
     'use strict';
 
     return SavedSearchWidget.extend({
         viewType: 'list',
 
-        initialize: function (options) {
+        initialize: function(options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
 
             this.videoTemplate = _.template(template);
@@ -28,24 +28,22 @@ define([
             this.documentsCollection = new DocumentsCollection();
         },
 
-        render: function () {
+        render: function() {
             SavedSearchWidget.prototype.render.apply(this);
 
-            this.listenTo(this.documentsCollection, 'add', function (model) {
-                if (model.get('media') === 'video') {
-                    const url = model.get('url');
+            this.listenTo(this.documentsCollection, 'add', function(model) {
+                if(model.get('media') === 'video') {
                     const offset = model.get('offset');
-                    const src = offset
-                        ? url + '#t=' + offset
-                        : url;
 
                     this.$content.html(this.videoTemplate({
                         loop: this.loop,
                         muted: !this.audio,
-                        src: src
+                        src: model.get('url') + (offset
+                            ? '#t=' + offset
+                            : '')
                     }));
 
-                    if (this.updateCallback) {
+                    if(this.updateCallback) {
                         this.updateCallback();
                         delete this.updateCallback();
                     }
@@ -53,10 +51,10 @@ define([
             });
         },
 
-        getData: function () {
+        getData: function() {
             let fieldText = this.queryModel.get('fieldText');
 
-            if (this.restrictSearch) {
+            if(this.restrictSearch) {
                 const restrictToVideo = 'MATCH{video}:' + configuration().fieldsInfo.contentType.names[0];
                 fieldText = fieldText
                     ? fieldText + ' AND ' + restrictToVideo
@@ -80,10 +78,14 @@ define([
             });
         },
 
-        exportData: function () {
+        isEmpty: function() {
+            return this.documentsCollection.isEmpty();
+        },
+
+        exportData: function() {
             const videoEl = this.$('video');
 
-            if (!videoEl.length) {
+            if(!videoEl.length) {
                 return null;
             }
 
@@ -109,7 +111,7 @@ define([
                     },
                     type: 'map'
                 }
-            } catch (e) {
+            } catch(e) {
                 // If there's an error, e.g. if the video is external and we're not allowed access, just skip it
             }
 

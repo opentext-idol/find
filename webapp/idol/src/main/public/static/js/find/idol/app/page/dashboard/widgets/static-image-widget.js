@@ -22,7 +22,6 @@ define([
             const html = $('<div class="static-image" style=\'background-image: url("' + this.url + '")\'></div>');
 
             this.$content.html(html);
-            this.initialized();
         },
 
         exportData: function(){

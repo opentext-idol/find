@@ -8,5 +8,5 @@ define([
 ], function(backboneMockFactory) {
     'use strict';
 
-    return backboneMockFactory.getCollection(['sync']);
+    return backboneMockFactory.getCollection(['sync', 'fetchRelatedConcepts', 'processDataForTopicMap']);
 });
