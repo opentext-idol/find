@@ -20,15 +20,11 @@ define([
 
         this.$('.search-result').each(function(index, element) {
             const boundingClientRect = element.getBoundingClientRect();
-            $(element).toggleClass('out-of-view',
+            $(element).toggleClass('in-view',
                 this.columnLayout
-                    ? boundingClientRect.right > containerBounds.right
-                    : boundingClientRect.bottom > containerBounds.bottom);
+                    ? boundingClientRect.right < containerBounds.right
+                    : boundingClientRect.bottom < containerBounds.bottom);
         }.bind(this));
-    }
-
-    function deferredHideOverflow() {
-        _.defer(hideOverflow.bind(this));
     }
 
     return SavedSearchWidget.extend({
@@ -62,11 +58,11 @@ define([
         },
 
         onResize: function() {
-            deferredHideOverflow.call(this);
+            hideOverflow.call(this);
         },
 
         updateVisualizer: function() {
-            deferredHideOverflow.call(this);
+            hideOverflow.call(this);
         },
 
         isEmpty: function() {
@@ -74,21 +70,22 @@ define([
         },
 
         getData: function() {
-            return this.documentsCollection.fetch({
-                data: {
-                    text: this.queryModel.get('queryText'),
-                    max_results: this.maxResults,
-                    indexes: this.queryModel.get('indexes'),
-                    field_text: this.queryModel.get('fieldText'),
-                    min_date: this.queryModel.getIsoDate('minDate'),
-                    max_date: this.queryModel.getIsoDate('maxDate'),
-                    sort: this.sort,
-                    summary: 'context',
-                    queryType: 'MODIFIED',
-                    highlight: false
-                },
-                reset: false
-            });
+            return this.documentsCollection
+                .fetch({
+                    data: {
+                        text: this.queryModel.get('queryText'),
+                        max_results: this.maxResults,
+                        indexes: this.queryModel.get('indexes'),
+                        field_text: this.queryModel.get('fieldText'),
+                        min_date: this.queryModel.getIsoDate('minDate'),
+                        max_date: this.queryModel.getIsoDate('maxDate'),
+                        sort: this.sort,
+                        summary: 'context',
+                        queryType: 'MODIFIED',
+                        highlight: false
+                    },
+                    reset: false
+                });
         },
 
         exportData: function() {
