@@ -36,6 +36,8 @@ import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class QueryTermsITCase extends FindTestBase {
+    private static final String ERROR_MESSAGE = "An error has occurred.";
+
     private FindPage findPage;
     private FindService findService;
 
@@ -58,7 +60,7 @@ public class QueryTermsITCase extends FindTestBase {
         final String searchTerm = "Fred is a chimpanzee";
         final ListView results = findService.search(searchTerm);
         assertThat(getElementFactory().getSearchBox().getValue(), is(searchTerm));
-        assertThat(results.getText().toLowerCase(), not(containsString("error")));
+        assertThat(results.getText().toLowerCase(), not(containsString(ERROR_MESSAGE)));
         assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), empty());
     }
 
@@ -72,7 +74,7 @@ public class QueryTermsITCase extends FindTestBase {
         final String searchTerm = "*";
         final ListView results = findService.search(searchTerm);
         assertThat(getElementFactory().getSearchBox().getValue(), is(searchTerm));
-        assertThat(results.getText().toLowerCase(), not(containsString("error")));
+        assertThat(results.getText().toLowerCase(), not(containsString(ERROR_MESSAGE)));
         assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), empty());
     }
 
@@ -86,7 +88,7 @@ public class QueryTermsITCase extends FindTestBase {
 
         final String searchTerm = "chimpanzee";
         final ListView results = findService.search(searchTerm);
-        assertThat(results.getText().toLowerCase(), not(containsString("error")));
+        assertThat(results.getText().toLowerCase(), not(containsString(ERROR_MESSAGE)));
         assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), contains(searchTerm));
     }
 
