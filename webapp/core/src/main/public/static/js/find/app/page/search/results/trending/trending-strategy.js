@@ -41,7 +41,8 @@ define([
                 minDate: options.queryModel.getIsoDate('minDate'),
                 maxDate: options.queryModel.getIsoDate('maxDate'),
                 minScore: options.queryModel.get('minScore'),
-                maxValues: options.numberOfValuesToDisplay
+                maxValues: options.values ? null : options.numberOfValuesToDisplay,
+                valueRestrictions: options.values ? _.pluck(options.values, 'name') : null
             }
         }).then(function (fieldList) {
             const field = fieldList.filter(function (fieldData) {
@@ -100,7 +101,10 @@ define([
                     }
                 })
                 .then(function (data) {
-                    return _.extend({valueName: value.value}, data);
+                    return _.extend({
+                        valueName: value.value,
+                        color: options.values ? _.findWhere(options.values, {'name': value.value}).color : null
+                    }, data);
                 });
         }));
     }
@@ -125,7 +129,8 @@ define([
                         max: value.max
                     };
                 }),
-                name: bucketedValue.valueName
+                name: bucketedValue.valueName,
+                color: bucketedValue.color
             });
         });
 
@@ -144,6 +149,7 @@ define([
         return _.map(values, function (value) {
             return {
                 name: value.name,
+                color: value.color,
                 points: _.filter(value.points, function (point) {
                     const date = new Date(point.mid).getTime() / MILLISECONDS_TO_SECONDS;
                     return date >= min && date <= max;

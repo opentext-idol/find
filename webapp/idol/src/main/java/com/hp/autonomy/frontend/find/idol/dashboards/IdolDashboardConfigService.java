@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.dashboards;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -34,6 +35,7 @@ public class IdolDashboardConfigService extends BaseConfigFileService<IdolDashbo
                 .deserializersByType(ImmutableMap.of(TagName.class, tagNameDeserializer))
                 .serializersByType(ImmutableMap.of(TagName.class, new TagNameSerializer()))
                 .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
+                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .createXmlMapper(false)
                 .build();
 

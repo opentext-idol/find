@@ -15,7 +15,7 @@ define([
 ], function (_, $, Backbone, i18n, SavedSearchWidget, trendingStrategy, Trending) {
     'use strict';
 
-    const colours = ['#1f77b4', '#6baed6', '#ff7f0e', '#e377c2', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#e7ba52'];
+    const SECONDS_IN_ONE_DAY = 86400;
 
     //noinspection JSUnresolvedFunction
     return SavedSearchWidget.extend({
@@ -46,6 +46,7 @@ define([
                 field: this.widgetSettings.parametricField.id,
                 dateField: this.widgetSettings.dateField.id,
                 numberOfValuesToDisplay: this.widgetSettings.maxValues,
+                values: this.widgetSettings.values
             };
 
             return trendingStrategy.fetchField(fetchOptions)
@@ -53,18 +54,42 @@ define([
                     if (selectedFieldValues.length === 0) {
                         return $.when();
                     } else {
-                        return trendingStrategy.fetchRange(selectedFieldValues, fetchOptions)
-                            .then(function (model) {
-                                this.currentMax = model.max;
-                                this.currentMin = model.min;
+                        let rangePromise;
 
-                                return trendingStrategy.fetchBucketedData(_.extend(fetchOptions, {
-                                    selectedFieldValues: selectedFieldValues,
-                                    targetNumberOfBuckets: this.widgetSettings.numberOfBuckets,
-                                    currentMax: this.currentMax,
-                                    currentMin: this.currentMin
-                                }));
-                            }.bind(this));
+                        if (this.widgetSettings.minDate && this.widgetSettings.maxDate) {
+                            rangePromise = $.when({
+                                currentMax: this.widgetSettings.maxDate,
+                                currentMin: this.widgetSettings.minDate
+                            });
+                        } else {
+                            rangePromise = trendingStrategy.fetchRange(selectedFieldValues, fetchOptions)
+                                .then(function(range) {
+                                    let currentMax = this.widgetSettings.maxDate ? this.widgetSettings.maxDate : range.max;
+                                    let currentMin = this.widgetSettings.minDate ? this.widgetSettings.minDate : range.min;
+
+                                    if (currentMin === currentMax) {
+                                        currentMax += SECONDS_IN_ONE_DAY;
+                                        currentMin -= SECONDS_IN_ONE_DAY;
+                                    }
+
+                                    return {
+                                        currentMax: currentMax,
+                                        currentMin: currentMin
+                                    }
+                                }.bind(this));
+                        }
+
+                        return rangePromise.then(function(range) {
+                            this.currentMin = range.currentMin;
+                            this.currentMax = range.currentMax;
+
+                            return trendingStrategy.fetchBucketedData(_.extend(fetchOptions, {
+                                selectedFieldValues: selectedFieldValues,
+                                targetNumberOfBuckets: this.widgetSettings.numberOfBuckets,
+                                currentMax: range.currentMax,
+                                currentMin: range.currentMin
+                            }));
+                        }.bind(this));
                     }
                 }.bind(this))
                 .done(function () {
@@ -100,7 +125,13 @@ define([
             }
         },
 
+        onResize: function () {
+            this.drawTrendingChart(this.bucketedValues);
+        },
+
         exportData: function () {
+            const colors = this.trendingChart.colors;
+
             if (_.isEmpty(this.bucketedValues)) {
                 return null;
             } else {
@@ -108,8 +139,12 @@ define([
                     return (value.min + value.max) / 2;
                 });
                 const rows = this.bucketedValues.map(function (bucketInfo, index) {
+                    const color = bucketInfo.color ?
+                        _.findWhere(colors, {name: bucketInfo.color})
+                        : colors[index % colors.length];
+
                     return {
-                        color: colours[index % colours.length],
+                        color: color.hex,
                         label: bucketInfo.valueName,
                         secondaryAxis: false,
                         values: _.pluck(bucketInfo.values, 'count')

@@ -1,6 +1,8 @@
 package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasourceMixins;
@@ -26,6 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public abstract class ComplexWidgetTest<W extends Widget<W, WS> & DatasourceDependentWidget, WS extends WidgetSettings<WS>> extends DatasourceDependentWidgetTest<W, WS> {
     @Autowired
     TagNameFactory tagNameFactory;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -35,6 +38,9 @@ public abstract class ComplexWidgetTest<W extends Widget<W, WS> & DatasourceDepe
         simpleModule.addSerializer(TagName.class, new TagNameSerializer());
         objectMapper.registerModule(simpleModule);
         objectMapper.addMixIn(WidgetDatasource.class, WidgetDatasourceMixins.class);
+        objectMapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
         json = new JacksonTester<>(getClass(), ResolvableType.forClass(getType()), objectMapper);
     }
 }

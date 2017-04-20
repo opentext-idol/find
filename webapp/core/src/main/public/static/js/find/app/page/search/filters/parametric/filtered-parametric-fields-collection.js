@@ -46,7 +46,7 @@ define([
                         minScore: this.queryModel.get('minScore'),
                         maxValues: 5,
                         stateTokens: this.queryModel.get('stateMatchIds'),
-                        valueRestriction: filterText ? "*" + filterText + "*" : null
+                        valueRestrictions: filterText ? ["*" + filterText + "*"] : null
                     }
                 });
             } else {

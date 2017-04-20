@@ -12,8 +12,20 @@ define([
 ], function(_, $, d3, widgetZoom, widgetDrag) {
     'use strict';
 
+    const COLORS = [
+        { name: 'blue', hex: '#1f77b4'},
+        { name: 'light-blue', hex: '#6baed6'},
+        { name: 'orange', hex: '#ff7f0e'},
+        { name: 'pink', hex:  '#e377c2'},
+        { name: 'green', hex: '#2ca02c'},
+        { name: 'light-green', hex: '#98df8a'},
+        { name: 'red', hex: '#d62728'},
+        { name: 'light-pink', hex: '#ff9896'},
+        { name: 'purple', hex: '#9467bd'},
+        { name: 'yellow', hex: '#e7ba52'}
+    ];
+
     const CHART_PADDING = 80;
-    const NUMBER_OF_COLORS = 10;
     const AXIS_DASHED_LINE_LENGTH = 15;
     const FADE_OUT_OPACITY = 0.3;
     const POINT_RADIUS = 5;
@@ -218,7 +230,7 @@ define([
             let nextLabel;
             let nextLabelTick;
             let widthToDouble;
-            if(i == numberOfTicks - 1) {
+            if(i === numberOfTicks - 1) {
                 widthToDouble = (currentLabelTick - prevLabelTick);
             } else {
                 nextLabel = d3.select(labels[i + 1]);
@@ -250,6 +262,7 @@ define([
             return {
                 index: i,
                 name: datum.name,
+                color: datum.color,
                 labelY: scales.yScale(datum.points[datum.points.length - 1].count),
                 dataY: scales.yScale(datum.points[datum.points.length - 1].count)
             }
@@ -307,6 +320,13 @@ define([
         }
     }
 
+    function getColor(data, d) {
+        const color = d.color ?
+            _.findWhere(COLORS, { name: d.color })
+            : COLORS[_.pluck(data, 'name').indexOf(d.name) % COLORS.length];
+        return color.hex;
+    }
+
     function Trending(settings) {
         this.el = settings.el;
         this.tooltipText = settings.tooltipText;
@@ -319,6 +339,7 @@ define([
     }
 
     _.extend(Trending.prototype, {
+        colors: COLORS,
         draw: function(options) {
             const reloaded = options.reloaded;
             const data = options.data;
@@ -336,10 +357,6 @@ define([
             const scales = setScales(options, chartHeight, chartWidth);
 
             const hoverCallbacks = createHoverCallbacks(this.hoverEnabled, this.chart, scales, chartHeight, this.tooltipText, timeFormat);
-
-            const getIndexOfValueName = function getIndexOfValueNameFn(name) {
-                return _.pluck(data, 'name').indexOf(name);
-            };
 
             const line = d3.svg.line()
                 .x(function(d) {
@@ -374,8 +391,8 @@ define([
                 .append('path');
 
             this.dataJoin
-                .attr('class', function(d) {
-                    return 'value color' + (getIndexOfValueName(d.name) % NUMBER_OF_COLORS);
+                .attr('stroke', function(d){
+                    return getColor(data, d);
                 });
 
             this.dataJoin.select('path')
@@ -439,7 +456,7 @@ define([
                 .append('g')
                 .each(function(d) {
                     const g = d3.select(this)
-                        .attr('class', 'color' + (d.index % NUMBER_OF_COLORS))
+                        .attr('stroke', getColor(data, d))
                         .attr('data-name', d.name);
 
                     g.append('line')
