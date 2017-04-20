@@ -18,7 +18,7 @@ define([
 
     const Type = {
         QUERY: 'QUERY',
-        COMPARISON: 'COMPARISON'
+        STATE_TOKEN: 'STATE_TOKEN'
     };
 
     return FindBaseCollection.extend({
@@ -105,7 +105,7 @@ define([
         fetchRelatedConcepts: function(queryModel, type, maxResults) {
             let data;
 
-            if(type === Type.COMPARISON) {
+            if(type === Type.STATE_TOKEN) {
                 data = {
                     queryText: '*',
                     stateDontMatchTokens: queryModel.get('stateDontMatchIds')

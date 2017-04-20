@@ -32,7 +32,7 @@ define([
 
             const commonContructorArguments = {
                 clickHandler: _.noop,
-                type: 'COMPARISON',
+                type: 'STATE_TOKEN',
                 configuration: configuration()
             };
 

@@ -23,18 +23,16 @@ define([
                     return _.flatten(this.queryModel.queryState.conceptGroups.pluck('concepts'));
                 }.bind(this)
             });
-        },
-
-        render: function() {
-            SavedSearchWidget.prototype.render.apply(this);
-
-            this.$content.addClass('fixed-height');
 
             this.topicMap = new TopicMapView({
                 clickHandler: _.noop,
                 autoResize: false
             });
+        },
 
+        render: function() {
+            SavedSearchWidget.prototype.render.apply(this);
+            this.$content.addClass('fixed-height');
             this.topicMap.setElement(this.$content).render();
         },
 

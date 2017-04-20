@@ -90,7 +90,7 @@ define([
 
             });
 
-            describe('and the model updates', function() {
+            describe('and the update is called', function() {
                 beforeEach(function() {
                     this.widget.update(this.updateTrackerModel);
                 });

@@ -112,8 +112,10 @@ define([
                     const empty = this.isEmpty();
                     toggleEmptyMessage.call(this, empty);
                     toggleErrorMessage.call(this, false);
-                    this.updateVisualizer();
                     this.toggleContent(!empty);
+                    if(!empty) {
+                        this.updateVisualizer();
+                    }
                 }.bind(this))
                 .fail(function(error) {
                     this.queryModel = null;

@@ -135,6 +135,8 @@
 @hpeTrackWidth: 210px;
 @hpeTrackHeight: 10px;
 
+@widgetUpdateSpinnerZIndex: 2;
+
 // Mixins
 .text-clamp(@maxNumberOfLines, @maxHeight) {
   .no-overflow;
@@ -2267,6 +2269,7 @@ h4.similar-dates-message {
   }
 }
 
+// Need equal padding on .widget and .widget-spinner-container for alignment purposes
 @widgetPadding: 0.5em;
 
 .widget {
@@ -2291,7 +2294,7 @@ h4.similar-dates-message {
 
   .widget-spinner-container {
     position: absolute;
-    z-index: 1000;
+    z-index: @widgetUpdateSpinnerZIndex;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
     display: inline;
     padding: @widgetPadding;
@@ -2315,6 +2318,7 @@ h4.similar-dates-message {
     .flex;
 
     justify-content: center;
+    z-index: calc(@widgetUpdateSpinnerZIndex - 1);
     align-content: center;
     flex-direction: column;
     height: @100percent;
@@ -2337,6 +2341,7 @@ h4.similar-dates-message {
     width: @100percent;
     height: @100percent;
 
+    z-index: calc(@widgetUpdateSpinnerZIndex - 1);
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -2356,6 +2361,7 @@ h4.similar-dates-message {
 
     flex: 1 0 80%;
 
+    z-index: calc(@widgetUpdateSpinnerZIndex - 1);
     h2 {
       font-size: 1.5vw;
     }
