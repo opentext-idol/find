@@ -21,7 +21,7 @@ define([
             d3.event.sourceEvent.stopPropagation();
 
             dragStartX = scaleType === 'date'
-                ? Math.floor(new Date(scale.invert(d3.event.sourceEvent.x)).getTime() / MILLIS_TO_SECONDS)
+                ? Math.floor(new Date(scale.invert(d3.event.sourceEvent.pageX)).getTime() / MILLIS_TO_SECONDS)
                 : scale.invert(d3.mouse(this)[0]);
 
         }
@@ -30,7 +30,7 @@ define([
     function dragMove(scale, scaleType, dragMoveCallback) {
         return function() {
             const mouseValue = scaleType === 'date'
-                ? Math.floor(new Date(scale.invert(d3.event.sourceEvent.x)).getTime() / MILLIS_TO_SECONDS)
+                ? Math.floor(new Date(scale.invert(d3.event.sourceEvent.pageX)).getTime() / MILLIS_TO_SECONDS)
                 : scale.invert(d3.mouse(this)[0]);
 
             const dragXDifference = dragStartX - mouseValue;
@@ -41,7 +41,7 @@ define([
     function dragEnd(scale, scaleType, dragEndCallback) {
         return function() {
             const mouseValue = scaleType === 'date'
-                ? Math.floor(new Date(scale.invert(d3.event.sourceEvent.x)).getTime() / MILLIS_TO_SECONDS)
+                ? Math.floor(new Date(scale.invert(d3.event.sourceEvent.pageX)).getTime() / MILLIS_TO_SECONDS)
                 : scale.invert(d3.mouse(this)[0]);
 
             const dragXDifference = dragStartX - mouseValue;
