@@ -71,7 +71,7 @@ define([
         },
 
         processDataForTopicMap: function() {
-            return this.chain().groupBy('cluster')
+            return _.chain(this.groupBy('cluster'))
             // Order the concepts in each cluster
                 .map(function(cluster) {
                     return _.sortBy(cluster, function(model) {
