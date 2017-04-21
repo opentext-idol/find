@@ -186,12 +186,14 @@
   "fieldsInfo": {
     "contentType": {
       "names": [
-        "AU_REPOSITORY_METADATA_TYPE_STRING"
+        "AU_REPOSITORY_METADATA_TYPE_STRING",
+        "REPOSITORY_METADATA_TYPE_STRING"
       ]
     },
     "url": {
       "names": [
-        "AU_REPOSITORY_METADATA_URL_FILE_STRING"
+        "AU_REPOSITORY_METADATA_URL_FILE_STRING",
+        "REPOSITORY_METADATA_URL_FILE_STRING"
       ]
     },
     "offset": {
@@ -202,23 +204,27 @@
     },
     "authors": {
       "names": [
-        "AU_DOCUMENT_METADATA_AUTHOR_STRING"
+        "AU_DOCUMENT_METADATA_AUTHOR_STRING",
+        "DOCUMENT_METADATA_AUTHOR_STRING"
       ]
     },
     "categories": {
       "names": [
-        "AU_REPOSITORY_METADATA_CATEGORY_STRING"
+        "AU_REPOSITORY_METADATA_CATEGORY_STRING",
+        "REPOSITORY_METADATA_CATEGORY_STRING"
       ]
     },
     "dateCreated": {
       "names": [
-        "AU_DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS"
+        "AU_DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS",
+        "DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS"
       ],
       "type": "Date"
     },
     "dateModified": {
       "names": [
-        "AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS"
+        "AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS",
+        "DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS"
       ],
       "type": "Date"
     },
