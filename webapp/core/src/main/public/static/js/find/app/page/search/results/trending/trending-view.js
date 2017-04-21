@@ -147,7 +147,7 @@ define([
         },
 
         update: function () {
-            if (this.$el.is(':visible')) {
+            if (this.$el.is(':visible') && !this.parametricCollection.isEmpty()) {
                 if (this.viewStateModel.get('searchStateChanged')) {
                     this.setFieldSelector();
                     this.fetchFieldAndRangeData();
