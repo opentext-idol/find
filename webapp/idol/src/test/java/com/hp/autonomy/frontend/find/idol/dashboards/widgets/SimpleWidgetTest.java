@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
 import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
+import com.hp.autonomy.frontend.find.idol.dashboards.WidgetNameSetting;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearch;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchConfig;
 import org.apache.commons.io.IOUtils;
@@ -34,6 +35,7 @@ public class SimpleWidgetTest extends ConfigurationComponentTest<SimpleWidget> {
                 .y(1)
                 .width(1)
                 .height(1)
+                .displayWidgetName(WidgetNameSetting.always)
                 .datasource(SavedSearch.builder()
                         .source("SavedSearch")
                         .config(SavedSearchConfig.builder()
@@ -63,6 +65,7 @@ public class SimpleWidgetTest extends ConfigurationComponentTest<SimpleWidget> {
                 .hasJsonPathNumberValue("$.y", 1)
                 .hasJsonPathNumberValue("$.width", 1)
                 .hasJsonPathNumberValue("$.height", 1)
+                .hasJsonPathStringValue("$.displayWidgetName", "always")
                 .hasJsonPathNumberValue("$.datasource.config.id", 123)
                 .hasJsonPathStringValue("$.datasource.config.type", "QUERY")
                 .hasJsonPathStringValue("$.widgetSettings.content", "Hello World!");
@@ -78,6 +81,7 @@ public class SimpleWidgetTest extends ConfigurationComponentTest<SimpleWidget> {
                         .y(0)
                         .width(1)
                         .height(1)
+                        .displayWidgetName(WidgetNameSetting.never)
                         .widgetSettings(SimpleWidgetSettings.builder().build())
                         .build()
         );
@@ -93,6 +97,7 @@ public class SimpleWidgetTest extends ConfigurationComponentTest<SimpleWidget> {
                         .y(1)
                         .width(1)
                         .height(1)
+                        .displayWidgetName(WidgetNameSetting.always)
                         .datasource(SavedSearch.builder()
                                 .source("SavedSearch")
                                 .config(SavedSearchConfig.builder()

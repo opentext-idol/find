@@ -45,7 +45,6 @@ define([
             this.dashboardName = options.dashboardName;
             this.updateInterval = 1000 * options.updateInterval;
             this.sidebarModel = options.sidebarModel;
-            this.displayWidgetNames = options.displayWidgetNames || 'never';
 
             this.widgetViews = _.map(options.widgets, function(widget) {
                 const widgetDefinition = widgetRegistry(widget.type);
@@ -53,13 +52,15 @@ define([
                     ? widgetDefinition.Constructor
                     : WidgetNotFoundWidget;
 
+                const displayWidgetName = widget.displayWidgetName || options.displayWidgetNames || 'never';
                 const widgetOptions = _.extend({
                     updateInterval: this.updateInterval,
-                    displayWidgetNames: this.displayWidgetNames
+                    displayWidgetName: displayWidgetName
                 }, widget);
 
                 return {
                     view: new WidgetConstructor(widgetOptions),
+                    displayWidgetName: displayWidgetName,
                     position: {
                         x: widget.x,
                         y: widget.y,
@@ -108,7 +109,7 @@ define([
 
         generateWidgetDiv: function(widget) {
             return $('<div class="widget p-xs"></div>')
-                .addClass('widget-name-' + this.displayWidgetNames)
+                .addClass('widget-name-' + widget.displayWidgetName)
                 .toggleClass('clickable', widget.view.clickable)
                 .css({
                     'left': 'calc(' + widget.position.x * this.widthPerUnit + '% + 10px)',

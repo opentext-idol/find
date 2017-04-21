@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.hp.autonomy.frontend.find.idol.dashboards.WidgetNameSetting;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
 import lombok.Builder;
 import lombok.Data;
@@ -27,9 +28,10 @@ public class TrendingWidget extends DatasourceDependentWidgetBase<TrendingWidget
                           final Integer y,
                           final Integer width,
                           final Integer height,
+                          final WidgetNameSetting displayWidgetName,
                           final WidgetDatasource<?> datasource,
                           final TrendingWidgetSettings widgetSettings) {
-        super(name, type, x, y, width, height, datasource, widgetSettings);
+        super(name, type, x, y, width, height, displayWidgetName, datasource, widgetSettings);
     }
 
     @JsonPOJOBuilder(withPrefix = "")

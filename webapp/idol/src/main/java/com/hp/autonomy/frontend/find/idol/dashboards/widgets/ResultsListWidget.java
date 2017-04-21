@@ -2,6 +2,7 @@ package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.hp.autonomy.frontend.find.idol.dashboards.WidgetNameSetting;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
 import lombok.Builder;
 import lombok.Data;
@@ -16,8 +17,8 @@ import lombok.ToString;
 public class ResultsListWidget extends DatasourceDependentWidgetBase<ResultsListWidget, ResultsListWidgetSettings> {
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public ResultsListWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetDatasource<?> datasource, final ResultsListWidgetSettings widgetSettings) {
-        super(name, type, x, y, width, height, datasource, widgetSettings);
+    public ResultsListWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final WidgetDatasource<?> datasource, final ResultsListWidgetSettings widgetSettings) {
+        super(name, type, x, y, width, height, displayWidgetName, datasource, widgetSettings);
     }
 
     @JsonPOJOBuilder(withPrefix = "")

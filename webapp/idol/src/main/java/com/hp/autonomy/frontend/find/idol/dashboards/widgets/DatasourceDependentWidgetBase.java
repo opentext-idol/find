@@ -1,6 +1,7 @@
 package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
 import com.hp.autonomy.frontend.configuration.ConfigException;
+import com.hp.autonomy.frontend.find.idol.dashboards.WidgetNameSetting;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,8 +14,8 @@ public abstract class DatasourceDependentWidgetBase<W extends DatasourceDependen
     protected final WidgetDatasource<?> datasource;
 
     @SuppressWarnings("ConstructorWithTooManyParameters")
-    DatasourceDependentWidgetBase(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetDatasource<?> datasource, final WS widgetSettings) {
-        super(name, type, x, y, width, height, widgetSettings);
+    DatasourceDependentWidgetBase(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final WidgetDatasource<?> datasource, final WS widgetSettings) {
+        super(name, type, x, y, width, height, displayWidgetName, widgetSettings);
         this.datasource = datasource;
     }
 

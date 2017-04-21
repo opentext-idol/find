@@ -3,6 +3,7 @@ package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
+import com.hp.autonomy.frontend.find.idol.dashboards.WidgetNameSetting;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,8 +17,8 @@ import lombok.ToString;
 public class StaticImageWidget extends Widget<StaticImageWidget, StaticImageWidgetSettings> {
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public StaticImageWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final StaticImageWidgetSettings widgetSettings) {
-        super(name, type, x, y, width, height, widgetSettings);
+    public StaticImageWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final StaticImageWidgetSettings widgetSettings) {
+        super(name, type, x, y, width, height, displayWidgetName, widgetSettings);
     }
 
     @Override

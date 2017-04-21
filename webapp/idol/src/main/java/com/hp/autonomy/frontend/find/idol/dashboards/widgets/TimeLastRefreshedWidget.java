@@ -2,6 +2,7 @@ package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.hp.autonomy.frontend.find.idol.dashboards.WidgetNameSetting;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,8 +16,8 @@ import lombok.ToString;
 public class TimeLastRefreshedWidget extends Widget<TimeLastRefreshedWidget, TimeLastRefreshedWidgetSettings> {
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public TimeLastRefreshedWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final TimeLastRefreshedWidgetSettings widgetSettings) {
-        super(name, type, x, y, width, height, widgetSettings);
+    public TimeLastRefreshedWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final TimeLastRefreshedWidgetSettings widgetSettings) {
+        super(name, type, x, y, width, height, displayWidgetName, widgetSettings);
     }
 
     @JsonPOJOBuilder(withPrefix = "")

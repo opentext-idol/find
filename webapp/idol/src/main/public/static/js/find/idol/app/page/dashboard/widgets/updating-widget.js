@@ -43,7 +43,7 @@ define([
 
         initialize: function(options) {
             Widget.prototype.initialize.apply(this, arguments);
-            this.widgetHasTitleBar = options.displayWidgetNames === 'always';
+            this.widgetHasTitleBar = options.displayWidgetName === 'always';
             this.beginInitialization = _.once(beginInitialization.bind(this));
             this.completeInitialization = _.once(completeInitialization.bind(this));
         },

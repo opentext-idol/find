@@ -2,6 +2,7 @@ package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.hp.autonomy.frontend.find.idol.dashboards.WidgetNameSetting;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
 import lombok.Builder;
 import lombok.Data;
@@ -18,8 +19,8 @@ public class SimpleWidget extends Widget<SimpleWidget, SimpleWidgetSettings> imp
 
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public SimpleWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetDatasource<?> datasource, final SimpleWidgetSettings widgetSettings) {
-        super(name, type, x, y, width, height, widgetSettings);
+    public SimpleWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final WidgetDatasource<?> datasource, final SimpleWidgetSettings widgetSettings) {
+        super(name, type, x, y, width, height, displayWidgetName, widgetSettings);
         this.datasource = datasource;
     }
 
