@@ -10,8 +10,8 @@ define([
     'find/idol/app/page/search/results/idol-results-view',
     'js-whatever/js/model-any-changed-attribute-listener',
     'find/app/model/parametric-fields-collection'
-], function(configuration, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener,
-            ParametricFieldsCollection) {
+], function (configuration, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener,
+             ParametricFieldsCollection) {
     'use strict';
 
     return ServiceView.extend({
@@ -21,7 +21,7 @@ define([
         mapViewAllowIncrement: true,
         parametricFieldsCollection: new ParametricFieldsCollection([]),
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.comparisonModalCallback = options.comparisonModalCallback;
 
             ServiceView.prototype.initialize.call(this, options);
@@ -40,22 +40,23 @@ define([
                 ],
                 this.fetchData
             );
+
+            this.listenTo(this.parametricFieldsCollection, 'sync', this.fetchParametricCollection);
         },
 
-        fetchParametricFields: function() {
-            if(this.parametricFieldsCollection.isEmpty()) {
+        fetchParametricFields: function () {
+            if (this.parametricFieldsCollection.isEmpty()) {
                 this.parametricFieldsCollection.fetch({
                     data: {
                         fieldTypes: ['Parametric', 'Numeric', 'NumericDate']
-                    },
-                    success: this.fetchParametricCollection.bind(this)
+                    }
                 });
             } else {
                 this.fetchParametricCollection();
             }
         },
 
-        getSavedSearchControlViewOptions: function() {
+        getSavedSearchControlViewOptions: function () {
             return {
                 comparisonModalCallback: this.comparisonModalCallback
             };
