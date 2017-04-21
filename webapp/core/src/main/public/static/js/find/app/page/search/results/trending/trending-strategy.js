@@ -60,7 +60,10 @@ define([
 
     function fetchRange(selectedFieldValues, options) {
         const trendingValues = _.first(selectedFieldValues, options.numberOfValuesToDisplay);
-        const trendingValuesRestriction = 'MATCH{' + _.pluck(trendingValues, 'value').toString() + '}:' + options.field;
+        const encodedValues = _.map(trendingValues, function(value) {
+            return encodeURIComponent(value.value);
+        });
+        const trendingValuesRestriction = 'MATCH{' + encodedValues.toString() + '}:' + options.field;
         const fieldText = getFieldText(options.selectedParametricValues).length > 0
             ? ' AND ' + toFieldTextNode(getFieldText(options.selectedParametricValues))
             : '';
@@ -95,7 +98,7 @@ define([
                 .fetch({
                     data: {
                         queryText: options.queryModel.get('queryText'),
-                        fieldText: 'MATCH{' + value.value + '}:' + options.field + fieldText,
+                        fieldText: 'MATCH{' + encodeURIComponent(value.value) + '}:' + options.field + fieldText,
                         minDate: options.queryModel.getIsoDate('minDate'),
                         maxDate: options.queryModel.getIsoDate('maxDate'),
                         minScore: options.queryModel.get('minScore'),
