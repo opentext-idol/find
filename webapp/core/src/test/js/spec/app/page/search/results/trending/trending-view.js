@@ -16,8 +16,8 @@ define([
     'find/app/page/search/results/trending/trending-view',
     'mock/page/results/trending-strategy',
     'mock/page/results/trending'
-], function (_, $, Backbone, i18n, backboneMockFactory, configuration, ParametricCollection, ParametricDetailsModel,
-             BucketedParametricCollection, TrendingView, TrendingStrategy, Trending) {
+], function(_, $, Backbone, i18n, backboneMockFactory, configuration, ParametricCollection, ParametricDetailsModel,
+            BucketedParametricCollection, TrendingView, TrendingStrategy, Trending) {
     'use strict';
 
     const originalDebounce = _.debounce;
@@ -59,13 +59,16 @@ define([
                 {
                     id: 'cheeses',
                     totalValues: 200
-                }, {
+                },
+                {
                     id: 'breads',
                     totalValues: 450
-                }, {
+                },
+                {
                     id: 'meats',
                     totalValues: 140
-                }, {
+                },
+                {
                     id: 'vegetables',
                     totalValues: 223
                 }
@@ -77,22 +80,26 @@ define([
                     displayName: 'Cheeses',
                     totalValues: 1000,
                     type: 'Parametric'
-                }, {
+                },
+                {
                     id: 'breads',
                     displayName: 'Breads',
                     totalValues: 1000,
                     type: 'Parametric'
-                }, {
+                },
+                {
                     id: 'meats',
                     displayName: 'Meats',
                     totalValues: 1000,
                     type: 'Parametric'
-                }, {
+                },
+                {
                     id: 'vegetables',
                     displayName: 'Veg',
                     totalValues: 1000,
                     type: 'Parametric'
-                }, {
+                },
+                {
                     id: 'numeric to be discarded',
                     displayName: '',
                     totalValues: 38,
@@ -152,12 +159,16 @@ define([
             });
 
             describe('and the fetch fails', function() {
-                beforeEach(function () {
+                beforeEach(function() {
                     TrendingStrategy.fetchFieldPromises[0].reject(xhr);
                 });
 
                 it('should display an error message', function() {
                     expect(this.view.$('.trending-error')).not.toHaveClass('hide');
+                });
+
+                it('should hide the snap to now button', function() {
+                    expect(this.view.$('.trending-snap-to-now')).toHaveClass('hide');
                 });
 
                 it('should hide the chart', function() {
@@ -172,19 +183,23 @@ define([
                             count: 2,
                             displayValue: 'CHEDDAR',
                             value: 'CHEDDAR'
-                        }, {
+                        },
+                        {
                             count: 4,
                             displayValue: 'STILTON',
                             value: 'STILTON'
-                        }, {
+                        },
+                        {
                             count: 2,
                             displayValue: 'BRIE',
                             value: 'BRIE'
-                        }, {
+                        },
+                        {
                             count: 0,
                             displayValue: 'RED LEICESTER',
                             value: 'RED LEICESTER'
-                        }]);
+                        }
+                    ]);
                 });
 
                 it('should fetch range data', function() {
@@ -192,12 +207,16 @@ define([
                 });
 
                 describe('and the fetch for range details fails', function() {
-                    beforeEach(function () {
+                    beforeEach(function() {
                         TrendingStrategy.fetchRangeDataPromises[0].reject(xhr);
                     });
 
                     it('should display an error message', function() {
                         expect(this.view.$('.trending-error')).not.toHaveClass('hide');
+                    });
+
+                    it('should hide the snap to now button', function() {
+                        expect(this.view.$('.trending-snap-to-now')).toHaveClass('hide');
                     });
 
                     it('should hide the chart', function() {
@@ -226,6 +245,10 @@ define([
                             expect(this.view.$('.trending-error')).not.toHaveClass('hide');
                         });
 
+                        it('should hide the snap to now button', function() {
+                            expect(this.view.$('.trending-snap-to-now')).toHaveClass('hide');
+                        });
+
                         it('should hide the chart', function() {
                             expect(this.view.$('.trending-chart')).toHaveClass('hide');
                         });
@@ -239,6 +262,18 @@ define([
                         it('should create the trending chart data', function() {
                             expect(TrendingStrategy.createChartData.calls.count()).toBe(1);
                             expect(Trending.instances).toHaveLength(1);
+                        });
+
+                        it('should not display an error message', function() {
+                            expect(this.view.$('.trending-error')).toHaveClass('hide');
+                        });
+
+                        it('should display the snap to now button', function() {
+                            expect(this.view.$('.trending-snap-to-now')).not.toHaveClass('hide');
+                        });
+
+                        it('should display the chart', function() {
+                            expect(this.view.$('.trending-chart')).not.toHaveClass('hide');
                         });
 
                         it('should draw the trending chart with the correct data', function() {
@@ -281,6 +316,27 @@ define([
 
                             it('should trigger a new fetch for bucketed values', function() {
                                 expect(TrendingStrategy.fetchBucketedDataPromises).toHaveLength(2)
+                            });
+                        });
+
+                        describe('after clicking the snap to now button', function() {
+                            it('should trigger a new fetch for bucketed values', function() {
+                                this.view.$('.trending-snap-to-now').click();
+                                expect(TrendingStrategy.fetchBucketedDataPromises).toHaveLength(2)
+                            });
+
+                            it('should call for buckets with the right arguments', function() {
+                                const tempTestMin = this.view.model.get('currentMin');
+                                const tempTestMax = this.view.model.get('currentMax');
+                                const tempTestNow = Date.now();
+                                this.view.$('.trending-snap-to-now').click();
+
+                                const args = TrendingStrategy.fetchBucketedData.calls.mostRecent().args[0];
+                                expect(args.currentMin).toBe(tempTestMin);
+                                expect(this.view.model.get('currentMin')).toBe(tempTestMin);
+                                expect(this.view.model.get('currentMax')).not.toBe(tempTestMax);
+                                // Expect currentMax to be within two seconds of reference tempTestNow
+                                expect(args.currentMax - tempTestNow <= 2).toBe(true);
                             });
                         });
                     });
