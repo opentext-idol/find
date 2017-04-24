@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.cssSelector;
 
 public class TrendingView {
@@ -72,6 +73,10 @@ public class TrendingView {
                 .stream()
                 .map(WebElement::getText)
                 .collect(Collectors.toList());
+    }
+
+    WebElement graphArea() {
+        return findElement(className("graph-area"));
     }
 
     public List<WebElement> chartValueGroups() {

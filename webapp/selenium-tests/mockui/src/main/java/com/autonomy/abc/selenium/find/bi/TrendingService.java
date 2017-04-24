@@ -8,18 +8,28 @@ package com.autonomy.abc.selenium.find.bi;
 import com.autonomy.abc.selenium.find.application.FindApplication;
 import com.autonomy.abc.selenium.find.application.FindElementFactory;
 import com.autonomy.abc.selenium.find.filters.FilterContainer;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.ButtonReleaseAction;
+import org.openqa.selenium.interactions.ClickAndHoldAction;
+import org.openqa.selenium.interactions.CompositeAction;
+import org.openqa.selenium.interactions.HasInputDevices;
+import org.openqa.selenium.interactions.Mouse;
+import org.openqa.selenium.interactions.MoveToOffsetAction;
+import org.openqa.selenium.internal.Locatable;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TrendingService {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,###");
+    private static final int SAFE_DISTANCE_FROM_POINT_TO_CLICK_FOR_DRAG = 10;
+    private static final int DISTANCE_TO_DRAG = 150;
 
     private final FindElementFactory elementFactory;
 
@@ -68,15 +78,11 @@ public class TrendingService {
     }
 
     public void dragRight(final TrendingView trendingView, final WebDriver driver) {
-        final String firstValue = trendingView.chartValueGroups().get(0).getAttribute("data-name");
-        final List<WebElement> points = trendingView.pointsForNamedValue(firstValue);
-        new Actions(driver).dragAndDrop(points.get(1), points.get(3)).perform();
+        drag(trendingView, driver, DISTANCE_TO_DRAG);
     }
 
     public void dragLeft(final TrendingView trendingView, final WebDriver driver) {
-        final String firstValue = trendingView.chartValueGroups().get(0).getAttribute("data-name");
-        final List<WebElement> points = trendingView.pointsForNamedValue(firstValue);
-        new Actions(driver).dragAndDrop(points.get(points.size() - 1), points.get(points.size() - 3)).perform();
+        drag(trendingView, driver, -DISTANCE_TO_DRAG);
     }
 
     public void changeSelectedField(final int index, final TrendingView trendingView) {
@@ -92,5 +98,36 @@ public class TrendingService {
                     .click();
             trendingView.waitForChartToLoad();
         }
+    }
+
+    private void drag(final TrendingView trendingView, final WebDriver driver, final int xOffset) {
+        final List<Point> firstPoints = trendingView.chartValueGroups().stream()
+                .map(value -> trendingView.pointsForNamedValue(value.getAttribute("data-name")).get(0).getLocation())
+                .sorted((x, y) -> y.getY() - x.getY())
+                .collect(Collectors.toList());
+        final Iterator<Point> iterator = firstPoints.iterator();
+        Point point = iterator.next();
+        while (iterator.hasNext()) {
+            final Point next = iterator.next();
+            if (point.getY() - next.getY() > SAFE_DISTANCE_FROM_POINT_TO_CLICK_FOR_DRAG) {
+                break;
+            }
+
+            point = next;
+        }
+
+        final WebElement graphArea = trendingView.graphArea();
+        final Point graphAreaLocation = graphArea.getLocation();
+        final int yOffsetForInitialClick = point.getY() - graphAreaLocation.getY() - SAFE_DISTANCE_FROM_POINT_TO_CLICK_FOR_DRAG > 0
+                ? point.getY() - graphAreaLocation.getY() - SAFE_DISTANCE_FROM_POINT_TO_CLICK_FOR_DRAG : firstPoints.get(0).getY() - graphAreaLocation.getY() + SAFE_DISTANCE_FROM_POINT_TO_CLICK_FOR_DRAG;
+
+        final Mouse mouse = ((HasInputDevices) driver).getMouse();
+
+        final CompositeAction action = new CompositeAction();
+        action.addAction(new MoveToOffsetAction(mouse, (Locatable) graphArea, point.getX() - graphAreaLocation.getX() + SAFE_DISTANCE_FROM_POINT_TO_CLICK_FOR_DRAG, yOffsetForInitialClick));
+        action.addAction(new ClickAndHoldAction(mouse, null));
+        action.addAction(new MoveToOffsetAction(mouse, null, xOffset, 0));
+        action.addAction(new ButtonReleaseAction(mouse, null));
+        action.perform();
     }
 }
