@@ -51,7 +51,7 @@ node {
 				"files": [
 					{
 						"pattern": "webapp/idol/target/*.war",
-						"target": "${artifactLocation}"
+						"target": "${artifactLocation};build.number=${env.BUILD_NUMBER}"
 					},
 					{
 						"pattern": "webapp/hod/target/*.war",
