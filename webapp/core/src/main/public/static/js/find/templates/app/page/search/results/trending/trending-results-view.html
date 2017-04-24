@@ -1,5 +1,12 @@
 <div class="col-md-12">
-    <div class="trending-field-selector"></div>
+    <div>
+        <span class="trending-field-selector"></span>
+        <span class="m-l-lg trending-slider hide">
+            <span class="m-r-md"><%-i18n['search.resultsView.trending.bucketSlider.fewerBuckets']%></span>
+            <span><input class="speed-slider inline" type="range"></span>
+            <span class="m-l-md"><%-i18n['search.resultsView.trending.bucketSlider.moreBuckets']%></span>
+        </span>
+    </div>
     <div class="trending-error hide"></div>
     <div class="trending-empty result-message hide">
         <%- i18n['search.resultsView.trending.empty'] %>

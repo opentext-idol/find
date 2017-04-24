@@ -32,6 +32,8 @@ define([
     const SECONDS_IN_ONE_DAY = 86400;
     const DEBOUNCE_TIME = 500;
     const ERROR_MESSAGE_ARGUMENTS = {messageToUser: i18n['search.resultsView.trending.error.query']};
+    const MIN_BUCKETS = 2;
+    const MAX_BUCKETS = 100;
 
     const renderState = {
         RENDERING_NEW_DATA: 'RENDERING NEW DATA',
@@ -74,11 +76,25 @@ define([
         template: _.template(template),
         loadingHtml: _.template(loadingSpinnerHtml),
 
+        events: {
+            'change .speed-slider': function(e) {
+                const $target = $(e.target);
+                const value = $target.val();
+                $target.attr('data-original-title', value);
+                $target.tooltip('show');
+                $target.blur();
+                this.model.set('targetNumberOfBuckets', value);
+            },
+            'input .speed-slider': function(e) {
+                const $target = $(e.target);
+                const value = $target.val();
+                this.$('.tooltip-inner').text(value);
+            }
+        },
+
         initialize: function (options) {
             const config = configuration();
             this.dateField = config.trending.dateField;
-            //noinspection JSUnresolvedVariable
-            this.targetNumberOfBuckets = config.trending.numberOfBuckets;
             //noinspection JSUnresolvedVariable
             this.numberOfValuesToDisplay = config.trending.numberOfValues;
             this.queryModel = options.queryModel;
@@ -89,7 +105,9 @@ define([
             this.debouncedFetchBucketingData = _.debounce(this.fetchBucketingData, DEBOUNCE_TIME);
             this.bucketedValues = {};
 
-            this.model = new Backbone.Model();
+            this.model = new Backbone.Model({
+                targetNumberOfBuckets: config.trending.numberOfBuckets
+            });
             this.viewStateModel = new Backbone.Model({
                 currentState: renderState.RENDERING_NEW_DATA,
                 searchStateChanged: false
@@ -108,6 +126,7 @@ define([
                 this.onDataError(xhr);
             });
             this.listenTo(this.model, 'change:field', this.fetchFieldAndRangeData);
+            this.listenTo(this.model, 'change:targetNumberOfBuckets', this.debouncedFetchBucketingData);
             this.listenTo(this.parametricCollection, 'sync', this.setFieldSelector);
             this.listenTo(this.parametricCollection, 'error', function (collection, xhr) {
                 this.onDataError(xhr);
@@ -121,10 +140,13 @@ define([
             }));
             this.$errorMessage = this.$('.trending-error');
             this.$chart = this.$('.trending-chart');
+            this.$trendingSlider = this.$('.trending-slider');
+            this.$speedSlider = this.$('.speed-slider');
 
             this.viewStateModel.set('dataState', dataState.LOADING);
 
             if (this.trendingChart) {
+                this.$speedSlider.tooltip('destroy');
                 this.trendingChart.remove();
             }
 
@@ -136,12 +158,25 @@ define([
                 hoverEnabled: true
             });
 
+            this.$speedSlider
+                .attr({
+                    min: MIN_BUCKETS,
+                    max: MAX_BUCKETS,
+                    step: 1
+                })
+                .val(this.model.get('targetNumberOfBuckets'))
+                .tooltip({
+                    title: this.model.get('targetNumberOfBuckets'),
+                    placement: 'top'
+                });
+
             if (!this.parametricCollection.isEmpty()) {
                 this.setFieldSelector();
             }
         },
 
         remove: function () {
+            this.$speedSlider.tooltip('destroy');
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
             Backbone.View.prototype.remove.call(this);
         },
@@ -240,7 +275,7 @@ define([
                 currentMin: this.model.get('currentMin'),
                 dateField: this.dateField,
                 numberOfValuesToDisplay: this.numberOfValuesToDisplay,
-                targetNumberOfBuckets: this.targetNumberOfBuckets
+                targetNumberOfBuckets: this.model.get('targetNumberOfBuckets')
             };
 
             return trendingStrategy.fetchBucketedData(fetchOptions)
@@ -308,6 +343,7 @@ define([
             this.$('.trending-empty').toggleClass('hide', state !== dataState.EMPTY);
             this.$('.trending-loading').toggleClass('hide', state !== dataState.LOADING);
             this.$chart.toggleClass('hide', state !== dataState.OK);
+            this.$trendingSlider.toggleClass('hide', state !== dataState.OK);
 
             if (state !== dataState.ERROR && this.$errorMessage) {
                 this.$errorMessage.empty();
