@@ -31,6 +31,8 @@ define([
     };
 
     const DEFAULT_NUMBER_OF_BUCKETS = 20;
+    const MIN_NUMBER_OF_BUCKETS = 3;
+    const MAX_NUMBER_OF_BUCKETS = 100;
 
     describe('Trending view', function() {
         beforeEach(function() {
@@ -105,7 +107,9 @@ define([
             configuration.and.returnValue({
                 trending: {
                     dateField: "AUTN_DATE",
-                    numberOfBuckets: 20,
+                    defaultNumberOfBuckets: DEFAULT_NUMBER_OF_BUCKETS,
+                    minNumberOfBuckets: MIN_NUMBER_OF_BUCKETS,
+                    maxNumberOfBuckets: MAX_NUMBER_OF_BUCKETS,
                     numberOfValues: 10
                 }
             });
@@ -267,8 +271,8 @@ define([
                         it('sets up the speed slider correctly', function() {
                             expect(this.view.model.get('targetNumberOfBuckets')).toBe(DEFAULT_NUMBER_OF_BUCKETS);
                             expect(this.view.$('.speed-slider').val()).toBe(DEFAULT_NUMBER_OF_BUCKETS + '');
-                            expect(this.view.$('.speed-slider')).toHaveAttr('min', '2');
-                            expect(this.view.$('.speed-slider')).toHaveAttr('max', '100');
+                            expect(this.view.$('.speed-slider')).toHaveAttr('min', MIN_NUMBER_OF_BUCKETS + '');
+                            expect(this.view.$('.speed-slider')).toHaveAttr('max', MAX_NUMBER_OF_BUCKETS + '');
                         });
 
                         it('updates the model targetNumberOfBuckets attribute when the slider is moved', function() {

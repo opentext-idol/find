@@ -32,8 +32,6 @@ define([
     const SECONDS_IN_ONE_DAY = 86400;
     const DEBOUNCE_TIME = 500;
     const ERROR_MESSAGE_ARGUMENTS = {messageToUser: i18n['search.resultsView.trending.error.query']};
-    const MIN_BUCKETS = 3;
-    const MAX_BUCKETS = 100;
 
     const renderState = {
         RENDERING_NEW_DATA: 'RENDERING NEW DATA',
@@ -105,9 +103,14 @@ define([
             this.debouncedFetchBucketingData = _.debounce(this.fetchBucketingData, DEBOUNCE_TIME);
             this.bucketedValues = {};
 
+            //noinspection JSUnresolvedVariable
             this.model = new Backbone.Model({
-                targetNumberOfBuckets: config.trending.numberOfBuckets
+                targetNumberOfBuckets: config.trending.defaultNumberOfBuckets
             });
+            //noinspection JSUnresolvedVariable
+            this.minBuckets = config.trending.minNumberOfBuckets;
+            //noinspection JSUnresolvedVariable
+            this.maxBuckets = config.trending.maxNumberOfBuckets;
             this.viewStateModel = new Backbone.Model({
                 currentState: renderState.RENDERING_NEW_DATA,
                 searchStateChanged: false
@@ -160,8 +163,8 @@ define([
 
             this.$speedSlider
                 .attr({
-                    min: MIN_BUCKETS,
-                    max: MAX_BUCKETS,
+                    min: this.minBuckets,
+                    max: this.maxBuckets,
                     step: 1
                 })
                 .val(this.model.get('targetNumberOfBuckets'))

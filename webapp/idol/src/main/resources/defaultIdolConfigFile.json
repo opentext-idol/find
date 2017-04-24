@@ -109,7 +109,9 @@
   "trending" : {
     "dateField" : "AUTN_DATE",
     "numberOfValues": 10,
-    "numberOfBuckets": 20
+    "defaultNumberOfBuckets": 20,
+    "minNumberOfBuckets": 3,
+    "maxNumberOfBuckets": 100
   },
   "export": {
     "powerpoint": {
