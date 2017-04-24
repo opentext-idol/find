@@ -244,10 +244,10 @@ define([
                 .append('foreignObject')
                 .attr('class', 'x-axis-label')
                 .attr('width', widthToDouble - tickPadding)
+                .attr('transform', 'translate(' + (-(widthToDouble - tickPadding) / 2) + ', 0)' )
+                .attr('height', CHART_PADDING)
                 .attr('cursor', 'default')
                 .append('xhtml:p')
-                .style('margin-left', -(widthToDouble - tickPadding) / 2 + 'px')
-                .style('margin-right', (widthToDouble - tickPadding) / 2 + 'px')
                 .html(text);
 
             prevLabelTick = currentLabelTick;
