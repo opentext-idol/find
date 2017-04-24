@@ -93,4 +93,9 @@ public class TrendingService {
             trendingView.waitForChartToLoad();
         }
     }
+
+    public void selectLastValueListedOfDisplayedField(final String selectedField) {
+        final List<WebElement> filters = elementFactory.getFilterPanel().parametricContainer(selectedField).filters();
+        filters.get(filters.size() - 1).click();
+    }
 }

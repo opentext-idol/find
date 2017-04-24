@@ -83,7 +83,7 @@ public class TrendingITCase extends IdolFindTestBase {
         final String startingFinalXLabel = trendingService.finalXAxisLabel(trendingView);
 
         final String selectedField = trendingService.removeCountFromFieldName(trendingView.chosenField().getText());
-        getElementFactory().getFilterPanel().parametricContainer(selectedField).filters().get(0).click();
+        trendingService.selectLastValueListedOfDisplayedField(selectedField);
 
         Waits.loadOrFadeWait();
         trendingView.waitForChartToLoad();
@@ -134,7 +134,7 @@ public class TrendingITCase extends IdolFindTestBase {
 
         final String selectedField = trendingService.removeCountFromFieldName(trendingView.chosenField().getText());
         final ListView listView = findPage.goToListView();
-        getElementFactory().getFilterPanel().parametricContainer(selectedField).filters().get(0).click();
+        trendingService.selectLastValueListedOfDisplayedField(selectedField);
         listView.waitForResultsToLoad();
         trendingView = findPage.goToTrending();
         trendingView.waitForChartToLoad();
