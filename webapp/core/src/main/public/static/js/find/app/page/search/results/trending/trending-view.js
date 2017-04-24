@@ -32,7 +32,7 @@ define([
     const SECONDS_IN_ONE_DAY = 86400;
     const DEBOUNCE_TIME = 500;
     const ERROR_MESSAGE_ARGUMENTS = {messageToUser: i18n['search.resultsView.trending.error.query']};
-    const MIN_BUCKETS = 2;
+    const MIN_BUCKETS = 3;
     const MAX_BUCKETS = 100;
 
     const renderState = {
