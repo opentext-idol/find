@@ -141,8 +141,8 @@ define([
                     widgetZoom.addZoomBehaviour({
                         chart: chart,
                         xScale: scale.x,
-                        minValue: minValue,
-                        maxValue: maxValue,
+                        min: minValue,
+                        max: maxValue,
                         callback: options.zoomCallback
                     });
                 }
