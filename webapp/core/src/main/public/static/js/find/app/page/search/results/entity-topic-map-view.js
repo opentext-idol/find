@@ -42,7 +42,7 @@ define([
                 const $target = $(e.target);
                 const value = $target.val();
                 $target.attr('data-original-title', value);
-                $target.tooltip('show');
+                this.$('.tooltip-inner').text(value);
                 $target.blur();
                 this.model.set('maxResults', value);
             },
