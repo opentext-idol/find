@@ -47,8 +47,8 @@ node {
 			def uploadSpec = """{
 				"files": [
 					{
-						"pattern": "webapp/idol/target/*.war",
-						"target": "${artifactLocation};commit=${gitCommit}"
+						"pattern": "webapp/idol/target/*.war;commit=${gitCommit}",
+						"target": "${artifactLocation}"
 					},
 					{
 						"pattern": "webapp/hod/target/*.war",
