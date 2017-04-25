@@ -189,7 +189,9 @@ define([
         },
 
         remove: function () {
-            this.$speedSlider.tooltip('destroy');
+            if (this.$speedSlider) {
+                this.$speedSlider.tooltip('destroy');
+            }
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
             if (this.$snapToNow) {
                 this.$snapToNow.tooltip('destroy');
