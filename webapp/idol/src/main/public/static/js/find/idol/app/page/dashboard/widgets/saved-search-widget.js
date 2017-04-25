@@ -121,7 +121,10 @@ define([
                     this.queryModel = null;
                     this.toggleContent(false);
                     toggleEmptyMessage.call(this, false);
-                    toggleErrorMessage.call(this, true, getResponseMessage(error));
+                    toggleErrorMessage.call(this, true,
+                        error.statusText === 'abort'
+                            ? i18n['dashboards.widget.dataError.tooSlow']
+                            : getResponseMessage(error));
                 }.bind(this));
         },
 

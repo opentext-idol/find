@@ -54,6 +54,7 @@ define([
         'dashboards': 'Dashboards',
         'dashboards.widget': 'Widget',
         'dashboards.widget.dataError': 'Error: failed to retrieve data',
+        'dashboards.widget.dataError.tooSlow': 'Request failed to complete in time',
         'dashboards.widget.noData': 'The query returned no results',
         'dashboards.widget.notFound': 'Widget of type "{0}" could not be found. Please check your configuration and try again',
         'dashboards.widget.lastRefresh.nextRefresh': 'Next refresh at',

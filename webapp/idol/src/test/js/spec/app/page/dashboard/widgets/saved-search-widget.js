@@ -16,7 +16,7 @@ define([
     }
 
     function rejectLatest(promiseArray) {
-        promiseArray[promiseArray.length - 1].reject();
+        promiseArray[promiseArray.length - 1].reject({statusText: 'abc'});
     }
 
     // This is the scenario where the widget has not yet executed postInitialize() or the promise was rejected.
