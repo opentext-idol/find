@@ -15,16 +15,21 @@ import com.autonomy.abc.selenium.find.bi.TrendingService;
 import com.autonomy.abc.selenium.find.bi.TrendingView;
 import com.autonomy.abc.selenium.find.results.ListView;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
+import com.hp.autonomy.frontend.selenium.element.RangeInput;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static org.hamcrest.Matchers.*;
 
 @Role(UserRole.BIFHI)
 public class TrendingITCase extends IdolFindTestBase {
@@ -39,7 +44,7 @@ public class TrendingITCase extends IdolFindTestBase {
 
     @Override
     public BIIdolFindElementFactory getElementFactory() {
-        return (BIIdolFindElementFactory)super.getElementFactory();
+        return (BIIdolFindElementFactory) super.getElementFactory();
     }
 
     @Before
@@ -67,7 +72,7 @@ public class TrendingITCase extends IdolFindTestBase {
         findPage.waitForParametricValuesToLoad();
         final List<String> fieldsInLeftHandSide = trendingService.filterFields();
         assertThat("The fields in the field selector are all contained in the left hand side list",
-                   fieldsInLeftHandSide.containsAll(fields));
+                fieldsInLeftHandSide.containsAll(fields));
     }
 
     @Test
@@ -89,8 +94,8 @@ public class TrendingITCase extends IdolFindTestBase {
         trendingView.waitForChartToLoad();
 
         assertThat("Either the y-axis values or the x-axis values have changed after adding a filter",
-                   !trendingService.yAxisLabelRange(trendingView).equals(startingRange)
-                           || !trendingService.finalXAxisLabel(trendingView).equals(startingFinalXLabel));
+                !trendingService.yAxisLabelRange(trendingView).equals(startingRange)
+                        || !trendingService.finalXAxisLabel(trendingView).equals(startingFinalXLabel));
     }
 
     @Test
@@ -103,8 +108,8 @@ public class TrendingITCase extends IdolFindTestBase {
         trendingView.waitForChartToLoad();
 
         assertThat("Either the y-axis values or the x-axis values have changed after adding a filter",
-                   !trendingService.yAxisLabelRange(trendingView).equals(startingRange)
-                           || !trendingService.finalXAxisLabel(trendingView).equals(startingFinalXLabel));
+                !trendingService.yAxisLabelRange(trendingView).equals(startingRange)
+                        || !trendingService.finalXAxisLabel(trendingView).equals(startingFinalXLabel));
     }
 
     @Test
@@ -140,13 +145,52 @@ public class TrendingITCase extends IdolFindTestBase {
         trendingView.waitForChartToLoad();
 
         assertThat("Either the y-axis values or the x-axis values have changed after adding a filter",
-                   !trendingService.yAxisLabelRange(trendingView).equals(startingRange)
-                           || !trendingService.finalXAxisLabel(trendingView).equals(startingFinalXLabel));
+                !trendingService.yAxisLabelRange(trendingView).equals(startingRange)
+                        || !trendingService.finalXAxisLabel(trendingView).equals(startingFinalXLabel));
+    }
+
+    @Test
+    public void sliderTooltip() {
+        final RangeInput slider = trendingView.slider();
+        final int firstNumber = sliderToolTipValue(slider);
+
+        slider.dragBy(10);
+        slider.hover();
+
+        assertThat("Tooltip reappears after dragging", slider.tooltip().isDisplayed());
+        verifyThat("New tooltip value bigger than old", sliderToolTipValue(slider), greaterThanOrEqualTo(firstNumber));
+    }
+
+    @Test
+    public void draggingSliderUpdatesGraph() {
+        final String firstValue = trendingView.chartValueGroups().get(0).getAttribute("data-name");
+        final int originalPointCount = trendingView.pointsForNamedValue(firstValue).size();
+
+        final RangeInput slider = trendingView.slider();
+
+        slider.dragBy(50);
+        final int updatedSliderValue = slider.getValue();
+        trendingView.waitForNumberOfPointsToChange(updatedSliderValue);
+        final int updatedPointCount = trendingView.pointsForNamedValue(firstValue).size();
+        assertThat("Changing the slider has added more data points to the graph", updatedPointCount, greaterThan(originalPointCount));
+
+        slider.dragBy(-50);
+        final int finalSliderValue = slider.getValue();
+        trendingView.waitForNumberOfPointsToChange(finalSliderValue);
+        final int finalPointCount = trendingView.pointsForNamedValue(firstValue).size();
+        assertThat("Changing the slider has added fewer data points to the graph", finalPointCount, lessThan(updatedPointCount));
     }
 
     private List<String> getDataNames(final Collection<WebElement> elements) {
         return elements.stream()
                 .map(v -> v.getAttribute("data-name"))
                 .collect(Collectors.toList());
+    }
+
+    private int sliderToolTipValue(final RangeInput slider) {
+        slider.hover();
+        new WebDriverWait(getDriver(), 5).until(ExpectedConditions.visibilityOf(slider.tooltip()));
+        verifyThat("Tooltip appears on hover", slider.tooltip().isDisplayed());
+        return slider.getTooltipValue();
     }
 }
