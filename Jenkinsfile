@@ -51,21 +51,19 @@ node {
 						"target": "${artifactLocation}"
 					},
 					{
-						"pattern": "webapp/hod/target/*.war",
-						"target": "${artifactLocation}"
-					},
-					{
 						"pattern": "webapp/on-prem-dist/target/*.zip",
-						"target": "${artifactLocation}"
-					},
-					{
-						"pattern": "webapp/hsod-dist/target/*.zip",
 						"target": "${artifactLocation}"
 					}
 				]
 			}"""
 
-			server.upload(uploadSpec)
+			withEnv(["GIT_COMMIT=${gitCommit}"]) {
+				def buildInfo = Artifactory.newBuildInfo()
+				buildInfo.env.capture = true
+				buildInfo.env.collect()
+
+				server.upload(uploadSpec, buildInfo)
+			}
 		} catch (org.acegisecurity.acls.NotFoundException e) {
 			echo "No Artifactory 'idol' server configured, skipping stage"
 		} catch (groovy.lang.MissingPropertyException e) {
