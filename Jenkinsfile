@@ -43,7 +43,6 @@ node {
 		try {
 			def server = Artifactory.server "idol" // "idol" is the name of the Artifactory server configured in Jenkins
 			def artifactLocation = "applications/find/${repository}/${branch}/"
-			def gitCommit = getGitCommit()
 
 			def uploadSpec = """{
 				"files": [
