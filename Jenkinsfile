@@ -43,12 +43,13 @@ node {
 		try {
 			def server = Artifactory.server "idol" // "idol" is the name of the Artifactory server configured in Jenkins
 			def artifactLocation = "applications/find/${repository}/${branch}/"
+			def gitCommit = getGitCommit()
 
 			def uploadSpec = """{
 				"files": [
 					{
 						"pattern": "webapp/idol/target/*.war",
-						"target": "${artifactLocation};commit=${getGitCommit()}"
+						"target": "${artifactLocation};commit=${gitCommit}"
 					},
 					{
 						"pattern": "webapp/hod/target/*.war",
