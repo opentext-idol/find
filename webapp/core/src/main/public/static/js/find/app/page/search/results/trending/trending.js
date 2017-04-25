@@ -9,7 +9,7 @@ define([
     'd3',
     'find/app/util/widget-zoom',
     'find/app/util/widget-drag'
-], function (_, $, d3, widgetZoom, widgetDrag) {
+], function(_, $, d3, widgetZoom, widgetDrag) {
     'use strict';
 
     const COLORS = [
@@ -40,7 +40,7 @@ define([
     function setScales(options, chartHeight, chartWidth) {
         const flatCountsChain = _.chain(options.data)
             .pluck('points')
-            .map(function (point) {
+            .map(function(point) {
                 return _.pluck(point, 'count');
             })
             .flatten();
@@ -56,7 +56,7 @@ define([
     }
 
     function createHoverCallbacks(hoverEnabled, chart, scales, chartHeight, tooltipText, timeFormat) {
-        if (!hoverEnabled) {
+        if(!hoverEnabled) {
             return {
                 lineAndPointMouseover: _.noop,
                 lineAndPointMouseout: _.noop,
@@ -69,8 +69,8 @@ define([
 
         const mouseover = function mouseoverFn(valueName) {
             d3.selectAll('.line')
-                .each(function () {
-                    if (this.parentNode.getAttribute('data-name') === valueName) {
+                .each(function() {
+                    if(this.parentNode.getAttribute('data-name') === valueName) {
                         d3.select(this)
                             .attr('stroke-width', POINT_RADIUS);
                     } else {
@@ -79,8 +79,8 @@ define([
                     }
                 });
             d3.selectAll('circle')
-                .each(function () {
-                    if (this.parentNode.getAttribute('data-name') === valueName) {
+                .each(function() {
+                    if(this.parentNode.getAttribute('data-name') === valueName) {
                         d3.select(this)
                             .attr('r', 5);
                     } else {
@@ -89,8 +89,8 @@ define([
                     }
                 });
             d3.selectAll('.legend-text')
-                .each(function () {
-                    if (this.parentNode.getAttribute('data-name') === valueName) {
+                .each(function() {
+                    if(this.parentNode.getAttribute('data-name') === valueName) {
                         d3.select(this)
                             .attr('class', 'legend-text bold')
                     } else {
@@ -223,14 +223,14 @@ define([
 
         let prevLabelTick = 0;
         let currentLabel = d3.select(labels[0]);
-        for (let i = 0; i < numberOfTicks; i++) {
+        for(let i = 0; i < numberOfTicks; i++) {
             const currentLabelTick = getTickTranslation(currentLabel);
             const text = currentLabel.text();
 
             let nextLabel;
             let nextLabelTick;
             let widthToDouble;
-            if (i === numberOfTicks - 1) {
+            if(i === numberOfTicks - 1) {
                 widthToDouble = (currentLabelTick - prevLabelTick);
             } else {
                 nextLabel = d3.select(labels[i + 1]);
@@ -258,7 +258,7 @@ define([
     }
 
     function getAdjustedLegendData(data, scales) {
-        const labelData = _.map(data, function (datum, i) {
+        const labelData = _.map(data, function(datum, i) {
             return {
                 index: i,
                 name: datum.name,
@@ -268,14 +268,14 @@ define([
             }
         });
 
-        labelData.sort(function (a, b) {
+        labelData.sort(function(a, b) {
             const difference = a.labelY - b.labelY;
             return difference === 0
                 ? a.index - b.index
                 : difference;
         });
 
-        const maxScaledY = _.max(labelData, function (datum) {
+        const maxScaledY = _.max(labelData, function(datum) {
             return datum.labelY;
         }).labelY;
         adjustLabelPositions(labelData, maxScaledY);
@@ -283,8 +283,8 @@ define([
     }
 
     function adjustLabelPositions(legendData, maxScaledY) {
-        _.each(legendData, function (d, i) {
-            if (i > 0) {
+        _.each(legendData, function(d, i) {
+            if(i > 0) {
                 const prevVal = legendData[i - 1].labelY + LEGEND_TEXT_HEIGHT;
                 d.labelY = d.labelY < prevVal
                     ? prevVal
@@ -292,11 +292,11 @@ define([
             }
         });
 
-        if (!_.isEmpty(legendData) && legendData[legendData.length - 1].labelY > maxScaledY) {
+        if(!_.isEmpty(legendData) && legendData[legendData.length - 1].labelY > maxScaledY) {
             legendData[legendData.length - 1].labelY = maxScaledY;
             legendData.reverse();
-            _.each(legendData, function (d, i) {
-                if (i > 0) {
+            _.each(legendData, function(d, i) {
+                if(i > 0) {
                     const prevVal = legendData[i - 1].labelY - LEGEND_TEXT_HEIGHT;
                     d.labelY = d.labelY > prevVal
                         ? prevVal
@@ -309,11 +309,11 @@ define([
 
     function getTimeFormat(max, min) {
         const range = max.getTime() / MILLISECONDS_TO_SECONDS - min.getTime() / MILLISECONDS_TO_SECONDS;
-        if (range > SECONDS_IN_ONE_YEAR) {
+        if(range > SECONDS_IN_ONE_YEAR) {
             return d3.time.format("%B %Y");
-        } else if (range < SECONDS_IN_ONE_DAY) {
+        } else if(range < SECONDS_IN_ONE_DAY) {
             return d3.time.format("%H:%M:%S %d&nbsp;%B %Y");
-        } else if (range < SECONDS_IN_ONE_WEEK) {
+        } else if(range < SECONDS_IN_ONE_WEEK) {
             return d3.time.format("%H:%M %d&nbsp;%B %Y");
         } else {
             return d3.time.format("%d&nbsp;%B %Y");
@@ -321,8 +321,8 @@ define([
     }
 
     function getColor(data, d) {
-        const color = d.color ?
-            _.findWhere(COLORS, {name: d.color})
+        const color = d.color
+            ? _.findWhere(COLORS, {name: d.color})
             : COLORS[_.pluck(data, 'name').indexOf(d.name) % COLORS.length];
         return color.hex;
     }
@@ -355,7 +355,7 @@ define([
 
     _.extend(Trending.prototype, {
         colors: COLORS,
-        draw: function (options) {
+        draw: function(options) {
             const reloaded = options.reloaded;
             const data = options.data;
             const minDate = options.minDate;
@@ -371,13 +371,19 @@ define([
 
             const scales = setScales(options, chartHeight, chartWidth);
 
-            const hoverCallbacks = createHoverCallbacks(this.hoverEnabled, this.chart, scales, chartHeight, this.tooltipText, timeFormat);
+            const hoverCallbacks = createHoverCallbacks(
+                this.hoverEnabled,
+                this.chart,
+                scales,
+                chartHeight,
+                this.tooltipText, timeFormat
+            );
 
             const line = d3.svg.line()
-                .x(function (d) {
+                .x(function(d) {
                     return scales.xScale(d.mid)
                 })
-                .y(function (d) {
+                .y(function(d) {
                     return scales.yScale(d.count)
                 })
                 .interpolate('linear');
@@ -386,27 +392,27 @@ define([
                 .attr('width', elWidth)
                 .attr('height', elHeight);
 
-            if (this.dataJoin) {
+            if(this.dataJoin) {
                 this.dataJoin = this.dataJoin
-                    .data(data, function (d) {
+                    .data(data, function(d) {
                         return d.name;
                     });
             } else {
                 this.dataJoin = this.chart.selectAll('.value')
-                    .data(data, function (d) {
+                    .data(data, function(d) {
                         return d.name;
                     });
             }
 
             this.dataJoin.enter()
                 .append('g')
-                .attr('data-name', function (d) {
+                .attr('data-name', function(d) {
                     return d.name;
                 })
                 .append('path');
 
             this.dataJoin
-                .attr('stroke', function (d) {
+                .attr('stroke', function(d) {
                     return getColor(data, d);
                 });
 
@@ -414,7 +420,7 @@ define([
                 .attr('class', 'line')
                 .attr('stroke-width', 2)
                 .attr('fill', 'none')
-                .attr('d', function (d) {
+                .attr('d', function(d) {
                     return line(d.points);
                 })
                 .on('mouseover', hoverCallbacks.lineAndPointMouseover)
@@ -422,15 +428,15 @@ define([
 
             this.dataJoin.exit().remove();
 
-            if (this.pointsJoin && !reloaded) {
+            if(this.pointsJoin && !reloaded) {
                 this.pointsJoin = this.pointsJoin
-                    .data(function (d) {
+                    .data(function(d) {
                         return d.points;
                     });
             } else {
                 this.pointsJoin = this.dataJoin
                     .selectAll('circle')
-                    .data(function (d) {
+                    .data(function(d) {
                         return d.points;
                     });
             }
@@ -443,10 +449,10 @@ define([
                 .attr('stroke-width', 3);
 
             this.pointsJoin
-                .attr('cy', function (d) {
+                .attr('cy', function(d) {
                     return scales.yScale(d.count);
                 })
-                .attr('cx', function (d) {
+                .attr('cx', function(d) {
                     return scales.xScale(d.mid);
                 })
                 .on('mouseover', hoverCallbacks.pointMouseover)
@@ -469,7 +475,7 @@ define([
                 .data(getAdjustedLegendData(data, scales))
                 .enter()
                 .append('g')
-                .each(function (d) {
+                .each(function(d) {
                     const g = d3.select(this)
                         .attr('stroke', getColor(data, d))
                         .attr('data-name', d.name);
@@ -481,10 +487,10 @@ define([
                         .attr('y2', d.labelY)
                         .attr('stroke-width', 2)
                         .attr('stroke-dasharray', '3,2')
-                        .on('mouseover', function () {
+                        .on('mouseover', function() {
                             hoverCallbacks.legendMouseover(d.name);
                         })
-                        .on('mouseout', function () {
+                        .on('mouseout', function() {
                             hoverCallbacks.legendMouseout(d.name);
                         });
 
@@ -497,10 +503,10 @@ define([
                         .attr('cursor', 'default')
                         .append('xhtml:p')
                         .html(d.name)
-                        .on('mouseover', function () {
+                        .on('mouseover', function() {
                             hoverCallbacks.legendMouseover(d.name);
                         })
-                        .on('mouseout', function () {
+                        .on('mouseout', function() {
                             hoverCallbacks.legendMouseout(d.name);
                         });
                 });
@@ -514,17 +520,17 @@ define([
                 max: maxDate.getTime() / MILLISECONDS_TO_SECONDS
             };
 
-            if (this.zoomEnabled) {
-                widgetZoom.addZoomBehaviour(_.extend(behaviourOptions, {
+            if(this.zoomEnabled) {
+                widgetZoom.addZoomBehaviour(_.extend({
                     callback: options.zoomCallback
-                }));
+                }, behaviourOptions));
             }
 
-            if (this.dragEnabled) {
-                widgetDrag.addDragBehaviour(_.extend(behaviourOptions, {
+            if(this.dragEnabled) {
+                widgetDrag.addDragBehaviour(_.extend({
                     dragMoveCallback: options.dragMoveCallback,
                     dragEndCallback: options.dragEndCallback
-                }));
+                }, behaviourOptions));
             }
         }
     });

@@ -1218,6 +1218,7 @@ input[type=range].speed-slider {
   margin: 5px;
   padding: 1px;
   cursor: pointer;
+  display: inline;
 
   &::-webkit-slider-runnable-track {
     width: @hpeTrackWidth;
@@ -2292,23 +2293,21 @@ h4.similar-dates-message {
   }
 
   .widget-init-spinner {
-    .flex;
+    .flex-column;
 
     justify-content: center;
     align-content: center;
-    flex-direction: column;
     height: @100percent;
     width: @100percent;
   }
 
   .widget-hover-title-container {
     .absolute;
-    .flex;
+    .flex-column;
 
     justify-content: center;
     z-index: calc(@widgetUpdateSpinnerZIndex - 1);
     align-content: center;
-    flex-direction: column;
     height: @100percent;
     width: @100percent;
     opacity: 0;
@@ -2324,13 +2323,12 @@ h4.similar-dates-message {
   .widget-empty,
   .widget-error {
     .no-overflow;
-    .flex;
+    .flex-column;
 
     width: @100percent;
     height: @100percent;
 
     z-index: calc(@widgetUpdateSpinnerZIndex - 1);
-    flex-direction: column;
     justify-content: center;
     align-items: center;
 
@@ -2504,6 +2502,10 @@ h4.similar-dates-message {
 // Trending visualiser
 .trending-chart {
   height: calc(~'100vh - 260px')
+}
+
+.trending-snap-to-now {
+  .inline-block;
 }
 
 .graph-area {

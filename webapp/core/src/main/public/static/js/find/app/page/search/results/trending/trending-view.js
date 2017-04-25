@@ -22,10 +22,9 @@ define([
     'find/app/page/search/results/trending/trending-strategy',
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/templates/app/page/search/results/trending/trending-results-view.html'
-
-], function (_, $, d3, Backbone, i18n, configuration, vent, generateErrorHtml, ParametricResultsView, FieldSelectionView,
-             calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel, ParametricCollection, Trending,
-             trendingStrategy, loadingSpinnerHtml, template) {
+], function(_, $, d3, Backbone, i18n, configuration, vent, generateErrorHtml, ParametricResultsView, FieldSelectionView,
+            calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel, ParametricCollection, Trending,
+            trendingStrategy, loadingSpinnerHtml, template) {
     'use strict';
 
     const MILLISECONDS_TO_SECONDS = 1000;
@@ -55,7 +54,7 @@ define([
         this.setMinMax(min, max);
         this.viewStateModel.set('currentState', renderState.ZOOMING);
         this.updateChart();
-        this.debouncedFetchBucketingData();
+        this.debouncedFetchBucketedData();
     }
 
     function dragMoveCallback(min, max) {
@@ -67,18 +66,32 @@ define([
     function dragEndCallback(min, max) {
         this.setMinMax(min, max);
         this.viewStateModel.set('currentState', renderState.DRAGGING);
-        this.debouncedFetchBucketingData();
+        this.debouncedFetchBucketedData();
     }
 
     return Backbone.View.extend({
         template: _.template(template),
-        loadingHtml: _.template(loadingSpinnerHtml),
+
+        events: {
+            'change .speed-slider': function(e) {
+                const $target = $(e.target);
+                const value = $target.val();
+                $target.attr('data-original-title', value);
+                $target.tooltip('show');
+                $target.blur();
+                this.model.set('targetNumberOfBuckets', value);
+            },
+            'input .speed-slider': function(e) {
+                const $target = $(e.target);
+                const value = $target.val();
+                this.$('.tooltip-inner').text(value);
+            },
+            'click .trending-snap-to-now': 'snapToNow'
+        },
 
         initialize: function (options) {
             const config = configuration();
             this.dateField = config.trending.dateField;
-            //noinspection JSUnresolvedVariable
-            this.targetNumberOfBuckets = config.trending.numberOfBuckets;
             //noinspection JSUnresolvedVariable
             this.numberOfValuesToDisplay = config.trending.numberOfValues;
             this.queryModel = options.queryModel;
@@ -86,10 +99,17 @@ define([
             this.parametricFieldsCollection = options.parametricFieldsCollection;
             this.parametricCollection = options.parametricCollection;
 
-            this.debouncedFetchBucketingData = _.debounce(this.fetchBucketingData, DEBOUNCE_TIME);
+            this.debouncedFetchBucketedData = _.debounce(this.fetchBucketedData, DEBOUNCE_TIME);
             this.bucketedValues = {};
 
-            this.model = new Backbone.Model();
+            //noinspection JSUnresolvedVariable
+            this.model = new Backbone.Model({
+                targetNumberOfBuckets: config.trending.defaultNumberOfBuckets
+            });
+            //noinspection JSUnresolvedVariable
+            this.minBuckets = config.trending.minNumberOfBuckets;
+            //noinspection JSUnresolvedVariable
+            this.maxBuckets = config.trending.maxNumberOfBuckets;
             this.viewStateModel = new Backbone.Model({
                 currentState: renderState.RENDERING_NEW_DATA,
                 searchStateChanged: false
@@ -108,25 +128,34 @@ define([
                 this.onDataError(xhr);
             });
             this.listenTo(this.model, 'change:field', this.fetchFieldAndRangeData);
+            this.listenTo(this.model, 'change:targetNumberOfBuckets', this.debouncedFetchBucketedData);
             this.listenTo(this.parametricCollection, 'sync', this.setFieldSelector);
             this.listenTo(this.parametricCollection, 'error', function (collection, xhr) {
                 this.onDataError(xhr);
             });
         },
 
-        render: function () {
-            this.$el.html(this.template({
-                i18n: i18n,
-                loadingHtml: this.loadingHtml
-            }));
-            this.$errorMessage = this.$('.trending-error');
-            this.$chart = this.$('.trending-chart');
-
-            this.viewStateModel.set('dataState', dataState.LOADING);
+        render: function() {
+            if (this.$snapToNow) {
+                this.$snapToNow.tooltip('destroy');
+            }
 
             if (this.trendingChart) {
+                this.$speedSlider.tooltip('destroy');
                 this.trendingChart.remove();
             }
+
+            this.$el.html(this.template({
+                i18n: i18n,
+                loadingHtml: _.template(loadingSpinnerHtml)
+            }));
+            this.$errorMessage = this.$('.trending-error');
+            this.$snapToNow = this.$('.trending-snap-to-now');
+            this.$chart = this.$('.trending-chart');
+            this.$trendingSlider = this.$('.trending-slider');
+            this.$speedSlider = this.$('.speed-slider');
+
+            this.viewStateModel.set('dataState', dataState.LOADING);
 
             this.trendingChart = new Trending({
                 el: this.$chart.get(0),
@@ -136,13 +165,35 @@ define([
                 hoverEnabled: true
             });
 
+            this.$snapToNow.tooltip({
+                placement: 'left',
+                container: 'body',
+                title: i18n['search.resultsView.trending.snapToNow']
+            });
+
+            this.$speedSlider
+                .attr({
+                    min: this.minBuckets,
+                    max: this.maxBuckets,
+                    step: 1
+                })
+                .val(this.model.get('targetNumberOfBuckets'))
+                .tooltip({
+                    title: this.model.get('targetNumberOfBuckets'),
+                    placement: 'top'
+                });
+
             if (!this.parametricCollection.isEmpty()) {
                 this.setFieldSelector();
             }
         },
 
         remove: function () {
+            this.$speedSlider.tooltip('destroy');
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
+            if (this.$snapToNow) {
+                this.$snapToNow.tooltip('destroy');
+            }
             Backbone.View.prototype.remove.call(this);
         },
 
@@ -213,7 +264,7 @@ define([
                         return $.when(trendingStrategy.fetchRange(this.selectedFieldValues, fetchOptions))
                             .then(function (data) {
                                 this.setMinMax(data.min, data.max);
-                                this.fetchBucketingData();
+                                this.fetchBucketedData();
                             }.bind(this));
                     }
                 }.bind(this))
@@ -223,7 +274,7 @@ define([
                 }.bind(this));
         },
 
-        fetchBucketingData: function () {
+        fetchBucketedData: function () {
             this.viewStateModel.set('fetchState', fetchState.FETCHING_BUCKETS);
 
             const minDate = this.model.get('currentMin'), maxDate = this.model.get('currentMax');
@@ -240,7 +291,7 @@ define([
                 currentMin: this.model.get('currentMin'),
                 dateField: this.dateField,
                 numberOfValuesToDisplay: this.numberOfValuesToDisplay,
-                targetNumberOfBuckets: this.targetNumberOfBuckets
+                targetNumberOfBuckets: this.model.get('targetNumberOfBuckets')
             };
 
             return trendingStrategy.fetchBucketedData(fetchOptions)
@@ -301,6 +352,18 @@ define([
             });
         },
 
+        snapToNow: function () {
+            const currentMin = this.model.get('currentMin');
+            const now = Math.ceil(Date.now() / MILLISECONDS_TO_SECONDS);
+            this.setMinMax(
+                currentMin >= now
+                    ? now - (this.model.get('currentMax') - currentMin)
+                    : currentMin,
+                now
+            );
+            this.fetchBucketedData();
+        },
+
         onDataStateChange: function () {
             const state = this.viewStateModel.get('dataState');
 
@@ -308,6 +371,8 @@ define([
             this.$('.trending-empty').toggleClass('hide', state !== dataState.EMPTY);
             this.$('.trending-loading').toggleClass('hide', state !== dataState.LOADING);
             this.$chart.toggleClass('hide', state !== dataState.OK);
+            this.$snapToNow.toggleClass('hide', state !== dataState.OK);
+            this.$trendingSlider.toggleClass('hide', state !== dataState.OK);
 
             if (state !== dataState.ERROR && this.$errorMessage) {
                 this.$errorMessage.empty();

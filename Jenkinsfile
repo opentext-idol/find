@@ -27,10 +27,7 @@ node {
 		env.JAVA_HOME="${tool 'Java 8 OpenJDK'}"
 		env.PATH="${tool 'Maven3'}/bin:${env.JAVA_HOME}/bin:${env.PATH}"
 
-        mavenArguments = getMavenArguments()
-
-		// Verify is needed to run some basic integration tests but these are not the selenium tests
-		sh "mvn ${mavenArguments} -f webapp/pom.xml -Dapplication.buildNumber=${gitCommit} clean verify -P production -U -pl idol -am"
+		sh "mvn clean install -f webapp/pom.xml -U -pl on-prem-dist,selenium-tests/mockui -am -Dapplication.buildNumber=${gitCommit} -Dtest.content.host=cbg-data-admin-dev.hpeswlab.net -Dtest.view.host=cbg-data-admin-dev.hpeswlab.net -Dtest.answer.host=cbg-data-admin-dev.hpeswlab.net -Dtest.database=GenericDocuments"
 
 	stage 'Archive output'
 		archive 'idol/target/find.war'
@@ -106,11 +103,4 @@ def getOrgRepoName() {
 		script: "git remote -v | head -1 | perl -pe 's~^.*?(?:git@|https?://)([^:/]*?)[:/](.*?)(?:\\.git)?\\s*\\((?:fetch|push)\\)\$~\\1/\\2~p'",
 		returnStdout: true
 	).trim()
-}
-
-def getMavenArguments() {
-    sh (
-        script: "bash /home/fenkins/resources/apps/find-maven-arguments.sh",
-        returnStdout: true
-    ).trim()
 }

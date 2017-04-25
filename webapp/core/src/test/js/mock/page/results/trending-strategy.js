@@ -57,7 +57,6 @@ define(function() {
         }]
     });
 
-
     MockTrendingStrategy.reset = function() {
         fetchFieldSpy.calls.reset();
         fetchRangeSpy.calls.reset();

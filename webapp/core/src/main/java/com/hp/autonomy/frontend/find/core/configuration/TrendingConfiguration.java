@@ -19,26 +19,38 @@ import lombok.EqualsAndHashCode;
 @Builder(toBuilder = true)
 @JsonDeserialize(builder = TrendingConfiguration.TrendingConfigurationBuilder.class)
 public class TrendingConfiguration extends SimpleComponent<TrendingConfiguration> {
+    private static final String SECTION = "Trending";
+
     private final FieldPath dateField;
-    private final Integer numberOfBuckets;
+    private final Integer defaultNumberOfBuckets;
+    private final Integer minNumberOfBuckets;
+    private final Integer maxNumberOfBuckets;
     private final Integer numberOfValues;
 
     @Override
     public void basicValidate(final String configSection) throws ConfigException {
-        if(dateField == null || dateField.getNormalisedPath().isEmpty()) {
+        if (dateField == null || dateField.getNormalisedPath().isEmpty()) {
             throw new ConfigException(configSection, "dateField must be provided");
         }
 
-        if(numberOfBuckets <= 0) {
-            throw new ConfigException(configSection, "numberOfBuckets must be provided and greater than 0");
-        }
+        validateInteger(defaultNumberOfBuckets, "Default number of buckets");
+        validateInteger(minNumberOfBuckets, "Minimum number of buckets");
+        validateInteger(maxNumberOfBuckets, "Maximum number of buckets");
+        validateInteger(numberOfValues, "Number of values");
 
-        if(numberOfValues <= 0) {
-            throw new ConfigException(configSection, "numberOfValues must be provided and greater than 0");
+        if (maxNumberOfBuckets < defaultNumberOfBuckets || minNumberOfBuckets > defaultNumberOfBuckets) {
+            throw new ConfigException(configSection, "Default number of buckets must lie between max and min");
+        }
+    }
+
+    private void validateInteger(final Integer integer, final String description) throws ConfigException {
+        if (integer == null || integer <= 0) {
+            throw new ConfigException(SECTION, description + " must be provided and must be greater than 0");
         }
     }
 
     @SuppressWarnings("WeakerAccess")
     @JsonPOJOBuilder(withPrefix = "")
-    public static class TrendingConfigurationBuilder {}
+    public static class TrendingConfigurationBuilder {
+    }
 }
