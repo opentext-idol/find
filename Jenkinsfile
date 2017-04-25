@@ -48,7 +48,7 @@ node {
 				"files": [
 					{
 						"pattern": "webapp/idol/target/*.war",
-						"target": "${artifactLocation};build.number=${env.BUILD_NUMBER}"
+						"target": "${artifactLocation};commit=${getGitCommit()}"
 					},
 					{
 						"pattern": "webapp/hod/target/*.war",
