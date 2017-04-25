@@ -15,6 +15,8 @@ define([
     'use strict';
 
     const SECONDS_IN_ONE_DAY = 86400;
+    const DEFAULT_NUMBER_OF_VALUES = 10;
+    const DEFAULT_NUMBER_OF_BUCKETS = 20;
 
     return SavedSearchWidget.extend({
         viewType: 'trending',
@@ -39,7 +41,7 @@ define([
                 model: this.model,
                 field: this.widgetSettings.parametricField.id,
                 dateField: this.widgetSettings.dateField.id,
-                numberOfValuesToDisplay: this.widgetSettings.maxValues,
+                numberOfValuesToDisplay: this.widgetSettings.maxValues || DEFAULT_NUMBER_OF_VALUES,
                 values: this.widgetSettings.values
             };
 
@@ -83,7 +85,7 @@ define([
 
                             return trendingStrategy.fetchBucketedData(_.extend(fetchOptions, {
                                 selectedFieldValues: selectedFieldValues,
-                                targetNumberOfBuckets: this.widgetSettings.numberOfBuckets,
+                                targetNumberOfBuckets: this.widgetSettings.numberOfBuckets || DEFAULT_NUMBER_OF_BUCKETS,
                                 currentMax: range.currentMax,
                                 currentMin: range.currentMin
                             }));
