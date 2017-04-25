@@ -57,7 +57,7 @@ node {
 				]
 			}"""
 
-			withEnv(["GIT_COMMIT=${gitCommit}"]) {
+			withEnv(["STEVE=${gitCommit}"]) {
 				def buildInfo = Artifactory.newBuildInfo()
 				buildInfo.env.capture = true
 				buildInfo.env.collect()
