@@ -57,11 +57,13 @@ node {
 				]
 			}"""
 
-			def buildInfo = Artifactory.newBuildInfo()
-			buildInfo.env.capture = true
-			buildInfo.env.collect()
+			withEnv(["GIT_COMMIT=${gitCommit}"]) {
+				def buildInfo = Artifactory.newBuildInfo()
+				buildInfo.env.capture = true
+				buildInfo.env.collect()
 
-			server.upload(uploadSpec, buildInfo)
+				server.upload(uploadSpec, buildInfo)
+			}
 		} catch (org.acegisecurity.acls.NotFoundException e) {
 			echo "No Artifactory 'idol' server configured, skipping stage"
 		} catch (groovy.lang.MissingPropertyException e) {
