@@ -6,6 +6,7 @@
 package com.autonomy.abc.selenium.find.bi;
 
 import com.autonomy.abc.selenium.find.Container;
+import com.hp.autonomy.frontend.selenium.element.RangeInput;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.openqa.selenium.By;
@@ -19,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.cssSelector;
 
 public class TrendingView {
@@ -45,6 +47,12 @@ public class TrendingView {
     public void waitForChartToLoad() {
         new WebDriverWait(driver, TRENDING_VIEW_LOAD_TIMEOUT).withMessage("Trending never stopped loading")
                 .until(ExpectedConditions.presenceOfElementLocated(cssSelector(".trending-loading.hide")));
+    }
+
+    public void waitForNumberOfPointsToChange(final int targetNumber) {
+        final String firstValue = findElement(cssSelector("svg > g[data-name]")).getAttribute("data-name");
+        new WebDriverWait(driver, TRENDING_VIEW_LOAD_TIMEOUT).withMessage("Target number of buckets not found")
+                .until(ExpectedConditions.numberOfElementsToBe(cssSelector("[data-name='" + firstValue + "'] circle"), targetNumber));
     }
 
     private void waitForDropdownToOpen() {
@@ -74,11 +82,19 @@ public class TrendingView {
                 .collect(Collectors.toList());
     }
 
+    public RangeInput slider() {
+        return new RangeInput(findElement(className("speed-slider")), driver, 10);
+    }
+
+    WebElement graphArea() {
+        return findElement(className("graph-area"));
+    }
+
     public List<WebElement> chartValueGroups() {
         return findElements(cssSelector("svg > g[data-name]"));
     }
 
-    List<WebElement> pointsForNamedValue(final String valueName) {
+    public List<WebElement> pointsForNamedValue(final String valueName) {
         return findElements(cssSelector("[data-name='" + valueName + "'] circle"));
     }
 

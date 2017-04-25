@@ -51,7 +51,9 @@ public class TrendingConfigurationTest extends ConfigurationComponentTest<Trendi
         TrendingConfiguration.builder()
                 .dateField(fieldPathNormaliser.normaliseFieldPath(""))
                 .numberOfValues(10)
-                .numberOfBuckets(15)
+                .defaultNumberOfBuckets(15)
+                .maxNumberOfBuckets(20)
+                .minNumberOfBuckets(10)
                 .build()
                 .basicValidate(null);
     }
@@ -61,7 +63,9 @@ public class TrendingConfigurationTest extends ConfigurationComponentTest<Trendi
         TrendingConfiguration.builder()
                 .dateField(fieldPathNormaliser.normaliseFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
                 .numberOfValues(0)
-                .numberOfBuckets(15)
+                .defaultNumberOfBuckets(15)
+                .maxNumberOfBuckets(20)
+                .minNumberOfBuckets(10)
                 .build()
                 .basicValidate(null);
     }
@@ -71,7 +75,21 @@ public class TrendingConfigurationTest extends ConfigurationComponentTest<Trendi
         TrendingConfiguration.builder()
                 .dateField(fieldPathNormaliser.normaliseFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
                 .numberOfValues(10)
-                .numberOfBuckets(0)
+                .defaultNumberOfBuckets(15)
+                .maxNumberOfBuckets(20)
+                .minNumberOfBuckets(0)
+                .build()
+                .basicValidate(null);
+    }
+
+    @Test(expected = ConfigException.class)
+    public void nonsensicalBucketingConfiguration() throws ConfigException {
+        TrendingConfiguration.builder()
+                .dateField(fieldPathNormaliser.normaliseFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
+                .numberOfValues(10)
+                .defaultNumberOfBuckets(20)
+                .maxNumberOfBuckets(10)
+                .minNumberOfBuckets(15)
                 .build()
                 .basicValidate(null);
     }
@@ -86,7 +104,9 @@ public class TrendingConfigurationTest extends ConfigurationComponentTest<Trendi
         return TrendingConfiguration.builder()
                 .dateField(fieldPathNormaliser.normaliseFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
                 .numberOfValues(10)
-                .numberOfBuckets(15)
+                .defaultNumberOfBuckets(15)
+                .maxNumberOfBuckets(20)
+                .minNumberOfBuckets(10)
                 .build();
     }
 
@@ -100,7 +120,9 @@ public class TrendingConfigurationTest extends ConfigurationComponentTest<Trendi
         jsonContent.assertThat()
                 .hasJsonPathStringValue("$.dateField", ParametricValuesService.AUTN_DATE_FIELD)
                 .hasJsonPathNumberValue("$.numberOfValues", 10)
-                .hasJsonPathNumberValue("$.numberOfBuckets", 15);
+                .hasJsonPathNumberValue("$.maxNumberOfBuckets", 20)
+                .hasJsonPathNumberValue("$.minNumberOfBuckets", 10)
+                .hasJsonPathNumberValue("$.defaultNumberOfBuckets", 15);
     }
 
     @Override
@@ -108,7 +130,9 @@ public class TrendingConfigurationTest extends ConfigurationComponentTest<Trendi
         objectContent.assertThat()
                 .hasFieldOrPropertyWithValue("dateField", fieldPathNormaliser.normaliseFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
                 .hasFieldOrPropertyWithValue("numberOfValues", 10)
-                .hasFieldOrPropertyWithValue("numberOfBuckets", 20);
+                .hasFieldOrPropertyWithValue("maxNumberOfBuckets", 20)
+                .hasFieldOrPropertyWithValue("minNumberOfBuckets", 10)
+                .hasFieldOrPropertyWithValue("defaultNumberOfBuckets", 20);
     }
 
     @Override
@@ -116,7 +140,9 @@ public class TrendingConfigurationTest extends ConfigurationComponentTest<Trendi
         objectContent.assertThat()
                 .hasFieldOrPropertyWithValue("dateField", fieldPathNormaliser.normaliseFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
                 .hasFieldOrPropertyWithValue("numberOfValues", 10)
-                .hasFieldOrPropertyWithValue("numberOfBuckets", 15);
+                .hasFieldOrPropertyWithValue("maxNumberOfBuckets", 20)
+                .hasFieldOrPropertyWithValue("minNumberOfBuckets", 10)
+                .hasFieldOrPropertyWithValue("defaultNumberOfBuckets", 15);
     }
 
     @Override

@@ -54,7 +54,7 @@ define([
         this.setMinMax(min, max);
         this.viewStateModel.set('currentState', renderState.ZOOMING);
         this.updateChart();
-        this.debouncedfetchBucketedData();
+        this.debouncedFetchBucketedData();
     }
 
     function dragMoveCallback(min, max) {
@@ -66,37 +66,57 @@ define([
     function dragEndCallback(min, max) {
         this.setMinMax(min, max);
         this.viewStateModel.set('currentState', renderState.DRAGGING);
-        this.debouncedfetchBucketedData();
+        this.debouncedFetchBucketedData();
     }
 
     return Backbone.View.extend({
         template: _.template(template),
 
         events: {
+            'change .speed-slider': function(e) {
+                const $target = $(e.target);
+                const value = $target.val();
+                $target.attr('data-original-title', value);
+                $target.tooltip('show');
+                $target.blur();
+                this.model.set('targetNumberOfBuckets', value);
+            },
+            'input .speed-slider': function(e) {
+                const $target = $(e.target);
+                const value = $target.val();
+                this.$('.tooltip-inner').text(value);
+            },
             'click .trending-snap-to-now': 'snapToNow'
         },
 
-        initialize: function(options) {
+        initialize: function (options) {
             const config = configuration();
             this.dateField = config.trending.dateField;
-            this.targetNumberOfBuckets = config.trending.numberOfBuckets;
+            //noinspection JSUnresolvedVariable
             this.numberOfValuesToDisplay = config.trending.numberOfValues;
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.parametricFieldsCollection = options.parametricFieldsCollection;
             this.parametricCollection = options.parametricCollection;
 
-            this.debouncedfetchBucketedData = _.debounce(this.fetchBucketedData, DEBOUNCE_TIME);
+            this.debouncedFetchBucketedData = _.debounce(this.fetchBucketedData, DEBOUNCE_TIME);
             this.bucketedValues = {};
 
-            this.model = new Backbone.Model();
+            //noinspection JSUnresolvedVariable
+            this.model = new Backbone.Model({
+                targetNumberOfBuckets: config.trending.defaultNumberOfBuckets
+            });
+            //noinspection JSUnresolvedVariable
+            this.minBuckets = config.trending.minNumberOfBuckets;
+            //noinspection JSUnresolvedVariable
+            this.maxBuckets = config.trending.maxNumberOfBuckets;
             this.viewStateModel = new Backbone.Model({
                 currentState: renderState.RENDERING_NEW_DATA,
                 searchStateChanged: false
             });
 
-            this.listenTo(this.queryModel, 'change', function() {
-                if(this.$el.is(':visible')) {
+            this.listenTo(this.queryModel, 'change', function () {
+                if (this.$el.is(':visible')) {
                     this.fetchFieldAndRangeData();
                 } else {
                     this.viewStateModel.set('searchStateChanged', true);
@@ -104,22 +124,24 @@ define([
             });
             this.listenTo(vent, 'vent:resize', this.update);
             this.listenTo(this.viewStateModel, 'change:dataState', this.onDataStateChange);
-            this.listenTo(this.parametricFieldsCollection, 'error', function(collection, xhr) {
+            this.listenTo(this.parametricFieldsCollection, 'error', function (collection, xhr) {
                 this.onDataError(xhr);
             });
             this.listenTo(this.model, 'change:field', this.fetchFieldAndRangeData);
+            this.listenTo(this.model, 'change:targetNumberOfBuckets', this.debouncedFetchBucketedData);
             this.listenTo(this.parametricCollection, 'sync', this.setFieldSelector);
-            this.listenTo(this.parametricCollection, 'error', function(collection, xhr) {
+            this.listenTo(this.parametricCollection, 'error', function (collection, xhr) {
                 this.onDataError(xhr);
             });
         },
 
         render: function() {
-            if(this.$snapToNow) {
+            if (this.$snapToNow) {
                 this.$snapToNow.tooltip('destroy');
             }
 
-            if(this.trendingChart) {
+            if (this.trendingChart) {
+                this.$speedSlider.tooltip('destroy');
                 this.trendingChart.remove();
             }
 
@@ -130,6 +152,8 @@ define([
             this.$errorMessage = this.$('.trending-error');
             this.$snapToNow = this.$('.trending-snap-to-now');
             this.$chart = this.$('.trending-chart');
+            this.$trendingSlider = this.$('.trending-slider');
+            this.$speedSlider = this.$('.speed-slider');
 
             this.viewStateModel.set('dataState', dataState.LOADING);
 
@@ -147,42 +171,55 @@ define([
                 title: i18n['search.resultsView.trending.snapToNow']
             });
 
-            if(!this.parametricCollection.isEmpty()) {
+            this.$speedSlider
+                .attr({
+                    min: this.minBuckets,
+                    max: this.maxBuckets,
+                    step: 1
+                })
+                .val(this.model.get('targetNumberOfBuckets'))
+                .tooltip({
+                    title: this.model.get('targetNumberOfBuckets'),
+                    placement: 'top'
+                });
+
+            if (!this.parametricCollection.isEmpty()) {
                 this.setFieldSelector();
             }
         },
 
-        remove: function() {
+        remove: function () {
+            this.$speedSlider.tooltip('destroy');
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
-            if(this.$snapToNow) {
+            if (this.$snapToNow) {
                 this.$snapToNow.tooltip('destroy');
             }
             Backbone.View.prototype.remove.call(this);
         },
 
-        update: function() {
-            if(this.$el.is(':visible') && !this.parametricCollection.isEmpty()) {
-                if(this.viewStateModel.get('searchStateChanged')) {
+        update: function () {
+            if (this.$el.is(':visible') && !this.parametricCollection.isEmpty()) {
+                if (this.viewStateModel.get('searchStateChanged')) {
                     this.setFieldSelector();
                     this.fetchFieldAndRangeData();
                     this.viewStateModel.set('searchStateChanged', false);
                 } else {
-                    if(!_.isEmpty(this.bucketedValues)) {
+                    if (!_.isEmpty(this.bucketedValues)) {
                         this.updateChart();
                     }
                 }
             }
         },
 
-        setFieldSelector: function() {
-            if(this.$el.is(':visible')) {
-                if(this.fieldSelector) {
+        setFieldSelector: function () {
+            if (this.$el.is(':visible')) {
+                if (this.fieldSelector) {
                     this.fieldSelector.remove();
                 }
 
                 const fields = this.parametricFieldsCollection
                     .where({type: 'Parametric'})
-                    .map(function(m) {
+                    .map(function (m) {
                         const id = m.get('id');
                         const field = this.parametricCollection.where({id: id})[0];
                         const totalValues = field
@@ -205,7 +242,7 @@ define([
             }
         },
 
-        fetchFieldAndRangeData: function() {
+        fetchFieldAndRangeData: function () {
             this.viewStateModel.set('dataState', dataState.LOADING);
 
             const fetchOptions = {
@@ -217,32 +254,31 @@ define([
             };
 
             $.when(trendingStrategy.fetchField(fetchOptions))
-                .then(function(values) {
+                .then(function (values) {
                     this.selectedFieldValues = values;
 
-                    if(this.selectedFieldValues.length === 0) {
+                    if (this.selectedFieldValues.length === 0) {
                         this.viewStateModel.set('dataState', dataState.EMPTY);
                         return $.when();
                     } else {
                         return $.when(trendingStrategy.fetchRange(this.selectedFieldValues, fetchOptions))
-                            .then(function(data) {
+                            .then(function (data) {
                                 this.setMinMax(data.min, data.max);
                                 this.fetchBucketedData();
                             }.bind(this));
                     }
                 }.bind(this))
-                .fail(function(xhr) {
+                .fail(function (xhr) {
                     this.onDataError(xhr);
                     this.viewStateModel.set('fetchState', fetchState.NOT_FETCHING);
                 }.bind(this));
         },
 
-        fetchBucketedData: function() {
+        fetchBucketedData: function () {
             this.viewStateModel.set('fetchState', fetchState.FETCHING_BUCKETS);
 
-            const minDate = this.model.get('currentMin');
-            const maxDate = this.model.get('currentMax');
-            if(minDate === maxDate) {
+            const minDate = this.model.get('currentMin'), maxDate = this.model.get('currentMax');
+            if (minDate === maxDate) {
                 this.setMinMax(minDate - SECONDS_IN_ONE_DAY, maxDate + SECONDS_IN_ONE_DAY);
             }
 
@@ -255,11 +291,11 @@ define([
                 currentMin: this.model.get('currentMin'),
                 dateField: this.dateField,
                 numberOfValuesToDisplay: this.numberOfValuesToDisplay,
-                targetNumberOfBuckets: this.targetNumberOfBuckets
+                targetNumberOfBuckets: this.model.get('targetNumberOfBuckets')
             };
 
             return trendingStrategy.fetchBucketedData(fetchOptions)
-                .done(_.bind(function() {
+                .done(_.bind(function () {
                     this.viewStateModel.set({
                         currentState: renderState.RENDERING_NEW_DATA,
                         dataState: dataState.OK,
@@ -267,14 +303,14 @@ define([
                     });
                     this.bucketedValues = Array.prototype.slice.call(arguments);
                     this.updateChart();
-                }, this)).fail(_.bind(function(xhr) {
+                }, this)).fail(_.bind(function (xhr) {
                     this.onDataError(xhr);
                     this.viewStateModel.set('fetchState', fetchState.NOT_FETCHING);
                 }, this));
         },
 
-        updateChart: function() {
-            if(this.viewStateModel.get('fetchState') !== fetchState.FETCHING_BUCKETS
+        updateChart: function () {
+            if (this.viewStateModel.get('fetchState') !== fetchState.FETCHING_BUCKETS
                 && !this.$chart.hasClass('hide')) {
 
                 const data = trendingStrategy.createChartData({
@@ -283,7 +319,7 @@ define([
                     currentMax: this.model.get('currentMax')
                 });
 
-                if(data.some(function(datum) {
+                if (data.some(function (datum) {
                         return datum.points.length > 0;
                     })) {
                     this.$('[data-toggle="tooltip"]').tooltip('destroy');
@@ -309,14 +345,14 @@ define([
             }
         },
 
-        setMinMax: function(min, max) {
+        setMinMax: function (min, max) {
             this.model.set({
                 currentMin: Math.floor(min),
                 currentMax: Math.floor(max)
             });
         },
 
-        snapToNow: function() {
+        snapToNow: function () {
             const currentMin = this.model.get('currentMin');
             const now = Math.ceil(Date.now() / MILLISECONDS_TO_SECONDS);
             this.setMinMax(
@@ -328,7 +364,7 @@ define([
             this.fetchBucketedData();
         },
 
-        onDataStateChange: function() {
+        onDataStateChange: function () {
             const state = this.viewStateModel.get('dataState');
 
             this.$errorMessage.toggleClass('hide', state !== dataState.ERROR);
@@ -336,14 +372,15 @@ define([
             this.$('.trending-loading').toggleClass('hide', state !== dataState.LOADING);
             this.$chart.toggleClass('hide', state !== dataState.OK);
             this.$snapToNow.toggleClass('hide', state !== dataState.OK);
+            this.$trendingSlider.toggleClass('hide', state !== dataState.OK);
 
-            if(state !== dataState.ERROR && this.$errorMessage) {
+            if (state !== dataState.ERROR && this.$errorMessage) {
                 this.$errorMessage.empty();
             }
         },
 
-        onDataError: function(xhr) {
-            if(xhr.status !== 0) {
+        onDataError: function (xhr) {
+            if (xhr.status !== 0) {
                 this.viewStateModel.set('dataState', dataState.ERROR);
                 const messageArguments = _.extend({
                     errorDetails: xhr.responseJSON.message,

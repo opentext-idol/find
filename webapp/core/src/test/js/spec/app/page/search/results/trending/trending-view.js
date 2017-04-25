@@ -30,6 +30,10 @@ define([
         }
     };
 
+    const DEFAULT_NUMBER_OF_BUCKETS = 20;
+    const MIN_NUMBER_OF_BUCKETS = 3;
+    const MAX_NUMBER_OF_BUCKETS = 100;
+
     describe('Trending view', function() {
         beforeEach(function() {
             _.debounce = function(callback) {
@@ -110,7 +114,9 @@ define([
             configuration.and.returnValue({
                 trending: {
                     dateField: "AUTN_DATE",
-                    numberOfBuckets: 20,
+                    defaultNumberOfBuckets: DEFAULT_NUMBER_OF_BUCKETS,
+                    minNumberOfBuckets: MIN_NUMBER_OF_BUCKETS,
+                    maxNumberOfBuckets: MAX_NUMBER_OF_BUCKETS,
                     numberOfValues: 10
                 }
             });
@@ -222,6 +228,10 @@ define([
                     it('should hide the chart', function() {
                         expect(this.view.$('.trending-chart')).toHaveClass('hide');
                     });
+
+                    it('should hide the slider', function() {
+                        expect(this.view.$('.trending-slider')).toHaveClass('hide');
+                    });
                 });
 
                 describe('and the fetch for range details succeeds', function() {
@@ -251,6 +261,10 @@ define([
 
                         it('should hide the chart', function() {
                             expect(this.view.$('.trending-chart')).toHaveClass('hide');
+                        });
+
+                        it('should hide the slider', function() {
+                            expect(this.view.$('.trending-slider')).toHaveClass('hide');
                         });
                     });
 
@@ -283,6 +297,23 @@ define([
                             expect(typeof Trending.instances[0].draw.calls.argsFor(0)[0].zoomCallback).toBe('function');
                             expect(typeof Trending.instances[0].draw.calls.argsFor(0)[0].dragMoveCallback).toBe('function');
                             expect(typeof Trending.instances[0].draw.calls.argsFor(0)[0].dragEndCallback).toBe('function');
+                        });
+
+                        it('should show the slider', function() {
+                            expect(this.view.$('.trending-slider')).not.toHaveClass('hide');
+                        });
+
+                        it('sets up the speed slider correctly', function() {
+                            expect(this.view.model.get('targetNumberOfBuckets')).toBe(DEFAULT_NUMBER_OF_BUCKETS);
+                            expect(this.view.$('.speed-slider').val()).toBe(DEFAULT_NUMBER_OF_BUCKETS + '');
+                            expect(this.view.$('.speed-slider')).toHaveAttr('min', MIN_NUMBER_OF_BUCKETS + '');
+                            expect(this.view.$('.speed-slider')).toHaveAttr('max', MAX_NUMBER_OF_BUCKETS + '');
+                        });
+
+                        it('updates the model targetNumberOfBuckets attribute when the slider is moved', function() {
+                            const currentSliderValue = +this.view.$('.speed-slider').val();
+                            this.view.$('.speed-slider').val(currentSliderValue + 50).trigger('change');
+                            expect(this.view.model.get('targetNumberOfBuckets')).toBe((currentSliderValue + 50) + '');
                         });
 
                         describe('after calling the zoom callback', function() {
