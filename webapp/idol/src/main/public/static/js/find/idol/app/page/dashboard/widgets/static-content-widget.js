@@ -5,8 +5,9 @@
 
 define([
     'underscore',
+    'jquery',
     './widget'
-], function(_, Widget) {
+], function(_, $, Widget) {
     'use strict';
 
     return Widget.extend({
