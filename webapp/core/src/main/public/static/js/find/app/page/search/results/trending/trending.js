@@ -167,7 +167,7 @@ define([
         }
     }
 
-    function setAxes(chart, scales, chartHeight, yAxisLabel, timeFormat) {
+    function setAxes(chart, scales, chartHeight, chartWidth, yAxisLabel, timeFormat) {
         chart.selectAll('.y-axis').remove();
         chart.selectAll('.x-axis').remove();
         chart.selectAll('.dashed-axis-line').remove();
@@ -199,8 +199,13 @@ define([
             .attr('transform', 'translate(0,' + (chartHeight - CHART_PADDING) + ')')
             .call(xAxisScale);
 
-        xAxis.selectAll('.tick text')
-            .call(labelWrap);
+        if(foreignObjectSupported()) {
+            xAxis.selectAll('.tick text')
+                .call(htmlLabelWrap);
+        } else {
+            xAxis.selectAll('.tick text')
+                .call(textLabelWrap, chartWidth);
+        }
 
         chart.append('line')
             .attr('class', 'dashed-axis-line')
@@ -213,7 +218,13 @@ define([
             .attr('stroke', 'gray');
     }
 
-    function labelWrap(labelWrapper) {
+    function foreignObjectSupported() {
+        const toStringFnc = ({}).toString;
+        return !!document.createElementNS &&
+            /SVGForeignObject/.test(toStringFnc.call(document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject')));
+    }
+
+    function htmlLabelWrap(labelWrapper) {
         const tickPadding = 5;
         const labels = labelWrapper[0];
         const numberOfTicks = labels.length;
@@ -255,6 +266,35 @@ define([
         }
 
         d3.selectAll('.x-axis text').remove();
+    }
+
+    function textLabelWrap(labels, width) {
+        const tickPadding = 5;
+        const tickWidth = width / labels[0].length;
+
+        labels.each(function () {
+            const label = d3.select(this);
+            const words = label.text().split(/\s+/).reverse();
+            const y = label.attr("y");
+            const dy = parseFloat(label.attr("dy"));
+            let word;
+            let lineNumber = 0;
+            let line = [];
+            let tspan = label.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+
+            //noinspection AssignmentResultUsedJS
+            while (word = words.pop()) {
+                line.push(word);
+                tspan.text(line.join(" "));
+                //noinspection JSUnresolvedFunction
+                if (tspan.node().getComputedTextLength() > tickWidth - tickPadding) {
+                    line.pop();
+                    tspan.text(line.join(" "));
+                    line = [word];
+                    tspan = label.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber + dy + "em").text(word);
+                }
+            }
+        });
     }
 
     function getAdjustedLegendData(data, scales) {
@@ -320,6 +360,19 @@ define([
         }
     }
 
+    function getIESafeTimeFormat(max, min) {
+        const range = max.getTime() / MILLISECONDS_TO_SECONDS - min.getTime() / MILLISECONDS_TO_SECONDS;
+        if(range > SECONDS_IN_ONE_YEAR) {
+            return d3.time.format("%B %Y");
+        } else if(range < SECONDS_IN_ONE_DAY) {
+            return d3.time.format("%H:%M:%S %d %B %Y");
+        } else if(range < SECONDS_IN_ONE_WEEK) {
+            return d3.time.format("%H:%M %d %B %Y");
+        } else {
+            return d3.time.format("%d %B %Y");
+        }
+    }
+
     function getColor(data, d) {
         const color = d.color
             ? _.findWhere(COLORS, {name: d.color})
@@ -367,7 +420,9 @@ define([
             const chartWidth = elWidth - legendWidth;
             const chartHeight = elHeight;
             const yAxisLabel = options.yAxisLabel;
-            const timeFormat = getTimeFormat(maxDate, minDate);
+            const timeFormat = foreignObjectSupported()
+                ? getTimeFormat(maxDate, minDate)
+                : getIESafeTimeFormat(maxDate, minDate);
 
             const scales = setScales(options, chartHeight, chartWidth);
 
@@ -460,7 +515,7 @@ define([
 
             this.pointsJoin.exit().remove();
 
-            setAxes(this.chart, scales, chartHeight, yAxisLabel, timeFormat);
+            setAxes(this.chart, scales, chartHeight, chartWidth, yAxisLabel, timeFormat);
 
             this.chart.selectAll('.legend').remove();
 
@@ -494,21 +549,41 @@ define([
                             hoverCallbacks.legendMouseout(d.name);
                         });
 
-                    g.append('foreignObject')
-                        .attr('class', 'legend-text')
-                        .attr('x', chartWidth + LEGEND_MARKER_WIDTH + LEGEND_PADDING)
-                        .attr('y', d.labelY - (2 * LEGEND_PADDING))
-                        .attr('width', legendWidth - LEGEND_MARKER_WIDTH - LEGEND_PADDING)
-                        .attr('height', LEGEND_TEXT_HEIGHT)
-                        .attr('cursor', 'default')
-                        .append('xhtml:p')
-                        .html(d.name)
-                        .on('mouseover', function() {
-                            hoverCallbacks.legendMouseover(d.name);
-                        })
-                        .on('mouseout', function() {
-                            hoverCallbacks.legendMouseout(d.name);
-                        });
+                    if(foreignObjectSupported()) {
+                        g.append('foreignObject')
+                            .attr('class', 'legend-text')
+                            .attr('x', chartWidth + LEGEND_MARKER_WIDTH + LEGEND_PADDING)
+                            .attr('y', d.labelY - (2 * LEGEND_PADDING))
+                            .attr('width', legendWidth - LEGEND_MARKER_WIDTH - LEGEND_PADDING)
+                            .attr('height', LEGEND_TEXT_HEIGHT)
+                            .attr('cursor', 'default')
+                            .append('xhtml:p')
+                            .html(d.name)
+                            .on('mouseover', function() {
+                                hoverCallbacks.legendMouseover(d.name);
+                            })
+                            .on('mouseout', function() {
+                                hoverCallbacks.legendMouseout(d.name);
+                            });
+                    } else {
+                        g.append('text')
+                            .attr('class', 'legend-text')
+                            .attr('x', chartWidth + LEGEND_MARKER_WIDTH + LEGEND_PADDING)
+                            .attr('y', d.labelY)
+                            .attr('width', legendWidth - LEGEND_MARKER_WIDTH - LEGEND_PADDING)
+                            .attr('cursor', 'default')
+                            .attr('fill', 'black')
+                            .attr('stroke', 'none')
+                            .attr('font-size', LEGEND_TEXT_HEIGHT)
+                            .text(d.name)
+                            .on('mouseover', function () {
+                                hoverCallbacks.legendMouseover(d.name);
+                            })
+                            .on('mouseout', function () {
+                                hoverCallbacks.legendMouseout(d.name);
+                            });
+                    }
+
                 });
 
             const graphArea = addDragAndZoomRectangle(this.chart, scales);
