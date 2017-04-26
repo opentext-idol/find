@@ -1215,10 +1215,13 @@ audio.preview-media-player {
 input[type=range].speed-slider {
   -webkit-appearance: none;
   width: @hpeTrackWidth;
+  height: @hpeThumbSize;
   margin: 5px;
   padding: 0;
   cursor: pointer;
   display: inline;
+  // added for Firefox alignment issues
+  vertical-align: middle;
 
   &::-webkit-slider-runnable-track {
     width: @hpeTrackWidth;
@@ -1283,6 +1286,7 @@ input[type=range].speed-slider {
     cursor: pointer;
     -webkit-appearance: none;
     margin-top: -6px;
+    box-sizing: border-box;
   }
   &::-moz-range-thumb {
     box-shadow: @hpeThumbShadow;
@@ -1292,6 +1296,7 @@ input[type=range].speed-slider {
     border-radius: @hpeThumbBorderRadius;
     background: @hpeThumbBackground;
     cursor: pointer;
+    box-sizing: border-box;
   }
   &::-ms-thumb {
     box-shadow: @hpeThumbShadow;
@@ -1301,6 +1306,7 @@ input[type=range].speed-slider {
     border-radius: @hpeThumbBorderRadius;
     background: @hpeThumbBackground;
     cursor: pointer;
+    box-sizing: border-box;
   }
 
   &:focus::-webkit-slider-thumb {
