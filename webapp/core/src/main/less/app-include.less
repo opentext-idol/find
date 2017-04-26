@@ -1220,6 +1220,7 @@ input[type=range].speed-slider {
   padding: 0;
   cursor: pointer;
   display: inline;
+  background: transparent;
   // added for Firefox alignment issues
   vertical-align: middle;
 
@@ -1264,9 +1265,11 @@ input[type=range].speed-slider {
 
   &:focus {
     outline: none;
-    background: @hpeTrackBackgroundFocus;
   }
   &:focus::-webkit-slider-runnable-track {
+    background: @hpeTrackBackgroundFocus;
+  }
+  &:focus::-moz-range-track {
     background: @hpeTrackBackgroundFocus;
   }
   &:focus::-ms-fill-lower {
