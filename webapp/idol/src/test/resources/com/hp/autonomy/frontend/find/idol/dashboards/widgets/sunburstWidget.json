@@ -13,8 +13,8 @@
     }
   },
   "widgetSettings": {
-    "firstField": "/DOCUMENT/CONTENT-TYPE",
-    "secondField": "/DOCUMENT/AUTHOR",
+    "firstField": "CONTENT-TYPE",
+    "secondField": "AUTHOR",
     "maxLegendEntries": 7,
     "testing": "testing"
   }

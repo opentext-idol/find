@@ -64,7 +64,7 @@ public class SunburstWidgetTest extends ComplexWidgetTest<SunburstWidget, Sunbur
                 .hasJsonPathNumberValue("$.height", 1)
                 .hasJsonPathNumberValue("$.datasource.config.id", 123)
                 .hasJsonPathStringValue("$.datasource.config.type", "QUERY")
-                .hasJsonPathStringValue("$.widgetSettings.firstField", "/DOCUMENT/CONTENT_TYPE")
+                .hasJsonPathStringValue("$.widgetSettings.firstField", "CONTENT_TYPE")
                 .hasJsonPathNumberValue("$.widgetSettings.maxLegendEntries", 5);
     }
 
