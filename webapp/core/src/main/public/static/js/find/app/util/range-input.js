@@ -1,13 +1,19 @@
 /*
- * Copyright 2014-2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
     'backbone',
+    'jquery',
+    'underscore',
     'text!find/templates/app/util/range-input.html'
-], function(Backbone, template) {
+], function(Backbone, $, _, template) {
     'use strict';
+
+    function destroyTooltip() {
+        this.$('.speed-slider').tooltip('destroy');
+    }
 
     return Backbone.View.extend({
 
@@ -17,8 +23,9 @@ define([
             'change .speed-slider': function(e) {
                 const $target = $(e.target);
                 const value = $target.val();
-                $target.attr('data-original-title', value);
                 this.$('.tooltip-inner').text(value);
+
+                $target.attr('data-original-title', value);
                 $target.blur();
                 this.model.set('value', value);
             },
@@ -38,6 +45,8 @@ define([
         },
 
         render: function() {
+            destroyTooltip.call(this);
+
             this.$el.html(this.template({
                 leftLabel: this.leftLabel,
                 min: this.min,
@@ -54,14 +63,10 @@ define([
                 });
         },
 
-        destroyTooltip: function() {
-            this.$('.speed-slider').tooltip('destroy');
-        },
-
         remove: function() {
-            this.destroyTooltip();
+            destroyTooltip.call(this);
 
-            Backbone.View.prototype.remove.apply(this, arguments);
+            Backbone.View.prototype.remove.call(this);
         }
 
     });

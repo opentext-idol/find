@@ -89,7 +89,7 @@ define([
                     min: SPEED_SLIDER_MIN,
                     model: this.model,
                     rightLabel: i18n['search.topicMap.accurate'],
-                    step: 1,
+                    step: 1
                 })
             }
 
@@ -126,10 +126,6 @@ define([
         },
 
         render: function() {
-            if(this.showSlider) {
-                this.slider.destroyTooltip();
-            }
-
             this.$el.html(this.template({
                 cid: this.cid,
                 errorTemplate: this.errorTemplate,

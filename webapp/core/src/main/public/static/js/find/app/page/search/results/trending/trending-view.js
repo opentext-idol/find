@@ -142,10 +142,6 @@ define([
                 this.$snapToNow.tooltip('destroy');
             }
 
-            if(this.slider) {
-                this.slider.destroyTooltip();
-            }
-
             if(this.trendingChart) {
                 this.trendingChart.remove();
             }
@@ -184,7 +180,7 @@ define([
         },
 
         remove: function() {
-            this.slider.destroyTooltip();
+            this.slider.remove();
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
 
             if(this.$snapToNow) {
@@ -200,10 +196,8 @@ define([
                     this.setFieldSelector();
                     this.fetchFieldAndRangeData();
                     this.viewStateModel.set('searchStateChanged', false);
-                } else {
-                    if(!_.isEmpty(this.bucketedValues)) {
-                        this.updateChart();
-                    }
+                } else if(!_.isEmpty(this.bucketedValues)) {
+                    this.updateChart();
                 }
             }
         },
