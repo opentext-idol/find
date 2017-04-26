@@ -153,12 +153,17 @@ non-interactive and must not depend on user click actions to be usable.
 The `onResize` function handles window resize events which should be overridden with logic that resizes or redraws the 
 widget. This funciton will be called automatically when the window is resized, and also when the sidebar is toggled.
 
-The `onClick` method is provided to handle click functionality and will be called if the widget is clicked anywhere. 
+The `onClick` method may be used to handle click functionality and will be called if the widget is clicked anywhere. 
 This will only be called if the `clickable` property is set to `true`.
 
 > **Note:** A Saved Search Widget already defines its own a click handler, which navigates the user to the underlying
 Saved Search. Unless this behaviour is undesirable, do not override the `onClick` method when implementing a Saved
 Search Widget.
+
+The `onHide` method may be used to implement any commands a widget must execute when the user hides (e.g. leaves) 
+the dashboard. For example, the built-in Video Widget uses this function to stop the playback, so that the video does 
+not play in the background once the user had navigated away. There is no need to call `onHide()` yourself - it will be 
+called automatically by the dashboard page when necessary. 
 
 #### Widget Settings
 
