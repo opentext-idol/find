@@ -94,6 +94,16 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .orElse(this);
     }
 
+    // somewhat messy workaround for the fact that default method does not handle @JsonProperty annotations
+    @Override
+    public Map<String, OptionalConfigurationComponent<?>> getValidationMap() {
+        final Map<String, OptionalConfigurationComponent<?>> validationMap = super.getValidationMap();
+        if (validationMap.containsKey("savedSearchConfig")) {
+            validationMap.put("savedSearches", validationMap.remove("savedSearchConfig"));
+        }
+        return validationMap;
+    }
+
     @JsonIgnore
     @Override
     public AciServerDetails getCommunityDetails() {
