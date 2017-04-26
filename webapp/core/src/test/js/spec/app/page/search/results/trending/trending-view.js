@@ -304,16 +304,16 @@ define([
                         });
 
                         it('sets up the speed slider correctly', function() {
-                            expect(this.view.model.get('targetNumberOfBuckets')).toBe(DEFAULT_NUMBER_OF_BUCKETS);
+                            expect(this.view.model.get('value')).toBe(DEFAULT_NUMBER_OF_BUCKETS);
                             expect(this.view.$('.speed-slider').val()).toBe(DEFAULT_NUMBER_OF_BUCKETS + '');
                             expect(this.view.$('.speed-slider')).toHaveAttr('min', MIN_NUMBER_OF_BUCKETS + '');
                             expect(this.view.$('.speed-slider')).toHaveAttr('max', MAX_NUMBER_OF_BUCKETS + '');
                         });
 
-                        it('updates the model targetNumberOfBuckets attribute when the slider is moved', function() {
+                        it('updates the model value attribute when the slider is moved', function() {
                             const currentSliderValue = +this.view.$('.speed-slider').val();
                             this.view.$('.speed-slider').val(currentSliderValue + 50).trigger('change');
-                            expect(this.view.model.get('targetNumberOfBuckets')).toBe((currentSliderValue + 50) + '');
+                            expect(this.view.model.get('value')).toBe((currentSliderValue + 50) + '');
                         });
 
                         describe('after calling the zoom callback', function() {
