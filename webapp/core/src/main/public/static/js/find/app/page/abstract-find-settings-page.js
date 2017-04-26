@@ -80,6 +80,7 @@ define([
                 validateUsernameBlank: i18n['settings.test.usernameBlank'],
                 validateSuccess: i18n['settings.test.ok'],
                 CONNECTION_ERROR: i18n['settings.CONNECTION_ERROR'],
+                DEFAULT_LOGIN: i18n['settings.DEFAULT_LOGIN'],
                 FETCH_PORT_ERROR: i18n['settings.FETCH_PORT_ERROR'],
                 FETCH_SERVICE_PORT_ERROR: i18n['settings.FETCH_SERVICE_PORT_ERROR'],
                 INCORRECT_SERVER_TYPE: i18n['settings.INCORRECT_SERVER_TYPE'],

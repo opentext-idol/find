@@ -379,6 +379,7 @@ define([
         'settings.view.referenceFieldPlaceholder': 'Enter Reference Field',
         'settings.view.viewingMode': 'Viewing Mode',
         'settings.CONNECTION_ERROR': 'An error occurred while contacting the ACI server',
+        'settings.DEFAULT_LOGIN': 'Default login specified. Test Community connection and select a server type.',
         'settings.FETCH_PORT_ERROR': "An error occurred while fetching the details of the server's index and service ports",
         'settings.FETCH_SERVICE_PORT_ERROR': "An error occurred while fetching the details of the server's service port",
         'settings.INCORRECT_SERVER_TYPE': 'Incorrect server type. Make sure you are using one of {0}',
