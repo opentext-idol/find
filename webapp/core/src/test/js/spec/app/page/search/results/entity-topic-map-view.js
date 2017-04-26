@@ -37,30 +37,30 @@ define([
                 if(sliderDisplayed) {
                     it('is present', function() {
                         this.createView(DEFAULT_MAX_RESULTS, sliderDisplayed);
-                        expect(this.view.$('.speed-slider')).toHaveLength(1);
+                        expect(this.view.$('.range-input-slider')).toHaveLength(1);
                     });
 
                     it('obeys the hard-coded minimum', function() {
                         this.createView(MINIMUM_ALLOWED_MAX_RESULTS - 20, sliderDisplayed);
-                        expect(this.view.$('.speed-slider').val()).toBe(MINIMUM_ALLOWED_MAX_RESULTS + '');
-                        expect(this.view.$('.speed-slider')).toHaveAttr('max', MINIMUM_ALLOWED_MAX_RESULTS + '');
+                        expect(this.view.$('.range-input-slider').val()).toBe(MINIMUM_ALLOWED_MAX_RESULTS + '');
+                        expect(this.view.$('.range-input-slider')).toHaveAttr('max', MINIMUM_ALLOWED_MAX_RESULTS + '');
                     });
 
                     it('uses the configured maximum', function() {
                         this.createView(17 * DEFAULT_MAX_RESULTS, sliderDisplayed);
-                        expect(this.view.$('.speed-slider').val()).toBe(DEFAULT_MAX_RESULTS + '');
-                        expect(this.view.$('.speed-slider')).toHaveAttr('max', (17 * DEFAULT_MAX_RESULTS) + '');
+                        expect(this.view.$('.range-input-slider').val()).toBe(DEFAULT_MAX_RESULTS + '');
+                        expect(this.view.$('.range-input-slider')).toHaveAttr('max', (17 * DEFAULT_MAX_RESULTS) + '');
                     });
 
                     it('does not exceed the configured maximum', function() {
                         this.createView(DEFAULT_MAX_RESULTS - 11, sliderDisplayed);
-                        expect(this.view.$('.speed-slider').val()).toBe((DEFAULT_MAX_RESULTS - 11) + '');
-                        expect(this.view.$('.speed-slider')).toHaveAttr('max', (DEFAULT_MAX_RESULTS - 11) + '');
+                        expect(this.view.$('.range-input-slider').val()).toBe((DEFAULT_MAX_RESULTS - 11) + '');
+                        expect(this.view.$('.range-input-slider')).toHaveAttr('max', (DEFAULT_MAX_RESULTS - 11) + '');
                     });
                 } else {
                     it('is absent', function() {
                         this.createView(DEFAULT_MAX_RESULTS, sliderDisplayed);
-                        expect(this.view.$('.speed-slider')).toHaveLength(0);
+                        expect(this.view.$('.range-input-slider')).toHaveLength(0);
                     });
                 }
             });
@@ -176,7 +176,7 @@ define([
 
             describe('when there are no entities in the collection', function() {
                 it('contains a speed slider', function() {
-                    expect(this.view.$('.speed-slider')).toHaveLength(1);
+                    expect(this.view.$('.range-input-slider')).toHaveLength(1);
                 });
 
                 it('shows the empty message', function() {
@@ -207,13 +207,13 @@ define([
                 });
 
                 it('contains a speed slider', function() {
-                    expect(this.view.$('.speed-slider')).toHaveLength(1);
+                    expect(this.view.$('.range-input-slider')).toHaveLength(1);
                 });
 
                 it('sets up the speed slider correctly', function() {
                     expect(this.view.model.get('value')).toBe(DEFAULT_MAX_RESULTS);
-                    expect(this.view.$('.speed-slider').val()).toBe(DEFAULT_MAX_RESULTS + '');
-                    expect(this.view.$('.speed-slider')).toHaveAttr('max', (2 * DEFAULT_MAX_RESULTS) + '');
+                    expect(this.view.$('.range-input-slider').val()).toBe(DEFAULT_MAX_RESULTS + '');
+                    expect(this.view.$('.range-input-slider')).toHaveAttr('max', (2 * DEFAULT_MAX_RESULTS) + '');
                 });
 
                 it('does not show the loading indicator', function() {
@@ -229,8 +229,8 @@ define([
                 });
 
                 it('updates the model value attribute when the slider is moved', function() {
-                    const currentSliderValue = +this.view.$('.speed-slider').val();
-                    this.view.$('.speed-slider').val(currentSliderValue - 50).trigger('change');
+                    const currentSliderValue = +this.view.$('.range-input-slider').val();
+                    this.view.$('.range-input-slider').val(currentSliderValue - 50).trigger('change');
                     expect(this.view.model.get('value')).toBe((currentSliderValue - 50) + '');
                 });
 

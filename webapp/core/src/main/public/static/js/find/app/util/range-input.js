@@ -12,7 +12,7 @@ define([
     'use strict';
 
     function destroyTooltip() {
-        this.$('.speed-slider').tooltip('destroy');
+        this.$('.range-input-slider').tooltip('destroy');
     }
 
     return Backbone.View.extend({
@@ -20,7 +20,7 @@ define([
         template: _.template(template),
 
         events: {
-            'change .speed-slider': function(e) {
+            'change .range-input-slider': function(e) {
                 const $target = $(e.target);
                 const value = $target.val();
                 this.$('.tooltip-inner').text(value);
@@ -29,7 +29,7 @@ define([
                 $target.blur();
                 this.model.set('value', value);
             },
-            'input .speed-slider': function(e) {
+            'input .range-input-slider': function(e) {
                 const $target = $(e.target);
                 const value = $target.val();
                 this.$('.tooltip-inner').text(value);
@@ -56,7 +56,7 @@ define([
                 value: this.model.get('value')
             }));
 
-            this.$('.speed-slider')
+            this.$('.range-input-slider')
                 .tooltip({
                     title: this.model.get('value'),
                     placement: 'top'

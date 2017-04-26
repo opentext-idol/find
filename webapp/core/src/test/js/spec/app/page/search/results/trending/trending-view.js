@@ -305,14 +305,14 @@ define([
 
                         it('sets up the speed slider correctly', function() {
                             expect(this.view.model.get('value')).toBe(DEFAULT_NUMBER_OF_BUCKETS);
-                            expect(this.view.$('.speed-slider').val()).toBe(DEFAULT_NUMBER_OF_BUCKETS + '');
-                            expect(this.view.$('.speed-slider')).toHaveAttr('min', MIN_NUMBER_OF_BUCKETS + '');
-                            expect(this.view.$('.speed-slider')).toHaveAttr('max', MAX_NUMBER_OF_BUCKETS + '');
+                            expect(this.view.$('.range-input-slider').val()).toBe(DEFAULT_NUMBER_OF_BUCKETS + '');
+                            expect(this.view.$('.range-input-slider')).toHaveAttr('min', MIN_NUMBER_OF_BUCKETS + '');
+                            expect(this.view.$('.range-input-slider')).toHaveAttr('max', MAX_NUMBER_OF_BUCKETS + '');
                         });
 
                         it('updates the model value attribute when the slider is moved', function() {
-                            const currentSliderValue = +this.view.$('.speed-slider').val();
-                            this.view.$('.speed-slider').val(currentSliderValue + 50).trigger('change');
+                            const currentSliderValue = Number(this.view.$('.range-input-slider').val());
+                            this.view.$('.range-input-slider').val(currentSliderValue + 50).trigger('change');
                             expect(this.view.model.get('value')).toBe((currentSliderValue + 50) + '');
                         });
 
