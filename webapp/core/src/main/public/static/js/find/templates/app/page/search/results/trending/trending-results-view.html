@@ -1,6 +1,10 @@
 <div class="col-md-12">
-    <div>
-        <span class="trending-field-selector"></span>
+    <div >
+        <div class="trending-field-selector inline"></div>
+        <span class="trending-range-selector hide"></span>
+        <button class="trending-snap-to-now btn btn-primary hide">
+            <i class="fa fa-step-forward"></i>
+        </button>
         <span class="m-l-lg trending-slider hide">
             <span class="m-r-md">
                 <%- i18n['search.resultsView.trending.bucketSlider.fewerBuckets'] %>
@@ -11,11 +15,6 @@
             <span class="m-l-md">
                 <%- i18n['search.resultsView.trending.bucketSlider.moreBuckets'] %>
             </span>
-        </span>
-        <span>
-            <button class="trending-snap-to-now btn btn-primary pull-right hide">
-                <i class="fa fa-step-forward"></i>
-            </button>
         </span>
     </div>
     <div class="trending-error hide"></div>
