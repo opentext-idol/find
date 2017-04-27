@@ -110,6 +110,18 @@ define([
                 this.dashboardPage.show();
             });
 
+            it('contains a dropdown, which has one button for multislide export', function() {
+                expect(this.dashboardPage.$('.dropdown-menu .report-pptx.report-pptx-multipage')).toHaveLength(1);
+            });
+
+            it('contains a dropdown, which has one button for single-slide export', function() {
+                expect(this.dashboardPage.$('.dropdown-menu .report-pptx:not(.report-pptx-multipage)')).toHaveLength(1);
+            });
+
+            it('contains a dropdown, which has one button for entering fullscreen mode', function() {
+                expect(this.dashboardPage.$('.dropdown-menu .fullscreen')).toHaveLength(1);
+            });
+
             it('should call update on the updating widgets', function() {
                 _.each(getUpdatingWidgets(this.dashboardPage), function(view) {
                     expect(view.update.calls.count()).toBe(1);

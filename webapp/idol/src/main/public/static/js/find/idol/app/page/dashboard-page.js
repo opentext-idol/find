@@ -22,6 +22,30 @@ define([
 
     const formTemplateFn = _.template(exportFormTemplate);
 
+    const emptyReport = {
+        data: {
+            text: [
+                {
+                    text: i18n['export.powerpoint.widgetEmpty'],
+                    fontSize: 12
+                }
+            ],
+        },
+        type: 'text'
+    };
+
+    const errorReport = {
+        data: {
+            text: [
+                {
+                    text: i18n['export.powerpoint.widgetError'],
+                    fontSize: 12
+                }
+            ],
+        },
+        type: 'text'
+    };
+
     function fullscreenHandlerFactory(fullScreenElement) {
         return function() {
             this.toggleKeepAlive(!this.$widgets.hasClass(FULLSCREEN_CLASS));
@@ -290,39 +314,49 @@ define([
             const padding = true;
 
             this.widgetViews.forEach(function(widget) {
+                const isEmpty = widget.view.isEmpty && widget.view.isEmpty();
+                const hasError = widget.view.hasError && widget.view.hasError();
+                const pos = widget.position;
+
+                function exportCallback(data) {
+                    return _.extend({
+                            title: labels ? widget.view.name : undefined,
+                            margin: padding ? 3 : 0
+                        },
+                        data,
+                        multiPage
+                            ? {
+                                x: 0,
+                                y: 0,
+                                width: 1,
+                                height: 1
+                            }
+                            : {
+                                x: pos.x * scaleX,
+                                y: pos.y * scaleY,
+                                width: pos.width * scaleX,
+                                height: pos.height * scaleY
+                            });
+                }
+
                 if(widget.view.exportData) {
-                    const data = widget.view.exportData();
+                    // Check for error first, as failed fetches produce empty widgets
+                    if(hasError) {
+                        reports.push($.when(errorReport).then(exportCallback));
+                    } else if(isEmpty) {
+                        reports.push($.when(emptyReport).then(exportCallback));
+                    } else {
+                        const data = widget.view.exportData();
 
-                    // this may be a promise, or an actual object
-                    if(data) {
-                        reports.push($.when(data)
-                            .then(function(data) {
-                                const pos = widget.position;
-
-                                return _.defaults(data,
-                                    {
-                                        title: labels ? widget.view.name : undefined,
-                                        margin: padding ? 3 : 0
-                                    },
-                                    multiPage
-                                        ? {
-                                            x: 0,
-                                            y: 0,
-                                            width: 1,
-                                            height: 1
-                                        }
-                                        : {
-                                            x: pos.x * scaleX,
-                                            y: pos.y * scaleY,
-                                            width: pos.width * scaleX,
-                                            height: pos.height * scaleY
-                                        });
-                            }));
+                        // this may be a promise, or an actual object
+                        if(data) {
+                            reports.push($.when(data).then(exportCallback));
+                        }
                     }
                 }
             });
 
-            if(reports.length) {
+            if(reports.length > 0) {
                 $.when.apply($, reports)
                     .done(function() {
                         const children = _.compact(arguments);
