@@ -40,21 +40,17 @@ define(function() {
     });
 
     createChartDataSpy.and.callFake(function() {
-        return [{
-            points: [{
-                count: 1,
-                mid: 0,
-                min: 5,
-                max: 10
+        return {
+            data: [{
+                points: [
+                    {count: 1, mid: 0, min: 5, max: 10}
+                ]
+            }, {
+                points: [
+                    {count: 3, mid: 10, min: 15, max: 20}
+                ]
             }]
-        }, {
-            points: [{
-                count: 3,
-                mid: 10,
-                min: 15,
-                max: 20
-            }]
-        }]
+        };
     });
 
     MockTrendingStrategy.reset = function() {

@@ -185,8 +185,8 @@ define([
             .call(yAxisScale);
 
         yAxis.append('text')
-            .attr('x', -(chartHeight / 2))
-            .attr('y', -(CHART_PADDING / 3 * 2))
+            .attr('x', -(CHART_PADDING + chartHeight) / 2)
+            .attr('y', -CHART_PADDING / 3 * 2)
             .attr('transform', 'rotate(270)')
             .text(yAxisLabel);
 
