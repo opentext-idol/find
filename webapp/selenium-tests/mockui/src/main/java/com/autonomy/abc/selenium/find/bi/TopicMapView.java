@@ -59,7 +59,7 @@ public class TopicMapView {
     }
 
     public RangeInput speedVsAccuracySlider() {
-        return new RangeInput(findElement(By.className("speed-slider")), driver, 10);
+        return new RangeInput(findElement(By.className("range-input-slider")), driver, 10);
     }
 
     private void offCentreClick(final WebElement element) {

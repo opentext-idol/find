@@ -1212,13 +1212,17 @@ audio.preview-media-player {
   height: calc(100vh - 265px);
 }
 
-input[type=range].speed-slider {
+input[type=range].range-input-slider {
   -webkit-appearance: none;
   width: @hpeTrackWidth;
+  height: @hpeThumbSize;
   margin: 5px;
-  padding: 1px;
+  padding: 0;
   cursor: pointer;
   display: inline;
+  background: transparent;
+  // added for Firefox alignment issues
+  vertical-align: middle;
 
   &::-webkit-slider-runnable-track {
     width: @hpeTrackWidth;
@@ -1261,9 +1265,11 @@ input[type=range].speed-slider {
 
   &:focus {
     outline: none;
-    background: @hpeTrackBackgroundFocus;
   }
   &:focus::-webkit-slider-runnable-track {
+    background: @hpeTrackBackgroundFocus;
+  }
+  &:focus::-moz-range-track {
     background: @hpeTrackBackgroundFocus;
   }
   &:focus::-ms-fill-lower {
@@ -1283,6 +1289,7 @@ input[type=range].speed-slider {
     cursor: pointer;
     -webkit-appearance: none;
     margin-top: -6px;
+    box-sizing: border-box;
   }
   &::-moz-range-thumb {
     box-shadow: @hpeThumbShadow;
@@ -1292,6 +1299,7 @@ input[type=range].speed-slider {
     border-radius: @hpeThumbBorderRadius;
     background: @hpeThumbBackground;
     cursor: pointer;
+    box-sizing: border-box;
   }
   &::-ms-thumb {
     box-shadow: @hpeThumbShadow;
@@ -1301,6 +1309,7 @@ input[type=range].speed-slider {
     border-radius: @hpeThumbBorderRadius;
     background: @hpeThumbBackground;
     cursor: pointer;
+    box-sizing: border-box;
   }
 
   &:focus::-webkit-slider-thumb {

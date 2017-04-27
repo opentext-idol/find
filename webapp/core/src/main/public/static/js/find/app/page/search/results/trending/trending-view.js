@@ -11,6 +11,7 @@ define([
     'i18n!find/nls/bundle',
     'find/app/configuration',
     'find/app/vent',
+    'find/app/util/range-input',
     'find/app/util/generate-error-support-message',
     'find/app/page/search/results/parametric-results-view',
     'find/app/page/search/results/field-selection-view',
@@ -22,7 +23,7 @@ define([
     'find/app/page/search/results/trending/trending-strategy',
     'text!find/templates/app/page/loading-spinner.html',
     'text!find/templates/app/page/search/results/trending/trending-results-view.html'
-], function(_, $, d3, Backbone, i18n, configuration, vent, generateErrorHtml, ParametricResultsView, FieldSelectionView,
+], function(_, $, d3, Backbone, i18n, configuration, vent, RangeInput, generateErrorHtml, ParametricResultsView, FieldSelectionView,
             calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel, ParametricCollection, Trending,
             trendingStrategy, loadingSpinnerHtml, template) {
     'use strict';
@@ -73,19 +74,6 @@ define([
         template: _.template(template),
 
         events: {
-            'change .speed-slider': function(e) {
-                const $target = $(e.target);
-                const value = $target.val();
-                $target.attr('data-original-title', value);
-                $target.tooltip('show');
-                $target.blur();
-                this.model.set('targetNumberOfBuckets', value);
-            },
-            'input .speed-slider': function(e) {
-                const $target = $(e.target);
-                const value = $target.val();
-                this.$('.tooltip-inner').text(value);
-            },
             'click .trending-snap-to-now': function() {
                 this.$snapToNow.blur();
                 this.snapToNow();
@@ -105,7 +93,7 @@ define([
             this.bucketedValues = {};
 
             this.model = new Backbone.Model({
-                targetNumberOfBuckets: config.trending.defaultNumberOfBuckets
+                value: config.trending.defaultNumberOfBuckets
             });
 
             this.minBuckets = config.trending.minNumberOfBuckets;
@@ -116,21 +104,34 @@ define([
                 searchStateChanged: false
             });
 
-            this.listenTo(this.queryModel, 'change', function() {
-                if(this.$el.is(':visible')) {
+            this.slider = new RangeInput({
+                leftLabel: i18n['search.resultsView.trending.bucketSlider.fewerBuckets'],
+                max: this.maxBuckets,
+                min: this.minBuckets,
+                model: this.model,
+                rightLabel: i18n['search.resultsView.trending.bucketSlider.moreBuckets'],
+                step: 1
+            });
+
+            this.listenTo(this.queryModel, 'change', function () {
+                if (this.$el.is(':visible')) {
                     this.fetchFieldAndRangeData();
                 } else {
                     this.viewStateModel.set('searchStateChanged', true);
                 }
             });
+
             this.listenTo(vent, 'vent:resize', this.update);
             this.listenTo(this.viewStateModel, 'change:dataState', this.onDataStateChange);
+
             this.listenTo(this.parametricFieldsCollection, 'error', function(collection, xhr) {
                 this.onDataError(xhr);
             });
+
             this.listenTo(this.model, 'change:field', this.fetchFieldAndRangeData);
-            this.listenTo(this.model, 'change:targetNumberOfBuckets', this.debouncedFetchBucketedData);
+            this.listenTo(this.model, 'change:value', this.debouncedFetchBucketedData);
             this.listenTo(this.parametricCollection, 'sync', this.setFieldSelector);
+            
             this.listenTo(this.parametricCollection, 'error', function(collection, xhr) {
                 this.onDataError(xhr);
             });
@@ -141,10 +142,6 @@ define([
                 this.$snapToNow.tooltip('destroy');
             }
 
-            if(this.$speedSlider) {
-                this.$speedSlider.tooltip('destroy');
-            }
-
             if(this.trendingChart) {
                 this.trendingChart.remove();
             }
@@ -153,11 +150,11 @@ define([
                 i18n: i18n,
                 loadingHtml: _.template(loadingSpinnerHtml)
             }));
+            
             this.$errorMessage = this.$('.trending-error');
             this.$snapToNow = this.$('.trending-snap-to-now');
             this.$chart = this.$('.trending-chart');
             this.$trendingSlider = this.$('.trending-slider');
-            this.$speedSlider = this.$('.speed-slider');
 
             this.viewStateModel.set('dataState', dataState.LOADING);
 
@@ -175,17 +172,7 @@ define([
                 title: i18n['search.resultsView.trending.snapToNow']
             });
 
-            this.$speedSlider
-                .attr({
-                    min: this.minBuckets,
-                    max: this.maxBuckets,
-                    step: 1
-                })
-                .val(this.model.get('targetNumberOfBuckets'))
-                .tooltip({
-                    title: this.model.get('targetNumberOfBuckets'),
-                    placement: 'top'
-                });
+            this.slider.setElement(this.$trendingSlider).render();
 
             if(!this.parametricCollection.isEmpty()) {
                 this.setFieldSelector();
@@ -193,13 +180,13 @@ define([
         },
 
         remove: function() {
+            this.slider.remove();
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
-            if(this.$speedSlider) {
-                this.$speedSlider.tooltip('destroy');
-            }
+
             if(this.$snapToNow) {
                 this.$snapToNow.tooltip('destroy');
             }
+
             Backbone.View.prototype.remove.call(this);
         },
 
@@ -209,10 +196,8 @@ define([
                     this.setFieldSelector();
                     this.fetchFieldAndRangeData();
                     this.viewStateModel.set('searchStateChanged', false);
-                } else {
-                    if(!_.isEmpty(this.bucketedValues)) {
-                        this.updateChart();
-                    }
+                } else if(!_.isEmpty(this.bucketedValues)) {
+                    this.updateChart();
                 }
             }
         },
@@ -284,6 +269,7 @@ define([
             this.viewStateModel.set('fetchState', fetchState.FETCHING_BUCKETS);
 
             const minDate = this.model.get('currentMin'), maxDate = this.model.get('currentMax');
+
             if(minDate === maxDate) {
                 this.setMinMax(minDate - SECONDS_IN_ONE_DAY, maxDate + SECONDS_IN_ONE_DAY);
             }
@@ -297,7 +283,7 @@ define([
                 currentMin: this.model.get('currentMin'),
                 dateField: this.dateField,
                 numberOfValuesToDisplay: this.numberOfValuesToDisplay,
-                targetNumberOfBuckets: this.model.get('targetNumberOfBuckets')
+                targetNumberOfBuckets: this.model.get('value')
             };
 
             return trendingStrategy.fetchBucketedData(fetchOptions)
@@ -309,7 +295,8 @@ define([
                     });
                     this.bucketedValues = Array.prototype.slice.call(arguments);
                     this.updateChart();
-                }, this)).fail(_.bind(function(xhr) {
+                }, this))
+                .fail(_.bind(function(xhr) {
                     this.onDataError(xhr);
                     this.viewStateModel.set('fetchState', fetchState.NOT_FETCHING);
                 }, this));

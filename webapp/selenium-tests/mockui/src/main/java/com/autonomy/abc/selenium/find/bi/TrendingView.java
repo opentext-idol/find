@@ -83,7 +83,7 @@ public class TrendingView {
     }
 
     public RangeInput slider() {
-        return new RangeInput(findElement(className("speed-slider")), driver, 10);
+        return new RangeInput(findElement(className("range-input-slider")), driver, 10);
     }
 
     WebElement graphArea() {

@@ -8,13 +8,14 @@ define([
     'jquery',
     'backbone',
     'find/app/util/topic-map-view',
+    'find/app/util/range-input',
     'find/app/model/entity-collection',
     'i18n!find/nls/bundle',
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/search/results/entity-topic-map-view.html',
     'text!find/templates/app/page/loading-spinner.html',
     'iCheck'
-], function(_, $, Backbone, TopicMapView, EntityCollection, i18n, generateErrorHtml,
+], function(_, $, Backbone, TopicMapView, RangeInput, EntityCollection, i18n, generateErrorHtml,
             template, loadingTemplate) {
     'use strict';
 
@@ -36,22 +37,6 @@ define([
 
     return Backbone.View.extend({
         template: _.template(template),
-
-        events: {
-            'change .speed-slider': function(e) {
-                const $target = $(e.target);
-                const value = $target.val();
-                $target.attr('data-original-title', value);
-                $target.tooltip('show');
-                $target.blur();
-                this.model.set('maxResults', value);
-            },
-            'input .speed-slider': function(e) {
-                const $target = $(e.target);
-                const value = $target.val();
-                this.$('.tooltip-inner').text(value);
-            }
-        },
 
         initialize: function(options) {
             this.queryState = options.queryState;
@@ -94,15 +79,26 @@ define([
 
             this.model = new Backbone.Model({
                 maxCount: 10,
-                maxResults: constructorMaxResults || Math.min(this.maximumMaxResults, DEFAULT_MAX_RESULTS)
+                value: constructorMaxResults || Math.min(this.maximumMaxResults, DEFAULT_MAX_RESULTS)
             });
 
-            this.listenTo(this.model, 'change:maxResults', function() {
-                this.debouncedFetchRelatedConcepts(this.queryModel, this.type, this.model.get('maxResults'));
+            if (this.showSlider) {
+                this.slider = new RangeInput({
+                    leftLabel: i18n['search.topicMap.fast'],
+                    max: this.maximumMaxResults,
+                    min: SPEED_SLIDER_MIN,
+                    model: this.model,
+                    rightLabel: i18n['search.topicMap.accurate'],
+                    step: 1
+                })
+            }
+
+            this.listenTo(this.model, 'change:value', function() {
+                this.debouncedFetchRelatedConcepts(this.queryModel, this.type, this.model.get('value'));
             });
 
             this.listenTo(this.queryModel, 'change', function() {
-                this.entityCollection.fetchRelatedConcepts(this.queryModel, this.type, this.model.get('maxResults'));
+                this.entityCollection.fetchRelatedConcepts(this.queryModel, this.type, this.model.get('value'));
             });
 
             this.listenTo(this.entityCollection, 'sync', function() {
@@ -126,14 +122,10 @@ define([
             });
 
             this.listenTo(this.viewModel, 'change', this.updateViewState);
-            this.entityCollection.fetchRelatedConcepts(this.queryModel, this.type, this.model.get('maxResults'));
+            this.entityCollection.fetchRelatedConcepts(this.queryModel, this.type, this.model.get('value'));
         },
 
         render: function() {
-            if(this.showSlider) {
-                this.$('.speed-slider').tooltip('destroy');
-            }
-
             this.$el.html(this.template({
                 cid: this.cid,
                 errorTemplate: this.errorTemplate,
@@ -148,18 +140,7 @@ define([
             this.$loading = this.$('.entity-topic-map-loading');
 
             if(this.showSlider) {
-                const maxResults = this.model.get('maxResults');
-                this.$('.speed-slider')
-                    .attr({
-                        min: SPEED_SLIDER_MIN,
-                        max: this.maximumMaxResults,
-                        step: 1
-                    })
-                    .val(maxResults)
-                    .tooltip({
-                        title: maxResults,
-                        placement: 'top'
-                    });
+                this.slider.setElement(this.$('.slider-block')).render();
             }
 
             this.topicMap.setElement(this.$('.entity-topic-map')).render();
@@ -169,7 +150,7 @@ define([
 
         remove: function() {
             if(this.showSlider) {
-                this.$('.speed-slider').tooltip('destroy');
+                this.slider.remove();
             }
 
             Backbone.View.prototype.remove.call(this);
