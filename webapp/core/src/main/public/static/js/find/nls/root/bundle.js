@@ -74,6 +74,7 @@ define([
         'error.unknown': 'Unknown error.',
         'export.powerpoint.single': 'Export to PowerPoint: Single Slide',
         'export.powerpoint.multiple': 'Export to PowerPoint: Multiple Slides',
+        'export.powerpoint.videoWidget.exportFailure.CORS': 'Failed to export video, possibly due to invalid CORS settings. Please contact your system administrator.',
         'login.defaultLogin': 'Details for the default login can be found in your config.json file',
         'login.error.auth': 'Please check your username and password.',
         'login.error.connection': 'There was an error authenticating with your Community server. Please check if your Community server is available.',

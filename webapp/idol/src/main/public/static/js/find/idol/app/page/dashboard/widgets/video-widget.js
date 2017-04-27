@@ -92,33 +92,49 @@ define([
                 return null;
             }
 
-            try {
-                const canvas = document.createElement('canvas');
-                const videoDom = videoEl[0];
-                // Compensate for the video element's auto-crop to preserve aspect ratio, jQuery doesn't include this.
-                const aspectRatio = videoDom.videoWidth / videoDom.videoHeight;
-                const width = videoEl.width();
-                const height = videoEl.height();
-                const actualWidth = Math.min(width, height * aspectRatio);
-                const actualHeight = Math.min(height, width / aspectRatio);
-                canvas.width = actualWidth;
-                canvas.height = actualHeight;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(videoDom, 0, 0, canvas.width, canvas.height);
+            const videoDom = videoEl[0];
+            // Compensate for the video element's auto-crop to preserve aspect ratio, jQuery doesn't include this.
+            const aspectRatio = videoDom.videoWidth / videoDom.videoHeight;
+            const width = videoEl.width();
+            const height = videoEl.height();
+            const actualWidth = Math.min(width, height * aspectRatio);
+            const actualHeight = Math.min(height, width / aspectRatio);
 
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = actualWidth;
+            canvas.height = actualHeight;
+
+            ctx.drawImage(videoDom, 0, 0, canvas.width, canvas.height);
+
+            let dataUrl;
+
+            try {
+                // Note: this might not work if the video is hosted elsewhere
+                dataUrl = canvas.toDataURL('image/jpeg');
+            } catch(e) {
+                // If there's an error, e.g. if the video is external and we're not allowed access
+                // Print warning in the ppt file to inform the user what happened
                 return {
                     data: {
-                        // Note: this might not work if the video is hosted elsewhere
-                        image: canvas.toDataURL('image/jpeg'),
-                        markers: []
+                        text: [
+                            {
+                                text: i18n['export.powerpoint.videoWidget.exportFailure.CORS'],
+                                fontSize: 12
+                            }
+                        ],
                     },
-                    type: 'map'
-                }
-            } catch(e) {
-                // If there's an error, e.g. if the video is external and we're not allowed access, just skip it
+                    type: 'text'
+                };
             }
 
-            return null;
+            return {
+                data: {
+                    image: dataUrl,
+                    markers: []
+                },
+                type: 'map'
+            };
         }
     });
 });
