@@ -20,6 +20,8 @@ define([
 
     const FULLSCREEN_CLASS = 'fullscreen';
 
+    const formTemplateFn = _.template(exportFormTemplate);
+
     function fullscreenHandlerFactory(fullScreenElement) {
         return function() {
             this.toggleKeepAlive(!this.$widgets.hasClass(FULLSCREEN_CLASS));
@@ -30,12 +32,20 @@ define([
 
     return BasePage.extend({
         template: _.template(template),
-        formTemplate: _.template(exportFormTemplate),
 
         events: function() {
-            const events = {};
+            const events = {
+                'click .report-pptx': function(e) {
+                    e.preventDefault();
+
+                    // false if exporting to single slide
+                    const exportMultipleSlides = $(e.currentTarget).is('.report-pptx-multipage');
+
+                    this.exportDashboard(exportMultipleSlides);
+                }
+            };
+
             events['click .' + FULLSCREEN_CLASS] = 'toggleFullScreen';
-            events['click .report-pptx'] = 'exportDashboard';
             return events;
         },
 
@@ -272,14 +282,10 @@ define([
             }
         },
 
-        exportDashboard: function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-
+        exportDashboard: function(multiPage) {
             const reports = [];
             const scaleX = 0.01 * this.widthPerUnit;
             const scaleY = 0.01 * this.heightPerUnit;
-            const multiPage = $(event.currentTarget).is('.report-pptx-multipage');
             const labels = true;
             const padding = true;
 
@@ -293,14 +299,24 @@ define([
                             .then(function(data) {
                                 const pos = widget.position;
 
-                                return _.defaults(data, {
-                                    title: labels ? widget.view.name : undefined,
-                                    x: multiPage ? 0 : pos.x * scaleX,
-                                    y: multiPage ? 0 : pos.y * scaleY,
-                                    width: multiPage ? 1 : pos.width * scaleX,
-                                    height: multiPage ? 1 : pos.height * scaleY,
-                                    margin: padding ? 3 : 0
-                                })
+                                return _.defaults(data,
+                                    {
+                                        title: labels ? widget.view.name : undefined,
+                                        margin: padding ? 3 : 0
+                                    },
+                                    multiPage
+                                        ? {
+                                            x: 0,
+                                            y: 0,
+                                            width: 1,
+                                            height: 1
+                                        }
+                                        : {
+                                            x: pos.x * scaleX,
+                                            y: pos.y * scaleY,
+                                            width: pos.width * scaleX,
+                                            height: pos.height * scaleY
+                                        });
                             }));
                     }
                 }
@@ -310,7 +326,7 @@ define([
                 $.when.apply($, reports)
                     .done(function() {
                         const children = _.compact(arguments);
-                        const $form = $(this.formTemplate({
+                        const $form = $(formTemplateFn({
                             data: JSON.stringify({
                                 children: children
                             }),
