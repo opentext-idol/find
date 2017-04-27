@@ -22,11 +22,12 @@ define([
         return function(cid) {
             let search = savedSearchCollection.get(cid);
 
-            if(search.isNew()) {
+            const queryState = queryStates.get(cid);
+            if (search.isNew() || queryState && !search.equalsQueryState(queryState)) {
                 search = new SavedSearchModel(
                     _.extend(
                         {title: search.get('title')},
-                        SavedSearchModel.attributesFromQueryState(queryStates.get(cid))
+                        SavedSearchModel.attributesFromQueryState(queryState)
                     )
                 );
             }
