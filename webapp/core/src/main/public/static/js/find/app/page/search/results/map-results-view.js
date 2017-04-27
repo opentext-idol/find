@@ -51,13 +51,19 @@ define([
                 popoverTemplate: this.popoverTemplate,
                 mapViewOptions: {addControl: true},
                 resultSets: resultSets,
-                toggleLoading: this.toggleLoading.bind(this)
+                toggleLoading: this.toggleLoading.bind(this),
+                errorCallback: function (errorInfo) {
+                    this.$error.html(i18n['error.message.default'] + " " + errorInfo.message);
+                    this.$error.toggleClass('hide', errorInfo.error);
+                    this.toggleLoading();
+                }.bind(this)
             });
 
             this.mapResultsViewStrategy.createAddListeners(this.listenTo.bind(this));
             this.mapResultsViewStrategy.createSyncListeners(this.listenTo.bind(this), function () {
                 this.$('.map-results-count').html(this.getResultsNoHTML());
             }.bind(this));
+            this.mapResultsViewStrategy.listenForErrors(this.listenTo.bind(this));
 
             this.listenTo(options.queryModel, 'change', this.reloadMarkers);
         },
@@ -73,6 +79,7 @@ define([
                 this.$loadMoreButton.addClass('hide disabled');
             }
             this.$('.map-loading-spinner').html(this.$loadingSpinner);
+            this.$error = this.$('.map-error');
 
             this.toggleLoading();
             this.$loadMoreButton.prop('disabled', true);

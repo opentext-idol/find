@@ -75,7 +75,12 @@ define([
                 popoverTemplate: this.popoverTemplate,
                 mapViewOptions: {addControl: true},
                 resultSets: this.resultSets,
-                toggleLoading: this.toggleLoading.bind(this)
+                toggleLoading: this.toggleLoading.bind(this),
+                errorCallback: function (errorInfo) {
+                    this.$error.html(i18n['error.message.default'] + " " + errorInfo.message);
+                    this.$error.toggleClass('hide', !errorInfo.error);
+                    this.toggleLoading();
+                }.bind(this)
             });
 
             this.resultSets.forEach(function (resultSet) {
@@ -88,6 +93,7 @@ define([
 
             this.mapResultsViewStrategy.createAddListeners(this.listenTo.bind(this));
             this.mapResultsViewStrategy.createSyncListeners(this.listenTo.bind(this));
+            this.mapResultsViewStrategy.listenForErrors(this.listenTo.bind(this));
         },
 
         render: function () {
@@ -100,6 +106,7 @@ define([
 
             this.$loadingSpinner = $(this.loadingTemplate);
             this.$('.map-loading-spinner').html(this.$loadingSpinner);
+            this.$error = this.$('.map-error');
 
             this.mapResultsViewStrategy.mapView.setElement(this.$('.location-comparison-map')).render();
 

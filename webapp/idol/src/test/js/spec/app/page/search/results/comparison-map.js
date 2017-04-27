@@ -148,6 +148,27 @@ define([
                     expect(this.view.mapResultsViewStrategy.mapView.fitMapToMarkerBounds.calls.count()).toEqual(1);
                 });
             });
+
+            describe('after an error', function () {
+                beforeEach(function () {
+                    this.view.resultSets[0].collection.trigger('error', null, {
+                        status: 1,
+                        responseJSON: {
+                        }
+                    });
+                    _.each(this.view.resultSets, function (resultSet) {
+                        resultSet.collection.trigger = false;
+                    });
+                });
+
+                it('the error span should be visible', function() {
+                    expect(this.view.$('.map-error')).not.toHaveClass('hide');
+                });
+
+                it('the loading spinner should not be visible', function() {
+                    expect(this.view.$('.loading-spinner')).toHaveClass('hide');
+                });
+            });
         });
     });
 });
