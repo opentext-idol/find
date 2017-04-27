@@ -17,6 +17,7 @@ define([
 
         isUpdating: _.constant(false),
         onResize: _.noop,
+        onHide: _.noop,
         onClick: _.noop,
 
         initialize: function(options) {

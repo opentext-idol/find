@@ -5,11 +5,12 @@
 
 define([
     'underscore',
+    'jquery',
     './saved-search-widget',
     'find/app/configuration',
     'find/app/model/documents-collection',
-    'text!find/idol/templates/page/dashboards/widgets/video-widget.html'
-], function(_, SavedSearchWidget, configuration, DocumentsCollection, template) {
+    'i18n!find/nls/bundle'
+], function(_, $, SavedSearchWidget, configuration, DocumentsCollection, i18n) {
     'use strict';
 
     return SavedSearchWidget.extend({
@@ -18,35 +19,30 @@ define([
         initialize: function(options) {
             SavedSearchWidget.prototype.initialize.apply(this, arguments);
 
-            this.videoTemplate = _.template(template);
-
-            this.loop = this.widgetSettings.loop !== false;
-            this.audio = this.widgetSettings.audio || false;
             this.searchResultNumber = this.widgetSettings.searchResultNumber || 1;
             this.restrictSearch = !!(this.widgetSettings.restrictSearch);
 
             this.documentsCollection = new DocumentsCollection();
-        },
 
-        render: function() {
-            SavedSearchWidget.prototype.render.apply(this);
+            this.$video = $('<video>')
+                .prop('autoplay', true)
+                .prop('loop', this.widgetSettings.loop !== false)
+                .prop('muted', !this.widgetSettings.audio && true);
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
-                if(model.get('media') === 'video') {
+                // Re-creates DOM on every update. If this changes, the onHide() method must
+                // be adjusted to pause the video rather than remove it.
+                if(this.$content && model.get('media') === 'video') {
                     const offset = model.get('offset');
 
-                    this.$content.html(this.videoTemplate({
-                        loop: this.loop,
-                        muted: !this.audio,
-                        src: model.get('url') + (offset
+                    this.$video.attr('src', model.get('url') + (offset
                             ? '#t=' + offset
-                            : '')
-                    }));
+                            : ''));
 
-                    if(this.updateCallback) {
-                        this.updateCallback();
-                        delete this.updateCallback();
-                    }
+                    const $container = $('<div class="video-container"></div>');
+                    $container.append(this.$video);
+
+                    this.$content.html($container);
                 }
             });
         },
@@ -56,9 +52,10 @@ define([
 
             if(this.restrictSearch) {
                 const restrictToVideo = 'MATCH{video}:' + configuration().fieldsInfo.contentType.names[0];
-                fieldText = fieldText
-                    ? fieldText + ' AND ' + restrictToVideo
-                    : restrictToVideo;
+
+                fieldText = restrictToVideo + (fieldText
+                        ? ' AND ' + fieldText
+                        : '');
             }
 
             return this.documentsCollection.fetch({
@@ -76,6 +73,12 @@ define([
                 },
                 reset: false
             });
+        },
+
+        onHide: function() {
+            // Stop video so that it does not play in the background after leaving the dashboard (FIND-1132).
+            // Removing video is equivalent to pausing it, as it will get recreated when the page is shown again
+            this.$('.video-container').remove();
         },
 
         isEmpty: function() {

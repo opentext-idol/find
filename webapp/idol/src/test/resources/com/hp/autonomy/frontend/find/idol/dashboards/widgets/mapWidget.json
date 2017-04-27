@@ -14,7 +14,10 @@
   },
   "widgetSettings": {
     "maxResults": 1000,
-    "locationFieldPairs": ["DefaultLocation", "Secret Lair"],
+    "locationFieldPairs": [
+      "DefaultLocation",
+      "Secret Lair"
+    ],
     "centerCoordinates": {
       "latitude": 51.5,
       "longitude": 0.12

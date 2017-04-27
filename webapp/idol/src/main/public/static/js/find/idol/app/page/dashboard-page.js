@@ -153,6 +153,10 @@ define([
             this.stopListening(this.sidebarModel, 'change:collapsed');
             this.toggleFullScreenListener(false);
 
+            this.widgetViews.forEach(function(widget) {
+                widget.view.onHide();
+            });
+
             this.toggleKeepAlive(false);
 
             BasePage.prototype.hide.call(this);

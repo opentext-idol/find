@@ -72,7 +72,7 @@ public class SunburstWidgetTest extends ComplexWidgetTest<SunburstWidget, Sunbur
     protected void validateParsedComponent(final ObjectContent<SunburstWidget> objectContent) {
         objectContent.assertThat().isEqualTo(
                 SunburstWidget.builder()
-                        .name("star 769 (content type/author) 7 entries")
+                        .name("Sunburst Widget")
                         .type("SunburstWidget")
                         .x(0)
                         .y(4)
