@@ -86,10 +86,18 @@ define([
                 this.updateRestrictions([null, this.readMaxInput()]);
             },
             'dp.change .results-filter-date[data-date-attribute="min-date"]': function(event) {
-                this.updateRestrictions([event.date.unix(), null]);
+                // The first time a user clicks the calendar a change event will be fired even though there is no change
+                const minInput = event.date.unix();
+                if (minInput !== this.minInput) {
+                    this.updateRestrictions([minInput, null]);
+                }
             },
             'dp.change .results-filter-date[data-date-attribute="max-date"]': function(event) {
-                this.updateRestrictions([null, event.date.unix()]);
+                // The first time a user clicks the calendar a change event will be fired even though there is no change
+                const maxInput = event.date.unix();
+                if (maxInput !== this.maxInput) {
+                    this.updateRestrictions([null, maxInput]);
+                }
             },
             'click .clickable-widget': function() {
                 this.clickCallback();
@@ -294,7 +302,7 @@ define([
                 })
             };
 
-            // Prevet user from manually setting min > max or max < min
+            // Prevent user from manually setting min > max or max < min
             if(newAttributes.range[0] > newAttributes.range[1]) {
                 if(existingRange.reduce(sum) - newAttributes.range.reduce(sum) > 0) { // if max was decreased
                     newAttributes.range[0] = newAttributes.range[1]; //set min to equal max
@@ -362,12 +370,14 @@ define([
 
         updateMinInput: function(newValue) {
             if(this.selectionEnabled) {
+                this.minInput = newValue;
                 this.$minInput.val(this.formatValue(newValue));
             }
         },
 
         updateMaxInput: function(newValue) {
             if(this.selectionEnabled) {
+                this.maxInput = newValue;
                 this.$maxInput.val(this.formatValue(newValue));
             }
         },
