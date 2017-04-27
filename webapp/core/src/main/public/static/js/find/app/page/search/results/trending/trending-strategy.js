@@ -22,10 +22,15 @@ define([
     'parametric-refinement/to-field-text-node',
 ], function(_, $, d3, Backbone, i18n, configuration, vent, generateErrorHtml, ParametricResultsView,
             FieldSelectionView, calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel,
-            ParametricCollection, Trending, toFieldTextNode) {
+            ParametricCollection, Trending, toFieldTextNode
+) {
     'use strict';
 
-    const MILLISECONDS_TO_SECONDS = 1000;
+    const SECONDS_TO_MILLISECONDS = 1000;
+    const HOURS_TO_SECONDS = 3600;
+    const MINUTES_TO_SECONDS = 60;
+    const DAYS_TO_SECONDS = 86400;
+    const YEARS_TO_SECONDS = 31536000;
 
     function fetchField(options) {
         const trendingCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
@@ -126,45 +131,69 @@ define([
     }
 
     function createChartData(options) {
-        const data = [];
+        // Assume all buckets have the same width
+        const firstPoint = options.bucketedValues[0].values[0];
+        const bucketWidthSecs = firstPoint.max - firstPoint.min;
+        const halfBucketWidthSecs = 0.5 * bucketWidthSecs;
 
-        _.each(options.bucketedValues, function(bucketedValue) {
-            data.push({
-                points: _.map(bucketedValue.values, function(value) {
-                    return {
-                        count: value.count,
-                        mid: Math.floor(value.min + ((value.max - value.min) / 2)),
-                        min: value.min,
-                        max: value.max
-                    };
-                }),
-                name: bucketedValue.valueName,
-                color: bucketedValue.color
-            });
-        });
+        const flatCountsChain = _.chain(options.bucketedValues)
+            .pluck('values')
+            .map(_.partial(_.pluck, _, 'count'))
+            .flatten();
 
-        _.each(data, function(value) {
-            _.each(value.points, function(point) {
-                point.mid = new Date(point.mid * MILLISECONDS_TO_SECONDS);
-                point.min = new Date(point.min * MILLISECONDS_TO_SECONDS);
-                point.max = new Date(point.max * MILLISECONDS_TO_SECONDS);
-            });
-        });
+        const minCount = flatCountsChain.min().value();
+        const maxCount = flatCountsChain.max().value();
+        const maxRatePerSec = maxCount / bucketWidthSecs;
 
-        return adjustBuckets(data, options.currentMin, options.currentMax);
-    }
+        let yUnit;
+        let rateCoefficient;
 
-    function adjustBuckets(values, min, max) {
-        return _.map(values, function(value) {
+        if (maxRatePerSec >= 1) {
+            yUnit = 'SECOND';
+            rateCoefficient = 1 / bucketWidthSecs;
+        } else if (maxRatePerSec >= (1 / MINUTES_TO_SECONDS)) {
+            yUnit = 'MINUTE';
+            rateCoefficient = MINUTES_TO_SECONDS / bucketWidthSecs;
+        } else if (maxRatePerSec >= (1 / HOURS_TO_SECONDS)) {
+            yUnit = 'HOUR';
+            rateCoefficient = HOURS_TO_SECONDS / bucketWidthSecs;
+        } else if (maxRatePerSec >= (1 / DAYS_TO_SECONDS)) {
+            yUnit = 'DAY';
+            rateCoefficient = DAYS_TO_SECONDS / bucketWidthSecs;
+        } else {
+            yUnit = 'YEAR';
+            rateCoefficient = YEARS_TO_SECONDS / bucketWidthSecs;
+        }
+
+        const data = _.map(options.bucketedValues, function(bucketedValue) {
             return {
-                name: value.name,
-                color: value.color,
-                points: _.filter(value.points, function(point) {
-                    const date = new Date(point.mid).getTime() / MILLISECONDS_TO_SECONDS;
-                    return !(date < min || date > max);
-                })
-            }
+                name: bucketedValue.valueName,
+                color: bucketedValue.color,
+                points: _.chain(bucketedValue.values)
+                    .map(function(value) {
+                        const midTime = Math.floor(value.min + halfBucketWidthSecs);
+
+                        return {
+                            rate: value.count * rateCoefficient,
+                            mid: new Date(midTime * SECONDS_TO_MILLISECONDS),
+                            min: new Date(value.min * SECONDS_TO_MILLISECONDS),
+                            max: new Date(value.max * SECONDS_TO_MILLISECONDS)
+                        };
+                    })
+                    .filter(function(value) {
+                        const midSeconds = value.mid.getTime() / SECONDS_TO_MILLISECONDS;
+                        return midSeconds >= options.currentMin && midSeconds <= options.currentMax;
+                    })
+                    .value()
+            };
         });
+
+        return {
+            data: data,
+            minRate: minCount * rateCoefficient,
+            maxRate: maxCount * rateCoefficient,
+            yUnit: yUnit
+        };
     }
 
     return {
@@ -172,5 +201,5 @@ define([
         fetchRange: fetchRange,
         fetchBucketedData: fetchBucketedData,
         createChartData: createChartData
-    }
+    };
 });
