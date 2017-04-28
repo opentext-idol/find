@@ -28,9 +28,9 @@ node {
 		env.PATH="${tool 'Maven3'}/bin:${env.JAVA_HOME}/bin:${env.PATH}"
 
 		try {
-			sh "mvn clean install -f webapp/pom.xml -U -pl on-prem-dist,selenium-tests/mockui -am -Dapplication.buildNumber=${gitCommit} -Dtest.content.host=cbg-data-admin-dev.hpeswlab.net -Dtest.view.host=cbg-data-admin-dev.hpeswlab.net -Dtest.answer.host=cbg-data-admin-dev.hpeswlab.net -Dtest.database=GenericDocuments"
+			throw e
 		} catch (e) {
-			emailext attachLog: true, body: "Check console output at ${env.BUILD_URL} to view the results.", subject: "Fenkins - ${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - ${currentBuild.result}", to: '$DEFAULT_RECIPIENTS'
+			emailext attachLog: true, body: "Check console output at $env.BUILD_URL to view the results.", subject: "Fenkins - $env.JOB_NAME - Build # $env.BUILD_NUMBER} - $currentBuild.result", to: '$DEFAULT_RECIPIENTS'
 			throw e
 		}
 
