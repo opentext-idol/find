@@ -51,7 +51,6 @@ public class ResultsITCase extends FindTestBase {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
         findPage.goToListView();
-
     }
 
     @Test
@@ -196,6 +195,9 @@ public class ResultsITCase extends FindTestBase {
         search(query);
 
         getDriver().navigate().refresh();
+
+        findPage = getElementFactory().getFindPage();
+        findPage.waitForLoad();
 
         // This could fail because %2F can be blocked by Tomcat
         assertThat(getElementFactory().getSearchBox().getValue(), is(query));
