@@ -82,6 +82,12 @@ define([
 
         exportData: function() {
             const paths = this.$el.topicmap('exportPaths');
+
+            paths.forEach(function(polygons, idx){
+                const depthFromLeaf = paths.length - 1 - idx;
+                polygons.forEach(function(path){ path.level = depthFromLeaf })
+            })
+
             return paths
                 ? {paths: _.flatten(paths.slice(1).reverse())}
                 : null;
