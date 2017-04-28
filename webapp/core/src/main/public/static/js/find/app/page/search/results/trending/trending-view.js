@@ -275,6 +275,8 @@ define([
                 }];
 
                 dateInputs.forEach(function(options) {
+                    options.$el.tooltip('destroy');
+
                     options.$el
                         .tooltip({
                             placement: 'top',
@@ -303,7 +305,7 @@ define([
         fetchFieldAndRangeData: function() {
             this.viewStateModel.set('dataState', dataState.LOADING);
 
-            if (this.bucketedDataReqest) {
+            if(this.bucketedDataReqest) {
                 this.bucketedDataReqest.abort();
             }
 
@@ -345,7 +347,7 @@ define([
                 this.setMinMax(minDate - SECONDS_IN_ONE_DAY, maxDate + SECONDS_IN_ONE_DAY);
             }
 
-            if (this.bucketedDataReqest) {
+            if(this.bucketedDataReqest) {
                 this.bucketedDataReqest.abort();
             }
 

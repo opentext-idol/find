@@ -110,6 +110,8 @@ define([
         };
 
         const pointMouseover = function pointMouseoverFn(d) {
+            $(d3.event.target).tooltip('destroy');
+
             const xMid = scales.xScale(d.mid);
             const yCount = scales.yScale(d.rate);
 
@@ -135,21 +137,24 @@ define([
                 timeFormat(d.max)
             );
 
-            $(d3.event.target).tooltip({
-                title: title,
-                container: 'body',
-                placement: 'top',
-                trigger: 'manual',
-                html: true
-            }).tooltip('show');
+            $(d3.event.target)
+                .tooltip({
+                    title: title,
+                    container: 'body',
+                    placement: 'top',
+                    trigger: 'manual',
+                    html: true
+                })
+                .tooltip('show');
 
             lineAndPointMouseover();
         };
 
         const pointMouseout = function pointMouseoutFn() {
-            chart.selectAll('.guide-line')
+            chart
+                .selectAll('.guide-line')
                 .remove();
-            $(d3.event.target).tooltip('hide');
+            $(d3.event.target).tooltip('destroy');
             mouseout();
         };
 
@@ -251,7 +256,7 @@ define([
                 .append('foreignObject')
                 .attr('class', 'x-axis-label')
                 .attr('width', widthToDouble - tickPadding)
-                .attr('transform', 'translate(' + (-(widthToDouble - tickPadding) / 2) + ', 0)' )
+                .attr('transform', 'translate(' + (-(widthToDouble - tickPadding) / 2) + ', 0)')
                 .attr('height', CHART_PADDING)
                 .attr('cursor', 'default')
                 .append('xhtml:p')
@@ -268,7 +273,7 @@ define([
         const tickPadding = 5;
         const tickWidth = width / labels[0].length;
 
-        labels.each(function () {
+        labels.each(function() {
             const label = d3.select(this);
             const words = label.text().split(/\s+/).reverse();
             const y = label.attr("y");
@@ -279,11 +284,11 @@ define([
             let tspan = label.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
 
             //noinspection AssignmentResultUsedJS
-            while (word = words.pop()) {
+            while(word = words.pop()) {
                 line.push(word);
                 tspan.text(line.join(" "));
                 //noinspection JSUnresolvedFunction
-                if (tspan.node().getComputedTextLength() > tickWidth - tickPadding) {
+                if(tspan.node().getComputedTextLength() > tickWidth - tickPadding) {
                     line.pop();
                     tspan.text(line.join(" "));
                     line = [word];
@@ -578,10 +583,10 @@ define([
                             .attr('stroke', 'none')
                             .attr('font-size', LEGEND_TEXT_HEIGHT)
                             .text(d.name)
-                            .on('mouseover', function () {
+                            .on('mouseover', function() {
                                 hoverCallbacks.legendMouseover(d.name);
                             })
-                            .on('mouseout', function () {
+                            .on('mouseout', function() {
                                 hoverCallbacks.legendMouseout(d.name);
                             });
                     }
