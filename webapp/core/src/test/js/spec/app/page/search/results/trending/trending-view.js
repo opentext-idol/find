@@ -294,8 +294,8 @@ define([
 
                         it('should draw the trending chart with the correct data', function() {
                             expect(Trending.instances[0].draw.calls.count()).toBe(1);
-                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].data.length).toBe(2);
-                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].data[0].points.length).toBe(1);
+                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].chartData.data.length).toBe(2);
+                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].chartData.data[0].points.length).toBe(1);
                             expect(typeof Trending.instances[0].draw.calls.argsFor(0)[0].zoomCallback).toBe('function');
                             expect(typeof Trending.instances[0].draw.calls.argsFor(0)[0].dragMoveCallback).toBe('function');
                             expect(typeof Trending.instances[0].draw.calls.argsFor(0)[0].dragEndCallback).toBe('function');
@@ -305,17 +305,8 @@ define([
                             expect(this.view.$('.trending-slider')).not.toHaveClass('hide');
                         });
 
-                        it('sets up the speed slider correctly', function() {
-                            expect(this.view.model.get('targetNumberOfBuckets')).toBe(DEFAULT_NUMBER_OF_BUCKETS);
-                            expect(this.view.$('.speed-slider').val()).toBe(DEFAULT_NUMBER_OF_BUCKETS + '');
-                            expect(this.view.$('.speed-slider')).toHaveAttr('min', MIN_NUMBER_OF_BUCKETS + '');
-                            expect(this.view.$('.speed-slider')).toHaveAttr('max', MAX_NUMBER_OF_BUCKETS + '');
-                        });
-
-                        it('updates the model targetNumberOfBuckets attribute when the slider is moved', function() {
-                            const currentSliderValue = +this.view.$('.speed-slider').val();
-                            this.view.$('.speed-slider').val(currentSliderValue + 50).trigger('change');
-                            expect(this.view.model.get('targetNumberOfBuckets')).toBe((currentSliderValue + 50) + '');
+                        it('sets up the model correctly', function() {
+                            expect(this.view.model.get('value')).toBe(DEFAULT_NUMBER_OF_BUCKETS);
                         });
 
                         it('should re-draw the graph after calling the zoom callback', function() {

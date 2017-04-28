@@ -30,10 +30,10 @@ define([
         this.$empty.toggleClass('hide', !isEmpty);
     }
 
-    function toggleErrorMessage(hasError, msg) {
-        this.$error.toggleClass('hide', !hasError);
+    function toggleErrorMessage(msg) {
+        this.$error.toggleClass('hide', !this.hasErrorState);
 
-        this.$error.html(hasError
+        this.$error.html(this.hasErrorState
             ? errorTemplateFn({
                 i18n: i18n,
                 errorMessage: msg
@@ -56,6 +56,11 @@ define([
         // May be overridden. Return true if the query returned no data to display, false otherwise.
         // Only called if data fetch was successful.
         isEmpty: _.constant(false),
+
+        // Reports if the widget is in an error state
+        hasError: function(){
+            return this.hasErrorState === true;
+        },
 
         // Update visualizer if necessary _before_ $content is shown toggled into view
         updateVisualizer: _.noop,
@@ -111,7 +116,8 @@ define([
                 .done(function() {
                     const empty = this.isEmpty();
                     toggleEmptyMessage.call(this, empty);
-                    toggleErrorMessage.call(this, false);
+                    this.hasErrorState = false;
+                    toggleErrorMessage.call(this);
                     this.toggleContent(!empty);
                     if(!empty) {
                         this.updateVisualizer();
@@ -121,7 +127,8 @@ define([
                     this.queryModel = null;
                     this.toggleContent(false);
                     toggleEmptyMessage.call(this, false);
-                    toggleErrorMessage.call(this, true,
+                    this.hasErrorState = true;
+                    toggleErrorMessage.call(this,
                         error.statusText === 'abort'
                             ? i18n['dashboards.widget.dataError.tooSlow']
                             : getResponseMessage(error));

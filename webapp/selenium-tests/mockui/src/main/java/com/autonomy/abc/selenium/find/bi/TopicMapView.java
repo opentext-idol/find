@@ -59,7 +59,7 @@ public class TopicMapView {
     }
 
     public RangeInput speedVsAccuracySlider() {
-        return new RangeInput(findElement(By.className("speed-slider")), driver, 10);
+        return new RangeInput(findElement(By.className("range-input-slider")), driver, 10);
     }
 
     private void offCentreClick(final WebElement element) {
@@ -92,14 +92,14 @@ public class TopicMapView {
 
     public List<String> mapEntityText() {
         return mapEntityTextElements().stream()
-                .map(this::getElementText)
-                .collect(Collectors.toList());
+            .map(this::getElementText)
+            .collect(Collectors.toList());
     }
 
     private String getElementText(final SearchContext webElement) {
         return webElement.findElements(By.tagName("tspan")).stream()
-                .map(WebElement::getText)
-                .collect(Collectors.joining(" "));
+            .map(WebElement::getText)
+            .collect(Collectors.joining(" "));
     }
 
     //CONCEPT CLUSTERS/PARENT ENTITIES
@@ -107,15 +107,15 @@ public class TopicMapView {
     //have an opacity of either the top or bottom layer (i.e. the map is done loading).
     private void waitForConceptClusters() {
         new WebDriverWait(driver, CONCEPT_CLUSTER_TIMEOUT)
-                .withMessage("entity to exist with opacity 2")
-                .until(ExpectedConditions.presenceOfElementLocated(CONCEPT_CLUSTER_LOCATOR));
+            .withMessage("entity to exist with opacity 2")
+            .until(ExpectedConditions.presenceOfElementLocated(CONCEPT_CLUSTER_LOCATOR));
 
         new WebDriverWait(driver, 10)
-                .withMessage("all entities to have opacity of either 0.2 or 0.7")
-                .until((Function<? super WebDriver, Boolean>)x ->
-                        container.findElements(
-                                By.cssSelector(".entity-topic-map > svg > path:not([stroke-opacity='0.2']):not([stroke-opacity='0.7'])")
-                        ).isEmpty());
+            .withMessage("all entities to have opacity of either 0.2 or 0.7")
+            .until((Function<? super WebDriver, Boolean>)x ->
+                container.findElements(
+                    By.cssSelector(".entity-topic-map > svg > path:not([stroke-opacity='0.2']):not([stroke-opacity='0.7'])")
+                ).isEmpty());
     }
 
     private List<WebElement> conceptClusters() {
@@ -159,8 +159,8 @@ public class TopicMapView {
 
     public void waitForConcepts() {
         new WebDriverWait(driver, 10)
-                .withMessage("bottom layer entities to reach the right opacity")
-                .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(CONCEPT_LOCATOR));
+            .withMessage("bottom layer entities to reach the right opacity")
+            .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(CONCEPT_LOCATOR));
     }
 
     public List<WebElement> concepts() {
@@ -202,7 +202,7 @@ public class TopicMapView {
             final Point centre = new Point(centreX, centreY);
 
             if(boundariesOfChosenCluster[0][0] <= centre.x && centre.x <= boundariesOfChosenCluster[0][1]
-                    && boundariesOfChosenCluster[1][0] <= centre.y && centre.y <= boundariesOfChosenCluster[1][1]) {
+                && boundariesOfChosenCluster[1][0] <= centre.y && centre.y <= boundariesOfChosenCluster[1][1]) {
                 childConceptsOfChosenCluster.add(new ImmutablePair<>(concepts, entityIndex));
             }
 
@@ -216,8 +216,8 @@ public class TopicMapView {
         final List<String> textElements = mapEntityText();
 
         return childConceptsOfChosenCluster.stream()
-                .map(path -> textElements.get(numberOfConcepts - 1 - path.getRight()))
-                .collect(Collectors.toList());
+            .map(path -> textElements.get(numberOfConcepts - 1 - path.getRight()))
+            .collect(Collectors.toList());
     }
 
     public List<String> getChildConceptsOfCluster(final int clusterIndex) {
@@ -228,15 +228,15 @@ public class TopicMapView {
 
     public Set<String> getGradientIds() {
         return findElements(By.tagName("linearGradient"))
-                .stream()
-                .map(tag -> tag.getAttribute("id"))
-                .collect(Collectors.toSet());
+            .stream()
+            .map(tag -> tag.getAttribute("id"))
+            .collect(Collectors.toSet());
     }
 
     public Set<String> getFills() {
         return mapEntities().stream()
-                .map(path -> path.getAttribute("fill"))
-                .collect(Collectors.toSet());
+            .map(path -> path.getAttribute("fill"))
+            .collect(Collectors.toSet());
     }
 
     private WebElement findElement(final By locator) {

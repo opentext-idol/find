@@ -30,7 +30,11 @@ define([
                 el: this.$chart.get(0),
                 zoomEnabled: false,
                 dragEnabled: false,
-                hoverEnabled: false
+                hoverEnabled: false,
+                yAxisLabelForUnit: i18n['search.resultsView.trending.yAxis'],
+                yAxisUnitsText: function(yUnit) {
+                    return i18n['search.resultsView.trending.unit.' + yUnit];
+                }
             });
         },
 
@@ -103,21 +107,21 @@ define([
 
         updateVisualizer: function() {
             if(!this.isEmpty()) {
-                const data = trendingStrategy.createChartData({
+                const chartData = trendingStrategy.createChartData({
                     bucketedValues: this.bucketedValues,
                     currentMax: this.currentMax,
                     currentMin: this.currentMin
                 });
 
+                const data = chartData.data;
                 const minDate = data[0].points[0].mid;
                 const maxDate = data[data.length - 1].points[data[0].points.length - 1].mid;
 
                 this.trendingChart.draw({
                     reloaded: true,
-                    data: data,
+                    chartData: chartData,
                     minDate: minDate,
-                    maxDate: maxDate,
-                    yAxisLabel: i18n['search.resultsView.trending.yAxis']
+                    maxDate: maxDate
                 });
             }
         },
