@@ -89,7 +89,7 @@ define([
     function fetchBucketedData(options) {
         const valuesToShow = _.first(options.selectedFieldValues, options.numberOfValuesToDisplay);
 
-        return $.when.apply($, _.map(valuesToShow, function(value) {
+        const requests = _.map(valuesToShow, function(value) {
             const bucketModel = new BucketedParametricCollection.Model({
                 id: options.dateField,
                 valueName: value.value
@@ -99,7 +99,7 @@ define([
                 ? ' AND ' + toFieldTextNode(getFieldText(options.selectedParametricValues))
                 : '';
 
-            return bucketModel
+            const xhr = bucketModel
                 .fetch({
                     data: {
                         queryText: options.queryModel.get('queryText'),
@@ -112,16 +112,29 @@ define([
                         bucketMin: options.currentMin,
                         bucketMax: options.currentMax
                     }
-                })
-                .then(function(data) {
-                    return _.extend({
-                        valueName: value.value,
-                        color: options.values
-                            ? _.findWhere(options.values, {'name': value.value}).color
-                            : null
-                    }, data);
                 });
-        }));
+
+            const promise = xhr.then(function(data) {
+                return _.extend({
+                    valueName: value.value,
+                    color: options.values
+                        ? _.findWhere(options.values, {'name': value.value}).color
+                        : null
+                }, data);
+            });
+
+            return {promise: promise, xhr: xhr};
+        });
+
+        const promise = $.when.apply($, _.pluck(requests, 'promise')).promise();
+
+        promise.abort = function() {
+            requests.forEach(function(request) {
+                request.xhr.abort();
+            });
+        };
+
+        return promise;
     }
 
     function getFieldText(selectedParametricValues) {

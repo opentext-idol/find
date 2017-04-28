@@ -248,6 +248,18 @@ define([
                         expect(TrendingStrategy.fetchBucketedDataPromises.length).toBeGreaterThan(0);
                     });
 
+                    describe('then a different field is selected before the range details have returned', function() {
+                        beforeEach(function() {
+                            this.view.$('.parametric-select')
+                                .val('breads')
+                                .trigger('change');
+                        });
+
+                        it('aborts the previous field requests', function() {
+                            expect(TrendingStrategy.fetchBucketedDataPromises[0].abort.calls.count()).toBe(1);
+                        });
+                    });
+
                     describe('and at least one of the fetches fails', function() {
                         beforeEach(function() {
                             TrendingStrategy.fetchBucketedDataPromises[0].reject(xhr);

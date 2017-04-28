@@ -250,6 +250,7 @@ define([
                     fields: fields,
                     allowEmpty: false
                 });
+
                 this.$('.trending-field-selector').prepend(this.fieldSelector.$el);
                 this.fieldSelector.render();
             }
@@ -302,6 +303,10 @@ define([
         fetchFieldAndRangeData: function() {
             this.viewStateModel.set('dataState', dataState.LOADING);
 
+            if (this.bucketedDataReqest) {
+                this.bucketedDataReqest.abort();
+            }
+
             const fetchOptions = {
                 queryModel: this.queryModel,
                 selectedParametricValues: this.selectedParametricValues,
@@ -340,6 +345,10 @@ define([
                 this.setMinMax(minDate - SECONDS_IN_ONE_DAY, maxDate + SECONDS_IN_ONE_DAY);
             }
 
+            if (this.bucketedDataReqest) {
+                this.bucketedDataReqest.abort();
+            }
+
             const fetchOptions = {
                 queryModel: this.queryModel,
                 selectedFieldValues: this.selectedFieldValues,
@@ -352,7 +361,7 @@ define([
                 targetNumberOfBuckets: this.model.get('value')
             };
 
-            return trendingStrategy.fetchBucketedData(fetchOptions)
+            this.bucketedDataReqest = trendingStrategy.fetchBucketedData(fetchOptions)
                 .done(_.bind(function() {
                     this.viewStateModel.set({
                         currentState: renderState.RENDERING_NEW_DATA,
@@ -365,7 +374,12 @@ define([
                 .fail(_.bind(function(xhr) {
                     this.onDataError(xhr);
                     this.viewStateModel.set('fetchState', fetchState.NOT_FETCHING);
-                }, this));
+                }, this))
+                .always(function() {
+                    this.bucketedDataReqest = null;
+                }.bind(this));
+
+            return this.bucketedDataReqest;
         },
 
         updateChart: function() {

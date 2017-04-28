@@ -196,7 +196,10 @@ define([
 
         describe('when fetching the bucketed data', function() {
             beforeEach(function() {
-                const bucketedFetchOptions = _.extend(this.fetchOptions, { selectedFieldValues: this.fetchData[0].values });
+                const bucketedFetchOptions = _.extend({
+                    selectedFieldValues: this.fetchData[0].values
+                }, this.fetchOptions);
+
                 this.bucketedResult = trendingStrategy.fetchBucketedData(bucketedFetchOptions);
             });
 
@@ -228,6 +231,18 @@ define([
                     });
                     expect(bucketedResult).toHaveLength(4);
                     expect(bucketedResult[0].values).toEqual(this.bucketData.values)
+                });
+            });
+
+            describe('when the returned abort method is called', function() {
+                beforeEach(function() {
+                    this.bucketedResult.abort();
+                });
+
+                it('calls abort on the bucketed parametric XHR objects', function() {
+                    BucketedParametricCollection.Model.fetchPromises.forEach(function(promise) {
+                        expect(promise.abort.calls.count()).toBe(1);
+                    });
                 });
             });
         });
