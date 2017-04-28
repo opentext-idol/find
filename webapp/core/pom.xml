@@ -154,6 +154,13 @@
             <version>${powerpoint.report.version}</version>
         </dependency>
 
+        <!--TODO move to Haven Search Components-->
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.configuration</groupId>
+            <artifactId>configuration-authentication</artifactId>
+            <version>0.7.1</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
