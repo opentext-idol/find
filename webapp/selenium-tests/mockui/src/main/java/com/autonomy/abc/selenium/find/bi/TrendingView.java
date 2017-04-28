@@ -46,18 +46,18 @@ public class TrendingView {
 
     public void waitForChartToLoad() {
         new WebDriverWait(driver, TRENDING_VIEW_LOAD_TIMEOUT).withMessage("Trending never stopped loading")
-                .until(ExpectedConditions.presenceOfElementLocated(cssSelector(".trending-loading.hide")));
+            .until(ExpectedConditions.presenceOfElementLocated(cssSelector(".trending-loading.hide")));
     }
 
     public void waitForNumberOfPointsToChange(final int targetNumber) {
         final String firstValue = findElement(cssSelector("svg > g[data-name]")).getAttribute("data-name");
         new WebDriverWait(driver, TRENDING_VIEW_LOAD_TIMEOUT).withMessage("Target number of buckets not found")
-                .until(ExpectedConditions.numberOfElementsToBe(cssSelector("[data-name='" + firstValue + "'] circle"), targetNumber));
+            .until(ExpectedConditions.numberOfElementsToBe(cssSelector("[data-name='" + firstValue + "'] circle"), targetNumber));
     }
 
     private void waitForDropdownToOpen() {
         new WebDriverWait(driver, TRENDING_VIEW_FIELD_DROPDOWN_TIMEOUT).withMessage("Field selector never opened")
-                .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(cssSelector(".active-result")));
+            .until(ExpectedConditions.visibilityOfAllElementsLocatedBy(cssSelector(".active-result")));
     }
 
     public WebElement trendingChart() {
@@ -77,9 +77,9 @@ public class TrendingView {
 
     List<String> fieldsList() {
         return fields()
-                .stream()
-                .map(WebElement::getText)
-                .collect(Collectors.toList());
+            .stream()
+            .map(WebElement::getText)
+            .collect(Collectors.toList());
     }
 
     public RangeInput slider() {

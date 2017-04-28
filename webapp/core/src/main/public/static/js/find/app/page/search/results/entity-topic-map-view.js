@@ -82,7 +82,7 @@ define([
                 value: constructorMaxResults || Math.min(this.maximumMaxResults, DEFAULT_MAX_RESULTS)
             });
 
-            if (this.showSlider) {
+            if(this.showSlider) {
                 this.slider = new RangeInput({
                     leftLabel: i18n['search.topicMap.fast'],
                     max: this.maximumMaxResults,

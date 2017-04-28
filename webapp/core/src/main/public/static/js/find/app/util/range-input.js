@@ -4,11 +4,11 @@
  */
 
 define([
-    'backbone',
-    'jquery',
     'underscore',
+    'jquery',
+    'backbone',
     'text!find/templates/app/util/range-input.html'
-], function(Backbone, $, _, template) {
+], function(_, $, Backbone, template) {
     'use strict';
 
     function destroyTooltip() {
@@ -16,7 +16,6 @@ define([
     }
 
     return Backbone.View.extend({
-
         template: _.template(template),
 
         events: {
@@ -68,7 +67,5 @@ define([
 
             Backbone.View.prototype.remove.call(this);
         }
-
     });
-
 });

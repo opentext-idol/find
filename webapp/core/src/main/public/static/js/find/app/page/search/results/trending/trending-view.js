@@ -6,6 +6,7 @@
 define([
     'underscore',
     'jquery',
+    'moment',
     'd3',
     'backbone',
     'i18n!find/nls/bundle',
@@ -13,6 +14,7 @@ define([
     'find/app/vent',
     'find/app/util/range-input',
     'find/app/util/generate-error-support-message',
+    'find/app/util/date-picker',
     'find/app/page/search/results/parametric-results-view',
     'find/app/page/search/results/field-selection-view',
     'find/app/page/search/filters/parametric/calibrate-buckets',
@@ -22,10 +24,12 @@ define([
     'find/app/page/search/results/trending/trending',
     'find/app/page/search/results/trending/trending-strategy',
     'text!find/templates/app/page/loading-spinner.html',
-    'text!find/templates/app/page/search/results/trending/trending-results-view.html'
-], function(_, $, d3, Backbone, i18n, configuration, vent, RangeInput, generateErrorHtml, ParametricResultsView, FieldSelectionView,
-            calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel, ParametricCollection, Trending,
-            trendingStrategy, loadingSpinnerHtml, template) {
+    'text!find/templates/app/page/search/results/trending/trending-results-view.html',
+    'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-date-input.html'
+], function(_, $, moment, d3, Backbone, i18n, configuration, vent, RangeInput, generateErrorHtml,
+            datePicker, ParametricResultsView, FieldSelectionView, calibrateBuckets,
+            BucketedParametricCollection, ParametricDetailsModel, ParametricCollection,
+            Trending, trendingStrategy, loadingSpinnerHtml, template, dateInputTemplate) {
     'use strict';
 
     const MILLISECONDS_TO_SECONDS = 1000;
@@ -77,8 +81,15 @@ define([
             'click .trending-snap-to-now': function() {
                 this.$snapToNow.blur();
                 this.snapToNow();
-            }
+            },
+            'dp.change .results-filter-date[data-date-attribute="min-date"]': function(event) {
+                this.inputMinValue(event.date.unix());
+            },
+            'dp.change .results-filter-date[data-date-attribute="max-date"]': function(event) {
+                this.inputMaxValue(event.date.unix());
+            },
         },
+        dateInputTemplate: _.template(dateInputTemplate),
 
         initialize: function(options) {
             const config = configuration();
@@ -113,8 +124,8 @@ define([
                 step: 1
             });
 
-            this.listenTo(this.queryModel, 'change', function () {
-                if (this.$el.is(':visible')) {
+            this.listenTo(this.queryModel, 'change', function() {
+                if(this.$el.is(':visible')) {
                     this.fetchFieldAndRangeData();
                 } else {
                     this.viewStateModel.set('searchStateChanged', true);
@@ -135,14 +146,20 @@ define([
             this.listenTo(this.parametricCollection, 'error', function(collection, xhr) {
                 this.onDataError(xhr);
             });
+            this.listenTo(this.model, 'change:currentMin', function() {
+                this.updateDateInput(this.$minInput, 'currentMin');
+            });
+            this.listenTo(this.model, 'change:currentMax', function() {
+                this.updateDateInput(this.$maxInput, 'currentMax');
+            });
         },
 
         render: function() {
-            if (this.$snapToNow) {
+            if(this.$snapToNow) {
                 this.$snapToNow.tooltip('destroy');
             }
 
-            if (this.trendingChart) {
+            if(this.trendingChart) {
                 this.trendingChart.remove();
             }
 
@@ -171,23 +188,24 @@ define([
             });
 
             this.$snapToNow.tooltip({
-                placement: 'left',
+                placement: 'top',
                 container: 'body',
                 title: i18n['search.resultsView.trending.snapToNow']
             });
 
             this.slider.setElement(this.$trendingSlider).render();
 
-            if (!this.parametricCollection.isEmpty()) {
+            if(!this.parametricCollection.isEmpty()) {
                 this.setFieldSelector();
             }
+            this.setRangeSelector();
         },
 
         remove: function() {
             this.slider.remove();
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
 
-            if (this.$snapToNow) {
+            if(this.$snapToNow) {
                 this.$snapToNow.tooltip('destroy');
             }
 
@@ -195,20 +213,20 @@ define([
         },
 
         update: function() {
-            if (this.$el.is(':visible') && !this.parametricCollection.isEmpty()) {
-                if (this.viewStateModel.get('searchStateChanged')) {
+            if(this.$el.is(':visible') && !this.parametricCollection.isEmpty()) {
+                if(this.viewStateModel.get('searchStateChanged')) {
                     this.setFieldSelector();
                     this.fetchFieldAndRangeData();
                     this.viewStateModel.set('searchStateChanged', false);
-                } else if (!_.isEmpty(this.bucketedValues)) {
+                } else if(!_.isEmpty(this.bucketedValues)) {
                     this.updateChart();
                 }
             }
         },
 
         setFieldSelector: function() {
-            if (this.$el.is(':visible')) {
-                if (this.fieldSelector) {
+            if(this.$el.is(':visible')) {
+                if(this.fieldSelector) {
                     this.fieldSelector.remove();
                 }
 
@@ -237,6 +255,50 @@ define([
             }
         },
 
+        setRangeSelector: function() {
+            if(this.$el.is(':visible') && !this.$minInput) {
+                this.$('.trending-range-selector').prepend(this.dateInputTemplate({minOrMax: 'max'}));
+                this.$('.trending-range-selector').prepend(this.dateInputTemplate({minOrMax: 'min'}));
+
+                this.$minInput = this.$('.numeric-parametric-min-input.form-control');
+                this.$maxInput = this.$('.numeric-parametric-max-input.form-control');
+
+                const dateInputs = [{
+                    $el: this.$minInput,
+                    inputFunction: this.inputMinValue.bind(this),
+                    tooltipText: i18n['search.resultsView.trending.minDate']
+                }, {
+                    $el: this.$maxInput,
+                    inputFunction: this.inputMaxValue.bind(this),
+                    tooltipText: i18n['search.resultsView.trending.maxDate']
+                }];
+
+                dateInputs.forEach(function(options) {
+                    options.$el
+                        .tooltip({
+                            placement: 'top',
+                            container: 'body'
+                        })
+                        .attr('data-original-title', options.tooltipText)
+                        .tooltip('fixTitle');
+
+                    datePicker.render(
+                        options.$el.closest('.results-filter-date'),
+                        function() {
+                            if(this.validateDateFormat(options.$el.val())) {
+                                options.inputFunction(this.parseDate(options.$el.val()));
+                            } else {
+                                this.indicateNonValidDateInput({
+                                    $inputEl: options.$el,
+                                    errorMessage: i18n['search.resultsView.trending.error.invalidDate'],
+                                    originalTooltipMessage: options.tooltipText
+                                });
+                            }
+                        }.bind(this));
+                }.bind(this));
+            }
+        },
+
         fetchFieldAndRangeData: function() {
             this.viewStateModel.set('dataState', dataState.LOADING);
 
@@ -252,7 +314,7 @@ define([
                 .then(function(values) {
                     this.selectedFieldValues = values;
 
-                    if (this.selectedFieldValues.length === 0) {
+                    if(this.selectedFieldValues.length === 0) {
                         this.viewStateModel.set('dataState', dataState.EMPTY);
                         return $.when();
                     } else {
@@ -274,7 +336,7 @@ define([
 
             const minDate = this.model.get('currentMin'), maxDate = this.model.get('currentMax');
 
-            if (minDate === maxDate) {
+            if(minDate === maxDate) {
                 this.setMinMax(minDate - SECONDS_IN_ONE_DAY, maxDate + SECONDS_IN_ONE_DAY);
             }
 
@@ -307,7 +369,7 @@ define([
         },
 
         updateChart: function() {
-            if (this.viewStateModel.get('fetchState') !== fetchState.FETCHING_BUCKETS
+            if(this.viewStateModel.get('fetchState') !== fetchState.FETCHING_BUCKETS
                 && !this.$chart.hasClass('hide')) {
 
                 const chartData = trendingStrategy.createChartData({
@@ -320,7 +382,7 @@ define([
                     return datum.points.length > 0;
                 });
 
-                if (haveData) {
+                if(haveData) {
                     this.$('[data-toggle="tooltip"]').tooltip('destroy');
 
                     const reloaded = this.viewStateModel.get('currentState') === renderState.RENDERING_NEW_DATA;
@@ -361,6 +423,61 @@ define([
             this.fetchBucketedData();
         },
 
+        updateDateInput: function($el, dateAttribute) {
+            $el.val(this.formatDate(this.model.get(dateAttribute)));
+            this.updateChart();
+            this.debouncedFetchBucketedData();
+        },
+
+        inputMinValue: function(min) {
+            if(min < this.model.get('currentMax')) {
+                this.model.set('currentMin', min);
+            } else {
+                this.indicateNonValidDateInput({
+                    $inputEl: this.$minInput,
+                    errorMessage: i18n['search.resultsView.trending.error.minBiggerThanMax'],
+                    originalTooltipMessage: i18n['search.resultsView.trending.minDate']
+                });
+            }
+        },
+
+        inputMaxValue: function(max) {
+            if(this.model.get('currentMin') < max) {
+                this.model.set('currentMax', max);
+            } else {
+                this.indicateNonValidDateInput({
+                    $inputEl: this.$maxInput,
+                    errorMessage: i18n['search.resultsView.trending.error.maxSmallerThanMin'],
+                    originalTooltipMessage: i18n['search.resultsView.trending.maxDate']
+                });
+            }
+        },
+
+        formatDate: function(unformattedString) {
+            return moment(Math.round(unformattedString * MILLISECONDS_TO_SECONDS)).format(datePicker.DATE_WIDGET_FORMAT);
+        },
+
+        parseDate: function(dateString) {
+            return moment(dateString, datePicker.DATE_WIDGET_FORMAT).unix();
+        },
+
+        validateDateFormat: function(dateString) {
+            return moment(dateString, datePicker.DATE_WIDGET_FORMAT, true).isValid();
+        },
+
+        indicateNonValidDateInput: function(options) {
+            options.$inputEl.css('border-color', 'red');
+            options.$inputEl.attr('data-original-title', options.errorMessage)
+                .tooltip('fixTitle')
+                .tooltip('show');
+            setTimeout(function() {
+                options.$inputEl.css('border-color', '');
+                options.$inputEl.attr('data-original-title', options.originalTooltipMessage)
+                    .tooltip('fixTitle')
+                    .tooltip('hide');
+            }, 2000);
+        },
+
         onDataStateChange: function() {
             const state = this.viewStateModel.get('dataState');
 
@@ -370,14 +487,15 @@ define([
             this.$chart.toggleClass('hide', state !== dataState.OK);
             this.$snapToNow.toggleClass('hide', state !== dataState.OK);
             this.$trendingSlider.toggleClass('hide', state !== dataState.OK);
+            this.$('.trending-range-selector').toggleClass('hide', state !== dataState.OK);
 
-            if (state !== dataState.ERROR && this.$errorMessage) {
+            if(state !== dataState.ERROR && this.$errorMessage) {
                 this.$errorMessage.empty();
             }
         },
 
         onDataError: function(xhr) {
-            if (xhr.status !== 0) {
+            if(xhr.status !== 0) {
                 this.viewStateModel.set('dataState', dataState.ERROR);
                 const messageArguments = _.extend({
                     errorDetails: xhr.responseJSON.message,
