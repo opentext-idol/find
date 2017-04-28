@@ -43,12 +43,6 @@ define([
             : '');
     }
 
-    function getResponseMessage(error) {
-        return (error && error.responseJSON)
-            ? error.responseJSON.message
-            : ''
-    }
-
     return UpdatingWidget.extend({
         viewType: '', // determines which results view is loaded when navigating to the saved search on click
         clickable: true,
@@ -58,7 +52,7 @@ define([
         isEmpty: _.constant(false),
 
         // Reports if the widget is in an error state
-        hasError: function(){
+        hasError: function() {
             return this.hasErrorState === true;
         },
 
@@ -131,7 +125,9 @@ define([
                     toggleErrorMessage.call(this,
                         error.statusText === 'abort'
                             ? i18n['dashboards.widget.dataError.tooSlow']
-                            : getResponseMessage(error));
+                            : (error.responseJSON
+                                ? error.responseJSON.message
+                                : ''));
                 }.bind(this));
         },
 
