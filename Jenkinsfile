@@ -27,7 +27,12 @@ node {
 		env.JAVA_HOME="${tool 'Java 8 OpenJDK'}"
 		env.PATH="${tool 'Maven3'}/bin:${env.JAVA_HOME}/bin:${env.PATH}"
 
-		sh "mvn clean install -f webapp/pom.xml -U -pl on-prem-dist,selenium-tests/mockui -am -Dapplication.buildNumber=${gitCommit} -Dtest.content.host=cbg-data-admin-dev.hpeswlab.net -Dtest.view.host=cbg-data-admin-dev.hpeswlab.net -Dtest.answer.host=cbg-data-admin-dev.hpeswlab.net -Dtest.database=GenericDocuments"
+		try {
+			sh "mvn clean install -f webapp/pom.xml -U -pl on-prem-dist,selenium-tests/mockui -am -Dapplication.buildNumber=${gitCommit} -Dtest.content.host=cbg-data-admin-dev.hpeswlab.net -Dtest.view.host=cbg-data-admin-dev.hpeswlab.net -Dtest.answer.host=cbg-data-admin-dev.hpeswlab.net -Dtest.database=GenericDocuments"
+		} catch (e) {
+			emailext attachLog: true, body: "Check console output at ${env.BUILD_URL} to view the results.", subject: "Fenkins - ${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - ${currentBuild.result}", to: '$DEFAULT_RECIPIENTS'
+			throw e
+		}
 
 	stage 'Archive output'
 		archive 'idol/target/find.war'
@@ -69,9 +74,6 @@ node {
 		} catch (groovy.lang.MissingPropertyException e) {
 		    echo "No Artifactory plugin installed, skipping stage"
 		}
-
-	stage 'Notifications'
-		emailext attachLog: true, body: "Check console output at ${env.BUILD_URL} to view the results.", subject: "Fenkins - ${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - ${currentBuild.result}", to: '$DEFAULT_RECIPIENTS'
 }
 
 def getGitCommit() {
