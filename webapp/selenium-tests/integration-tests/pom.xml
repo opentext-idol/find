@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.hp.autonomy.frontend.find</groupId>
         <artifactId>selenium-tests</artifactId>
-        <version>11.3.1-SNAPSHOT</version>
+        <version>11.3.1</version>
     </parent>
 
     <artifactId>integration-tests</artifactId>
