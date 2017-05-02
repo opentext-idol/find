@@ -26,6 +26,7 @@
     "bjoska.bowser": "1.0.0",
     "chosen": "1.5.1",
     "corejs-typeahead": "#d60aed0",
+    "d3": "3.3.8",
     "fontawesome": "components-font-awesome#4.5.0",
     "iCheck": "1.0.1",
     "jquery": "components/jquery#1.10.2",
