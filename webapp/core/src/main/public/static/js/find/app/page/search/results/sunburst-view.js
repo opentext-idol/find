@@ -151,19 +151,18 @@ define([
                         _.bind(this.onClick, this)
                     );
                 }
-
-                const noValidChildren = _.chain(this.dependentParametricCollection.pluck('children'))
-                    .flatten()
-                    .compact()
-                    .isEmpty()
-                    .value();
-
-                if(this.fieldsCollection.at(1).get('field') !== '' && noValidChildren) {
-                    this.$message.text(i18n['search.resultsView.sunburst.error.noSecondFieldValues']);
-                } else {
-                    this.$message.empty();
-                }
             }
+
+            const noValidChildren = _.chain(this.dependentParametricCollection.pluck('children'))
+                .flatten()
+                .compact()
+                .isEmpty()
+                .value();
+
+            if(this.fieldsCollection.at(1).get('field') !== '' && noValidChildren) {
+                this.updateMessage(i18n['search.resultsView.sunburst.error.noSecondFieldValues']);
+            }
+            this.toggleContentDisplay();
         },
 
         render: function() {
