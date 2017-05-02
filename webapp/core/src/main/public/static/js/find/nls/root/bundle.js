@@ -198,9 +198,9 @@ define([
         'search.resultsView.list': 'List',
         'search.resultsView.topic-map': 'Topic Map',
         'search.resultsView.sunburst': 'Sunburst',
-        'search.resultsView.sunburst.error.noParametricValues': 'Could not display Sunburst View: your search returned no parametric values',
+        'search.resultsView.sunburst.noParametricValues': 'Could not display Sunburst View: your search returned no parametric values',
         'search.resultsView.sunburst.error.query': 'Error: could not display Sunburst View',
-        'search.resultsView.sunburst.error.noDependentParametricValues': 'There are too many parametric fields to display in Sunburst View',
+        'search.resultsView.sunburst.noDependentParametricValues': 'There are too many parametric fields to display in Sunburst View',
         'search.resultsView.sunburst.error.noSecondFieldValues': 'There are no documents with values for both fields. Showing results for only first field.',
         'search.resultsView.map': 'Map',
         'search.resultsView.map.field': 'Field',
@@ -209,7 +209,8 @@ define([
         'search.resultsView.table': 'Table',
         'search.resultsView.table.count': 'Count',
         'search.resultsView.table.error.query': 'Error: could not display Table View',
-        'search.resultsView.table.error.noDependentParametricValues': 'There are too many parametric fields to display in Table View',
+        'search.resultsView.table.noParametricValues': 'Could not display Table View: your search returned no parametric values',
+        'search.resultsView.table.noDependentParametricValues': 'There are too many parametric fields to display in Table View',
         'search.resultsView.table.info': 'Showing _START_ to _END_ of _TOTAL_ entries', // see https://datatables.net/reference/option/language.info
         'search.resultsView.table.infoFiltered': '(filtered from _MAX_ total entries)', // see https://datatables.net/reference/option/language.infoFiltered
         'search.resultsView.table.lengthMenu': 'Show _MENU_ entries', // see https://datatables.net/reference/option/language.lengthMenu
