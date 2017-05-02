@@ -10,10 +10,9 @@ define([
     'sunburst/js/sunburst',
     'find/app/page/search/results/parametric-results-view',
     'i18n!find/nls/bundle',
-    'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/search/results/sunburst/sunburst-label.html',
     'find/app/vent'
-], function(_, $, d3, Sunburst, ParametricResultsView, i18n, generateErrorHtml, labelTemplate, vent) {
+], function(_, $, d3, Sunburst, ParametricResultsView, i18n, labelTemplate, vent) {
     'use strict';
 
     const HIDDEN_COLOR = '#f0f0f0';
@@ -39,14 +38,14 @@ define([
             animate: false,
             nameAttr: 'text',
             sizeAttr: 'count',
-            comparator: function (x, y) {
+            comparator: function(x, y) {
                 const hiddenComparison = x.hidden - y.hidden;
-                if (hiddenComparison !== 0) {
+                if(hiddenComparison !== 0) {
                     return hiddenComparison;
                 }
 
                 const valueComparison = y.value - x.value;
-                if (valueComparison !== 0) {
+                if(valueComparison !== 0) {
                     return valueComparison;
                 }
 
@@ -79,7 +78,9 @@ define([
             },
             labelFormatter: function(datum, prevClicked) {
                 const zoomedOnRoot = !prevClicked || prevClicked.depth === 0;
-                const hoveringCenter = prevClicked ? datum === prevClicked.parent : datum.depth === 0;
+                const hoveringCenter = prevClicked
+                    ? datum === prevClicked.parent
+                    : datum.depth === 0;
                 const textIsEmpty = datum.text === '';
 
                 const templateArguments = {
@@ -123,8 +124,8 @@ define([
     return ParametricResultsView.extend({
         initialize: function(options) {
             ParametricResultsView.prototype.initialize.call(this, _.defaults({
-                emptyDependentMessage: i18n['search.resultsView.sunburst.error.noDependentParametricValues'],
-                emptyMessage: generateErrorHtml({errorLookup: 'emptySunburstView'}),
+                emptyDependentMessage: i18n['search.resultsView.sunburst.noDependentParametricValues'],
+                emptyMessage: i18n['search.resultsView.sunburst.noParametricValues'],
                 errorMessageArguments: {messageToUser: i18n['search.resultsView.sunburst.error.query']}
             }, options));
 
@@ -150,19 +151,18 @@ define([
                         _.bind(this.onClick, this)
                     );
                 }
-
-                const noValidChildren = _.chain(this.dependentParametricCollection.pluck('children'))
-                    .flatten()
-                    .compact()
-                    .isEmpty()
-                    .value();
-
-                if(this.fieldsCollection.at(1).get('field') !== '' && noValidChildren) {
-                    this.$message.text(i18n['search.resultsView.sunburst.error.noSecondFieldValues']);
-                } else {
-                    this.$message.empty();
-                }
             }
+
+            const noValidChildren = _.chain(this.dependentParametricCollection.pluck('children'))
+                .flatten()
+                .compact()
+                .isEmpty()
+                .value();
+
+            if(this.fieldsCollection.at(1).get('field') !== '' && noValidChildren) {
+                this.updateMessage(i18n['search.resultsView.sunburst.error.noSecondFieldValues']);
+            }
+            this.toggleContentDisplay();
         },
 
         render: function() {

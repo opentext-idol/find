@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -17,8 +17,7 @@ define([
 
         events: {
             'shown.bs.tab [data-tab-id]': function(event) {
-                var selectedTab = $(event.target).attr('data-tab-id');
-                this.model.set('selectedTab', selectedTab);
+                this.model.set('selectedTab', $(event.target).attr('data-tab-id'));
             }
         },
 
