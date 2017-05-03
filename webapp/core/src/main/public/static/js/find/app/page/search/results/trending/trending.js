@@ -38,24 +38,17 @@ define([
     const SECONDS_IN_ONE_DAY = 86400;
 
     function setScales(options, chartHeight, chartWidth) {
-        const flatCountsChain = _.chain(options.data)
-            .pluck('points')
-            .map(function(point) {
-                return _.pluck(point, 'count');
-            })
-            .flatten();
-
         return {
             xScale: d3.time.scale()
                 .domain([options.minDate, options.maxDate])
                 .range([CHART_PADDING, chartWidth]),
             yScale: d3.scale.linear()
-                .domain([flatCountsChain.min().value(), flatCountsChain.max().value()])
+                .domain([options.chartData.minRate, options.chartData.maxRate])
                 .range([chartHeight - CHART_PADDING, CHART_PADDING / 2])
         };
     }
 
-    function createHoverCallbacks(hoverEnabled, chart, scales, chartHeight, tooltipText, timeFormat) {
+    function createHoverCallbacks(hoverEnabled, chart, scales, chartHeight, tooltipText, yUnitText, timeFormat) {
         if(!hoverEnabled) {
             return {
                 lineAndPointMouseover: _.noop,
@@ -117,8 +110,11 @@ define([
         };
 
         const pointMouseover = function pointMouseoverFn(d) {
+            $(d3.event.target).tooltip('destroy');
+
             const xMid = scales.xScale(d.mid);
-            const yCount = scales.yScale(d.count);
+            const yCount = scales.yScale(d.rate);
+
             chart.append('line')
                 .attr('class', 'guide-line')
                 .attr('x1', CHART_PADDING - AXIS_DASHED_LINE_LENGTH)
@@ -134,26 +130,31 @@ define([
                 .attr('y2', chartHeight - CHART_PADDING);
 
             const title = tooltipText(
-                d.count,
+                d.rate.toPrecision(2),
+                yUnitText,
                 _.escape(this.parentNode.getAttribute('data-name')),
                 timeFormat(d.min),
                 timeFormat(d.max)
             );
-            $(d3.event.target).tooltip({
-                title: title,
-                container: 'body',
-                placement: 'top',
-                trigger: 'manual',
-                html: true
-            }).tooltip('show');
+
+            $(d3.event.target)
+                .tooltip({
+                    title: title,
+                    container: 'body',
+                    placement: 'top',
+                    trigger: 'manual',
+                    html: true
+                })
+                .tooltip('show');
 
             lineAndPointMouseover();
         };
 
         const pointMouseout = function pointMouseoutFn() {
-            chart.selectAll('.guide-line')
+            chart
+                .selectAll('.guide-line')
                 .remove();
-            $(d3.event.target).tooltip('hide');
+            $(d3.event.target).tooltip('destroy');
             mouseout();
         };
 
@@ -189,8 +190,8 @@ define([
             .call(yAxisScale);
 
         yAxis.append('text')
-            .attr('x', -(chartHeight / 2))
-            .attr('y', -(CHART_PADDING / 3 * 2))
+            .attr('x', -(CHART_PADDING + chartHeight) / 2)
+            .attr('y', -CHART_PADDING / 3 * 2)
             .attr('transform', 'rotate(270)')
             .text(yAxisLabel);
 
@@ -255,7 +256,7 @@ define([
                 .append('foreignObject')
                 .attr('class', 'x-axis-label')
                 .attr('width', widthToDouble - tickPadding)
-                .attr('transform', 'translate(' + (-(widthToDouble - tickPadding) / 2) + ', 0)' )
+                .attr('transform', 'translate(' + (-(widthToDouble - tickPadding) / 2) + ', 0)')
                 .attr('height', CHART_PADDING)
                 .attr('cursor', 'default')
                 .append('xhtml:p')
@@ -272,7 +273,7 @@ define([
         const tickPadding = 5;
         const tickWidth = width / labels[0].length;
 
-        labels.each(function () {
+        labels.each(function() {
             const label = d3.select(this);
             const words = label.text().split(/\s+/).reverse();
             const y = label.attr("y");
@@ -283,11 +284,11 @@ define([
             let tspan = label.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
 
             //noinspection AssignmentResultUsedJS
-            while (word = words.pop()) {
+            while(word = words.pop()) {
                 line.push(word);
                 tspan.text(line.join(" "));
                 //noinspection JSUnresolvedFunction
-                if (tspan.node().getComputedTextLength() > tickWidth - tickPadding) {
+                if(tspan.node().getComputedTextLength() > tickWidth - tickPadding) {
                     line.pop();
                     tspan.text(line.join(" "));
                     line = [word];
@@ -303,8 +304,8 @@ define([
                 index: i,
                 name: datum.name,
                 color: datum.color,
-                labelY: scales.yScale(datum.points[datum.points.length - 1].count),
-                dataY: scales.yScale(datum.points[datum.points.length - 1].count)
+                labelY: scales.yScale(datum.points[datum.points.length - 1].rate),
+                dataY: scales.yScale(datum.points[datum.points.length - 1].rate)
             }
         });
 
@@ -398,6 +399,8 @@ define([
     function Trending(settings) {
         this.el = settings.el;
         this.tooltipText = settings.tooltipText;
+        this.yAxisUnitsText = settings.yAxisUnitsText;
+        this.yAxisLabelForUnit = settings.yAxisLabelForUnit;
         this.zoomEnabled = settings.zoomEnabled;
         this.dragEnabled = settings.dragEnabled;
         this.hoverEnabled = settings.hoverEnabled;
@@ -408,9 +411,10 @@ define([
 
     _.extend(Trending.prototype, {
         colors: COLORS,
+
         draw: function(options) {
             const reloaded = options.reloaded;
-            const data = options.data;
+            const data = options.chartData.data;
             const minDate = options.minDate;
             const maxDate = options.maxDate;
             const $el = $(this.el);
@@ -419,7 +423,8 @@ define([
             const legendWidth = elWidth / 7;
             const chartWidth = elWidth - legendWidth;
             const chartHeight = elHeight;
-            const yAxisLabel = options.yAxisLabel;
+            const yUnitText = this.yAxisUnitsText(options.chartData.yUnit);
+
             const timeFormat = foreignObjectSupported()
                 ? getTimeFormat(maxDate, minDate)
                 : getIESafeTimeFormat(maxDate, minDate);
@@ -431,7 +436,9 @@ define([
                 this.chart,
                 scales,
                 chartHeight,
-                this.tooltipText, timeFormat
+                this.tooltipText,
+                yUnitText,
+                timeFormat
             );
 
             const line = d3.svg.line()
@@ -439,7 +446,7 @@ define([
                     return scales.xScale(d.mid)
                 })
                 .y(function(d) {
-                    return scales.yScale(d.count)
+                    return scales.yScale(d.rate)
                 })
                 .interpolate('linear');
 
@@ -505,7 +512,7 @@ define([
 
             this.pointsJoin
                 .attr('cy', function(d) {
-                    return scales.yScale(d.count);
+                    return scales.yScale(d.rate);
                 })
                 .attr('cx', function(d) {
                     return scales.xScale(d.mid);
@@ -515,7 +522,7 @@ define([
 
             this.pointsJoin.exit().remove();
 
-            setAxes(this.chart, scales, chartHeight, chartWidth, yAxisLabel, timeFormat);
+            setAxes(this.chart, scales, chartHeight, chartWidth, this.yAxisLabelForUnit(yUnitText), timeFormat);
 
             this.chart.selectAll('.legend').remove();
 
@@ -576,10 +583,10 @@ define([
                             .attr('stroke', 'none')
                             .attr('font-size', LEGEND_TEXT_HEIGHT)
                             .text(d.name)
-                            .on('mouseover', function () {
+                            .on('mouseover', function() {
                                 hoverCallbacks.legendMouseover(d.name);
                             })
-                            .on('mouseout', function () {
+                            .on('mouseout', function() {
                                 hoverCallbacks.legendMouseout(d.name);
                             });
                     }

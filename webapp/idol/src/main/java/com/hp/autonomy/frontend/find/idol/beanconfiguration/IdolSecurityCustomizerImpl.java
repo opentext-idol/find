@@ -16,6 +16,7 @@ import com.hp.autonomy.frontend.find.idol.authentication.FindCommunityRole;
 import com.hp.autonomy.user.UserService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -24,8 +25,11 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
 @Component
@@ -42,6 +46,9 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
 
     @Autowired
     private AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever;
+
+    @Value("${find.defaultRoles}")
+    private String defaultRolesProperty;
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
@@ -71,12 +78,21 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
                 .setPrivileges(Collections.singleton("login"))
                 .build();
 
+        final Set<String> defaultRoles;
+
+        if (defaultRolesProperty.isEmpty()) {
+            defaultRoles = Collections.emptySet();
+        } else {
+            defaultRoles = new HashSet<>(Arrays.asList(defaultRolesProperty.split(",")));
+        }
+
         return new CommunityAuthenticationProvider(
                 configService,
                 userService,
                 new Roles(Collections.singletonList(user)),
                 Collections.singleton("login"),
-                grantedAuthoritiesMapper
+                grantedAuthoritiesMapper,
+                defaultRoles
         );
     }
 }

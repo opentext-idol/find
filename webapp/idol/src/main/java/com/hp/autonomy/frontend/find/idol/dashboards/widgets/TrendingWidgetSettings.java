@@ -46,7 +46,7 @@ public class TrendingWidgetSettings extends SimpleComponent<TrendingWidgetSettin
     @Override
     public void basicValidate(final String section) throws ConfigException {
         if (parametricField == null) {
-            throw new ConfigException(SECTION, "Trending dashboard config must specify a parametric field");
+            throw new ConfigException(SECTION, "Trending widget config must specify a parametric field");
         }
 
         if (values != null) {

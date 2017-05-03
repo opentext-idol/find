@@ -25,6 +25,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
@@ -77,9 +78,9 @@ public class TrendingITCase extends IdolFindTestBase {
 
     @Test
     public void testCorrectValuesRendered() {
-        final List<String> values = getDataNames(trendingView.chartValueGroups());
-        final List<String> legendValues = getDataNames(trendingView.legendValueGroups());
-        assertThat("There are the same value names for the lines and the legend labels", legendValues.equals(values));
+        final Set<String> values = getDataNames(trendingView.chartValueGroups());
+        final Set<String> legendValues = getDataNames(trendingView.legendValueGroups());
+        assertThat("There are the same value names for the lines and the legend labels", values, is(equalTo(legendValues)));
     }
 
     @Test
@@ -126,7 +127,7 @@ public class TrendingITCase extends IdolFindTestBase {
 
     @Test
     public void testChangingSelectedFieldRedrawsChart() {
-        final List<String> values = getDataNames(trendingView.chartValueGroups());
+        final Set<String> values = getDataNames(trendingView.chartValueGroups());
         trendingService.changeSelectedField(3, trendingView);
         trendingView.waitForChartToLoad();
         assertThat("The values have changed", !getDataNames(trendingView.chartValueGroups()).equals(values));
@@ -181,10 +182,10 @@ public class TrendingITCase extends IdolFindTestBase {
         assertThat("Changing the slider has added fewer data points to the graph", finalPointCount, lessThan(updatedPointCount));
     }
 
-    private List<String> getDataNames(final Collection<WebElement> elements) {
+    private Set<String> getDataNames(final Collection<WebElement> elements) {
         return elements.stream()
                 .map(v -> v.getAttribute("data-name"))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     private int sliderToolTipValue(final RangeInput slider) {

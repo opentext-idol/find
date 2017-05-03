@@ -1,0 +1,15 @@
+<% var uniqueId = _.uniqueId('range-input') %>
+<label for="<%- uniqueId %>" class="m-r-xs inline">
+    <%- leftLabel %>
+</label>
+<span>
+    <input id="<%- uniqueId %>"
+             class="range-input-slider"
+             type="range"
+             value="<%- value %>"
+             min="<%- min %>"
+             max="<%- max %>"
+             step="<%- step %>"></span>
+<label for="<%- uniqueId %>" class="m-l-xs inline">
+    <%- rightLabel %>
+</label>

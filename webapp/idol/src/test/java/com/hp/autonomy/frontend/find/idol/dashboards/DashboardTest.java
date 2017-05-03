@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hewlett Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -40,8 +40,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 
+import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.AllOf.allOf;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
@@ -65,77 +67,115 @@ public class DashboardTest extends ConfigurationComponentTest<Dashboard> {
         json = new JacksonTester<>(getClass(), ResolvableType.forClass(getType()), objectMapper);
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void dashboardWithoutCoordinates() throws ConfigException {
-        Dashboard.builder()
-                .dashboardName("My First Dashboard")
+        final String dashboardName = "My First Dashboard";
+        try {
+            Dashboard.builder()
+                .dashboardName(dashboardName)
                 .enabled(true)
                 .widget(SimpleWidget.builder()
-                        .name("Sample Widget")
-                        .x(1)
-                        .y(1)
-                        .width(1)
-                        .height(1)
-                        .build())
+                            .name("Sample Widget")
+                            .x(1)
+                            .y(1)
+                            .width(1)
+                            .height(1)
+                            .build())
                 .build()
                 .basicValidate(null);
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       allOf(containsString(dashboardName),
+                             containsString("does not have valid dimensions")));
+        }
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void widgetWithoutCoordinates() throws ConfigException {
-        Dashboard.builder()
+        final String widgetName = "Sample Widget";
+        try {
+            Dashboard.builder()
                 .dashboardName("My First Dashboard")
                 .enabled(true)
                 .width(5)
                 .height(5)
                 .widget(SimpleWidget.builder()
-                        .name("Sample Widget")
-                        .build())
+                            .name(widgetName)
+                            .build())
                 .build()
                 .basicValidate(null);
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       allOf(containsString(widgetName),
+                             containsString("does not have valid coordinates and dimensions")));
+        }
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void widgetOutsideBounds() throws ConfigException {
-        Dashboard.builder()
+        final String widgetName = "Sample Widget";
+        try {
+            Dashboard.builder()
                 .dashboardName("My First Dashboard")
                 .enabled(true)
                 .width(5)
                 .height(5)
                 .widget(SimpleWidget.builder()
-                        .name("Sample Widget")
-                        .x(1)
-                        .y(1)
-                        .width(4)
-                        .height(5)
-                        .build())
+                            .name(widgetName)
+                            .x(1)
+                            .y(1)
+                            .width(4)
+                            .height(5)
+                            .build())
                 .build()
                 .basicValidate(null);
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       allOf(containsString(widgetName),
+                             containsString("extends outside the dashboard grid")));
+        }
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void overlappingWidgets() throws ConfigException {
-        Dashboard.builder()
+        final String firstWidgetName = "First Widget";
+        final String secondWidgetName = "Second Widget";
+        try {
+            Dashboard.builder()
                 .dashboardName("My First Dashboard")
                 .enabled(true)
                 .width(5)
                 .height(5)
                 .widget(SimpleWidget.builder()
-                        .name("Sample Widget")
-                        .x(0)
-                        .y(0)
-                        .width(2)
-                        .height(2)
-                        .build())
+                            .name(firstWidgetName)
+                            .x(0)
+                            .y(0)
+                            .width(2)
+                            .height(2)
+                            .build())
                 .widget(SimpleWidget.builder()
-                        .name("Sample Widget 2")
-                        .x(1)
-                        .y(1)
-                        .width(2)
-                        .height(2)
-                        .build())
+                            .name(secondWidgetName)
+                            .x(1)
+                            .y(1)
+                            .width(2)
+                            .height(2)
+                            .build())
                 .build()
                 .basicValidate(null);
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       allOf(containsString(firstWidgetName),
+                             containsString(secondWidgetName),
+                             containsString("overlap")));
+        }
     }
 
     @Override
@@ -146,94 +186,94 @@ public class DashboardTest extends ConfigurationComponentTest<Dashboard> {
     @Override
     protected Dashboard constructComponent() {
         return Dashboard.builder()
-                .dashboardName("My First Dashboard")
-                .enabled(true)
-                .width(5)
-                .height(5)
-                .widget(SimpleWidget.builder()
+            .dashboardName("My First Dashboard")
+            .enabled(true)
+            .width(5)
+            .height(5)
+            .widget(SimpleWidget.builder()
                         .name("Sample Widget")
                         .x(0)
                         .y(0)
                         .width(1)
                         .height(1)
                         .build())
-                .build();
+            .build();
     }
 
     @Override
     protected String sampleJson() throws IOException {
         return IOUtils.toString(
-                getClass().getResourceAsStream("/com/hp/autonomy/frontend/find/idol/dashboards/dashboard.json")
+            getClass().getResourceAsStream("/com/hp/autonomy/frontend/find/idol/dashboards/dashboard.json")
         );
     }
 
     @Override
     protected void validateJson(final JsonContent<Dashboard> jsonContent) {
         jsonContent.assertThat()
-                .hasJsonPathStringValue("$.dashboardName", "My First Dashboard")
-                .hasJsonPathBooleanValue("$.enabled", true)
-                .hasJsonPathNumberValue("$.width", 5)
-                .hasJsonPathNumberValue("$.height", 5)
-                .doesNotHaveEmptyJsonPathValue("$.widgets");
+            .hasJsonPathStringValue("$.dashboardName", "My First Dashboard")
+            .hasJsonPathBooleanValue("$.enabled", true)
+            .hasJsonPathNumberValue("$.width", 5)
+            .hasJsonPathNumberValue("$.height", 5)
+            .doesNotHaveEmptyJsonPathValue("$.widgets");
     }
 
     @Override
     protected void validateParsedComponent(final ObjectContent<Dashboard> objectContent) {
         objectContent.assertThat().isEqualTo(
-                Dashboard.builder()
-                        .dashboardName("Default Dashboard")
-                        .enabled(false)
-                        .width(3)
-                        .height(3)
-                        .widget(SimpleWidget.builder()
-                                .name("Default Widget")
-                                .type("ClockWidget")
-                                .x(0)
-                                .y(0)
-                                .width(1)
-                                .height(1)
-                                .widgetSettings(SimpleWidgetSettings.builder().build())
-                                .build())
-                        .widget(SunburstWidget.builder()
-                                .name("star 769 (content type/author) 7 entries")
-                                .type("SunburstWidget")
-                                .x(0)
-                                .y(4)
-                                .width(5)
-                                .height(2)
-                                .datasource(SavedSearch.builder()
-                                        .source("SavedSearch")
-                                        .config(SavedSearchConfig.builder()
-                                                .id(769L)
-                                                .type(SavedSearchType.QUERY)
+            Dashboard.builder()
+                .dashboardName("Default Dashboard")
+                .enabled(false)
+                .width(3)
+                .height(3)
+                .widget(SimpleWidget.builder()
+                            .name("Default Widget")
+                            .type("ClockWidget")
+                            .x(0)
+                            .y(0)
+                            .width(1)
+                            .height(1)
+                            .widgetSettings(SimpleWidgetSettings.builder().build())
+                            .build())
+                .widget(SunburstWidget.builder()
+                            .name("star 769 (content type/author) 7 entries")
+                            .type("SunburstWidget")
+                            .x(0)
+                            .y(4)
+                            .width(5)
+                            .height(2)
+                            .datasource(SavedSearch.builder()
+                                            .source("SavedSearch")
+                                            .config(SavedSearchConfig.builder()
+                                                        .id(769L)
+                                                        .type(SavedSearchType.QUERY)
+                                                        .build())
+                                            .build())
+                            .widgetSettings(SunburstWidgetSettings.builder()
+                                                .firstField(tagNameFactory.buildTagName("CONTENT-TYPE"))
+                                                .secondField(tagNameFactory.buildTagName("AUTHOR"))
+                                                .maxLegendEntries(7)
                                                 .build())
-                                        .build())
-                                .widgetSettings(SunburstWidgetSettings.builder()
-                                        .firstField(tagNameFactory.buildTagName("CONTENT-TYPE"))
-                                        .secondField(tagNameFactory.buildTagName("AUTHOR"))
-                                        .maxLegendEntries(7)
-                                        .build())
-                                .build())
-                        .build()
+                            .build())
+                .build()
         );
     }
 
     @Override
     protected void validateMergedComponent(final ObjectContent<Dashboard> objectContent) {
         objectContent.assertThat().isEqualTo(
-                Dashboard.builder()
-                        .dashboardName("My First Dashboard")
-                        .enabled(true)
-                        .width(5)
-                        .height(5)
-                        .widget(SimpleWidget.builder()
-                                .name("Sample Widget")
-                                .x(0)
-                                .y(0)
-                                .width(1)
-                                .height(1)
-                                .build())
-                        .build()
+            Dashboard.builder()
+                .dashboardName("My First Dashboard")
+                .enabled(true)
+                .width(5)
+                .height(5)
+                .widget(SimpleWidget.builder()
+                            .name("Sample Widget")
+                            .x(0)
+                            .y(0)
+                            .width(1)
+                            .height(1)
+                            .build())
+                .build()
         );
     }
 

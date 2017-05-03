@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.hod.configuration;
 
 import com.hp.autonomy.frontend.configuration.ConfigException;
@@ -6,6 +11,7 @@ import com.hp.autonomy.frontend.find.core.configuration.UiCustomizationOptionsTe
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import org.apache.commons.io.IOUtils;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.springframework.boot.test.json.JsonContent;
 import org.springframework.boot.test.json.ObjectContent;
@@ -15,7 +21,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 
-import static org.hamcrest.Matchers.*;
+import static junit.framework.TestCase.fail;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -30,15 +40,14 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
     protected HodConfig constructComponent() {
         try {
             return HodConfig.builder()
-                    .activeIndexes(Collections.singletonList(ResourceName.WIKI_CHI))
-                    .publicIndexesEnabled(true)
-                    .apiKey(new ApiKey("api-key-abc"))
-                    .ssoPageGetUrl(new URL("https://dev.havenapps.io/sso.html"))
-                    .ssoPagePostUrl(new URL("https://dev.havenapps.io/sso"))
-                    .endpointUrl(new URL("https://api.int.havenondemand.com"))
-                    .build();
-
-        } catch (final MalformedURLException e) {
+                .activeIndexes(Collections.singletonList(ResourceName.WIKI_CHI))
+                .publicIndexesEnabled(true)
+                .apiKey(new ApiKey("api-key-abc"))
+                .ssoPageGetUrl(new URL("https://dev.havenapps.io/sso.html"))
+                .ssoPagePostUrl(new URL("https://dev.havenapps.io/sso"))
+                .endpointUrl(new URL("https://api.int.havenondemand.com"))
+                .build();
+        } catch(final MalformedURLException e) {
             throw new AssertionError("Failed to parse URL", e);
         }
     }
@@ -90,47 +99,75 @@ public class HodConfigTest extends ConfigurationComponentTest<HodConfig> {
         // TODO: Remove this override once ISO-51 is complete
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void nullApiKeyInvalid() throws ConfigException, MalformedURLException {
-        HodConfig.builder()
+        try {
+            HodConfig.builder()
                 .apiKey(null)
                 .publicIndexesEnabled(true)
                 .ssoPageGetUrl(new URL("https://dev.int.havenapps.io/sso.html"))
                 .endpointUrl(new URL("https://api.int.havenondemand.com"))
                 .build()
                 .basicValidate("configSection");
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            MatcherAssert.assertThat("Exception has the correct message",
+                                     e.getMessage(),
+                                     containsString("Application API key must be provided"));
+        }
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void nullPublicIndexesEnabledInvalid() throws ConfigException, MalformedURLException {
-        HodConfig.builder()
+        try {
+            HodConfig.builder()
                 .apiKey(new ApiKey("my-api-key"))
                 .publicIndexesEnabled(null)
                 .ssoPageGetUrl(new URL("https://dev.int.havenapps.io/sso.html"))
                 .endpointUrl(new URL("https://api.int.havenondemand.com"))
                 .build()
                 .basicValidate("configSection");
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            MatcherAssert.assertThat("Exception has the correct message",
+                                     e.getMessage(),
+                                     containsString("The publicIndexesEnabled option must be specified"));
+        }
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void nullSsoPageUrlInvalid() throws ConfigException, MalformedURLException {
-        HodConfig.builder()
+        try {
+            HodConfig.builder()
                 .apiKey(new ApiKey("my-api-key"))
                 .publicIndexesEnabled(true)
                 .endpointUrl(new URL("https://api.int.havenondemand.com"))
                 .ssoPageGetUrl(null)
                 .build()
                 .basicValidate("configSection");
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            MatcherAssert.assertThat("Exception has the correct message",
+                                     e.getMessage(),
+                                     containsString("Both URLs for the SSO page must be provided"));
+        }
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void nullEndpointUrlInvalid() throws ConfigException, MalformedURLException {
-        HodConfig.builder()
+        try {
+            HodConfig.builder()
                 .apiKey(new ApiKey("my-api-key"))
                 .publicIndexesEnabled(true)
                 .ssoPageGetUrl(new URL("https://dev.int.havenapps.io/sso.html"))
                 .endpointUrl(null)
                 .build()
                 .basicValidate("configSection");
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            MatcherAssert.assertThat("Exception has the correct message",
+                                     e.getMessage(),
+                                     containsString("Both URLs for the SSO page must be provided"));
+        }
     }
 }

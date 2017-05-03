@@ -196,7 +196,10 @@ define([
 
         describe('when fetching the bucketed data', function() {
             beforeEach(function() {
-                const bucketedFetchOptions = _.extend(this.fetchOptions, { selectedFieldValues: this.fetchData[0].values });
+                const bucketedFetchOptions = _.extend({
+                    selectedFieldValues: this.fetchData[0].values
+                }, this.fetchOptions);
+
                 this.bucketedResult = trendingStrategy.fetchBucketedData(bucketedFetchOptions);
             });
 
@@ -228,6 +231,18 @@ define([
                     });
                     expect(bucketedResult).toHaveLength(4);
                     expect(bucketedResult[0].values).toEqual(this.bucketData.values)
+                });
+            });
+
+            describe('when the returned abort method is called', function() {
+                beforeEach(function() {
+                    this.bucketedResult.abort();
+                });
+
+                it('calls abort on the bucketed parametric XHR objects', function() {
+                    BucketedParametricCollection.Model.fetchPromises.forEach(function(promise) {
+                        expect(promise.abort.calls.count()).toBe(1);
+                    });
                 });
             });
         });
@@ -291,15 +306,28 @@ define([
             });
 
             it('should return only the values that fit in the current min-max range', function() {
-                expect(this.chartData).toHaveLength(4);
-                expect(this.chartData[0].points).toHaveLength(4);
+                expect(this.chartData.data).toHaveLength(4);
+                expect(this.chartData.data[0].points).toHaveLength(4);
             });
 
             it('should return data with mid points', function() {
-                expect(this.chartData[0].points[2].mid).toBeTruthy();
-                expect(this.chartData[1].points[2].mid).toBeTruthy();
-                expect(this.chartData[2].points[2].mid).toBeTruthy();
-                expect(this.chartData[3].points[2].mid).toBeTruthy();
+                expect(this.chartData.data[0].points[2].mid).toBeTruthy();
+                expect(this.chartData.data[1].points[2].mid).toBeTruthy();
+                expect(this.chartData.data[2].points[2].mid).toBeTruthy();
+                expect(this.chartData.data[3].points[2].mid).toBeTruthy();
+            });
+
+            it('returns the y axis unit', function() {
+                expect(this.chartData.yUnit).toBe('MINUTE');
+            });
+
+            it('converts the counts to rates', function() {
+                expect(this.chartData.data[0].points[0].rate).toBe(12);
+            });
+
+            it('returns out the minRate and maxRate', function() {
+                expect(this.chartData.minRate).toBe(0);
+                expect(this.chartData.maxRate).toBe(12);
             });
         });
     });

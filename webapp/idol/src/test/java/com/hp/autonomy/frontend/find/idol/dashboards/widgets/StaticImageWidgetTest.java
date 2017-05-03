@@ -16,22 +16,44 @@ import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 public class StaticImageWidgetTest extends ConfigurationComponentTest<StaticImageWidget> {
-    @Test(expected = ConfigException.class)
+    @Test
     public void noWidgetSettings() throws ConfigException {
-        StaticImageWidget.builder()
+        try {
+            StaticImageWidget.builder()
+                .x(1)
+                .y(1)
+                .width(1)
+                .height(1)
                 .build()
                 .basicValidate(null);
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       containsString("Widget Settings must be specified for Static Image Widget"));
+        }
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void noUrl() throws ConfigException {
-        StaticImageWidget.builder()
-                .widgetSettings(StaticImageWidgetSettings.builder()
-                        .build())
+        try {
+            StaticImageWidget.builder()
+                .widgetSettings(StaticImageWidgetSettings.builder().build())
+                .x(1)
+                .y(1)
+                .width(1)
+                .height(1)
                 .build()
                 .basicValidate(null);
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       containsString("Static Image Widget must contain a url"));
+        }
     }
 
     @Override
@@ -42,6 +64,61 @@ public class StaticImageWidgetTest extends ConfigurationComponentTest<StaticImag
     @Override
     protected StaticImageWidget constructComponent() {
         return StaticImageWidget.builder()
+            .name("Test Widget")
+            .type("StaticImageWidget")
+            .x(1)
+            .y(1)
+            .width(1)
+            .height(1)
+            .widgetSettings(StaticImageWidgetSettings.builder()
+                                .url("http://placehold.it/800x300")
+                                .widgetSetting("testing", "testing")
+                                .build())
+            .build();
+    }
+
+    @Override
+    protected String sampleJson() throws IOException {
+        return IOUtils.toString(
+            getClass().getResourceAsStream("/com/hp/autonomy/frontend/find/idol/dashboards/widgets/staticImageWidget.json")
+        );
+    }
+
+    @Override
+    protected void validateJson(final JsonContent<StaticImageWidget> jsonContent) {
+        jsonContent.assertThat()
+            .hasJsonPathStringValue("$.name", "Test Widget")
+            .hasJsonPathStringValue("$.type", "StaticContentWidget")
+            .hasJsonPathNumberValue("$.x", 1)
+            .hasJsonPathNumberValue("$.y", 1)
+            .hasJsonPathNumberValue("$.width", 1)
+            .hasJsonPathNumberValue("$.height", 1)
+            .hasJsonPathStringValue("$.widgetSettings.url", "http://placehold.it/800x300")
+            .hasJsonPathStringValue("$.widgetSettings.testing", "testing");
+    }
+
+    @Override
+    protected void validateParsedComponent(final ObjectContent<StaticImageWidget> objectContent) {
+        objectContent.assertThat().isEqualTo(
+            StaticImageWidget.builder()
+                .name("Static Image")
+                .type("StaticImageWidget")
+                .x(1)
+                .y(1)
+                .width(2)
+                .height(2)
+                .widgetSettings(StaticImageWidgetSettings.builder()
+                                    .url("http://placehold.it/800x300")
+                                    .widgetSetting("testing", "testing")
+                                    .build())
+                .build()
+        );
+    }
+
+    @Override
+    protected void validateMergedComponent(final ObjectContent<StaticImageWidget> objectContent) {
+        objectContent.assertThat().isEqualTo(
+            StaticImageWidget.builder()
                 .name("Test Widget")
                 .type("StaticImageWidget")
                 .x(1)
@@ -49,65 +126,10 @@ public class StaticImageWidgetTest extends ConfigurationComponentTest<StaticImag
                 .width(1)
                 .height(1)
                 .widgetSettings(StaticImageWidgetSettings.builder()
-                        .url("http://placehold.it/800x300")
-                        .widgetSetting("testing", "testing")
-                        .build())
-                .build();
-    }
-
-    @Override
-    protected String sampleJson() throws IOException {
-        return IOUtils.toString(
-                getClass().getResourceAsStream("/com/hp/autonomy/frontend/find/idol/dashboards/widgets/staticImageWidget.json")
-        );
-    }
-
-    @Override
-    protected void validateJson(final JsonContent<StaticImageWidget> jsonContent) {
-        jsonContent.assertThat()
-                .hasJsonPathStringValue("$.name", "Test Widget")
-                .hasJsonPathStringValue("$.type", "StaticContentWidget")
-                .hasJsonPathNumberValue("$.x", 1)
-                .hasJsonPathNumberValue("$.y", 1)
-                .hasJsonPathNumberValue("$.width", 1)
-                .hasJsonPathNumberValue("$.height", 1)
-                .hasJsonPathStringValue("$.widgetSettings.url", "http://placehold.it/800x300")
-                .hasJsonPathStringValue("$.widgetSettings.testing", "testing");
-    }
-
-    @Override
-    protected void validateParsedComponent(final ObjectContent<StaticImageWidget> objectContent) {
-        objectContent.assertThat().isEqualTo(
-                StaticImageWidget.builder()
-                        .name("Static Image")
-                        .type("StaticImageWidget")
-                        .x(1)
-                        .y(1)
-                        .width(2)
-                        .height(2)
-                        .widgetSettings(StaticImageWidgetSettings.builder()
-                                .url("http://placehold.it/800x300")
-                                .widgetSetting("testing", "testing")
-                                .build())
-                        .build()
-        );
-    }
-
-    @Override
-    protected void validateMergedComponent(final ObjectContent<StaticImageWidget> objectContent) {
-        objectContent.assertThat().isEqualTo(
-                StaticImageWidget.builder()
-                        .name("Test Widget")
-                        .type("StaticImageWidget")
-                        .x(1)
-                        .y(1)
-                        .width(1)
-                        .height(1)
-                        .widgetSettings(StaticImageWidgetSettings.builder()
-                                .url("http://placehold.it/800x300")
-                                .widgetSetting("testing", "testing")
-                                .build())
-                        .build()
+                                    .url("http://placehold.it/800x300")
+                                    .widgetSetting("testing", "testing")
+                                    .build())
+                .build()
         );
     }
 

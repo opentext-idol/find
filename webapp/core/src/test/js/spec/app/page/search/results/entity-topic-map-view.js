@@ -37,30 +37,12 @@ define([
                 if(sliderDisplayed) {
                     it('is present', function() {
                         this.createView(DEFAULT_MAX_RESULTS, sliderDisplayed);
-                        expect(this.view.$('.speed-slider')).toHaveLength(1);
-                    });
-
-                    it('obeys the hard-coded minimum', function() {
-                        this.createView(MINIMUM_ALLOWED_MAX_RESULTS - 20, sliderDisplayed);
-                        expect(this.view.$('.speed-slider').val()).toBe(MINIMUM_ALLOWED_MAX_RESULTS + '');
-                        expect(this.view.$('.speed-slider')).toHaveAttr('max', MINIMUM_ALLOWED_MAX_RESULTS + '');
-                    });
-
-                    it('uses the configured maximum', function() {
-                        this.createView(17 * DEFAULT_MAX_RESULTS, sliderDisplayed);
-                        expect(this.view.$('.speed-slider').val()).toBe(DEFAULT_MAX_RESULTS + '');
-                        expect(this.view.$('.speed-slider')).toHaveAttr('max', (17 * DEFAULT_MAX_RESULTS) + '');
-                    });
-
-                    it('does not exceed the configured maximum', function() {
-                        this.createView(DEFAULT_MAX_RESULTS - 11, sliderDisplayed);
-                        expect(this.view.$('.speed-slider').val()).toBe((DEFAULT_MAX_RESULTS - 11) + '');
-                        expect(this.view.$('.speed-slider')).toHaveAttr('max', (DEFAULT_MAX_RESULTS - 11) + '');
+                        expect(this.view.slider).toBeDefined();
                     });
                 } else {
                     it('is absent', function() {
                         this.createView(DEFAULT_MAX_RESULTS, sliderDisplayed);
-                        expect(this.view.$('.speed-slider')).toHaveLength(0);
+                        expect(this.view.slider).not.toBeDefined();
                     });
                 }
             });
@@ -109,17 +91,17 @@ define([
             describe('the model', function() {
                 it('obeys the hard-coded minimum', function() {
                     this.createView(1);
-                    expect(this.view.model.get('maxResults')).toBe(MINIMUM_ALLOWED_MAX_RESULTS);
+                    expect(this.view.model.get('value')).toBe(MINIMUM_ALLOWED_MAX_RESULTS);
                 });
 
                 it('is initialised with the correct default value', function() {
                     this.createView(10 * DEFAULT_MAX_RESULTS);
-                    expect(this.view.model.get('maxResults')).toBe(DEFAULT_MAX_RESULTS);
+                    expect(this.view.model.get('value')).toBe(DEFAULT_MAX_RESULTS);
                 });
 
                 it('the default does not exceed the configured maximum', function() {
                     this.createView(DEFAULT_MAX_RESULTS - 22);
-                    expect(this.view.model.get('maxResults')).toBe(DEFAULT_MAX_RESULTS - 22);
+                    expect(this.view.model.get('value')).toBe(DEFAULT_MAX_RESULTS - 22);
                 });
             });
 
@@ -152,17 +134,17 @@ define([
                 describe('the model', function() {
                     it('obeys the hard-coded minimum', function() {
                         this.createView(MINIMUM_ALLOWED_MAX_RESULTS - 20);
-                        expect(this.view.model.get('maxResults')).toBe(MINIMUM_ALLOWED_MAX_RESULTS);
+                        expect(this.view.model.get('value')).toBe(MINIMUM_ALLOWED_MAX_RESULTS);
                     });
 
                     it('is initialised with the maximum value (smaller than default)', function() {
                         this.createView(DEFAULT_MAX_RESULTS - 33);
-                        expect(this.view.model.get('maxResults')).toBe(DEFAULT_MAX_RESULTS - 33);
+                        expect(this.view.model.get('value')).toBe(DEFAULT_MAX_RESULTS - 33);
                     });
 
                     it('is initialised with the maximum value (larger than default)', function() {
                         this.createView(12 * DEFAULT_MAX_RESULTS);
-                        expect(this.view.model.get('maxResults')).toBe(12 * DEFAULT_MAX_RESULTS);
+                        expect(this.view.model.get('value')).toBe(12 * DEFAULT_MAX_RESULTS);
                     });
                 });
             });
@@ -176,7 +158,7 @@ define([
 
             describe('when there are no entities in the collection', function() {
                 it('contains a speed slider', function() {
-                    expect(this.view.$('.speed-slider')).toHaveLength(1);
+                    expect(this.view.slider).toBeDefined();
                 });
 
                 it('shows the empty message', function() {
@@ -207,13 +189,11 @@ define([
                 });
 
                 it('contains a speed slider', function() {
-                    expect(this.view.$('.speed-slider')).toHaveLength(1);
+                    expect(this.view.slider).toBeDefined();
                 });
 
-                it('sets up the speed slider correctly', function() {
-                    expect(this.view.model.get('maxResults')).toBe(DEFAULT_MAX_RESULTS);
-                    expect(this.view.$('.speed-slider').val()).toBe(DEFAULT_MAX_RESULTS + '');
-                    expect(this.view.$('.speed-slider')).toHaveAttr('max', (2 * DEFAULT_MAX_RESULTS) + '');
+                it('sets up the model correctly', function() {
+                    expect(this.view.model.get('value')).toBe(DEFAULT_MAX_RESULTS);
                 });
 
                 it('does not show the loading indicator', function() {
@@ -226,12 +206,6 @@ define([
 
                 it('does not show the empty message', function() {
                     expect(this.view.$('.entity-topic-map-empty')).toHaveClass('hide');
-                });
-
-                it('updates the model maxResults attribute when the slider is moved', function() {
-                    const currentSliderValue = +this.view.$('.speed-slider').val();
-                    this.view.$('.speed-slider').val(currentSliderValue - 50).trigger('change');
-                    expect(this.view.model.get('maxResults')).toBe((currentSliderValue - 50) + '');
                 });
 
                 describe('when the entities collection is fetched', function() {

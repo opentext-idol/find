@@ -1,9 +1,11 @@
 /*
- * Copyright 2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-define(function() {
+define([
+    'jquery'
+], function($) {
     'use strict';
 
     const fetchFieldSpy = jasmine.createSpy('fetchField');
@@ -34,27 +36,23 @@ define(function() {
 
     fetchBucketedDataSpy.and.callFake(function() {
         const promise = $.Deferred();
-
+        promise.abort = jasmine.createSpy('abort');
         MockTrendingStrategy.fetchBucketedDataPromises.push(promise);
         return promise;
     });
 
     createChartDataSpy.and.callFake(function() {
-        return [{
-            points: [{
-                count: 1,
-                mid: 0,
-                min: 5,
-                max: 10
+        return {
+            data: [{
+                points: [
+                    {count: 1, mid: 0, min: 5, max: 10}
+                ]
+            }, {
+                points: [
+                    {count: 3, mid: 10, min: 15, max: 20}
+                ]
             }]
-        }, {
-            points: [{
-                count: 3,
-                mid: 10,
-                min: 15,
-                max: 20
-            }]
-        }]
+        };
     });
 
     MockTrendingStrategy.reset = function() {

@@ -56,7 +56,10 @@ define([
             this.errorMessageArguments = options.errorMessageArguments;
 
             this.dependentParametricCollection = options.dependentParametricCollection || new DependentParametricCollection();
-            this.fieldsCollection = new Backbone.Collection([{field: '', displayName: ''}, {field: '', displayName: ''}]);
+            this.fieldsCollection = new Backbone.Collection([{field: '', displayName: ''}, {
+                field: '',
+                displayName: ''
+            }]);
 
             this.onClick = this.savedSearchModel.get('type') === SNAPSHOT ? _.noop : this.onSavedSearchClick;
 
@@ -152,10 +155,11 @@ define([
         },
 
         onSavedSearchClick: function(data) {
-            const selectedParameters = getClickedParameters(data, this.fieldsCollection.invoke('pick', 'field', 'displayName'), []);
+            const selectedParameters = getClickedParameters(data,
+                this.fieldsCollection.invoke('pick', 'field', 'displayName'), []);
 
             // empty value means padding element was clicked on
-            if (!_.findWhere(selectedParameters, {value: ''})) {
+            if(!_.findWhere(selectedParameters, {value: ''})) {
                 this.selectedParametricValues.add(selectedParameters);
             }
         },
@@ -165,7 +169,7 @@ define([
 
             this.$parametricSelections.toggleClass('hide', noMoreParametricFields);
 
-            if (noMoreParametricFields) {
+            if(noMoreParametricFields) {
                 this.model.set('loading', false);
                 this.updateMessage(this.emptyMessage);
             } else {
@@ -176,10 +180,9 @@ define([
         updateData: function() {
             this.model.set('loading', false);
 
-            if(!this.parametricCollection.fetching && !this.dependentParametricCollection.isEmpty()) {
+            if(!(this.parametricCollection.fetching || this.dependentParametricCollection.isEmpty())) {
                 this.update();
             } else if(this.dependentParametricCollection.isEmpty()) {
-                this.model.set('loading', false);
                 this.updateMessage(this.emptyDependentMessage);
             }
 
@@ -200,9 +203,11 @@ define([
             this.firstChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(0),
                 name: 'first',
-                fields: this.parametricCollection.invoke('pick', 'id', 'displayName').filter(function (data) {
-                    return !selectedFieldsAndValues[data.id];
-                }.bind(this)),
+                fields: this.parametricCollection
+                    .invoke('pick', 'id', 'displayName')
+                    .filter(function(data) {
+                        return !selectedFieldsAndValues[data.id];
+                    }.bind(this)),
                 allowEmpty: false
             });
 
@@ -219,9 +224,12 @@ define([
             this.secondChosen = new FieldSelectionView({
                 model: this.fieldsCollection.at(1),
                 name: 'second',
-                fields: this.parametricCollection.invoke('pick', 'id', 'displayName').filter(function (data) {
-                    return data.id !== this.fieldsCollection.at(0).get('field') && !selectedFieldsAndValues[data.id];
-                }.bind(this)).sort(),
+                fields: this.parametricCollection
+                    .invoke('pick', 'id', 'displayName')
+                    .filter(function(data) {
+                        return !(data.id === this.fieldsCollection.at(0).get('field') || selectedFieldsAndValues[data.id]);
+                    }.bind(this))
+                    .sort(),
                 allowEmpty: true
             });
 

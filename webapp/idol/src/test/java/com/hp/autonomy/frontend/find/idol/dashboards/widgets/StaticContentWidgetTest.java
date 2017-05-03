@@ -16,22 +16,44 @@ import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 public class StaticContentWidgetTest extends ConfigurationComponentTest<StaticContentWidget> {
-    @Test(expected = ConfigException.class)
+    @Test
     public void noWidgetSettings() throws ConfigException {
-        StaticContentWidget.builder()
+        try {
+            StaticContentWidget.builder()
+                .x(1)
+                .y(1)
+                .width(1)
+                .height(1)
                 .build()
                 .basicValidate(null);
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       containsString("Widget Settings must be specified for Static Content Widget"));
+        }
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void noHtml() throws ConfigException {
-        StaticContentWidget.builder()
-                .widgetSettings(StaticContentWidgetSettings.builder()
-                        .build())
+        try {
+            StaticContentWidget.builder()
+                .widgetSettings(StaticContentWidgetSettings.builder().build())
+                .x(1)
+                .y(1)
+                .width(1)
+                .height(1)
                 .build()
                 .basicValidate(null);
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       containsString("Static content widget must contain html"));
+        }
     }
 
     @Override
@@ -42,6 +64,61 @@ public class StaticContentWidgetTest extends ConfigurationComponentTest<StaticCo
     @Override
     protected StaticContentWidget constructComponent() {
         return StaticContentWidget.builder()
+            .name("Test Widget")
+            .type("StaticContentWidget")
+            .x(1)
+            .y(1)
+            .width(1)
+            .height(1)
+            .widgetSettings(StaticContentWidgetSettings.builder()
+                                .html("Hello World!")
+                                .widgetSetting("testing", "testing")
+                                .build())
+            .build();
+    }
+
+    @Override
+    protected String sampleJson() throws IOException {
+        return IOUtils.toString(
+            getClass().getResourceAsStream("/com/hp/autonomy/frontend/find/idol/dashboards/widgets/staticContentWidget.json")
+        );
+    }
+
+    @Override
+    protected void validateJson(final JsonContent<StaticContentWidget> jsonContent) {
+        jsonContent.assertThat()
+            .hasJsonPathStringValue("$.name", "Test Widget")
+            .hasJsonPathStringValue("$.type", "StaticContentWidget")
+            .hasJsonPathNumberValue("$.x", 1)
+            .hasJsonPathNumberValue("$.y", 1)
+            .hasJsonPathNumberValue("$.width", 1)
+            .hasJsonPathNumberValue("$.height", 1)
+            .hasJsonPathStringValue("$.widgetSettings.html", "Hello World!")
+            .hasJsonPathStringValue("$.widgetSettings.testing", "testing");
+    }
+
+    @Override
+    protected void validateParsedComponent(final ObjectContent<StaticContentWidget> objectContent) {
+        objectContent.assertThat().isEqualTo(
+            StaticContentWidget.builder()
+                .name("")
+                .type("StaticContentWidget")
+                .x(1)
+                .y(1)
+                .width(2)
+                .height(2)
+                .widgetSettings(StaticContentWidgetSettings.builder()
+                                    .html("<div><p style=\"font-weight: bold; font-style: italic\">I love cheese</p><p>cheese is the best</p></div>")
+                                    .widgetSetting("testing", "testing")
+                                    .build())
+                .build()
+        );
+    }
+
+    @Override
+    protected void validateMergedComponent(final ObjectContent<StaticContentWidget> objectContent) {
+        objectContent.assertThat().isEqualTo(
+            StaticContentWidget.builder()
                 .name("Test Widget")
                 .type("StaticContentWidget")
                 .x(1)
@@ -49,65 +126,10 @@ public class StaticContentWidgetTest extends ConfigurationComponentTest<StaticCo
                 .width(1)
                 .height(1)
                 .widgetSettings(StaticContentWidgetSettings.builder()
-                        .html("Hello World!")
-                        .widgetSetting("testing", "testing")
-                        .build())
-                .build();
-    }
-
-    @Override
-    protected String sampleJson() throws IOException {
-        return IOUtils.toString(
-                getClass().getResourceAsStream("/com/hp/autonomy/frontend/find/idol/dashboards/widgets/staticContentWidget.json")
-        );
-    }
-
-    @Override
-    protected void validateJson(final JsonContent<StaticContentWidget> jsonContent) {
-        jsonContent.assertThat()
-                .hasJsonPathStringValue("$.name", "Test Widget")
-                .hasJsonPathStringValue("$.type", "StaticContentWidget")
-                .hasJsonPathNumberValue("$.x", 1)
-                .hasJsonPathNumberValue("$.y", 1)
-                .hasJsonPathNumberValue("$.width", 1)
-                .hasJsonPathNumberValue("$.height", 1)
-                .hasJsonPathStringValue("$.widgetSettings.html", "Hello World!")
-                .hasJsonPathStringValue("$.widgetSettings.testing", "testing");
-    }
-
-    @Override
-    protected void validateParsedComponent(final ObjectContent<StaticContentWidget> objectContent) {
-        objectContent.assertThat().isEqualTo(
-                StaticContentWidget.builder()
-                        .name("")
-                        .type("StaticContentWidget")
-                        .x(1)
-                        .y(1)
-                        .width(2)
-                        .height(2)
-                        .widgetSettings(StaticContentWidgetSettings.builder()
-                                .html("<div><p style=\"font-weight: bold; font-style: italic\">I love cheese</p><p>cheese is the best</p></div>")
-                                .widgetSetting("testing", "testing")
-                                .build())
-                        .build()
-        );
-    }
-
-    @Override
-    protected void validateMergedComponent(final ObjectContent<StaticContentWidget> objectContent) {
-        objectContent.assertThat().isEqualTo(
-                StaticContentWidget.builder()
-                        .name("Test Widget")
-                        .type("StaticContentWidget")
-                        .x(1)
-                        .y(1)
-                        .width(1)
-                        .height(1)
-                        .widgetSettings(StaticContentWidgetSettings.builder()
-                                .html("Hello World!")
-                                .widgetSetting("testing", "testing")
-                                .build())
-                        .build()
+                                    .html("Hello World!")
+                                    .widgetSetting("testing", "testing")
+                                    .build())
+                .build()
         );
     }
 

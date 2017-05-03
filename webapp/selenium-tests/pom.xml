@@ -13,7 +13,7 @@
     <groupId>com.hp.autonomy.frontend.find</groupId>
     <artifactId>selenium-tests</artifactId>
     <packaging>pom</packaging>
-    <version>11.3.1-SNAPSHOT</version>
+    <version>11.4.0-SNAPSHOT</version>
 
     <properties>
         <qa.infrastructure.version>2.10.1</qa.infrastructure.version>

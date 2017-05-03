@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -28,13 +28,24 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasTagName;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -51,7 +62,6 @@ public class ResultsITCase extends FindTestBase {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
         findPage.goToListView();
-
     }
 
     @Test
@@ -61,8 +71,8 @@ public class ResultsITCase extends FindTestBase {
 
         final ListView results = findService.search(searchTerm);
 
-        for (final WebElement searchElement : results.resultsContainingString(searchTerm)) {
-            if (searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
+        for(final WebElement searchElement : results.resultsContainingString(searchTerm)) {
+            if(searchElement.isDisplayed()) {        //They can become hidden if they're too far in the summary
                 verifyThat(searchElement.getText().toLowerCase(), containsString(searchTerm));
             }
             verifyThat(searchElement, not(hasTagName("a")));
@@ -84,7 +94,7 @@ public class ResultsITCase extends FindTestBase {
 
         final List<String> references = new ArrayList<>();
 
-        for (final FindResult result : results.getResults()) {
+        for(final FindResult result : results.getResults()) {
             references.add(result.getReference());
         }
 
@@ -113,7 +123,7 @@ public class ResultsITCase extends FindTestBase {
         final ListView results = findService.search("thissearchwillalmostcertainlyreturnnoresults");
 
         new WebDriverWait(getDriver(), 60L).withMessage("No results message should appear")
-                .until(ExpectedConditions.textToBePresentInElement(results.resultsDiv(), "No results found"));
+            .until(ExpectedConditions.textToBePresentInElement(results.resultsDiv(), "No results found"));
 
         findPage.scrollToBottom();
 
@@ -156,8 +166,8 @@ public class ResultsITCase extends FindTestBase {
         search(term);
         assertThat("Has autocorrected", findPage.hasAutoCorrected());
         assertThat("Has autocorrected " + term + " to " + termAutoCorrected,
-                findPage.getCorrectedQuery().toLowerCase(),
-                is("( " + termAutoCorrected + " )"));
+                   findPage.getCorrectedQuery().toLowerCase(),
+                   is("( " + termAutoCorrected + " )"));
 
         findPage.waitForParametricValuesToLoad();
         verifyThat("Still has parametric fields", getElementFactory().getFilterPanel().parametricField(indexOfCategoryWFilters).getFilterCount(), not(0));
@@ -183,8 +193,8 @@ public class ResultsITCase extends FindTestBase {
         results.waitForResultsToLoad();
         findPage.waitForParametricValuesToLoad();
         assumeThat(term + " has been auto-corrected to " + findPage.getCorrectedQuery() + " and this returns some results",
-                results.getTotalResultsNum(),
-                greaterThan(0));
+                   results.getTotalResultsNum(),
+                   greaterThan(0));
 
         assertThat("\"No more results\" message not present.", !findPage.resultsMessagePresent());
     }
@@ -196,6 +206,9 @@ public class ResultsITCase extends FindTestBase {
         search(query);
 
         getDriver().navigate().refresh();
+
+        findPage = getElementFactory().getFindPage();
+        findPage.waitForLoad();
 
         // This could fail because %2F can be blocked by Tomcat
         assertThat(getElementFactory().getSearchBox().getValue(), is(query));
@@ -213,7 +226,7 @@ public class ResultsITCase extends FindTestBase {
         findPage.waitForParametricValuesToLoad();
 
         //TODO: part of the bad structure -> will be fixed w/ refactor of Roles vs App.
-        ((BIIdolFindElementFactory) getElementFactory()).getSearchOptionsBar().exportResultsToCSV();
+        ((BIIdolFindElementFactory)getElementFactory()).getSearchOptionsBar().exportResultsToCSV();
 
         final CSVExportModal modal = CSVExportModal.make(getDriver());
         assertThat("Modal has some contents", modal.fieldsToExport(), hasSize(greaterThan(0)));
@@ -235,19 +248,19 @@ public class ResultsITCase extends FindTestBase {
 
         boolean foundResults = false;
 
-        for (final String query : nonLatinQueries) {
-            if (!foundResults) {
+        for(final String query : nonLatinQueries) {
+            if(!foundResults) {
                 search(query);
                 findPage.ensureTermNotAutoCorrected();
                 findPage.waitForParametricValuesToLoad();
 
                 final ListView results = getElementFactory().getListView();
-                if (results.getTotalResultsNum() > 0) {
+                if(results.getTotalResultsNum() > 0) {
                     foundResults = true;
                     final WebElement incidenceOfTerm = results.resultsContainingString(query).get(0);
                     assertThat("Term \"" + query + "\" is highlighted (bold).",
-                            incidenceOfTerm.getCssValue("font-weight"),
-                            is(weightOfHighlightedTerm));
+                               incidenceOfTerm.getCssValue("font-weight"),
+                               is(weightOfHighlightedTerm));
                 }
 
                 conceptsPanel.removeAllConcepts();

@@ -6,12 +6,15 @@
 define([
     'underscore',
     'jquery',
+    'moment',
     'd3',
     'backbone',
     'i18n!find/nls/bundle',
     'find/app/configuration',
     'find/app/vent',
+    'find/app/util/range-input',
     'find/app/util/generate-error-support-message',
+    'find/app/util/date-picker',
     'find/app/page/search/results/parametric-results-view',
     'find/app/page/search/results/field-selection-view',
     'find/app/page/search/filters/parametric/calibrate-buckets',
@@ -21,10 +24,12 @@ define([
     'find/app/page/search/results/trending/trending',
     'find/app/page/search/results/trending/trending-strategy',
     'text!find/templates/app/page/loading-spinner.html',
-    'text!find/templates/app/page/search/results/trending/trending-results-view.html'
-], function(_, $, d3, Backbone, i18n, configuration, vent, generateErrorHtml, ParametricResultsView, FieldSelectionView,
-            calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel, ParametricCollection, Trending,
-            trendingStrategy, loadingSpinnerHtml, template) {
+    'text!find/templates/app/page/search/results/trending/trending-results-view.html',
+    'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-date-input.html'
+], function(_, $, moment, d3, Backbone, i18n, configuration, vent, RangeInput, generateErrorHtml,
+            datePicker, ParametricResultsView, FieldSelectionView, calibrateBuckets,
+            BucketedParametricCollection, ParametricDetailsModel, ParametricCollection,
+            Trending, trendingStrategy, loadingSpinnerHtml, template, dateInputTemplate) {
     'use strict';
 
     const MILLISECONDS_TO_SECONDS = 1000;
@@ -73,24 +78,18 @@ define([
         template: _.template(template),
 
         events: {
-            'change .speed-slider': function(e) {
-                const $target = $(e.target);
-                const value = $target.val();
-                $target.attr('data-original-title', value);
-                $target.tooltip('show');
-                $target.blur();
-                this.model.set('targetNumberOfBuckets', value);
-            },
-            'input .speed-slider': function(e) {
-                const $target = $(e.target);
-                const value = $target.val();
-                this.$('.tooltip-inner').text(value);
-            },
             'click .trending-snap-to-now': function() {
                 this.$snapToNow.blur();
                 this.snapToNow();
-            }
+            },
+            'dp.change .results-filter-date[data-date-attribute="min-date"]': function(event) {
+                this.inputMinValue(event.date.unix());
+            },
+            'dp.change .results-filter-date[data-date-attribute="max-date"]': function(event) {
+                this.inputMaxValue(event.date.unix());
+            },
         },
+        dateInputTemplate: _.template(dateInputTemplate),
 
         initialize: function(options) {
             const config = configuration();
@@ -105,7 +104,7 @@ define([
             this.bucketedValues = {};
 
             this.model = new Backbone.Model({
-                targetNumberOfBuckets: config.trending.defaultNumberOfBuckets
+                value: config.trending.defaultNumberOfBuckets
             });
 
             this.minBuckets = config.trending.minNumberOfBuckets;
@@ -116,6 +115,15 @@ define([
                 searchStateChanged: false
             });
 
+            this.slider = new RangeInput({
+                leftLabel: i18n['search.resultsView.trending.bucketSlider.fewerBuckets'],
+                max: this.maxBuckets,
+                min: this.minBuckets,
+                model: this.model,
+                rightLabel: i18n['search.resultsView.trending.bucketSlider.moreBuckets'],
+                step: 1
+            });
+
             this.listenTo(this.queryModel, 'change', function() {
                 if(this.$el.is(':visible')) {
                     this.fetchFieldAndRangeData();
@@ -123,26 +131,32 @@ define([
                     this.viewStateModel.set('searchStateChanged', true);
                 }
             });
+
             this.listenTo(vent, 'vent:resize', this.update);
             this.listenTo(this.viewStateModel, 'change:dataState', this.onDataStateChange);
+
             this.listenTo(this.parametricFieldsCollection, 'error', function(collection, xhr) {
                 this.onDataError(xhr);
             });
+
             this.listenTo(this.model, 'change:field', this.fetchFieldAndRangeData);
-            this.listenTo(this.model, 'change:targetNumberOfBuckets', this.debouncedFetchBucketedData);
+            this.listenTo(this.model, 'change:value', this.debouncedFetchBucketedData);
             this.listenTo(this.parametricCollection, 'sync', this.setFieldSelector);
+
             this.listenTo(this.parametricCollection, 'error', function(collection, xhr) {
                 this.onDataError(xhr);
+            });
+            this.listenTo(this.model, 'change:currentMin', function() {
+                this.updateDateInput(this.$minInput, 'currentMin');
+            });
+            this.listenTo(this.model, 'change:currentMax', function() {
+                this.updateDateInput(this.$maxInput, 'currentMax');
             });
         },
 
         render: function() {
             if(this.$snapToNow) {
                 this.$snapToNow.tooltip('destroy');
-            }
-
-            if(this.$speedSlider) {
-                this.$speedSlider.tooltip('destroy');
             }
 
             if(this.trendingChart) {
@@ -153,11 +167,11 @@ define([
                 i18n: i18n,
                 loadingHtml: _.template(loadingSpinnerHtml)
             }));
+
             this.$errorMessage = this.$('.trending-error');
             this.$snapToNow = this.$('.trending-snap-to-now');
             this.$chart = this.$('.trending-chart');
             this.$trendingSlider = this.$('.trending-slider');
-            this.$speedSlider = this.$('.speed-slider');
 
             this.viewStateModel.set('dataState', dataState.LOADING);
 
@@ -166,40 +180,35 @@ define([
                 tooltipText: i18n['search.resultsView.trending.tooltipText'],
                 zoomEnabled: true,
                 dragEnabled: true,
-                hoverEnabled: true
+                hoverEnabled: true,
+                yAxisLabelForUnit: i18n['search.resultsView.trending.yAxis'],
+                yAxisUnitsText: function(yUnit) {
+                    return i18n['search.resultsView.trending.unit.' + yUnit];
+                }
             });
 
             this.$snapToNow.tooltip({
-                placement: 'left',
+                placement: 'top',
                 container: 'body',
                 title: i18n['search.resultsView.trending.snapToNow']
             });
 
-            this.$speedSlider
-                .attr({
-                    min: this.minBuckets,
-                    max: this.maxBuckets,
-                    step: 1
-                })
-                .val(this.model.get('targetNumberOfBuckets'))
-                .tooltip({
-                    title: this.model.get('targetNumberOfBuckets'),
-                    placement: 'top'
-                });
+            this.slider.setElement(this.$trendingSlider).render();
 
             if(!this.parametricCollection.isEmpty()) {
                 this.setFieldSelector();
             }
+            this.setRangeSelector();
         },
 
         remove: function() {
+            this.slider.remove();
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
-            if(this.$speedSlider) {
-                this.$speedSlider.tooltip('destroy');
-            }
+
             if(this.$snapToNow) {
                 this.$snapToNow.tooltip('destroy');
             }
+
             Backbone.View.prototype.remove.call(this);
         },
 
@@ -209,10 +218,8 @@ define([
                     this.setFieldSelector();
                     this.fetchFieldAndRangeData();
                     this.viewStateModel.set('searchStateChanged', false);
-                } else {
-                    if(!_.isEmpty(this.bucketedValues)) {
-                        this.updateChart();
-                    }
+                } else if(!_.isEmpty(this.bucketedValues)) {
+                    this.updateChart();
                 }
             }
         },
@@ -243,13 +250,64 @@ define([
                     fields: fields,
                     allowEmpty: false
                 });
+
                 this.$('.trending-field-selector').prepend(this.fieldSelector.$el);
                 this.fieldSelector.render();
             }
         },
 
+        setRangeSelector: function() {
+            if(this.$el.is(':visible') && !this.$minInput) {
+                this.$('.trending-range-selector').prepend(this.dateInputTemplate({minOrMax: 'max'}));
+                this.$('.trending-range-selector').prepend(this.dateInputTemplate({minOrMax: 'min'}));
+
+                this.$minInput = this.$('.numeric-parametric-min-input.form-control');
+                this.$maxInput = this.$('.numeric-parametric-max-input.form-control');
+
+                const dateInputs = [{
+                    $el: this.$minInput,
+                    inputFunction: this.inputMinValue.bind(this),
+                    tooltipText: i18n['search.resultsView.trending.minDate']
+                }, {
+                    $el: this.$maxInput,
+                    inputFunction: this.inputMaxValue.bind(this),
+                    tooltipText: i18n['search.resultsView.trending.maxDate']
+                }];
+
+                dateInputs.forEach(function(options) {
+                    options.$el.tooltip('destroy');
+
+                    options.$el
+                        .tooltip({
+                            placement: 'top',
+                            container: 'body'
+                        })
+                        .attr('data-original-title', options.tooltipText)
+                        .tooltip('fixTitle');
+
+                    datePicker.render(
+                        options.$el.closest('.results-filter-date'),
+                        function() {
+                            if(this.validateDateFormat(options.$el.val())) {
+                                options.inputFunction(this.parseDate(options.$el.val()));
+                            } else {
+                                this.indicateNonValidDateInput({
+                                    $inputEl: options.$el,
+                                    errorMessage: i18n['search.resultsView.trending.error.invalidDate'],
+                                    originalTooltipMessage: options.tooltipText
+                                });
+                            }
+                        }.bind(this));
+                }.bind(this));
+            }
+        },
+
         fetchFieldAndRangeData: function() {
             this.viewStateModel.set('dataState', dataState.LOADING);
+
+            if(this.bucketedDataReqest) {
+                this.bucketedDataReqest.abort();
+            }
 
             const fetchOptions = {
                 queryModel: this.queryModel,
@@ -284,8 +342,13 @@ define([
             this.viewStateModel.set('fetchState', fetchState.FETCHING_BUCKETS);
 
             const minDate = this.model.get('currentMin'), maxDate = this.model.get('currentMax');
+
             if(minDate === maxDate) {
                 this.setMinMax(minDate - SECONDS_IN_ONE_DAY, maxDate + SECONDS_IN_ONE_DAY);
+            }
+
+            if(this.bucketedDataReqest) {
+                this.bucketedDataReqest.abort();
             }
 
             const fetchOptions = {
@@ -297,10 +360,10 @@ define([
                 currentMin: this.model.get('currentMin'),
                 dateField: this.dateField,
                 numberOfValuesToDisplay: this.numberOfValuesToDisplay,
-                targetNumberOfBuckets: this.model.get('targetNumberOfBuckets')
+                targetNumberOfBuckets: this.model.get('value')
             };
 
-            return trendingStrategy.fetchBucketedData(fetchOptions)
+            this.bucketedDataReqest = trendingStrategy.fetchBucketedData(fetchOptions)
                 .done(_.bind(function() {
                     this.viewStateModel.set({
                         currentState: renderState.RENDERING_NEW_DATA,
@@ -309,40 +372,46 @@ define([
                     });
                     this.bucketedValues = Array.prototype.slice.call(arguments);
                     this.updateChart();
-                }, this)).fail(_.bind(function(xhr) {
+                }, this))
+                .fail(_.bind(function(xhr) {
                     this.onDataError(xhr);
                     this.viewStateModel.set('fetchState', fetchState.NOT_FETCHING);
-                }, this));
+                }, this))
+                .always(function() {
+                    this.bucketedDataReqest = null;
+                }.bind(this));
+
+            return this.bucketedDataReqest;
         },
 
         updateChart: function() {
             if(this.viewStateModel.get('fetchState') !== fetchState.FETCHING_BUCKETS
                 && !this.$chart.hasClass('hide')) {
 
-                const data = trendingStrategy.createChartData({
+                const chartData = trendingStrategy.createChartData({
                     bucketedValues: this.bucketedValues,
                     currentMin: this.model.get('currentMin'),
                     currentMax: this.model.get('currentMax')
                 });
 
-                if(data.some(function(datum) {
-                        return datum.points.length > 0;
-                    })) {
+                const haveData = chartData.data.some(function(datum) {
+                    return datum.points.length > 0;
+                });
+
+                if(haveData) {
                     this.$('[data-toggle="tooltip"]').tooltip('destroy');
 
                     const reloaded = this.viewStateModel.get('currentState') === renderState.RENDERING_NEW_DATA;
 
                     this.trendingChart.draw({
                         reloaded: reloaded,
-                        data: data,
+                        chartData: chartData,
                         minDate: reloaded
-                            ? data[0].points[0].mid
+                            ? chartData.data[0].points[0].mid
                             : new Date(this.model.get('currentMin') * MILLISECONDS_TO_SECONDS),
                         maxDate: reloaded
-                            ? data[data.length - 1].points[data[0].points.length - 1].mid
+                            ? chartData.data[chartData.data.length - 1].points[chartData.data[0].points.length - 1].mid
                             : new Date(this.model.get('currentMax') * MILLISECONDS_TO_SECONDS),
-                        xAxisLabel: i18n['search.resultsView.trending.xAxis'],
-                        yAxisLabel: i18n['search.resultsView.trending.yAxis'],
                         zoomCallback: zoomCallback.bind(this),
                         dragMoveCallback: dragMoveCallback.bind(this),
                         dragEndCallback: dragEndCallback.bind(this)
@@ -370,6 +439,61 @@ define([
             this.fetchBucketedData();
         },
 
+        updateDateInput: function($el, dateAttribute) {
+            $el.val(this.formatDate(this.model.get(dateAttribute)));
+            this.updateChart();
+            this.debouncedFetchBucketedData();
+        },
+
+        inputMinValue: function(min) {
+            if(min < this.model.get('currentMax')) {
+                this.model.set('currentMin', min);
+            } else {
+                this.indicateNonValidDateInput({
+                    $inputEl: this.$minInput,
+                    errorMessage: i18n['search.resultsView.trending.error.minBiggerThanMax'],
+                    originalTooltipMessage: i18n['search.resultsView.trending.minDate']
+                });
+            }
+        },
+
+        inputMaxValue: function(max) {
+            if(this.model.get('currentMin') < max) {
+                this.model.set('currentMax', max);
+            } else {
+                this.indicateNonValidDateInput({
+                    $inputEl: this.$maxInput,
+                    errorMessage: i18n['search.resultsView.trending.error.maxSmallerThanMin'],
+                    originalTooltipMessage: i18n['search.resultsView.trending.maxDate']
+                });
+            }
+        },
+
+        formatDate: function(unformattedString) {
+            return moment(Math.round(unformattedString * MILLISECONDS_TO_SECONDS)).format(datePicker.DATE_WIDGET_FORMAT);
+        },
+
+        parseDate: function(dateString) {
+            return moment(dateString, datePicker.DATE_WIDGET_FORMAT).unix();
+        },
+
+        validateDateFormat: function(dateString) {
+            return moment(dateString, datePicker.DATE_WIDGET_FORMAT, true).isValid();
+        },
+
+        indicateNonValidDateInput: function(options) {
+            options.$inputEl.css('border-color', 'red');
+            options.$inputEl.attr('data-original-title', options.errorMessage)
+                .tooltip('fixTitle')
+                .tooltip('show');
+            setTimeout(function() {
+                options.$inputEl.css('border-color', '');
+                options.$inputEl.attr('data-original-title', options.originalTooltipMessage)
+                    .tooltip('fixTitle')
+                    .tooltip('hide');
+            }, 2000);
+        },
+
         onDataStateChange: function() {
             const state = this.viewStateModel.get('dataState');
 
@@ -379,6 +503,7 @@ define([
             this.$chart.toggleClass('hide', state !== dataState.OK);
             this.$snapToNow.toggleClass('hide', state !== dataState.OK);
             this.$trendingSlider.toggleClass('hide', state !== dataState.OK);
+            this.$('.trending-range-selector').toggleClass('hide', state !== dataState.OK);
 
             if(state !== dataState.ERROR && this.$errorMessage) {
                 this.$errorMessage.empty();
