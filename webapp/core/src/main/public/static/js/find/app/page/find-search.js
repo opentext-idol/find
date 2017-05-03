@@ -21,7 +21,8 @@ define([
     'find/app/model/min-score-model',
     'find/app/model/query-text-model',
     'find/app/model/document-model',
-    'find/app/page/search/document/document-detail-view',
+    'find/app/page/search/document-content-view',
+    'find/app/page/search/document/document-detail-content-view',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/related-concepts/related-concepts-click-handlers',
     'find/app/util/database-name-resolver',
@@ -34,7 +35,7 @@ define([
 ], function(_, $, Backbone, BasePage, config, DatesFilterModel, SelectedParametricValuesCollection,
             DocumentsCollection, InputView, queryTextStrategy, TabbedSearchView, MergeCollection,
             SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel, QueryTextModel, DocumentModel,
-            DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver,
+            DocumentContentView, DocumentDetailContentView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver,
             SavedQueryResultPoller, events, router, vent, i18n, template) {
     'use strict';
 
@@ -304,10 +305,13 @@ define([
 
                 this.removeDocumentDetailView();
 
-                this.documentDetailView = new DocumentDetailView(_.extend({
+                this.documentDetailView = new DocumentContentView(_.extend({
                     backUrl: backURL,
-                    indexesCollection: this.indexesCollection,
-                    mmapTab: this.mmapTab
+                    ContentView: DocumentDetailContentView,
+                    contentViewOptions: {
+                        indexesCollection: this.indexesCollection,
+                        mmapTab: this.mmapTab
+                    }
                 }, this.documentDetailOptions.apply(this, arguments)));
 
                 this.$('.document-detail-service-view-container').append(this.documentDetailView.$el);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -7,12 +7,13 @@ define([
     'backbone',
     'jquery',
     'underscore',
+    'js-testing/backbone-mock-factory',
     'find/app/configuration',
-    'find/app/page/search/document/document-detail-view',
+    'find/app/page/search/document-content-view',
     'find/app/page/search/document/tab-content-view',
     'mock/model/document-model',
     'find/app/vent'
-], function(Backbone, $, _, configuration, DocumentDetailView, TabContentView, MockDocumentModel, vent) {
+], function(Backbone, $, _, mockFactory, configuration, DocumentContentView, TabContentView, MockDocumentModel, vent) {
     'use strict';
 
     const BACK_URL = 'search/goback';
@@ -20,24 +21,25 @@ define([
     const REFERENCE = '099a5ab5-94ee-4cfc-a142-9b3503c92282';
     const ERROR_MESSAGE = 'Document not found';
 
-    const NO_MMAP = {
-        supported: _.constant(false)
-    };
+    const MockContentView = mockFactory.getView();
 
-    describe('DocumentDetailView', function() {
+    describe('DocumentContentView', function() {
         beforeEach(function() {
             configuration.and.returnValue({
                 enableRelatedConcepts: false,
                 mmapBaseUrl: 'http://mmap.com',
-                map: {enabled: false}
+                map: {enabled: false},
+                ContentView: MockContentView
             });
 
-            this.view = new DocumentDetailView({
+            this.view = new DocumentContentView({
                 backUrl: BACK_URL,
                 database: DATABASE,
-                indexesCollection: new Backbone.Collection(),
-                mmapTab: NO_MMAP,
-                reference: REFERENCE
+                reference: REFERENCE,
+                ContentView: MockContentView,
+                contentViewOptions: {
+                    indexesCollection: new Backbone.Collection()
+                }
             });
 
             this.documentModel = MockDocumentModel.instances[0];
@@ -47,6 +49,7 @@ define([
 
         afterEach(function() {
             this.view.remove();
+            MockContentView.reset();
             MockDocumentModel.reset();
             vent.navigateToDetailRoute.calls.reset();
             vent.navigate.calls.reset();
@@ -57,15 +60,15 @@ define([
         });
 
         it('displays the loading spinner', function() {
-            expect(this.view.$('.document-detail-loading')).not.toHaveClass('hide');
+            expect(this.view.$('.document-content-loading')).not.toHaveClass('hide');
         });
 
         it('hides the error message', function() {
-            expect(this.view.$('.document-detail-error')).toHaveClass('hide');
+            expect(this.view.$('.document-content-error')).toHaveClass('hide');
         });
 
         it('hides the content', function() {
-            expect(this.view.$('.document-detail-content')).toHaveClass('hide');
+            expect(this.view.$('.document-content-content')).toHaveClass('hide');
         });
 
         describe('when the back button is clicked', function() {
@@ -88,17 +91,17 @@ define([
             });
 
             it('displays the error message', function() {
-                const $error = this.view.$('.document-detail-error');
+                const $error = this.view.$('.document-content-error');
                 expect($error).not.toHaveClass('hide');
                 expect($error).toContainText(ERROR_MESSAGE);
             });
 
             it('hides the loading spinner', function() {
-                expect(this.view.$('.document-detail-loading')).toHaveClass('hide');
+                expect(this.view.$('.document-content-loading')).toHaveClass('hide');
             });
 
             it('hides the content', function() {
-                expect(this.view.$('.document-detail-content')).toHaveClass('hide');
+                expect(this.view.$('.document-content-content')).toHaveClass('hide');
             });
         });
 
@@ -113,15 +116,16 @@ define([
             });
 
             it('displays the content', function() {
-                expect(this.view.$('.document-detail-content')).not.toHaveClass('hide');
+                expect(this.view.$('.document-content-content')).not.toHaveClass('hide');
+                expect(MockContentView.instances.length).toBe(1);
             });
 
             it('hides the error message', function() {
-                expect(this.view.$('.document-detail-error')).toHaveClass('hide');
+                expect(this.view.$('.document-content-error')).toHaveClass('hide');
             });
 
             it('hides the loading spinner', function() {
-                expect(this.view.$('.document-detail-loading')).toHaveClass('hide');
+                expect(this.view.$('.document-content-loading')).toHaveClass('hide');
             });
         });
     });

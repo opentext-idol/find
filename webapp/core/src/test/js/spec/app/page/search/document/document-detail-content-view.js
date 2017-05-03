@@ -58,7 +58,7 @@ define([
             describe('when the view renders with a single tab defined', function() {
                 beforeEach(function() {
                     this.view = new ContentView({
-                        model: new DocumentModel({
+                        documentModel: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF
                         }),
                         indexesCollection: new Backbone.Collection(),
@@ -82,7 +82,7 @@ define([
             describe('when the view renders with more than one tab defined', function() {
                 beforeEach(function() {
                     this.view = new ContentView({
-                        model: new DocumentModel({
+                        documentModel: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF
                         }),
                         indexesCollection: new Backbone.Collection(),
@@ -108,7 +108,7 @@ define([
         describe('when requirements for a tab to be rendered are not met', function() {
             beforeEach(function() {
                 this.view = new ContentView({
-                    model: new DocumentModel({
+                    documentModel: new DocumentModel({
                         reference: 'some other reference'
                     }),
                     indexesCollection: new Backbone.Collection(),
@@ -131,7 +131,7 @@ define([
         describe('when the view renders with a media document', function() {
             beforeEach(function() {
                 this.view = new ContentView({
-                    model: new DocumentModel({
+                    documentModel: new DocumentModel({
                         reference: DOCUMENT_MODEL_REF,
                         media: 'audio',
                         url: 'www.example.com'
@@ -150,7 +150,7 @@ define([
         describe('when the view renders with a non-media document', function() {
             beforeEach(function() {
                 this.view = new ContentView({
-                    model: new DocumentModel({
+                    documentModel: new DocumentModel({
                         reference: DOCUMENT_MODEL_REF,
                         url: ANY_OLD_URL
                     }),
@@ -168,7 +168,7 @@ define([
         describe('when the view renders and the document has a url', function() {
             beforeEach(function() {
                 this.view = new ContentView({
-                    model: new DocumentModel({
+                    documentModel: new DocumentModel({
                         reference: DOCUMENT_MODEL_REF,
                         url: ANY_OLD_URL
                     }),
@@ -187,7 +187,7 @@ define([
         describe('when the view renders and the document has no url but a reference that could be a url', function() {
             beforeEach(function() {
                 this.view = new ContentView({
-                    model: new DocumentModel({
+                    documentModel: new DocumentModel({
                         url: URL_LIKE_REFERENCE
                     }),
                     indexesCollection: new Backbone.Collection(),
@@ -205,7 +205,7 @@ define([
         describe('when the view renders but the document has no url or url-like reference', function() {
             beforeEach(function() {
                 this.view = new ContentView({
-                    model: new DocumentModel({
+                    documentModel: new DocumentModel({
                         reference: DOCUMENT_MODEL_REF
                     }),
                     indexesCollection: new Backbone.Collection(),
@@ -228,7 +228,7 @@ define([
 
             beforeEach(function() {
                 this.view = new ContentView({
-                    model: new DocumentModel({
+                    documentModel: new DocumentModel({
                         reference: DOCUMENT_MODEL_REF,
                         mmapUrl: mmapUrl
                     }),

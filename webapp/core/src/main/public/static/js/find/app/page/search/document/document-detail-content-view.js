@@ -28,7 +28,7 @@ define([
                 events().original();
             },
             'click .document-detail-mmap-button': function() {
-                this.mmapTab.open(this.model.attributes);
+                this.mmapTab.open(this.documentModel.attributes);
             },
             'shown.bs.tab a[data-toggle=tab]': function(event) {
                 const tab = this.tabs[$(event.target).parent().index()];
@@ -39,20 +39,21 @@ define([
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
             this.mmapTab = options.mmapTab;
+            this.documentModel = options.documentModel;
 
             this.tabs = this.filterTabs(tabs);
         },
 
         render: function() {
-            const url = this.model.get('url');
-            const documentHref = url ? urlManipulator.addSpecialUrlPrefix(this.model.get('contentType'), this.model.get('url')) : null;
+            const url = this.documentModel.get('url');
+            const documentHref = url ? urlManipulator.addSpecialUrlPrefix(this.documentModel.get('contentType'), this.documentModel.get('url')) : null;
 
             this.$el.html(this.template({
                 i18n: i18n,
-                title: this.model.get('title'),
+                title: this.documentModel.get('title'),
                 href: documentHref,
                 tabs: this.tabs,
-                mmap: this.mmapTab.supported(this.model.attributes)
+                mmap: this.mmapTab.supported(this.documentModel.attributes)
             }));
 
             this.renderDocument();
@@ -62,7 +63,7 @@ define([
         filterTabs: function(tabList) {
             return _.chain(tabList)
                 .filter(function(tab) {
-                    return tab.shown(this.model);
+                    return tab.shown(this.documentModel);
                 }, this)
                 .map(function(tab, index) {
                     return _.extend({index: index}, tab);
@@ -73,10 +74,10 @@ define([
         renderDocument: function() {
             const $preview = this.$('.document-detail-view-container');
 
-            if (this.model.isMedia()) {
+            if (this.documentModel.isMedia()) {
                 $preview.html(this.mediaTemplate({
                     i18n: i18n,
-                    model: this.model
+                    model: this.documentModel
                 }));
             } else {
                 $preview.html(this.documentTemplate({
@@ -100,7 +101,7 @@ define([
                 }, this));
 
                 // The src attribute has to be added retrospectively to avoid a race condition
-                const url = viewClient.getHref(this.model.get('reference'), this.model);
+                const url = viewClient.getHref(this.documentModel.get('reference'), this.documentModel);
                 iframe.attr('src', url);
             }
         },
@@ -111,7 +112,7 @@ define([
             _.each(this.tabs, function(tab) {
                 tab.view = new (tab.TabContentConstructor)({
                     tab: tab,
-                    model: this.model,
+                    model: this.documentModel,
                     indexesCollection: this.indexesCollection
                 });
 

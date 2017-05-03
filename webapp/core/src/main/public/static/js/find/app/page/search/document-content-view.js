@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -10,11 +10,10 @@ define([
     'i18n!find/nls/bundle',
     'find/app/model/document-model',
     'find/app/configuration',
-    'find/app/page/search/document/document-detail-content-view',
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/loading-spinner.html',
-    'text!find/templates/app/page/search/document/document-detail-view.html'
-], function(Backbone, _, vent, i18n, DocumentModel, configuration, ContentView, generateErrorMessage, loadingTemplate, template) {
+    'text!find/templates/app/page/search/document-content-view.html'
+], function(Backbone, _, vent, i18n, DocumentModel, configuration, generateErrorMessage, loadingTemplate, template) {
     'use strict';
 
     const ViewState = {
@@ -23,6 +22,9 @@ define([
         OK: 'OK'
     };
 
+    /**
+     * Fetches a document model for the given reference and index, then renders the given ContentView.
+     */
     return Backbone.View.extend({
         template: _.template(template),
 
@@ -41,13 +43,13 @@ define([
 
         initialize: function(options) {
             this.backUrl = options.backUrl;
-            this.indexesCollection = options.indexesCollection;
-            this.mmapTab = options.mmapTab;
+            this.ContentView = options.ContentView;
+            this.contentViewOptions = options.contentViewOptions || {};
 
             this.viewModel = new Backbone.Model({state: ViewState.LOADING});
-            this.model = new DocumentModel();
+            this.documentModel = new DocumentModel();
 
-            this.model.fetch({
+            this.documentModel.fetch({
                     data: {
                         reference: options.reference,
                         database: options.database
@@ -73,10 +75,10 @@ define([
                 relatedConcepts: configuration().enableRelatedConcepts
             }));
 
-            this.$content = this.$('.document-detail-content');
-            this.$loading = this.$('.document-detail-loading');
-            this.$error = this.$('.document-detail-error');
-            this.$errorMessage = this.$('.document-detail-error-message');
+            this.$content = this.$('.document-content-content');
+            this.$loading = this.$('.document-content-loading');
+            this.$error = this.$('.document-content-error');
+            this.$errorMessage = this.$('.document-content-error-message');
 
             this.updateState();
         },
@@ -112,11 +114,9 @@ define([
                 if (state === ViewState.OK) {
                     this.removeContentView();
 
-                    this.contentView = new ContentView({
-                        indexesCollection: this.indexesCollection,
-                        mmapTab: this.mmapTab,
-                        model: this.model
-                    });
+                    this.contentView = new this.ContentView(_.extend({
+                        documentModel: this.documentModel
+                    }, this.contentViewOptions));
 
                     this.$content.append(this.contentView.$el);
                     this.contentView.render();

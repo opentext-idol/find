@@ -59,7 +59,7 @@ require.config({
             'find/app/page/search/results/trending/trending': 'mock/page/results/trending',
             'find/app/util/range-input': 'mock/util/range-input'
         },
-        'find/app/page/search/document/document-detail-view': {
+        'find/app/page/search/document-content-view': {
             'find/app/model/document-model': 'mock/model/document-model'
         }
     }
