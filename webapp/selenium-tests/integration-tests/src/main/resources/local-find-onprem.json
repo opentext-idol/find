@@ -16,6 +16,16 @@
       "username": "selenium",
       "password": "q"
     },
+    "dashboard": {
+      "role": "BIFHI",
+      "username": "selenium2",
+      "password": "q"
+    },
+    "dashboard2": {
+      "role": "BIFHI",
+      "username": "selenium3",
+      "password": "q"
+    },
     "find": {
       "role": "USER",
       "username": "tellurium",

@@ -93,7 +93,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
         final Collection<String> roles = authenticationInformationRetriever.getAuthentication()
                 .getAuthorities()
                 .stream()
-                .map((Function<GrantedAuthority, String>)GrantedAuthority::getAuthority)
+                .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toCollection(LinkedList::new));
 
         final FindConfig<C, B> findConfig = configService.getConfig();

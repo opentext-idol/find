@@ -7,12 +7,14 @@ package com.hp.autonomy.frontend.find.idol.web;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
+import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.core.web.MvcConstants;
 import com.hp.autonomy.frontend.find.idol.applications.IdolCustomApplication;
 import com.hp.autonomy.frontend.find.idol.applications.IdolCustomApplicationsConfig;
+import com.hp.autonomy.frontend.find.idol.authentication.FindCommunityRole;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
@@ -25,28 +27,30 @@ import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
 public class IdolFindController extends FindController<IdolFindConfig, IdolFindConfigBuilder> {
+    private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
     private final ConfigService<IdolDashboardConfig> dashConfig;
     private final ConfigService<IdolCustomApplicationsConfig> appsConfig;
 
     @SuppressWarnings({"TypeMayBeWeakened", "ConstructorWithTooManyParameters"})
     @Autowired
     protected IdolFindController(final ControllerUtils controllerUtils,
-                                 final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever,
+                                 final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
                                  final ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService,
                                  final ConfigService<IdolFindConfig> configService,
                                  final ConfigService<IdolDashboardConfig> dashConfig,
                                  final ConfigService<IdolCustomApplicationsConfig> appsConfig,
                                  final FieldDisplayNameGenerator fieldDisplayNameGenerator) {
         super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService, fieldDisplayNameGenerator);
+        this.authenticationInformationRetriever = authenticationInformationRetriever;
         this.dashConfig = dashConfig;
         this.appsConfig = appsConfig;
     }
@@ -66,10 +70,16 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
         if(BooleanUtils.isTrue(mmap.getEnabled())) {
             publicConfig.put(IdolMvcConstants.MMAP_BASE_URL.getName(), mmap.getBaseUrl());
         }
+        final Set<String> roles = authenticationInformationRetriever.getPrincipal().getIdolRoles();
 
         publicConfig.put(IdolMvcConstants.TRENDING.getName(), config.getTrending());
         publicConfig.put(IdolMvcConstants.VIEW_HIGHLIGHTING.getName(), config.getViewConfig().getHighlighting());
-        publicConfig.put(IdolMvcConstants.DASHBOARDS.getName(), dashConfig.getConfig().getDashboards());
+        publicConfig.put(IdolMvcConstants.DASHBOARDS.getName(), dashConfig.getConfig().getDashboards().stream()
+                .filter(dashboard ->
+                        roles.contains(FindCommunityRole.ADMIN.value()) ||
+                        dashboard.getRoles() == null || dashboard.getRoles().isEmpty() ||
+                        dashboard.getRoles().stream().anyMatch(roles::contains))
+                .collect(Collectors.toList()));
         publicConfig.put(IdolMvcConstants.APPLICATIONS.getName(), enabledApps);
         publicConfig.put(MvcConstants.ANSWER_SERVER_ENABLED.value(), config.getAnswerServer().getEnabled());
 

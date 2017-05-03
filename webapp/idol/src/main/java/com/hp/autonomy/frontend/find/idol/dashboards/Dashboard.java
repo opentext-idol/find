@@ -20,6 +20,7 @@ import lombok.Singular;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -32,6 +33,7 @@ public class Dashboard extends SimpleComponent<Dashboard> implements OptionalCon
     private final Integer width;
     private final Integer height;
     private final Integer updateInterval;
+    private final Set<String> roles;
 
     @Singular
     private final Collection<Widget<?, ?>> widgets;

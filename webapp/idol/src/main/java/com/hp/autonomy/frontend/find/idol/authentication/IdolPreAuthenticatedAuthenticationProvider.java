@@ -26,8 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 import static com.hp.autonomy.frontend.find.idol.authentication.IdolPreAuthenticatedAuthenticationProvider.REVERSE_PROXY_PROPERTY_KEY;
@@ -87,7 +86,7 @@ public class IdolPreAuthenticatedAuthenticationProvider implements Authenticatio
                 .map(role -> new SimpleGrantedAuthority(role.value()))
                 .collect(Collectors.toSet());
 
-        final CommunityPrincipal communityPrincipal = new CommunityPrincipal(user.getUid(), username, user.getSecurityInfo());
+        final CommunityPrincipal communityPrincipal = new CommunityPrincipal(user.getUid(), username, user.getSecurityInfo(), Collections.emptySet());
         final Collection<? extends GrantedAuthority> authorities = authoritiesMapper.mapAuthorities(grantedAuthorities);
         return new UsernamePasswordAuthenticationToken(communityPrincipal, null, authorities);
     }

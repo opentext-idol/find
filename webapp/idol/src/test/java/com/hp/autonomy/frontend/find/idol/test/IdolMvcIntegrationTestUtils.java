@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -53,7 +54,7 @@ public class IdolMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
 
     @Override
     protected Authentication createAuthentication(final Collection<GrantedAuthority> authorities) {
-        final CommunityPrincipal communityPrincipal = new CommunityPrincipal(1L, "user", null);
+        final CommunityPrincipal communityPrincipal = new CommunityPrincipal(1L, "user", null, Collections.emptySet());
 
         final UsernamePasswordAuthenticationToken authentication = mock(UsernamePasswordAuthenticationToken.class);
         when(authentication.isAuthenticated()).thenReturn(true);
