@@ -297,25 +297,21 @@ define([
                 const backURL = this.suggestView
                     ? this.generateSuggestURL(this.suggestView.documentModel)
                     : this.generateURL();
+
                 this.toggleExpandedState(true);
                 this.$('.service-view-container').addClass('hide');
                 this.$('.document-detail-service-view-container').removeClass('hide');
 
                 this.removeDocumentDetailView();
 
-                const options = this.documentDetailOptions.apply(this, arguments);
+                this.documentDetailView = new DocumentDetailView(_.extend({
+                    backUrl: backURL,
+                    indexesCollection: this.indexesCollection,
+                    mmapTab: this.mmapTab
+                }, this.documentDetailOptions.apply(this, arguments)));
 
-                fetchDocument(options, function(documentModel) {
-                    this.documentDetailView = new DocumentDetailView({
-                        backUrl: backURL,
-                        model: documentModel,
-                        indexesCollection: this.indexesCollection,
-                        mmapTab: this.mmapTab
-                    });
-
-                    this.$('.document-detail-service-view-container').append(this.documentDetailView.$el);
-                    this.documentDetailView.render();
-                }.bind(this));
+                this.$('.document-detail-service-view-container').append(this.documentDetailView.$el);
+                this.documentDetailView.render();
             }, this);
 
             this.listenTo(router, 'route:suggest', function() {

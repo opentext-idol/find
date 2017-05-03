@@ -10,6 +10,7 @@ require.config({
         'jasmine-jquery': '../bower_components/jasmine-jquery/lib/jasmine-jquery',
         'js-testing': '../bower_components/hp-autonomy-js-testing-utils/src/js',
         'mock': '../../../../test/js/mock',
+        'test-util': '../../../../test/js/util',
         'resources': '../../../../test/js/resources',
         'fieldtext/js/parser': '../../../../../target/classes/static/js/pegjs/fieldtext/parser'
     },
@@ -57,6 +58,9 @@ require.config({
             'find/app/page/search/results/trending/trending-strategy': 'mock/page/results/trending-strategy',
             'find/app/page/search/results/trending/trending': 'mock/page/results/trending',
             'find/app/util/range-input': 'mock/util/range-input'
+        },
+        'find/app/page/search/document/document-detail-view': {
+            'find/app/model/document-model': 'mock/model/document-model'
         }
     }
 });

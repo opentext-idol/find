@@ -8,137 +8,131 @@ define([
     'underscore',
     'find/app/vent',
     'i18n!find/nls/bundle',
-    'find/app/util/view-server-client',
-    'js-whatever/js/list-view',
-    'find/app/page/search/document/document-detail-tabs',
+    'find/app/model/document-model',
     'find/app/configuration',
-    'find/app/util/events',
-    'find/app/util/url-manipulator',
-    'text!find/templates/app/page/search/document/document-detail.html',
-    'text!find/templates/app/page/search/document/view-mode-document.html',
-    'text!find/templates/app/page/search/document/view-media-player.html'
-], function(Backbone, _, vent, i18n, viewClient, ListView, tabs, configuration, events, urlManipulator, template, documentTemplate, mediaTemplate) {
+    'find/app/page/search/document/document-detail-content-view',
+    'find/app/util/generate-error-support-message',
+    'text!find/templates/app/page/loading-spinner.html',
+    'text!find/templates/app/page/search/document/document-detail-view.html'
+], function(Backbone, _, vent, i18n, DocumentModel, configuration, ContentView, generateErrorMessage, loadingTemplate, template) {
     'use strict';
+
+    const ViewState = {
+        LOADING: 'LOADING',
+        ERROR: 'ERROR',
+        OK: 'OK'
+    };
 
     return Backbone.View.extend({
         template: _.template(template),
-        mediaTemplate: _.template(mediaTemplate),
-        documentTemplate: _.template(documentTemplate),
+
+        loadingHtml: _.template(loadingTemplate)({
+            large: true,
+            i18n: i18n
+        }),
 
         className: 'service-view-flex-container',
 
         events: {
             'click .detail-view-back-button': function() {
                 vent.navigate(this.backUrl);
-            },
-            'click .document-detail-open-original-link': function () {
-                // the link itself is responsible for opening the window
-                events().original();
-            },
-            'click .document-detail-mmap-button': function () {
-                this.mmapTab.open(this.model.attributes);
-            },
-            'shown.bs.tab a[data-toggle=tab]': function (event) {
-                var tab = this.tabs[$(event.target).parent().index()];
-                tab.view.render();
             }
         },
 
         initialize: function(options) {
-            this.model = options.model;
             this.backUrl = options.backUrl;
             this.indexesCollection = options.indexesCollection;
             this.mmapTab = options.mmapTab;
 
-            this.tabs = this.filterTabs(tabs);
+            this.viewModel = new Backbone.Model({state: ViewState.LOADING});
+            this.model = new DocumentModel();
 
-            if (this.model.get('url')) {
-                this.documentHref = urlManipulator.addSpecialUrlPrefix(this.model.get('contentType'), this.model.get('url'));
-            } else {
-                this.documentHref = '';
-            }
+            this.model.fetch({
+                    data: {
+                        reference: options.reference,
+                        database: options.database
+                    }
+                })
+                .done(function() {
+                    this.viewModel.set('state', ViewState.OK);
+                }.bind(this))
+                .fail(function(xhr) {
+                    this.viewModel.set({
+                        error: xhr.responseJSON,
+                        state: ViewState.ERROR
+                    });
+                }.bind(this));
+
+            this.listenTo(this.viewModel, 'change', this.updateState);
         },
 
         render: function() {
             this.$el.html(this.template({
                 i18n: i18n,
-                title: this.model.get('title'),
-                href: this.documentHref,
-                tabs: this.tabs,
-                relatedConcepts: configuration().enableRelatedConcepts,
-                mmap: this.mmapTab.supported(this.model.attributes)
+                loadingHtml: this.loadingHtml,
+                relatedConcepts: configuration().enableRelatedConcepts
             }));
 
-            this.renderDocument();
-            this.renderTabContent();
+            this.$content = this.$('.document-detail-content');
+            this.$loading = this.$('.document-detail-loading');
+            this.$error = this.$('.document-detail-error');
+            this.$errorMessage = this.$('.document-detail-error-message');
+
+            this.updateState();
         },
 
-        filterTabs: function(tabsToFilter) {
-            return _.chain(tabsToFilter)
-                .filter(function(tab) {
-                    return tab.shown(this.model);
-                }, this)
-                .map(function(tab, index) {
-                    return _.extend({ index: index }, tab);
-                })
-                .value();
-        },
+        updateState: function() {
+            const state = this.viewModel.get('state');
 
-        renderDocument: function () {
-            var $preview = this.$('.document-detail-view-container');
+            if (this.$loading) {
+                this.$loading.toggleClass('hide', state !== ViewState.LOADING);
+            }
 
-            if (this.model.isMedia()) {
-                $preview.html(this.mediaTemplate({
-                    i18n: i18n,
-                    model: this.model
-                }));
-            } else {
-                $preview.html(this.documentTemplate({
-                    i18n: i18n
-                }));
+            if (this.$error) {
+                this.$error.toggleClass('hide', state !== ViewState.ERROR);
 
-                this.$iframe = this.$('.preview-document-frame');
+                if (state === ViewState.ERROR) {
+                    const error = this.viewModel.get('error');
 
-                this.$iframe.on('load', _.bind(function() {
-                    // Cannot execute scripts in iframe or detect error event, so look for attribute on html
-                    if(this.$iframe.contents().find('html').data('hpeFindAuthError')) {
-                        window.location.reload();
-                    }
+                    const errorHtml = generateErrorMessage({
+                        errorHeader: i18n['error.message.default'],
+                        messageToUser: i18n['search.document.detail.loadingError'],
+                        errorLookup: error.backendErrorCode,
+                        errorUUID: error.uuid,
+                        errorDetails: error.message
+                    });
 
-                    this.$('.view-server-loading-indicator').addClass('hidden');
-                    this.$iframe.removeClass('hidden');
+                    this.$errorMessage.html(errorHtml);
+                }
+            }
 
-                    // View server adds script tags to rendered PDF documents, which are blocked by the application
-                    // This replicates their functionality
-                    this.$iframe.contents().find('.InvisibleAbsolute').hide();
-                }, this));
+            if (this.$content) {
+                this.$content.toggleClass('hide', state !== ViewState.OK);
 
-                // The src attribute has to be added retrospectively to avoid a race condition
-                var url = viewClient.getHref(this.model.get('reference'), this.model);
-                this.$iframe.attr('src', url);
+                if (state === ViewState.OK) {
+                    this.removeContentView();
+
+                    this.contentView = new ContentView({
+                        indexesCollection: this.indexesCollection,
+                        mmapTab: this.mmapTab,
+                        model: this.model
+                    });
+
+                    this.$content.append(this.contentView.$el);
+                    this.contentView.render();
+                }
             }
         },
 
-        renderTabContent: function () {
-            var $tabContentContainer = this.$('.document-detail-tabs-content');
-            _.each(this.tabs, function(tab) {
-                tab.view = new (tab.TabContentConstructor)({
-                    tab: tab,
-                    model: this.model,
-                    indexesCollection: this.indexesCollection
-                });
-
-                $tabContentContainer.append(tab.view.$el);
-            }, this);
-
-            if (this.tabs.length !== 0) this.tabs[0].view.render();
+        removeContentView: function() {
+            if (this.contentView) {
+                this.contentView.remove();
+                this.contentView = null;
+            }
         },
 
         remove: function() {
-            _.each(this.tabs, function(tab) {
-                tab.view && tab.view.remove();
-            });
-
+            this.removeContentView();
             Backbone.View.prototype.remove.call(this);
         }
     });
