@@ -57,21 +57,6 @@ define([
         });
     }
 
-    function fetchDocument(options, callback) {
-        const documentModel = new DocumentModel();
-
-        documentModel
-            .fetch({
-                data: {
-                    reference: options.reference,
-                    database: options.database
-                }
-            })
-            .done(function() {
-                callback(documentModel);
-            });
-    }
-
     return BasePage.extend({
         className: 'search-page',
         template: _.template(template),
@@ -323,21 +308,19 @@ define([
                 this.$('.service-view-container').addClass('hide');
                 this.$('.suggest-service-view-container').removeClass('hide');
 
-                const options = this.suggestOptions.apply(this, arguments);
-
-                fetchDocument(options, function(documentModel) {
-                    this.suggestView = new this.SuggestView({
-                        backUrl: this.generateURL(),
-                        documentModel: documentModel,
-                        indexesCollection: this.indexesCollection,
-                        scrollModel: this.windowScrollModel,
+                this.suggestView = new DocumentContentView(_.extend({
+                    backUrl: this.generateURL(),
+                    ContentView: this.SuggestView,
+                    contentViewOptions: {
                         configuration: config(),
-                        mmapTab: this.mmapTab
-                    });
+                        indexesCollection: this.indexesCollection,
+                        mmapTab: this.mmapTab,
+                        scrollModel: this.windowScrollModel,
+                    }
+                }, this.suggestOptions.apply(this, arguments)));
 
-                    this.$('.suggest-service-view-container').append(this.suggestView.$el);
-                    this.suggestView.render();
-                }.bind(this));
+                this.$('.suggest-service-view-container').append(this.suggestView.$el);
+                this.suggestView.render();
             }, this);
 
             this.listenTo(this.savedSearchCollection, 'sync', function() {
