@@ -14,27 +14,28 @@ define([
     'text!find/templates/app/page/search/results/map-results-view.html',
     'text!find/templates/app/page/search/results/map-popover.html',
     'text!find/templates/app/page/loading-spinner.html',
-    'find/app/vent'
-], function (_, $, Backbone, mapResultsViewStrategy, MapView, i18n, DocumentsCollection,
-             template, popoverTemplate, loadingSpinnerTemplate, vent) {
+    'find/app/vent',
+    'find/app/util/generate-error-support-message',
+], function(_, $, Backbone, mapResultsViewStrategy, MapView, i18n, DocumentsCollection,
+            template, popoverTemplate, loadingSpinnerTemplate, vent, generateErrorHtml) {
     'use strict';
+
+    const popoverTemplateFn = _.template(popoverTemplate);
+    const loadingHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
 
     return Backbone.View.extend({
         template: _.template(template),
-        popoverTemplate: _.template(popoverTemplate),
-        loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
 
         events: {
-            'click .map-show-more': function () {
+            'click .map-show-more': function() {
                 this.mapResultsViewStrategy.fetchDocuments()
             },
-            'click .map-popup-title': function (e) {
-                //noinspection JSUnresolvedFunction
+            'click .map-popup-title': function(e) {
                 vent.navigateToDetailRoute(this.documentsCollection.get(e.currentTarget.getAttribute('cid')));
             }
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.documentsCollection = new DocumentsCollection();
             const resultSets = [{
                 collection: this.documentsCollection,
@@ -44,23 +45,33 @@ define([
 
             this.allowIncrement = options.allowIncrement;
             this.resultsStep = options.resultsStep;
+
+            this.errorModel = new Backbone.Model();
+
             this.mapResultsViewStrategy = mapResultsViewStrategy({
                 allowIncrement: this.allowIncrement,
                 resultsStep: this.resultsStep,
                 clusterMarkers: true,
-                popoverTemplate: this.popoverTemplate,
+                popoverTemplate: popoverTemplateFn,
                 mapViewOptions: {addControl: true},
                 resultSets: resultSets,
                 toggleLoading: this.toggleLoading.bind(this),
-                errorCallback: function (errorInfo) {
-                    this.$error.html(i18n['error.message.default'] + " " + errorInfo.message);
-                    this.$error.toggleClass('hide', errorInfo.error);
+                errorModel: this.errorModel,
+                errorCallback: function(errorInfo) {
+                    this.$error.html(generateErrorHtml(errorInfo.hasError
+                        ? {
+                            errorDetails: errorInfo.responseJSON.message,
+                            errorUUID: errorInfo.responseJSON.uuid,
+                            errorLookup: errorInfo.responseJSON.backendErrorCode
+                        }
+                        : {}));
+                    this.$error.toggleClass('hide', !errorInfo.hasError);
                     this.toggleLoading();
                 }.bind(this)
             });
 
             this.mapResultsViewStrategy.createAddListeners(this.listenTo.bind(this));
-            this.mapResultsViewStrategy.createSyncListeners(this.listenTo.bind(this), function () {
+            this.mapResultsViewStrategy.createSyncListeners(this.listenTo.bind(this), function() {
                 this.$('.map-results-count').html(this.getResultsNoHTML());
             }.bind(this));
             this.mapResultsViewStrategy.listenForErrors(this.listenTo.bind(this));
@@ -68,14 +79,14 @@ define([
             this.listenTo(options.queryModel, 'change', this.reloadMarkers);
         },
 
-        render: function () {
+        render: function() {
             this.$el.html(this.template({
                 showMore: i18n['search.resultsView.map.show.more']
             }));
             this.mapResultsViewStrategy.mapView.setElement(this.$('.location-results-map')).render();
-            this.$loadingSpinner = $(this.loadingTemplate);
+            this.$loadingSpinner = $(loadingHtml);
             this.$loadMoreButton = this.$('.map-show-more');
-            if (!this.allowIncrement) {
+            if(!this.allowIncrement) {
                 this.$loadMoreButton.addClass('hide disabled');
             }
             this.$('.map-loading-spinner').html(this.$loadingSpinner);
@@ -87,22 +98,25 @@ define([
             this.reloadMarkers();
         },
 
-        getResultsNoHTML: function () {
+        getResultsNoHTML: function() {
             return this.documentsCollection.isEmpty()
                 ? i18n['search.resultsView.amount.shown.no.results']
                 : this.allowIncrement
-                    ? i18n['search.resultsView.amount.shown'](1, this.documentsCollection.length, this.documentsCollection.totalResults)
-                    : i18n['search.resultsView.amount.shown.no.increment'](this.resultsStep, this.documentsCollection.totalResults);
+                       ? i18n['search.resultsView.amount.shown'](1, this.documentsCollection.length, this.documentsCollection.totalResults)
+                       : i18n['search.resultsView.amount.shown.no.increment'](this.resultsStep, this.documentsCollection.totalResults);
         },
 
-        reloadMarkers: function () {
+        reloadMarkers: function() {
             this.$('.map-results-count').empty();
             this.mapResultsViewStrategy.reloadMarkers();
         },
 
-        toggleLoading: function () {
+        toggleLoading: function() {
             this.$loadingSpinner.toggleClass('hide', !this.mapResultsViewStrategy.collectionsFetching());
-            this.$loadMoreButton.prop('disabled', this.mapResultsViewStrategy.collectionsFetching() || this.mapResultsViewStrategy.collectionsFull());
+            this.$loadMoreButton.prop('disabled',
+                !!(this.mapResultsViewStrategy.collectionsFetching() ||
+                this.mapResultsViewStrategy.collectionsFull() ||
+                this.errorModel.get('hasError')));
         }
     });
 });

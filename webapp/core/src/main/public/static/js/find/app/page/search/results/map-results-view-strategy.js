@@ -11,10 +11,10 @@ define([
     'find/app/page/search/results/add-links-to-summary',
     'find/app/page/search/results/map-view',
     'i18n!find/nls/bundle'
-], function (_, $, Backbone, configuration, addLinksToSummary, MapView, i18n) {
+], function(_, $, Backbone, configuration, addLinksToSummary, MapView, i18n) {
     'use strict';
 
-    return function (options) {
+    return function(options) {
         const allowIncrement = options.allowIncrement;
         const resultsStep = options.resultsStep;
         const clusterMarkers = options.clusterMarkers;
@@ -26,39 +26,39 @@ define([
 
         const mapView = new MapView(options.mapViewOptions);
         const parentLayerModel = new Backbone.Model();
-        const errorModel = new Backbone.Model();
+        const errorModel = options.errorModel || new Backbone.Model();
 
         return {
             mapView: mapView,
 
-            createAddListeners: function (listenTo) {
-                resultSets.forEach(function (resultSet) {
-                    listenTo(resultSet.collection, 'add', function (model) {
+            createAddListeners: function(listenTo) {
+                resultSets.forEach(function(resultSet) {
+                    listenTo(resultSet.collection, 'add', function(model) {
                         return this.getMarkersFromDocumentModel(model, resultSet.markers, resultSet.color);
                     }.bind(this));
                 }, this);
             },
 
-            listenForErrors: function (listenTo) {
-                resultSets.forEach(function (resultSet) {
-                    listenTo(resultSet.collection, 'error', function (collection, xhr) {
+            listenForErrors: function(listenTo) {
+                resultSets.forEach(function(resultSet) {
+                    listenTo(resultSet.collection, 'error', function(collection, xhr) {
                         if(xhr.status !== 0) {
                             errorModel.set({
-                                error: true,
-                                message: xhr.responseJSON.message
+                                hasError: true,
+                                responseJSON: xhr.responseJSON
                             });
                         }
                     }.bind(this));
                 }, this);
-                listenTo(errorModel, 'change:error', function () {
+                listenTo(errorModel, 'change:hasError', function() {
                     errorCallback(errorModel.attributes);
                 });
             },
 
-            getMarkersFromDocumentModel: function (model, markers, color) {
+            getMarkersFromDocumentModel: function(model, markers, color) {
                 const locations = model.get('locations');
-                _.each(locations, function (locationValues, locationName) {
-                    locationValues.forEach(function (location) {
+                _.each(locations, function(locationValues, locationName) {
+                    locationValues.forEach(function(location) {
                         const longitude = location.longitude;
                         const latitude = location.latitude;
 
@@ -78,7 +78,7 @@ define([
                         const icon = mapView.getIcon(location.iconName, location.iconColor, color || location.markerColor);
                         const marker = mapView.getMarker(latitude, longitude, icon, title, popover);
 
-                        if (markers[location.displayName]) {
+                        if(markers[location.displayName]) {
                             markers[location.displayName].push(marker);
                         } else {
                             markers[location.displayName] = [marker];
@@ -87,26 +87,26 @@ define([
                 });
             },
 
-            createSyncListeners: function (listenTo, callback) {
+            createSyncListeners: function(listenTo, callback) {
                 const createParentLayers = resultSets.length > 1;
-                resultSets.forEach(function (resultSet) {
-                    listenTo(resultSet.collection, 'sync', function () {
+                resultSets.forEach(function(resultSet) {
+                    listenTo(resultSet.collection, 'sync', function() {
                         this.addMarkersToMap(resultSet.markers, resultSet.clusterLayer, createParentLayers);
 
-                        if (callback) {
+                        if(callback) {
                             callback();
                         }
                     }.bind(this));
                 }, this)
             },
 
-            addMarkersToMap: function (markerMap, clusterLayer, createParentLayers) {
-                if (!_.isEmpty(markerMap)) {
-                    _.each(markerMap, function (markers, markerName) {
+            addMarkersToMap: function(markerMap, clusterLayer, createParentLayers) {
+                if(!_.isEmpty(markerMap)) {
+                    _.each(markerMap, function(markers, markerName) {
                         let parentLayer;
-                        if (createParentLayers) {
+                        if(createParentLayers) {
                             parentLayer = parentLayerModel.get(markerName);
-                            if (!parentLayer) {
+                            if(!parentLayer) {
                                 parentLayer = mapView.addGroupingLayer(markerName);
                                 parentLayerModel.set(markerName, parentLayer);
                             }
@@ -124,10 +124,10 @@ define([
                 toggleLoading();
             },
 
-            reloadMarkers: function () {
-                if (mapView.mapRendered()) {
+            reloadMarkers: function() {
+                if(mapView.mapRendered()) {
                     mapView.clearMarkers();
-                    resultSets.forEach(function (resultSet) {
+                    resultSets.forEach(function(resultSet) {
                         resultSet.collection.reset();
                         resultSet.clusterLayer = clusterMarkers
                             ? mapView.addClusterLayer(resultSet.name, resultSet.layerOptions)
@@ -141,7 +141,7 @@ define([
                 return null;
             },
 
-            collectionsFetching: function () {
+            collectionsFetching: function() {
                 return _.chain(resultSets)
                     .pluck('collection')
                     .pluck('fetching')
@@ -149,17 +149,17 @@ define([
                     .value();
             },
 
-            collectionsFull: function () {
+            collectionsFull: function() {
                 return _.chain(resultSets)
                     .pluck('collection')
-                    .reject(function (collection) {
+                    .reject(function(collection) {
                         return collection.length === collection.totalResults
                     })
                     .isEmpty()
                     .value();
             },
 
-            getFetchOptions: function (queryModel, fieldText, length) {
+            getFetchOptions: function(queryModel, fieldText, length) {
                 const newFieldText = queryModel.get('fieldText')
                     ? '(' + queryModel.get('fieldText') + ') AND (' + fieldText + ')'
                     : fieldText;
@@ -192,27 +192,28 @@ define([
                 };
             },
 
-            fetchDocuments: function () {
+            fetchDocuments: function() {
                 const config = configuration();
 
-                const locationFieldsToRetrieve = config.map.locationFields.filter(function (locationField) {
-                    return _.isEmpty(locationFields) || _.contains(locationFields, locationField.displayName);
-                }, this);
+                const locationFieldsToRetrieve = config.map
+                    .locationFields
+                    .filter(function(locationField) {
+                        return _.isEmpty(locationFields) || _.contains(locationFields, locationField.displayName);
+                    }, this);
 
-                if (!_.isEmpty(locationFieldsToRetrieve)) {
-                    errorModel.set({
-                        error: false
-                    });
+                if(!_.isEmpty(locationFieldsToRetrieve)) {
+                    errorModel.set('hasError', false);
 
-                    const fieldText = locationFieldsToRetrieve.map(function (locationField) {
+                    const fieldText = locationFieldsToRetrieve.map(function(locationField) {
                         return '(EXISTS{}:' + config.fieldsInfo[locationField.latitudeField].names.join(':') +
                             ' AND EXISTS{}:' + config.fieldsInfo[locationField.longitudeField].names.join(':') + ')';
                     }).join(' OR ');
 
-                    const promises = resultSets.map(function (resultSet) {
-                        const options = this.getFetchOptions(resultSet.model, fieldText, resultSet.collection.length);
-                        return resultSet.collection.fetch(options);
-                    }, this);
+                    const promises = resultSets
+                        .map(function(resultSet) {
+                            const options = this.getFetchOptions(resultSet.model, fieldText, resultSet.collection.length);
+                            return resultSet.collection.fetch(options);
+                        }, this);
 
                     toggleLoading();
 

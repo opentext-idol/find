@@ -1,9 +1,10 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
     'jquery',
     'backbone',
     'find/idol/app/model/comparison/comparison-documents-collection',
@@ -17,30 +18,32 @@ define([
     'text!find/idol/templates/comparison/map-comparison-view.html',
     'text!find/templates/app/page/search/results/map-popover.html',
     'find/app/vent',
-    'underscore',
+    'find/app/util/generate-error-support-message',
     'iCheck'
-], function ($, Backbone, ComparisonDocumentsCollection, mapResultsViewStrategy, MapView, configuration, i18n, comparisonsI18n,
-             searchDataUtil, loadingSpinnerTemplate, template, popoverTemplate, vent, _) {
+], function(_, $, Backbone, ComparisonDocumentsCollection, mapResultsViewStrategy, MapView,
+            configuration, i18n, comparisonsI18n, searchDataUtil, loadingSpinnerTemplate,
+            template, popoverTemplate, vent, generateErrorHtml) {
     'use strict';
+
+    const popoverTemplateFn = _.template(popoverTemplate);
+    const loadingHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
 
     return Backbone.View.extend({
         className: 'service-view-container',
         template: _.template(template),
-        loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
-        popoverTemplate: _.template(popoverTemplate),
 
         events: {
-            'click .location-comparison-show-more': function () {
+            'click .location-comparison-show-more': function() {
                 this.mapResultsViewStrategy.fetchDocuments()
             },
 
-            'click .map-popup-title': function (e) {
+            'click .map-popup-title': function(e) {
                 const allCollections = _.chain(this.comparisons).pluck('collection').pluck('models').flatten().value();
                 vent.navigateToDetailRoute(_.findWhere(allCollections, {cid: e.currentTarget.getAttribute('cid')}));
             }
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.searchModels = options.searchModels;
 
             const firstQueryModel = this.createQueryModel(this.model.get('firstText'), this.model.get('onlyInFirst'), [this.searchModels.first]);
@@ -68,22 +71,32 @@ define([
                 }
             ];
 
+            this.errorModel = new Backbone.Model();
+
             this.mapResultsViewStrategy = mapResultsViewStrategy({
                 allowIncrement: true,
                 resultsStep: configuration().map.resultsStep,
                 clusterMarkers: true,
-                popoverTemplate: this.popoverTemplate,
+                popoverTemplate: popoverTemplateFn,
                 mapViewOptions: {addControl: true},
                 resultSets: this.resultSets,
                 toggleLoading: this.toggleLoading.bind(this),
-                errorCallback: function (errorInfo) {
-                    this.$error.html(i18n['error.message.default'] + " " + errorInfo.message);
-                    this.$error.toggleClass('hide', !errorInfo.error);
+                errorModel: this.errorModel,
+                errorCallback: function(errorInfo) {
+                    this.$error.html(generateErrorHtml(errorInfo.hasError
+                        ? {
+                            errorDetails: errorInfo.responseJSON.message,
+                            errorUUID: errorInfo.responseJSON.uuid,
+                            errorLookup: errorInfo.responseJSON.backendErrorCode
+                        }
+                        : {}));
+
+                    this.$error.toggleClass('hide', !errorInfo.hasError);
                     this.toggleLoading();
                 }.bind(this)
             });
 
-            this.resultSets.forEach(function (resultSet) {
+            this.resultSets.forEach(function(resultSet) {
                 resultSet.collection = new ComparisonDocumentsCollection();
                 resultSet.layerOptions = {
                     iconCreateFunction: this.mapResultsViewStrategy.mapView.getDivIconCreateFunction(resultSet.iconClass)
@@ -96,7 +109,7 @@ define([
             this.mapResultsViewStrategy.listenForErrors(this.listenTo.bind(this));
         },
 
-        render: function () {
+        render: function() {
             this.$el.html(this.template({
                 bothLabel: comparisonsI18n['list.title.both'],
                 firstLabel: comparisonsI18n['list.title.first'](this.searchModels.first.get('title')),
@@ -104,7 +117,7 @@ define([
                 showMore: i18n['search.resultsView.map.show.more']
             }));
 
-            this.$loadingSpinner = $(this.loadingTemplate);
+            this.$loadingSpinner = $(loadingHtml);
             this.$('.map-loading-spinner').html(this.$loadingSpinner);
             this.$error = this.$('.map-error');
 
@@ -114,9 +127,9 @@ define([
             this.reloadMarkers();
         },
 
-        createQueryModel: function (queryText, stateTokens, searchModels) {
+        createQueryModel: function(queryText, stateTokens, searchModels) {
             const indexes = _.chain(searchModels)
-                .map(function (model) {
+                .map(function(model) {
                     return searchDataUtil.buildIndexes(model.get('indexes'));
                 })
                 .flatten()
@@ -129,14 +142,18 @@ define([
             }, stateTokens));
         },
 
-        reloadMarkers: function () {
+        reloadMarkers: function() {
             this.$('.map-results-count').empty();
             this.mapResultsViewStrategy.reloadMarkers();
         },
 
-        toggleLoading: function () {
+        toggleLoading: function() {
             this.$loadingSpinner.toggleClass('hide', !this.mapResultsViewStrategy.collectionsFetching());
-            this.$('.location-comparison-show-more').prop('disabled', this.mapResultsViewStrategy.collectionsFetching() || this.mapResultsViewStrategy.collectionsFull());
+            this.$('.location-comparison-show-more').prop('disabled',
+                !!(this.mapResultsViewStrategy.collectionsFetching() ||
+                this.mapResultsViewStrategy.collectionsFull() ||
+                this.errorModel.get('hasError'))
+            );
         }
     });
 });
