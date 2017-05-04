@@ -1,16 +1,16 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
     'backbone',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'find/app/page/search/document/document-detail-tabs',
-    'find/app/model/document-model',
-    'underscore'
-], function(Backbone, configuration, i18n, documentDetailTabs, DocumentModel, _) {
+    'find/app/model/document-model'
+], function(_, Backbone, configuration, i18n, documentDetailTabs, DocumentModel) {
     'use strict';
 
     function filterTabs(model) {
@@ -51,7 +51,7 @@ define([
                     url: true
                 });
 
-                expect(filterTabs(model).length).toBe(documentDetailTabs.length);
+                expect(filterTabs(model)).toHaveLength(documentDetailTabs.length);
             });
 
             it('displays default tabs for an empty model', function() {
@@ -61,7 +61,7 @@ define([
                     longitude: undefined
                 });
 
-                expect(filterTabs(model).length).toBe(3);
+                expect(filterTabs(model)).toHaveLength(3);
             });
 
             it('displays the author tab when an authors attribute is present', function() {
@@ -70,7 +70,7 @@ define([
                 });
 
                 const tabs = filterTabs(model);
-                expect(tabs.length).toBe(4);
+                expect(tabs).toHaveLength(4);
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.authors')).toBeDefined();
             });
 
@@ -80,7 +80,7 @@ define([
                 });
 
                 const tabs = filterTabs(model);
-                expect(tabs.length).toBe(4);
+                expect(tabs).toHaveLength(4);
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.similarSources')).toBeDefined();
             });
 
@@ -92,7 +92,7 @@ define([
                 });
 
                 const tabs = filterTabs(model);
-                expect(tabs.length).toBe(4);
+                expect(tabs).toHaveLength(4);
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.transcript')).toBeDefined();
             });
 
@@ -108,7 +108,7 @@ define([
                 });
 
                 const tabs = filterTabs(model);
-                expect(tabs.length).toBe(4);
+                expect(tabs).toHaveLength(4);
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.location')).toBeDefined();
             });
 
@@ -116,7 +116,7 @@ define([
                 const model = new DocumentModel({locations: undefined});
 
                 const tabs = filterTabs(model);
-                expect(tabs.length).toBe(3);
+                expect(tabs).toHaveLength(3);
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.location')).toBeUndefined();
             });
         });
@@ -137,7 +137,7 @@ define([
                 });
 
                 const tabs = filterTabs(model);
-                expect(tabs.length).toBe(2);
+                expect(tabs).toHaveLength(2);
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.location')).toBeUndefined();
             });
         });

@@ -53,7 +53,7 @@ define([
             });
 
             it('displays a filter label', function() {
-                expect(this.view.$el.find('.filter-label').length).toBe(1);
+                expect(this.view.$el.find('.filter-label')).toHaveLength(1);
             });
 
             it('increments the counter accordingly', function() {
@@ -64,7 +64,7 @@ define([
                 ' button, and resets the counter', function() {
                 this.view.$el.find('.remove-all-filters').click();
                 expect(this.view.collection.isEmpty()).toBe(true);
-                expect(this.view.$el.find('.filter-label').length).toBe(0);
+                expect(this.view.$el.find('.filter-label')).toHaveLength(0);
                 expect(this.view.getSectionControls()).toHaveClass('hide');
                 expect(this.view.getHeaderCounter()).toContainText('(0)');
             });

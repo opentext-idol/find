@@ -1,12 +1,13 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'find/app/page/search/related-concepts/related-concepts-click-handlers',
-    'backbone'
-], function(clickHandlers, Backbone) {
+    'backbone',
+    'find/app/page/search/related-concepts/related-concepts-click-handlers'
+], function(Backbone, clickHandlers) {
+    'use strict';
 
     describe('Related Concepts Click Handlers', function() {
         describe('updateQuery', function() {
@@ -30,7 +31,11 @@ define([
 
         describe('newQuery', function() {
             beforeEach(function() {
-                this.savedQueryCollection = new Backbone.Collection([{id: 1, queryText: 'cat', relatedConcepts: [['baz']]}]);
+                this.savedQueryCollection = new Backbone.Collection([{
+                    id: 1,
+                    queryText: 'cat',
+                    relatedConcepts: [['baz']]
+                }]);
                 const savedSearchModel = this.savedQueryCollection.at(0);
 
                 this.selectedTabModel = new Backbone.Model({selectedSearchCid: savedSearchModel.cid});
@@ -57,5 +62,4 @@ define([
             });
         });
     });
-
 });

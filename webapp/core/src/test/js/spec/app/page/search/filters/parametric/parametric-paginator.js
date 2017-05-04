@@ -1,13 +1,14 @@
 /*
- * Copyright 2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
     'jquery',
     'backbone',
     'find/app/page/search/filters/parametric/parametric-paginator'
-], function($, Backbone, ParametricPaginator) {
+], function(_, $, Backbone, ParametricPaginator) {
     'use strict';
 
     const ALL_INDEXES = ['Broadcast', 'Generic'];
@@ -40,14 +41,26 @@ define([
         };
     }
 
-    describe('ParametricPaginator', function(){
+    describe('ParametricPaginator', function() {
         beforeEach(function() {
             this.fetchPromises = [];
             this.fetchFunction = jasmine.createSpy('fetchFunction');
 
             this.selectedValues = new Backbone.Collection([
-                {field: 'CATEGORY', displayName: 'Category', value: 'ANIMALS', displayValue: 'Animals', type: 'Parametric'},
-                {field: 'THINGS', displayName: 'Things', value: 'ANIMALS', displayValue: 'Animals', type: 'Parametric'}
+                {
+                    field: 'CATEGORY',
+                    displayName: 'Category',
+                    value: 'ANIMALS',
+                    displayValue: 'Animals',
+                    type: 'Parametric'
+                },
+                {
+                    field: 'THINGS',
+                    displayName: 'Things',
+                    value: 'ANIMALS',
+                    displayValue: 'Animals',
+                    type: 'Parametric'
+                }
             ]);
 
             this.fetchFunction.and.callFake(function() {
@@ -275,7 +288,13 @@ define([
                             expect(this.fetchPromises.length).toBe(2);
 
                             expect(this.fetchFunction.calls.argsFor(1)).toEqual([
-                                {start: 3, maxValues: 4, fieldNames: ['CATEGORY'], queryText: 'cat', databases: ['Generic']}
+                                {
+                                    start: 3,
+                                    maxValues: 4,
+                                    fieldNames: ['CATEGORY'],
+                                    queryText: 'cat',
+                                    databases: ['Generic']
+                                }
                             ]);
                         });
 
@@ -328,5 +347,4 @@ define([
             });
         });
     });
-
 });

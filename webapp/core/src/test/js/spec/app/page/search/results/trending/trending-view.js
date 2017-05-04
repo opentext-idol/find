@@ -306,8 +306,8 @@ define([
 
                         it('should draw the trending chart with the correct data', function() {
                             expect(Trending.instances[0].draw.calls.count()).toBe(1);
-                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].chartData.data.length).toBe(2);
-                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].chartData.data[0].points.length).toBe(1);
+                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].chartData.data).toHaveLength(2);
+                            expect(Trending.instances[0].draw.calls.argsFor(0)[0].chartData.data[0].points).toHaveLength(1);
                             expect(typeof Trending.instances[0].draw.calls.argsFor(0)[0].zoomCallback).toBe('function');
                             expect(typeof Trending.instances[0].draw.calls.argsFor(0)[0].dragMoveCallback).toBe('function');
                             expect(typeof Trending.instances[0].draw.calls.argsFor(0)[0].dragEndCallback).toBe('function');

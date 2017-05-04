@@ -1,15 +1,16 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
+    'moment',
     'find/idol/app/page/search/snapshots/snapshot-detail',
     'i18n!find/nls/bundle',
-    'i18n!find/idol/nls/snapshots',
-    'underscore',
-    'moment'
-], function(snapshotDetail, i18n, snapshotsI18n, _, moment) {
+    'i18n!find/idol/nls/snapshots'
+], function(_, moment, snapshotDetail, i18n, snapshotsI18n) {
+    'use strict';
 
     function runProcessAttributes(input) {
         // Only pick the target attributes to reflect how processAttributes is called in the DataPanelView
@@ -18,12 +19,12 @@ define([
 
     describe('Snapshot detail panel', function() {
         it('returns the formatted date created and the result count', function() {
-            var output = runProcessAttributes({
+            const output = runProcessAttributes({
                 dateCreated: moment(1455026659454),
                 resultCount: 25
             });
 
-            expect(output.length).toBe(2);
+            expect(output).toHaveLength(2);
             expect(output[0].title).toBe(snapshotsI18n['detail.dateCreated']);
             expect(output[0].content).toContain('2016/02/09');
             expect(output[1].title).toBe(snapshotsI18n['detail.resultCount']);
@@ -31,7 +32,7 @@ define([
         });
 
         it('returns "Unknown" when the result count is not present in the attributes', function() {
-            var output = runProcessAttributes({
+            const output = runProcessAttributes({
                 dateCreated: moment(1455026659454)
             });
 
@@ -40,7 +41,7 @@ define([
         });
 
         it('returns 0 when the result count is 0', function() {
-            var output = runProcessAttributes({
+            const output = runProcessAttributes({
                 dateCreated: moment(1455026659454),
                 resultCount: 0
             });
@@ -49,5 +50,4 @@ define([
             expect(output[1].content).toEqual(0);
         });
     });
-
 });

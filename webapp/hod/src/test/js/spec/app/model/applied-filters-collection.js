@@ -4,6 +4,8 @@
  */
 
 define([
+    'backbone',
+    'moment',
     'js-testing/backbone-mock-factory',
     'find/app/model/dates-filter-model',
     'find/app/model/applied-filters-collection',
@@ -11,11 +13,9 @@ define([
     'databases-view/js/hod-databases-collection',
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
-    'find/app/configuration',
-    'backbone',
-    'moment'
-], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues,
-            DatabasesCollection, i18n, fieldTextParser, configuration, Backbone, moment) {
+    'find/app/configuration'
+], function(Backbone, moment, mockFactory, DatesFilterModel, FiltersCollection,
+            SelectedParametricValues, DatabasesCollection, i18n, fieldTextParser, configuration) {
     'use strict';
 
     const WOOKIEPEDIA = {

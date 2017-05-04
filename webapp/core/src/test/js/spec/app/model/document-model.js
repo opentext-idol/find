@@ -1,14 +1,14 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'find/app/model/document-model',
-    'find/app/configuration',
+    'underscore',
     'moment',
-    'underscore'
-], function(DocumentModel, configuration, moment, _) {
+    'find/app/model/document-model',
+    'find/app/configuration'
+], function(_, moment, DocumentModel, configuration) {
     'use strict';
 
     const THUMBNAIL = 'VGhlIGJhc2UgNjQgZW5jb2RlZCB0aHVtYm5haWw=';
@@ -20,13 +20,29 @@ define([
     function baseResponse() {
         return {
             fieldMap: {
-                authors: {type: 'STRING', displayName: 'Author', values: [{value: 'Humbert', displayValue: 'Humbert'}, {value: 'Gereon', displayValue: 'Gereon'}]},
+                authors: {
+                    type: 'STRING',
+                    displayName: 'Author',
+                    values: [{value: 'Humbert', displayValue: 'Humbert'}, {value: 'Gereon', displayValue: 'Gereon'}]
+                },
                 LONGITUDE: {type: 'NUMBER', displayName: 'Longitude', values: [{value: 52.5, displayValue: '52.5'}]},
                 LATITUDE: {type: 'NUMBER', displayName: 'Latitude', values: [{value: 42.2, displayValue: '42.2'}]},
-                thumbnail: {type: 'STRING', displayName: 'thumbnail', values: [{value: THUMBNAIL, displayValue: THUMBNAIL}]},
+                thumbnail: {
+                    type: 'STRING',
+                    displayName: 'thumbnail',
+                    values: [{value: THUMBNAIL, displayValue: THUMBNAIL}]
+                },
                 datePublished: {type: 'DATE', displayName: 'Date Published', values: [{value: DATE_PUBLISHED_SECONDS}]},
-                sourceType: {type: 'STRING', displayName: 'sourceType', values: [{value: SOURCETYPE, displayValue: SOURCETYPE}]},
-                transcript: {type: 'STRING', displayName: 'transcript', values: [{value: TRANSCRIPT, displayValue: TRANSCRIPT}]}
+                sourceType: {
+                    type: 'STRING',
+                    displayName: 'sourceType',
+                    values: [{value: SOURCETYPE, displayValue: SOURCETYPE}]
+                },
+                transcript: {
+                    type: 'STRING',
+                    displayName: 'transcript',
+                    values: [{value: TRANSCRIPT, displayValue: TRANSCRIPT}]
+                }
             }
         };
     }
@@ -109,16 +125,16 @@ define([
 
             it('parses the field map into an array, converting date values to formatted strings and number values to javascript numbers', function() {
                 const fields = this.parse(fullResponse()).fields;
-                expect(fields.length).toBe(7);
+                expect(fields).toHaveLength(7);
 
                 const longitudeField = _.findWhere(fields, {displayName: 'Longitude'});
                 expect(longitudeField).toBeDefined();
-                expect(longitudeField.values.length).toBe(1);
+                expect(longitudeField.values).toHaveLength(1);
                 expect(longitudeField.values[0]).toBe(52.5);
 
                 const datePublishedField = _.findWhere(fields, {displayName: 'Date Published'});
                 expect(datePublishedField).toBeDefined();
-                expect(datePublishedField.values.length).toBe(1);
+                expect(datePublishedField.values).toHaveLength(1);
                 expect(datePublishedField.values[0]).toBe(moment(DATE_PUBLISHED_SECONDS).format('LLLL'));
             });
 
@@ -126,7 +142,7 @@ define([
                 const locations = this.parse(fullResponse()).locations;
                 expect(locations).toBeDefined();
                 expect(locations.test).toBeDefined();
-                expect(locations.test.length).toBe(1);
+                expect(locations.test).toHaveLength(1);
 
                 const location = locations.test[0];
 
