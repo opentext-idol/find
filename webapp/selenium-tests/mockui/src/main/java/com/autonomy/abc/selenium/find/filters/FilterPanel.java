@@ -18,7 +18,6 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
@@ -49,7 +48,9 @@ public class FilterPanel {
     }
 
     public void waitForIndexes() {
-        new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
+        new WebDriverWait(driver, 10).until((com.google.common.base.Predicate<WebDriver>) webDriver -> {
+            return ElementUtil.hasClass("hide", panel.findElement(By.cssSelector(".no-active-databases")));
+        });
     }
 
     public IndexesTreeContainer indexesTreeContainer() {
