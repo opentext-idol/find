@@ -22,9 +22,11 @@ define([
         const popoverTemplate = options.popoverTemplate;
         const toggleLoading = options.toggleLoading;
         const resultSets = options.resultSets;
+        const errorCallback = options.errorCallback;
 
         const mapView = new MapView(options.mapViewOptions);
         const parentLayerModel = new Backbone.Model();
+        const errorModel = options.errorModel || new Backbone.Model();
 
         return {
             mapView: mapView,
@@ -35,6 +37,22 @@ define([
                         return this.getMarkersFromDocumentModel(model, resultSet.markers, resultSet.color);
                     }.bind(this));
                 }, this);
+            },
+
+            listenForErrors: function(listenTo) {
+                resultSets.forEach(function(resultSet) {
+                    listenTo(resultSet.collection, 'error', function(collection, xhr) {
+                        if(xhr.status !== 0) {
+                            errorModel.set({
+                                hasError: true,
+                                responseJSON: xhr.responseJSON
+                            });
+                        }
+                    }.bind(this));
+                }, this);
+                listenTo(errorModel, 'change:hasError', function() {
+                    errorCallback(errorModel.attributes);
+                });
             },
 
             getMarkersFromDocumentModel: function(model, markers, color) {
@@ -177,20 +195,25 @@ define([
             fetchDocuments: function() {
                 const config = configuration();
 
-                const locationFieldsToRetrieve = config.map.locationFields.filter(function(locationField) {
-                    return _.isEmpty(locationFields) || _.contains(locationFields, locationField.displayName);
-                }, this);
+                const locationFieldsToRetrieve = config.map
+                    .locationFields
+                    .filter(function(locationField) {
+                        return _.isEmpty(locationFields) || _.contains(locationFields, locationField.displayName);
+                    }, this);
 
                 if(!_.isEmpty(locationFieldsToRetrieve)) {
+                    errorModel.set('hasError', false);
+
                     const fieldText = locationFieldsToRetrieve.map(function(locationField) {
                         return '(EXISTS{}:' + config.fieldsInfo[locationField.latitudeField].names.join(':') +
                             ' AND EXISTS{}:' + config.fieldsInfo[locationField.longitudeField].names.join(':') + ')';
                     }).join(' OR ');
 
-                    const promises = resultSets.map(function(resultSet) {
-                        const options = this.getFetchOptions(resultSet.model, fieldText, resultSet.collection.length);
-                        return resultSet.collection.fetch(options);
-                    }, this);
+                    const promises = resultSets
+                        .map(function(resultSet) {
+                            const options = this.getFetchOptions(resultSet.model, fieldText, resultSet.collection.length);
+                            return resultSet.collection.fetch(options);
+                        }, this);
 
                     toggleLoading();
 
