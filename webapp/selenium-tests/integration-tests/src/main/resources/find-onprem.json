@@ -20,6 +20,16 @@
       "role": "ADMIN",
       "username": "face",
       "password": "soface"
+    },
+    "dashboard": {
+      "role": "BIFHI",
+      "username": "selenium2",
+      "password": "q"
+    },
+    "dashboard2": {
+      "role": "BIFHI",
+      "username": "selenium3",
+      "password": "q"
     }
   }
 }
