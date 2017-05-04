@@ -118,6 +118,7 @@ define([
         'search.document.date': 'Date',
         'search.document.dateModified': 'Date Modified',
         'search.document.dateCreated': 'Date Created',
+        'search.document.detail.loadingError': 'Failed to load the document',
         'search.document.detail.expand': 'Expand Preview',
         'search.document.detail.openOriginal': 'Open Original',
         'search.document.detail.highlightQueryTerms': 'Highlight Query Terms',

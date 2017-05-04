@@ -34,7 +34,6 @@ define([
         },
 
         initialize: function(options) {
-            this.backUrl = options.backUrl;
             this.documentModel = options.documentModel;
             this.scrollModel = options.scrollModel;
             this.configuration = options.configuration;

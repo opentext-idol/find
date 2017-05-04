@@ -35,17 +35,19 @@ define([
             });
 
             it('displays every tab for a complete model with map enabled', function() {
-                var model = new DocumentModel({
+                const model = new DocumentModel({
                     authors: ['Humbert', 'Gereon'],
                     media: true,
                     sourceType: 'news',
                     thumbnail: 'VGhlIGJhc2UgNjQgZW5jb2RlZCB0aHVtYm5haWw=',
                     transcript: 'test transcript',
-                    locations: [{
-                        displayName: 'test',
-                        latitude: 12.5,
-                        longitude: 42.2
-                    }],
+                    locations: [
+                        {
+                            displayName: 'test',
+                            latitude: 12.5,
+                            longitude: 42.2
+                        }
+                    ],
                     url: true
                 });
 
@@ -53,7 +55,7 @@ define([
             });
 
             it('displays default tabs for an empty model', function() {
-                var model = new DocumentModel({
+                const model = new DocumentModel({
                     authors: [],
                     latitude: undefined,
                     longitude: undefined
@@ -63,55 +65,57 @@ define([
             });
 
             it('displays the author tab when an authors attribute is present', function() {
-                var model = new DocumentModel({
+                const model = new DocumentModel({
                     authors: ['Humbert', 'Gereon']
                 });
 
-                var tabs = filterTabs(model);
+                const tabs = filterTabs(model);
                 expect(tabs.length).toBe(4);
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.authors')).toBeDefined();
             });
 
             it('displays similar sources tab when a source attribute is present', function() {
-                var model = new DocumentModel({
+                const model = new DocumentModel({
                     sourceType: 'News'
                 });
 
-                var tabs = filterTabs(model);
+                const tabs = filterTabs(model);
                 expect(tabs.length).toBe(4);
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.similarSources')).toBeDefined();
             });
 
             it('displays the transcript tab when the model has transcript, media and url attributes', function() {
-                var model = new DocumentModel({
+                const model = new DocumentModel({
                     media: true,
                     url: true,
                     transcript: 'test transcript'
                 });
 
-                var tabs = filterTabs(model);
+                const tabs = filterTabs(model);
                 expect(tabs.length).toBe(4);
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.transcript')).toBeDefined();
             });
 
             it('displays the location tab if the locations property is preset', function() {
-                var model = new DocumentModel({
-                    locations: [{
-                        displayName: 'test',
-                        latitude: 12.5,
-                        longitude: 42.2
-                    }]
+                const model = new DocumentModel({
+                    locations: [
+                        {
+                            displayName: 'test',
+                            latitude: 12.5,
+                            longitude: 42.2
+                        }
+                    ]
                 });
 
-                var tabs = filterTabs(model);
+                const tabs = filterTabs(model);
                 expect(tabs.length).toBe(4);
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.location')).toBeDefined();
             });
 
             it('does not display the location tab if the locations property is absent', function() {
-                var model = new DocumentModel({locations: undefined});
+                const model = new DocumentModel({locations: undefined});
 
-                var tabs = filterTabs(model);
+                const tabs = filterTabs(model);
                 expect(tabs.length).toBe(3);
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.location')).toBeUndefined();
             });
@@ -127,12 +131,12 @@ define([
             });
 
             it('does not display the location tab even if longitude and latitude attributes are present', function() {
-                var model = new DocumentModel({
+                const model = new DocumentModel({
                     longitude: 123.4,
                     latitude: 73
                 });
 
-                var tabs = filterTabs(model);
+                const tabs = filterTabs(model);
                 expect(tabs.length).toBe(2);
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.location')).toBeUndefined();
             });

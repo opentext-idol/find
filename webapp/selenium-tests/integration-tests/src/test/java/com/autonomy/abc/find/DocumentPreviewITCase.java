@@ -14,7 +14,6 @@ import com.autonomy.abc.selenium.find.preview.DetailedPreviewPage;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ListView;
-import com.autonomy.abc.selenium.query.IndexFilter;
 import com.hp.autonomy.frontend.selenium.config.Browser;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
@@ -128,52 +127,49 @@ public class DocumentPreviewITCase extends FindTestBase {
 
     @Test
     public void testDetailedPreview() {
-        final ListView results = findService.search("m");
-
-        filters().indexesTreeContainer().expand();
-        findPage.filterBy(new IndexFilter(filters().getIndex(0)));
-        findPage.waitForLoad();
+        final ListView results = findService.search("face");
 
         final InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
         final DetailedPreviewPage detailedPreviewPage = inlinePreview.openPreview();
 
-        //loading
         final String frameText = new Frame(getMainSession().getActiveWindow(), detailedPreviewPage.frame()).getText();
         verifyThat("Frame has content", frameText, not(isEmptyOrNullString()));
         verifyThat("Preview frame has no error", frameText, not(containsString("encountered an error")));
 
         checkHasMetaDataFields(detailedPreviewPage);
-
         checkSimilarDocuments(detailedPreviewPage);
 
         if (Objects.equals(getApplication().getClass(), BIIdolFind.class)) {
             checkSimilarDates(detailedPreviewPage);
         }
-        detailedPreviewPage.goBackToSearch();
 
+        detailedPreviewPage.goBackToSearch();
     }
 
     private void checkHasMetaDataFields(final DetailedPreviewPage detailedPreviewPage) {
-        verifyThat("Tab loads", !detailedPreviewPage.loadingIndicator().isDisplayed());
         verifyThat("Detailed Preview has reference", detailedPreviewPage.getReference(), not(nullValue()));
+
         if (isHosted()) {
             verifyThat("Detailed Preview has index", detailedPreviewPage.getIndex(), not(nullValue()));
         } else {
             verifyThat("Detailed Preview has database", detailedPreviewPage.getDatabase(), not(nullValue()));
         }
+
         verifyThat("Detailed Preview has title", detailedPreviewPage.getTitle(), not(nullValue()));
         verifyThat("Detailed Preview has summary", detailedPreviewPage.getSummary(), not(nullValue()));
-        //verifyThat("Detailed Preview has date", detailedPreviewPage.getDate(), not(nullValue()));
+        verifyThat("Detailed Preview has date", detailedPreviewPage.getDate(), not(nullValue()));
     }
 
     private void checkSimilarDocuments(final DetailedPreviewPage detailedPreviewPage) {
         detailedPreviewPage.similarDocsTab().click();
-        verifyThat("Tab loads", !detailedPreviewPage.loadingIndicator().isDisplayed());
+        detailedPreviewPage.waitForTabToLoad();
+        verifyThat("Tab loads", !detailedPreviewPage.tabLoadingIndicator().isDisplayed());
     }
 
     private void checkSimilarDates(final DetailedPreviewPage detailedPreviewPage) {
         detailedPreviewPage.similarDatesTab().click();
-        verifyThat("Tab loads", !detailedPreviewPage.loadingIndicator().isDisplayed());
+        detailedPreviewPage.waitForTabToLoad();
+        verifyThat("Tab loads", !detailedPreviewPage.tabLoadingIndicator().isDisplayed());
         changeDateSliderToYearBefore(detailedPreviewPage);
         verifyThat("Can change to similar docs from year before", detailedPreviewPage.getSimilarDatesSummary(), containsString("Between 1 year"));
     }
@@ -193,7 +189,6 @@ public class DocumentPreviewITCase extends FindTestBase {
         verifyThat("Only 1 copy of that document in detailed preview", detailedPreviewPage.numberOfHeadersWithDocTitle(), lessThanOrEqualTo(1));
 
         detailedPreviewPage.goBackToSearch();
-
     }
 
     @Test

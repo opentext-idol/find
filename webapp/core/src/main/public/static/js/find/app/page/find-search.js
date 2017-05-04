@@ -21,7 +21,8 @@ define([
     'find/app/model/min-score-model',
     'find/app/model/query-text-model',
     'find/app/model/document-model',
-    'find/app/page/search/document/document-detail-view',
+    'find/app/page/search/document-content-view',
+    'find/app/page/search/document/document-detail-content-view',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/related-concepts/related-concepts-click-handlers',
     'find/app/util/database-name-resolver',
@@ -34,7 +35,7 @@ define([
 ], function(_, $, Backbone, BasePage, config, DatesFilterModel, SelectedParametricValuesCollection,
             DocumentsCollection, InputView, queryTextStrategy, TabbedSearchView, MergeCollection,
             SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel, QueryTextModel, DocumentModel,
-            DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver,
+            DocumentContentView, DocumentDetailContentView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver,
             SavedQueryResultPoller, events, router, vent, i18n, template) {
     'use strict';
 
@@ -54,21 +55,6 @@ define([
         return _.map(selectedIndexes, function(indexModel) {
             return indexModel.pick('domain', 'name');
         });
-    }
-
-    function fetchDocument(options, callback) {
-        const documentModel = new DocumentModel();
-
-        documentModel
-            .fetch({
-                data: {
-                    reference: options.reference,
-                    database: options.database
-                }
-            })
-            .done(function() {
-                callback(documentModel);
-            });
     }
 
     return BasePage.extend({
@@ -297,25 +283,24 @@ define([
                 const backURL = this.suggestView
                     ? this.generateSuggestURL(this.suggestView.documentModel)
                     : this.generateURL();
+
                 this.toggleExpandedState(true);
                 this.$('.service-view-container').addClass('hide');
                 this.$('.document-detail-service-view-container').removeClass('hide');
 
                 this.removeDocumentDetailView();
 
-                const options = this.documentDetailOptions.apply(this, arguments);
-
-                fetchDocument(options, function(documentModel) {
-                    this.documentDetailView = new DocumentDetailView({
-                        backUrl: backURL,
-                        model: documentModel,
+                this.documentDetailView = new DocumentContentView(_.extend({
+                    backUrl: backURL,
+                    ContentView: DocumentDetailContentView,
+                    contentViewOptions: {
                         indexesCollection: this.indexesCollection,
                         mmapTab: this.mmapTab
-                    });
+                    }
+                }, this.documentDetailOptions.apply(this, arguments)));
 
-                    this.$('.document-detail-service-view-container').append(this.documentDetailView.$el);
-                    this.documentDetailView.render();
-                }.bind(this));
+                this.$('.document-detail-service-view-container').append(this.documentDetailView.$el);
+                this.documentDetailView.render();
             }, this);
 
             this.listenTo(router, 'route:suggest', function() {
@@ -323,21 +308,19 @@ define([
                 this.$('.service-view-container').addClass('hide');
                 this.$('.suggest-service-view-container').removeClass('hide');
 
-                const options = this.suggestOptions.apply(this, arguments);
-
-                fetchDocument(options, function(documentModel) {
-                    this.suggestView = new this.SuggestView({
-                        backUrl: this.generateURL(),
-                        documentModel: documentModel,
-                        indexesCollection: this.indexesCollection,
-                        scrollModel: this.windowScrollModel,
+                this.suggestView = new DocumentContentView(_.extend({
+                    backUrl: this.generateURL(),
+                    ContentView: this.SuggestView,
+                    contentViewOptions: {
                         configuration: config(),
-                        mmapTab: this.mmapTab
-                    });
+                        indexesCollection: this.indexesCollection,
+                        mmapTab: this.mmapTab,
+                        scrollModel: this.windowScrollModel,
+                    }
+                }, this.suggestOptions.apply(this, arguments)));
 
-                    this.$('.suggest-service-view-container').append(this.suggestView.$el);
-                    this.suggestView.render();
-                }.bind(this));
+                this.$('.suggest-service-view-container').append(this.suggestView.$el);
+                this.suggestView.render();
             }, this);
 
             this.listenTo(this.savedSearchCollection, 'sync', function() {

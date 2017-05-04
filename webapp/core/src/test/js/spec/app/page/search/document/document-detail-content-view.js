@@ -1,40 +1,40 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
     'backbone',
     'jquery',
-    'find/app/page/search/document/document-detail-view',
+    'find/app/page/search/document/document-detail-content-view',
     'find/app/page/search/document/tab-content-view',
     'find/app/model/document-model',
     'find/app/configuration',
     'find/app/vent',
     'underscore'
-], function(Backbone, $, DocumentDetailView, TabContentView, DocumentModel, configuration, vent, _) {
+], function(Backbone, $, ContentView, TabContentView, DocumentModel, configuration, vent, _) {
     'use strict';
 
-    var BACK_URL = 'search/goback';
-    var DOCUMENT_MODEL_REF = 'reference';
+    const DOCUMENT_MODEL_REF = 'reference';
+    const URL_LIKE_REFERENCE = 'http://www.example.com';
+    const ANY_OLD_URL = 'www.example.com';
 
-    var URL_LIKE_REFERENCE = 'http://www.example.com';
-    var ANY_OLD_URL = 'www.example.com';
-
-    var MOCK_TABS = [{
-        TabContentConstructor: TabContentView.extend({TabSubContentConstructor: Backbone.View}),
-        title: 'some title',
-        shown: function(documentModel) {
-            return documentModel.get('reference') === DOCUMENT_MODEL_REF;
-        }
-    },
+    const MOCK_TABS = [
+        {
+            TabContentConstructor: TabContentView.extend({TabSubContentConstructor: Backbone.View}),
+            title: 'some title',
+            shown: function(documentModel) {
+                return documentModel.get('reference') === DOCUMENT_MODEL_REF;
+            }
+        },
         {
             TabContentConstructor: TabContentView.extend({TabSubContentConstructor: Backbone.View}),
             title: 'some other title',
             shown: function() {
                 return true;
             }
-        }];
+        }
+    ];
 
     const NO_MMAP = {
         supported: function() {
@@ -46,7 +46,7 @@ define([
         return _.first(MOCK_TABS, length);
     }
 
-    describe('DocumentDetailView', function() {
+    describe('DocumentDetailContentView', function() {
         beforeEach(function() {
             configuration.and.returnValue({
                 mmapBaseUrl: ANY_OLD_URL,
@@ -54,34 +54,11 @@ define([
             });
         });
 
-        afterEach(function() {
-            vent.navigateToDetailRoute.calls.reset();
-            vent.navigate.calls.reset();
-        });
-
-        describe('when the back button is clicked', function() {
-            beforeEach(function() {
-                this.view = new DocumentDetailView({
-                    model: new DocumentModel(),
-                    backUrl: BACK_URL,
-                    indexesCollection: new Backbone.Collection(),
-                    mmapTab: NO_MMAP
-                });
-
-                this.view.render();
-                this.view.$('.detail-view-back-button').click();
-            });
-
-            it('calls vent.navigate with the correct URL', function() {
-                expect(vent.navigate).toHaveBeenCalledWith(BACK_URL);
-            });
-        });
-
         describe('when requirements for a tab to be rendered are met', function() {
             describe('when the view renders with a single tab defined', function() {
                 beforeEach(function() {
-                    this.view = new DocumentDetailView({
-                        model: new DocumentModel({
+                    this.view = new ContentView({
+                        documentModel: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF
                         }),
                         indexesCollection: new Backbone.Collection(),
@@ -104,8 +81,8 @@ define([
 
             describe('when the view renders with more than one tab defined', function() {
                 beforeEach(function() {
-                    this.view = new DocumentDetailView({
-                        model: new DocumentModel({
+                    this.view = new ContentView({
+                        documentModel: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF
                         }),
                         indexesCollection: new Backbone.Collection(),
@@ -130,8 +107,8 @@ define([
 
         describe('when requirements for a tab to be rendered are not met', function() {
             beforeEach(function() {
-                this.view = new DocumentDetailView({
-                    model: new DocumentModel({
+                this.view = new ContentView({
+                    documentModel: new DocumentModel({
                         reference: 'some other reference'
                     }),
                     indexesCollection: new Backbone.Collection(),
@@ -153,8 +130,8 @@ define([
 
         describe('when the view renders with a media document', function() {
             beforeEach(function() {
-                this.view = new DocumentDetailView({
-                    model: new DocumentModel({
+                this.view = new ContentView({
+                    documentModel: new DocumentModel({
                         reference: DOCUMENT_MODEL_REF,
                         media: 'audio',
                         url: 'www.example.com'
@@ -172,8 +149,8 @@ define([
 
         describe('when the view renders with a non-media document', function() {
             beforeEach(function() {
-                this.view = new DocumentDetailView({
-                    model: new DocumentModel({
+                this.view = new ContentView({
+                    documentModel: new DocumentModel({
                         reference: DOCUMENT_MODEL_REF,
                         url: ANY_OLD_URL
                     }),
@@ -190,8 +167,8 @@ define([
 
         describe('when the view renders and the document has a url', function() {
             beforeEach(function() {
-                this.view = new DocumentDetailView({
-                    model: new DocumentModel({
+                this.view = new ContentView({
+                    documentModel: new DocumentModel({
                         reference: DOCUMENT_MODEL_REF,
                         url: ANY_OLD_URL
                     }),
@@ -209,8 +186,8 @@ define([
 
         describe('when the view renders and the document has no url but a reference that could be a url', function() {
             beforeEach(function() {
-                this.view = new DocumentDetailView({
-                    model: new DocumentModel({
+                this.view = new ContentView({
+                    documentModel: new DocumentModel({
                         url: URL_LIKE_REFERENCE
                     }),
                     indexesCollection: new Backbone.Collection(),
@@ -227,8 +204,8 @@ define([
 
         describe('when the view renders but the document has no url or url-like reference', function() {
             beforeEach(function() {
-                this.view = new DocumentDetailView({
-                    model: new DocumentModel({
+                this.view = new ContentView({
+                    documentModel: new DocumentModel({
                         reference: DOCUMENT_MODEL_REF
                     }),
                     indexesCollection: new Backbone.Collection(),
@@ -247,11 +224,11 @@ define([
         });
 
         describe('when the view renders and the document has mmap references', function() {
-            var mmapUrl = '/video/a-video';
+            const mmapUrl = '/video/a-video';
 
             beforeEach(function() {
-                this.view = new DocumentDetailView({
-                    model: new DocumentModel({
+                this.view = new ContentView({
+                    documentModel: new DocumentModel({
                         reference: DOCUMENT_MODEL_REF,
                         mmapUrl: mmapUrl
                     }),
@@ -281,3 +258,4 @@ define([
         });
     });
 });
+

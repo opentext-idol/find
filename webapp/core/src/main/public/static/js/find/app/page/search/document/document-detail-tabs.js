@@ -20,8 +20,10 @@ define([
 
     'use strict';
 
-    var always = _.constant(true);
-    var hasBiRole = function() {
+    const always = _.constant(true);
+
+    // Function rather than constant so tests can mock configuration
+    const hasBiRole = function() {
         return configuration().hasBiRole;
     };
 
@@ -48,7 +50,7 @@ define([
             title: i18n['search.document.detail.tabs.location'],
 
             shown: function(documentModel) {
-                var locations = documentModel.get('locations');                
+                const locations = documentModel.get('locations');
                 return configuration().map.enabled && !_.isEmpty(locations);
             }
         },
