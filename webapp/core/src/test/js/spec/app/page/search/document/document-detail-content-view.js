@@ -4,15 +4,14 @@
  */
 
 define([
-    'backbone',
+    'underscore',
     'jquery',
+    'backbone',
     'find/app/page/search/document/document-detail-content-view',
     'find/app/page/search/document/tab-content-view',
     'find/app/model/document-model',
-    'find/app/configuration',
-    'find/app/vent',
-    'underscore'
-], function(Backbone, $, ContentView, TabContentView, DocumentModel, configuration, vent, _) {
+    'find/app/configuration'
+], function(_, $, Backbone, ContentView, TabContentView, DocumentModel, configuration) {
     'use strict';
 
     const DOCUMENT_MODEL_REF = 'reference';
@@ -258,4 +257,3 @@ define([
         });
     });
 });
-

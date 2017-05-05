@@ -1,12 +1,12 @@
 /*
- * Copyright 2016-2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
-    'jquery',
     'underscore',
+    'jquery',
+    'backbone',
     'js-whatever/js/model-any-changed-attribute-listener',
     'find/app/vent',
     'find/app/model/document-model',
@@ -25,7 +25,7 @@ define([
     'moment',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
-], function(Backbone, $, _, addChangeListener, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
+], function(_, $, Backbone, addChangeListener, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
             ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, configuration,
             generateErrorHtml, html, loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
     'use strict';
@@ -67,7 +67,7 @@ define([
                     event.stopPropagation();
                     const cid = $(event.target).closest('[data-cid]').data('cid');
                     let documentModel = this.documentsCollection.get(cid);
-                    if (!documentModel) {
+                    if(!documentModel) {
                         documentModel = this.promotionsCollection.get(cid);
                     }
                     vent.navigateToSuggestRoute(documentModel);
@@ -128,7 +128,10 @@ define([
                 documentsCollection: this.documentsCollection
             });
 
-            addChangeListener(this, this.queryModel, ['sort', 'autoCorrect'].concat(this.fetchStrategy.queryModelAttributes), this.refreshResults);
+            addChangeListener(this,
+                this.queryModel,
+                ['sort', 'autoCorrect'].concat(this.fetchStrategy.queryModelAttributes),
+                this.refreshResults);
 
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
 
@@ -199,8 +202,6 @@ define([
                 this.handleError(xhr);
             });
 
-            this.refreshResults();
-
             if(this.entityCollection) {
                 this.updateEntityHighlighting();
             }
@@ -217,7 +218,8 @@ define([
             if(this.fetchStrategy.validateQuery(this.queryModel)) {
                 if(this.fetchStrategy.waitForIndexes(this.queryModel)) {
                     this.$loadingSpinner.addClass('hide');
-                    this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes['search.error.noIndexes']}));
+                    this.$('.main-results-content .results')
+                        .html(this.messageTemplate({message: i18n_indexes['search.error.noIndexes']}));
                 } else {
                     this.endOfResults = false;
                     this.start = 1;
@@ -363,7 +365,9 @@ define([
                 //enable/choose another preview view
                 const cid = $target.data('cid');
                 const isPromotion = $target.closest('.main-results-list').hasClass('promotions');
-                const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
+                const collection = isPromotion
+                    ? this.promotionsCollection
+                    : this.documentsCollection;
                 const model = collection.get(cid);
                 this.previewModeModel.set({document: model});
 
