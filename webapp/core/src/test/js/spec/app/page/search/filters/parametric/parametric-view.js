@@ -1,18 +1,19 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
     'underscore',
+    'backbone',
     'find/app/page/search/filters/parametric/parametric-view',
     'parametric-refinement/selected-values-collection'
-], function (Backbone, _, ParametricView, SelectedValuesCollection) {
+], function(_, Backbone, ParametricView, SelectedValuesCollection) {
+    'use strict';
 
-    describe('Parametric view', function () {
-        describe('when fields are returned', function () {
-            beforeEach(function () {
+    describe('Parametric view', function() {
+        describe('when fields are returned', function() {
+            beforeEach(function() {
                 this.parametricFieldsCollection = new Backbone.Collection([{
                     id: '/DOCUMENT/WIKIPEDIA_CATEGORY',
                     displayName: 'Wikipedia Category',
@@ -70,8 +71,8 @@ define([
                 this.view.render();
             });
 
-            describe('when rendered with no request in flight', function () {
-                it('displays every parametric value grouped by field', function () {
+            describe('when rendered with no request in flight', function() {
+                it('displays every parametric value grouped by field', function() {
                     expect(this.view.$('[data-field]')).toHaveLength(2);
 
                     expect(this.view.$('[data-field="/DOCUMENT/WIKIPEDIA_CATEGORY"]')).toHaveLength(1);
@@ -80,66 +81,66 @@ define([
                     expect(this.view.$('[data-field="/DOCUMENT/WIKIPEDIA_CATEGORY"] [data-value="person"]')).toHaveLength(1);
                 });
 
-                it('hides the error message', function () {
+                it('hides the error message', function() {
                     expect(this.view.$('.parametric-fields-error')).toHaveClass('hide');
                 });
 
-                it('hides the empty message', function () {
+                it('hides the empty message', function() {
                     expect(this.view.$('.parametric-fields-empty')).toHaveClass('hide');
                 });
 
-                it('displays the field list', function () {
+                it('displays the field list', function() {
                     expect(this.view.$('.parametric-fields-list')).not.toHaveClass('hide');
                 });
 
-                describe('then the parametric fields collection is fetched', function () {
-                    beforeEach(function () {
+                describe('then the parametric fields collection is fetched', function() {
+                    beforeEach(function() {
                         this.parametricFieldsCollection.reset();
                         this.parametricFieldsCollection.trigger('request');
                     });
 
-                    it('displays the loading spinner', function () {
+                    it('displays the loading spinner', function() {
                         expect(this.view.$('.parametric-fields-processing-indicator')).not.toHaveClass('hide');
                     });
 
-                    it('hides the empty message', function () {
+                    it('hides the empty message', function() {
                         expect(this.view.$('.parametric-fields-empty')).toHaveClass('hide');
                     });
 
-                    it('hides the field list', function () {
+                    it('hides the field list', function() {
                         expect(this.view.$('.parametric-fields-list')).toHaveClass('hide');
                     });
 
-                    describe('then the request fails', function () {
-                        beforeEach(function () {
+                    describe('then the request fails', function() {
+                        beforeEach(function() {
                             this.parametricFieldsCollection.trigger('error', this.parametricFieldsCollection, {status: 500});
                         });
 
-                        it('hides the loading spinner', function () {
+                        it('hides the loading spinner', function() {
                             expect(this.view.$('.parametric-fields-processing-indicator')).toHaveClass('hide');
                         });
 
-                        it('hides the empty message', function () {
+                        it('hides the empty message', function() {
                             expect(this.view.$('.parametric-fields-empty')).toHaveClass('hide');
                         });
 
-                        it('hides the field list', function () {
+                        it('hides the field list', function() {
                             expect(this.view.$('.parametric-fields-list')).toHaveClass('hide');
                         });
                     });
 
-                    describe('then the request is aborted', function () {
-                        beforeEach(function () {
+                    describe('then the request is aborted', function() {
+                        beforeEach(function() {
                             this.parametricFieldsCollection.trigger('error', this.parametricFieldsCollection, {status: 0});
                         });
 
-                        it('hides the error message', function () {
+                        it('hides the error message', function() {
                             expect(this.view.$('.parametric-fields-error')).toHaveClass('hide');
                         });
                     });
 
-                    describe('then the request succeeds', function () {
-                        beforeEach(function () {
+                    describe('then the request succeeds', function() {
+                        beforeEach(function() {
                             this.parametricFieldsCollection.reset([{
                                 id: '/DOCUMENT/PERSON_SEX',
                                 displayName: 'Person Sex',
@@ -149,19 +150,19 @@ define([
                             this.parametricFieldsCollection.trigger('sync');
                         });
 
-                        it('hides the loading spinner', function () {
+                        it('hides the loading spinner', function() {
                             expect(this.view.$('.parametric-fields-processing-indicator')).toHaveClass('hide');
                         });
 
-                        it('hides the error message', function () {
+                        it('hides the error message', function() {
                             expect(this.view.$('.parametric-fields-error')).toHaveClass('hide');
                         });
 
-                        it('hides the empty message', function () {
+                        it('hides the empty message', function() {
                             expect(this.view.$('.parametric-fields-empty')).toHaveClass('hide');
                         });
 
-                        it('displays the field list', function () {
+                        it('displays the field list', function() {
                             expect(this.view.$('.parametric-fields-list')).not.toHaveClass('hide');
                         });
                     });
@@ -169,8 +170,8 @@ define([
             });
         });
 
-        describe('when no fields are returned', function () {
-            beforeEach(function () {
+        describe('when no fields are returned', function() {
+            beforeEach(function() {
                 this.filteredParametricCollection = new Backbone.Collection();
 
                 const parametricFieldsCollection = new Backbone.Collection([]);
@@ -186,10 +187,9 @@ define([
                 });
             });
 
-            it('shows the empty message', function () {
+            it('shows the empty message', function() {
                 expect(this.view.$('.parametric-fields-empty')).not.toHaveClass('hide');
             });
         })
     });
-
 });

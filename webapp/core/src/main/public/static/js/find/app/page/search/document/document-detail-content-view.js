@@ -4,8 +4,8 @@
  */
 
 define([
-    'backbone',
     'underscore',
+    'backbone',
     'find/app/page/search/document/document-detail-tabs',
     'find/app/util/events',
     'find/app/util/url-manipulator',
@@ -14,7 +14,8 @@ define([
     'text!find/templates/app/page/search/document/document-detail-content-view.html',
     'text!find/templates/app/page/search/document/view-mode-document.html',
     'text!find/templates/app/page/search/document/view-media-player.html'
-], function(Backbone, _, tabs, events, urlManipulator, viewClient, i18n, template, documentTemplate, mediaTemplate) {
+], function(_, Backbone, tabs, events, urlManipulator, viewClient, i18n, template,
+            documentTemplate, mediaTemplate) {
     'use strict';
 
     return Backbone.View.extend({
@@ -46,7 +47,11 @@ define([
 
         render: function() {
             const url = this.documentModel.get('url');
-            const documentHref = url ? urlManipulator.addSpecialUrlPrefix(this.documentModel.get('contentType'), this.documentModel.get('url')) : null;
+            const documentHref = url
+                ? urlManipulator.addSpecialUrlPrefix(
+                    this.documentModel.get('contentType'),
+                    this.documentModel.get('url'))
+                : null;
 
             this.$el.html(this.template({
                 i18n: i18n,
@@ -74,7 +79,7 @@ define([
         renderDocument: function() {
             const $preview = this.$('.document-detail-view-container');
 
-            if (this.documentModel.isMedia()) {
+            if(this.documentModel.isMedia()) {
                 $preview.html(this.mediaTemplate({
                     i18n: i18n,
                     model: this.documentModel
@@ -88,7 +93,7 @@ define([
 
                 iframe.on('load', _.bind(function() {
                     // Cannot execute scripts in iframe or detect error event, so look for attribute on html
-                    if (iframe.contents().find('html').data('hpeFindAuthError')) {
+                    if(iframe.contents().find('html').data('hpeFindAuthError')) {
                         window.location.reload();
                     }
 
@@ -119,7 +124,7 @@ define([
                 $tabContentContainer.append(tab.view.$el);
             }, this);
 
-            if (this.tabs.length !== 0) {
+            if(this.tabs.length !== 0) {
                 this.tabs[0].view.render();
             }
         },
@@ -132,5 +137,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-
 });

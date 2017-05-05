@@ -1,13 +1,18 @@
+/*
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'backbone',
     'underscore',
     'jquery',
+    'backbone',
     'databases-view/js/databases-view',
     './index-item-view',
     'i18n!find/nls/indexes',
-    'text!find/templates/app/page/search/filters/indexes/indexes-view.html',
+    'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/indexes/index-list.html'
-], function(Backbone, _, $, DatabasesView, IndexItemView, i18n, template, listTemplate) {
+], function(_, $, Backbone, DatabasesView, IndexItemView, i18nIndexes, i18n, listTemplate) {
     'use strict';
 
     const CHECKED_CLASS = 'hp-icon hp-fw hp-check';
@@ -23,7 +28,6 @@ define([
         getIndexCategories: null,
         databaseHelper: null,
 
-        template: _.template(template),
         categoryTemplate: _.template(listTemplate),
 
         events: {
@@ -80,9 +84,11 @@ define([
 
             DatabasesView.prototype.initialize.call(this, _.extend({
                 databasesCollection: options.indexesCollection,
-                emptyMessage: i18n['search.indexes.empty'],
-                topLevelDisplayName: i18n['search.indexes.all'],
-                childCategories: indexCategories.length < 2 ? null : indexCategories,
+                emptyMessage: i18nIndexes['search.indexes.empty'],
+                topLevelDisplayName: i18nIndexes['search.indexes.all'],
+                childCategories: indexCategories.length < 2
+                    ? null
+                    : indexCategories,
                 databaseHelper: this.databaseHelper,
                 listViewOptions: {
                     ItemView: IndexItemView,
@@ -95,6 +101,10 @@ define([
             this.pendingSelection = _.clone(this.currentSelection);
 
             this.updateWithPendingSelection = _.debounce(this.updateWithPendingSelection, DEBOUNCE_TIMEOUT);
+        },
+
+        getTemplateOptions: function() {
+            return {loading: i18n['app.loading']};
         },
 
         updateWithPendingSelection: function() {

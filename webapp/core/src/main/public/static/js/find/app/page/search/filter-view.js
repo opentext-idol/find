@@ -17,7 +17,7 @@ define([
     'find/app/util/filtering-collection',
     'find/app/configuration',
     'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes',
+    'i18n!find/nls/indexes'
 ], function(_, $, Backbone, AbstractSectionView, DateView, FilteredParametricFieldsCollection,
             ParametricView, NumericParametricFieldView, TextInput, Collapsible, FilteringCollection,
             configuration, i18n, i18nIndexes) {

@@ -1,20 +1,20 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
     'underscore',
     'jquery',
+    'backbone',
     'find/idol/app/page/search/filters/indexes/idol-indexes-view',
     'databases-view/js/idol-databases-collection',
     'jasmine-jquery'
-], function(Backbone, _, $, IndexesView, DatabasesCollection) {
+], function(_, $, Backbone, IndexesView, DatabasesCollection) {
     'use strict';
 
     describe('Indexes View', function() {
-        var INDEXES = _.map(['a','b','c'], function(name) {
+        const INDEXES = _.map(['a', 'b', 'c'], function(name) {
             return {name: name, id: name};
         });
 
@@ -54,9 +54,9 @@ define([
 
         describe('after initialization', function() {
             it('should display indexes in the IndexesCollection', function() {
-                var elements = this.indexesView.$el.find('[data-id]');
+                const elements = this.indexesView.$el.find('[data-id]');
 
-                var dataIds = _.map(elements, function (element) {
+                const dataIds = _.map(elements, function(element) {
                     return $(element).attr('data-id');
                 });
 
@@ -86,9 +86,9 @@ define([
                 });
 
                 it('should check the clicked index', function() {
-                    var checkedCheckbox = this.idElement(INDEXES[0]).find('i');
-                    var uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
-                    var uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
+                    const checkedCheckbox = this.idElement(INDEXES[0]).find('i');
+                    const uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
+                    const uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
 
                     expect(checkedCheckbox).toHaveClass('hp-check');
                     expect(uncheckedCheckboxOne).not.toHaveClass('hp-check');
@@ -106,9 +106,9 @@ define([
                     });
 
                     it('should check the clicked index', function() {
-                        var checkedCheckbox = this.idElement(INDEXES[0]).find('i');
-                        var uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
-                        var uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
+                        const checkedCheckbox = this.idElement(INDEXES[0]).find('i');
+                        const uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
+                        const uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
 
                         expect(checkedCheckbox).toHaveClass('hp-check');
                         expect(uncheckedCheckboxOne).not.toHaveClass('hp-check');
@@ -146,9 +146,9 @@ define([
                 });
 
                 it('should select the right indexes', function() {
-                    var uncheckedCheckbox = this.idElement(INDEXES[0]).find('i');
-                    var checkedCheckboxOne = this.idElement(INDEXES[1]).find('i');
-                    var checkedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
+                    const uncheckedCheckbox = this.idElement(INDEXES[0]).find('i');
+                    const checkedCheckboxOne = this.idElement(INDEXES[1]).find('i');
+                    const checkedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
 
                     expect(uncheckedCheckbox).not.toHaveClass('hp-check');
                     expect(checkedCheckboxOne).toHaveClass('hp-check');
@@ -162,9 +162,9 @@ define([
                 });
 
                 it('should select only the first index', function() {
-                    var checkedCheckbox = this.idElement(INDEXES[0]).find('i');
-                    var uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
-                    var uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
+                    const checkedCheckbox = this.idElement(INDEXES[0]).find('i');
+                    const uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
+                    const uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
 
                     expect(checkedCheckbox).toHaveClass('hp-check');
                     expect(uncheckedCheckboxOne).not.toHaveClass('hp-check');
@@ -172,7 +172,5 @@ define([
                 });
             });
         });
-
     });
-
 });

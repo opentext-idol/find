@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -35,17 +35,17 @@ import java.util.Date;
 import java.util.List;
 
 public class FindPage extends AppElement implements AppPage,
-        IndexFilter.Filterable,
-        DatePickerFilter.Filterable,
-        StringDateFilter.Filterable,
-        Filterable {
+    IndexFilter.Filterable,
+    DatePickerFilter.Filterable,
+    StringDateFilter.Filterable,
+    Filterable {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     FindPage(final WebDriver driver) {
         super(new WebDriverWait(driver, 30)
-                      .withMessage("loading Find page")
-                      .until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container"))), driver);
+                  .withMessage("loading Find page")
+                  .until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container"))), driver);
     }
 
     //WAITS
@@ -60,14 +60,16 @@ public class FindPage extends AppElement implements AppPage,
 
     public void waitUntilParametricModalGone() {
         new WebDriverWait(getDriver(), 10)
-                .until(ExpectedConditions.invisibilityOfElementLocated(By.className(".parametric-modal")));
+            .until(ExpectedConditions.invisibilityOfElementLocated(By.className(".parametric-modal")));
     }
 
     public void waitUntilDatabasesLoaded() {
         new WebDriverWait(getDriver(), 20)
-                .withMessage("databases not loaded message to disappear")
-                .until(ExpectedConditions.invisibilityOfElementWithText(By.cssSelector(".main-results-list .results")
-                        , "The list of databases has not yet been retrieved"));
+            .withMessage("databases not loaded message to disappear")
+            .until(ExpectedConditions.invisibilityOfElementWithText(
+                By.cssSelector(".main-results-list .results"),
+                "The list of databases has not yet been retrieved"
+            ));
     }
 
     //RESULTS

@@ -8,6 +8,7 @@
         <groupId>com.hp.autonomy</groupId>
         <artifactId>foss-master-pom</artifactId>
         <version>2.0.0</version>
+        <relativePath></relativePath>
     </parent>
 
     <groupId>com.hp.autonomy.frontend.find</groupId>
