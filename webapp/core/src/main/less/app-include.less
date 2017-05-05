@@ -68,7 +68,7 @@
 @locationTabMaxHeight: 750px;
 @locationTabMinHeight: 400px;
 @sunburstHeight: 600px;
-@locationMapMinHeight: 600px;
+@locationMapMinHeight: 300px;
 @middleBoxWrapperHeight: 400px;
 @thumbnailHeight: 55px;
 @findInputHeight: 45px;
@@ -2000,7 +2000,7 @@ input[type=range].range-input-slider {
 }
 
 .location-comparison-map {
-  height: @100percent;
+  height: calc(100vh - 275px);
   min-height: @locationMapMinHeight;
   width: @100percent;
 }
@@ -2058,20 +2058,10 @@ input[type=range].range-input-slider {
   }
 }
 
-.location-comparison-show-more {
-  .m-b-sm;
-  .m-l-sm;
-}
-
 .location-results-map {
-  height: @100percent;
+  height: calc(100vh - 260px);
   min-height: @locationMapMinHeight;
   width: @100percent;
-}
-
-.map-show-more {
-  .m-b-xxs;
-  .m-l-xxs;
 }
 
 .map-loading-spinner {
