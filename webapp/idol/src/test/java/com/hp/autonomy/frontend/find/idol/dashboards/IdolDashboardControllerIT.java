@@ -31,9 +31,9 @@ public class IdolDashboardControllerIT extends AbstractFindIT {
     private static final String UUID = "b1c71fad-a52d-47bf-a121-f71500bd7ddb";
     private static final String DASHBOARD_CONFIG = TEST_DIR + "/customization/dashboards.json";
     private static final String DASHBOARD_CONFIG_BACKUP = TEST_DIR + "/customization/dashboards.json.bak";
-    private static final String REPLACEMENT_CONFIG = "target/classes/IdolDashboardControllerIT-Config-1.json";
-    private static final String RENAMED_DASHBOARD_CONFIG = "target/classes/IdolDashboardControllerIT-Config-2.json";
-    private static final String DASHBOARD_URL = "http://abc.xyz/public/dashboards/Figs";
+    private static final String REPLACEMENT_CONFIG = "target/test-classes/IdolDashboardControllerIT-Config-1.json";
+    private static final String RENAMED_DASHBOARD_CONFIG = "target/test-classes/IdolDashboardControllerIT-Config-2.json";
+    private static final String DASHBOARD_URL = "http://example.com/public/dashboards/Figs";
     private static final String ROOT_URL = "/";
 
     @Override
