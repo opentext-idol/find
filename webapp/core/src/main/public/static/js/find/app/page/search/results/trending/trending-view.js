@@ -328,7 +328,6 @@ define([
                         return $.when(trendingStrategy.fetchRange(this.selectedFieldValues, fetchOptions))
                             .then(function(data) {
                                 this.setMinMax(data.min, data.max);
-                                this.fetchBucketedData();
                             }.bind(this));
                     }
                 }.bind(this))
