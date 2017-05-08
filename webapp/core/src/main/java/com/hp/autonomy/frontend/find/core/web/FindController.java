@@ -1,7 +1,8 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.hp.autonomy.frontend.find.core.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,7 +12,9 @@ import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfi
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
-import com.hp.autonomy.frontend.find.core.export.MetadataNode;
+import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
+import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
+import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,9 +26,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
+import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FIND_METRICS_ENABLED_PROPERTY;
 
 public abstract class FindController<C extends FindConfig<C, B>, B extends FindConfigBuilder<C, B>> {
     public static final String APP_PATH = "/public";
@@ -36,20 +48,27 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
     private final ControllerUtils controllerUtils;
     private final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever;
     private final ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
+    private final FieldDisplayNameGenerator fieldDisplayNameGenerator;
+
     @Value(AppConfiguration.GIT_COMMIT_PROPERTY)
     private String gitCommit;
 
     @Value(AppConfiguration.APPLICATION_RELEASE_VERSION_PROPERTY)
     private String releaseVersion;
 
+    @Value(FIND_METRICS_ENABLED_PROPERTY)
+    private boolean metricsEnabled;
+
     protected FindController(final ControllerUtils controllerUtils,
                              final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever,
                              final ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService,
-                             final ConfigService<C> configService) {
+                             final ConfigService<C> configService,
+                             final FieldDisplayNameGenerator fieldDisplayNameGenerator) {
         this.controllerUtils = controllerUtils;
         this.authenticationInformationRetriever = authenticationInformationRetriever;
         this.authenticationConfigService = authenticationConfigService;
         this.configService = configService;
+        this.fieldDisplayNameGenerator = fieldDisplayNameGenerator;
     }
 
     protected abstract Map<String, Object> getPublicConfig();
@@ -71,7 +90,11 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
     public ModelAndView mainPage(final HttpServletRequest request) throws JsonProcessingException {
         final String username = authenticationInformationRetriever.getAuthentication().getName();
 
-        final Collection<String> roles = authenticationInformationRetriever.getAuthentication().getAuthorities().stream().map((Function<GrantedAuthority, String>)GrantedAuthority::getAuthority).collect(Collectors.toCollection(LinkedList::new));
+        final Collection<String> roles = authenticationInformationRetriever.getAuthentication()
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toCollection(LinkedList::new));
 
         final FindConfig<C, B> findConfig = configService.getConfig();
 
@@ -81,14 +104,14 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
         config.put(MvcConstants.ROLES.value(), roles);
         config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         config.put(MvcConstants.RELEASE_VERSION.value(), releaseVersion);
+        config.put(MvcConstants.METRICS_ENABLED.value(), metricsEnabled);
         config.put(MvcConstants.MAP.value(), findConfig.getMap());
         config.put(MvcConstants.UI_CUSTOMIZATION.value(), findConfig.getUiCustomization());
         config.put(MvcConstants.SAVED_SEARCH_CONFIG.value(), findConfig.getSavedSearchConfig());
         config.put(MvcConstants.MIN_SCORE.value(), findConfig.getMinScore());
-        config.put(MvcConstants.FIELDS_INFO.value(), findConfig.getFieldsInfo().getFieldConfig());
-        config.put(MvcConstants.PARAMETRIC_DISPLAY_VALUES.value(), findConfig.getParametricDisplayValues());
+        config.put(MvcConstants.FIELDS_INFO.value(), getFieldConfigWithDisplayNames(findConfig));
         config.put(MvcConstants.TOPIC_MAP_MAX_RESULTS.value(), findConfig.getTopicMapMaxResults());
-        config.put(MvcConstants.METADATA_FIELD_IDS.value(), getMetadataNodes());
+        config.put(MvcConstants.METADATA_FIELD_INFO.value(), getMetadataNodeInfo());
         config.putAll(getPublicConfig());
 
         final Map<String, Object> attributes = new HashMap<>();
@@ -111,5 +134,32 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         return new ModelAndView(ViewNames.CONFIG.viewName(), attributes);
+    }
+
+    private Map<String, FieldInfo<?>> getMetadataNodeInfo() {
+        return getMetadataNodes().stream()
+                .collect(toLinkedMap(MetadataNode::getName, node -> FieldInfo.builder()
+                        .id(node.getName())
+                        .displayName(node.getDisplayName())
+                        .type(node.getFieldType())
+                        .build()));
+    }
+
+    private Map<String, FieldInfo<?>> getFieldConfigWithDisplayNames(final FindConfig<C, B> findConfig) {
+        return findConfig.getFieldsInfo().getFieldConfig().entrySet().stream()
+                .collect(toLinkedMap(Map.Entry::getKey, entry -> entry.getValue().toBuilder()
+                        .displayName(Optional.ofNullable(entry.getValue().getDisplayName())
+                                             .orElseGet(() -> fieldDisplayNameGenerator.prettifyFieldName(entry.getValue().getId())))
+                        .build()));
+    }
+
+    private <T, K, U> Collector<T, ?, Map<K, U>> toLinkedMap(
+            final Function<? super T, ? extends K> keyMapper,
+            final Function<? super T, ? extends U> valueMapper) {
+        return Collectors.toMap(keyMapper, valueMapper,
+                                (u, v) -> {
+                                    throw new IllegalStateException(String.format("Duplicate key %s", u));
+                                },
+                                LinkedHashMap::new);
     }
 }

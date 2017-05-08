@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -34,7 +34,6 @@ define([
         },
 
         initialize: function(options) {
-            this.backUrl = options.backUrl;
             this.documentModel = options.documentModel;
             this.scrollModel = options.scrollModel;
             this.configuration = options.configuration;
@@ -44,7 +43,7 @@ define([
                 indexes: this.getIndexes(options.indexesCollection, this.documentModel)
             });
 
-            var previewModeModel = new Backbone.Model({document: null});
+            const previewModeModel = new Backbone.Model({document: null});
 
             this.resultsView = new this.ResultsView({
                 fetchStrategy: suggestStrategy,
@@ -55,6 +54,7 @@ define([
             });
 
             this.resultsViewAugmentation = new this.ResultsViewAugmentation({
+                indexesCollection: options.indexesCollection,
                 queryModel: this.queryModel,
                 resultsView: this.resultsView,
                 scrollModel: this.scrollModel,

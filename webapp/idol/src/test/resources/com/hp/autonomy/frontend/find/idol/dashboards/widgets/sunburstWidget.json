@@ -1,0 +1,21 @@
+{
+  "name": "Sunburst Widget",
+  "type": "SunburstWidget",
+  "x": 0,
+  "y": 4,
+  "width": 5,
+  "height": 2,
+  "datasource": {
+    "source": "SavedSearch",
+    "config": {
+      "id": 769,
+      "type": "QUERY"
+    }
+  },
+  "widgetSettings": {
+    "firstField": "CONTENT-TYPE",
+    "secondField": "AUTHOR",
+    "maxLegendEntries": 7,
+    "testing": "testing"
+  }
+}

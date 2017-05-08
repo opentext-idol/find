@@ -56,6 +56,11 @@
             }
         ]
     },
+    "export": {
+        "powerpoint": {
+            "templateFile": ""
+        }
+    },
     "uiCustomization": {
         "options": {
             "directAccessLink": {
@@ -68,6 +73,14 @@
             "enableRelatedConcepts": {
                 "user": true,
                 "bi": false
+            },
+            "enableSavedSearch": {
+                "user": false,
+                "bi": true
+            },
+            "enableTypeAhead": {
+                "user": true,
+                "bi": true
             },
             "resultViewOrder": {
                 "bi": ["list", "topic-map", "sunburst", "table", "map"],

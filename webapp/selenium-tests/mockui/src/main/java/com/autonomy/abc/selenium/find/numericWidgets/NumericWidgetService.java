@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find.numericWidgets;
 
 import com.autonomy.abc.selenium.find.IdolFindPage;
@@ -10,10 +15,9 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class NumericWidgetService {
-
     private final BIIdolFindElementFactory elementFactory;
     private final BIIdolFind find;
-    private IdolFindPage findPage;
+    private final IdolFindPage findPage;
 
     public NumericWidgetService(final BIIdolFind find) {
         elementFactory = find.elementFactory();
@@ -23,15 +27,15 @@ public class NumericWidgetService {
 
     public MainNumericWidget waitForReload() {
         elementFactory.getFilterPanel().waitForParametricFields();
-        MainNumericWidget mainGraph = findPage.mainGraph();
+        final MainNumericWidget mainGraph = findPage.mainGraph();
         mainGraph.waitUntilWidgetLoaded();
         return mainGraph;
     }
 
-    public String selectFilterGraph(GraphFilterContainer container, final WebDriver driver) {
+    public String selectFilterGraph(final GraphFilterContainer container, final WebDriver driver) {
         container.expand();
-        String graphTitle = container.filterCategoryName();
-        new WebDriverWait(driver, 5).until(new ExpectedCondition<Boolean> (){
+        final String graphTitle = container.filterCategoryName();
+        new WebDriverWait(driver, 5).until(new ExpectedCondition<Boolean>() {
             @Override
             public Boolean apply(final WebDriver driver) {
                 return !container.isCollapsed();
@@ -41,32 +45,30 @@ public class NumericWidgetService {
         return graphTitle;
     }
 
-    public MainNumericWidget searchAndSelectNthGraph(int n, String searchTerm, final WebDriver driver) {
-        IdolFilterPanel filterPanel = searchAndReturnFilterPanel(searchTerm);
+    public MainNumericWidget searchAndSelectNthGraph(final int n, final String searchTerm, final WebDriver driver) {
+        final IdolFilterPanel filterPanel = searchAndReturnFilterPanel(searchTerm);
         selectFilterGraph(filterPanel.getNthGraph(n), driver);
 
         return findPage.mainGraph();
     }
 
     public MainNumericWidget searchAndSelectFirstNumericGraph(final String searchTerm, final WebDriver driver) {
-        IdolFilterPanel filterPanel = searchAndReturnFilterPanel(searchTerm);
+        final IdolFilterPanel filterPanel = searchAndReturnFilterPanel(searchTerm);
         selectFilterGraph(filterPanel.getFirstNumericGraph(), driver);
 
         return findPage.mainGraph();
     }
 
     public MainNumericWidget searchAndSelectFirstDateGraph(final String searchTerm, final WebDriver driver) {
-        IdolFilterPanel filterPanel = searchAndReturnFilterPanel(searchTerm);
+        final IdolFilterPanel filterPanel = searchAndReturnFilterPanel(searchTerm);
         selectFilterGraph(filterPanel.getFirstDateGraph(), driver);
         return findPage.mainGraph();
     }
 
-    private IdolFilterPanel searchAndReturnFilterPanel(String searchTerm){
+    private IdolFilterPanel searchAndReturnFilterPanel(final String searchTerm) {
         find.findService().searchAnyView(searchTerm);
         final IdolFilterPanel filterPanel = elementFactory.getFilterPanel();
         filterPanel.waitForParametricFields();
         return filterPanel;
     }
-
-
 }

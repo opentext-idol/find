@@ -1,61 +1,68 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'text!find/templates/app/util/collapsible.html',
+    'underscore',
     'bootstrap'
-], function(Backbone, collapsibleTemplate) {
+], function (Backbone, collapsibleTemplate, _) {
     'use strict';
 
     return Backbone.View.extend({
         template: _.template(collapsibleTemplate, {variable: 'data'}),
 
         events: {
-            'click > .collapsible-header': function() {
+            'click > .collapsible-header': function () {
                 this.$collapse.collapse('toggle');
 
                 // other handlers called before this trigger
-                this.trigger('toggle', this.collapsed);
+                this.trigger('toggle', this.collapseModel.get('collapsed'));
             },
-            'show.bs.collapse': function() {
-                this.collapsed = false;
+            'show.bs.collapse': function () {
+                this.collapseModel.set('collapsed', false);
                 this.updateHeaderState();
 
                 this.trigger('show');
             },
-            'shown.bs.collapse': function() {
+            'shown.bs.collapse': function () {
                 if (this.renderOnOpen) {
                     this.view.render();
                 }
 
                 this.trigger('shown');
             },
-            'hide.bs.collapse': function() {
-                this.collapsed = true;
+            'hide.bs.collapse': function () {
+                this.collapseModel.set('collapsed', true);
                 this.updateHeaderState();
 
                 this.trigger('hide');
             }
         },
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.view = options.view;
-            this.collapsed = options.collapsed || false;
+            this.collapseModel = options.collapseModel || new Backbone.Model({collapsed: false});
             this.title = options.title;
             this.subtitle = options.subtitle;
             this.renderOnOpen = options.renderOnOpen || false;
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(this.template({
                 title: this.title,
                 subtitle: this.subtitle
             }));
 
             this.$header = this.$('.collapsible-header');
+            this.$title = this.$('.collapsible-title');
             this.updateHeaderState();
 
             // activate plugin manually for greater control of click handlers
             this.$collapse = this.$('.collapse').collapse({
-                toggle: !this.collapsed
+                toggle: !this.collapseModel.get('collapsed')
             });
 
             // Render after appending to the DOM since graph views must measure element dimensions
@@ -63,46 +70,46 @@ define([
             this.view.delegateEvents().render();
         },
 
-        remove: function() {
+        remove: function () {
             this.view.remove();
             Backbone.View.prototype.remove.call(this);
         },
 
-        updateHeaderState: function() {
+        updateHeaderState: function () {
             // The "collapsed" class controls the icons with class "rotating-chevron"
-            this.$header.toggleClass('collapsed', this.collapsed);
+            this.$header.toggleClass('collapsed', this.collapseModel.get('collapsed'));
         },
-        
-        setSubTitle: function(subtitle) {
+
+        setSubTitle: function (subtitle) {
             this.subtitle = subtitle;
             this.$('.collapsible-subtitle').text(subtitle);
         },
 
-        toggleSubtitle: function(toggle) {
+        toggleSubtitle: function (toggle) {
             this.$('.collapsible-subtitle').toggleClass('hide', !toggle)
         },
 
-        show: function() {
-            if (this.collapsed) {
+        show: function () {
+            if (this.collapseModel.get('collapsed')) {
                 this.$collapse.collapse('show');
             }
         },
 
-        setTitle: function(title) {
+        setTitle: function (title) {
             this.title = title;
 
-            if (this.$header) {
-                this.$header.text(this.title);
+            if (this.$title) {
+                this.$title.text(this.title);
             }
         },
 
-        hide: function() {
-            if (!this.collapsed) {
+        hide: function () {
+            if (!this.collapseModel.get('collapsed')) {
                 this.$collapse.collapse('hide');
             }
         },
 
-        toggle: function(state) {
+        toggle: function (state) {
             if (state) {
                 this.show();
             } else {

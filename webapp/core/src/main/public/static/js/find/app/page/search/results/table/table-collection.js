@@ -1,27 +1,25 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'find/app/model/find-base-collection',
-    'underscore'
-], function(BaseCollection, _) {
+    'underscore',
+    'find/app/model/dependent-parametric-collection'
+], function (_, DependentParametricCollection) {
     'use strict';
 
     // As this is mixed case, it can't match an IDOL field or a HOD field
-    var NONE_COLUMN = 'defaultColumn';
-    
-    return BaseCollection.extend({
-        url: 'api/public/parametric/dependent-values',
+    const NONE_COLUMN = 'defaultColumn';
 
-        parse: function(data) {
+    return DependentParametricCollection.extend({
+        parse: function (data) {
             this.columnNames = _.chain(data)
-            // take all the field arrays
-                .pluck('field')
+                // take all the field arrays
+                .pluck('subFields')
                 // flatten into a single array so we can pluck the values
                 .flatten()
-                .pluck('value')
+                .pluck('displayValue')
                 // make unique and sort
                 .uniq()
                 .sort()
@@ -35,29 +33,28 @@ define([
             }
 
             if (_.isEmpty(this.columnNames)) {
-                return _.map(data, function(datum) {
+                return _.map(data, function (datum) {
                     return {
-                        count: Number(datum.count),
-                        text: datum.value
+                        count: datum.count,
+                        text: datum.displayValue
                     }
                 });
-            }
-            else {
-                return _.map(data, function(datum) {
-                    var columns = _.chain(datum.field)
-                        .map(function(field) {
-                            var value = {};
-                            value[field.value || NONE_COLUMN] = Number(field.count);
+            } else {
+                return _.map(data, function (datum) {
+                    const columns = _.chain(datum.subFields)
+                        .map(function (field) {
+                            const value = {};
+                            value[field.displayValue || NONE_COLUMN] = field.count;
 
                             return value;
                         })
-                        .reduce(function(memo, fieldAndCount) {
+                        .reduce(function (memo, fieldAndCount) {
                             return _.extend(memo, fieldAndCount);
                         }, {})
                         .value();
 
                     return _.extend({
-                        text: datum.value
+                        text: datum.displayValue
                     }, columns);
                 }, this);
             }
@@ -65,5 +62,4 @@ define([
     }, {
         noneColumn: NONE_COLUMN
     });
-    
 });

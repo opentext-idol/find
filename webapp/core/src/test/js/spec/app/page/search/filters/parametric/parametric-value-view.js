@@ -1,17 +1,28 @@
+/*
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'find/app/page/search/filters/parametric/parametric-value-view',
-    'backbone'
-], function(ValueView, Backbone) {
+    'backbone',
+    'find/app/page/search/filters/parametric/parametric-value-view'
+], function(Backbone, ValueView) {
+    'use strict';
 
     describe('Parametric value view', function() {
         beforeEach(function() {
             this.model = new Backbone.Model({
-                id: 'cat',
+                value: 'cat',
+                displayValue: 'feline',
                 count: 3,
                 selected: false
             });
 
-            this.view = new ValueView({model: this.model});
+            this.selectedValuesCollection = new Backbone.Collection();
+            this.view = new ValueView({
+                model: this.model,
+                selectedValuesCollection: this.selectedValuesCollection
+            });
             this.view.render();
 
             this.$check = this.view.$('.parametric-value-icon');
@@ -25,7 +36,7 @@ define([
         });
 
         it('displays the value name', function() {
-            expect(this.$name).toContainText('cat');
+            expect(this.$name).toContainText('feline');
         });
 
         it('displays the count', function() {
@@ -36,21 +47,6 @@ define([
             expect(this.$check).toHaveClass('hide');
         });
 
-        describe('when the model has a displayName', function() {
-            beforeEach(function() {
-                this.model.set('displayName', 'feline');
-                this.view.updateText();
-            });
-
-            it('displays the display name when present', function() {
-                expect(this.$name).toContainText('feline');
-            });
-
-            it('still sets the correct name in the data value attribute', function() {
-                expect(this.view.$el).toHaveAttr('data-value', 'cat');
-            });
-        });
-
         describe('after the count is set to null', function() {
             beforeEach(function() {
                 this.model.set('count', null);
@@ -58,7 +54,7 @@ define([
             });
 
             it('displays the value name', function() {
-                expect(this.$name).toContainText('cat');
+                expect(this.$name).toContainText('feline');
             });
 
             it('does not display the count', function() {
@@ -75,7 +71,7 @@ define([
                 });
 
                 it('displays the value name', function() {
-                    expect(this.$name).toContainText('cat');
+                    expect(this.$name).toContainText('feline');
                 });
 
                 it('displays the count', function() {
@@ -86,8 +82,7 @@ define([
 
         describe('after the value is selected', function() {
             beforeEach(function() {
-                this.model.set('selected', true);
-                this.view.updateSelected();
+                this.selectedValuesCollection.add({id: 'cat'});
             });
 
             it('shows the check icon', function() {
@@ -96,8 +91,7 @@ define([
 
             describe('then the value is deselected', function() {
                 beforeEach(function() {
-                    this.model.set('selected', false);
-                    this.view.updateSelected();
+                    this.selectedValuesCollection.remove('cat');
                 });
 
                 it('hides the check icon', function() {

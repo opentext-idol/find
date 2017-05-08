@@ -13,6 +13,7 @@ import com.hp.autonomy.frontend.configuration.SimpleComponent;
 import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -32,7 +33,7 @@ import java.util.Collection;
 public class HodConfig extends SimpleComponent<HodConfig> implements OptionalConfigurationComponent<HodConfig> {
     private final ApiKey apiKey;
     @Singular
-    private final Collection<ResourceIdentifier> activeIndexes;
+    private final Collection<ResourceName> activeIndexes;
     private final Boolean publicIndexesEnabled;
     private final URL ssoPageGetUrl;
     private final URL ssoPagePostUrl;

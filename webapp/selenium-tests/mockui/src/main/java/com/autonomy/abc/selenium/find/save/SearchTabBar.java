@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find.save;
 
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
@@ -8,8 +13,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,7 +21,6 @@ import java.util.List;
 public class SearchTabBar implements Iterable<SearchTab> {
     private final WebElement bar;
     private final WebDriver driver;
-
 
     public SearchTabBar(final WebDriver driver) {
         bar = driver.findElement(By.className("search-tabs-list"));
@@ -32,7 +34,7 @@ public class SearchTabBar implements Iterable<SearchTab> {
 
     public List<SearchTab> tabs() {
         final List<SearchTab> tabs = new ArrayList<>();
-        for (final WebElement tab : bar.findElements(By.className("search-tab"))) {
+        for(final WebElement tab : bar.findElements(By.className("search-tab"))) {
             tabs.add(new SearchTab(tab));
         }
         return tabs;
@@ -41,8 +43,8 @@ public class SearchTabBar implements Iterable<SearchTab> {
     public List<String> savedTabTitles() {
         final List<String> tabTitles = new ArrayList<>();
 
-        for(SearchTab tab : tabs()){
-            if(!tab.getTitle().equals("New Search")){
+        for(final SearchTab tab : tabs()) {
+            if(!tab.getTitle().equals("New Search")) {
                 tabTitles.add(tab.getTitle());
             }
         }
@@ -66,8 +68,8 @@ public class SearchTabBar implements Iterable<SearchTab> {
     }
 
     public SearchTab tab(final String title) {
-        for (final SearchTab tab : tabs()) {
-            if (tab.getTitle().equals(title)) {
+        for(final SearchTab tab : tabs()) {
+            if(tab.getTitle().equals(title)) {
                 return tab;
             }
         }
@@ -86,22 +88,19 @@ public class SearchTabBar implements Iterable<SearchTab> {
         newTabButton().click();
     }
 
-    public void hoverOnTab(final int i){
+    public void hoverOnTab(final int i) {
         DriverUtil.hover(driver, tabFromIndex(i).getTab());
     }
 
     public void waitUntilTabGone(final String title) {
-        new WebDriverWait(driver, 300).withMessage("deleted tab to disappear").until(new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(final WebDriver driver) {
-                return bar.findElements(By.xpath(".//*[contains(normalize-space(),'"+title+"')]")).isEmpty();
-            }
-        });
+        new WebDriverWait(driver, 30)
+                .withMessage("deleted tab to disappear")
+                .until((ExpectedCondition<Boolean>)driver -> bar.findElements(By.xpath(".//*[text()='" + title + "']")).isEmpty());
     }
 
     public void waitUntilSavedSearchAppears() {
-        new WebDriverWait(driver, 400).until(ExpectedConditions.presenceOfElementLocated
-                (By.cssSelector(".search-tab:nth-child(3) .search-tab-title")));
+        new WebDriverWait(driver, 40)
+                .until(ExpectedConditions.presenceOfElementLocated
+                        (By.cssSelector(".search-tab:nth-child(3) .search-tab-title")));
     }
-
 }

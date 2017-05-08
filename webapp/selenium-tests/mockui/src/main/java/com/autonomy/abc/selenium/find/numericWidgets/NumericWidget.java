@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find.numericWidgets;
 
 import com.hp.autonomy.frontend.selenium.util.AppElement;
@@ -11,12 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NumericWidget extends AppElement {
+    private final WebElement container;
 
-    final private WebElement container;
-
-    public NumericWidget(WebDriver driver, WebElement outerContainer) {
+    public NumericWidget(final WebDriver driver, final WebElement outerContainer) {
         super(new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfNestedElementLocatedBy(outerContainer, By.cssSelector("svg.chart"))), driver);
-        this.container = outerContainer.findElement(By.cssSelector("svg.chart"));
+        container = outerContainer.findElement(By.cssSelector("svg.chart"));
     }
 
     public WebElement getContainer() {
@@ -28,7 +32,7 @@ public class NumericWidget extends AppElement {
     }
 
     public int selectionRectangleWidth() {
-        return (int) Double.parseDouble(selectionRec().getAttribute("Width"));
+        return (int)Double.parseDouble(selectionRec().getAttribute("Width"));
     }
 
     public boolean selectionRectangleExists() {
@@ -36,13 +40,13 @@ public class NumericWidget extends AppElement {
     }
 
     public List<WebElement> barsWithResults() {
-        List<WebElement> bars = new ArrayList<>();
-        for (WebElement bar : findElements(By.cssSelector("g > g > rect:not([height='1'])"))) {
-            if (bar.isDisplayed()) {
+        final List<WebElement> bars = new ArrayList<>();
+        for(final WebElement bar : findElements(By.cssSelector("g > g > rect:not([height='1'])"))) {
+            if(bar.isDisplayed()) {
                 bars.add(bar);
             }
         }
+
         return bars;
     }
-
 }

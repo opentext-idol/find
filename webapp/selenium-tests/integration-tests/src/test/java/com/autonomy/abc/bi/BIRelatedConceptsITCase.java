@@ -1,7 +1,8 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
@@ -12,6 +13,7 @@ import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.application.UserRole;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
 import com.autonomy.abc.selenium.find.concepts.ConceptsPanel;
+import com.autonomy.abc.selenium.find.concepts.ConceptsPanel.EditPopover;
 import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.results.ListView;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
@@ -22,12 +24,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
+import java.util.AbstractSequentialList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasAttribute;
 import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
@@ -44,15 +48,15 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
 
     @Before
     public void setUp() {
-        elementFactory = (BIIdolFindElementFactory)super.getElementFactory();
+        elementFactory = (BIIdolFindElementFactory) getElementFactory();
         findService = getApplication().findService();
         findPage = elementFactory.getFindPage();
         findPage.goToListView();
         conceptsPanel = elementFactory.getConceptsPanel();
     }
 
-    private ConceptsPanel.EditPopover openEditPopOverForConcept(final int index, final String correctValue) {
-        ConceptsPanel.EditPopover popOver = conceptsPanel.editConcept(index);
+    private EditPopover openEditPopOverForConcept(final int index, final String correctValue) {
+        final EditPopover popOver = conceptsPanel.editConcept(index);
 
         assertThat("Edit box has opened", popOver, displayed());
         verifyThat("Popover contains value", popOver.containsValue(correctValue));
@@ -63,19 +67,18 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
     @SuppressWarnings("FeatureEnvy")
     @Test
     public void testResultsCountGoesDownAfterAddingConcept() {
-        final int numberOfRepeats = 2;
-        final LinkedList<Integer> resultCountList = new LinkedList<>();
 
         final ListView results = searchAndWait("loathing");
 
         final int resultsCountNoConcept = results.getTotalResultsNum();
         assumeThat("Initial query returned no results", resultsCountNoConcept, greaterThan(0));
+        final AbstractSequentialList<Integer> resultCountList = new LinkedList<>();
         resultCountList.add(resultsCountNoConcept);
 
-        TopicMapView topicMap;
-        for(int i = 0; i < numberOfRepeats; ++i) {
-            topicMap = goToTopicMap();
-            topicMap.clickConceptAndAddText(topicMap.conceptClusterNames().size());
+        final int numberOfRepeats = 2;
+        for (int i = 0; i < numberOfRepeats; ++i) {
+            final TopicMapView topicMap = goToTopicMap();
+            topicMap.clickNthClusterHeading(0);
             Waits.loadOrFadeWait();
 
             findPage.goToListView();
@@ -84,32 +87,44 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
             resultCountList.add(results.getTotalResultsNum());
         }
 
-        for(int i = 0; i < resultCountList.size() - 1; ++i) {
+        for (int i = 0; i < resultCountList.size() - 1; ++i) {
             LOGGER.info("Search no. " + (i + 1) + " yielded " + resultCountList.get(i) + " results.");
             assertThat("Adding a concept does not increase the result count",
-                       resultCountList.get(i),
-                       greaterThanOrEqualTo(resultCountList.get(i + 1)));
+                    resultCountList.get(i),
+                    greaterThanOrEqualTo(resultCountList.get(i + 1)));
         }
+    }
+
+    @Test
+    public void editConceptToWhitespaceNotAllowed() {
+        final String concept = "cheese";
+        searchAndWait(concept);
+        final EditPopover popover = openEditPopOverForConcept(0, concept);
+        popover.setValue("");
+        verifyThat("Not possible to save concept as empty space", popover.saveButton(), hasAttribute("disabled"));
+        popover.setValue("\n     ");
+        verifyThat("Not possible to save concept as whitespace", popover.saveButton(), hasAttribute("disabled"));
+        popover.cancelEdit();
     }
 
     @Test
     public void testEditingASingleConcept() {
         final String originalConcept = "balloon";
-        final String editedConcept = "shiny";
 
-        ListView results = searchAndWait(originalConcept);
+        final ListView results = searchAndWait(originalConcept);
         final String firstResult = results.getResult(1).getTitleString();
 
-        TopicMapView topicMap = goToTopicMap();
+        final TopicMapView topicMap = goToTopicMap();
         final List<String> parentNames = topicMap.conceptClusterNames();
 
-        ConceptsPanel.EditPopover popOver = openEditPopOverForConcept(0,originalConcept);
+        EditPopover popOver = openEditPopOverForConcept(0, originalConcept);
 
         popOver.setValue("blaaaaaaaaaaaaah");
         popOver.cancelEdit();
         verifyThat("Have not edited the concept", conceptsPanel.selectedConcepts().get(0), containsText(originalConcept));
 
         popOver = conceptsPanel.editConcept(0);
+        final String editedConcept = "shiny";
         popOver.setValue(editedConcept);
         popOver.saveEdit();
         verifyThat("Edit popover has closed", conceptsPanel.popOverGone());
@@ -125,18 +140,18 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
         goToTopicMap();
         verifyThat("Topic map entities have changed", topicMap.conceptClusterNames(), not(parentNames));
     }
-    
+
     @Test
     //Assumes that "nefarioustrout" returns no results
     public void testQuotesInConcept() {
         final String termA = "trout";
-        final String termB = "nefarious";
 
         searchAndWait(termA);
         final ListView results = elementFactory.getListView();
         int numResults = results.getTotalResultsNum();
         conceptsPanel.removeAllConcepts();
 
+        final String termB = "nefarious";
         searchAndWait(termB);
         numResults = numResults + results.getTotalResultsNum();
         assertThat("There are some results when search terms are 'OR'ed", numResults, greaterThan(0));
@@ -145,21 +160,21 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
         final String originalConcept = "silly";
         searchAndWait(originalConcept);
 
-        ConceptsPanel.EditPopover popOver = openEditPopOverForConcept(0, originalConcept);
+        EditPopover popOver = openEditPopOverForConcept(0, originalConcept);
 
-        popOver.setValueAndSave(Arrays.asList("\""+termB, termA+"\""));
+        popOver.setValueAndSave(Arrays.asList('"' + termB, termA + '"'));
 
         results.waitForResultsToLoad();
         verifyThat("Converts the line break to a space and looks for an exact match", results.getTotalResultsNum(), is(0));
 
         popOver = conceptsPanel.editConcept(0);
-        verifyThat("Line breaks replaced with spaces in edit box",!popOver.containsValue("\n"));
+        verifyThat("Line breaks replaced with spaces in edit box", !popOver.containsValue("\n"));
     }
 
     @Test
     public void testEditingConceptCluster() {
         searchAndWait("something");
-        TopicMapView topicMap = goToTopicMap();
+        final TopicMapView topicMap = goToTopicMap();
 
         final int clusterIndex = 0;
         final List<String> childConcepts = topicMap.getChildConceptsOfCluster(clusterIndex);
@@ -168,18 +183,18 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
         final String conceptCluster = topicMap.clickNthClusterHeading(clusterIndex);
         topicMap.waitForConcepts();
 
-        ConceptsPanel.EditPopover popOver = openEditPopOverForConcept(1, conceptCluster);
+        final EditPopover popOver = openEditPopOverForConcept(1, conceptCluster);
 
-        for (String child : childConcepts) {
+        for (final String child : childConcepts) {
             verifyThat("Pop-over contains child: " + child, popOver.containsValue(child));
         }
 
-        final List<String> newConcepts = Arrays.asList("my fab","concepts","so fabulous");
+        final List<String> newConcepts = Arrays.asList("my fab", "concepts", "so fabulous");
         popOver.setValueAndSave(newConcepts);
 
-        DriverUtil.hover(getDriver(),conceptsPanel.selectedConcepts().get(1));
+        DriverUtil.hover(getDriver(), conceptsPanel.selectedConcepts().get(1));
         final String text = conceptsPanel.toolTipText(1);
-        for(String concept : newConcepts) {
+        for (final String concept : newConcepts) {
             verifyThat("Tool tip has added concept: " + concept, text, containsString(concept));
         }
     }
@@ -187,13 +202,13 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-686")
     public void testInlinePreviewClosesOnEdit() {
-        final String originalSearch = "face";
         findPage.goToListView();
+        final String originalSearch = "face";
         final ListView results = findService.search(originalSearch);
         results.waitForResultsToLoad();
 
-        InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
-        ConceptsPanel.EditPopover popOver = openEditPopOverForConcept(0, originalSearch);
+        final InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
+        final EditPopover popOver = openEditPopOverForConcept(0, originalSearch);
 
         popOver.setValue("blaaaaaaaaaaaaahljsfiejsfeisjtl");
         popOver.saveEdit();
@@ -202,7 +217,7 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
     }
 
     private TopicMapView goToTopicMap() {
-        TopicMapView map = findPage.goToTopicMap();
+        final TopicMapView map = findPage.goToTopicMap();
         map.waitForMapLoaded();
         return map;
     }

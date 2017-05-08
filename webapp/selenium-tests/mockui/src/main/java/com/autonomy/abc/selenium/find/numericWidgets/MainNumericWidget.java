@@ -1,11 +1,19 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find.numericWidgets;
 
 import com.hp.autonomy.frontend.selenium.element.DatePicker;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
-import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -19,16 +27,11 @@ public class MainNumericWidget extends AppElement {
     private final WebDriver driver;
     private final NumericWidget chart;
 
-    private enum LimitType {
-        max,
-        min
-    }
-
     public MainNumericWidget(final WebDriver driver) {
-        super(driver.findElement(By.className("middle-container-time-bar")),driver);
+        super(driver.findElement(By.className("middle-container-time-bar")), driver);
         this.driver = driver;
-        this.container = driver.findElement(By.className("middle-container-time-bar"));
-        this.chart = new NumericWidget(driver, container);
+        container = driver.findElement(By.className("middle-container-time-bar"));
+        chart = new NumericWidget(driver, container);
     }
 
     //Around the graph/chart
@@ -91,11 +94,11 @@ public class MainNumericWidget extends AppElement {
         selectFractionOfBars(1, 2);
     }
 
-    public void selectFractionOfBars(int i, int j) {
-        List<WebElement> bars = graphAsWidget().barsWithResults();
-        int index = bars.size() * i / j;
+    public void selectFractionOfBars(final int i, final int j) {
+        final List<WebElement> bars = graphAsWidget().barsWithResults();
+        final int index = bars.size() * i / j;
 
-        WebElement bar = bars.get(index);
+        final WebElement bar = bars.get(index);
         DriverUtil.clickAndDrag(100, bar, driver);
     }
 
@@ -135,41 +138,41 @@ public class MainNumericWidget extends AppElement {
         return fieldValue(LimitType.max);
     }
 
-    private String fieldValue(LimitType limit) {
-        return findElement(By.cssSelector(".numeric-parametric-" + limit.toString() + "-input")).getAttribute("value");
+    private String fieldValue(final LimitType limit) {
+        return findElement(By.cssSelector(".numeric-parametric-" + limit + "-input")).getAttribute("value");
     }
 
     public List<Date> getDates() {
-        List<Date> dates = new ArrayList<>();
+        final List<Date> dates = new ArrayList<>();
         dates.add(parseTheDates(minFieldValue()));
         dates.add(parseTheDates(maxFieldValue()));
         return dates;
     }
 
     //DATE FORMAT: YYYY-MM-DD hh:mm
-    private Date parseTheDates(String stringDate) {
-        String date = stringDate.split(" ")[0];
-        String[] dateParts = date.split("-");
+    private Date parseTheDates(final String stringDate) {
+        final String date = stringDate.split(" ")[0];
+        final String[] dateParts = date.split("-");
         return new Date(Integer.parseInt(dateParts[0]) - 1900, Integer.parseInt(dateParts[1]), Integer.parseInt(dateParts[2]));
     }
 
     //Setting date field values
-    private WebElement inputBox(LimitType limit) {
-        return findElement(By.className("numeric-parametric-" + limit.toString() + "-input"));
+    private WebElement inputBox(final LimitType limit) {
+        return findElement(By.className("numeric-parametric-" + limit + "-input"));
     }
 
-    public void setMinValueViaText(String value) {
+    public void setMinValueViaText(final String value) {
         inputValue(value, minFieldValue().length(), inputBox(LimitType.min));
     }
 
-    public void setMaxValueViaText(String value) {
+    public void setMaxValueViaText(final String value) {
         inputValue(value, maxFieldValue().length(), inputBox(LimitType.max));
     }
 
     //FormInput class is not used because the in-built clear and submit methods don't work w/ these boxes
-    private void inputValue(final String term, int length, WebElement inputBox) {
+    private void inputValue(final String term, final int length, final WebElement inputBox) {
         waitUntilWidgetLoaded();
-        for (int i = 0; i < length; i++) {
+        for(int i = 0; i < length; i++) {
             inputBox.sendKeys(Keys.BACK_SPACE);
         }
         inputBox.sendKeys(term);
@@ -186,7 +189,7 @@ public class MainNumericWidget extends AppElement {
         return findElement(By.cssSelector(".input-group[data-date-attribute='max-date']"));
     }
 
-    public DatePicker openCalendar(WebElement dateInput) {
+    public DatePicker openCalendar(final WebElement dateInput) {
         dateInput.findElement(By.className("hp-calendar")).click();
         new WebDriverWait(getDriver(), 3).until(new ExpectedCondition<Boolean>() {
             @Override
@@ -201,5 +204,8 @@ public class MainNumericWidget extends AppElement {
         return !findElements(By.cssSelector(".datepicker-days .picker-switch")).isEmpty();
     }
 
-
+    private enum LimitType {
+        max,
+        min
+    }
 }

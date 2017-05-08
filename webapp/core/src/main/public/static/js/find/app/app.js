@@ -1,12 +1,12 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
     'jquery',
     'backbone',
-    'underscore',
     'find/app/util/test-browser',
     'find/app/model/window-scroll-model',
     'find/app/model/saved-searches/saved-query-collection',
@@ -14,14 +14,16 @@ define([
     './model-registry',
     'find/app/navigation',
     'find/app/configuration',
+    'find/app/metrics',
     'find/app/pages',
     'find/app/util/logout',
     'find/app/vent',
     'find/app/router',
     'js-whatever/js/escape-regex',
     'text!find/templates/app/app.html'
-], function($, Backbone, _, testBrowser, WindowScrollModel, SavedQueryCollection, parseUrl, ModelRegistry,
-            Navigation, configuration, Pages, logout, vent, router, escapeRegex, template) {
+], function(_, $, Backbone, testBrowser, WindowScrollModel, SavedQueryCollection, parseUrl, ModelRegistry,
+            Navigation, configuration, metrics, Pages, logout, vent, router, escapeRegex, template) {
+    'use strict';
 
     function removeTrailingSlash(string) {
         return string.replace(/\/$/, '');
@@ -32,12 +34,10 @@ define([
      * @return {string} A fully qualified URI
      */
     function determineBaseURI() {
-        if (document.body.baseURI) {
-            return document.body.baseURI;
-        } else {
+        return document.body.baseURI
+            ? document.body.baseURI
             // IE11 does not have Node.baseURI so parse the <base> element's href directly
-            return $('base').prop('href');
-        }
+            : $('base').prop('href');
     }
 
     return Backbone.View.extend({
@@ -50,22 +50,22 @@ define([
         IndexesCollection: null,
 
         // Abstract
+        ajaxErrorHandler: null,
         getPageData: null,
 
         events: {
             'click .navigation-logout': function() {
                 logout('logout');
             },
-            'click a[href]': function(event) {
-                // If not left click (event.which === 1) without the control key, continue with full page redirect
-                if (event.which === 1 && !(event.ctrlKey || event.metaKey)) {
-                    var href = $(event.currentTarget).prop('href');
+            'click a[href]': function(e) {
+                // If not left click (e.which === 1) without the control key, continue with full page redirect
+                if(e.which === 1 && !(e.ctrlKey || e.metaKey)) {
+                    const href = $(e.currentTarget).prop('href');
 
                     // If not an internal route, continue with full page redirect
-                    if (this.internalHrefRegexp.test(href)) {
-                        event.preventDefault();
-                        var route = href.replace(this.internalHrefRegexp, '');
-                        vent.navigate(route);
+                    if(this.internalHrefRegexp.test(href)) {
+                        e.preventDefault();
+                        vent.navigate(href.replace(this.internalHrefRegexp, ''));
                     }
                 }
             }
@@ -73,9 +73,10 @@ define([
 
         initialize: function() {
             $.ajaxSetup({cache: false});
+            $(document).ajaxError(this.ajaxErrorHandler.bind(this));
 
             // disable Datatables alerting behaviour
-            if ($.fn.dataTableExt) {
+            if($.fn.dataTableExt) {
                 $.fn.dataTableExt.sErrMode = 'throw';
             }
 
@@ -85,8 +86,8 @@ define([
             this.internalHrefRegexp = new RegExp('^' + escapeRegex(removeTrailingSlash(baseURI) + applicationPath));
 
             testBrowser().done(function() {
-                var modelRegistry = new ModelRegistry(this.getModelData());
-                var pageData = this.getPageData();
+                const modelRegistry = new ModelRegistry(this.getModelData());
+                const pageData = this.getPageData();
 
                 this.pages = new Pages({
                     configuration: config,
@@ -98,20 +99,25 @@ define([
 
                 this.navigation = new this.Navigation({
                     pageData: pageData,
-                    router: router
+                    router: router,
+                    sidebarModel: modelRegistry.get('sidebarModel')
                 });
 
                 this.render();
 
-                var matchedRoute = Backbone.history.start({
+                let matchedRoute = Backbone.history.start({
                     pushState: true,
                     // Application path must have a leading slash
                     root: removeTrailingSlash(parseUrl(baseURI).pathname) + applicationPath
                 });
 
-                if (!matchedRoute) {
-                    vent.navigate(configuration().hasBiRole ? 'search/query/*' : 'search/splash');
+                if(!matchedRoute) {
+                    vent.navigate(configuration().hasBiRole
+                        ? 'search/query'
+                        : 'search/splash');
                 }
+
+                metrics.addTimeSincePageLoad('page-responsive-after-reload');
             }.bind(this));
         },
 
@@ -129,31 +135,31 @@ define([
 
         // Can be overridden
         getModelData: function() {
-            var modelData = {
+            return {
                 indexesCollection: {
                     Constructor: this.IndexesCollection
+                },
+                sidebarModel: {
+                    Constructor: Backbone.Model,
+                    fetch: false,
+                    attributes: {
+                        collapsed: false
+                    }
                 },
                 windowScrollModel: {
                     Constructor: WindowScrollModel,
                     fetch: false
-                }
+                },
+                savedQueryCollection: configuration().hasBiRole
+                    ? {
+                        Constructor: SavedQueryCollection,
+                        fetchOptions: {remove: false, reset: false}
+                    }
+                    : {
+                        Constructor: Backbone.Collection,
+                        fetch: false
+                    }
             };
-
-            if (configuration().hasBiRole) {
-                modelData.savedQueryCollection = {
-                    Constructor: SavedQueryCollection,
-                    fetchOptions: {remove: false}
-                };
-            }
-            else {
-                modelData.savedQueryCollection = {
-                    Constructor: Backbone.Collection,
-                    fetch: false
-                };
-            }
-
-            return modelData;
         }
     });
-
 });

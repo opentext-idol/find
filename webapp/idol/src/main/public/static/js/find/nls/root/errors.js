@@ -1,7 +1,8 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'js-whatever/js/substitution'
 ], function(substitution) {
@@ -54,8 +55,6 @@ define([
         'error.code.DAHGETQUERYTAGVALUES512': 'Find did not understand your search text',
         'error.code.AXEGETQUERYTAGVALUES512': 'Find did not understand your search text',
         'error.code.DAHQUERY512': 'Find did not understand your search text',
-        'error.code.AXEQUERY512': 'Find did not understand your search text',
-        'error.code.emptyTableView': 'Could not display Table View: your search returned no parametric values',
-        'error.code.emptySunburstView': 'Could not display Sunburst View: your search returned no parametric values'
+        'error.code.AXEQUERY512': 'Find did not understand your search text'
     });
 });

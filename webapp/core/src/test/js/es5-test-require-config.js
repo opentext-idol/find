@@ -7,6 +7,7 @@ require.config({
     baseUrl: 'src/main/public/static/js',
     paths: {
         'find': '../../../../../target/es5-jasmine-test/find',
-        'find/templates': 'find/templates'
+        'find/templates': 'find/templates',
+        'mock': '../../../../../target/es5-jasmine-test-specs/mock'
     }
 });

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
-import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
+import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
@@ -30,18 +30,18 @@ import java.util.Optional;
 public class UiCustomization implements ConfigurationComponent<UiCustomization> {
     private final UiCustomizationOptions options;
     @Singular("parametricNeverShowItem")
-    private final Collection<TagName> parametricNeverShow;
+    private final Collection<FieldPath> parametricNeverShow;
     @Singular("parametricAlwaysShowItem")
-    private final Collection<TagName> parametricAlwaysShow;
+    private final Collection<FieldPath> parametricAlwaysShow;
     @Singular("parametricOrderItem")
-    private final Collection<TagName> parametricOrder;
+    private final Collection<FieldPath> parametricOrder;
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final Map<String, String> specialUrlPrefixes;
     private final String errorCallSupportString;
 
     @Override
     public UiCustomization merge(final UiCustomization uiCustomization) {
-        if (uiCustomization == null) {
+        if(uiCustomization == null) {
             return this;
         } else {
             final Map<String, String> specialUrlPrefixes = new HashMap<>(uiCustomization.specialUrlPrefixes);

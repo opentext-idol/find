@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,15 +13,14 @@
     <groupId>com.hp.autonomy.frontend.find</groupId>
     <artifactId>selenium-tests</artifactId>
     <packaging>pom</packaging>
-    <version>11.3.0-SNAPSHOT</version>
+    <version>11.4.0-SNAPSHOT</version>
 
     <properties>
-        <qa.infrastructure.version>2.5.4</qa.infrastructure.version>
+        <qa.infrastructure.version>2.10.1</qa.infrastructure.version>
     </properties>
 
     <modules>
         <module>integration-tests</module>
         <module>mockui</module>
     </modules>
-
 </project>

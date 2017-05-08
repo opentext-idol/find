@@ -11,6 +11,7 @@ import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.aci.AbstractConfigurableAciService;
@@ -21,6 +22,10 @@ import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentica
 import com.hp.autonomy.frontend.configuration.server.ServerConfigValidator;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolAuthenticationMixins;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.Widget;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.WidgetMixins;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasourceMixins;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.requests.IdolQueryRestrictionsMixin;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
@@ -51,8 +56,11 @@ public class IdolConfiguration {
         final ObjectMapper mapper = builder
                 .createXmlMapper(false)
                 .mixIn(Authentication.class, IdolAuthenticationMixins.class)
+                .mixIn(Widget.class, WidgetMixins.class)
+                .mixIn(WidgetDatasource.class, WidgetDatasourceMixins.class)
                 .mixIn(QueryRestrictions.class, IdolQueryRestrictionsMixin.class)
                 .mixIn(IdolQueryRestrictions.class, IdolQueryRestrictionsMixin.class)
+                .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
                 .build();
 
         mapper.setInjectableValues(new InjectableValues.Std().addValue(AuthenticationInformationRetriever.class, authenticationInformationRetriever));

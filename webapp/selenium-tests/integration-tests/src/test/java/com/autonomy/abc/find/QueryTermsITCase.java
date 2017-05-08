@@ -1,9 +1,14 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.find;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.base.Role;
 import com.autonomy.abc.queryHelper.IdolQueryTestHelper;
-import com.autonomy.abc.selenium.error.Errors;
+import com.autonomy.abc.selenium.error.Errors.Search;
 import com.autonomy.abc.selenium.find.FindPage;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.application.UserRole;
@@ -15,7 +20,6 @@ import com.autonomy.abc.shared.QueryTestHelper;
 import com.hp.autonomy.frontend.selenium.application.ApplicationType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature;
-import com.hp.autonomy.frontend.selenium.framework.environment.Deployment;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import org.apache.commons.collections4.ListUtils;
@@ -32,6 +36,8 @@ import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 public class QueryTermsITCase extends FindTestBase {
+    private static final String ERROR_MESSAGE = "An error has occurred.";
+
     private FindPage findPage;
     private FindService findService;
 
@@ -54,7 +60,7 @@ public class QueryTermsITCase extends FindTestBase {
         final String searchTerm = "Fred is a chimpanzee";
         final ListView results = findService.search(searchTerm);
         assertThat(getElementFactory().getSearchBox().getValue(), is(searchTerm));
-        assertThat(results.getText().toLowerCase(), not(containsString("error")));
+        assertThat(results.getText().toLowerCase(), not(containsString(ERROR_MESSAGE)));
         assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), empty());
     }
 
@@ -68,7 +74,7 @@ public class QueryTermsITCase extends FindTestBase {
         final String searchTerm = "*";
         final ListView results = findService.search(searchTerm);
         assertThat(getElementFactory().getSearchBox().getValue(), is(searchTerm));
-        assertThat(results.getText().toLowerCase(), not(containsString("error")));
+        assertThat(results.getText().toLowerCase(), not(containsString(ERROR_MESSAGE)));
         assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), empty());
     }
 
@@ -82,7 +88,7 @@ public class QueryTermsITCase extends FindTestBase {
 
         final String searchTerm = "chimpanzee";
         final ListView results = findService.search(searchTerm);
-        assertThat(results.getText().toLowerCase(), not(containsString("error")));
+        assertThat(results.getText().toLowerCase(), not(containsString(ERROR_MESSAGE)));
         assertThat(getElementFactory().getConceptsPanel().selectedConceptHeaders(), contains(searchTerm));
     }
 
@@ -103,10 +109,22 @@ public class QueryTermsITCase extends FindTestBase {
     public void testBooleanOperators() {
         findPage.goToListView();
 
-        List<String> potentialTerms = new ArrayList<>(Arrays.asList("brevity", "tessellate", "hydrangea", "\"dearly departed\"", "abstruse", "lobotomy"));
+        final List<String> potentialTerms = new ArrayList<>(Arrays.asList(
+                "mabuya",
+                "margita",
+                "overtrain",
+                "brevity",
+                "tessellate",
+                "hydrangea",
+                "\"dearly departed\"",
+                "abstruse",
+                "lobotomy"
+        ));
+
         final String termOne = findService.termWithBetween1And30Results(potentialTerms);
         final String termTwo = findService.termWithBetween1And30Results(potentialTerms);
-        assertThat("Test only works if query terms both have <=30 results ","",not(anyOf(is(termOne),is(termTwo))));
+
+        assertThat("Test only works if query terms both have <=30 results ", "", not(anyOf(is(termOne), is(termTwo))));
 
         final List<String> resultsTermOne = getResultsList(termOne);
         final int resultsNumberTermOne = resultsTermOne.size();
@@ -137,12 +155,12 @@ public class QueryTermsITCase extends FindTestBase {
     private List<String> getResultsList(final String term) {
         final ListView results = findService.search(term);
         results.waitForResultsToLoad();
-        final List<String> searchResults = results.getResultTitles();
+        final List<String> searchResults = results.getResultsReferences();
         removeAllConcepts();
         return searchResults;
     }
 
-    private void checkANotB(final String term, final Set<String> uniqueResults, final List<String> notIncludeResults) {
+    private void checkANotB(final String term, final Set<String> uniqueResults, final Collection<String> notIncludeResults) {
         final List<String> notTermOne = getResultsList(term);
         uniqueResults.removeAll(notIncludeResults);
         assertThat(notTermOne.size(), is(uniqueResults.size()));
@@ -152,30 +170,37 @@ public class QueryTermsITCase extends FindTestBase {
     private void ensureOnCorrectView() {
         findService.searchAnyView("get rid of");
         removeAllConcepts();
-        ListView results = findPage.goToListView();
+        final ListView results = findPage.goToListView();
         results.waitForResultsToLoad();
     }
 
     @Test
-    @ActiveBug(value = "CORE-2925", type = ApplicationType.ON_PREM, against = Deployment.DEVELOP)
-    //TODO Hosted -> is "An error occurred" a good enough error here?
+    @ActiveBug({"CORE-2925", "FIND-853"})
     public void testCorrectErrorMessageDisplayed() {
         ensureOnCorrectView();
-        new QueryTestHelper<>(findService)
-                .booleanOperatorQueryText(Errors.Search.OPERATORS, Errors.Search.OPENING_BOOL, Errors.Search.GENERIC_HOSTED_ERROR);
-        new QueryTestHelper<>(findService)
-                .emptyQueryText(Errors.Search.STOPWORDS, Errors.Search.NO_TEXT,Errors.Search.GENERIC_HOSTED_ERROR, Errors.Search.HOSTED_INVALID);
+        new IdolQueryTestHelper(findService)
+                .booleanOperatorQueryText(getElementFactory(), Search.OPERATORS, Search.OPENING_BOOL, Search.BOOL_AFTER_BRACKET, Search.GENERIC_HOSTED_ERROR);
+        new IdolQueryTestHelper(findService)
+                .emptyQueryText(getElementFactory(), Search.STOPWORDS, Search.NO_TEXT, Search.GENERIC_HOSTED_ERROR, Search.HOSTED_INVALID);
     }
 
     @Test
     @ResolvedBug("FIND-151")
+    @Role(UserRole.FIND)
     public void testAllowSearchOfStringsThatContainBooleansWithinThem() {
         ensureOnCorrectView();
-        new IdolQueryTestHelper<ListView>(findService).hiddenQueryOperatorText(getElementFactory());
+        new IdolQueryTestHelper(findService).hiddenQueryOperatorText(getElementFactory());
     }
 
     @Test
-    //TODO Hosted -> is "An error occurred" a good enough error here?
+    @ResolvedBug({"FIND-151", "FIND-1122"})
+    @Role(UserRole.BIFHI)
+    public void testAllowSearchOfStringsThatContainBooleansWithinThemNoAutoCorrect() {
+        ensureOnCorrectView();
+        new IdolQueryTestHelper(findService).hiddenQueryOperatorTextNoAutoCorrect(getElementFactory());
+    }
+
+    @Test
     public void testSearchParentheses() {
         ensureOnCorrectView();
         //noinspection AnonymousInnerClassWithTooManyMethods
@@ -197,11 +222,13 @@ public class QueryTermsITCase extends FindTestBase {
     @ResolvedBug("HOD-2170")
     @ActiveBug("CCUK-3634")
     public void testSearchQuotationMarks() {
-        new QueryTestHelper<>(findService).mismatchedQuoteQueryText(Errors.Search.QUOTES);
+        ensureOnCorrectView();
+        new IdolQueryTestHelper(findService).mismatchedQuoteQueryText(getElementFactory(), Search.QUOTES, Search.BRACKETS_BOOLEAN_OPEN);
     }
 
     @Test
-    @ActiveBug(value = "CCUK-3700", type = ApplicationType.ON_PREM)
+    @ActiveBug(value = {"CCUK-3700", "FIND-1120"}, type = ApplicationType.ON_PREM)
+    @Role(UserRole.FIND)
     public void testWhitespaceSearch() {
         assumeThat("Currently should only run on prem - requires role infrastructure", !isHosted());
 
@@ -243,5 +270,4 @@ public class QueryTermsITCase extends FindTestBase {
     private void removeAllConcepts() {
         getElementFactory().getConceptsPanel().removeAllConcepts();
     }
-
 }

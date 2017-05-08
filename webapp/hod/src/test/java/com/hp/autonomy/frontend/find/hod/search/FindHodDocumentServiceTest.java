@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -8,7 +8,7 @@ package com.hp.autonomy.frontend.find.hod.search;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.hod.configuration.HodConfig;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodError;
 import com.hp.autonomy.hod.client.error.HodErrorCode;
 import com.hp.autonomy.hod.client.error.HodErrorException;
@@ -99,9 +99,9 @@ public class FindHodDocumentServiceTest {
         findDocumentsService = new FindHodDocumentService(databasesService, documentsService, databasesRequestBuilderFactory, findConfigService);
 
         final QueryManipulationConfig config = QueryManipulationConfig.builder()
-                .profile("SomeProfile")
-                .index("SomeIndex")
-                .build();
+            .profile("SomeProfile")
+            .index("SomeIndex")
+            .build();
 
         when(findConfig.getQueryManipulation()).thenReturn(config);
         when(findConfig.getHod()).thenReturn(HodConfig.builder().publicIndexesEnabled(true).build());
@@ -110,13 +110,13 @@ public class FindHodDocumentServiceTest {
 
     @Test
     public void invalidIndexName() throws HodErrorException {
-        final ResourceIdentifier goodIndex = new ResourceIdentifier("Good", "Good");
-        final ResourceIdentifier badIndex = new ResourceIdentifier("bad", "bad");
+        final ResourceName goodIndex = new ResourceName("Good", "Good");
+        final ResourceName badIndex = new ResourceName("bad", "bad");
 
         final HodError invalidIndexError = new HodError.Builder().setErrorCode(HodErrorCode.INDEX_NAME_INVALID).build();
         final HodSearchResult result = HodSearchResult.builder()
-                .index(goodIndex.getName())
-                .build();
+            .index(goodIndex.getName())
+            .build();
         final Documents<HodSearchResult> mockedResults = new Documents<>(Collections.singletonList(result), 1, null, null, null, null);
         when(documentsService.queryTextIndex(any())).thenThrow(new HodErrorException(invalidIndexError, HttpStatus.INTERNAL_SERVER_ERROR.value())).thenReturn(mockedResults);
 

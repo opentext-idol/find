@@ -1,12 +1,14 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'jquery',
-    'find/app/util/generate-error-support-message'
-], function($, generateErrorHtml) {
-    "use strict";
+    'find/app/util/generate-error-support-message',
+    'find/app/configuration'
+], function($, generateErrorHtml, configuration) {
+    'use strict';
 
     function generateDummyError(xhr) {
         return generateErrorHtml({
@@ -16,13 +18,19 @@ define([
         });
     }
 
-    var DUMMY_UUID = 'dummyuuid';
-    var DUMMY_MESSAGE_FOR_USER = 'Message for user';
-    var KNOWN_USER_ERROR_CODE = 'DUMMYERRORCODE123';
-    var KNOWN_USER_PRETTY_ERROR_MESSAGE = 'Prettified dummy error message';
-    var UNKNOWN_ERROR = 'Unknown error';
+    const DUMMY_UUID = 'dummyuuid';
+    const DUMMY_MESSAGE_FOR_USER = 'Message for user';
+    const KNOWN_USER_ERROR_CODE = 'DUMMYERRORCODE123';
+    const KNOWN_USER_PRETTY_ERROR_MESSAGE = 'Prettified dummy error message';
+    const UNKNOWN_ERROR = 'Unknown error';
 
     describe("The error-generating function", function() {
+        beforeEach(function() {
+            configuration.and.returnValue(function() {
+                return {};
+            });
+        });
+
         describe("when passed a user-caused error", function() {
             beforeEach(function() {
                 this.xhr = {

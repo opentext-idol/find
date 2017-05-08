@@ -2,19 +2,20 @@ package com.autonomy.abc.selenium.find.bi;
 
 
 import com.autonomy.abc.selenium.find.Container;
+import com.google.common.base.Function;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
-import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 
 public class SunburstView extends ParametricFieldView {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SunburstView.class);
+    private static final int SUNBURST_LOAD_TIMEOUT = 60;
 
     public SunburstView(final WebDriver driver) {
         super(driver, By.xpath(".//*[contains(@class,'parametric-content') and contains(@class,'sunburst')]/../.."));
@@ -27,7 +28,7 @@ public class SunburstView extends ParametricFieldView {
 
     public List<WebElement> findSunburstSegments() {
         return Container.currentTabContents(getDriver())
-                .findElements(By.cssSelector(".sunburst path:not([fill='#f0f0f0']):not([fill='#ffffff'])"));
+                .findElements(By.cssSelector(".sunburst path:not([fill='#f0f0f0']):not([fill='#ffffff']):not([fill='white'])"));
     }
 
     public int numberOfSunburstSegments() {
@@ -35,15 +36,12 @@ public class SunburstView extends ParametricFieldView {
     }
 
     public void waitForSunburst() {
-        new WebDriverWait(getDriver(), 60).withMessage("waiting for sunburst or sunburst message")
-                .until(new ExpectedCondition<Boolean>() {
-                    @Override
-                    public Boolean apply(final WebDriver driver) {
-                        final WebElement sunburstView = driver.findElement(By.xpath(".//*[contains(@class,'parametric-content') and contains(@class,'sunburst')]/../.."));
-                        return (!sunburstView.findElements(By.cssSelector("svg")).isEmpty()
-                                || sunburstView.findElement(By.cssSelector(".parametric-view-message")).isDisplayed())
-                                && !sunburstView.findElement(By.cssSelector(".parametric-loading")).isDisplayed();
-                    }
+        new WebDriverWait(getDriver(), SUNBURST_LOAD_TIMEOUT).withMessage("waiting for sunburst or sunburst message")
+                .until((Function<? super WebDriver, Boolean>) driver -> {
+                    final WebElement sunburstView = driver.findElement(By.xpath(".//*[contains(@class,'parametric-content') and contains(@class,'sunburst')]/../.."));
+                    return (!sunburstView.findElements(By.cssSelector("svg")).isEmpty()
+                            || sunburstView.findElement(By.cssSelector(".parametric-view-message")).isDisplayed())
+                            && !sunburstView.findElement(By.cssSelector(".parametric-loading")).isDisplayed();
                 });
     }
 
@@ -52,7 +50,7 @@ public class SunburstView extends ParametricFieldView {
         return sunburstCentre().getText();
     }
 
-    public WebElement sunburstCentre() {
+    private WebElement sunburstCentre() {
         return findElement(By.className("sunburst-sector-name"));
     }
 
@@ -84,7 +82,7 @@ public class SunburstView extends ParametricFieldView {
     public void segmentHover(final WebElement segment) {
         DriverUtil.hover(getDriver(), segment);
 
-        if (!sunburstCentreHasText() || (sunburstCentreHasText() && getSunburstCentreName().equals("Parametric Distribution"))) {
+        if (!sunburstCentreHasText() || sunburstCentreHasText() && "Parametric Distribution".equals(getSunburstCentreName())) {
             specialHover(segment);
         }
     }
@@ -92,8 +90,8 @@ public class SunburstView extends ParametricFieldView {
     private void specialHover(final WebElement segment) {
         final Dimension dimensions = segment.getSize();
 
-        DriverUtil.hoveringOffSide(segment, new Point((dimensions.getWidth() / 4) * 3, dimensions.getHeight() / 2), getDriver());
-        if (!sunburstCentreHasText() || (sunburstCentreHasText() && getSunburstCentreName().equals("Parametric Distribution"))) {
+        DriverUtil.hoveringOffSide(segment, new Point(dimensions.getWidth() / 4 * 3, dimensions.getHeight() / 2), getDriver());
+        if (!sunburstCentreHasText() || sunburstCentreHasText() && "Parametric Distribution".equals(getSunburstCentreName())) {
             DriverUtil.hoveringOffSide(segment, new Point(dimensions.getWidth() / 4, dimensions.getHeight() / 2), getDriver());
         }
     }

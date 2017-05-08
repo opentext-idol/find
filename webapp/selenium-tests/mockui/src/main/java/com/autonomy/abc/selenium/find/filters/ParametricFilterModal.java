@@ -1,14 +1,19 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find.filters;
 
+import com.google.common.base.Function;
 import com.hp.autonomy.frontend.selenium.element.ModalView;
-import com.hp.autonomy.frontend.selenium.util.CssUtil;
 import com.hp.autonomy.frontend.selenium.util.DriverUtil;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.Locator;
 import org.openqa.selenium.By;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -26,7 +31,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
 
     private final WebDriver driver;
 
-    ParametricFilterModal(final WebElement element, final WebDriver webDriver) {
+    private ParametricFilterModal(final WebElement element, final WebDriver webDriver) {
         super(element, webDriver);
         driver = webDriver;
     }
@@ -35,50 +40,63 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
         final WebElement $el = new WebDriverWait(driver, 40)
                 .withMessage("Parametric filter modal did not open within 30 seconds ")
                 .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".fixed-height-modal")));
+
         return new ParametricFilterModal($el, driver);
     }
 
-    public boolean loadingIndicatorPresent() {
-        return !findElements(By.cssSelector(".loading-spinner")).isEmpty();
+    private static void waitUntilModalGone(final WebDriver driver) {
+        new WebDriverWait(driver, 30).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".fixed-height-modal")));
+    }
+
+    private static boolean isBigEnough(final int thisCount, final int totalResults) {
+        return (double) thisCount / totalResults >= 0.05;
+    }
+
+    public boolean isCurrentTabLoading() {
+        return findElements(By.cssSelector(".tab-pane.active .loading-spinner.hide")).isEmpty();
     }
 
     public void waitForLoad() {
-        new WebDriverWait(getDriver(),15).withMessage("loading indicator to disappear").until(new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(final WebDriver driver) {
-                return !loadingIndicatorPresent();
-            }
-        });
+        new WebDriverWait(getDriver(), 15)
+                .withMessage("loading indicator to disappear")
+                .until((Function<? super WebDriver, Boolean>) webDriver -> !isCurrentTabLoading());
     }
 
     public void cancel() {
-        findElement(new Locator()
-            .withTagName("button")
-            .containingText("Cancel")
-        ).click();
+        final Locator locator = new Locator()
+                .withTagName("button")
+                .containingText("Cancel");
 
+        findElement(locator).click();
         waitUntilModalGone(driver);
     }
 
     public void apply() {
-        findElement(new Locator()
-            .withTagName("button")
-            .containingText("Apply")
-        ).click();
+        final Locator locator = new Locator()
+                .withTagName("button")
+                .containingText("Apply");
+
+        findElement(locator).click();
         waitUntilModalGone(driver);
     }
 
     public List<WebElement> tabs() {
-        return findElements(By.cssSelector(".category-title"));
+        return findElements(By.cssSelector(".fields-list a"));
     }
 
     public String activeTabName() {
-        return findElement(By.cssSelector("li.category-title.active span")).getText();
+        return findElement(By.cssSelector(".fields-list li.active span")).getText();
+    }
+
+    public List<String> tabNames() {
+        return findElements(By.cssSelector(".fields-list a span")).stream()
+                .map(WebElement::getText)
+                .collect(Collectors.toList());
     }
 
     //input 0-indexed like panel
     public void goToTab(final int tabNumber) {
-        findElement(By.cssSelector(".category-title:nth-child(" + CssUtil.cssifyIndex(tabNumber) + ") a")).click();
+        tabs().get(tabNumber).click();
     }
 
     public WebElement activePane() {
@@ -87,7 +105,7 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
 
     public List<WebElement> activePaneFilterList() {
         scrollDownInsideModal();
-        return activePane().findElements(By.cssSelector(".checkbox.parametric-field-label"));
+        return activePane().findElements(By.cssSelector(".checkbox.parametric-value-label"));
     }
 
     private void scrollDownInsideModal() {
@@ -97,30 +115,34 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
 
         final int limit = 20;
         int i = 0;
-        int numberOfCategories = 0;
+        int numberOfValues = 0;
         int previousNumber = -1;
         int twicePreviousNumber = -1;
 
-        while( i < limit && filtersWithNoResults(pane) < 1 && twicePreviousNumber < numberOfCategories) {
+        while (i < limit && filtersWithNoResults(pane) < 1 && twicePreviousNumber < numberOfValues) {
             DriverUtil.scrollToBottom(driver);
             twicePreviousNumber = previousNumber;
-            previousNumber = numberOfCategories;
-            numberOfCategories = pane.findElements(By.cssSelector(".checkbox.parametric-field-label")).size();
+            previousNumber = numberOfValues;
+            numberOfValues = pane.findElements(By.cssSelector(".checkbox.parametric-value-label")).size();
             i++;
         }
-        if( i >= limit ) {
+        if (i >= limit) {
             LOGGER.info("Loop reached limit of " + limit + " , " +
                     "but if there is v large number of categories the limit may need to be higher");
         }
     }
 
-    private int filtersWithNoResults(final WebElement pane) {
-        return pane.findElements(By.xpath(".//*[contains(@class, 'checkbox') and contains(@class, 'parametric-field-label') and contains(.,'(0)')]")).size();
+    private int filtersWithNoResults(final SearchContext pane) {
+        final By locator = By.xpath(
+                ".//*[contains(@class, 'checkbox') and " +
+                        "contains(@class, 'parametric-value-label') and contains(.,'(0)')]"
+        );
+
+        return pane.findElements(locator).size();
     }
 
-
     public List<WebElement> allFilters() {
-        return findElements(By.cssSelector(".checkbox.parametric-field-label"));
+        return findElements(By.cssSelector(".checkbox.parametric-value-label"));
     }
 
     public String checkCheckBoxInActivePane(final int i) {
@@ -133,27 +155,29 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
         final List<String> allCheckedFilters = new ArrayList<>();
         for (final WebElement tab : tabs()) {
             tab.click();
-            allCheckedFilters.addAll(ElementUtil.getTexts(activePane().findElements(By.cssSelector(".icheckbox-hp.checked + span"))));
+            allCheckedFilters.addAll(ElementUtil.getTexts(activePane().findElements(
+                    By.cssSelector(".icheckbox-hp.checked + span")))
+            );
         }
         return allCheckedFilters;
     }
 
+    @Override
     public Iterator<ParametricModalCheckbox> iterator() {
         return values().iterator();
     }
 
-    public List<ParametricModalCheckbox> values(){
+    public List<ParametricModalCheckbox> values() {
         return activePaneFilterList().stream().map(ParametricModalCheckbox::new).collect(Collectors.toList());
     }
 
-    private int totalResultsInPane(final Iterable<ParametricModalCheckbox> checkboxes){
+    private int totalResultsInPane(final Iterable<ParametricModalCheckbox> checkboxes) {
         int totalResults = 0;
 
-        for (final ParametricModalCheckbox checkbox: checkboxes){
-            if (checkbox.getResultsCount()!=0) {
+        for (final ParametricModalCheckbox checkbox : checkboxes) {
+            if (checkbox.getResultsCount() != 0) {
                 totalResults += checkbox.getResultsCount();
-            }
-            else{
+            } else {
                 break;
             }
         }
@@ -165,10 +189,9 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
         int count = 0;
 
         for (final ParametricModalCheckbox checkbox : checkboxes) {
-            if(checkbox.getResultsCount()!=0) {
+            if (checkbox.getResultsCount() != 0) {
                 count++;
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -176,28 +199,20 @@ public class ParametricFilterModal extends ModalView implements Iterable<Paramet
         return count;
     }
 
-    public List<String> expectedParametricValues(){
+    public List<String> expectedParametricValues() {
         final Iterable<ParametricModalCheckbox> checkboxes = values();
         final List<String> expected = new ArrayList<>();
 
-        int totalResults = totalResultsInPane(checkboxes);
+        final int totalResults = totalResultsInPane(checkboxes);
 
         for (final ParametricModalCheckbox checkbox : checkboxes) {
             final int thisCount = checkbox.getResultsCount();
-            if ((expected.size() < VISIBLE_SEGMENTS || isBigEnough(thisCount, totalResults)) && thisCount!=0) {
+            if ((expected.size() < VISIBLE_SEGMENTS || isBigEnough(thisCount, totalResults)) && thisCount != 0) {
                 expected.add(checkbox.getName());
             } else {
                 break;
             }
         }
         return expected;
-    }
-
-    private static void waitUntilModalGone(final WebDriver driver) {
-        new WebDriverWait(driver, 30).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".fixed-height-modal")));
-    }
-
-    private static boolean isBigEnough(final int thisCount, final int totalResults) {
-        return (double) thisCount /totalResults >= 0.05;
     }
 }

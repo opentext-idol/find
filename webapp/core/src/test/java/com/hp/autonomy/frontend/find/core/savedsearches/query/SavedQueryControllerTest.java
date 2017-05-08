@@ -1,7 +1,8 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
@@ -26,29 +27,33 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class SavedQueryControllerTest<RQ extends QueryRequest<Q>, S extends Serializable, Q extends QueryRestrictions<S>, D extends SearchResult, E extends Exception> {
-    private final SavedQuery savedQuery = new SavedQuery.Builder()
-            .setTitle("Any old saved search")
-            .build();
+public abstract class SavedQueryControllerTest<RQ extends QueryRequest<Q>, S extends Serializable, Q extends QueryRestrictions<S>, D extends SearchResult, E extends Exception, C extends SavedQueryController<RQ, S, Q, D, E>> {
     @Mock
     protected SavedQueryService savedQueryService;
     @Mock
     protected FieldTextParser fieldTextParser;
+    protected C savedQueryController;
     @Mock
     private Documents<D> searchResults;
     private DocumentsService<RQ, ?, ?, Q, D, E> documentsService;
-    private SavedQueryController<RQ, S, Q, D, E> savedQueryController;
+    private SavedQuery savedQuery;
 
     protected abstract DocumentsService<RQ, ?, ?, Q, D, E> constructDocumentsService();
-    protected abstract SavedQueryController<RQ, S, Q, D, E> constructController();
+
+    protected abstract C constructController();
 
     @Before
     public void setUp() {
         documentsService = constructDocumentsService();
         savedQueryController = constructController();
+        savedQuery = new SavedQuery.Builder()
+                .setTitle("Any old saved search")
+                .build();
     }
 
     @Test
@@ -63,7 +68,7 @@ public abstract class SavedQueryControllerTest<RQ extends QueryRequest<Q>, S ext
 
         final SavedQuery updatedQuery = savedQueryController.update(42, savedQuery);
         verify(savedQueryService).update(Matchers.isA(SavedQuery.class));
-        assertEquals(42L, (long) updatedQuery.getId());
+        assertEquals(42L, (long)updatedQuery.getId());
     }
 
     @Test

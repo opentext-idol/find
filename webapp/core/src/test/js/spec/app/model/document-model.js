@@ -1,25 +1,32 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'find/app/model/document-model',
     'find/app/configuration',
-    'moment'
-], function(DocumentModel, configuration, moment) {
+    'moment',
+    'underscore'
+], function(DocumentModel, configuration, moment, _) {
+    'use strict';
 
-    var THUMBNAIL = 'VGhlIGJhc2UgNjQgZW5jb2RlZCB0aHVtYm5haWw=';
-    var TITLE = 'My Document';
-    var TRANSCRIPT = 'test transcript';
-    var SOURCETYPE = 'news';
-    var DATE_PUBLISHED_SECONDS = 1456161196000;
+    const THUMBNAIL = 'VGhlIGJhc2UgNjQgZW5jb2RlZCB0aHVtYm5haWw=';
+    const TITLE = 'My Document';
+    const TRANSCRIPT = 'test transcript';
+    const SOURCETYPE = 'news';
+    const DATE_PUBLISHED_SECONDS = 1456161196000;
 
     function baseResponse() {
         return {
             fieldMap: {
-                authors: {type: 'STRING', displayName: 'Author', values: ['Humbert', 'Gereon']},
-                LONGITUDE: {type: 'NUMBER', displayName: 'Longitude', values: ['52.5']},
-                LATITUDE: {type: 'NUMBER', displayName: 'Latitude', values: ['42.2']},
-                thumbnail: {type: 'STRING', values: [THUMBNAIL]},
-                datePublished: {type: 'DATE', displayName: 'Date Published', values: [DATE_PUBLISHED_SECONDS]},
-                sourceType: {type: 'STRING', values: [SOURCETYPE]},
-                transcript: {type: 'STRING', values: [TRANSCRIPT]}
+                authors: {type: 'STRING', displayName: 'Author', values: [{value: 'Humbert', displayValue: 'Humbert'}, {value: 'Gereon', displayValue: 'Gereon'}]},
+                LONGITUDE: {type: 'NUMBER', displayName: 'Longitude', values: [{value: 52.5, displayValue: '52.5'}]},
+                LATITUDE: {type: 'NUMBER', displayName: 'Latitude', values: [{value: 42.2, displayValue: '42.2'}]},
+                thumbnail: {type: 'STRING', displayName: 'thumbnail', values: [{value: THUMBNAIL, displayValue: THUMBNAIL}]},
+                datePublished: {type: 'DATE', displayName: 'Date Published', values: [{value: DATE_PUBLISHED_SECONDS}]},
+                sourceType: {type: 'STRING', displayName: 'sourceType', values: [{value: SOURCETYPE, displayValue: SOURCETYPE}]},
+                transcript: {type: 'STRING', displayName: 'transcript', values: [{value: TRANSCRIPT, displayValue: TRANSCRIPT}]}
             }
         };
     }
@@ -69,7 +76,7 @@ define([
             });
 
             it('uses the whole reference if the reference finishes with a slash', function() {
-                var reference = 'http://example.com/main/';
+                const reference = 'http://example.com/main/';
 
                 expect(this.parse(_.extend({
                     reference: reference
@@ -77,7 +84,7 @@ define([
             });
 
             it('uses the whole reference if the reference finishes with a slash followed by whitespace', function() {
-                var reference = 'foo/   \n ';
+                const reference = 'foo/   \n ';
 
                 expect(this.parse(_.extend({
                     reference: reference
@@ -99,27 +106,29 @@ define([
             it('parses the transcript from the field map', function() {
                 expect(this.parse(fullResponse()).transcript).toBe(TRANSCRIPT);
             });
-            
+
             it('parses the field map into an array, converting date values to formatted strings and number values to javascript numbers', function() {
-                var fields = this.parse(fullResponse()).fields;
+                const fields = this.parse(fullResponse()).fields;
                 expect(fields.length).toBe(7);
 
-                var longitudeField = _.findWhere(fields, {displayName: 'Longitude'});
+                const longitudeField = _.findWhere(fields, {displayName: 'Longitude'});
                 expect(longitudeField).toBeDefined();
                 expect(longitudeField.values.length).toBe(1);
                 expect(longitudeField.values[0]).toBe(52.5);
 
-                var datePublishedField = _.findWhere(fields, {displayName: 'Date Published'});
+                const datePublishedField = _.findWhere(fields, {displayName: 'Date Published'});
                 expect(datePublishedField).toBeDefined();
                 expect(datePublishedField.values.length).toBe(1);
                 expect(datePublishedField.values[0]).toBe(moment(DATE_PUBLISHED_SECONDS).format('LLLL'));
             });
 
             it('parses the locations from the field map', function() {
-                var locations = this.parse(fullResponse()).locations;
-                expect(locations.length).toBe(1);
+                const locations = this.parse(fullResponse()).locations;
+                expect(locations).toBeDefined();
+                expect(locations.test).toBeDefined();
+                expect(locations.test.length).toBe(1);
 
-                var location = locations[0];
+                const location = locations.test[0];
 
                 expect(location).toBeDefined();
                 expect(location.displayName).toBe('test');
@@ -128,5 +137,4 @@ define([
             });
         });
     });
-
 });

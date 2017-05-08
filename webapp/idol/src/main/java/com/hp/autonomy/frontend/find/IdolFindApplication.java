@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find;
 
 import com.hp.autonomy.frontend.find.core.web.server.TomcatSettings;
+import com.hp.autonomy.frontend.find.idol.web.JavaxXmlSettings;
 import com.hp.autonomy.searchcomponents.idol.beanconfiguration.HavenSearchIdolConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.ManagementWebSecurityAutoConfiguration;
@@ -35,6 +36,7 @@ import org.springframework.web.WebApplicationInitializer;
 public class IdolFindApplication extends SpringBootServletInitializer implements WebApplicationInitializer {
     public static void main(final String[] args) {
         TomcatSettings.apply();
+        JavaxXmlSettings.apply();
         SpringApplication.run(IdolFindApplication.class, args);
     }
 }

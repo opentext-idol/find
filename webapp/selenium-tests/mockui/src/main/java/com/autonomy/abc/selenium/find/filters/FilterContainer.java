@@ -23,7 +23,7 @@ public abstract class FilterContainer extends ChevronContainer{
     }
 
     protected WebElement filterCategory(){
-        return container.findElement(By.tagName("h4"));
+        return container.findElement(By.cssSelector(".collapsible-header h4 span"));
     }
 
     public String toString(){

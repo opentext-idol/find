@@ -1,7 +1,8 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.hp.autonomy.frontend.find.core.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -59,32 +60,44 @@ class ControllerUtilsImpl implements ControllerUtils {
     @Override
     public ModelAndView buildErrorModelAndView(final ErrorModelAndViewInfo errorInfo) {
         final ModelAndView modelAndView = new ModelAndView(ViewNames.ERROR.viewName());
-        modelAndView.addObject(ErrorAttributes.MAIN_MESSAGE.value(), getMessage(errorInfo.getMainMessageCode(), null));
-        modelAndView.addObject(ErrorAttributes.SUB_MESSAGE.value(), getMessage(errorInfo.getSubMessageCode(), errorInfo.getSubMessageArguments()));
+        modelAndView.addObject(ErrorAttributes.MAIN_MESSAGE.value(),
+                               errorInfo.getMainMessageCode() == null
+                                       ? errorInfo.getMainMessage()
+                                       : getMessage(errorInfo.getMainMessageCode(), null));
+        modelAndView.addObject(ErrorAttributes.SUB_MESSAGE.value(),
+                               errorInfo.getSubMessageCode() == null
+                                       ? errorInfo.getSubMessage()
+                                       : getMessage(errorInfo.getSubMessageCode(), errorInfo.getSubMessageArguments()));
         modelAndView.addObject(ErrorAttributes.BASE_URL.value(), RequestUtils.buildBaseUrl(errorInfo.getRequest()));
         modelAndView.addObject(ErrorAttributes.STATUS_CODE.value(), errorInfo.getStatusCode());
         modelAndView.addObject(ErrorAttributes.AUTH_ERROR.value(), errorInfo.isAuthError());
 
-        final String contactSupportMessage = Optional.ofNullable(configService.getConfig().getUiCustomization()).map(UiCustomization::getErrorCallSupportString).orElse(null);
+        final String contactSupportMessage = Optional
+                .ofNullable(configService.getConfig().getUiCustomization())
+                .map(UiCustomization::getErrorCallSupportString)
+                .orElse(null);
 
-        if (errorInfo.isContactSupport()) {
-            if (errorInfo.getException() != null) {
+        if(errorInfo.isContactSupport()) {
+            if(errorInfo.getException() != null) {
                 final UUID uuid = UUID.randomUUID();
                 log.error("Unhandled exception with uuid {}", uuid);
                 log.error("Stack trace", errorInfo.getException());
-                modelAndView.addObject(ErrorAttributes.CONTACT_SUPPORT.value(), contactSupportMessage == null
-                        ? getMessage(MESSAGE_CODE_CONTACT_SUPPORT_UUID, new Object[]{uuid})
-                        : contactSupportMessage);
+                modelAndView.addObject(ErrorAttributes.CONTACT_SUPPORT.value(),
+                                       contactSupportMessage == null
+                                               ? getMessage(MESSAGE_CODE_CONTACT_SUPPORT_UUID, new Object[]{uuid})
+                                               : contactSupportMessage);
             } else {
-                modelAndView.addObject(ErrorAttributes.CONTACT_SUPPORT.value(), contactSupportMessage == null
-                        ? getMessage(MESSAGE_CODE_CONTACT_SUPPORT_NO_UUID, null)
-                        : contactSupportMessage);
+                modelAndView.addObject(ErrorAttributes.CONTACT_SUPPORT.value(),
+                                       contactSupportMessage == null
+                                               ? getMessage(MESSAGE_CODE_CONTACT_SUPPORT_NO_UUID, null)
+                                               : contactSupportMessage);
             }
         }
 
-        if (errorInfo.getButtonHref() != null) {
+        if(errorInfo.getButtonHref() != null) {
             modelAndView.addObject(ErrorAttributes.BUTTON_HREF.value(), errorInfo.getButtonHref());
-            modelAndView.addObject(ErrorAttributes.BUTTON_MESSAGE.value(), getMessage(MESSAGE_CODE_ERROR_BUTTON, null));
+            modelAndView.addObject(ErrorAttributes.BUTTON_MESSAGE.value(),
+                                   getMessage(MESSAGE_CODE_ERROR_BUTTON, null));
         }
         modelAndView.addObject(MvcConstants.GIT_COMMIT.value(), commit);
 

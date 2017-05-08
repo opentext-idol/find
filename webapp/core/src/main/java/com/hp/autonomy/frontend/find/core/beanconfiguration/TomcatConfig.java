@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -25,11 +25,14 @@ public class TomcatConfig {
     @Value("${server.tomcat.resources.max-cache-kb}")
     private long webResourcesCacheSize;
 
+    @Value("${server.tomcat.connector.max-post-size}")
+    private int connectorMaxPostSize;
+
     @Bean
     public EmbeddedServletContainerFactory servletContainer() {
         final TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
 
-        if (useReverseProxy) {
+        if(useReverseProxy) {
             tomcat.addAdditionalTomcatConnectors(createAjpConnector());
         }
 
@@ -38,6 +41,10 @@ public class TomcatConfig {
             final WebResourceRoot resources = new StandardRoot(context);
             resources.setCacheMaxSize(webResourcesCacheSize);
             context.setResources(resources);
+        });
+
+        tomcat.addConnectorCustomizers(connector -> {
+            connector.setMaxPostSize(connectorMaxPostSize);
         });
 
         return tomcat;
@@ -49,5 +56,4 @@ public class TomcatConfig {
         connector.setAttribute("tomcatAuthentication", false);
         return connector;
     }
-
 }

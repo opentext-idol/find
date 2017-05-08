@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>com.hp.autonomy.frontend.find</groupId>
         <artifactId>selenium-tests</artifactId>
-        <version>11.3.0-SNAPSHOT</version>
+        <version>11.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>integration-tests</artifactId>
@@ -161,7 +161,8 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <excludedGroups>com.hp.autonomy.frontend.selenium.framework.categories.SlowTest</excludedGroups>
+                            <excludedGroups>com.hp.autonomy.frontend.selenium.framework.categories.SlowTest
+                            </excludedGroups>
                         </configuration>
                     </plugin>
                 </plugins>

@@ -7,75 +7,46 @@ package com.hp.autonomy.frontend.find.hod.databases;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
-import com.hp.autonomy.hod.client.api.authentication.TokenType;
-import com.hp.autonomy.hod.client.api.resource.ListResourcesRequestBuilder;
-import com.hp.autonomy.hod.client.api.resource.Resource;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import com.hp.autonomy.hod.client.api.resource.ResourceType;
-import com.hp.autonomy.hod.client.api.resource.Resources;
-import com.hp.autonomy.hod.client.api.resource.ResourcesService;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.hod.client.token.TokenProxy;
 import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
 import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequest;
+import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 @Primary
 @Service
-class FindHodDatabasesServiceImpl implements FindHodDatabasesService {
+class FindHodDatabasesServiceImpl implements HodDatabasesService {
     private final DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService;
-    private final ResourcesService resourcesService;
     private final ConfigService<HodFindConfig> configService;
 
     @Autowired
     public FindHodDatabasesServiceImpl(
             @Qualifier(DATABASES_SERVICE_BEAN_NAME) final DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService,
-            final ResourcesService resourcesService,
             final ConfigService<HodFindConfig> configService
     ) {
         this.databasesService = databasesService;
-        this.resourcesService = resourcesService;
         this.configService = configService;
     }
 
     @Override
-    public Resources getAllIndexes(final TokenProxy<?, TokenType.Simple> tokenProxy) throws HodErrorException {
-        final Set<ResourceType> types = new HashSet<>();
-        types.add(ResourceType.CONTENT);
-
-        final ListResourcesRequestBuilder params = new ListResourcesRequestBuilder().setTypes(types);
-
-        final Resources indexes = resourcesService.list(tokenProxy, params);
-
-        final List<Resource> resources = new ArrayList<>(indexes.getResources().size());
-
-        resources.addAll(indexes.getResources().stream().filter(resource -> CONTENT_FLAVOURS.contains(resource.getFlavour())).collect(Collectors.toList()));
-
-        return new Resources(resources, indexes.getPublicResources());
-    }
-
-    @Override
     public Set<Database> getDatabases(final HodDatabasesRequest request) throws HodErrorException {
-        final Collection<ResourceIdentifier> activeIndexes = configService.getConfig().getHod().getActiveIndexes();
+        final Collection<ResourceName> activeIndexes = configService.getConfig().getHod().getActiveIndexes();
         return activeIndexes.isEmpty() ? databasesService.getDatabases(request) : listActiveIndexes(activeIndexes);
     }
 
-    private Set<Database> listActiveIndexes(final Iterable<ResourceIdentifier> activeIndexes) {
+    private Set<Database> listActiveIndexes(final Iterable<ResourceName> activeIndexes) {
         final Set<Database> activeDatabases = new TreeSet<>();
 
-        for (final ResourceIdentifier index : activeIndexes) {
+        for (final ResourceName index : activeIndexes) {
             activeDatabases.add(Database.builder()
                     .domain(index.getDomain())
                     .name(index.getName())

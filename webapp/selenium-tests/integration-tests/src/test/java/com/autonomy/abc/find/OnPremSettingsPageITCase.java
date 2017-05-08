@@ -8,6 +8,7 @@ import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.EnumSet;
@@ -79,6 +80,7 @@ public class OnPremSettingsPageITCase extends IdolFindTestBase{
     }
 
     @Test
+    @Ignore
     public void testRevertToNewlySaved() {
         testHelper.testRevertToNewlySaved(getApplication().getName());
     }

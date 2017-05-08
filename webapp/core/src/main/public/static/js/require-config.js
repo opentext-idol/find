@@ -7,8 +7,7 @@ require.config({
     paths: {
         css: '../css',
         'about-page': '../bower_components/hp-autonomy-about-page/src',
-        backbone: 'find/lib/backbone/backbone-extensions',
-        'backbone-base': '../bower_components/backbone/backbone',
+        backbone: '../bower_components/backbone/backbone',
         bootstrap: '../bower_components/bootstrap/dist/js/bootstrap',
         bowser: '../bower_components/bjoska.bowser/bowser',
         'bootstrap-datetimepicker': '../bower_components/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
@@ -17,12 +16,14 @@ require.config({
         'datatables.net-bs': '../bower_components/datatables.net-bs/js/dataTables.bootstrap',
         'datatables.net-fixedColumns': '../bower_components/datatables.net-fixedcolumns/js/dataTables.fixedColumns',
         'd3': '../bower_components/d3/d3',
+        'fieldtext/js/parser': 'pegjs/fieldtext/parser',
+        'html2canvas': '../bower_components/html2canvas/build/html2canvas',
         i18n: '../bower_components/requirejs-i18n/i18n',
-        'peg': '../bower_components/pegjs/peg-0.10.0',
         'fieldtext': '../bower_components/hp-autonomy-fieldtext-js/src',
         'parametric-refinement': '../bower_components/hp-autonomy-js-parametric-refinement/src',
         iCheck: '../bower_components/iCheck/icheck',
         chosen: '../bower_components/chosen/chosen.jquery',
+        metisMenu: '../bower_components/metisMenu/dist/metisMenu',
         jquery: '../bower_components/jquery/jquery',
         'js-whatever': '../bower_components/hp-autonomy-js-whatever/src',
         json2: '../bower_components/json/json2',
@@ -30,7 +31,10 @@ require.config({
         leaflet: '../bower_components/leaflet/dist/leaflet-src',
         'Leaflet.awesome-markers': '../bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers',
         'leaflet.markercluster': '../bower_components/leaflet.markercluster/dist/leaflet.markercluster-src',
+        'leaflet.markercluster.layersupport': '../bower_components/leaflet.markercluster.layersupport/src/layersupport',
+        'leaflet.notransform': 'leaflet.notransform/leaflet.notransform',
         moment: '../bower_components/moment/moment',
+        'moment-timezone-with-data': '../bower_components/moment-timezone/builds/moment-timezone-with-data',
         Raphael: '../bower_components/raphael/raphael',
         settings: '../bower_components/hp-autonomy-settings-page/src',
         slider: '../bower_components/seiyria-bootstrap-slider/dist',
@@ -41,7 +45,7 @@ require.config({
         typeahead: '../bower_components/corejs-typeahead/dist/typeahead.jquery'
     },
     shim: {
-        'backbone-base': {
+        'backbone': {
             exports: 'Backbone'
         },
         bootstrap: ['jquery'],
@@ -50,14 +54,16 @@ require.config({
         d3: {
             exports: 'd3'
         },
-        iCheck: ['jquery'],
-        peg: {
-            exports: 'PEG'
+        html2canvas: {
+            exports: 'html2canvas'
         },
+        iCheck: ['jquery'],
         underscore: {
             exports: '_'
         },
         'Leaflet.awesome-markers': ['leaflet'],
-        'leaflet.markercluster': ['leaflet']
+        'leaflet.markercluster': ['leaflet'],
+        'leaflet.markercluster.layersupport': ['leaflet.markercluster'],
+        'leaflet': ['leaflet.notransform']
     }
 });

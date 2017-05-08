@@ -1,8 +1,12 @@
+/*
+ * Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.core.configuration;
 
+import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
-
-import java.util.Collection;
 
 /**
  * Builder for configuration common to both HoD and Idol implementations of Find
@@ -22,13 +26,9 @@ public interface FindConfigBuilder<C extends FindConfig<C, B>, B extends FindCon
 
     B uiCustomization(UiCustomization uiCustomization);
 
-    B parametricDisplayValues(Collection<? extends ParametricDisplayValues> parametricDisplayValues);
-
-    B parametricDisplayValue(ParametricDisplayValues parametricDisplayValue);
-
-    B clearParametricDisplayValues();
-
     B topicMapMaxResults(Integer topicMapMaxResults);
+
+    B export(ExportConfig exportConfig);
 
     C build();
 }

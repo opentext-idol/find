@@ -60,9 +60,10 @@ public abstract class MvcIntegrationTestUtils {
         }
     }
 
-    public String[] getFields(final MockMvc mockMvc, final String subPath) throws Exception {
+    public String[] getFields(final MockMvc mockMvc, final String subPath, final String... fieldTypes) throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = get(FieldsController.FIELDS_PATH + subPath)
                 .with(authentication(userAuth()));
+        requestBuilder.param(FieldsController.FIELD_TYPES_PARAM, fieldTypes);
         addFieldRequestParams(requestBuilder);
 
         final MvcResult mvcResult = mockMvc.perform(requestBuilder)

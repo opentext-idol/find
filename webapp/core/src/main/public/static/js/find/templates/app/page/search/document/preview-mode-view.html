@@ -22,6 +22,19 @@
         </button>
     <% } %>
 </div>
-<h4 class="preview-mode-document-title"></h4>
-<div class="preview-mode-document"></div>
-<div class="preview-mode-metadata"></div>
+<div class="preview-titles">
+    <div class="flex">
+        <h4 class="preview-mode-document-title m-b-nil m-r-sm"></h4>
+        <h4 class="preview-mode-document-database m-b-nil shorten text-right"></h4>
+    </div>
+</div>
+
+<div class="preview-mode-document-url-container m-b-sm">
+    <a href="<%-url%>" target="_blank" class="preview-mode-document-url text-muted shorten block"></a>
+</div>
+<div class="flex preview-mode-document-container <%-mediaType%>">
+    <div class="preview-mode-document"></div>
+</div>
+<div class="preview-mode-metadata-container m-t-sm">
+    <div class="preview-mode-metadata"></div>
+</div>

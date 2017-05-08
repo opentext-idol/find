@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -17,19 +17,19 @@ public enum DateRange {
     WEEK(3),
     NEW(4);
 
-    private Integer id;
+    private final Integer id;
 
-    DateRange(Integer id) {
+    DateRange(final Integer id) {
         this.id = id;
     }
 
-    public static DateRange getType(Integer id) {
-        if (id == null) {
+    public static DateRange getType(final Integer id) {
+        if(id == null) {
             return null;
         }
 
-        for (DateRange dateRange : DateRange.values()) {
-            if (id.equals(dateRange.getId())) {
+        for(final DateRange dateRange : DateRange.values()) {
+            if(id.equals(dateRange.getId())) {
                 return dateRange;
             }
         }

@@ -1,15 +1,17 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
-    'underscore',
     'find/app/configuration',
     'find/app/page/search/service-view',
     'find/idol/app/page/search/results/idol-results-view-augmentation',
     'find/idol/app/page/search/results/idol-results-view',
-    'js-whatever/js/model-any-changed-attribute-listener'
-], function(_, configuration, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener) {
+    'js-whatever/js/model-any-changed-attribute-listener',
+    'find/app/model/parametric-fields-collection'
+], function (configuration, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener,
+             ParametricFieldsCollection) {
     'use strict';
 
     return ServiceView.extend({
@@ -17,8 +19,9 @@ define([
         ResultsView: ResultsView,
         mapViewResultsStep: configuration().map.resultsStep,
         mapViewAllowIncrement: true,
+        parametricFieldsCollection: new ParametricFieldsCollection([]),
 
-        initialize: function(options) {
+        initialize: function (options) {
             this.comparisonModalCallback = options.comparisonModalCallback;
 
             ServiceView.prototype.initialize.call(this, options);
@@ -34,36 +37,29 @@ define([
                     'maxDate',
                     'minScore',
                     'stateMatchIds'
-                ], this.fetchData);
+                ],
+                this.fetchData
+            );
+
+            this.listenTo(this.parametricFieldsCollection, 'sync', this.fetchParametricCollection);
         },
 
-        fetchParametricFields: function(fieldsCollection, callback) {
-            fieldsCollection.fetch({
-                success: _.bind(function() {
-                    if(callback) {
-                        callback();
+        fetchParametricFields: function () {
+            if (this.parametricFieldsCollection.isEmpty()) {
+                this.parametricFieldsCollection.fetch({
+                    data: {
+                        fieldTypes: ['Parametric', 'Numeric', 'NumericDate']
                     }
-                }, this)
-            });
+                });
+            } else {
+                this.fetchParametricCollection();
+            }
         },
 
-        getSavedSearchControlViewOptions: function() {
+        getSavedSearchControlViewOptions: function () {
             return {
                 comparisonModalCallback: this.comparisonModalCallback
             };
-        },
-
-        fetchParametricValues: function() {
-            this.parametricCollection.reset();
-
-            var fieldNames = this.parametricFieldsCollection.pluck('id');
-            if(fieldNames.length > 0) {
-                this.parametricCollection.fetch({
-                    data: {
-                        fieldNames: fieldNames
-                    }
-                });
-            }
         }
     });
 });

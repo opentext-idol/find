@@ -1,44 +1,43 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
-    'backbone',
     'underscore',
     'jquery',
+    'backbone',
     'js-whatever/js/list-view',
     'find/app/util/csv-field-selection-list-item',
     'find/app/configuration',
     'text!find/templates/app/util/csv-export-form-template.html'
-], function(Backbone, _, $, ListView, ItemView, configuration, exportFormTemplate) {
-    "use strict";
+], function(_, $, Backbone, ListView, ItemView, configuration, exportFormTemplate) {
+    'use strict';
 
     return Backbone.View.extend({
         formTemplate: _.template(exportFormTemplate),
 
         events: {
             'ifClicked .csv-field-label': function(e) {
-                var $currentTarget = $(e.currentTarget);
-                var fieldName = $currentTarget.attr('data-field-id');
-
-                var selectedFieldsModel = this.exportFieldCollection.get(fieldName);
-
+                const selectedFieldsModel = this.exportFieldCollection.get(
+                    $(e.currentTarget).attr('data-field-id')
+                );
                 // checked is the old value
-                var selected = !$(e.target).prop('checked');
-                selectedFieldsModel.set('selected', selected);
+                selectedFieldsModel.set('selected', !$(e.target).prop('checked'));
             }
         },
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
 
-            var fieldsInfo = configuration().fieldsInfo;
+            const config = configuration();
+            const fieldsInfo = config.fieldsInfo;
 
-            var metadataModels = _.values(configuration().metadataFieldIds).map(function(id) {
-                return {id: id, selected: true};
+            const metadataModels = _.map(config.metadataFieldInfo, function(info) {
+                return _.extend({selected: true}, info);
             });
 
-            var fieldModels = _.map(fieldsInfo, function(info) {
+            const fieldModels = _.map(fieldsInfo, function(info) {
                 return _.extend({selected: true}, info);
             });
 
@@ -64,17 +63,18 @@ define([
 
         render: function() {
             this.listView.render();
-            this.$el.empty().append(this.listView.el);
+            this.$el.html(this.listView.el);
         },
 
         requestCsv: function() {
-            var selectedFields = _.pluck(this.exportFieldCollection.where({selected: true}), 'id');
+            const selectedFields = _.pluck(this.exportFieldCollection.where({selected: true}), 'id');
 
-            //noinspection AmdModulesDependencies
-            var queryRequest = JSON.stringify({
+            const queryRequest = JSON.stringify({
                 queryRestrictions: {
                     text: this.queryModel.get('queryText'),
-                    field_text: this.queryModel.get('fieldText') ? this.queryModel.get('fieldText').toString() : '',
+                    field_text: this.queryModel.get('fieldText')
+                        ? this.queryModel.get('fieldText').toString()
+                        : '',
                     indexes: this.queryModel.get('indexes'),
                     min_date: this.queryModel.getIsoDate('minDate'),
                     max_date: this.queryModel.getIsoDate('maxDate'),
@@ -90,8 +90,8 @@ define([
                 queryType: 'MODIFIED'
             });
 
-            var $form = $(this.formTemplate({queryRequest: queryRequest, fields: selectedFields}));
-            $form.appendTo('body').submit().remove();
+            $(this.formTemplate({queryRequest: queryRequest, fields: selectedFields}))
+                .appendTo('body').submit().remove();
         }
     });
 });

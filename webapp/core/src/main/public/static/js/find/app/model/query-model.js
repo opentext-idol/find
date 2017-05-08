@@ -1,27 +1,27 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
     'backbone',
-    'find/app/util/search-data-util'
-], function(Backbone, searchDataUtil) {
-    
+    'find/app/util/search-data-util',
+    'underscore'
+], function(Backbone, searchDataUtil, _) {
     'use strict';
-    
+
     /**
      * @readonly
      * @enum {String}
      */
-    var Sort = {
+    const Sort = {
         date: 'date',
         relevance: 'relevance'
     };
 
-    var DEBOUNCE_WAIT_MILLISECONDS = 500;
+    const DEBOUNCE_WAIT_MILLISECONDS = 500;
 
-    var collectionBuildIndexes = function(collection) {
+    const collectionBuildIndexes = function (collection) {
         return searchDataUtil.buildIndexes(collection.map(function (model) {
             return model.pick('domain', 'name');
         }));
@@ -47,21 +47,23 @@ define([
 
         /**
          * @param {Object} attributes
-         * @param {{queryState: QueryState}} options
+         * @param {{queryState: QueryState, enableAutoCorrect: boolean}} options
          */
         initialize: function(attributes, options) {
             this.queryState = options.queryState;
 
-            this.listenTo(this.queryState.conceptGroups, 'change:concepts update reset', function () {
-                var queryText = makeQueryText(this.queryState);
+            this.listenTo(this.queryState.conceptGroups, 'change:concepts update reset', function() {
+                const queryText = makeQueryText(this.queryState);
 
-                if (queryText) {
-                    this.set({
+                if(queryText) {
+                    const newAttributes = {correctedQuery: '', queryText: queryText};
+
+                    if (options.enableAutoCorrect) {
                         // Reset auto-correct whenever the search text changes
-                        autoCorrect: true,
-                        correctedQuery: '',
-                        queryText: queryText
-                    });
+                        newAttributes.autoCorrect = true;
+                    }
+
+                    this.set(newAttributes);
                 }
             });
 
@@ -73,16 +75,16 @@ define([
                 this.set('minScore', this.queryState.minScoreModel.get('minScore'));
             });
 
-            this.listenTo(this.queryState.selectedIndexes, 'update reset', _.debounce(_.bind(function() {
+            this.listenTo(this.queryState.selectedIndexes, 'update reset', _.bind(function() {
                 this.set('indexes', collectionBuildIndexes(this.queryState.selectedIndexes));
-            }, this), DEBOUNCE_WAIT_MILLISECONDS));
+            }, this));
 
             this.listenTo(this.queryState.selectedParametricValues, 'add remove reset change', _.debounce(_.bind(function() {
-                var fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
+                const fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
                 this.set('fieldText', fieldTextNode ? fieldTextNode : null);
             }, this), DEBOUNCE_WAIT_MILLISECONDS));
 
-            var fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
+            const fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
 
             this.set(_.extend({
                 queryText: makeQueryText(this.queryState),
@@ -93,9 +95,9 @@ define([
         },
 
         getIsoDate: function(type) {
-            var date = this.get(type);
+            const date = this.get(type);
 
-            if (date) {
+            if(date) {
                 return date.toISOString();
             } else {
                 return null;
@@ -104,5 +106,4 @@ define([
     }, {
         Sort: Sort
     });
-
 });

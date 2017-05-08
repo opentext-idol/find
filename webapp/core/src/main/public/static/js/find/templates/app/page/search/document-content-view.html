@@ -1,0 +1,20 @@
+<div class="left-side-container side-container small-container"></div>
+<div class="middle-container container-fluid">
+    <div class="row m-t-sm">
+        <div class="col-md-12">
+            <button type="button" class="detail-view-back-button btn button-primary m-b-nil">
+                <%- i18n['app.backToSearch'] %>
+            </button>
+        </div>
+    </div>
+    <div class="row m-t-sm document-content-loading">
+        <div class="col-xs-12"><%= loadingHtml %></div>
+    </div>
+    <div class="row m-t-sm document-content-error">
+        <div class="col-xs-12 document-content-error-message"></div>
+    </div>
+    <div class="document-content-content"></div>
+</div>
+<% if (relatedConcepts) { %>
+    <div class="right-side-container side-container small-container"></div>
+<% } %>

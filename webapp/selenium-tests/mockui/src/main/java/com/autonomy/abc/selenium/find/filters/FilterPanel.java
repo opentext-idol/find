@@ -1,7 +1,8 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.autonomy.abc.selenium.find.filters;
 
 import com.autonomy.abc.selenium.find.Container;
@@ -9,7 +10,7 @@ import com.autonomy.abc.selenium.indexes.Index;
 import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
 import com.autonomy.abc.selenium.indexes.tree.IndexesTree;
 import com.autonomy.abc.selenium.query.DatePickerFilter;
-import com.autonomy.abc.selenium.query.StringDateFilter;
+import com.autonomy.abc.selenium.query.StringDateFilter.Filterable;
 import com.hp.autonomy.frontend.selenium.element.Collapsible;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
@@ -17,7 +18,6 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
@@ -48,18 +48,18 @@ public class FilterPanel {
     }
 
     public void waitForIndexes() {
-        new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("not-loading")));
+        new WebDriverWait(driver, 10).until((com.google.common.base.Predicate<WebDriver>) webDriver -> {
+            return ElementUtil.hasClass("hide", panel.findElement(By.cssSelector(".no-active-databases")));
+        });
     }
 
     public IndexesTreeContainer indexesTreeContainer() {
-        final WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Indexes') or contains(text(), 'Databases')]"));
-        final WebElement container = ElementUtil.ancestor(heading, 2);
+        final WebElement container = panel.findElement(By.xpath(".//div[contains(div/@class, 'collapsible-header') and (contains(div/h4/span/text(), 'Indexes') or contains(div/h4/span/text(), 'Databases'))]"));
         return new IndexesTreeContainer(container, driver);
     }
 
     public DateFilterContainer dateFilterContainer() {
-        final WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Dates')]"));
-        final WebElement container = ElementUtil.ancestor(heading, 2);
+        final WebElement container = panel.findElement(By.xpath(".//div[contains(div/@class, 'collapsible-header') and contains(div/h4/span/text(), 'Dates')]"));
         return new DateFilterContainer(container, driver);
     }
 
@@ -94,15 +94,15 @@ public class FilterPanel {
     }
 
     public int nonZeroParamFieldContainer(final int n) {
-        return nthParametricThatSatisfiedCondition(n,(x) -> 0 != (x));
+        return nthParametricThatSatisfiedCondition(n, x -> 0 != x);
     }
 
-    public int nthParametricThatSatisfiedCondition(final int n, Predicate<Integer> op) {
+    public int nthParametricThatSatisfiedCondition(final int n, final Predicate<Integer> op) {
         int index = 0;
         int nonZeroCount = 0;
         for(final WebElement container : getParametricFilters()) {
             final ParametricFieldContainer candidate = new ParametricFieldContainer(container, driver);
-            if(op.test(candidate.getFilterNumber())) {
+            if(op.test(candidate.getFilterCount())) {
                 if(nonZeroCount >= n) {
                     return index;
                 } else {
@@ -116,8 +116,8 @@ public class FilterPanel {
 
     public String formattedNameOfNonZeroField(final int n) {
         return WordUtils.capitalize(parametricField(nonZeroParamFieldContainer(n))
-                .filterCategoryName()
-                .toLowerCase());
+                                            .filterCategoryName()
+                                            .toLowerCase());
     }
 
     //DATE SPECIFIC
@@ -129,7 +129,7 @@ public class FilterPanel {
         return dateFilterContainer();
     }
 
-    public StringDateFilter.Filterable stringDateFilterable() {
+    public Filterable stringDateFilterable() {
         return dateFilterContainer();
     }
 
@@ -187,7 +187,7 @@ public class FilterPanel {
         final int tooManyFiltersToBother = 600;
 
         final ParametricFieldContainer container = parametricField(index);
-        if(container.getFilterNumber() > tooManyFiltersToBother){
+        if(container.getFilterCount() > tooManyFiltersToBother) {
             return true;
         }
         container.expand();
@@ -197,8 +197,8 @@ public class FilterPanel {
 
         final List<WebElement> filters = filterModal.activePaneFilterList();
 
-        for(WebElement filter : filters) {
-            String name = filter.findElement(By.cssSelector(".field-value")).getText();
+        for(final WebElement filter : filters) {
+            final String name = filter.findElement(By.cssSelector(".field-value")).getText();
             if(name.contains(target)) {
                 filterModal.cancel();
                 return true;

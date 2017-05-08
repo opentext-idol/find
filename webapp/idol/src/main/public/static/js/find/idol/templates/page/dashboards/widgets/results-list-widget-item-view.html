@@ -1,0 +1,7 @@
+<h4><%-data.title%></h4>
+<% if(data.thumbnail) { %>
+<img class="document-thumbnail m-r-sm pull-left" src="data:image/jpeg;base64,<%=data.thumbnail%>"/>
+<% } else if (data.thumbnailUrl) { %>
+<img class="document-thumbnail m-r-sm pull-left" src="<%=data.thumbnailUrl%>"/>
+<% } %>
+<span><%-data.summary%></span>

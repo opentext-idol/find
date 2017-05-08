@@ -1,16 +1,18 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
+    'underscore',
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/nls/errors',
     'text!find/templates/app/util/error-custom-contact-support.html'
-], function(configuration, i18n, i18nErrors, errorCustomContactSupportTemplate) {
-    "use strict";
+], function(_, configuration, i18n, i18nErrors, errorCustomContactSupportTemplate) {
+    'use strict';
 
-    var customContactSupportTemplate = _.template(errorCustomContactSupportTemplate);
+    const customContactSupportTemplate = _.template(errorCustomContactSupportTemplate);
 
     /**
      * @typedef {Object} GenerateErrorSupportMessageArgument
@@ -24,21 +26,21 @@ define([
      * @param {GenerateErrorSupportMessageArgument} argumentHash
      */
     function generateErrorSupportMessage(argumentHash) {
-        var options = _.extend({
+        const options = _.extend({
             errorHeader: i18n['error.message.default'],
-            messageToUser: "",
-            errorDetails: "",
-            errorLookup: "",
-            errorUUID: ""
+            messageToUser: '',
+            errorDetails: '',
+            errorLookup: '',
+            errorUUID: ''
         }, argumentHash);
 
-        var detailsTemplate = i18n['error.details'];
-        var uuidTemplate = i18n['error.UUID'];
-        var needTechSupport;
+        const detailsTemplate = i18n['error.details'];
+        const uuidTemplate = i18n['error.UUID'];
+        let needTechSupport;
 
-        if (!options.errorDetails && options.errorLookup) {
-            if (i18nErrors["error.code." + options.errorLookup]) {
-                options.errorDetails = i18nErrors["error.code." + options.errorLookup];
+        if(!options.errorDetails && options.errorLookup) {
+            if(i18nErrors['error.code.' + options.errorLookup]) {
+                options.errorDetails = i18nErrors['error.code.' + options.errorLookup];
                 // Errors in the bundle are user-created errors, so we don't want them to contact support
                 needTechSupport = false;
             } else {
@@ -49,18 +51,25 @@ define([
         }
 
         // If app's config.json contains a custom "call support" string, print it. Otherwise fall back on bundle.js
-        var messageContactSupport = needTechSupport ? (configuration().errorCallSupportString || i18n['error.default.contactSupport']) : "";
+        const messageContactSupport = needTechSupport
+            ? (configuration().errorCallSupportString || i18n['error.default.contactSupport'])
+            : '';
 
         return customContactSupportTemplate({
             errorHeader: options.errorHeader,
             messageToUser: options.messageToUser,
             messageContactSupport: messageContactSupport,
-            errorDetails: options.errorDetails ? detailsTemplate(options.errorDetails) : detailsTemplate(i18n['error.unknown']),
-            errorUUID: (needTechSupport && options.errorUUID) ? uuidTemplate(options.errorUUID) : "",
-            errorLookup: needTechSupport ? options.errorLookup : ""
+            errorDetails: options.errorDetails
+                ? detailsTemplate(options.errorDetails)
+                : detailsTemplate(i18n['error.unknown']),
+            errorUUID: needTechSupport && options.errorUUID
+                ? uuidTemplate(options.errorUUID)
+                : '',
+            errorLookup: needTechSupport
+                ? options.errorLookup
+                : ''
         });
     }
 
     return generateErrorSupportMessage;
-
 });

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2015-2017 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'jquery',
@@ -5,8 +10,10 @@ define([
     'text!find/templates/app/page/search/results/results-view-augmentation.html'
 ], function(Backbone, $, _, viewHtml) {
 
+    'use strict';
+
     // We always want a gap between the preview well and the container
-    var PREVIEW_MARGIN_PIXELS = 10;
+    const PREVIEW_MARGIN_PIXELS = 10;
 
     return Backbone.View.extend({
         // abstract
@@ -35,11 +42,9 @@ define([
                     this.$previewModeContainer.append(this.previewModeView.$el);
                     this.previewModeView.render();
                     this.scrollFollow();
-
-                    this.togglePreviewMode(true);
-                } else {
-                    this.togglePreviewMode(false);
                 }
+
+                this.togglePreviewMode(!!documentModel);
             });
 
             this.listenTo(this.scrollModel, 'change', this.scrollFollow);
@@ -80,18 +85,18 @@ define([
 
         scrollFollow: function() {
             if (this.$el.is(':visible')) {
-                var augmentationRect = this.el.getBoundingClientRect();
-                var containerTop = this.scrollModel.get('top');
-                var containerBottom = this.scrollModel.get('bottom');
+                const augmentationRect = this.el.getBoundingClientRect();
+                const containerTop = this.scrollModel.get('top');
+                const containerBottom = this.scrollModel.get('bottom');
 
                 // Ensure that the top of the preview is at least PREVIEW_MARGIN_PIXELS from the top of the container
                 // but not above the augmentation view top
-                var targetTop = Math.max(containerTop + PREVIEW_MARGIN_PIXELS, augmentationRect.top);
-                var margin = targetTop - augmentationRect.top;
+                const targetTop = Math.max(containerTop + PREVIEW_MARGIN_PIXELS, augmentationRect.top);
+                const margin = targetTop - augmentationRect.top;
 
                 // Ensure that the bottom of the preview is at most PREVIEW_MARGIN_PIXELS from the bottom of the container
-                var targetBottom = containerBottom - PREVIEW_MARGIN_PIXELS;
-                var height = targetBottom - augmentationRect.top - margin;
+                const targetBottom = containerBottom - PREVIEW_MARGIN_PIXELS;
+                const height = targetBottom - augmentationRect.top - margin;
 
                 this.$previewModeContainer.css({
                     height: height,

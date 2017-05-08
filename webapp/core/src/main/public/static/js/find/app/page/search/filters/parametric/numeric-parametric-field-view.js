@@ -1,11 +1,12 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
-    'backbone',
-    'jquery',
     'underscore',
+    'jquery',
+    'backbone',
     'moment',
     'find/app/vent',
     'find/app/model/find-base-collection',
@@ -21,24 +22,47 @@ define([
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-date-input.html',
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/nls/bundle'
-], function(Backbone, $, _, moment, vent, FindBaseCollection, calibrateBuckets, rounder, numericWidget,
+], function(_, $, Backbone, moment, vent, FindBaseCollection, calibrateBuckets, rounder, numericWidget,
             BucketedParametricCollection, toFieldTextNode, datePicker, addChangeListener,
             template, numericInputTemplate, dateInputTemplate, loadingTemplate, i18n) {
-
     'use strict';
 
     function sum(a, b) {
         return a + b;
     }
 
-    function rangeModelMatching(fieldName, dataType) {
-        return function(model) {
-            return model.get('field') === fieldName && model.get('range') && model.get('dataType') === dataType;
-        };
+    // Update the inputs as the user drags a selection on the graph.
+    // Note that this means the value in the input does not depend
+    // on just the selected parametric range model.
+    function updateCallback(x1, x2) {
+        // rounding to one decimal place
+        this.updateMinInput(x1);
+        this.updateMaxInput(x2);
+    }
+
+    function selectionCallback(x1, x2) {
+        const newMin = this.parseBoundarySelection(x1);
+        const newMax = this.parseBoundarySelection(x2);
+        this.updateRestrictions([newMin, newMax]);
+    }
+
+    function mouseMoveCallback(x) {
+        this.$numericParametricCoords.text(this.formatValue(x));
+    }
+
+    function mouseLeaveCallback() {
+        this.$numericParametricCoords.text('');
+    }
+
+    function zoomCallback(min, max) {
+        this.model.set({
+            currentMin: min,
+            currentMax: max
+        });
     }
 
     // This view must be visible before it is rendered
-    var NumericParametricFieldView = Backbone.View.extend({
+    const NumericParametricFieldView = Backbone.View.extend({
         className: 'animated fadeIn',
         loadingSpinnerHtml: _.template(loadingTemplate)({i18n: i18n, large: true}),
         svgTemplate: _.template('<svg class="chart <%- selectionEnabled ? \'chart-selection-enabled\' : \'\' %>"></svg>'),
@@ -62,10 +86,18 @@ define([
                 this.updateRestrictions([null, this.readMaxInput()]);
             },
             'dp.change .results-filter-date[data-date-attribute="min-date"]': function(event) {
-                this.updateRestrictions([event.date.unix(), null]);
+                // The first time a user clicks the calendar a change event will be fired even though there is no change
+                const minInput = event.date.unix();
+                if (minInput !== this.minInput) {
+                    this.updateRestrictions([minInput, null]);
+                }
             },
             'dp.change .results-filter-date[data-date-attribute="max-date"]': function(event) {
-                this.updateRestrictions([null, event.date.unix()]);
+                // The first time a user clicks the calendar a change event will be fired even though there is no change
+                const maxInput = event.date.unix();
+                if (maxInput !== this.maxInput) {
+                    this.updateRestrictions([null, maxInput]);
+                }
             },
             'click .clickable-widget': function() {
                 this.clickCallback();
@@ -73,6 +105,9 @@ define([
         },
 
         initialize: function(options) {
+            this.delayedFetchBuckets = _.debounce(this.fetchBuckets, 500);
+            this.collapseModel = options.collapseModel || null;
+
             this.inputTemplate = options.inputTemplate || NumericParametricFieldView.numericInputTemplate;
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.selectedParametricValues;
@@ -80,14 +115,17 @@ define([
             this.selectionEnabled = options.selectionEnabled;
             this.zoomEnabled = options.zoomEnabled;
             this.buttonsEnabled = options.selectionEnabled && options.buttonsEnabled;
-            this.coordinatesEnabled = options.coordinatesEnabled === undefined ? true : options.coordinatesEnabled;
+            this.coordinatesEnabled = _.isUndefined(options.coordinatesEnabled) || options.coordinatesEnabled;
             this.hideTitle = options.hideTitle;
-            this.dataType = options.dataType;
             this.clickCallback = options.clickCallback;
 
             this.fieldName = this.model.id;
+            this.displayName = this.model.get('displayName');
+            this.type = this.model.get('type');
 
-            var formatting = this.dataType === 'date' ? options.formatting : NumericParametricFieldView.defaultFormatting;
+            const formatting = this.type === 'NumericDate'
+                ? options.formatting
+                : NumericParametricFieldView.defaultFormatting;
             this.formatValue = function(value) {
                 return formatting.format(value, this.model.get('currentMin'), this.model.get('currentMax'));
             }.bind(this);
@@ -97,53 +135,61 @@ define([
 
             this.widget = numericWidget({formattingFn: this.formatValue});
 
-            // The view's this.model contains the current and absolute ranges, the bucketModel contains the values
-            this.bucketModel = new BucketedParametricCollection.Model({id: this.model.get('id')});
+            // The view's this.model contains the current and
+            // absolute ranges, the bucketModel contains the values
+            this.bucketModel = new BucketedParametricCollection.Model({id: this.fieldName});
 
             // Bind the selection rectangle to the selected parametric range
             this.listenTo(this.selectedParametricValues, 'add remove change', function(model) {
-                if(rangeModelMatching(this.fieldName, this.dataType)(model)) {
+                if(this.isTargetModel(model)) {
                     this.updateSelection();
                 }
             });
 
+            this.throttledFetchBuckets = _.throttle(this.fetchBuckets, 500);
+
             addChangeListener(this, this.model, ['currentMin', 'currentMax'], function() {
-                // Immediately update the graph for the new range; we calibrate the buckets to remove buckets outside of the range
+                // Immediately update the graph for the new range; we calibrate
+                // the buckets to remove buckets outside of the range
                 this.updateGraph();
 
                 // Fetch new buckets when the range changes
-                this.fetchBuckets();
+                this.throttledFetchBuckets();
             });
 
-            addChangeListener(this, this.queryModel, ['queryText', 'fieldText', 'indexes', 'minDate', 'maxDate', 'minScore'], function() {
-                // Existing buckets are incorrect when the query changes
-                this.bucketModel.set({values: []});
+            addChangeListener(this, this.queryModel,
+                ['queryText', 'fieldText', 'indexes', 'minDate', 'maxDate', 'minScore'],
+                function() {
+                    // Existing buckets are incorrect when the query changes
+                    this.bucketModel.set({values: []});
+                    this.fetchBuckets();
+                });
 
-                this.fetchBuckets();
-            });
-
-            // TODO: Only update graph rather than render?
-            this.listenTo(vent, 'vent:resize', this.render);
+            this.listenTo(vent, 'vent:resize', this.delayedFetchBucketsAndUpdate);
 
             this.listenTo(this.bucketModel, 'change:values request sync error', this.updateGraph);
         },
 
         render: function() {
-            var inputColumnClass = this.selectionEnabled ? (this.coordinatesEnabled ? 'col-xs-4' : 'col-xs-6') : 'hide';
-            var coordinatesColumnClass = this.coordinatesEnabled ? (this.selectionEnabled ? 'col-xs-4' : 'col-xs-12') : 'hide';
-
             this.$el
-                .empty()
-                .append(this.template({
+                .html(this.template({
                     i18n: i18n,
-                    fieldName: this.hideTitle ? undefined : this.model.get('displayName'),
-                    clickable: Boolean(this.clickCallback),
+                    fieldName: this.hideTitle
+                        ? undefined
+                        : this.model.get('displayName'),
+                    clickable: !!this.clickCallback,
                     buttonsEnabled: this.buttonsEnabled,
-                    inputsRowClass: this.selectionEnabled || this.coordinatesEnabled ? '' : 'hide',
-                    inputColumnClass: inputColumnClass,
+                    inputsRowClass: this.selectionEnabled || this.coordinatesEnabled
+                        ? ''
+                        : 'hide',
+                    inputColumnClass: this.selectionEnabled
+                        ? (this.coordinatesEnabled ? 'col-xs-4' : 'col-xs-6')
+                        : 'hide',
                     inputTemplate: this.inputTemplate,
                     loadingSpinnerHtml: this.loadingSpinnerHtml,
-                    coordinatesColumnClass: coordinatesColumnClass
+                    coordinatesColumnClass: this.coordinatesEnabled
+                        ? (this.selectionEnabled ? 'col-xs-4' : 'col-xs-12')
+                        : 'hide'
                 }));
 
             if(this.selectionEnabled) {
@@ -152,73 +198,50 @@ define([
                 this.$maxInput = this.$('.numeric-parametric-max-input');
             }
 
+            this.$numericParametricCoords = this.$('.numeric-parametric-co-ordinates');
+
             this.updateGraph();
 
             // Width may have changed, re-fetch the buckets
             this.fetchBuckets();
         },
 
-        // Draw the graph with the current data and ranges, or display the loading spinner if we don't have any data yet
+        // Draw the graph with the current data and ranges, or display
+        // the loading spinner if we don't have any data yet
         updateGraph: function() {
-            var hadError = this.bucketModel.error;
-            var fetching = this.bucketModel.fetching;
-            var noValues = this.model.get('totalValues') === 0;
-            var modelBuckets = this.bucketModel.get('values');
+            const noError = !this.bucketModel.error;
+            const fetching = this.bucketModel.fetching;
+            const hasValues = this.model.get('totalValues') !== 0;
+            const modelBuckets = this.bucketModel.get('values');
 
-            this.$('.numeric-parametric-error-text').toggleClass('hide', !hadError);
-            this.$('.numeric-parametric-empty-text').toggleClass('hide', hadError || !noValues);
+            this.$('.numeric-parametric-error-text').toggleClass('hide', noError);
+            this.$('.numeric-parametric-empty-text').toggleClass('hide', !noError || hasValues);
 
-            var showLoadingIndicator = !hadError && !noValues && (fetching && modelBuckets.length === 0);
-            this.$('.numeric-parametric-loading-indicator').toggleClass('hide', !showLoadingIndicator);
+            const hideLoadingIndicator = !(noError && hasValues && fetching && modelBuckets.length === 0);
+            this.$('.numeric-parametric-loading-indicator').toggleClass('hide', hideLoadingIndicator);
 
-            var $chartRow = this.$('.numeric-parametric-chart-row');
+            const $chartRow = this.$('.numeric-parametric-chart-row');
             $chartRow.find('.chart').remove();
-            var width = $chartRow.width();
+            const width = $chartRow.width();
 
-            if(!hadError && !noValues && !showLoadingIndicator && width > 0) {
-                var $chart = $(this.svgTemplate({selectionEnabled: this.selectionEnabled}));
+            if(noError && hasValues && hideLoadingIndicator && width > 0) {
+                const $chart = $(this.svgTemplate({selectionEnabled: this.selectionEnabled}));
                 $chartRow.append($chart);
 
-                var buckets = calibrateBuckets(modelBuckets, [this.model.get('currentMin'), this.model.get('currentMax')]);
-
-                // Update the inputs as the user drags a selection on the graph. Note that this means the value in the input
-                // does not depend on just the selected parametric range model.
-                var updateCallback = function(x1, x2) {
-                    // rounding to one decimal place
-                    this.updateMinInput(x1);
-                    this.updateMaxInput(x2);
-                }.bind(this);
-
-                var selectionCallback = function(x1, x2) {
-                    var newMin = this.parseBoundarySelection(x1);
-                    var newMax = this.parseBoundarySelection(x2);
-                    this.updateRestrictions([newMin, newMax]);
-                }.bind(this);
-
-                var mouseMoveCallback = function(x) {
-                    this.$('.numeric-parametric-co-ordinates').text(this.formatValue(x));
-                }.bind(this);
-
-                var mouseLeaveCallback = function() {
-                    this.$('.numeric-parametric-co-ordinates').text('');
-                }.bind(this);
-
-                var zoomCallback = function(min, max) {
-                    this.model.set({
-                        currentMin: min,
-                        currentMax: max
-                    });
-                }.bind(this);
+                const buckets = calibrateBuckets(
+                    modelBuckets,
+                    [this.model.get('currentMin'), this.model.get('currentMax')]
+                );
 
                 this.graph = this.widget.drawGraph({
                     chart: $chart.get(0),
                     data: buckets,
-                    updateCallback: updateCallback,
-                    selectionCallback: selectionCallback,
+                    updateCallback: updateCallback.bind(this),
+                    selectionCallback: selectionCallback.bind(this),
                     deselectionCallback: this.clearRestrictions.bind(this),
-                    mouseMoveCallback: mouseMoveCallback,
-                    mouseLeaveCallback: mouseLeaveCallback,
-                    zoomCallback: zoomCallback,
+                    mouseMoveCallback: mouseMoveCallback.bind(this),
+                    mouseLeaveCallback: mouseLeaveCallback.bind(this),
+                    zoomCallback: zoomCallback.bind(this),
                     xRange: width,
                     yRange: $chart.height(),
                     tooltip: i18n['search.numericParametricFields.tooltip'],
@@ -237,17 +260,18 @@ define([
             });
         },
 
-        // Update the rendered selection rectangle and inputs to match the selected parametric range model
+        // Update the rendered selection rectangle and
+        // inputs to match the selected parametric range model
         updateSelection: function() {
             if(this.graph) {
-                var rangeModel = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.dataType));
+                const rangeModel = this.selectedParametricValues
+                    .find(this.isTargetModel.bind(this));
 
                 if(rangeModel) {
-                    var range = rangeModel.get('range');
+                    const range = rangeModel.get('range');
 
                     this.updateMinInput(range[0]);
                     this.updateMaxInput(range[1]);
-
                     this.graph.setSelection(range);
                 } else {
                     this.updateMinInput(this.model.get('min'));
@@ -260,21 +284,25 @@ define([
         // Apply a new range selection; a null boundary will not be updated
         // Should be called with values that are already parsed
         updateRestrictions: function(newRange) {
-            var existingModel = this.selectedParametricValues.find(rangeModelMatching(this.fieldName, this.dataType));
-            var existingRange = existingModel ? existingModel.get('range') : [this.model.get('min'), this.model.get('max')];
+            const existingModel = this.selectedParametricValues
+                .find(this.isTargetModel.bind(this));
+            const existingRange = existingModel
+                ? existingModel.get('range')
+                : [this.model.get('min'), this.model.get('max')];
 
-            var newAttributes = {
+            const newAttributes = {
                 field: this.fieldName,
-                dataType: this.dataType,
-                // TODO: Replace numeric with the more expressive dataType
-                numeric: this.dataType === 'numeric',
+                displayName: this.displayName,
+                type: this.type,
                 range: _.map(newRange, function(value, index) {
                     // Explicitly check null since 0 is falsy
-                    return value === null ? existingRange[index] : value;
+                    return value === null
+                        ? existingRange[index]
+                        : value;
                 })
             };
 
-            // Fixes error where user could manually input min > max or max < min
+            // Prevent user from manually setting min > max or max < min
             if(newAttributes.range[0] > newAttributes.range[1]) {
                 if(existingRange.reduce(sum) - newAttributes.range.reduce(sum) > 0) { // if max was decreased
                     newAttributes.range[0] = newAttributes.range[1]; //set min to equal max
@@ -291,35 +319,45 @@ define([
         },
 
         clearRestrictions: function() {
-            this.selectedParametricValues.remove(this.selectedParametricValues.filter(rangeModelMatching(this.fieldName, this.dataType)));
+            this.selectedParametricValues.remove(
+                this.selectedParametricValues
+                    .filter(this.isTargetModel.bind(this))
+            );
         },
 
         fetchBuckets: function() {
-            var width = this.$('.numeric-parametric-chart-row').width();
+            if(!(this.collapseModel && this.collapseModel.get('collapsed'))) {
+                const width = this.$('.numeric-parametric-chart-row').width();
 
-            // If the SVG has no width or there are no values, there is no point fetching new data
-            if(width !== 0 && this.model.get('totalValues') !== 0) {
-                // Exclude any restrictions for this field from the field text
-                var otherSelectedValues = this.selectedParametricValues
-                    .reject(rangeModelMatching(this.fieldName, this.dataType))
-                    .map(function(model) {
-                        return model.toJSON();
+                // If the SVG has no width or there are no values, there is no point fetching new data
+                if(!(width === 0 || this.model.get('totalValues') === 0)) {
+                    // Exclude any restrictions for this field from the field text
+                    const otherSelectedValues = this.selectedParametricValues
+                        .reject(this.isTargetModel.bind(this))
+                        .map(function(model) {
+                            return model.toJSON();
+                        });
+
+                    this.bucketModel.fetch({
+                        data: {
+                            queryText: this.queryModel.get('queryText'),
+                            fieldText: toFieldTextNode(otherSelectedValues),
+                            minDate: this.queryModel.getIsoDate('minDate'),
+                            maxDate: this.queryModel.getIsoDate('maxDate'),
+                            minScore: this.queryModel.get('minScore'),
+                            databases: this.queryModel.get('indexes'),
+                            targetNumberOfBuckets: Math.floor(width / this.pixelsPerBucket),
+                            bucketMin: this.model.get('currentMin'),
+                            bucketMax: this.model.get('currentMax')
+                        }
                     });
-
-                this.bucketModel.fetch({
-                    data: {
-                        queryText: this.queryModel.get('queryText'),
-                        fieldText: toFieldTextNode(otherSelectedValues),
-                        minDate: this.queryModel.getIsoDate('minDate'),
-                        maxDate: this.queryModel.getIsoDate('maxDate'),
-                        minScore: this.queryModel.get('minScore'),
-                        databases: this.queryModel.get('indexes'),
-                        targetNumberOfBuckets: Math.floor(width / this.pixelsPerBucket),
-                        bucketMin: this.model.get('currentMin'),
-                        bucketMax: this.model.get('currentMax')
-                    }
-                });
+                }
             }
+        },
+
+        delayedFetchBucketsAndUpdate: function() {
+            this.updateGraph();
+            this.delayedFetchBuckets();
         },
 
         readMinInput: function() {
@@ -332,14 +370,22 @@ define([
 
         updateMinInput: function(newValue) {
             if(this.selectionEnabled) {
+                this.minInput = newValue;
                 this.$minInput.val(this.formatValue(newValue));
             }
         },
 
         updateMaxInput: function(newValue) {
             if(this.selectionEnabled) {
+                this.maxInput = newValue;
                 this.$maxInput.val(this.formatValue(newValue));
             }
+        },
+
+        isTargetModel: function(model) {
+            return model.get('field') === this.fieldName &&
+                model.get('range') &&
+                model.get('type') === this.type;
         }
     }, {
         dateInputTemplate: _.template(dateInputTemplate),
@@ -362,16 +408,17 @@ define([
                 return Math.round(input);
             },
             render: function($el) {
-                datePicker.render($el.find('.results-filter-date[data-date-attribute="min-date"]'), function() {
-                    this.updateRestrictions([this.readMinInput(), null]);
-                }.bind(this));
-                datePicker.render($el.find('.results-filter-date[data-date-attribute="max-date"]'), function() {
-                    this.updateRestrictions([null, this.readMaxInput()]);
-                }.bind(this));
+                datePicker.render($el.find('.results-filter-date[data-date-attribute="min-date"]'),
+                    function() {
+                        this.updateRestrictions([this.readMinInput(), null]);
+                    }.bind(this));
+                datePicker.render($el.find('.results-filter-date[data-date-attribute="max-date"]'),
+                    function() {
+                        this.updateRestrictions([null, this.readMaxInput()]);
+                    }.bind(this));
             }
         }
     });
 
     return NumericParametricFieldView;
-
 });

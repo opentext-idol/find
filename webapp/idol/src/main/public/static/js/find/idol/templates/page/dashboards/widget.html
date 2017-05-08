@@ -1,0 +1,19 @@
+<h3 class="title shorten"><%- name %></h3>
+<div class="widget-error hide"></div>
+<div class="widget-empty hide">
+    <i class="hp-icon hp-info"></i>
+    <span>
+        <%- i18n['dashboards.widget.noData'] %>
+    </span>
+</div>
+<div class="widget-init-spinner hide">
+    <div class="loading-spinner loading-spinner-lg">
+        <i class="fa fa-spinner fa-spin"></i> <%- i18n['app.loading'] %>
+    </div>
+</div>
+<div class="widget-content"></div>
+<div class="widget-hover-title-container">
+    <h2 class="widget-hover-title text-center">
+        <%- name ? name : i18n['dashboards.widget'] %>
+    </h2>
+</div>

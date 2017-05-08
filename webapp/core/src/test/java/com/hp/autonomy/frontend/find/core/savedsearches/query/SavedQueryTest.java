@@ -7,9 +7,9 @@ package com.hp.autonomy.frontend.find.core.savedsearches.query;
 import com.hp.autonomy.frontend.find.core.savedsearches.AbstractSavedSearchTest;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearch;
 
-public class SavedQueryTest extends AbstractSavedSearchTest<SavedQuery> {
+public class SavedQueryTest extends AbstractSavedSearchTest<SavedQuery, SavedQuery.Builder> {
     @Override
-    protected SavedSearch.Builder<SavedQuery> createBuilder() {
+    protected SavedSearch.Builder<SavedQuery, SavedQuery.Builder> createBuilder() {
         return new SavedQuery.Builder();
     }
 }

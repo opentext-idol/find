@@ -33,6 +33,9 @@ define([
             this.listenTo(this.collection, 'remove', this.onRemove);
             this.listenTo(this.collection, 'change', this.onChange);
             this.listenTo(this.collection, 'reset', this.onReset);
+            this.listenTo(this.collection, 'request', this.onRequest);
+            this.listenTo(this.collection, 'error', this.onError);
+            this.listenTo(this.collection, 'sync', this.onSync);
 
             this.collection.each(function(model) {
                 if (this.predicate(model)) {
@@ -61,14 +64,30 @@ define([
             this.reset(collection.filter(this.predicate))
         },
 
+        onRequest: function () {
+            this.trigger('request');
+        },
+
+        onError: function (collection, xhr) {
+            this.trigger('error', collection, xhr);
+        },
+
+        onSync: function () {
+            this.trigger('sync');
+        },
+
         filterModels: function() {
-            var models = this.collection.filter(this.predicate);
+            const models = this.collection.filter(this.predicate);
 
             if (this.resetOnFilter) {
                 this.reset(models);
             } else {
                 this.set(models);
             }           
+        },
+
+        isProcessing: function () {
+            return Boolean(this.collection.currentRequest);
         }
     })
 });

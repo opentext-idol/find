@@ -6,7 +6,6 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.hp.autonomy.aci.content.fieldtext.FieldText;
-import com.hp.autonomy.aci.content.fieldtext.FieldTexts;
 import com.hp.autonomy.aci.content.fieldtext.MATCH;
 import com.hp.autonomy.aci.content.fieldtext.NRANGE;
 import com.hp.autonomy.aci.content.fieldtext.RANGE;
@@ -25,7 +24,7 @@ import java.util.Set;
 public class FieldTextParserImpl implements FieldTextParser {
     // WARNING: This logic is duplicated in the client side SelectedValuesCollection
     @Override
-    public String toFieldText(final SavedSearch<?> savedSearch) {
+    public String toFieldText(final SavedSearch<?, ?> savedSearch) {
         final Set<FieldAndValue> parametricValues = savedSearch.getParametricValues();
         final Set<ParametricRange> parametricRanges = savedSearch.getParametricRanges();
 
@@ -45,13 +44,7 @@ public class FieldTextParserImpl implements FieldTextParser {
             final Map<String, List<String>> fieldToValues = new HashMap<>();
 
             for (final FieldAndValue fieldAndValue : parametricValues) {
-                List<String> values = fieldToValues.get(fieldAndValue.getField());
-
-                if (values == null) {
-                    values = new LinkedList<>();
-                    fieldToValues.put(fieldAndValue.getField(), values);
-                }
-
+                final List<String> values = fieldToValues.computeIfAbsent(fieldAndValue.getField(), key -> new LinkedList<>());
                 values.add(fieldAndValue.getValue());
             }
 

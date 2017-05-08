@@ -1,21 +1,43 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find.application;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 public enum UserRole {
-    BIFHI,
-    FIND,
-    BOTH;
+    BIFHI("bifhi"), FIND("find");
 
-    public static UserRole fromString(String value) {
-        if (value == null){
-            return null;
-        }
+    /**
+     * The id in the config file of the user with this role.
+     */
+    private final String configId;
 
-        switch(value.toLowerCase()){
-            case "find" :
-                return FIND;
-            case "bifhi":
-            default:
-                return BIFHI;
-        }
+    UserRole(final String configId) {
+        this.configId = configId;
+    }
+
+    public static Optional<UserRole> fromString(final String value) {
+        final String lowerCaseValue = value.toLowerCase();
+
+        return Arrays.stream(values())
+                .filter(role -> role.name().toLowerCase().equals(lowerCaseValue))
+                .findFirst();
+    }
+
+    public static UserRole activeRole() {
+        final String maybeProperty = System.getProperty("userRole");
+
+        return Optional.ofNullable(maybeProperty)
+                .map(property -> fromString(property)
+                        .orElseThrow(() -> new IllegalStateException("Unrecognised role \"" + property + "\" read from userRole system property")))
+                .orElse(BIFHI);
+    }
+
+    public String getConfigId() {
+        return configId;
     }
 }

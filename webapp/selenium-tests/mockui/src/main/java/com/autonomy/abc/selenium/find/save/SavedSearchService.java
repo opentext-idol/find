@@ -1,3 +1,8 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.autonomy.abc.selenium.find.save;
 
 import com.autonomy.abc.selenium.find.application.BIIdolFind;
@@ -5,23 +10,22 @@ import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class SavedSearchService {
-    private final BIIdolFindElementFactory elementFactory;
     private static final Logger LOGGER = LoggerFactory.getLogger(SavedSearchService.class);
+    private final BIIdolFindElementFactory elementFactory;
 
     public SavedSearchService(final BIIdolFind find) {
         elementFactory = find.elementFactory();
     }
 
-    public void saveCurrentAs(final String searchName, final SearchType type){
+    public void saveCurrentAs(final String searchName, final SearchType type) {
         Waits.loadOrFadeWait();
-        nameSavedSearch(searchName,type).confirmSave();
+        nameSavedSearch(searchName, type).confirmSave();
     }
 
     public void renameCurrentAs(final String newSearchName) {
@@ -33,7 +37,7 @@ public class SavedSearchService {
         optionsBar.confirmSave();
     }
 
-    public SearchOptionsBar nameSavedSearch(final String searchName,final SearchType type){
+    public SearchOptionsBar nameSavedSearch(final String searchName, final SearchType type) {
         final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
         options.saveAsButton(type).click();
         options.searchTitleInput().setValue(searchName);
@@ -47,24 +51,23 @@ public class SavedSearchService {
     }
 
     public void waitForSomeTabsAndDelete() {
-        try{
+        try {
             elementFactory.getSearchTabBar().waitUntilSavedSearchAppears();
             deleteAll();
-        } catch (final TimeoutException ignored) {
+        } catch(final TimeoutException ignored) {
             LOGGER.info("Timed out waiting for a Saved Search to appear");
             deleteAll();
         }
-
     }
 
-    //STILL NOT DELETING THE TABS
+    //TODO: Still not deleting the tabs but really a problem with the app's slow deletion
     public void deleteAll() {
-        SearchTabBar tabBar = elementFactory.getSearchTabBar();
+        final SearchTabBar tabBar = elementFactory.getSearchTabBar();
 
         final List<String> savedTitles = tabBar.savedTabTitles();
         LOGGER.info("Saved titles: " + savedTitles);
 
-        for(String title: savedTitles) {
+        for(final String title : savedTitles) {
             elementFactory.getSearchTabBar().tab(title).activate();
             elementFactory.getFindPage().waitForLoad();
             deleteCurrentSearch();

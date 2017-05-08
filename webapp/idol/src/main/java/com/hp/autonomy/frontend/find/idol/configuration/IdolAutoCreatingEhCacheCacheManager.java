@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.idol.configuration;
 
 import com.hp.autonomy.frontend.find.core.beanconfiguration.InMemoryCondition;
 import com.hp.autonomy.frontend.find.core.configuration.AutoCreatingEhCacheCacheManager;
+import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class IdolAutoCreatingEhCacheCacheManager extends AutoCreatingEhCacheCacheManager {
     @Autowired
     public IdolAutoCreatingEhCacheCacheManager(final CacheManager cacheManager, final CacheConfiguration defaults) {
-        super(cacheManager, defaults);
+        super(cacheManager, FindCacheNames.CACHE_EXPIRES, defaults);
     }
 
     @Override

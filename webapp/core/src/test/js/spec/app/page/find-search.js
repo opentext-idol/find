@@ -3,9 +3,12 @@ define([
     'find/app/configuration',
     'backbone'
 ], function (FindSearch, configuration, Backbone) {
+    'use strict';
 
     describe('Find Search', function() {
         beforeEach(function() {
+            spyOn(Backbone.history, 'getFragment').and.returnValue('');
+
             configuration.and.returnValue({
                 savedSearchConfig: {
                     pollForUpdates: false
@@ -14,7 +17,11 @@ define([
 
             this.findSearch = new (FindSearch.extend({
                 IndexesCollection: Backbone.Collection,
-                ServiceView: Backbone.View
+                ServiceView: Backbone.View.extend({
+                    getSelectedTab: function() {
+                        return '';
+                    }
+                })
             }))({
                 savedQueryCollection: new Backbone.Collection(),
                 indexesCollection: new Backbone.Collection()

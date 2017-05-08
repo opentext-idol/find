@@ -16,6 +16,7 @@ FIND_USER="${NAME}"
 FIND_GROUP="${NAME}"
 FIND_INSTALL_DIR="/opt/${NAME}"
 FIND_HOME_DIR="${FIND_INSTALL_DIR}/home"
+FIND_LOGGING_DIR="${FIND_HOME_DIR}/logs"
 FIND_PORT=8080
 EXECUTABLE="${FIND_INSTALL_DIR}/${NAME}.war"
 JAVA_BIN="/usr/bin/java"
@@ -24,7 +25,7 @@ JAVA_BIN="/usr/bin/java"
 PRODUCT_NAME="HPE Find"
 LOCKFILE="/var/lock/${NAME}.pid"
 STARTUP_LOG="${FIND_INSTALL_DIR}/console.log"
-ARGS=("-Dhp.find.home=${FIND_HOME_DIR}" "-Dserver.port=${FIND_PORT}" "-jar" "${EXECUTABLE}")
+ARGS=("-Dhp.find.home=${FIND_HOME_DIR}" "-Dlogging.path=${FIND_LOGGING_DIR}" "-Dserver.port=${FIND_PORT}" "-jar" "${EXECUTABLE}")
 SLEEP_TIME=2
 ##
 

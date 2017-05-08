@@ -20,7 +20,7 @@ public class ResultsComparisonView {
     private final WebDriver driver;
 
     private ResultsComparisonView(final WebElement serviceViewContainer, final WebDriver driver) {
-        this.wholeContainer = serviceViewContainer;
+        wholeContainer = serviceViewContainer;
         this.driver = driver;
         waitForLoad(driver);
     }
@@ -66,7 +66,7 @@ public class ResultsComparisonView {
     public MapView goToMapView() {
         wholeContainer.findElement(By.cssSelector("[data-tab-id='map']")).click();
         new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOf(wholeContainer.findElement(By.cssSelector(".location-comparison-map"))));
-        return new MapView(driver);
+        return new MapView(driver, true);
     }
 
     private static void waitForLoad(final WebDriver driver) {
