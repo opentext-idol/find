@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -25,8 +25,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 
 import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CLASSES_PROPERTY;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
@@ -52,19 +57,19 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
     @Override
     protected UiCustomization constructComponent() {
         final UiCustomizationRule rule = UiCustomizationRule.builder()
-                .populateRule("user", false)
-                .build();
+            .populateRule("user", false)
+            .build();
 
         final UiCustomizationOptions uiCustomizationOptions = new UiCustomizationOptions();
         uiCustomizationOptions.populateRules("option3", rule);
 
         return UiCustomization.builder()
-                .options(uiCustomizationOptions)
-                .parametricOrderItem(tagNameFactory.getFieldPath("FIELD_Y"))
-                .parametricOrderItem(tagNameFactory.getFieldPath("FIELD_X"))
-                .specialUrlPrefixes(ImmutableMap.of("application/vnd.visio", "ms-visio:ofv|u|"))
-                .errorCallSupportString("Custom technical support message")
-                .build();
+            .options(uiCustomizationOptions)
+            .parametricOrderItem(tagNameFactory.getFieldPath("FIELD_Y"))
+            .parametricOrderItem(tagNameFactory.getFieldPath("FIELD_X"))
+            .specialUrlPrefixes(ImmutableMap.of("application/vnd.visio", "ms-visio:ofv|u|"))
+            .errorCallSupportString("Custom technical support message")
+            .build();
     }
 
     @Override
@@ -101,6 +106,5 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
     }
 
     @Override
-    protected void validateString(final String s) {
-    }
+    protected void validateString(final String s) {}
 }

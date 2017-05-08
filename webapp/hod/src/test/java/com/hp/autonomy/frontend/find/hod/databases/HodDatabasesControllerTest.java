@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -42,8 +42,8 @@ public class HodDatabasesControllerTest extends AbstractDatabasesControllerTest<
         when(databasesRequestBuilder.publicIndexesEnabled(anyBoolean())).thenReturn(databasesRequestBuilder);
 
         final HodConfig hodConfig = HodConfig.builder()
-                .publicIndexesEnabled(true)
-                .build();
+            .publicIndexesEnabled(true)
+            .build();
         when(configService.getConfig()).thenReturn(HodFindConfig.builder().hod(hodConfig).build());
 
         return new HodDatabasesController(hodDatabasesService, databasesRequestBuilderFactory, configService);
