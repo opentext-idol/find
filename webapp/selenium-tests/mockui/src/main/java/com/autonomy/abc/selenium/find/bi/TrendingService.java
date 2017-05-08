@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class TrendingService {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,###");
     private static final int SAFE_DISTANCE_FROM_POINT_TO_CLICK_FOR_DRAG = 10;
-    private static final int DISTANCE_TO_DRAG = 150;
+    private static final int DISTANCE_TO_DRAG = 500;
 
     private final FindElementFactory elementFactory;
 
