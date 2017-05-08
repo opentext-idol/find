@@ -202,6 +202,15 @@ define([
                 this.handleError(xhr);
             });
 
+            if(this.indexesCollection) {
+                this.indexesCollection.currentRequest
+                    .always(function() {
+                        this.refreshResults();
+                    }.bind(this));
+            } else {
+                this.refreshResults();
+            }
+
             if(this.entityCollection) {
                 this.updateEntityHighlighting();
             }

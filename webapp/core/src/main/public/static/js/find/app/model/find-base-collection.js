@@ -1,12 +1,12 @@
 /*
- * Copyright 2016-2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
-    'underscore'
-], function(Backbone, _) {
+    'underscore',
+    'backbone'
+], function(_, Backbone) {
     'use strict';
 
     function createFetch(prototype) {
@@ -19,8 +19,8 @@ define([
             this.fetching = true;
             this.error = false;
 
-            var error = options.error;
-            var success = options.success;
+            const error = options.error;
+            const success = options.success;
 
             this.currentRequest = prototype.fetch.call(this, _.extend(options || {}, {
                 reset: _.isUndefined(options.reset) || options.reset,
@@ -48,7 +48,7 @@ define([
         };
     }
 
-    var baseProperties = {
+    const baseProperties = {
         currentRequest: null,
         error: false,
         fetching: false,
@@ -62,7 +62,7 @@ define([
         }
     };
 
-    var Model = Backbone.Model.extend(_.extend({
+    const Model = Backbone.Model.extend(_.extend({
         fetch: createFetch(Backbone.Model.prototype)
     }, baseProperties));
 

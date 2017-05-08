@@ -38,9 +38,13 @@ define([
         const uuidTemplate = i18n['error.UUID'];
         let needTechSupport;
 
-        if(!options.errorDetails && options.errorLookup) {
-            if(i18nErrors['error.code.' + options.errorLookup]) {
-                options.errorDetails = i18nErrors['error.code.' + options.errorLookup];
+        if(options.errorLookup) {
+            const prettifiedError = i18nErrors['error.code.' + options.errorLookup];
+            if(prettifiedError) {
+                options.errorDetails = prettifiedError +
+                    (options.errorDetails
+                        ? ' / ' + options.errorDetails
+                        : '');
                 // Errors in the bundle are user-created errors, so we don't want them to contact support
                 needTechSupport = false;
             } else {
