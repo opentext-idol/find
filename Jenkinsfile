@@ -78,6 +78,10 @@ node {
 		}
 
     stage 'Deploy'
+        echo "webapp = ${webapp}"
+        echo "repository_location = ${repository}"
+        echo "branch = ${branch}"
+
         sh """
             FPLAYBOOKDIR=/home/fenkins/frontend-playbook/vagrant/ansible/frontendslave-playbook/
             config_template_name=onprem-config.json.j2
