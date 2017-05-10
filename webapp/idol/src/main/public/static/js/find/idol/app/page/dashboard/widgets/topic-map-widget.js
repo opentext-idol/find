@@ -32,7 +32,7 @@ define([
 
         render: function() {
             SavedSearchWidget.prototype.render.apply(this);
-            this.$content.addClass('fixed-height');
+            this.$content.addClass('fixed-height widget-topic-map');
             this.topicMap.setElement(this.$content).render();
         },
 
