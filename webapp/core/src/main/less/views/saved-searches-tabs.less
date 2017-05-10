@@ -1,0 +1,116 @@
+/*
+ * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+.new-document-label {
+  .absolute;
+
+  background-color: @red0;
+  display: block;
+  font-size: @custom5;
+  left: @nil;
+  top: @nil;
+  border-radius: 3px;
+  padding: 1px 3px !important;
+}
+
+.search-tabs-list {
+  .no-overflow;
+
+  height: @searchTabsHeight;
+  padding-top: 5px;
+}
+
+.search-tab-title {
+  i {
+    font-size: 12px;
+  }
+  .hp-new {
+    .absolute;
+
+    top: @nil;
+    right: 3px;
+  }
+}
+
+.search-tab-title.shorten {
+  .no-overflow;
+
+  max-width: @searchTabTitleMaxWidth;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-tabs-container {
+  background-color: @white;
+  min-height: @nil;
+
+  .nav-tabs {
+    border-bottom: none;
+  }
+
+  .nav-tabs > li > a {
+    border: 1px solid @grey16;
+    border-bottom: none;
+  }
+
+  .nav-tabs > li.active > a {
+    background-color: @grey18;
+  }
+
+  .nav-tabs > li.start-new-search > a {
+    background-color: transparent;
+    background-image: none;
+    border-radius: @custom3;
+    border: 2px solid;
+    color: @accent;
+    height: @custom9;
+    line-height: @custom5;
+    padding: 5px;
+  }
+}
+
+.search-type {
+  font-size: @custom5;
+}
+
+.start-new-search {
+  i {
+    vertical-align: bottom;
+  }
+}
+
+.tab-dropdown {
+  padding-right: 16px;
+  padding-top: 12px;
+
+  .dropdown-menu {
+    margin-left: -115px;
+
+    .search-tab-anchor {
+      padding: 8px 20px;
+    }
+
+    .search-tab-title {
+      .hp-new {
+        top: auto;
+      }
+    }
+
+    .new-document-label {
+      left: 5px;
+      top: 5px;
+    }
+
+  }
+
+  .tab-drop > i {
+    font-size: 24px;
+  }
+}
+
+.tab-title.disabled,
+.active .tab-title.disabled {
+  color: @grey7;
+}
