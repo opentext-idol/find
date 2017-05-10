@@ -7,6 +7,11 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.Set;
+
 public interface SharedToUserRepository extends CrudRepository<SharedToUser, SharedToUserPK> {
 
+    Set<SharedToUser> findByUser_UserIdAndSavedSearch_ActiveTrue(Long userId);
+
+    Set<SharedToUser> findBySavedSearch_Id(Long searchId);
 }

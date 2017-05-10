@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Set;
 
 import static com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchRepositoryTestConfiguration.SAVED_SEARCH_REPOSITORY_TEST_PROPERTY;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SavedSearchRepositoryTestConfiguration.class,
@@ -55,22 +55,24 @@ public class SharedToUserRepositoryTest {
                 .sharedDate(ZonedDateTime.now())
                 .build();
 
+        final Long initialCount = repository.count();
         repository.save(sharedToUser);
 
-        assertThat(repository.count(), is(2L));
+        assertThat(repository.count(), is(initialCount + 1));
     }
 
     @Test
     public void saveMultiple() {
-        final SavedQuery savedQuery = savedQueryRepository.findAll().iterator().next();
-        final Iterator<UserEntity> userIterator = userEntityRepository.findAll().iterator();
-        final UserEntity user = userIterator.next();
-        final UserEntity user2 = userIterator.next();
+        final Iterator<SavedQuery> queryIterator = savedQueryRepository.findAll().iterator();
+        final SavedQuery savedQuery = queryIterator.next();
+        final SavedQuery savedQuery2 = queryIterator.next();
+        final UserEntity user = userEntityRepository.findAll().iterator().next();
+        final Long initialCount = repository.count();
 
         final Collection<SharedToUser> sharedToUserList = new ArrayList<>();
 
         sharedToUserList.add(SharedToUser.builder()
-                .id(new SharedToUserPK(1L, 1L))
+                .id(new SharedToUserPK())
                 .savedSearch(savedQuery)
                 .user(user)
                 .canEdit(true)
@@ -79,9 +81,9 @@ public class SharedToUserRepositoryTest {
                 .build());
 
         sharedToUserList.add(SharedToUser.builder()
-                .id(new SharedToUserPK(1L, 2L))
-                .savedSearch(savedQuery)
-                .user(user2)
+                .id(new SharedToUserPK())
+                .savedSearch(savedQuery2)
+                .user(user)
                 .canEdit(true)
                 .modifiedDate(ZonedDateTime.now())
                 .sharedDate(ZonedDateTime.now())
@@ -89,7 +91,7 @@ public class SharedToUserRepositoryTest {
 
         repository.save(sharedToUserList);
 
-        assertThat(repository.count(), is(3L));
+        assertThat(repository.count(), is(initialCount + 2));
     }
 
     @Test
@@ -97,6 +99,12 @@ public class SharedToUserRepositoryTest {
         final SharedToUserPK pk = new SharedToUserPK(1L, 3L);
         final SharedToUser sharedToUser = repository.findOne(pk);
         assertThat(sharedToUser.getId(), equalTo(pk));
+        assertThat(sharedToUser.getSavedSearch(), notNullValue());
+        assertThat(sharedToUser.getUser(), notNullValue());
+        assertThat(sharedToUser.getCanEdit(), is(true));
+        //TODO: fix this
+//        assertThat(sharedToUser.getModifiedDate(), notNullValue());
+//        assertThat(sharedToUser.getSharedDate(), notNullValue());
     }
 
     @Test
@@ -114,44 +122,27 @@ public class SharedToUserRepositoryTest {
     public void findAllWithIds() {
         final SharedToUserPK pk = new SharedToUserPK(1L, 3L);
         assertThat(repository.findAll(Collections.singletonList(pk)).iterator().hasNext(), is(true));
-        final SharedToUserPK pkNoResults = new SharedToUserPK(1L, 2L);
+        final SharedToUserPK pkNoResults = new SharedToUserPK(1L, 1L);
         assertThat(repository.findAll(Collections.singletonList(pkNoResults)).iterator().hasNext(), is(false));
     }
 
     @Test
-    public void count() {
-        assertThat(repository.count(), is(1L));
-    }
-
-    @Test
     public void deleteWithId() {
-        assertThat(repository.count(), is(1L));
+        final Long initialCount = repository.count();
         repository.delete(new SharedToUserPK(1L, 3L));
-        assertThat(repository.count(), is(0L));
+        assertThat(repository.count(), is(initialCount - 1));
     }
 
     @Test(expected = EmptyResultDataAccessException.class)
     public void deleteWithWrongId() {
-        assertThat(repository.count(), is(1L));
-        repository.delete(new SharedToUserPK(1L, 2L));
+        repository.delete(new SharedToUserPK(1L, 1L));
     }
 
     @Test
     public void deleteWithObject() {
-        assertThat(repository.count(), is(1L));
-
-        final SavedQuery savedQuery = savedQueryRepository.findAll().iterator().next();
-        final UserEntity user = userEntityRepository.findAll().iterator().next();
-        final SharedToUser sharedToUser = SharedToUser.builder()
-                .id(new SharedToUserPK(1L, 3L))
-                .savedSearch(savedQuery)
-                .user(user)
-                .canEdit(true)
-                .modifiedDate(ZonedDateTime.now())
-                .sharedDate(ZonedDateTime.now())
-                .build();
-        repository.delete(sharedToUser);
-        assertThat(repository.count(), is(0L));
+        final Long initialCount = repository.count();
+        repository.delete(repository.findOne(new SharedToUserPK(1L, 3L)));
+        assertThat(repository.count(), is(initialCount - 1));
     }
 
     @Test
@@ -160,7 +151,7 @@ public class SharedToUserRepositoryTest {
         final UserEntity user = userEntityRepository.findAll().iterator().next();
 
         final SharedToUser sharedToUser = SharedToUser.builder()
-                .id(new SharedToUserPK(2L, 2L))
+                .id(new SharedToUserPK())
                 .savedSearch(savedQuery)
                 .user(user)
                 .canEdit(true)
@@ -169,9 +160,21 @@ public class SharedToUserRepositoryTest {
                 .build();
 
         repository.save(sharedToUser);
-        assertThat(repository.count(), is(2L));
+        assertThat(repository.count(), is(greaterThan(0L)));
 
         repository.deleteAll();
         assertThat(repository.count(), is(0L));
+    }
+
+    @Test
+    public void findPermittedSearchesByUserId() {
+        final Set<SharedToUser> searchesSharedWithNamedUser = repository.findByUser_UserIdAndSavedSearch_ActiveTrue(2L);
+        assertThat(searchesSharedWithNamedUser.size(), is(1));
+    }
+
+    @Test
+    public void findPermittedUsersBySearchId() {
+        final Set<SharedToUser> usersAllowedToSeeNamedSearch = repository.findBySavedSearch_Id(1L);
+        assertThat(usersAllowedToSeeNamedSearch.size(), is(3));
     }
 }

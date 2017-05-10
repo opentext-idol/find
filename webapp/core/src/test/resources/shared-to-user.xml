@@ -2,8 +2,13 @@
     <users user_id="1"/>
     <users user_id="2"/>
     <users user_id="3"/>
-    <searches  search_id="1" user_id="1" active="true" search_type="0" min_score="0"/>
-    <searches  search_id="2" user_id="1" active="false" search_type="0" min_score="0"/>
-    <searches  search_id="3" user_id="1" active="true" search_type="1" min_score="0"/>
-    <shared_to_user search_id="1" user_id="3" can_edit="true" modified_date="2017-05-09" shared_date="2017-05-09"/>
+    <users user_id="4"/>
+    <searches search_id="1" user_id="1" active="true" search_type="0" min_score="0"/>
+    <searches search_id="2" user_id="1" active="false" search_type="0" min_score="0"/>
+    <searches search_id="3" user_id="1" active="true" search_type="1" min_score="0"/>
+    <searches search_id="4" user_id="2" active="true" search_type="1" min_score="0"/>
+    <shared_to_user search_id="1" user_id="3" can_edit="true"/>
+    <shared_to_user search_id="1" user_id="2" can_edit="true"/>
+    <shared_to_user search_id="2" user_id="2" can_edit="true"/>
+    <shared_to_user search_id="1" user_id="4" can_edit="true"/>
 </dataset>
