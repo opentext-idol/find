@@ -1,0 +1,435 @@
+/*
+ * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+//This includes left side bar, time bar, parametric modal and anything related to search filtering
+
+.bootstrap-datetimepicker-widget {
+  font-size: @font-size-base - 1;
+
+  .timepicker {
+    td {
+      border: none;
+    }
+
+    .btn {
+      .no-box-shadow;
+    }
+  }
+
+  a[data-action] {
+    .p-nil;
+
+    color: @text-color;
+  }
+
+  table {
+    td {
+      height: @nil;
+      line-height: @custom5;
+      width: @nil;
+
+      span {
+        height: @nil;
+        line-height: @nil;
+        width: @custom9;
+      }
+    }
+  }
+
+  .separator {
+    .p-nil;
+  }
+}
+
+.bootstrap-datetimepicker-widget.dropdown-menu {
+  width: auto;
+}
+
+.chart {
+  rect {
+    fill: @hpegreen;
+
+    &:hover {
+      fill: @color40;
+    }
+  }
+
+  rect.selection {
+    fill: @timebarSelectionColor;
+  }
+}
+
+.chart-selection-enabled {
+  cursor: crosshair;
+}
+
+.category-name,
+.category-name-icon,
+.child-categories li {
+  line-height: 1.42857143;
+  padding: @custom6;
+  vertical-align: top;
+}
+
+.category-name,
+.category-name-icon {
+  font-weight: bold;
+}
+
+.category-input {
+  border-bottom: none !important;
+  border-top: 1px solid @tableBorder;
+}
+
+.child-categories {
+  li {
+    .break-all;
+
+    border-bottom: 1px solid @color7;
+
+    &:first-child {
+      border-top: 1px solid @color7;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.clickable-widget {
+  .clickable;
+  .p-xs;
+
+  border: 2px solid @color5;
+}
+
+.database-input > span,
+.category-input > span {
+  .inline-block;
+}
+
+.database-name,
+.category-name {
+  padding: @nil @custom6;
+}
+
+.databases-list {
+  .toggle-more {
+    i {
+      transform-origin: 20px;
+    }
+  }
+}
+
+.database-name {
+  max-width: 110px;
+}
+
+.date {
+  .inline-block;
+  .relative;
+}
+
+.date > input {
+  font-size: @font-size-base - 1;
+  padding: @custom6 @nil @custom6 30px;
+}
+
+.date > .date-select {
+  .text-center;
+  .text-decoration-none;
+  .clickable;
+  .absolute;
+
+  background: transparent;
+  border: @nil;
+  left: @nil;
+  padding: @custom6;
+  top: @nil;
+  width: 33px;
+  z-index: @dateSelectZIndex;
+}
+
+.datepicker-days {
+  td {
+    padding: @nil !important;
+  }
+}
+
+.disabled-index {
+  .cursor-not-allowed;
+
+  color: @color19;
+}
+
+.field-label {
+  .inline-block;
+
+  list-style: none;
+  margin: 2px @nil;
+}
+
+.fields-list {
+  height: @100percent;
+  overflow: auto;
+}
+
+.filter-display-text {
+  line-height: 1.2em;
+  max-width: @filterDisplayLabelWidth;
+  vertical-align: middle;
+  font-size: @labelSize;
+}
+
+.filters-margin {
+  .m-r-xs;
+  .m-t-nil;
+}
+
+.filters-remove-icon {
+  .m-l-xs;
+}
+
+.filter-label {
+  .p-xs;
+
+  background-color: @white !important;
+  border-radius: @nil;
+  border: solid 1px @color23;
+  color: @color22;
+  font-size: @100percent;
+  font-weight: normal;
+
+  span {
+    color: @color1;
+  }
+}
+
+.filter-checkbox {
+  .m-r-sm;
+}
+
+.highlighted-widget {
+  .clickable-widget {
+    background-color: @color38;
+    border: 2px solid @color35;
+  }
+}
+
+.input-append.date {
+  .m-b-nil;
+
+  .add-on {
+    .clickable;
+
+    i {
+      .inline;
+    }
+  }
+}
+
+.input-append,
+.input-prepend .date {
+  font-size: @100percent;
+}
+
+.indexes-list-group {
+  .controls {
+    margin-left: 100px;
+  }
+
+  .control-label {
+    .text-left;
+
+    width: @settingsIndexesWidth;
+  }
+}
+
+.left-side-applied-filters-view-title {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  max-width: @100percent;
+
+  .shorten {
+    .inline-block;
+    flex: 1;
+    white-space: pre;
+  }
+}
+
+.list-indexes {
+  right: -65px;
+}
+
+.middle-container-time-bar-content {
+  .p-t-sm;
+  .m-nil;
+
+  height: 190px;
+  background-color: @color42;
+  border-top: 1px solid @color30;
+}
+
+.middle-container-time-bar {
+  background-color: @color31;
+}
+
+.numeric-parametric-inputs {
+  min-height: 18px;
+}
+
+.numeric-parametric-chart-row,
+.numeric-parametric-chart-row .chart {
+  height: 110px;
+}
+
+.numeric-parametric-field-control {
+  .text-decoration-none;
+
+  color: @color2;
+  font-size: 14px;
+}
+
+.parametric-swap {
+  margin-left: 3px;
+}
+
+.parametric-fields-table {
+  table-layout: fixed;
+}
+
+.parametric-value-count-cell {
+  width: @custom3;
+}
+
+.parametric-value-count {
+  .text-right;
+}
+
+.parametric-value-name,
+.parametric-value-count {
+  white-space: nowrap;
+}
+
+.remove-all-filters {
+  font-size: @fontSizeMedium;
+  text-transform: lowercase;
+}
+
+.search-dates-wrapper {
+  .form-group {
+    .inline-flex;
+  }
+}
+
+.show-all,
+.show-all td {
+  border-bottom: none !important;
+}
+
+.section-title-counter {
+  .m-l-xs;
+}
+
+.section-controls {
+  .m-l-sm;
+}
+
+.side-container {
+  .p-t-sm;
+  .p-b-sm;
+  .p-l;
+  .p-r;
+
+  background-color: @color5;
+  flex: @nil @nil auto;
+  overflow-y: auto;
+  width: 20%;
+
+  td {
+    .break-all;
+
+    border-bottom: 1px solid @color7;
+  }
+
+  h3, h4 {
+    .uppercase;
+    .metric-regular;
+  }
+
+  h3 {
+    font-size: 22px;
+  }
+
+  h4 {
+    .rotating-chevron {
+      font-weight: bold;
+    }
+  }
+
+  .container-toggle {
+    font-size: 18px;
+  }
+
+  .parametric-value-error {
+    td {
+      word-break: normal;
+    }
+  }
+}
+
+.time-bar-container-toggle {
+  height: @custom3;
+
+  h4.time-bar-header {
+    .inline-block;
+    .m-t;
+    .m-b-nil;
+    .m-l-nil;
+    .m-r;
+
+    width: auto;
+  }
+}
+
+.time-bar-container-icon {
+  .inline-block;
+  .pull-right;
+  .m-t;
+  .m-b-nil;
+  .m-l;
+  .m-r-nil;
+}
+
+.toggle-more-text {
+  color: @color25;
+  font-size: 11px;
+}
+
+.values-list {
+  border-left: 1px solid @tableBorder;
+  height: @100percent;
+
+  .tab-pane {
+    overflow-y: auto;
+  }
+}
+
+.values-list,
+.tab-content,
+.tab-pane,
+.full-height {
+  height: @100percent;
+}
+
+//Media queries
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .left-side-applied-filters-view-title {
+    .shorten {
+      flex: inherit;
+    }
+  }
+}

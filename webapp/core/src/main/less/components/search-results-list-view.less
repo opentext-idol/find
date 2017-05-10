@@ -1,0 +1,113 @@
+/*
+ * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+.answered-question {
+  border: 3px solid @color43;
+
+  h4 {
+    width: 80%;
+  }
+
+  .fa-question {
+    top: -2px;
+    left: -2px;
+  }
+}
+
+.content-type {
+  .fa-stack {
+    i.fa-question {
+      font-size: @fontSize;
+    }
+
+    i.fa-comments-o {
+      font-size: calc(@fontSize * 2);
+    }
+  }
+
+  i {
+    font-size: 23px;
+  }
+}
+
+.direct-access-title {
+  &:hover {
+    color: @color32;
+  }
+}
+
+.document-date {
+  .italic;
+
+  color: @color11;
+  cursor: default;
+  font-size: small;
+  font-weight: bold;
+}
+
+.document-detail-mode {
+  .main-results-container {
+    .clickable;
+  }
+}
+
+.document-reference {
+  .inline-block;
+
+  color: @color11;
+  font-size: (@font-size-base - 1px);
+}
+
+.document-reference.shorten {
+  width: @100percent;
+}
+
+.document-thumbnail {
+  height: @thumbnailHeight;
+  width: 97px;
+}
+
+.promoted-document {
+  border: 3px solid @color9;
+
+  h4 {
+    width: 80%;
+  }
+}
+
+.preview-link {
+  .m-l-sm;
+}
+
+.promoted-label {
+  color: @color34;
+  font-size: 12px;
+}
+
+.results-contents {
+  .no-overflow;
+
+  display: block;
+}
+
+.results-small-links {
+  .pull-right;
+}
+
+.result-summary {
+  .text-justify;
+  .text-clamp(2, 43px);
+}
+
+.results-popover-title,
+.search-text {
+  .metric-semibold;
+
+  font-weight: @fontWeightBold;
+}
+
+.selected-document {
+  background-color: @secondary-hover;
+}
