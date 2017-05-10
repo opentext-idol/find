@@ -2,16 +2,23 @@
   "app": {
     "type": "On Premise",
     "deployment": "develop",
-    "find": "http://localhost:8080"
+    "find": "http://localhost:8082"
   },
   "selenium": {
-    "browsers": ["chrome"],
+    "browsers": [
+      "chrome"
+    ],
     "url": "http://localhost:4444/wd/hub"
   },
   "users": {
-    "default": {
-      "role": "Admin",
+    "bifhi": {
+      "role": "BIFHI",
       "username": "selenium",
+      "password": "q"
+    },
+    "find": {
+      "role": "USER",
+      "username": "tellurium",
       "password": "q"
     }
   }

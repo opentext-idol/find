@@ -1,120 +1,90 @@
 define([
     'find/app/page/search/filters/parametric/parametric-select-modal-list-view',
+    'find/app/configuration',
     'backbone'
-], function(SelectModalListView, Backbone) {
+], function(SelectModalListView, configuration, Backbone) {
 
-    describe('Parametric Select Modal list view', function() {
+    describe('Parametric Select Modal list view constructed with a loading Paginator', function() {
         beforeEach(function() {
-            this.selectCollection = new Backbone.Collection();
+            configuration.and.returnValue({});
 
-            var field = new Backbone.Model({
-                displayName: 'Teenage Mutant Ninja Turtles',
-                id: 'TMNT',
-                numeric: undefined
-            });
+            this.paginator = {
+                fetchNext: jasmine.createSpy('fetchNext'),
+                toggleSelection: jasmine.createSpy('toggleSelection'),
+                valuesCollection: new Backbone.Collection(),
+                stateModel: new Backbone.Model({
+                    empty: false,
+                    loading: true,
+                    error: null
+                })
+            };
 
-            field.fieldValues = new Backbone.Collection([
-                {
-                    count: 100,
-                    id: 'Leonardo',
-                    selected: true
-                },
-                {
-                    count: 75,
-                    id: 'Michelangelo',
-                    selected: false
-                },
-                {
-                    count: 50,
-                    id: 'Raphael',
-                    selected: true
-                },
-                {
-                    count: 1,
-                    id: 'Donatello',
-                    selected: false
-                }
-            ]);
-
-            this.parametricDisplayCollection = new Backbone.Collection([field]);
-
-            this.view = new SelectModalListView({
-                parametricDisplayCollection: this.parametricDisplayCollection,
-                selectCollection: this.selectCollection,
-                field: field,
-                allValues: [
-                    { id: 'Leonardo' },
-                    { id: 'Michelangelo' },
-                    { id: 'Splinter' },
-                    { id: 'Raphael' },
-                    { id: 'Donatello' },
-                    { id: 'Shredder' },
-                    { id: 'Krang' }
-                ]
-            });
-
+            this.view = new SelectModalListView({paginator: this.paginator});
             this.view.render();
         });
 
-        it('should create 7 checkboxes', function() {
-            expect(this.view.$('.i-check').length).toBe(7);
+        it('shows the loading indicator', function() {
+            expect(this.view.$('.loading-spinner')).not.toHaveClass('hide');
         });
 
-        it('should display the counts correctly', function() {
-            var $labels = this.view.$('label');
-            expect($labels[0]).toContainText('Leonardo (100)');
-            expect($labels[1]).toContainText('Michelangelo (75)');
-            expect($labels[2]).toContainText('Raphael (50)');
-            expect($labels[3]).toContainText('Donatello (1)');
-            expect($labels[4]).toContainText('Krang (0)');
-            expect($labels[5]).toContainText('Shredder (0)');
-            expect($labels[6]).toContainText('Splinter (0)');
+        it('hides the error message', function() {
+            expect(this.view.$('.parametric-select-error')).toHaveClass('hide');
         });
 
-        it('should have two selected', function() {
-            expect(this.view.$('input[checked]').length).toBe(2);
+        it('hides the empty message', function() {
+            expect(this.view.$('.parametric-select-empty')).toHaveClass('hide');
         });
 
-        describe('After clicking on an unselected value', function() {
-           beforeEach(function () {
-               this.view.$('[data-id="Michelangelo"] ins').click();
-           });
-            
-            it('should check the selected box', function () {
-                expect(this.view.$('[data-id="Michelangelo"] [aria-checked="true"]')).not.toBeEmpty();
+        describe('when the Paginator loads the first page', function() {
+            beforeEach(function() {
+                this.paginator.stateModel.set('loading', false);
+
+                this.paginator.valuesCollection.add([
+                    {value: 'MONKEY', count: 5, selected: false},
+                    {value: 'CAT', count: 3, selected: true}
+                ]);
             });
 
-            it('should add the selected item to the selectedCollection', function () {
-                expect(this.selectCollection.length).toBe(1);
-                var newField = this.selectCollection.models[0];
+            it('hides the loading indicator', function() {
+                expect(this.view.$('.loading-spinner')).toHaveClass('hide');
+            });
 
-                expect(newField.get('displayName')).toBe('Teenage Mutant Ninja Turtles');
-                expect(newField.get('field')).toBe('TMNT');
-                expect(newField.get('numeric')).toBe(undefined);
-                expect(newField.get('selected')).toBe(true);
-                expect(newField.get('value')).toBe('Michelangelo');
-            })
+            it('renders the values', function() {
+                expect(this.view.$('li')).toHaveLength(2);
+            });
         });
 
-        describe('After clicking on a previously selected value', function() {
-            beforeEach(function () {
-                this.view.$('[data-id="Raphael"] ins').click();
+        describe('when the Paginator is empty', function() {
+            beforeEach(function() {
+                this.paginator.stateModel.set({
+                    loading: false,
+                    empty: true
+                });
             });
 
-            it('should uncheck the selected box', function () {
-                expect(this.view.$('[data-id="Raphael"] [aria-checked="false"]')).not.toBeEmpty();
+            it('hides the loading indicator', function() {
+                expect(this.view.$('.loading-spinner')).toHaveClass('hide');
             });
 
-            it('should add the selected item to the selectedCollection', function () {
-                expect(this.selectCollection.length).toBe(1);
-                var newField = this.selectCollection.models[0];
+            it('shows the empty message', function() {
+                expect(this.view.$('.parametric-select-empty')).not.toHaveClass('hide');
+            });
+        });
 
-                expect(newField.get('displayName')).toBe('Teenage Mutant Ninja Turtles');
-                expect(newField.get('field')).toBe('TMNT');
-                expect(newField.get('numeric')).toBe(undefined);
-                expect(newField.get('selected')).toBe(false);
-                expect(newField.get('value')).toBe('Raphael');
-            })
+        describe('when the Paginator has an error', function() {
+            beforeEach(function() {
+                this.paginator.stateModel.set('error', {
+                    message: 'It went wrong',
+                    uuid: '515d7be3-7003-4440-9e5a-8a5205d50a56',
+                    backendErrorCode: 'UNKNOWN ERROR'
+                });
+            });
+
+            it('shows the error message', function() {
+                const $error = this.view.$('.parametric-select-error');
+                expect($error).not.toHaveClass('hide');
+                expect($error).toContainText('515d7be3-7003-4440-9e5a-8a5205d50a56');
+            });
         });
     });
 

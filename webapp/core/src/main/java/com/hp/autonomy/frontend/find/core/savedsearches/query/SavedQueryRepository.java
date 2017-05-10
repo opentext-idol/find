@@ -12,5 +12,5 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchRepository;
  * Repository containing actions which can be performed on the main searches table
  * Spring automatically implements basic operations
  */
-public interface SavedQueryRepository extends SavedSearchRepository<SavedQuery> {
+public interface SavedQueryRepository extends SavedSearchRepository<SavedQuery, SavedQuery.Builder> {
 }

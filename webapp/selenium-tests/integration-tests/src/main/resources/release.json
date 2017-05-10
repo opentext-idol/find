@@ -10,12 +10,12 @@
   },
   "users": {
     "bifhi": {
-      "role": "bifhi",
+      "role": "BIFHI",
       "username": "BIFace",
       "password": "soBIFace"
     },
     "find": {
-      "role": "Admin",
+      "role": "USER",
       "username": "face",
       "password": "soface"
     }

@@ -8,12 +8,15 @@ define([
     'text!find/templates/app/page/search/filters/indexes/indexes-view.html',
     'text!find/templates/app/page/search/filters/indexes/index-list.html'
 ], function(Backbone, _, $, DatabasesView, IndexItemView, i18n, template, listTemplate) {
+    'use strict';
 
-    var CHECKED_CLASS = 'hp-icon hp-fw hp-check';
-    var INDETERMINATE_CLASS = 'hp-icon hp-fw hp-minus';
-    var DISABLED_CLASS = 'disabled';
+    const CHECKED_CLASS = 'hp-icon hp-fw hp-check';
+    const INDETERMINATE_CLASS = 'hp-icon hp-fw hp-minus';
+    const DISABLED_CLASS = 'disabled';
 
-    var ICON_SELECTOR = '> span > .database-icon';
+    const ICON_SELECTOR = '> span > .database-icon';
+
+    const DEBOUNCE_TIMEOUT = 500;
 
     return DatabasesView.extend({
         // will be overridden
@@ -27,49 +30,54 @@ define([
             'click li[data-id]:not(disabled-index)': function(e) {
                 e.stopPropagation();
 
-                var $target = $(e.currentTarget).find('.database-input');
+                const $target = $(e.currentTarget).find('.database-input');
                 //noinspection JSUnresolvedFunction
-                var args = this.findInCurrentSelectionArguments($target);
-                var checked = $target.find('i').hasClass('hp-check');
+                const args = this.findInCurrentSelectionArguments($target);
+                const $i = $target.find('i');
+                const checked = $i.hasClass('hp-check');
 
-                //noinspection JSUnresolvedFunction
-                this.selectDatabase(args, !checked);
+                this.selectDatabase(args, !checked, 'pendingSelection');
+
+                this.updateWithPendingSelection();
             },
             'click .category-input': function(e) {
                 e.stopPropagation();
-                var dataTarget = $(e.target).attr('data-target');
 
-                // data-target means they've clicked a chevron, so we want to collapse stuff
-                if(dataTarget) {
-                    var $target = this.$(dataTarget);
-                    $target.collapse('toggle');
-                }
-                else {
-                    var $currentTarget = $(e.currentTarget);
-                    var category = $currentTarget.attr('data-category-id');
-                    var checked = $currentTarget.find('i').hasClass('hp-check');
+                const $currentTarget = $(e.currentTarget);
+                const category = $currentTarget.attr('data-category-id');
+                const checked = $currentTarget.find('i').hasClass('hp-check');
 
-                    this.selectCategory(category, !checked);
-                }
+                this.selectCategory(category, !checked, 'pendingSelection');
+
+                this.updateWithPendingSelection();
+            },
+            'click .category-input [data-target]': function(e) {
+                e.stopPropagation();
+
+                const dataTarget = $(e.target).attr('data-target');
+
+                const $target = this.$(dataTarget);
+                $target.collapse('toggle');
             },
             'show.bs.collapse': function(e) {
                 e.stopPropagation();
 
-                var $parent = $(e.target).parent();
+                const $parent = $(e.target).parent();
                 $parent.find('> span > i[data-target]').removeClass('collapsed');
                 $parent.find('> span[data-target]').removeClass('collapsed');
             },
             'hide.bs.collapse': function(e) {
                 e.stopPropagation();
 
-                var $parent = $(e.target).parent();
+                const $parent = $(e.target).parent();
                 $parent.find('> span > i[data-target]').addClass('collapsed');
                 $parent.find('> span[data-target]').addClass('collapsed');
             }
         },
 
         initialize: function(options) {
-            var indexCategories = this.getIndexCategories();
+            const indexCategories = this.getIndexCategories();
+
             DatabasesView.prototype.initialize.call(this, _.extend({
                 databasesCollection: options.indexesCollection,
                 emptyMessage: i18n['search.indexes.empty'],
@@ -83,6 +91,23 @@ define([
                     }
                 }
             }, options));
+
+            this.pendingSelection = _.clone(this.currentSelection);
+
+            this.updateWithPendingSelection = _.debounce(this.updateWithPendingSelection, DEBOUNCE_TIMEOUT);
+        },
+
+        updateWithPendingSelection: function() {
+            this.currentSelection = _.clone(this.pendingSelection);
+
+            this.updateCheckedOptions();
+            this.updateSelectedDatabases();
+        },
+
+        updateSelectedDatabases: function() {
+            DatabasesView.prototype.updateSelectedDatabases.apply(this, arguments);
+
+            this.pendingSelection = _.clone(this.currentSelection);
         },
 
         check: function($input) {

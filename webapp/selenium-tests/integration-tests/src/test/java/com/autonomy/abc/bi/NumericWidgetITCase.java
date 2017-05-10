@@ -1,7 +1,8 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.autonomy.abc.bi;
 
 import com.autonomy.abc.base.IdolFindTestBase;
@@ -41,10 +42,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 
@@ -68,7 +76,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     public void setUp() {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
-        numericService = ((BIIdolFind) getApplication()).numericWidgetService();
+        numericService = ((BIIdolFind)getApplication()).numericWidgetService();
     }
 
     /*##########ANY NUMERIC GRAPH###########*/
@@ -80,7 +88,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         assertThat("Default: main graph not shown", !findPage.mainGraphDisplayed());
 
         MainNumericWidget mainGraph;
-        for (final GraphFilterContainer container : filters().graphContainers()) {
+        for(final GraphFilterContainer container : filters().graphContainers()) {
             final String graphTitle = numericService.selectFilterGraph(container, getDriver());
             verifyThat("Main graph now shown", findPage.mainGraphDisplayed());
 
@@ -185,7 +193,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
                 .map(labelElement -> labelElement.findElement(By.cssSelector(".filter-display-text")).getAttribute("data-original-title"))
                 .collect(Collectors.toList());
 
-        for (int i = 0; i < graphTitles.size(); i++) {
+        for(int i = 0; i < graphTitles.size(); i++) {
             final String title = graphTitles.get(i);
             verifyThat("Title " + title.toLowerCase() + " is in filter tooltip", tooltipsText.get(i).toLowerCase(), containsString(title.toLowerCase()));
         }
@@ -194,7 +202,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     private List<String> filterByAllGraphs() {
         final List<String> titles = new ArrayList<>();
 
-        for (final GraphFilterContainer container : filters().graphContainers()) {
+        for(final GraphFilterContainer container : filters().graphContainers()) {
             //TODO: this is reloading which is making things stale
             titles.add(numericService.selectFilterGraph(container, getDriver()));
             DriverUtil.clickAndDrag(100, findPage.mainGraph().graph(), getDriver());
@@ -353,14 +361,14 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         MainNumericWidget mainGraph = numericService.searchAndSelectFirstNumericGraph("red", getDriver());
 
         final double fractionToSelect = 3.0;
-        final double selectRange = mainGraph.getRange()/fractionToSelect;
+        final double selectRange = mainGraph.getRange() / fractionToSelect;
         final String minValue = mainGraph.minFieldValue();
 
         final String maxValue = Double.toString(Double.parseDouble(minValue) + selectRange);
-        final int rangeMinusDelta = (int) (selectRange * 0.98);
-        final int rangePlusDelta = (int) (selectRange * 1.02);
+        final int rangeMinusDelta = (int)(selectRange * 0.98);
+        final int rangePlusDelta = (int)(selectRange * 1.02);
 
-        final int numericUnitsPerChartWidth = (int) mainGraph.getRange() / mainGraph.graphWidth();
+        final int numericUnitsPerChartWidth = (int)mainGraph.getRange() / mainGraph.graphWidth();
 
         //#1 testing that correct proportion of chart selected
         mainGraph = setMinAndMax(minValue, maxValue, mainGraph);
@@ -378,7 +386,7 @@ public class NumericWidgetITCase extends IdolFindTestBase {
         mainGraph.rectangleHoverLeft();
         final String leftCorner = mainGraph.hoverMessage();
 
-        final int rectangleRange = (int) (Double.parseDouble(rightCorner) - Double.parseDouble(leftCorner));
+        final int rectangleRange = (int)(Double.parseDouble(rightCorner) - Double.parseDouble(leftCorner));
         verifyThat("Edges of rectangle reflect bounds correctly", rectangleRange, allOf(greaterThanOrEqualTo(rangeMinusDelta), lessThanOrEqualTo(rangePlusDelta)));
     }
 
@@ -427,11 +435,11 @@ public class NumericWidgetITCase extends IdolFindTestBase {
     private void checkBoundsForPlaceElevationWidget() {
         findPage.filterBy(new IndexFilter("Cities"));
         MainNumericWidget mainGraph = findPage.mainGraph();
-        final int originalRange = (int) mainGraph.setAndGetFullRange();
+        final int originalRange = (int)mainGraph.setAndGetFullRange();
 
         findService.searchAnyView("Tse");
         mainGraph = findPage.mainGraph();
-        final int newRange = (int) mainGraph.setAndGetFullRange();
+        final int newRange = (int)mainGraph.setAndGetFullRange();
 
         verifyThat("Bounds are determined by current query for non-date widget", newRange, lessThan(originalRange));
         mainGraph.reset();

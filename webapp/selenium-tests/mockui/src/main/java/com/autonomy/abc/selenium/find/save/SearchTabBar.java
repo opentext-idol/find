@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -93,16 +93,14 @@ public class SearchTabBar implements Iterable<SearchTab> {
     }
 
     public void waitUntilTabGone(final String title) {
-        new WebDriverWait(driver, 300).withMessage("deleted tab to disappear").until(new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(final WebDriver driver) {
-                return bar.findElements(By.xpath(".//*[contains(normalize-space(),'" + title + "')]")).isEmpty();
-            }
-        });
+        new WebDriverWait(driver, 30)
+                .withMessage("deleted tab to disappear")
+                .until((ExpectedCondition<Boolean>)driver -> bar.findElements(By.xpath(".//*[text()='" + title + "']")).isEmpty());
     }
 
     public void waitUntilSavedSearchAppears() {
-        new WebDriverWait(driver, 400).until(ExpectedConditions.presenceOfElementLocated
-                (By.cssSelector(".search-tab:nth-child(3) .search-tab-title")));
+        new WebDriverWait(driver, 40)
+                .until(ExpectedConditions.presenceOfElementLocated
+                        (By.cssSelector(".search-tab:nth-child(3) .search-tab-title")));
     }
 }

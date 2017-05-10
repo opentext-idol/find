@@ -53,14 +53,12 @@ public class FilterPanel {
     }
 
     public IndexesTreeContainer indexesTreeContainer() {
-        final WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Indexes') or contains(text(), 'Databases')]"));
-        final WebElement container = ElementUtil.ancestor(heading, 2);
+        final WebElement container = panel.findElement(By.xpath(".//div[contains(div/@class, 'collapsible-header') and (contains(div/h4/span/text(), 'Indexes') or contains(div/h4/span/text(), 'Databases'))]"));
         return new IndexesTreeContainer(container, driver);
     }
 
     public DateFilterContainer dateFilterContainer() {
-        final WebElement heading = panel.findElement(By.xpath(".//h4[contains(text(), 'Dates')]"));
-        final WebElement container = ElementUtil.ancestor(heading, 2);
+        final WebElement container = panel.findElement(By.xpath(".//div[contains(div/@class, 'collapsible-header') and contains(div/h4/span/text(), 'Dates')]"));
         return new DateFilterContainer(container, driver);
     }
 
@@ -95,7 +93,7 @@ public class FilterPanel {
     }
 
     public int nonZeroParamFieldContainer(final int n) {
-        return nthParametricThatSatisfiedCondition(n, (x) -> 0 != (x));
+        return nthParametricThatSatisfiedCondition(n, x -> 0 != x);
     }
 
     public int nthParametricThatSatisfiedCondition(final int n, final Predicate<Integer> op) {
@@ -103,7 +101,7 @@ public class FilterPanel {
         int nonZeroCount = 0;
         for(final WebElement container : getParametricFilters()) {
             final ParametricFieldContainer candidate = new ParametricFieldContainer(container, driver);
-            if(op.test(candidate.getFilterNumber())) {
+            if(op.test(candidate.getFilterCount())) {
                 if(nonZeroCount >= n) {
                     return index;
                 } else {
@@ -188,7 +186,7 @@ public class FilterPanel {
         final int tooManyFiltersToBother = 600;
 
         final ParametricFieldContainer container = parametricField(index);
-        if(container.getFilterNumber() > tooManyFiltersToBother) {
+        if(container.getFilterCount() > tooManyFiltersToBother) {
             return true;
         }
         container.expand();

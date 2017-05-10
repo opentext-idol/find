@@ -7,28 +7,29 @@ define([
     'find/app/page/search/results/parametric-results-view',
     'backbone',
     'find/app/configuration',
+    'parametric-refinement/selected-values-collection',
     'jasmine-ajax'
-], function(ParametricResultsView, Backbone, configuration) {
+], function(ParametricResultsView, Backbone, configuration, SelectedParametricValues) {
     'use strict';
 
-    var DEPENDENT_EMPTY_MESSAGE = 'No dependent fields';
-    var EMPTY_MESSAGE = 'No fields';
-    var ERROR_MESSAGE = 'Error';
+    const DEPENDENT_EMPTY_MESSAGE = 'No dependent fields';
+    const EMPTY_MESSAGE = 'No fields';
+    const ERROR_MESSAGE = 'Error';
 
     describe('Parametric Results View', function() {
         beforeEach(function() {
             this.parametricCollection = new Backbone.Collection();
-            this.selectedParametricValues = new Backbone.Collection();
+            this.selectedParametricValues = new SelectedParametricValues();
             this.queryModel = new Backbone.Model();
             this.queryModel.getIsoDate = jasmine.createSpy('getIsoDate');
             this.queryState = {selectedParametricValues: this.selectedParametricValues};
             this.savedSearchModel = new Backbone.Model();
 
-            var viewConstructorArguments = {
+            const viewConstructorArguments = {
                 emptyDependentMessage: DEPENDENT_EMPTY_MESSAGE,
                 emptyMessage: EMPTY_MESSAGE,
                 errorMessageArguments: {messageToUser: ERROR_MESSAGE},
-                restrictedParametricCollection: this.parametricCollection,
+                parametricCollection: this.parametricCollection,
                 queryModel: this.queryModel,
                 queryState: this.queryState,
                 savedSearchModel: this.savedSearchModel
@@ -104,7 +105,7 @@ define([
                     beforeEach(function() {
                         this.parametricCollection.fetching = false;
 
-                        var sources = {
+                        const sources = {
                             id: '/DOCUMENT/SOURCE',
                             field: 'SOURCE',
                             values: [
@@ -119,7 +120,7 @@ define([
                             ]
                         };
 
-                        var category = {
+                        const category = {
                             id: '/DOCUMENT/CATEGORY',
                             field: 'CATEGORY',
                             values: [
@@ -136,7 +137,7 @@ define([
                             ]
                         };
 
-                        var collectionContents = [sources, category];
+                        const collectionContents = [sources, category];
 
                         this.parametricCollection.add(collectionContents);
                         this.parametricCollection.trigger('sync');
@@ -154,8 +155,45 @@ define([
                         expect(this.view.$parametricSelections).not.toHaveClass('hide');
                         expect(this.view.$content).not.toHaveClass('invisible');
                     });
-                })
+
+                    describe('then the selectors are populated', function () {
+                        beforeEach(function() {
+                             this.view.fieldsCollection.at(0).set({field: '/DOCUMENT/SOURCE', displayValue:'SOURCE'});
+                             this.view.fieldsCollection.at(1).set({field: '/DOCUMENT/CATEGORY', displayValue:'CATEGORY'});
+                        });
+
+
+                        it('should enable the swap fields button', function() {
+                            expect(this.view.$parametricSwapButton).not.toHaveClass('disabled');
+                            expect(this.view.$parametricSwapButton).not.toBeDisabled();
+                        });
+
+                        describe('then the swap button is clicked', function(){
+                            beforeEach(function(){
+                                this.view.$parametricSwapButton.click();
+                            });
+
+                            it('should have swapped the fields', function() {
+                                expect(this.view.fieldsCollection.at(0).get('field')).toBe('/DOCUMENT/CATEGORY');
+                                expect(this.view.fieldsCollection.at(1).get('field')).toBe('/DOCUMENT/SOURCE');
+                            });
+                        });
+
+                        describe('then the second field is removed', function(){
+                            beforeEach(function () {
+                                const second = this.view.fieldsCollection.at(1);
+                                second.set('field', '');
+                                this.view.fieldsCollection.set([second]);
+                            });
+
+                            it('should disable the swap fields button', function() {
+                                expect(this.view.$parametricSwapButton).toHaveClass('disabled');
+                                expect(this.view.$parametricSwapButton).toBeDisabled();
+                            });
+                        });
+                    });
+                });
             });
         });
-    })
+    });
 });

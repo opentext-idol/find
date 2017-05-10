@@ -8,21 +8,18 @@ define([
     'underscore',
     'i18n!find/nls/bundle',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
-    'parametric-refinement/prettify-field-name',
     'text!find/templates/app/page/search/time-bar-view.html'
-], function(Backbone, _, i18n, NumericParametricFieldView, prettifyFieldName, timeBarTemplate) {
+], function(Backbone, _, i18n, NumericParametricFieldView, timeBarTemplate) {
     'use strict';
 
-    var PIXELS_PER_BUCKET = 20;
+    const PIXELS_PER_BUCKET = 20;
 
-    var graphConfiguration = {
-        date: {
-            collectionName: 'dateParametricFieldsCollection',
+    const graphConfiguration = {
+        NumericDate: {
             template: NumericParametricFieldView.dateInputTemplate,
             formatting: NumericParametricFieldView.dateFormatting
         },
-        numeric: {
-            collectionName: 'numericParametricFieldsCollection',
+        Numeric: {
             template: NumericParametricFieldView.numericInputTemplate,
             formatting: NumericParametricFieldView.defaultFormatting
         }
@@ -35,6 +32,7 @@ define([
         events: {
             'click .time-bar-container-icon': function() {
                 this.timeBarModel.set({
+                    graphedFieldId: null,
                     graphedFieldName: null,
                     graphedDataType: null
                 });
@@ -46,11 +44,11 @@ define([
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.timeBarModel = options.timeBarModel;
 
-            this.fieldName = this.timeBarModel.get('graphedFieldName');
+            this.fieldId = this.timeBarModel.get('graphedFieldId');
             this.dataType = this.timeBarModel.get('graphedDataType');
 
-            var currentGraphConfig = graphConfiguration[this.dataType];
-            var fieldModel = options[currentGraphConfig.collectionName].get(this.fieldName);
+            const currentGraphConfig = graphConfiguration[this.dataType];
+            const fieldModel = options.parametricFieldsCollection.get(this.fieldId);
 
             this.graphView = new NumericParametricFieldView({
                 buttonsEnabled: true,
@@ -60,7 +58,6 @@ define([
                 selectedParametricValues: this.selectedParametricValues,
                 zoomEnabled: true,
                 dataType: this.dataType,
-                numericRestriction: this.dataType === 'numeric',
                 model: fieldModel,
                 formatting: currentGraphConfig.formatting,
                 inputTemplate: currentGraphConfig.template
@@ -71,7 +68,7 @@ define([
 
         render: function() {
             this.$el.html(this.template({
-                fieldName: prettifyFieldName(this.fieldName)
+                fieldName: this.timeBarModel.get('graphedFieldName')
             }));
 
             this.$('.middle-container-time-bar-content').append(this.graphView.$el);

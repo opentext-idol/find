@@ -1,22 +1,21 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'jquery',
+    'underscore',
     'find/app/page/search/results/parametric-results-view',
     'find/app/page/search/results/table/table-collection',
     'find/app/util/generate-error-support-message',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/results/table/table-view.html',
-    'underscore',
     'datatables.net-bs',
     'datatables.net-fixedColumns'
-], function($, ParametricResultsView, TableCollection, generateErrorHtml, i18n, tableTemplate, _) {
+], function(_, ParametricResultsView, TableCollection, generateErrorHtml, i18n, tableTemplate) {
     'use strict';
 
-    var strings = {
+    const strings = {
         info: i18n['search.resultsView.table.info'],
         infoFiltered: i18n['search.resultsView.table.infoFiltered'],
         lengthMenu: i18n['search.resultsView.table.lengthMenu'],
@@ -29,7 +28,6 @@ define([
     };
 
     return ParametricResultsView.extend({
-
         tableTemplate: _.template(tableTemplate),
 
         initialize: function(options) {
@@ -42,7 +40,7 @@ define([
         },
 
         render: function() {
-            ParametricResultsView.prototype.render.apply(this, arguments);
+            ParametricResultsView.prototype.render.apply(this);
 
             this.$content.html(this.tableTemplate());
 
@@ -75,13 +73,14 @@ define([
                         ],
                         language: strings
                     });
-                }
-                else {
-                    var columns = _.map(this.dependentParametricCollection.columnNames, function(name) {
+                } else {
+                    const columns = _.map(this.dependentParametricCollection.columnNames, function(name) {
                         return {
                             data: name,
                             defaultContent: 0,
-                            title: name === TableCollection.noneColumn ? i18n['search.resultsView.table.noneHeader'] : name
+                            title: name === TableCollection.noneColumn
+                                ? i18n['search.resultsView.table.noneHeader']
+                                : name
                         }
                     });
 
@@ -110,7 +109,7 @@ define([
                 this.dataTable.destroy();
             }
 
-            ParametricResultsView.prototype.remove.apply(this, arguments);
+            ParametricResultsView.prototype.remove.apply(this);
         }
     })
 });

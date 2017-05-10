@@ -27,10 +27,12 @@ node {
 		env.JAVA_HOME="${tool 'Java 8 OpenJDK'}"
 		env.PATH="${tool 'Maven3'}/bin:${env.JAVA_HOME}/bin:${env.PATH}"
 
-        mavenArguments = getMavenArguments()
-
-		// Verify is needed to run some basic integration tests but these are not the selenium tests
-		sh "mvn ${mavenArguments} -f webapp/pom.xml -Dapplication.buildNumber=${gitCommit} clean verify -P production -U -pl idol -am"
+		try {
+			sh "mvn clean install -f webapp/pom.xml -U -pl on-prem-dist,selenium-tests/mockui -am -Dapplication.buildNumber=${gitCommit} -Dtest.content.host=cbg-data-admin-dev.hpeswlab.net -Dtest.view.host=cbg-data-admin-dev.hpeswlab.net -Dtest.answer.host=cbg-data-admin-dev.hpeswlab.net -Dtest.database=GenericDocuments"
+		} catch (e) {
+			emailext attachLog: true, body: "Check console output at ${env.BUILD_URL} to view the results.", subject: "Fenkins - ${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - ${currentBuild.result}", to: '$DEFAULT_RECIPIENTS'
+			throw e
+		}
 
 	stage 'Archive output'
 		archive 'idol/target/find.war'
@@ -54,29 +56,24 @@ node {
 						"target": "${artifactLocation}"
 					},
 					{
-						"pattern": "webapp/hod/target/*.war",
-						"target": "${artifactLocation}"
-					},
-					{
 						"pattern": "webapp/on-prem-dist/target/*.zip",
-						"target": "${artifactLocation}"
-					},
-					{
-						"pattern": "webapp/hsod-dist/target/*.zip",
 						"target": "${artifactLocation}"
 					}
 				]
 			}"""
 
-			server.upload(uploadSpec)
+			withEnv(["GIT_COMMIT=${gitCommit}"]) {
+				def buildInfo = Artifactory.newBuildInfo()
+				buildInfo.env.capture = true
+				buildInfo.env.collect()
+
+				server.upload(uploadSpec, buildInfo)
+			}
 		} catch (org.acegisecurity.acls.NotFoundException e) {
 			echo "No Artifactory 'idol' server configured, skipping stage"
 		} catch (groovy.lang.MissingPropertyException e) {
 		    echo "No Artifactory plugin installed, skipping stage"
 		}
-
-	stage 'Notifications'
-		emailext attachLog: true, body: "Check console output at ${env.BUILD_URL} to view the results.", subject: "Fenkins - ${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - ${currentBuild.result}", to: '$DEFAULT_RECIPIENTS'
 }
 
 def getGitCommit() {
@@ -106,11 +103,4 @@ def getOrgRepoName() {
 		script: "git remote -v | head -1 | perl -pe 's~^.*?(?:git@|https?://)([^:/]*?)[:/](.*?)(?:\\.git)?\\s*\\((?:fetch|push)\\)\$~\\1/\\2~p'",
 		returnStdout: true
 	).trim()
-}
-
-def getMavenArguments() {
-    sh (
-        script: "bash /home/fenkins/resources/apps/find-maven-arguments.sh",
-        returnStdout: true
-    ).trim()
 }

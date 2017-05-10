@@ -28,6 +28,6 @@ public class GraphFilterContainer extends FilterContainer {
     //gets the graph header
     @Override
     public WebElement filterCategory(){
-        return getContainer().findElement(By.cssSelector(".collapsible-header h4"));
+        return getContainer().findElement(By.cssSelector(".collapsible-header h4 span"));
     }
 }

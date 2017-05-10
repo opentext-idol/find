@@ -109,7 +109,9 @@ public class RelatedConceptsITCase extends FindTestBase {
 
         verifyThat(getElementFactory().getSearchBox().getValue(), is("bongo"));
 
-        final List<String> selectedConceptHeaders = conceptsPanel.selectedConceptHeaders();
+        final List<String> selectedConceptHeaders = conceptsPanel.selectedConceptHeaders().stream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toList());
         verifyThat(selectedConceptHeaders, hasSize(relatedConcepts.size()));
         verifyThat(selectedConceptHeaders, containsItems(relatedConcepts.stream().map(s -> '"' + s + '"').collect(Collectors.toList())));
     }

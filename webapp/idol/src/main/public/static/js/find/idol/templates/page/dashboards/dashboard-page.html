@@ -1,0 +1,25 @@
+<div class="dashboard p-sm">
+    <div class="btn-group pull-right" dropdown>
+        <button type="button" class="btn inline-dropdown dropdown-toggle" aria-expanded="false" data-toggle="dropdown">
+            <i class="hp-icon hp-splitter hp-rotate-90"></i>
+        </button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="btnDropDown">
+            <li>
+                <a class="fullscreen">
+                    <i class="hp-icon hp-expand clickable"></i> <%- i18n['dashboards.fullscreen'] %>
+                </a>
+            </li>
+            <li>
+                <a class="report-pptx hide">
+                    <i class="hp-icon hp-document-download clickable"></i> <%- i18n['export.powerpoint.single'] %>
+                </a>
+            </li>
+            <li>
+                <a class="report-pptx hide report-pptx-multipage">
+                    <i class="hp-icon hp-document-download clickable"></i> <%- i18n['export.powerpoint.multiple'] %>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="widgets"></div>
+</div>

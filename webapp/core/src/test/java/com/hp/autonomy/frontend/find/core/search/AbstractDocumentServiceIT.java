@@ -40,8 +40,8 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
     public void queryWithPagination() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH)
                 .param(DocumentsController.TEXT_PARAM, "*")
-                .param(DocumentsController.RESULTS_START_PARAM, "51")
-                .param(DocumentsController.MAX_RESULTS_PARAM, "100")
+                .param(DocumentsController.RESULTS_START_PARAM, "10")
+                .param(DocumentsController.MAX_RESULTS_PARAM, "20")
                 .param(DocumentsController.AUTO_CORRECT_PARAM, "false")
                 .param(DocumentsController.SUMMARY_PARAM, "context")
                 .param(DocumentsController.INDEXES_PARAM, mvcIntegrationTestUtils.getDatabases())

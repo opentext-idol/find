@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-class InitialLocation {
+public class InitialLocation {
     final Double latitude;
     final Double longitude;
 

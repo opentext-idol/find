@@ -8,8 +8,11 @@ package com.hp.autonomy.frontend.find.idol.configuration;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
+import com.hp.autonomy.frontend.configuration.server.ProductType;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
+import com.hp.autonomy.frontend.find.core.configuration.TrendingConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import org.junit.Before;
@@ -31,6 +34,9 @@ public class IdolFindConfigTest {
     private CommunityAuthentication communityAuthentication;
 
     @Mock
+    private ExportConfig export;
+
+    @Mock
     private QueryManipulation queryManipulation;
 
     @Mock
@@ -38,6 +44,9 @@ public class IdolFindConfigTest {
 
     @Mock
     private ViewConfig viewConfig;
+
+    @Mock
+    private TrendingConfiguration trending;
 
     private IdolFindConfig idolFindConfig;
 
@@ -48,7 +57,9 @@ public class IdolFindConfigTest {
                 .login(communityAuthentication)
                 .queryManipulation(queryManipulation)
                 .savedSearchConfig(savedSearchConfig)
+                .trending(trending)
                 .view(viewConfig)
+                .export(export)
                 .build();
     }
 
@@ -70,6 +81,8 @@ public class IdolFindConfigTest {
         when(queryManipulation.merge(any(QueryManipulation.class))).thenReturn(queryManipulation);
         when(savedSearchConfig.merge(any(SavedSearchConfig.class))).thenReturn(savedSearchConfig);
         when(viewConfig.merge(any(ViewConfig.class))).thenReturn(viewConfig);
+        when(export.merge(any(ExportConfig.class))).thenReturn(export);
+        when(trending.merge(any(TrendingConfiguration.class))).thenReturn(trending);
 
         final IdolFindConfig defaults = IdolFindConfig.builder().content(mock(ServerConfig.class)).build();
         final IdolFindConfig mergedConfig = idolFindConfig.merge(defaults);
@@ -78,6 +91,8 @@ public class IdolFindConfigTest {
         assertEquals(queryManipulation, mergedConfig.getQueryManipulation());
         assertEquals(savedSearchConfig, mergedConfig.getSavedSearchConfig());
         assertEquals(viewConfig, mergedConfig.getViewConfig());
+        assertEquals(export, mergedConfig.getExport());
+        assertEquals(trending, mergedConfig.getTrending());
         assertEquals(idolFindConfig, mergedConfig);
     }
 
@@ -120,5 +135,19 @@ public class IdolFindConfigTest {
     @Test
     public void withHashedPasswords() {
         assertEquals(idolFindConfig, idolFindConfig.withHashedPasswords());
+    }
+
+    @Test
+    public void lookupComponentNameByHostAndPort() {
+        when(communityAuthentication.getMethod()).thenReturn("default");
+
+        final String host = "localhost";
+        when(serverConfig.getHost()).thenReturn(host);
+        final int port = 1234;
+        when(serverConfig.getPort()).thenReturn(port);
+        final int servicePort = 5678;
+        when(serverConfig.getServicePort()).thenReturn(servicePort);
+        assertEquals(ProductType.AXE.getFriendlyName(), idolFindConfig.lookupComponentNameByHostAndPort(host, port));
+        assertEquals(ProductType.AXE.getFriendlyName(), idolFindConfig.lookupComponentNameByHostAndPort(host, servicePort));
     }
 }

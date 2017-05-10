@@ -1,0 +1,7 @@
+{
+  "dateField": "AUTN_DATE",
+  "numberOfValues": 10,
+  "maxNumberOfBuckets": 20,
+  "minNumberOfBuckets": 10,
+  "defaultNumberOfBuckets": 20
+}

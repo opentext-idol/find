@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.hod.configuration;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.configuration.authentication.Authentication;
@@ -14,7 +15,9 @@ import com.hp.autonomy.frontend.configuration.filter.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfoConfigMixins;
-import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
+import com.hp.autonomy.searchcomponents.core.config.FieldValue;
+import com.hp.autonomy.searchcomponents.core.config.FieldValueConfigMixins;
+import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,8 +30,9 @@ class HodFindConfigFileService extends FindConfigFileService<HodFindConfig, HodF
     public HodFindConfigFileService(
             final FilterProvider filterProvider,
             final TextEncryptor textEncryptor,
-            final JsonDeserializer<TagName> tagNameDeserializer) {
-        super(filterProvider, textEncryptor, tagNameDeserializer);
+            final JsonSerializer<FieldPath> fieldPathSerializer,
+            final JsonDeserializer<FieldPath> fieldPathDeserializer) {
+        super(filterProvider, textEncryptor, fieldPathSerializer, fieldPathDeserializer);
     }
 
     @Override
@@ -53,6 +57,7 @@ class HodFindConfigFileService extends FindConfigFileService<HodFindConfig, HodF
                 .put(BCryptUsernameAndPassword.class, ConfigurationFilterMixin.class)
                 .put(HodFindConfig.class, ConfigurationFilterMixin.class)
                 .put(FieldInfo.class, FieldInfoConfigMixins.class)
+                .put(FieldValue.class, FieldValueConfigMixins.class)
                 .build();
     }
 }

@@ -1,15 +1,17 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.ConfigFileConfiguration;
+import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import com.hp.autonomy.searchcomponents.core.test.CoreTestContext;
-import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
+import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
 import org.apache.commons.io.FileUtils;
 import org.jasypt.util.text.TextEncryptor;
 import org.junit.After;
@@ -32,35 +34,35 @@ import java.io.File;
 import java.io.IOException;
 
 import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CLASSES_PROPERTY;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
-@SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @JsonTest
 @AutoConfigureJsonTesters(enabled = false)
 @SpringBootTest(classes = CoreTestContext.class, properties = CORE_CLASSES_PROPERTY)
 public abstract class FindConfigFileServiceTest<C extends FindConfig<C, B>, B extends FindConfigBuilder<C, B>> {
     @ClassRule
     public static final SpringClassRule SCR = new SpringClassRule();
+    private static final String TEST_DIR = "./target/test";
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    private static final String TEST_DIR = "./target/test";
+    @Autowired
+    protected FieldPathNormaliser fieldPathNormaliser;
+    @Autowired
+    protected JsonSerializer<FieldPath> fieldPathSerializer;
+    @Autowired
+    protected JsonDeserializer<FieldPath> fieldPathDeserializer;
+    @Mock
+    protected TextEncryptor textEncryptor;
+    protected FilterProvider filterProvider;
+    private FindConfigFileService<C, B> findConfigFileService;
 
     @BeforeClass
     public static void init() {
         System.setProperty("hp.find.home", TEST_DIR);
     }
-
-    @Autowired
-    protected JsonDeserializer<TagName> tagNameDeserializer;
-
-    @Mock
-    protected TextEncryptor textEncryptor;
-
-    protected FilterProvider filterProvider;
-
-    private FindConfigFileService<C, B> findConfigFileService;
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Before
@@ -112,6 +114,7 @@ public abstract class FindConfigFileServiceTest<C extends FindConfig<C, B>, B ex
 
     @Test
     public void postInitialise() {
+        // Check no exceptions are thrown
         final C config = findConfigFileService.getConfig();
         findConfigFileService.postInitialise(config);
     }
@@ -124,6 +127,7 @@ public abstract class FindConfigFileServiceTest<C extends FindConfig<C, B>, B ex
 
     @Test
     public void postUpdate() {
+        // Check no exceptions are thrown
         final C config = findConfigFileService.getConfig();
         findConfigFileService.postUpdate(config);
     }

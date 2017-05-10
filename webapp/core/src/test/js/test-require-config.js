@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -10,7 +10,8 @@ require.config({
         'jasmine-jquery': '../bower_components/jasmine-jquery/lib/jasmine-jquery',
         'js-testing': '../bower_components/hp-autonomy-js-testing-utils/src/js',
         'mock': '../../../../test/js/mock',
-        'resources': '../../../../test/js/resources'
+        'resources': '../../../../test/js/resources',
+        'fieldtext/js/parser': '../../../../../target/classes/static/js/pegjs/fieldtext/parser'
     },
     shim: {
         'jasmine-jquery': ['jquery']
@@ -21,12 +22,13 @@ require.config({
             'find/app/router': 'mock/router',
             'find/app/vent': 'mock/vent',
             'find/app/util/database-name-resolver': 'mock/database-name-resolver',
-            'find/lib/backbone/backbone-extensions': 'backbone',
             'find/app/util/confirm-view': 'mock/util/confirm-view',
             'find/app/page/search/document/location-tab': 'mock/page/search/document/location-tab',
             'find/app/util/topic-map-view': 'mock/util/topic-map-view',
             'find/app/model/bucketed-parametric-collection': 'mock/model/bucketed-parametric-collection',
-            'css/result-highlighting.css': 'mock/css/result-highlighting.css'
+            'css/result-highlighting.css': 'mock/css/result-highlighting.css',
+            'find/app/model/parametric-collection': 'mock/model/parametric-collection',
+            'find/app/model/parametric-field-details-model': 'mock/model/parametric-details-model'
         },
         'find/app/page/search/related-concepts/related-concepts-view': {
             'find/app/model/documents-collection': 'mock/model/documents-collection'
@@ -42,7 +44,19 @@ require.config({
             'parametric-refinement/display-collection': 'mock/model/display-collection'
         },
         'find/app/page/search/results/entity-topic-map-view': {
-            'find/app/model/entity-collection': 'mock/model/entity-collection'
+            'find/app/model/entity-collection': 'mock/model/entity-collection',
+            'find/app/util/range-input': 'mock/util/range-input'
+        },
+        'find/app/page/search/filters/parametric/parametric-select-modal-view': {
+            'find/app/page/search/filters/parametric/parametric-paginator': 'mock/page/search/filters/parametric/parametric-paginator'
+        },
+        'find/app/page/search/filters/parametric/parametric-select-modal': {
+            'find/app/page/search/filters/parametric/parametric-paginator': 'mock/page/search/filters/parametric/parametric-paginator'
+        },
+        'find/app/page/search/results/trending/trending-view': {
+            'find/app/page/search/results/trending/trending-strategy': 'mock/page/results/trending-strategy',
+            'find/app/page/search/results/trending/trending': 'mock/page/results/trending',
+            'find/app/util/range-input': 'mock/util/range-input'
         }
     }
 });

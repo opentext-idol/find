@@ -15,7 +15,7 @@ define([
 
             this.view = new NumericParametricFieldCollapsibleView({
                 selectedParametricValues: new Backbone.Collection(),
-                dataType: 'numeric',
+                type: 'Numeric',
                 filterModel: this.filterModel,
                 model: new Backbone.Model({id: 'the-model'})
             });
@@ -23,10 +23,24 @@ define([
             this.view.render();
         });
 
-        it('should open the view when there is filter text', function() {
-            this.filterModel.set('text', 'the');
+        describe('when there is filter text', function() {
+            beforeEach(function() {
+                this.filterModel.set('text', 'the');
+            });
 
-            expect(this.view.collapseModel.get('collapsed')).toBe(false);
+            it('should open the view', function() {
+                expect(this.view.collapseModel.get('collapsed')).toBe(false);
+            });
+
+            describe('and the filter text is removed again', function() {
+                beforeEach(function() {
+                    this.filterModel.set('text', '');
+                });
+
+                it('should hide the view', function() {
+                    expect(this.view.collapseModel.get('collapsed')).toBe(true);
+                });
+            });
         });
     })
 });

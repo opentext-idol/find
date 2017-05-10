@@ -95,6 +95,13 @@ module.exports = (grunt) ->
       test:
         files: watchFiles
         tasks: ['babel:transform', 'jasmine:test']
+    peg:
+      fieldtext:
+        src: 'src/main/public/static/bower_components/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
+        dest: 'target/classes/static/js/pegjs/fieldtext/parser.js'
+        options:
+          format: 'amd'
+          trackLineAndColumn: true
 
   grunt.loadNpmTasks 'grunt-babel'
   grunt.loadNpmTasks 'grunt-contrib-clean'
@@ -102,6 +109,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-contrib-less'
+  grunt.loadNpmTasks 'grunt-peg'
 
   grunt.registerTask 'default', ['test']
   grunt.registerTask 'test', ['babel:transform', 'jasmine:test']

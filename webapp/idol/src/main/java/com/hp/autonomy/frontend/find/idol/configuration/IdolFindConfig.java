@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -14,13 +14,16 @@ import com.hp.autonomy.frontend.configuration.AbstractConfig;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.authentication.Authentication;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
+import com.hp.autonomy.frontend.configuration.server.ProductType;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
+import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
-import com.hp.autonomy.frontend.find.core.configuration.ParametricDisplayValues;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
+import com.hp.autonomy.frontend.find.core.configuration.TrendingConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
+import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
@@ -31,10 +34,13 @@ import com.hp.autonomy.user.UserServiceConfig;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Singular;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @SuppressWarnings({"InstanceVariableOfConcreteClass", "DefaultAnnotationParam"})
@@ -56,11 +62,14 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final UiCustomization uiCustomization;
     private final FieldsInfo fieldsInfo;
     private final MapConfiguration map;
+    private final TrendingConfiguration trending;
     private final Integer minScore;
     private final StatsServerConfig statsServer;
     private final Integer topicMapMaxResults;
-    @Singular
-    private final Collection<ParametricDisplayValues> parametricDisplayValues;
+    private final ExportConfig export;
+
+    @JsonIgnore
+    private volatile Map<String, Map<Integer, String>> productMap;
 
     @Override
     public IdolFindConfig merge(final IdolFindConfig maybeOther) {
@@ -76,12 +85,23 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                         .uiCustomization(uiCustomization == null ? other.uiCustomization : uiCustomization.merge(other.uiCustomization))
                         .fieldsInfo(fieldsInfo == null ? other.fieldsInfo : fieldsInfo.merge(other.fieldsInfo))
                         .map(map == null ? other.map : map.merge(other.map))
+                        .trending(trending == null ? other.trending : trending.merge(other.trending))
                         .minScore(minScore == null ? other.minScore : minScore)
                         .statsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
-                        .parametricDisplayValues(CollectionUtils.isEmpty(parametricDisplayValues) ? other.parametricDisplayValues : parametricDisplayValues)
                         .topicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
+                        .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(maybeOther.export)).orElse(maybeOther.export))
                         .build())
                 .orElse(this);
+    }
+
+    // somewhat messy workaround for the fact that default method does not handle @JsonProperty annotations
+    @Override
+    public Map<String, OptionalConfigurationComponent<?>> getValidationMap() {
+        final Map<String, OptionalConfigurationComponent<?>> validationMap = super.getValidationMap();
+        if (validationMap.containsKey("savedSearchConfig")) {
+            validationMap.put("savedSearches", validationMap.remove("savedSearchConfig"));
+        }
+        return validationMap;
     }
 
     @JsonIgnore
@@ -120,10 +140,15 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     public void basicValidate(final String section) throws ConfigException {
         login.basicValidate(SECTION);
         content.basicValidate("content");
+        trending.basicValidate("trending");
         savedSearchConfig.basicValidate(SECTION);
 
         if(map != null) {
             map.basicValidate("map");
+        }
+
+        if(export != null) {
+            export.basicValidate(SECTION);
         }
 
         if(queryManipulation != null) {
@@ -145,6 +170,54 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     @JsonIgnore
     public ViewConfig getViewConfig() {
         return view;
+    }
+
+    @Override
+    public String lookupComponentNameByHostAndPort(final String hostName, final int port) {
+        if(productMap == null) {
+            final Map<String, Map<Integer, String>> tempProductMap = new HashMap<>();
+            addEntriesToProductMap(tempProductMap, ProductType.AXE.getFriendlyName(), content.getHost(), content.getPort(), content.getServicePort());
+            addEntriesToProductMap(tempProductMap, ProductType.VIEW.getFriendlyName(), view.getHost(), view.getPort(), view.getServicePort());
+
+            if(!"default".equals(login.getMethod())) {
+                addEntriesToProductMap(tempProductMap, ProductType.UASERVER.getFriendlyName(), login.getCommunity().getHost(), login.getCommunity().getPort(), login.getCommunity().getServicePort());
+            }
+
+            if(isOptionalComponentEnabled(queryManipulation)) {
+                addEntriesToProductMap(tempProductMap, ProductType.QMS.getFriendlyName(), queryManipulation.getServer().getHost(), queryManipulation.getServer().getPort(), queryManipulation.getServer().getServicePort());
+            }
+
+            if(isOptionalComponentEnabled(answerServer)) {
+                addEntriesToProductMap(tempProductMap, ProductType.ANSWERSERVER.getFriendlyName(), answerServer.getServer().getHost(), answerServer.getServer().getPort(), answerServer.getServer().getServicePort());
+            }
+
+            if(isOptionalComponentEnabled(statsServer)) {
+                addEntriesToProductMap(tempProductMap, statsServer.getServer().getHost(), ProductType.STATS.getFriendlyName(), statsServer.getServer().getPort(), statsServer.getServer().getServicePort());
+            }
+
+            productMap = tempProductMap;
+        }
+
+        return productMap.getOrDefault(hostName, Collections.emptyMap()).get(port);
+    }
+
+    private <T extends OptionalConfigurationComponent<T>> Boolean isOptionalComponentEnabled(final OptionalConfigurationComponent<T> maybeComponent) {
+        return Optional.ofNullable(maybeComponent)
+                .map(component -> BooleanUtils.isTrue(component.getEnabled()))
+                .orElse(false);
+    }
+
+    private void addEntriesToProductMap(final Map<String, Map<Integer, String>> productMap,
+                                        final String productName,
+                                        final String hostName,
+                                        final Integer... ports) {
+        productMap.compute(hostName, (key, maybeMap) -> {
+            final Map<Integer, String> map = Optional.ofNullable(maybeMap).orElse(new HashMap<>());
+            Arrays.stream(ports)
+                    .filter(Objects::nonNull)
+                    .forEach(port -> map.put(port, productName));
+            return map;
+        });
     }
 
     @SuppressWarnings("WeakerAccess")

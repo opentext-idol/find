@@ -166,7 +166,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
 
         final BIIdolFind other = new BIIdolFind();
         launchInNewSession(other);
-        other.loginService().login(getConfig().getUserWithRole("BIFHI"));
+        other.loginService().login(getInitialUser());
         other.findService().searchAnyView("blur");
 
         final BIIdolFindElementFactory factory = other.elementFactory();
@@ -255,7 +255,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         assertThat(searchTabBar.currentTab(), not(modified()));
         final List<String> finalConceptHeaders = conceptsPanel.selectedConceptHeaders();
         assertThat(finalConceptHeaders, hasSize(1));
-        assertThat(finalConceptHeaders, hasItem('"' + selectedConcept.toLowerCase() + '"'));
+        assertThat(finalConceptHeaders, hasItem('"' + selectedConcept + '"'));
     }
 
     @Test
@@ -272,14 +272,30 @@ public class SavedSearchITCase extends IdolFindTestBase {
         saveService.deleteAll();
         saveManySearchesWithSameNameAsSearchText(new String[]{"yellow", "red"}, SearchType.QUERY);
 
-        final SearchTabBar bar = elementFactory.getSearchTabBar();
-        final String title = bar.currentTab().getTitle();
+        final SearchTabBar searchTabBar = elementFactory.getSearchTabBar();
+        final String title = searchTabBar.currentTab().getTitle();
 
         final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
         options.delete();
-        bar.waitUntilTabGone(title);
+        searchTabBar.waitUntilTabGone(title);
 
-        verifyThat("Deleted search is gone", bar.savedTabTitles(), not(contains(title)));
+        verifyThat("Deleted search is gone", searchTabBar.savedTabTitles(), not(contains(title)));
+    }
+
+    @Test
+    @ResolvedBug({"FIND-1170", "FIND-1168"})
+    public void newSearchParametricsLoadedAfterSavedSearchPageLoad() {
+        findService.search("cheese");
+        saveService.saveCurrentAs("cheese", SearchType.QUERY);
+        final String url = getDriver().getCurrentUrl();
+        getDriver().navigate().to(url);
+        elementFactory.getFindPage().waitForLoad();
+        elementFactory.getFilterPanel().waitForParametricFields();
+
+        assertThat("There is a non-zero parametric filter available on the saved search", elementFactory.getFilterPanel().nonZeroParamFieldContainer(0) >= 0);
+        elementFactory.getSearchTabBar().switchTo("New Search");
+        elementFactory.getFilterPanel().waitForParametricFields();
+        assertThat("There is a non-zero parametric filter available on the new search", elementFactory.getFilterPanel().nonZeroParamFieldContainer(0) >= 0);
     }
 
     private void saveManySearchesWithSameNameAsSearchText(final String[] searchNames, final SearchType saveType) {

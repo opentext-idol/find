@@ -1,0 +1,12 @@
+{
+  "name": "",
+  "type": "StaticContentWidget",
+  "x": 1,
+  "y": 1,
+  "width": 2,
+  "height": 2,
+  "widgetSettings": {
+    "html": "<div><p style=\"font-weight: bold; font-style: italic\">I love cheese</p><p>cheese is the best</p></div>",
+    "testing": "testing"
+  }
+}

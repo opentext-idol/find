@@ -7,7 +7,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,26 +20,41 @@ abstract class ParametricFieldView {
         this.container = Container.currentTabContents(driver).findElement(locator);
     }
 
-    public String getSelectedFieldName(final int i){
-        return nthParametricFilter(i).getText();
+    public String getFirstSelectedFieldName(){
+        return firstParametricFilter().getText();
     }
 
-    private WebElement nthParametricFilter(final int i){
-        return findElement(By.cssSelector(".parametric-selections span:nth-child(" + i + ')'));
+    public String getSecondSelectedFieldName(){
+        return secondParametricFilter().getText();
+    }
+
+    private WebElement firstParametricFilter(){
+        return findElement(By.cssSelector(".parametric-selections span:nth-child(1)"));
+    }
+
+    private WebElement secondParametricFilter(){
+        return findElement(By.cssSelector(".parametric-selections span:nth-child(3)"));
     }
 
     public boolean parametricSelectionDropdownsExist(){
         return findElement(By.cssSelector(".parametric-selections span")).isDisplayed();
     }
 
-    public ChosenDrop parametricSelectionDropdown(final int i){
-        return new ChosenDrop(nthParametricFilter(i), getDriver());
+    public ChosenDrop firstParametricSelectionDropdown(){
+        return new ChosenDrop(firstParametricFilter(), getDriver());
     }
 
-    public List<String> getParametricDropdownItems(final int i){
-        final ChosenDrop dropdown = parametricSelectionDropdown(i);
-        final List<String> badFormat = ElementUtil.getTexts(dropdown.getItems());
+    public ChosenDrop secondParametricSelectionDropdown(){
+        return new ChosenDrop(secondParametricFilter(), getDriver());
+    }
+
+    public List<String> getParametricDropdownItems(final ChosenDrop chosenDrop){
+        final List<String> badFormat = ElementUtil.getTexts(chosenDrop.getItems());
         return badFormat.stream().map(String::toUpperCase).collect(Collectors.toList());
+    }
+
+    public void clickSwapButton() {
+        findElement(By.cssSelector(".parametric-swap")).click();
     }
 
     public WebElement message() {

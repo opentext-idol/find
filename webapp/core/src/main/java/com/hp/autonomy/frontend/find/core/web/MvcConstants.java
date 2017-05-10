@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -19,10 +19,9 @@ public enum MvcConstants {
     USERNAME("username"),
     MIN_SCORE("minScore"),
     UI_CUSTOMIZATION("uiCustomization"),
-    PARAMETRIC_DISPLAY_VALUES("parametricDisplayValues"),
     FIELDS_INFO("fieldsInfo"),
     TOPIC_MAP_MAX_RESULTS("topicMapMaxResults"),
-    METADATA_FIELD_IDS("metadataFieldIds"),
+    METADATA_FIELD_INFO("metadataFieldInfo"),
     ANSWER_SERVER_ENABLED("answerServerEnabled"),
     PUBLIC_INDEXES_ENABLED("publicIndexesEnabled");
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -30,9 +30,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
@@ -62,7 +62,6 @@ public class ResultsITCase extends FindTestBase {
         findPage = getElementFactory().getFindPage();
         findService = getApplication().findService();
         findPage.goToListView();
-
     }
 
     @Test
@@ -99,7 +98,7 @@ public class ResultsITCase extends FindTestBase {
             references.add(result.getReference());
         }
 
-        final Set<String> referencesSet = new HashSet<>(references);
+        final Collection<String> referencesSet = new HashSet<>(references);
 
         /* References apparently may not be unique, but they're definitely ~more unique
                 than titles within our data set  */
@@ -109,7 +108,7 @@ public class ResultsITCase extends FindTestBase {
     @Test
     @ResolvedBug("CCUK-3647")
     public void testNoMoreResultsFoundAtEnd() {
-        final ListView results = findService.search(new Query("Cheese AND Onion AND Carrot"));
+        final ListView results = findService.search(new Query("Cheese AND Onion AND Carrot AND Coriander"));
         results.waitForResultsToLoad();
 
         verifyThat(results.getTotalResultsNum(), lessThanOrEqualTo(30));
@@ -124,7 +123,7 @@ public class ResultsITCase extends FindTestBase {
         final ListView results = findService.search("thissearchwillalmostcertainlyreturnnoresults");
 
         new WebDriverWait(getDriver(), 60L).withMessage("No results message should appear")
-                .until(ExpectedConditions.textToBePresentInElement(results.resultsDiv(), "No results found"));
+            .until(ExpectedConditions.textToBePresentInElement(results.resultsDiv(), "No results found"));
 
         findPage.scrollToBottom();
 
@@ -152,7 +151,6 @@ public class ResultsITCase extends FindTestBase {
     @ResolvedBug("FIND-694")
     @Role(UserRole.FIND)
     public void testAutoCorrectedQueriesHaveRelatedConceptsAndParametrics() {
-        final String term = "eevrything";
         final String termAutoCorrected = "everything";
         search(termAutoCorrected);
 
@@ -164,6 +162,7 @@ public class ResultsITCase extends FindTestBase {
         assertThat(termAutoCorrected + " has some parametric fields", indexOfCategoryWFilters, not(-1));
         assertThat(termAutoCorrected + " has related concepts", !getElementFactory().getRelatedConceptsPanel().noConceptsPresent());
 
+        final String term = "eevrything";
         search(term);
         assertThat("Has autocorrected", findPage.hasAutoCorrected());
         assertThat("Has autocorrected " + term + " to " + termAutoCorrected,
@@ -171,12 +170,12 @@ public class ResultsITCase extends FindTestBase {
                    is("( " + termAutoCorrected + " )"));
 
         findPage.waitForParametricValuesToLoad();
-        verifyThat("Still has parametric fields", getElementFactory().getFilterPanel().parametricField(indexOfCategoryWFilters).getFilterNumber(), not(0));
+        verifyThat("Still has parametric fields", getElementFactory().getFilterPanel().parametricField(indexOfCategoryWFilters).getFilterCount(), not(0));
         verifyThat("Still has related concepts", !getElementFactory().getRelatedConceptsPanel().noConceptsPresent());
     }
 
     @Test
-    @ActiveBug("FIND-719")
+    @ResolvedBug("FIND-719")
     @Role(UserRole.FIND)
     public void testNoResultsMessageHiddenAfterAutoCorrect() {
         final String term = "eevrything";
@@ -207,6 +206,9 @@ public class ResultsITCase extends FindTestBase {
         search(query);
 
         getDriver().navigate().refresh();
+
+        findPage = getElementFactory().getFindPage();
+        findPage.waitForLoad();
 
         // This could fail because %2F can be blocked by Tomcat
         assertThat(getElementFactory().getSearchBox().getValue(), is(query));

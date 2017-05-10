@@ -17,7 +17,6 @@ import com.autonomy.abc.selenium.find.preview.InlinePreview;
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
 import com.autonomy.abc.selenium.find.save.SearchType;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
-import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
@@ -26,13 +25,9 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.StringMatchers.containsString;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.Matchers.*;
 
 @Role(UserRole.BIFHI)
 public class MapITCase extends IdolFindTestBase {
@@ -47,7 +42,7 @@ public class MapITCase extends IdolFindTestBase {
 
     @Override
     public BIIdolFindElementFactory getElementFactory() {
-        return (BIIdolFindElementFactory)super.getElementFactory();
+        return (BIIdolFindElementFactory) super.getElementFactory();
     }
 
     @Before
@@ -97,7 +92,7 @@ public class MapITCase extends IdolFindTestBase {
 
     private void clickClustersUntilMarker() {
         final List<WebElement> markers = mapView.markers();
-        if(!markers.isEmpty()) {
+        if (!markers.isEmpty()) {
             mapView.clickMarker(markers.get(0));
             return;
         }
@@ -122,39 +117,42 @@ public class MapITCase extends IdolFindTestBase {
 
     @Test
     @ResolvedBug("FIND-328")
-    @ActiveBug("FIND-649")
-    public void testOnlyLocationDataInMapComparison() {
-        final String firstSearch = "Dr Jekyll";
-        final String secondSearch = "Mr Hyde";
-        mapView = search("saint");
-        mapView.waitForMarkers();
-        final int firstResults = mapView.numberResults();
+    public void testLocationCountsInMapResultsAndComparison() {
+        final MapView firstSearchMapView = search("saint");
+        firstSearchMapView.waitForMarkers();
+        final int firstResults = firstSearchMapView.countLocations();
+        final int firstSearchDisplayedDocumentCount = firstSearchMapView.numberOfDisplayedDocuments();
+        verifyThat("First search has expected number of map points", firstResults, greaterThanOrEqualTo(firstSearchDisplayedDocumentCount));
 
         try {
+            final String firstSearch = "Dr Jekyll";
             savedSearchService.saveCurrentAs(firstSearch, SearchType.QUERY);
 
             savedSearchService.openNewTab();
             Waits.loadOrFadeWait();
-            mapView = search("bear");
-            mapView.waitForMarkers();
+            final MapView secondSearchMapView = search("bear");
+            secondSearchMapView.waitForMarkers();
 
-            final int secondResults = mapView.numberResults();
+            final int secondResults = secondSearchMapView.countLocations();
+            final int secondSearchDisplayedDocumentCount = secondSearchMapView.numberOfDisplayedDocuments();
+            verifyThat("Second search has expected number of map points", secondResults, greaterThanOrEqualTo(secondSearchDisplayedDocumentCount));
 
+            final String secondSearch = "Mr Hyde";
             savedSearchService.saveCurrentAs(secondSearch, SearchType.QUERY);
             savedSearchService.compareCurrentWith(firstSearch);
 
-            mapView = getElementFactory().getResultsComparison().goToMapView();
+            final MapView comparisonMapView = getElementFactory().getResultsComparison().goToMapView();
 
-            mapView.waitForMarkers();
+            comparisonMapView.waitForMarkers();
             //map often adjusts zoom and moves markers
             Waits.loadOrFadeWait();
 
-            final int common = mapView.countCommonLocations();
-            final int comparee = mapView.countLocationsForComparee() + common;
-            final int comparer = mapView.countLocationsForComparer() + common;
+            final int common = comparisonMapView.countCommonLocations();
+            final int comparee = comparisonMapView.countLocationsForComparee();
+            final int comparer = comparisonMapView.countLocationsForComparer();
+            final int totalMapPoints = common + comparee + comparer;
 
-            verifyThat("First search has same number results", comparee, is(firstResults));
-            verifyThat("Second search has same number results", comparer, is(secondResults));
+            verifyThat("Comparison has expected number of map points", totalMapPoints, greaterThanOrEqualTo(Math.max(firstSearchDisplayedDocumentCount, secondSearchDisplayedDocumentCount)));
         } finally {
             findPage.goBackToSearch();
             savedSearchService.waitForSomeTabsAndDelete();

@@ -58,7 +58,6 @@ public class SavedSearchService {
             LOGGER.info("Timed out waiting for a Saved Search to appear");
             deleteAll();
         }
-
     }
 
     //TODO: Still not deleting the tabs but really a problem with the app's slow deletion

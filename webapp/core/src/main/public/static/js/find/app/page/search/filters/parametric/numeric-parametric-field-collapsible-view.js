@@ -11,21 +11,21 @@ define([
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/util/collapsible',
     'find/app/vent'
-], function(Backbone, _, i18n, NumericParametricFieldView, rounder, Collapsible, vent) {
+], function (Backbone, _, i18n, NumericParametricFieldView, rounder, Collapsible, vent) {
     'use strict';
 
     function getSubtitle() {
-        var model = this.selectedParametricValues.findWhere({field: this.model.id});
+        const model = this.selectedParametricValues.findWhere({field: this.model.id});
 
-        if(model) {
-            var range;
+        if (model) {
+            let range;
             const rangeArray = model.get('range');
-            if(this.dataType === 'numeric') {
-                range = _.map(rangeArray, function(entry) {
+            if (this.type === 'Numeric') {
+                range = _.map(rangeArray, function (entry) {
                     return rounder().round(entry, rangeArray[0], rangeArray[1]);
                 });
-            } else if(this.dataType === 'date') {
-                range = _.map(rangeArray, function(entry) {
+            } else if (this.type === 'NumericDate') {
+                range = _.map(rangeArray, function (entry) {
                     return NumericParametricFieldView.dateFormatting.format(entry);
                 });
             }
@@ -38,27 +38,31 @@ define([
     }
 
     return Backbone.View.extend({
-        initialize: function(options) {
+        initialize: function (options) {
             this.selectedParametricValues = options.selectedParametricValues;
-            this.dataType = this.model.get('dataType');
+            this.type = this.model.get('type');
             this.timeBarModel = options.timeBarModel;
             this.filterModel = options.filterModel;
 
-            this.collapseModel = new Backbone.Model({
-                collapsed: Boolean(_.isFunction(options.collapsed)
+            const shouldBeCollapsed = function () {
+                return Boolean(_.isFunction(options.collapsed)
                     ? options.collapsed(options.model)
-                    : _.isUndefined(options.collapsed) || options.collapsed)
+                    : _.isUndefined(options.collapsed) || options.collapsed);
+            };
+            this.collapseModel = new Backbone.Model({
+                collapsed: shouldBeCollapsed()
             });
 
-            var clickCallback = null;
+            let clickCallback = null;
 
-            if(this.timeBarModel) {
-                clickCallback = function() {
-                    var isCurrentField = this.isCurrentField();
+            if (this.timeBarModel) {
+                clickCallback = function () {
+                    const isCurrentField = this.isCurrentField();
 
                     this.timeBarModel.set({
-                        graphedDataType: isCurrentField ? null : this.dataType,
-                        graphedFieldName: isCurrentField ? null : this.model.id
+                        graphedDataType: isCurrentField ? null : this.model.get('type'),
+                        graphedFieldId: isCurrentField ? null : this.model.id,
+                        graphedFieldName: isCurrentField ? null : this.model.get('displayName')
                     });
                 }.bind(this);
             }
@@ -67,7 +71,7 @@ define([
                 _.extend({
                     hideTitle: true,
                     clickCallback: clickCallback,
-                    dataType: this.dataType,
+                    type: this.type,
                     collapseModel: this.collapseModel
                 }, options)
             );
@@ -86,31 +90,33 @@ define([
                 this.setFieldSelectedValues
             );
 
-            this.listenTo(this.collapsible, 'show', function() {
+            this.listenTo(this.collapsible, 'show', function () {
                 this.collapsible.toggleSubtitle(true);
             });
 
-            this.listenTo(this.collapsible, 'hide', function() {
+            this.listenTo(this.collapsible, 'hide', function () {
                 this.toggleSubtitle();
             });
 
-            this.listenTo(this.collapsible, 'toggle', function(newState) {
+            this.listenTo(this.collapsible, 'toggle', function (newState) {
                 this.collapseModel.set('collapsed', newState);
                 this.trigger('toggle', this.model, newState);
             });
 
-            if(this.filterModel) {
-                this.listenTo(this.filterModel, 'change', function() {
-                    if(this.filterModel.get('text')) {
+            if (this.filterModel) {
+                this.listenTo(this.filterModel, 'change', function () {
+                    if (this.filterModel.get('text')) {
                         this.collapsible.show();
+                        this.collapseModel.set('collapsed', false);
                     } else {
-                        this.collapsible.toggle(!this.collapseModel.get('collapsed'));
+                        this.collapsible.toggle(!shouldBeCollapsed());
+                        this.collapseModel.set('collapsed', true);
                     }
                 });
             }
         },
 
-        render: function() {
+        render: function () {
             this.$el.append(this.collapsible.$el);
             this.collapsible.render();
             this.toggleSubtitle();
@@ -118,30 +124,28 @@ define([
         },
 
         // Is the field represented by the view currently displayed in the time bar?
-        isCurrentField: function() {
-            return this.timeBarModel.get('graphedFieldName') === this.model.id &&
-                this.timeBarModel.get('graphedDataType') === this.dataType;
+        isCurrentField: function () {
+            return this.timeBarModel.get('graphedFieldId') === this.model.id &&
+                this.timeBarModel.get('graphedDataType') === this.type;
         },
 
-        updateHighlightState: function() {
-            if(this.timeBarModel) {
+        updateHighlightState: function () {
+            if (this.timeBarModel) {
                 this.fieldView.$el.toggleClass('highlighted-widget', this.isCurrentField());
             }
         },
 
-        toggleSubtitle: function() {
-            var subtitleUnfiltered = this.selectedParametricValues
-                .findWhere({field: this.model.id});
-
+        toggleSubtitle: function () {
+            const subtitleUnfiltered = this.selectedParametricValues.findWhere({field: this.model.id});
             this.collapsible.toggleSubtitle(subtitleUnfiltered);
         },
 
-        setFieldSelectedValues: function() {
+        setFieldSelectedValues: function () {
             this.collapsible.setSubTitle(getSubtitle.call(this));
             this.toggleSubtitle();
         },
 
-        remove: function() {
+        remove: function () {
             this.collapsible.remove();
             Backbone.View.prototype.remove.call(this);
         }

@@ -13,12 +13,12 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public abstract class AbstractSavedSearchTest<T extends SavedSearch<T>> {
-    protected abstract SavedSearch.Builder<T> createBuilder();
+public abstract class AbstractSavedSearchTest<T extends SavedSearch<T, B>, B extends SavedSearch.Builder<T, B>> {
+    protected abstract SavedSearch.Builder<T, B> createBuilder();
 
     @Test
     public void toQueryTextWithNoConceptClusters() {
-        final SavedSearch<T> search = createBuilder()
+        final SavedSearch<T, B> search = createBuilder()
                 .setConceptClusterPhrases(Collections.singleton(new ConceptClusterPhrase("cats", true, -1)))
                 .build();
 
@@ -35,7 +35,7 @@ public abstract class AbstractSavedSearchTest<T extends SavedSearch<T>> {
                 new ConceptClusterPhrase("raccoons", true, 2)
         ));
 
-        final SavedSearch<T> search = createBuilder()
+        final SavedSearch<T, B> search = createBuilder()
                 .setConceptClusterPhrases(conceptClusterPhrases)
                 .build();
 

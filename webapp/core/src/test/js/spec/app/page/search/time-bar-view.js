@@ -1,40 +1,27 @@
 define([
     'backbone',
     'jquery',
-    'find/app/configuration',
     'find/app/page/search/time-bar-view',
     'find/app/model/bucketed-parametric-collection'
-], function(Backbone, $, configuration, TimeBarView, BucketedParametricCollection) {
+], function(Backbone, $, TimeBarView, BucketedParametricCollection) {
 
     describe('TimeBarView', function() {
         beforeEach(function() {
-            configuration.and.returnValue({
-                parametricDisplayValues: [{
-                    name: "FELINES",
-                    displayName: "cats",
-                    values: [{
-                        name: "MR_MISTOFFELEES",
-                        displayName: "Mr. Mistoffelees, the magical cat"
-                    }]
-                }]
-            });
             this.queryModel = new Backbone.Model();
             this.selectedParametricValues = new Backbone.Collection();
-            this.numericParametricFieldsCollection = new Backbone.Collection();
-
-            this.dateParametricFieldsCollection = new Backbone.Collection([
-                {id: 'autn_date', name: 'autn_date'}
+            this.parametricFieldsCollection = new Backbone.Collection([
+                {id: 'autn_date', displayName: 'Autn Date', type: 'NumericDate'}
             ]);
 
             this.timeBarModel = new Backbone.Model({
-                graphedFieldName: 'autn_date',
-                graphedDataType: 'date'
+                graphedFieldId: 'autn_date',
+                graphedFieldName: 'Autn Date',
+                graphedDataType: 'NumericDate'
             });
 
             this.view = new TimeBarView({
                 queryModel: this.queryModel,
-                dateParametricFieldsCollection: this.dateParametricFieldsCollection,
-                numericParametricFieldsCollection: this.numericParametricFieldsCollection,
+                parametricFieldsCollection: this.parametricFieldsCollection,
                 timeBarModel: this.timeBarModel,
                 queryState: {
                     selectedParametricValues: this.selectedParametricValues

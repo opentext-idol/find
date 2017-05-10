@@ -21,8 +21,8 @@ public class UserEntityTest {
 
         final UserEntity userEntity2 = new UserEntity();
         userEntity2.setUid(3L);
-        final Set<SavedSearch<?>> searches = new HashSet<>();
-        final SavedSearch<?> search = new SavedQuery();
+        final Set<SavedSearch<?, ?>> searches = new HashSet<>();
+        final SavedSearch<?, ?> search = new SavedQuery();
         searches.add(search);
         userEntity2.setSearches(searches);
 

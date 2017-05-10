@@ -10,16 +10,16 @@ define([
     'i18n!find/idol/nls/snapshots',
     'underscore',
     'moment'
-], function(snapshotRestrictions, i18n, indexesI18n, snapshotsI18n, _, moment) {
+], function (snapshotRestrictions, i18n, indexesI18n, snapshotsI18n, _, moment) {
 
     function runProcessAttributes(input) {
         // Only pick the target attributes to reflect how processAttributes is called in the DataPanelView
         return _.compact(snapshotRestrictions.processAttributes(_.pick(input, snapshotRestrictions.targetAttributes)));
     }
 
-    describe('Snapshot restrictions panel', function() {
-        it('returns query text and indexes', function() {
-            var output = runProcessAttributes({
+    describe('Snapshot restrictions panel', function () {
+        it('returns query text and indexes', function () {
+            const output = runProcessAttributes({
                 indexes: [{name: 'Wikipedia', domain: null}, {name: 'Admissions', domain: null}],
                 queryText: 'cat',
                 relatedConcepts: [],
@@ -32,8 +32,8 @@ define([
             expect(output[0].content).toContain('Admissions');
         });
 
-        it('returns related concepts if they are present in the attributes', function() {
-            var output = runProcessAttributes({
+        it('returns related concepts if they are present in the attributes', function () {
+            const output = runProcessAttributes({
                 indexes: [{name: 'Wikipedia', domain: null}, {name: 'Admissions', domain: null}],
                 queryText: 'cat',
                 relatedConcepts: ['Copenhagen', 'Quantum'],
@@ -46,8 +46,8 @@ define([
             expect(output[0].content).toContain('Quantum');
         });
 
-        it('formats and returns a minimum date if present in the attributes', function() {
-            var output = runProcessAttributes({
+        it('formats and returns a minimum date if present in the attributes', function () {
+            const output = runProcessAttributes({
                 indexes: [{name: 'Wikipedia', domain: null}, {name: 'Admissions', domain: null}],
                 queryText: 'cat',
                 relatedConcepts: [],
@@ -60,8 +60,8 @@ define([
             expect(output[1].content).toContain('2016/02/09');
         });
 
-        it('formats and returns a maximum date if present in the attributes', function() {
-            var output = runProcessAttributes({
+        it('formats and returns a maximum date if present in the attributes', function () {
+            const output = runProcessAttributes({
                 indexes: [{name: 'Wikipedia', domain: null}, {name: 'Admissions', domain: null}],
                 queryText: 'cat',
                 relatedConcepts: [],
@@ -74,24 +74,24 @@ define([
             expect(output[1].content).toContain('2016/02/09');
         });
 
-        it('groups, prettifies and returns parametric values present in the attributes', function() {
-            var output = runProcessAttributes({
+        it('groups, prettifies and returns parametric values present in the attributes', function () {
+            const output = runProcessAttributes({
                 indexes: [{name: 'Wikipedia', domain: null}, {name: 'Admissions', domain: null}],
                 queryText: 'cat',
                 relatedConcepts: [],
                 parametricValues: [
-                    {field: 'animal', value: 'cat'},
-                    {field: 'PRIMARY_COLOUR', value: 'ginger'},
-                    {field: 'PRIMARY_COLOUR', value: 'black'}
+                    {field: 'animal', displayName: 'Animal', value: 'cat', displayValue: 'Cat', type: 'Parametric'},
+                    {field: 'PRIMARY_COLOUR', displayName: 'Primary Colour', value: 'ginger', displayValue: 'Ginger', type: 'Parametric'},
+                    {field: 'PRIMARY_COLOUR', displayName: 'Primary Colour', value: 'black', displayValue: 'Black', type: 'Parametric'}
                 ]
             });
 
             expect(output.length).toBe(3);
             expect(output[1].title).toBe('Animal');
-            expect(output[1].content).toContain('cat');
+            expect(output[1].content).toContain('Cat');
             expect(output[2].title).toBe('Primary Colour');
-            expect(output[2].content).toContain('ginger');
-            expect(output[2].content).toContain('black');
+            expect(output[2].content).toContain('Ginger');
+            expect(output[2].content).toContain('Black');
         });
     });
 

@@ -1,6 +1,11 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'backbone',
     'underscore',
+    'backbone',
     'find/idol/app/model/comparison/comparison-documents-collection',
     'find/idol/app/page/search/results/idol-results-view',
     'find/idol/app/page/search/results/comparison-lists',
@@ -12,10 +17,12 @@ define([
     'find/app/configuration',
     'text!find/idol/templates/comparison/comparison-view.html',
     'i18n!find/nls/bundle'
-], function(Backbone, _, ComparisonDocumentsCollection, ResultsView, ResultsLists, ComparisonMap, ComparisonTopicMap,
-            stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, configuration, template, i18n) {
+], function(_, Backbone, ComparisonDocumentsCollection, ResultsView, ResultsLists, ComparisonMap,
+            ComparisonTopicMap, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
+            configuration, template, i18n) {
+    'use strict';
 
-    var html = _.template(template)({i18n: i18n});
+    const html = _.template(template)({i18n: i18n});
 
     return Backbone.View.extend({
         className: 'service-view-container',
@@ -30,7 +37,7 @@ define([
             this.searchModels = options.searchModels;
             this.escapeCallback = options.escapeCallback;
 
-            var resultsViews = _.where([
+            const resultsViews = _.where([
                 {
                     Constructor: ComparisonTopicMap,
                     id: 'topic-map',
@@ -79,7 +86,7 @@ define([
                 }
             ], {shown: true});
 
-            var resultsViewSelectionModel = new Backbone.Model({
+            const resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab
                 selectedTab: resultsViews[0].id
             });
@@ -108,5 +115,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-
 });

@@ -6,12 +6,19 @@
 define([
     'settings/js/validate-on-save-modal',
     'text!find/templates/app/page/settings/validate-on-save-modal.html',
+    'text!find/templates/app/page/settings/validation-error-message.html',
     'underscore'
-], function(SaveModal, template, _) {
+], function(SaveModal, template, errorTemplate, _) {
     'use strict';
 
     return SaveModal.extend({
         className: 'modal fade',
-        template: _.template(template)
+        template: _.template(template),
+
+        initialize: function () {
+            SaveModal.prototype.initialize.apply(this, arguments);
+
+            this.errorTemplate = _.template(errorTemplate, undefined, {variable: 'ctx'});
+        }
     });
 });

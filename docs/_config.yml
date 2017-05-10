@@ -1,0 +1,9 @@
+repository: hpe-idol/find
+theme: jekyll-theme-midnight
+collections: 
+  customisation:
+    output: true
+  building:
+    output: true
+  configuration:
+    output: true

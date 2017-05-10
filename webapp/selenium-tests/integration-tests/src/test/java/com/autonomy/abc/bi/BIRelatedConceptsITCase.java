@@ -24,19 +24,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
+import java.util.AbstractSequentialList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assertThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
-import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
+import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.*;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.hasAttribute;
+import static org.hamcrest.Matchers.*;
 import static org.openqa.selenium.lift.Matchers.displayed;
 
 @Role(UserRole.BIFHI)
@@ -52,7 +48,7 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
 
     @Before
     public void setUp() {
-        elementFactory = (BIIdolFindElementFactory)getElementFactory();
+        elementFactory = (BIIdolFindElementFactory) getElementFactory();
         findService = getApplication().findService();
         findPage = elementFactory.getFindPage();
         findPage.goToListView();
@@ -71,19 +67,18 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
     @SuppressWarnings("FeatureEnvy")
     @Test
     public void testResultsCountGoesDownAfterAddingConcept() {
-        final int numberOfRepeats = 2;
-        final LinkedList<Integer> resultCountList = new LinkedList<>();
 
         final ListView results = searchAndWait("loathing");
 
         final int resultsCountNoConcept = results.getTotalResultsNum();
         assumeThat("Initial query returned no results", resultsCountNoConcept, greaterThan(0));
+        final AbstractSequentialList<Integer> resultCountList = new LinkedList<>();
         resultCountList.add(resultsCountNoConcept);
 
-        TopicMapView topicMap;
-        for(int i = 0; i < numberOfRepeats; ++i) {
-            topicMap = goToTopicMap();
-            topicMap.clickConceptAndAddText(topicMap.conceptClusterNames().size());
+        final int numberOfRepeats = 2;
+        for (int i = 0; i < numberOfRepeats; ++i) {
+            final TopicMapView topicMap = goToTopicMap();
+            topicMap.clickNthClusterHeading(0);
             Waits.loadOrFadeWait();
 
             findPage.goToListView();
@@ -92,18 +87,29 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
             resultCountList.add(results.getTotalResultsNum());
         }
 
-        for(int i = 0; i < resultCountList.size() - 1; ++i) {
+        for (int i = 0; i < resultCountList.size() - 1; ++i) {
             LOGGER.info("Search no. " + (i + 1) + " yielded " + resultCountList.get(i) + " results.");
             assertThat("Adding a concept does not increase the result count",
-                       resultCountList.get(i),
-                       greaterThanOrEqualTo(resultCountList.get(i + 1)));
+                    resultCountList.get(i),
+                    greaterThanOrEqualTo(resultCountList.get(i + 1)));
         }
+    }
+
+    @Test
+    public void editConceptToWhitespaceNotAllowed() {
+        final String concept = "cheese";
+        searchAndWait(concept);
+        final EditPopover popover = openEditPopOverForConcept(0, concept);
+        popover.setValue("");
+        verifyThat("Not possible to save concept as empty space", popover.saveButton(), hasAttribute("disabled"));
+        popover.setValue("\n     ");
+        verifyThat("Not possible to save concept as whitespace", popover.saveButton(), hasAttribute("disabled"));
+        popover.cancelEdit();
     }
 
     @Test
     public void testEditingASingleConcept() {
         final String originalConcept = "balloon";
-        final String editedConcept = "shiny";
 
         final ListView results = searchAndWait(originalConcept);
         final String firstResult = results.getResult(1).getTitleString();
@@ -118,6 +124,7 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
         verifyThat("Have not edited the concept", conceptsPanel.selectedConcepts().get(0), containsText(originalConcept));
 
         popOver = conceptsPanel.editConcept(0);
+        final String editedConcept = "shiny";
         popOver.setValue(editedConcept);
         popOver.saveEdit();
         verifyThat("Edit popover has closed", conceptsPanel.popOverGone());
@@ -138,13 +145,13 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
     //Assumes that "nefarioustrout" returns no results
     public void testQuotesInConcept() {
         final String termA = "trout";
-        final String termB = "nefarious";
 
         searchAndWait(termA);
         final ListView results = elementFactory.getListView();
         int numResults = results.getTotalResultsNum();
         conceptsPanel.removeAllConcepts();
 
+        final String termB = "nefarious";
         searchAndWait(termB);
         numResults = numResults + results.getTotalResultsNum();
         assertThat("There are some results when search terms are 'OR'ed", numResults, greaterThan(0));
@@ -155,7 +162,7 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
 
         EditPopover popOver = openEditPopOverForConcept(0, originalConcept);
 
-        popOver.setValueAndSave(Arrays.asList("\"" + termB, termA + "\""));
+        popOver.setValueAndSave(Arrays.asList('"' + termB, termA + '"'));
 
         results.waitForResultsToLoad();
         verifyThat("Converts the line break to a space and looks for an exact match", results.getTotalResultsNum(), is(0));
@@ -178,7 +185,7 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
 
         final EditPopover popOver = openEditPopOverForConcept(1, conceptCluster);
 
-        for(final String child : childConcepts) {
+        for (final String child : childConcepts) {
             verifyThat("Pop-over contains child: " + child, popOver.containsValue(child));
         }
 
@@ -187,7 +194,7 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
 
         DriverUtil.hover(getDriver(), conceptsPanel.selectedConcepts().get(1));
         final String text = conceptsPanel.toolTipText(1);
-        for(final String concept : newConcepts) {
+        for (final String concept : newConcepts) {
             verifyThat("Tool tip has added concept: " + concept, text, containsString(concept));
         }
     }
@@ -195,8 +202,8 @@ public class BIRelatedConceptsITCase extends IdolFindTestBase {
     @Test
     @ResolvedBug("FIND-686")
     public void testInlinePreviewClosesOnEdit() {
-        final String originalSearch = "face";
         findPage.goToListView();
+        final String originalSearch = "face";
         final ListView results = findService.search(originalSearch);
         results.waitForResultsToLoad();
 

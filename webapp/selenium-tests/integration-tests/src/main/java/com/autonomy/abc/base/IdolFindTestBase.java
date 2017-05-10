@@ -13,9 +13,8 @@ import java.util.Collections;
 
 @RunWith(Parameterized.class)
 public abstract class IdolFindTestBase extends TestBase<IdolFind <? extends IdolFindElementFactory>, IdolFindElementFactory> {
-
     protected IdolFindTestBase(final TestConfig config) {
-        super(config, IdolFind.withRole(UserRole.fromString(System.getProperty("userRole"))));
+        super(config, IdolFind.withRole(UserRole.activeRole()), UserRole.activeRole());
     }
 
     @Parameterized.Parameters

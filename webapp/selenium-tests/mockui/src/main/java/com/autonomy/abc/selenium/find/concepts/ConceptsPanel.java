@@ -6,6 +6,7 @@
 package com.autonomy.abc.selenium.find.concepts;
 
 import com.autonomy.abc.selenium.find.Container;
+import com.google.common.base.Function;
 import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.element.HPRemovable;
 import com.hp.autonomy.frontend.selenium.element.Removable;
@@ -17,13 +18,11 @@ import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -31,7 +30,7 @@ import java.util.stream.Collectors;
  */
 public class ConceptsPanel {
     private static final String SELECTED_RELATED_CONCEPT_CLASS = "selected-related-concept";
-    final By POPOVER_LOCATOR = By.cssSelector(".selected-concept-container .popover");
+    private static final By POPOVER_LOCATOR = By.cssSelector(".selected-concept-container .popover");
 
     private final WebElement panel;
     private final WebDriver driver;
@@ -64,7 +63,7 @@ public class ConceptsPanel {
      */
     public List<String> selectedConceptHeaders() {
         return selectedConcepts().stream()
-                .map(((Function<WebElement, String>)WebElement::getText).andThen(String::toLowerCase))
+                .map(WebElement::getText)
                 .collect(Collectors.toList());
     }
 
@@ -88,7 +87,7 @@ public class ConceptsPanel {
                 .filter(element -> element.getText().toLowerCase().contains(lowerCaseHeader))
                 .findFirst();
 
-        if(match.isPresent()) {
+        if (match.isPresent()) {
             return new HPRemovable(match.get(), driver);
         } else {
             throw new IllegalStateException("Concept not found");
@@ -101,7 +100,7 @@ public class ConceptsPanel {
     public void removeFirstConceptCluster() {
         final List<Removable> removables = selectedConceptRemovables();
 
-        if(removables.isEmpty()) {
+        if (removables.isEmpty()) {
             throw new IllegalStateException("There are no concepts to remove");
         } else {
             removables.get(0).removeAndWait();
@@ -109,10 +108,10 @@ public class ConceptsPanel {
     }
 
     public void removeAllConcepts() {
-        selectedConceptRemovables().stream().forEach(Removable::removeAndWait);
+        selectedConceptRemovables().forEach(Removable::removeAndWait);
     }
 
-    public EditPopover editPopover(final Removable concept) {
+    private EditPopover editPopover(final Removable concept) {
         concept.click();
 
         new WebDriverWait(driver, 5)
@@ -126,7 +125,7 @@ public class ConceptsPanel {
         //Necessary due to tooltip
         try {
             return editPopover(selectedConceptRemovables().get(i));
-        } catch(NoSuchElementException | TimeoutException | StaleElementReferenceException e) {
+        } catch (NoSuchElementException | TimeoutException | StaleElementReferenceException ignored) {
             return editPopover(selectedConceptRemovables().get(i));
         }
     }
@@ -151,37 +150,31 @@ public class ConceptsPanel {
 
         public void cancelEdit() {
             findElement(By.cssSelector(".edit-concept-cancel-button")).click();
-            new WebDriverWait(driver, 5).until(new ExpectedCondition<Boolean>() {
-                @Override
-                public Boolean apply(final WebDriver driver) {
-                    return popOverGone();
-                }
-            });
+            new WebDriverWait(driver, 5).until((Function<? super WebDriver, Boolean>) x -> popOverGone());
         }
 
         public void saveEdit() {
-            findElement(By.cssSelector(".edit-concept-confirm-button")).click();
-            new WebDriverWait(driver, 5).until(new ExpectedCondition<Boolean>() {
-                @Override
-                public Boolean apply(final WebDriver driver) {
-                    return popOverGone();
-                }
-            });
+            saveButton().click();
+            new WebDriverWait(driver, 5).until((Function<? super WebDriver, Boolean>) x -> popOverGone());
         }
 
-        public boolean containsValue(final String value) {
-            return editBox.getValue().replaceAll("\\s+", "").contains(value);
+        public WebElement saveButton() {
+            return findElement(By.cssSelector(".edit-concept-confirm-button"));
+        }
+
+        public boolean containsValue(final CharSequence value) {
+            return editBox.getValue().contains(value);
         }
 
         public void setValue(final String value) {
             editBox.setValue(value);
         }
 
-        public void setValueAndSave(final List<String> concepts) {
+        public void setValueAndSave(final Iterable<String> concepts) {
             editBox.clear();
             final WebElement box = editBox.getElement();
 
-            for(final String concept : concepts) {
+            for (final String concept : concepts) {
                 box.sendKeys(concept);
                 box.sendKeys(Keys.ENTER);
             }

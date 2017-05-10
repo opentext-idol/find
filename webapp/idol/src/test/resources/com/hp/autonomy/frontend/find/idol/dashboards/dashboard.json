@@ -1,0 +1,34 @@
+{
+  "dashboardName": "Default Dashboard",
+  "enabled": false,
+  "width": 3,
+  "height": 3,
+  "widgets": [{
+    "name": "Default Widget",
+    "type": "ClockWidget",
+    "x": 0,
+    "y": 0,
+    "width": 1,
+    "height": 1,
+    "widgetSettings": {}
+  }, {
+    "name": "star 769 (content type/author) 7 entries",
+    "type": "SunburstWidget",
+    "x": 0,
+    "y": 4,
+    "width": 5,
+    "height": 2,
+    "datasource": {
+      "source": "SavedSearch",
+      "config": {
+        "id": 769,
+        "type": "QUERY"
+      }
+    },
+    "widgetSettings": {
+      "firstField": "CONTENT-TYPE",
+      "secondField": "AUTHOR",
+      "maxLegendEntries": 7
+    }
+  }]
+}

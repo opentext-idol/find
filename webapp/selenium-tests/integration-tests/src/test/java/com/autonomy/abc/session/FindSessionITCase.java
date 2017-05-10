@@ -2,9 +2,9 @@ package com.autonomy.abc.session;
 
 import com.autonomy.abc.base.FindTestBase;
 import com.autonomy.abc.base.Role;
-import com.autonomy.abc.selenium.element.DocumentViewer;
 import com.autonomy.abc.selenium.find.FindService;
 import com.autonomy.abc.selenium.find.application.UserRole;
+import com.autonomy.abc.selenium.find.results.DocumentViewer;
 import com.autonomy.abc.selenium.find.results.FindResult;
 import com.autonomy.abc.selenium.find.results.ListView;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
@@ -61,15 +61,14 @@ public class FindSessionITCase extends FindTestBase {
 
         final DocumentViewer docViewer = searchResult.openDocumentPreview();
         final Frame frame = new Frame(getWindow(), docViewer.frame());
-        frame.activate();
-
-        verifyThat("Authentication Fail frame displayed correctly", frame.content(), allOf(
-                containsText("403"),
-                containsText("Authentication Failed"),
-                containsText("You do not have permission to view this page")
-        ));
-
-        frame.deactivate();
+        frame.operateOnContent(content -> {
+            verifyThat("Authentication Fail frame displayed correctly", content, allOf(
+                    containsText("403"),
+                    containsText("Authentication Failed"),
+                    containsText("You do not have permission to view this page")
+            ));
+            return null;
+        });
     }
 
     @Test

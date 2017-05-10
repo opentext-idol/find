@@ -1,29 +1,35 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'js-whatever/js/modal',
+    'underscore',
     'jquery',
+    'js-whatever/js/modal',
     'find/idol/app/page/search/comparison/search-to-compare-view',
     'find/idol/app/model/comparison/comparison-model',
     'find/app/model/saved-searches/saved-search-model',
     'text!find/idol/templates/comparison/compare-modal-footer.html',
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/idol/nls/comparisons',
-    'i18n!find/nls/bundle',
-    'underscore'
-], function(Modal, $, SearchToCompare, ComparisonModel, SavedSearchModel, compareModalFooter,
-            loadingSpinnerTemplate, comparisonsI18n, i18n, _) {
+    'i18n!find/nls/bundle'
+], function(_, $, Modal, SearchToCompare, ComparisonModel, SavedSearchModel, compareModalFooter,
+            loadingSpinnerTemplate, comparisonsI18n, i18n) {
     'use strict';
 
     function getSearchModelWithDefault(savedSearchCollection, queryStates) {
         return function(cid) {
-            var search = savedSearchCollection.get(cid);
+            let search = savedSearchCollection.get(cid);
 
-            if(search.isNew()) {
-                search = new SavedSearchModel(_.extend({title: search.get('title')}, SavedSearchModel.attributesFromQueryState(queryStates.get(cid))));
+            const queryState = queryStates.get(cid);
+            if (search.isNew() || queryState && !search.equalsQueryState(queryState)) {
+                search = new SavedSearchModel(
+                    _.extend(
+                        {title: search.get('title')},
+                        SavedSearchModel.attributesFromQueryState(queryState)
+                    )
+                );
             }
 
             return search;
@@ -36,13 +42,13 @@ define([
 
         initialize: function(options) {
             this.comparisonSuccessCallback = options.comparisonSuccessCallback;
-            var savedSearchCollection = options.savedSearchCollection;
-            var queryStates = options.queryStates;
-            var getSearchModel = getSearchModelWithDefault(savedSearchCollection, queryStates);
+            const savedSearchCollection = options.savedSearchCollection;
+            const queryStates = options.queryStates;
+            const getSearchModel = getSearchModelWithDefault(savedSearchCollection, queryStates);
 
             this.selectedId = null;
 
-            var initialSearch = getSearchModel(options.cid);
+            const initialSearch = getSearchModel(options.cid);
 
             this.searchToCompare = new SearchToCompare({
                 savedSearchCollection: savedSearchCollection,
@@ -61,14 +67,14 @@ define([
                     this.$loadingSpinner.removeClass('hide');
                     this.$confirmButton.prop('disabled', true);
 
-                    var secondSearch = getSearchModel(this.selectedId);
+                    const secondSearch = getSearchModel(this.selectedId);
 
-                    var searchModels = {
+                    const searchModels = {
                         first: initialSearch,
                         second: secondSearch
                     };
 
-                    var comparisonModel = ComparisonModel.fromModels(searchModels.first, searchModels.second);
+                    const comparisonModel = ComparisonModel.fromModels(searchModels.first, searchModels.second);
 
                     this.xhr = comparisonModel.save({}, {
                         success: _.bind(function() {
@@ -105,11 +111,15 @@ define([
         },
 
         remove: function() {
-            Modal.prototype.remove.call(this);
-
             if(this.xhr) {
                 this.xhr.abort();
             }
+
+            if(this.searchToCompare) {
+                this.searchToCompare.remove();
+            }
+
+            Modal.prototype.remove.call(this);
         }
     });
 });

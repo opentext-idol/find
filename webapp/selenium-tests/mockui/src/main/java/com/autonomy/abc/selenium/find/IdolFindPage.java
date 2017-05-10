@@ -9,6 +9,7 @@ import com.autonomy.abc.selenium.find.bi.MapView;
 import com.autonomy.abc.selenium.find.bi.SunburstView;
 import com.autonomy.abc.selenium.find.bi.TableView;
 import com.autonomy.abc.selenium.find.bi.TopicMapView;
+import com.autonomy.abc.selenium.find.bi.TrendingView;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
 import com.autonomy.abc.selenium.find.filters.FilterPanel;
 import com.autonomy.abc.selenium.find.filters.IdolFilterPanel;
@@ -108,6 +109,11 @@ public class IdolFindPage extends FindPage {
     public MapView goToMap() {
         goToTab(ViewTab.MAP);
         return new MapView(getDriver());
+    }
+
+    public TrendingView goToTrending() {
+        goToTab(ViewTab.TRENDING);
+        return new TrendingView(getDriver());
     }
 
     public SunburstView goToSunburst() {

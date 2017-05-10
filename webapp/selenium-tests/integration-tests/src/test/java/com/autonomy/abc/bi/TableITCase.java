@@ -82,8 +82,8 @@ public class TableITCase extends IdolFindTestBase {
         tableView = findPage.goToTable();
 
         final WebElement message = tableView.message();
-        final String correctMessage = "Could not display Table View: your search returned no parametric values";
         assertThat("Message appearing when no sunburst & search from Sunburst", message, displayed());
+        final String correctMessage = "Could not display Table View: your search returned no parametric values";
         verifyThat("Message is: " + correctMessage, message, containsText(correctMessage));
     }
 
@@ -97,6 +97,7 @@ public class TableITCase extends IdolFindTestBase {
         checkRowNumber(0);
     }
 
+    // TODO: test contains potentially unreasonable assumption of filter with 1 - 10 values
     @Test
     public void testTwoFieldsGiveCorrectTableValues() {
         tableView = elementFactory.getFindPage().goToTable();
@@ -111,15 +112,15 @@ public class TableITCase extends IdolFindTestBase {
         final String categoryName = filters.parametricField(goodCategory).filterCategoryName();
         final Map<String, Integer> filterCounts = getHighestResultCountForOtherFilters(goodCategory, categoryName);
         tableView.waitForTable();
-        DriverUtil.scrollIntoView(getDriver(), tableView.parametricSelectionDropdown(1).getElement());
-        tableView.parametricSelectionDropdown(1).select(WordUtils.capitalize(categoryName.toLowerCase()));
+        DriverUtil.scrollIntoView(getDriver(), tableView.firstParametricSelectionDropdown().getElement());
+        tableView.firstParametricSelectionDropdown().select(WordUtils.capitalize(categoryName.toLowerCase()));
         tableView.waitForTable();
 
-        for(final String key : filterCounts.keySet()) {
-            tableView.parametricSelectionDropdown(2).select(WordUtils.capitalize(key.toLowerCase()));
+        for(final Map.Entry<String, Integer> stringIntegerEntry : filterCounts.entrySet()) {
+            tableView.secondParametricSelectionDropdown().select(WordUtils.capitalize(stringIntegerEntry.getKey().toLowerCase()));
             tableView.waitForTable();
-            verifyThat("Number of columns is: " + tableView.columnCount() + " for main category " + categoryName + " with second category " + key
-                    , tableView.columnCount(), greaterThan(filterCounts.get(key)));
+            verifyThat("Number of columns is: " + tableView.columnCount() + " for main category " + categoryName + " with second category " + stringIntegerEntry.getKey()
+                    , tableView.columnCount(), greaterThan(stringIntegerEntry.getValue()));
         }
 
         checkRowNumber(goodCategory);
@@ -144,8 +145,8 @@ public class TableITCase extends IdolFindTestBase {
                 final String filterCat = cont.filterCategoryName();
                 if(!filterCat.equals(categoryName)) {
                     final Integer filterNum = filterCounts.get(filterCat);
-                    if(filterNum == null || filterNum < cont.getFilterNumber()) {
-                        filterCounts.put(filterCat, cont.getFilterNumber());
+                    if(filterNum == null || filterNum < cont.getFilterCount()) {
+                        filterCounts.put(filterCat, cont.getFilterCount());
                     }
                 }
             }
@@ -156,7 +157,7 @@ public class TableITCase extends IdolFindTestBase {
     }
 
     private void checkRowNumber(final int index) {
-        final int filterNumber = filters().parametricField(index).getFilterNumber();
+        final int filterNumber = filters().parametricField(index).getFilterCount();
         verifyThat("Number of rows equals number of filters in filter type (or max per page)",
                    tableView.rowCount(),
                    anyOf(is(NUMBER_PER_PAGE), is(filterNumber)));
@@ -241,12 +242,12 @@ public class TableITCase extends IdolFindTestBase {
         tableView.waitForTable();
 
         final FilterPanel filters = filters();
-        final String parametricSelectionFirst = tableView.getSelectedFieldName(1);
+        final String parametricSelectionFirst = tableView.getFirstSelectedFieldName();
 
         filters.parametricContainer(parametricSelectionFirst).getFilters().get(0).check();
 
         tableView.waitForTable();
-        assertThat("Parametric selection changed", tableView.getSelectedFieldName(1), not(Matchers.is(parametricSelectionFirst)));
+        assertThat("Parametric selection changed", tableView.getFirstSelectedFieldName(), not(Matchers.is(parametricSelectionFirst)));
     }
 
     @Test
@@ -256,10 +257,10 @@ public class TableITCase extends IdolFindTestBase {
 
         final int index = filters().nonZeroParamFieldContainer(0);
         final String firstParametric = filters().parametricField(index).filterCategoryName();
-        verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(tableView.getSelectedFieldName(1).toUpperCase()));
+        verifyThat("Default parametric selection is 1st parametric type", firstParametric, startsWith(tableView.getFirstSelectedFieldName().toUpperCase()));
 
-        tableView.parametricSelectionDropdown(2).open();
-        verifyThat("1st selected parametric does not appear as choice in 2nd", tableView.getParametricDropdownItems(2), not(contains(firstParametric)));
+        tableView.secondParametricSelectionDropdown().open();
+        verifyThat("1st selected parametric does not appear as choice in 2nd", tableView.getParametricDropdownItems(tableView.secondParametricSelectionDropdown()), not(contains(firstParametric)));
     }
 
     private void init(final String searchText) {

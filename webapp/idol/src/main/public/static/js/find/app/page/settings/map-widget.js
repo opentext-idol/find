@@ -1,16 +1,15 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'jquery',
+    'underscore',
     'settings/js/widget',
     'find/app/page/settings/enable-view',
     'text!find/templates/app/page/settings/widget.html',
-    'text!find/templates/app/page/settings/map-widget.html',
-    'underscore'
-], function($, Widget, EnableView, widgetTemplate, template, _) {
+    'text!find/templates/app/page/settings/map-widget.html'
+], function(_, Widget, EnableView, widgetTemplate, template) {
     'use strict';
 
     return Widget.extend({
@@ -28,7 +27,7 @@ define([
         },
 
         render: function() {
-            Widget.prototype.render.apply(this, arguments);
+            Widget.prototype.render.apply(this);
 
             this.$content.html(this.template({
                 strings: this.strings

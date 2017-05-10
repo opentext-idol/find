@@ -1,23 +1,94 @@
 <div class="find-navbar navbar navbar-static-top">
-    <span class="find-logo-small navbar-brand m-l-sm m-t-sm"></span>
     <% if(data.username) { %>
-        <span class="nav navbar-nav navbar-right navbar-username shorten"><%-data.username%></span>
+        <span class="nav navbar-nav navbar-right navbar-username shorten">
+            <%- data.username %>
+        </span>
     <% } %>
     <ul class="nav navbar-nav navbar-right drop-list">
         <li class="dropdown navbar-top-link">
-            <a class="dropdown-toggle clickable" data-toggle="dropdown"><i class="hp-icon hp-settings hp-fw"></i></a>
+            <a class="dropdown-toggle clickable" data-toggle="dropdown">
+                <i class="hp-icon hp-settings hp-fw"></i>
+            </a>
             <ul class="dropdown-menu" role="menu">
                 <% if(data.username) { %>
                     <li class="not-clickable">
-                        <a class="bold username shorten"><%- data.username %></a>
+                        <a class="bold username shorten">
+                            <%- data.username %>
+                        </a>
                     </li>
                     <li class="divider"></li>
                 <% } %>
-                <%= data.menuItems(data) %>
+                <%= data.menuItems({pages: data.pages.dropdown}) %>
                 <li>
-                    <a class="clickable navigation-logout"><i class="hp-icon hp-steps hp-fw text-muted"></i> <%-data.i18n['app.logout']%></a>
+                    <a class="clickable navigation-logout"><i class="hp-icon hp-steps hp-fw text-muted"></i> <%- data.i18n['app.logout'] %></a>
                 </li>
             </ul>
         </li>
     </ul>
+    <nav class="navbar-static-side-container nav-menu-btn-container-dark">
+        <div class="nav-menu-btn-container nav-menu-btn-container-dark nav-menu-btn-container-top-light">
+            <% if (data.pages.sidebar || data.pages.dashboards) { %>
+                <a class="nav-menu-toggle-btn" href="">
+                    <i class="hp-icon hp-menu-skinny"></i>
+                </a>
+            <% } %>
+            <span class="find-logo-small side-nav navbar-brand m-l-sm m-t-sm navbar-hidden"></span>
+        </div>
+        <% if (data.pages.sidebar || data.pages.dashboards || !_.isEmpty(data.applications)) { %>
+            <nav class="navbar-default navbar-static-side navbar-static-side-dark" role="navigation">
+                <ul class="nav side-menu metismenu">
+                    <li></li><% /* this is added to allow for the logo elements expects which we don't use. (logo goes here when implemented) */ %>
+                    <% _.each(data.pages.sidebar, function(page, index) { %>
+                        <li data-pagename="<%- page.pageName %>" <%- index === 0 ? 'class="active"' : '' %>>
+                            <a href="public/<%- page.pageName %>" data-pagename="<%- page.pageName %>">
+                                <i class="<%- page.icon %>"></i> <%- page.title %>
+                            </a>
+                        </li>
+                    <% }); %>
+                    <% if(data.pages.dashboards) { %>
+                        <li data-pagename="dashboards">
+                            <a>
+                                <i class="hp-icon hp-dashboard"></i>
+                                    <%- data.i18n['dashboards'] %>
+                                <i class="hp-icon hp-collapse arrow"></i>
+                            </a>
+                            <ul class="nav nav-second-level collapse">
+                                <% _.each(data.pages.dashboards, function(page, index) { %>
+                                    <li data-pagename="<%- page.pageName %>" <%- index === 0 ? 'class="active"' : '' %>>
+                                        <a href="public/<%- page.pageName %>" data-pagename="<%- page.pageName %>">
+                                            <i class="<%- page.icon %>"></i> <%- page.title %>
+                                        </a>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                        </li>
+                    <% } %>
+                    <% if (!_.isEmpty(data.applications)) { %>
+                        <li data-pagename="custom-applications">
+                            <a>
+                                <i class="hp-icon hp-app"></i>
+                                    <%- data.i18n['applications'] %>
+                                <i class="hp-icon hp-collapse arrow"></i>
+                            </a>
+                            <ul class="nav nav-second-level collapse">
+                                <% _.each(data.applications, function(app) { %>
+                                    <li>
+                                        <a href="<%= app.url %>" <%- app.openInNewTab ? 'target="_blank"' : '' %>>
+                                            <% if (app.icon) { %>
+                                                <i class="<%- 'hp-icon ' + app.icon %>"></i>
+                                            <% } %>
+                                            <%- app.applicationName %>
+                                            <% if (app.openInNewTab) { %>
+                                                <i class="fa fa-external-link"></i>
+                                            <% } %>
+                                        </a>
+                                    </li>
+                                <% }); %>
+                            </ul>
+                        </li>
+                    <% } %>
+                </ul>
+            </nav>
+        <% } %>
+    </nav>
 </div>

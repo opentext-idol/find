@@ -1,16 +1,26 @@
+/*
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'backbone',
     'jquery',
+    'backbone',
     'text!find/templates/app/page/search/filters/parametric/parametric-value-view.html'
-], function(Backbone, $, template) {
+], function($, Backbone, template) {
     'use strict';
 
     return Backbone.View.extend({
         className: 'parametric-value-element selectable-table-item clickable',
         tagName: 'tr',
 
-        initialize: function() {
-            this.$el.attr('data-value', this.model.id);
+        initialize: function(options) {
+            this.selectedValuesCollection = options.selectedValuesCollection;
+
+            this.$el.attr('data-value', this.model.get('value'));
+            this.$el.attr('data-display-value', this.model.get('displayValue'));
+
+            this.listenTo(this.selectedValuesCollection, 'update', this.updateSelected);
         },
 
         render: function() {
@@ -29,7 +39,7 @@ define([
         updateText: function() {
             this.$text.tooltip('destroy');
 
-            var name = this.model.get('displayName') || this.model.id;
+            const name = this.model.get('displayValue');
             this.$name.text(name);
 
             this.$text.tooltip({
@@ -41,26 +51,22 @@ define([
 
         updateCount: function() {
             if(this.$count) {
-                var count = this.model.get('count');
-
-                if(count !== null) {
-                    this.$count.text(' (' + count + ')');
-                } else {
-                    this.$count.text('');
-                }
+                const count = this.model.get('count');
+                this.$count.text(count === null
+                    ? ''
+                    : (' (' + count + ')'));
             }
         },
 
         updateSelected: function() {
             if(this.$check) {
-                this.$check.toggleClass('hide', !this.model.get('selected'));
+                this.$check.toggleClass('hide', !this.selectedValuesCollection.get(this.model.get('value')));
             }
         },
 
         remove: function() {
             this.$text.tooltip('destroy');
-
-            Backbone.View.prototype.remove.apply(this, arguments);
+            Backbone.View.prototype.remove.apply(this);
         }
     });
 });
