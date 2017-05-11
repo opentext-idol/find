@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -70,8 +70,8 @@ audio.preview-media-player {
 
   border: @nil;
   display: block;
-  width: @100percent;
-  height: @100percent;
+  width: 100%;
+  height: 100%;
   background-color: @white;
 }
 
@@ -95,7 +95,7 @@ audio.preview-media-player {
 }
 
 .preview-mode-document-url {
-  font-size: (@font-size-base - 1);
+  font-size: ~'calc(@{font-size-base} - 1px)';
   color: @grey6;
 }
 

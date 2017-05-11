@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -23,7 +23,7 @@
     }
 
     i.fa-comments-o {
-      font-size: calc(@fontSize * 2);
+      font-size: ~'calc(@{fontSize} * 2)';
     }
   }
 
@@ -57,11 +57,11 @@
   .inline-block;
 
   color: @grey6;
-  font-size: (@font-size-base - 1px);
+  font-size: ~'calc(@{font-size-base} - 1px)';
 }
 
 .document-reference.shorten {
-  width: @100percent;
+  width: 100%;
 }
 
 .document-thumbnail {

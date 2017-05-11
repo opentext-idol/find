@@ -1,12 +1,12 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 //This includes left side bar, time bar, parametric modal and anything related to search filtering
 
 .bootstrap-datetimepicker-widget {
-  font-size: @font-size-base - 1;
+  font-size: ~'calc(@{font-size-base} - 1px)';
 
   .timepicker {
     td {
@@ -134,7 +134,7 @@
 }
 
 .date > input {
-  font-size: @font-size-base - 1;
+  font-size: ~'calc(@{font-size-base} - 1px)';
   padding: @custom6 @nil @custom6 30px;
 }
 
@@ -173,7 +173,7 @@
 }
 
 .fields-list {
-  height: @100percent;
+  height: 100%;
   overflow: auto;
 }
 
@@ -200,7 +200,7 @@
   border-radius: @nil;
   border: solid 1px @grey13;
   color: @grey1;
-  font-size: @100percent;
+  font-size: 100%;
   font-weight: normal;
 
   span {
@@ -233,7 +233,7 @@
 
 .input-append,
 .input-prepend .date {
-  font-size: @100percent;
+  font-size: 100%;
 }
 
 .indexes-list-group {
@@ -251,7 +251,7 @@
 .left-side-applied-filters-view-title {
   display: inline-flex;
   flex-flow: row nowrap;
-  max-width: @100percent;
+  max-width: 100%;
 
   .shorten {
     .inline-block;
@@ -411,7 +411,7 @@
 
 .values-list {
   border-left: 1px solid @tableBorder;
-  height: @100percent;
+  height: 100%;
 
   .tab-pane {
     overflow-y: auto;
@@ -422,7 +422,7 @@
 .tab-content,
 .tab-pane,
 .full-height {
-  height: @100percent;
+  height: 100%;
 }
 
 //Media queries

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -7,20 +7,20 @@
   .no-overflow;
   .relative;
 
-  height: calc(100vh - @navBarHeight);
-  width: @100percent;
+  height: ~'calc(100vh - @{navBarHeight})';
+  width: 100%;
   overflow: hidden;
 
   .widgets {
     .relative;
 
-    height: calc(@100percent - 30px);
-    width: @100percent;
+    height: ~'calc(100% - 30px)';
+    width: 100%;
     overflow: hidden;
 
     &.fullscreen {
       background-color: #fafafa;
-      height: @100percent;
+      height: 100%;
       pointer-events: none;
 
       div {
@@ -75,11 +75,11 @@
 }
 
 .sunburst-visualizer-container {
-   height: 95%;
-   max-width: 60%;
-   min-width: 40%;
-   display: inline-block;
- }
+  height: 95%;
+  max-width: 60%;
+  min-width: 40%;
+  display: inline-block;
+}
 
 .sunburst-legend {
   .no-overflow;
@@ -162,8 +162,8 @@
 
     justify-content: center;
     align-content: center;
-    height: @100percent;
-    width: @100percent;
+    height: 100%;
+    width: 100%;
   }
 
   .widget-hover-title-container {
@@ -171,10 +171,10 @@
     .flex-column;
 
     justify-content: center;
-    z-index: calc(@widgetUpdateSpinnerZIndex - 1);
+    z-index: ~'calc(@{widgetUpdateSpinnerZIndex} - 1)';
     align-content: center;
-    height: @100percent;
-    width: @100percent;
+    height: 100%;
+    width: 100%;
     opacity: 0;
     transition: opacity .2s;
 
@@ -190,15 +190,15 @@
     .no-overflow;
     .flex-column;
 
-    width: @100percent;
-    height: @100percent;
+    width: 100%;
+    height: 100%;
 
-    z-index: calc(@widgetUpdateSpinnerZIndex - 1);
+    z-index: ~'calc(@{widgetUpdateSpinnerZIndex} - 1)';
     justify-content: center;
     align-items: center;
 
     i {
-      font-size: calc(2 * @fontSizeXXLarge);
+      font-size: ~'calc(2 * @{fontSizeXXLarge})';
       margin-bottom: 10px;
     }
 
@@ -212,7 +212,7 @@
 
     flex: 1 0 80%;
 
-    z-index: calc(@widgetUpdateSpinnerZIndex - 1);
+    z-index: ~'calc(@{widgetUpdateSpinnerZIndex} - 1)';
     h2 {
       font-size: 1.5vw;
     }
@@ -259,7 +259,7 @@
 
       &.results-list-row {
         flex-direction: column;
-        max-height: @100percent;
+        max-height: 100%;
       }
 
       &.results-list-column {
@@ -281,7 +281,7 @@
       .crisp-edges;
 
       background: no-repeat center;
-      height: @100percent;
+      height: 100%;
       background-size: contain;
     }
 
@@ -289,13 +289,13 @@
       .relative;
 
       background-color: transparent;
-      height: @100percent;
+      height: 100%;
 
       video {
         .absolute;
 
-        width: @100percent;
-        height: @100percent;
+        width: 100%;
+        height: 100%;
       }
     }
   }

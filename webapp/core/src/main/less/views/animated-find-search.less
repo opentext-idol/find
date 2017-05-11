@@ -1,12 +1,12 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 .animated-container {
   .absolute;
 
-  top: (10px - @navBarHeight);
+  top: ~'calc(10px - @{navBarHeight})';
   transition: @transitAll;
 
   .find-form {
@@ -22,7 +22,7 @@
 }
 
 .find-banner-container {
-  background: @green2 url('../img/Find_banner.png');
+  background: @green2 url('../static-@{gitCommitHash}/img/Find_banner.png');
   height: 125px;
 }
 
@@ -40,7 +40,7 @@
 .find-logo-large {
   .inline-block;
 
-  background: url('../img/Find_Logo_lge.png') no-repeat;
+  background: url('../static-@{gitCommitHash}/img/Find_Logo_lge.png') no-repeat;
   color: @blue1;
   font-size: 90px;
   height: 45px;
@@ -49,7 +49,7 @@
 }
 
 .find-logo-small {
-  background: url('../img/Find_Logo_sml.png') no-repeat 0 50%/100px 20px;
+  background: url('../static-@{gitCommitHash}/img/Find_Logo_sml.png') no-repeat 0 50%/100px 20px;
   height: 20px;
   width: 100px;
   &.side-nav {
@@ -60,10 +60,10 @@
 }
 
 .hp-logo-footer {
-  background: url('../img/HPE_logo.png') no-repeat center/140px 55px;
+  background: url('../static-@{gitCommitHash}/img/HPE_logo.png') no-repeat center/140px 55px;
   bottom: 20px;
   height: 55px;
-  left: calc(50% - @custom8);
+  left: ~'calc(50% - @{custom8})';
   position: fixed;
   width: 140px;
 }
@@ -108,7 +108,7 @@
 //Media queries
 @media @xsmWidthScreen {
   .reverse-animated-container .find-form {
-    width: @100percent;
+    width: 100%;
   }
 }
 

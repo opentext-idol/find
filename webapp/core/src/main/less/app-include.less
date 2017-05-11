@@ -61,7 +61,7 @@
 }
 
 .container-fluid {
-  height: calc(@100percent - @navBarHeight);
+  height: ~'calc(100% - @{navBarHeight})';
 }
 
 .container-fluid.reduced {
@@ -97,12 +97,12 @@
 }
 
 .entity-topic-map {
-  width: @100percent;
-  height: @100percent;
+  width: 100%;
+  height: 100%;
 }
 
 .entity-topic-map.fixed-height {
-  height: calc(100vh - 265px);
+  height: ~'calc(100vh - 265px)';
 }
 
 .error-body h1,
@@ -130,7 +130,7 @@
 
 .fixed-height-modal {
   .modal-body {
-    height: calc(@100percent - 120px);
+    height: ~'calc(100% - 120px)';
     overflow-y: auto;
   }
 }
@@ -148,7 +148,7 @@ h4.similar-dates-message {
 }
 
 .left-side-container {
-  font-size: @font-size-base - 1;
+  font-size: ~'calc(@{font-size-base} - 1px)';
 }
 
 .main-results-container {
@@ -158,7 +158,7 @@ h4.similar-dates-message {
   .p-r-sm;
 
   border-bottom: 1px solid @secondary-hover;
-  width: @100percent;
+  width: 100%;
 }
 
 .metadata-table {
@@ -189,7 +189,7 @@ h4.similar-dates-message {
     color: @hpegreen-hover;
     font-size: @fontSizeLarge;
     font-weight: bold;
-    width: @100percent;
+    width: 100%;
   }
 }
 
@@ -199,19 +199,19 @@ h4.similar-dates-message {
   .p-l;
   .p-r;
 
-  height: @100percent;
+  height: 100%;
   overflow-y: auto;
 }
 
 .middle-container.middle-container-with-time-bar {
   .middle-container-contents {
-    height: calc(@100percent - 240px);
+    height: ~'calc(100% - 240px)';
   }
 }
 
 .middle-container.shorten {
   h4 {
-    width: @100percent;
+    width: 100%;
   }
 }
 
@@ -244,11 +244,11 @@ h4.similar-dates-message {
 .query-service-view {
   .flex;
 
-  height: calc(@100vh - @navBarHeight);
+  height: ~'calc(100vh - @{navBarHeight})';
 }
 
 .query-service-view.bi-query-service-view {
-  height: calc(@100vh - @navBarHeight - @searchTabsHeight - 58px);
+  height: ~'calc(100vh - @{navBarHeight} - @{searchTabsHeight} - 58px)';
 }
 
 .result-container-control {
@@ -292,8 +292,8 @@ h4.similar-dates-message {
 }
 
 .service-view-container {
-  height: calc(@100vh - @navBarHeight);
-  width: @100percent;
+  height: ~'calc(100vh - @{navBarHeight})';
+  width: 100%;
 
   .hp-check {
     color: @green1;
@@ -327,7 +327,7 @@ h4.similar-dates-message {
 .service-view-flex-container {
   .flex;
 
-  min-height: @100percent;
+  min-height: 100%;
 }
 
 .side-container.small-container {
@@ -373,7 +373,7 @@ h4.similar-dates-message {
 
 .sunburst {
   height: @sunburstHeight;
-  width: @100percent;
+  width: 100%;
 }
 
 .sunburst-sector-name {
