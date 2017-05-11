@@ -6,9 +6,13 @@ import com.hp.autonomy.frontend.configuration.BaseConfigFileService;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 @Service
 public class TemplatesConfigService extends BaseConfigFileService<TemplatesConfig>{
-    public TemplatesConfigService() {
+    public TemplatesConfigService() throws IOException {
         final ObjectMapper objectMapper = new Jackson2ObjectMapperBuilder()
                 .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
                 .createXmlMapper(false)
@@ -18,6 +22,12 @@ public class TemplatesConfigService extends BaseConfigFileService<TemplatesConfi
         setConfigFileLocation(FindConfigFileService.CONFIG_FILE_LOCATION);
         setConfigFileName("customization/templates/templates.json");
         setDefaultConfigFile("/defaultTemplatesConfigFile.json");
+    }
+
+    @Override
+    public void init() throws Exception {
+        Files.createDirectories(Paths.get(getConfigFileLocation()).getParent());
+        super.init();
     }
 
     @Override
