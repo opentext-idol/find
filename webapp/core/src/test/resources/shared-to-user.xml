@@ -11,4 +11,6 @@
     <shared_to_user search_id="1" user_id="2" can_edit="true"/>
     <shared_to_user search_id="2" user_id="2" can_edit="true"/>
     <shared_to_user search_id="1" user_id="4" can_edit="true"/>
+    <shared_to_user search_id="2" user_id="4" can_edit="true"/>
+    <shared_to_user search_id="3" user_id="4" can_edit="true"/>
 </dataset>

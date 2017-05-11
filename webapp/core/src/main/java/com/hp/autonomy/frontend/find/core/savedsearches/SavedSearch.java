@@ -119,6 +119,9 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     @Column(name = Table.Column.MIN_SCORE, nullable = false)
     private Integer minScore = 0;
 
+    @Transient
+    private boolean canEdit = true;
+
     protected SavedSearch(final Builder<?, ?> builder) {
         id = builder.id;
         title = builder.title;
@@ -133,6 +136,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         dateRange = builder.dateRange;
         active = builder.active;
         minScore = builder.minScore;
+        canEdit = builder.canEdit;
     }
 
     /**
@@ -285,6 +289,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         private DateRange dateRange;
         private Boolean active = true;
         private Integer minScore;
+        private Boolean canEdit;
 
         protected Builder(final SavedSearch<T, B> search) {
             id = search.id;
@@ -300,6 +305,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             dateRange = search.dateRange;
             active = search.active;
             minScore = search.minScore;
+            canEdit = search.canEdit;
         }
 
         public abstract T build();
@@ -368,6 +374,11 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
 
         public Builder<T, B> setMinScore(final Integer minScore) {
             this.minScore = minScore;
+            return this;
+        }
+
+        public Builder<T, B> setCanEdit(final Boolean canEdit) {
+            this.canEdit = canEdit;
             return this;
         }
     }

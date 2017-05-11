@@ -4,6 +4,7 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryRepository;
+import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,8 +168,14 @@ public class SharedToUserRepositoryTest {
     }
 
     @Test
-    public void findPermittedSearchesByUserId() {
-        final Set<SharedToUser> searchesSharedWithNamedUser = repository.findByUser_UserIdAndSavedSearch_ActiveTrue(2L);
+    public void findPermittedSavedQueriesByUserId() {
+        final Set<SharedToUser> searchesSharedWithNamedUser = repository.findByUserId(4L, SavedQuery.class);
+        assertThat(searchesSharedWithNamedUser.size(), is(1));
+    }
+
+    @Test
+    public void findPermittedSavedSnapshotByUserId() {
+        final Set<SharedToUser> searchesSharedWithNamedUser = repository.findByUserId(4L, SavedSnapshot.class);
         assertThat(searchesSharedWithNamedUser.size(), is(1));
     }
 
