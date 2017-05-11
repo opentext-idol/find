@@ -1,7 +1,12 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'backbone',
     'underscore',
     'jquery',
+    'backbone',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'find/app/vent',
@@ -16,13 +21,13 @@ define([
     'text!find/templates/app/page/search/document/view-mode-document.html',
     'text!find/templates/app/page/search/document/view-media-player.html',
     'text!css/result-highlighting.css'
-], function(Backbone, _, $, i18n, i18nIndexes, vent, viewClient, DocumentModel, configuration, databaseNameResolver, events, urlManipulator, template, metaDataTemplate,
+], function(_, $, Backbone, i18n, i18nIndexes, vent, viewClient, DocumentModel, configuration,
+            databaseNameResolver, events, urlManipulator, template, metaDataTemplate,
             documentTemplate, mediaTemplate, highlightingRule) {
-
     'use strict';
 
     function highlighting(innerWindow) {
-        var styleEl = innerWindow.createElement('style');
+        const styleEl = innerWindow.createElement('style');
 
         // Append style element to iframe document head
         innerWindow.head.appendChild(styleEl);
@@ -41,7 +46,7 @@ define([
         events: {
             'click .preview-mode-open-detail-button': 'openDocumentDetail',
             'click .preview-mode-highlight-query-terms': 'toggleHighlighting',
-            'click .preview-mode-mmap-button': function () {
+            'click .preview-mode-mmap-button': function() {
                 this.mmapTab.open(this.model.attributes);
             },
             'click .close-preview-mode': 'triggerClose'
@@ -53,9 +58,9 @@ define([
             this.highlightingModel = new Backbone.Model({highlighting: false});
             this.mmapTab = options.mmapTab;
 
-            var queryText = options.queryText;
+            const queryText = options.queryText;
 
-            if (queryText !== '*') {
+            if(queryText !== '*') {
                 this.queryText = queryText;
             }
 
@@ -68,13 +73,13 @@ define([
         },
 
         render: function() {
-            var href;
-            if (this.model.get('url')) {
+            let href;
+            if(this.model.get('url')) {
                 href = urlManipulator.addSpecialUrlPrefix(this.model.get('contentType'), this.model.get('url'));
             }
 
-            var referenceKey = this.model.get('url') ? 'url' : 'reference';
-            var reference = this.model.get(referenceKey);
+            const referenceKey = this.model.get('url') ? 'url' : 'reference';
+            let reference = this.model.get(referenceKey);
 
             this.$el.html(this.template({
                 i18n: i18n,
@@ -91,9 +96,10 @@ define([
                 this.$highlightToggle.toggleClass('active', this.highlightingModel.get('highlighting'));
             }, this));
 
-
             this.$('.preview-mode-document-title').prepend(this.model.get('title'));
-            this.$('.preview-mode-document-database').text(databaseNameResolver.getDatabaseDisplayNameFromDocumentModel(this.indexesCollection, this.model));
+            this.$('.preview-mode-document-database').text(
+                databaseNameResolver.getDatabaseDisplayNameFromDocumentModel(this.indexesCollection, this.model)
+            );
             this.$('.preview-mode-document-url').text(reference).toggleClass('hide', !reference);
 
             //noinspection JSUnresolvedFunction
@@ -103,9 +109,9 @@ define([
                 model: this.model,
             }));
 
-            var $preview = this.$('.preview-mode-document');
+            const $preview = this.$('.preview-mode-document');
 
-            if (this.model.isMedia()) {
+            if(this.model.isMedia()) {
                 $preview.html(this.mediaTemplate({
                     i18n: i18n,
                     model: this.model
@@ -115,26 +121,26 @@ define([
                     i18n: i18n
                 }));
 
-                var $iframe = this.$('.preview-document-frame');
+                const $iframe = this.$('.preview-document-frame');
 
                 $iframe.on('load', _.bind(function() {
                     // Cannot execute scripts in iframe or detect error event, so look for attribute on html
-                    if ($iframe.contents().find('html').data('hpeFindAuthError')) {
+                    if($iframe.contents().find('html').data('hpeFindAuthError')) {
                         window.location.reload();
                     }
 
                     this.$('.view-server-loading-indicator').addClass('hidden');
                     $iframe.removeClass('hidden');
 
-                    var $contents = $iframe.contents();
+                    const $contents = $iframe.contents();
 
                     // View server adds script tags to rendered HTML documents, which are blocked by the application
                     // This replicates their functionality
                     $contents.find('.InvisibleAbsolute').hide();
 
-                    var $contentDocument = $contents[0];
+                    const $contentDocument = $contents[0];
 
-                    if (this.highlighting) {
+                    if(this.highlighting) {
                         highlighting($contentDocument);
                     }
 
@@ -144,7 +150,11 @@ define([
                 }, this));
 
                 // The src attribute has to be added retrospectively to avoid a race condition
-                var src = viewClient.getHref(this.model.get('reference'), this.model, this.highlighting ? this.queryText : null);
+                const src = viewClient.getHref(this.model.get('reference'),
+                    this.model,
+                    this.highlighting
+                        ? this.queryText
+                        : null);
                 $iframe.attr('src', src);
             }
 
@@ -152,7 +162,7 @@ define([
         },
 
         pauseMedia: function() {
-            if (this.model.get('media') === 'video' || this.model.get('media') === 'audio') {
+            if(this.model.get('media') === 'video' || this.model.get('media') === 'audio') {
                 this.$('.preview-media-player').get(0).pause();
             }
         },
@@ -169,8 +179,8 @@ define([
         },
 
         updateHighlighting: function() {
-            this.$contentDocumentBody.toggleClass('haven-search-view-document-highlighting-on', this.highlightingModel.get('highlighting'));
+            this.$contentDocumentBody.toggleClass('haven-search-view-document-highlighting-on',
+                this.highlightingModel.get('highlighting'));
         }
     });
-
 });

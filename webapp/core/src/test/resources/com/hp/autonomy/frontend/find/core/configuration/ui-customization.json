@@ -8,8 +8,14 @@
       "bi": true
     }
   },
-  "parametricNeverShow": ["A_CLEAN_NUMERIC_FIELD"],
-  "parametricAlwaysShow": ["AUTN_DATE", "A_CLEAN_NUMERIC_FIELD", "DOCUMENT/SOME_DATE"],
+  "parametricNeverShow": [
+    "A_CLEAN_NUMERIC_FIELD"
+  ],
+  "parametricAlwaysShow": [
+    "AUTN_DATE",
+    "A_CLEAN_NUMERIC_FIELD",
+    "DOCUMENT/SOME_DATE"
+  ],
   "parametricOrder": [],
   "specialUrlPrefixes": {
     "application/msword": "ms-word:ofv|u|"

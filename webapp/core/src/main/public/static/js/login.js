@@ -1,18 +1,18 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 require(['require-config'], function() {
+    'use strict';
+
     require([
+        'underscore',
         'login-page/js/login',
         'text!find/templates/app/page/login/login.html',
-        'i18n!find/nls/bundle',
-        'underscore'
-    ], function(Login, template, i18n, _) {
-        'use strict';
-
-        var FindLogin = Login.extend({
+        'i18n!find/nls/bundle'
+    ], function(_, Login, template, i18n) {
+        const FindLogin = Login.extend({
             template: _.template(template),
             controlGroupClass: 'form-group',
             errorClass: 'has-error'
