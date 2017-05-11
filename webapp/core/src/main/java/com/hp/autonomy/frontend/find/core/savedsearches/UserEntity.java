@@ -7,6 +7,8 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -36,8 +38,10 @@ import java.util.UUID;
 @Entity
 @Table(name = UserEntity.Table.NAME)
 @Data
+@Builder
 @EqualsAndHashCode(exclude = {"searches", "userId"})
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserEntity {
     @Id
     @Column(name = Table.Column.USER_ID)

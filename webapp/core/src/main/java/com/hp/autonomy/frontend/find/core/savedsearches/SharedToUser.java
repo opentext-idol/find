@@ -5,6 +5,10 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +21,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
-import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 import static com.hp.autonomy.frontend.find.core.savedsearches.SharedToUser.Table.NAME;
@@ -29,9 +32,8 @@ import static com.hp.autonomy.frontend.find.core.savedsearches.SharedToUser.Tabl
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SharedToUser implements Serializable {
-    private static final long serialVersionUID = 5810410840618727845L;
-
+@JsonDeserialize(builder = SharedToUser.SharedToUserBuilder.class)
+public class SharedToUser {
     @EmbeddedId
     public SharedToUserPK id;
 
@@ -53,6 +55,25 @@ public class SharedToUser implements Serializable {
 
     @Column(name = Table.Column.MODIFIED_DATE)
     private ZonedDateTime modifiedDate;
+
+    @SuppressWarnings({"WeakerAccess", "unused"})
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class SharedToUserBuilder {
+        private SavedSearch<?, ?> savedSearch;
+        private UserEntity user;
+
+        @JsonProperty("searchId")
+        public SharedToUserBuilder searchId(final Long searchId) {
+            savedSearch = new SavedQuery.Builder().setId(searchId).build();
+            return this;
+        }
+
+        @JsonProperty("userId")
+        public SharedToUserBuilder userId(final Long userId) {
+            user = UserEntity.builder().userId(userId).build();
+            return this;
+        }
+    }
 
     public interface Table {
         String NAME = "shared_to_user";
