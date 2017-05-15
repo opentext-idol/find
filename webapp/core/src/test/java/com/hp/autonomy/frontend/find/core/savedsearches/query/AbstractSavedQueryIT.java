@@ -7,14 +7,13 @@ package com.hp.autonomy.frontend.find.core.savedsearches.query;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
 import org.apache.commons.io.IOUtils;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +27,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -45,8 +45,10 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@SuppressWarnings("SpringJavaAutowiringInspection")
 public abstract class AbstractSavedQueryIT extends AbstractFindIT {
-    private static final TypeReference<Set<SavedQuery>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedQuery>>() {};
+    private static final TypeReference<Set<SavedQuery>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedQuery>>() {
+    };
 
     private static final String TITLE = "Any old saved search";
     private static final String PRIMARY_PHRASE = "manhattan";
@@ -55,13 +57,11 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired
-    protected DataSource dataSource;
+    private DataSource dataSource;
 
-    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired
-    protected MvcIntegrationTestUtils integrationTestUtils;
+    private MvcIntegrationTestUtils integrationTestUtils;
 
     @Value("classpath:save-query-request.json")
     private Resource saveQueryRequestResource;
@@ -69,7 +69,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     private JdbcTemplate jdbcTemplate;
 
     protected AbstractSavedQueryIT() {
-        mapper.registerModule(new JodaModule());
+        mapper.registerModule(new JavaTimeModule());
     }
 
     @PostConstruct
@@ -202,13 +202,13 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         final SavedQuery savedQuery = createAndParseSavedQuery(inputSavedQuery);
 
         assertNotNull(savedQuery.getId());
-        assertThat(savedQuery.getDateCreated(), isA(DateTime.class));
-        assertThat(savedQuery.getDateModified(), isA(DateTime.class));
-        assertTrue(savedQuery.getDateCreated().isEqual(savedQuery.getDateModified().toInstant()));
+        assertThat(savedQuery.getDateCreated(), isA(ZonedDateTime.class));
+        assertThat(savedQuery.getDateModified(), isA(ZonedDateTime.class));
+        assertTrue(savedQuery.getDateCreated().isEqual(savedQuery.getDateModified()));
 
         // Safe to assume completed in an hour
         // TODO: mock out the datetime service used by spring auditing to check this properly
-        assertTrue(savedQuery.getDateCreated().plusHours(1).isAfterNow());
+        assertTrue(savedQuery.getDateCreated().plusHours(1).isAfter(ZonedDateTime.now()));
 
         savedQuery.setConceptClusterPhrases(Collections.singleton(new ConceptClusterPhrase("*", true, -1)));
 
@@ -220,9 +220,9 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
 
         final SavedQuery updatedSavedQuery = updateAndParseSavedQuery(savedQueryUpdate);
 
-        assertThat(updatedSavedQuery.getDateCreated(), isA(DateTime.class));
-        assertThat(updatedSavedQuery.getDateModified(), isA(DateTime.class));
-        assertTrue(updatedSavedQuery.getDateModified().isAfter(savedQuery.getDateCreated().toInstant()));
+        assertThat(updatedSavedQuery.getDateCreated(), isA(ZonedDateTime.class));
+        assertThat(updatedSavedQuery.getDateModified(), isA(ZonedDateTime.class));
+        assertTrue(updatedSavedQuery.getDateModified().isAfter(savedQuery.getDateCreated()));
     }
 
     @Test
@@ -256,7 +256,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .build();
 
         final SavedQuery saveRequest2 = new SavedQuery.Builder()
-                .setDateDocsLastFetched(DateTime.now())
+                .setDateDocsLastFetched(ZonedDateTime.now())
                 .setTitle("title2")
                 .setMinScore(0)
                 .setIndexes(indexes)

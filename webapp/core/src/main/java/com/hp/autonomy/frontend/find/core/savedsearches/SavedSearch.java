@@ -11,11 +11,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
-import org.jadira.usertype.dateandtime.joda.PersistentDateTime;
-import org.joda.time.DateTime;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -39,6 +34,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -56,11 +52,8 @@ import static java.util.stream.Collectors.toList;
 @Data
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@TypeDefs(@TypeDef(name = SavedSearch.JADIRA_TYPE_NAME, typeClass = PersistentDateTime.class))
 @Access(AccessType.FIELD)
 public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSearch.Builder<T, B>> {
-    public static final String JADIRA_TYPE_NAME = "jadira";
-
     @Id
     @Column(name = Table.Column.ID)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -92,22 +85,18 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     private Set<ConceptClusterPhrase> conceptClusterPhrases;
 
     @Column(name = Table.Column.START_DATE)
-    @Type(type = JADIRA_TYPE_NAME)
-    private DateTime minDate;
+    private ZonedDateTime minDate;
 
     @Column(name = Table.Column.END_DATE)
-    @Type(type = JADIRA_TYPE_NAME)
-    private DateTime maxDate;
+    private ZonedDateTime maxDate;
 
     @CreatedDate
     @Column(name = Table.Column.CREATED_DATE)
-    @Type(type = JADIRA_TYPE_NAME)
-    private DateTime dateCreated;
+    private ZonedDateTime dateCreated;
 
     @LastModifiedDate
     @Column(name = Table.Column.MODIFIED_DATE)
-    @Type(type = JADIRA_TYPE_NAME)
-    private DateTime dateModified;
+    private ZonedDateTime dateModified;
 
     @Transient
     private DateRange dateRange;
@@ -269,6 +258,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     @NoArgsConstructor
     @Getter
     public abstract static class Builder<T extends SavedSearch<T, B>, B extends Builder<T, B>> {
@@ -278,10 +268,10 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         private Set<FieldAndValue> parametricValues;
         private Set<ParametricRange> parametricRanges;
         private Set<ConceptClusterPhrase> conceptClusterPhrases;
-        private DateTime minDate;
-        private DateTime maxDate;
-        private DateTime dateCreated;
-        private DateTime dateModified;
+        private ZonedDateTime minDate;
+        private ZonedDateTime maxDate;
+        private ZonedDateTime dateCreated;
+        private ZonedDateTime dateModified;
         private DateRange dateRange;
         private Boolean active = true;
         private Integer minScore;
@@ -334,24 +324,24 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             return this;
         }
 
-        public Builder<T, B> setMinDate(final DateTime minDate) {
+        public Builder<T, B> setMinDate(final ZonedDateTime minDate) {
             this.minDate = minDate;
             return this;
         }
 
-        public Builder<T, B> setMaxDate(final DateTime maxDate) {
+        public Builder<T, B> setMaxDate(final ZonedDateTime maxDate) {
             this.maxDate = maxDate;
             return this;
         }
 
         @SuppressWarnings("unused")
-        public Builder<T, B> setDateCreated(final DateTime dateCreated) {
+        public Builder<T, B> setDateCreated(final ZonedDateTime dateCreated) {
             this.dateCreated = dateCreated;
             return this;
         }
 
         @SuppressWarnings("unused")
-        public Builder<T, B> setDateModified(final DateTime dateModified) {
+        public Builder<T, B> setDateModified(final ZonedDateTime dateModified) {
             this.dateModified = dateModified;
             return this;
         }

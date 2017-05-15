@@ -16,7 +16,6 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.apache.commons.collections4.CollectionUtils;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
@@ -87,8 +87,8 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
         int newResults = 0;
 
         final SavedQuery savedQuery = service.get(id);
-        final DateTime dateDocsLastFetched = savedQuery.getDateDocsLastFetched();
-        if(savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
+        final ZonedDateTime dateDocsLastFetched = savedQuery.getDateDocsLastFetched();
+        if (savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
             final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                     .queryText(savedQuery.toQueryText())
                     .fieldText(fieldTextParser.toFieldText(savedQuery))
@@ -113,8 +113,8 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
 
     private Collection<S> convertEmbeddableIndexes(final Iterable<EmbeddableIndex> embeddableIndexes) {
         final Collection<S> indexes = new ArrayList<>(CollectionUtils.size(embeddableIndexes));
-        if(embeddableIndexes != null) {
-            for(final EmbeddableIndex embeddableIndex : embeddableIndexes) {
+        if (embeddableIndexes != null) {
+            for (final EmbeddableIndex embeddableIndex : embeddableIndexes) {
                 indexes.add(convertEmbeddableIndex(embeddableIndex));
             }
         }

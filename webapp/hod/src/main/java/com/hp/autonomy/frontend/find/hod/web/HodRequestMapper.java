@@ -17,10 +17,10 @@ import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Component
@@ -66,9 +66,9 @@ class HodRequestMapper extends AbstractRequestMapper<HodQueryRequest> {
         @JsonProperty("indexes")
         private List<ResourceIdentifier> databases;
         @JsonProperty("min_date")
-        private DateTime minDate;
+        private ZonedDateTime minDate;
         @JsonProperty("max_date")
-        private DateTime maxDate;
+        private ZonedDateTime maxDate;
         @JsonProperty("min_score")
         private Integer minScore;
     }

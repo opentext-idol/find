@@ -2,7 +2,6 @@ package com.hp.autonomy.frontend.find.idol.search;
 
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -10,6 +9,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.time.ZonedDateTime;
 import java.util.Collection;
 
 @Component
@@ -55,13 +55,13 @@ class FindIdolQueryRestrictionsBuilder implements IdolQueryRestrictionsBuilder {
     }
 
     @Override
-    public FindIdolQueryRestrictionsBuilder minDate(final DateTime minDate) {
+    public FindIdolQueryRestrictionsBuilder minDate(final ZonedDateTime minDate) {
         defaultBuilder.minDate(minDate);
         return this;
     }
 
     @Override
-    public FindIdolQueryRestrictionsBuilder maxDate(final DateTime maxDate) {
+    public FindIdolQueryRestrictionsBuilder maxDate(final ZonedDateTime maxDate) {
         defaultBuilder.maxDate(maxDate);
         return this;
     }
