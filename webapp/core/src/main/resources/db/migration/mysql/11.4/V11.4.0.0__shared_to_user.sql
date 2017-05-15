@@ -8,7 +8,7 @@
 -- Target Version: 11.4.0.0
 --------------------------------------------*/
 
-SET SCHEMA find;
+USE find;
 
 CREATE TABLE shared_to_users
 (
@@ -17,7 +17,7 @@ CREATE TABLE shared_to_users
   shared_date   DATETIME,
   modified_date DATETIME,
   can_edit      BIT    NOT NULL
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE INDEX ix__shared_to_users__search_id ON shared_to_users (search_id);
 CREATE INDEX ix__shared_to_users__user_id ON shared_to_users (user_id);
