@@ -54,7 +54,7 @@ class IdolFieldsController extends FieldsController<IdolFieldsRequest, AciErrorE
 
     @RequestMapping(value = GET_PARAMETRIC_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public List<FieldAndValueDetails> getParametricFields(@RequestParam(FIELD_TYPES_PARAM) final Collection<FieldTypeParam> fieldTypes) throws AciErrorException {
+    public List<FieldAndValueDetails<?>> getParametricFields(@RequestParam(FIELD_TYPES_PARAM) final Collection<FieldTypeParam> fieldTypes) throws AciErrorException {
         return getParametricFields(fieldsRequestBuilderFactory.getObject()
                 .fieldTypes(fieldTypes)
                 .build());

@@ -22,6 +22,8 @@ import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -66,7 +68,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
      */
     protected abstract Q createValueDetailsQueryRestrictions(R request);
 
-    protected List<FieldAndValueDetails> getParametricFields(final R request) throws E {
+    protected List<FieldAndValueDetails<?>> getParametricFields(final R request) throws E {
         final Predicate<TagName> predicate = alwaysAndNeverShowFilter();
         final Map<FieldTypeParam, Set<TagName>> response = fieldsService.getFields(request).entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream().filter(predicate).collect(Collectors.toSet())));
@@ -81,24 +83,22 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
             );
         }
 
-        final List<FieldAndValueDetails> output = new ArrayList<>();
-        output.addAll(fetchNumericParametricFieldAndValueDetails(request, FieldTypeParam.NumericDate, response));
-        output.addAll(fetchNumericParametricFieldAndValueDetails(request, FieldTypeParam.Numeric, response));
-        output.addAll(fetchParametricFieldAndValueDetails(FieldTypeParam.Parametric, response));
+        final List<FieldAndValueDetails<?>> output = new ArrayList<>();
+        output.addAll(fetchDateParametricFieldAndValueDetails(request, response));
+        output.addAll(fetchNumericParametricFieldAndValueDetails(request, response));
+        output.addAll(fetchParametricFieldAndValueDetails(response));
         output.sort(fieldComparatorFactory.parametricFieldComparator());
 
         return output;
     }
 
-    private Collection<FieldAndValueDetails> fetchParametricFieldAndValueDetails(final FieldTypeParam fieldType,
-                                                                                 final Map<FieldTypeParam, Set<TagName>> response) throws E {
-        return fetchParametricFieldAndValueDetails(fieldType, response, tagNames -> Collections.emptyMap());
+    private <T extends Comparable<? super T> & Serializable> Collection<FieldAndValueDetails<T>> fetchParametricFieldAndValueDetails(final Map<FieldTypeParam, Set<TagName>> response) throws E {
+        return fetchParametricFieldAndValueDetails(FieldTypeParam.Parametric, response, tagNames -> Collections.emptyMap());
     }
 
-    private Collection<FieldAndValueDetails> fetchNumericParametricFieldAndValueDetails(final R request,
-                                                                                        final FieldTypeParam fieldType,
-                                                                                        final Map<FieldTypeParam, Set<TagName>> response) throws E {
-        return fetchParametricFieldAndValueDetails(fieldType, response, tagNames -> {
+    private Collection<FieldAndValueDetails<Double>> fetchNumericParametricFieldAndValueDetails(final R request,
+                                                                                                final Map<FieldTypeParam, Set<TagName>> response) throws E {
+        return fetchParametricFieldAndValueDetails(FieldTypeParam.Numeric, response, tagNames -> {
             // Fetch the value details for the fields
             final P parametricRequest = parametricRequestBuilderFactory.getObject()
                     .fieldNames(tagNames.stream()
@@ -107,16 +107,32 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
                     .queryRestrictions(createValueDetailsQueryRestrictions(request))
                     .build();
 
-            return parametricValuesService.getValueDetails(parametricRequest);
+            return parametricValuesService.getNumericValueDetails(parametricRequest);
+        });
+    }
+
+    private Collection<FieldAndValueDetails<ZonedDateTime>> fetchDateParametricFieldAndValueDetails(final R request,
+                                                                                                    final Map<FieldTypeParam, Set<TagName>> response) throws E {
+        return fetchParametricFieldAndValueDetails(FieldTypeParam.NumericDate, response, tagNames -> {
+            // Fetch the value details for the fields
+            final P parametricRequest = parametricRequestBuilderFactory.getObject()
+                    .fieldNames(tagNames.stream()
+                            .map(TagName::getId)
+                            .collect(Collectors.toList()))
+                    .queryRestrictions(createValueDetailsQueryRestrictions(request))
+                    .build();
+
+            return parametricValuesService.getDateValueDetails(parametricRequest);
         });
     }
 
     /**
      * Fetch the parametric fields of the given type along with their min and max values.
      */
-    private Collection<FieldAndValueDetails> fetchParametricFieldAndValueDetails(final FieldTypeParam fieldType,
-                                                                                 final Map<FieldTypeParam, Set<TagName>> response,
-                                                                                 final ValueDetailsFetch<E> valueDetailsFetch) throws E {
+    private <T extends Comparable<? super T> & Serializable, V extends ValueDetails<T>>
+    Collection<FieldAndValueDetails<T>> fetchParametricFieldAndValueDetails(final FieldTypeParam fieldType,
+                                                                            final Map<FieldTypeParam, Set<TagName>> response,
+                                                                            final ValueDetailsFetch<T, V, E> valueDetailsFetch) throws E {
         if (!response.containsKey(fieldType)) {
             return Collections.emptyList();
         }
@@ -127,16 +143,16 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
                 .filter(entry -> entry.getKey() != fieldType)
                 .forEach(entry -> entry.getValue().remove(tagName)));
 
-        final Map<FieldPath, ValueDetails> valueDetailsResponse = valueDetailsFetch.fetch(tagNames);
+        final Map<FieldPath, V> valueDetailsResponse = valueDetailsFetch.fetch(tagNames);
 
         return tagNames.stream()
                 .map(tagName -> {
-                    final FieldAndValueDetails.FieldAndValueDetailsBuilder builder = FieldAndValueDetails.builder()
+                    final FieldAndValueDetails.FieldAndValueDetailsBuilder<T> builder = FieldAndValueDetails.<T>builder()
                             .id(tagName.getId().getNormalisedPath())
                             .displayName(tagName.getDisplayName())
                             .type(fieldType);
 
-                    final ValueDetails valueDetails = valueDetailsResponse.get(tagName.getId());
+                    final V valueDetails = valueDetailsResponse.get(tagName.getId());
 
                     if (valueDetails != null) {
                         builder
@@ -166,7 +182,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
     }
 
     @FunctionalInterface
-    private interface ValueDetailsFetch<E extends Exception> {
-        Map<FieldPath, ValueDetails> fetch(final Set<TagName> tagNames) throws E;
+    private interface ValueDetailsFetch<T extends Comparable<? super T> & Serializable, V extends ValueDetails<T>, E extends Exception> {
+        Map<FieldPath, V> fetch(final Set<TagName> tagNames) throws E;
     }
 }
