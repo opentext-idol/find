@@ -5,17 +5,22 @@
 
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
+import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.find.core.fields.FieldComparatorFactory;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.BucketingParams;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.DependentParametricField;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
+import com.hp.autonomy.types.requests.idol.actions.tags.DateRangeInfo;
+import com.hp.autonomy.types.requests.idol.actions.tags.DateValueDetails;
 import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
+import com.hp.autonomy.types.requests.idol.actions.tags.NumericRangeInfo;
+import com.hp.autonomy.types.requests.idol.actions.tags.NumericValueDetails;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
-import com.hp.autonomy.types.requests.idol.actions.tags.RangeInfo;
 import lombok.Data;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -36,6 +41,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -46,11 +52,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricValuesControllerTest.ParametricRequestMatcher.matchesParametricRequest;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -78,6 +85,7 @@ public abstract class AbstractParametricValuesControllerTest<
     @MockBean
     private FieldComparatorFactory fieldComparatorFactory;
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private TagNameFactory tagNameFactory;
 
@@ -107,7 +115,9 @@ public abstract class AbstractParametricValuesControllerTest<
     public void getParametricValues() throws E {
         final List<FieldPath> fieldNames = Stream.of("CATEGORY", "AUTHOR").map(tagNameFactory::getFieldPath).collect(Collectors.toList());
 
-        parametricValuesController.getParametricValues(
+        when(parametricValuesService.getParametricValues(argThat(matchesParametricRequest(fieldNames, "cat", "MATCH{ANIMAL}:CATEGORY"))))
+                .thenReturn(Collections.singleton(QueryTagInfo.builder().build()));
+        assertThat(parametricValuesController.getParametricValues(
                 fieldNames,
                 1,
                 10,
@@ -119,14 +129,13 @@ public abstract class AbstractParametricValuesControllerTest<
                 null,
                 null,
                 null
-        );
-
-        verify(parametricValuesService).getParametricValues(argThat(matchesParametricRequest(fieldNames, "cat", "MATCH{ANIMAL}:CATEGORY")));
+        ), not(empty()));
     }
 
     @Test
     public void getDependentParametricValues() throws E {
-        parametricValuesController.getDependentParametricValues(
+        when(parametricValuesService.getDependentParametricValues(Matchers.any())).thenReturn(Collections.singletonList(DependentParametricField.builder().build()));
+        assertThat(parametricValuesController.getDependentParametricValues(
                 Collections.singletonList(tagNameFactory.getFieldPath("SomeParametricField")),
                 "Some query text",
                 null,
@@ -135,35 +144,86 @@ public abstract class AbstractParametricValuesControllerTest<
                 null,
                 0,
                 null
-        );
-
-        verify(parametricValuesService).getDependentParametricValues(Matchers.any());
+        ), not(empty()));
     }
 
     @Test
-    public void getValueDetails() throws E {
-        parametricValuesController.getValueDetails(tagNameFactory.getFieldPath("SomeParametricField"), "Some query text", null, Collections.emptyList(), null, null, 0, null);
-        verify(parametricValuesService).getValueDetails(Matchers.any());
+    public void getNumericValueDetails() throws E {
+        final FieldPath field = tagNameFactory.getFieldPath("SomeNumericField");
+        when(parametricValuesService.getNumericValueDetails(Matchers.any())).thenReturn(ImmutableMap.of(field, NumericValueDetails.builder().build()));
+        assertNotNull(parametricValuesController.getNumericValueDetails(
+                field,
+                "Some query text",
+                null, Collections.emptyList(),
+                null,
+                null,
+                0,
+                null));
     }
 
     @Test
-    public void getParametricValuesInBuckets() throws UnsupportedEncodingException, E {
+    public void getDateValueDetails() throws E {
+        final FieldPath field = tagNameFactory.getFieldPath("SomeDateField");
+        when(parametricValuesService.getDateValueDetails(Matchers.any())).thenReturn(ImmutableMap.of(field, DateValueDetails.builder().build()));
+        assertNotNull(parametricValuesController.getDateValueDetails(
+                field,
+                "Some query text",
+                null, Collections.emptyList(),
+                null,
+                null,
+                0,
+                null));
+    }
+
+    @Test
+    public void getNumericParametricValuesInBuckets() throws UnsupportedEncodingException, E {
         final String fieldName = "birth&death";
 
-        final RangeInfo rangeInfo = mock(RangeInfo.class);
-        final BucketingParams expectedBucketingParams = new BucketingParams(5, -0.5, 0.5);
+        final NumericRangeInfo rangeInfo = NumericRangeInfo.builder().build();
+        final BucketingParams<Double> expectedBucketingParams = new BucketingParams<>(5, -0.5, 0.5);
 
         when(parametricValuesService.getNumericParametricValuesInBuckets(Matchers.any(), Matchers.any())).thenAnswer(invocation -> {
-            @SuppressWarnings("unchecked")
-            final Map<FieldPath, BucketingParams> bucketingParamsPerField = invocation.getArgumentAt(1, Map.class);
+            @SuppressWarnings("unchecked") final Map<FieldPath, BucketingParams<Double>> bucketingParamsPerField = invocation.getArgumentAt(1, Map.class);
 
-            final BucketingParams bucketingParams = bucketingParamsPerField.get(tagNameFactory.getFieldPath(fieldName));
+            final BucketingParams<Double> bucketingParams = bucketingParamsPerField.get(tagNameFactory.getFieldPath(fieldName));
             return expectedBucketingParams.equals(bucketingParams)
                     ? Collections.singletonList(rangeInfo)
                     : Collections.emptyList();
         });
 
-        final RangeInfo output = parametricValuesController.getNumericParametricValuesInBucketsForField(
+        final NumericRangeInfo output = parametricValuesController.getNumericParametricValuesInBucketsForField(
+                tagNameFactory.getFieldPath(fieldName),
+                expectedBucketingParams.getTargetNumberOfBuckets(),
+                expectedBucketingParams.getMin(),
+                expectedBucketingParams.getMax(),
+                "*",
+                "",
+                Collections.emptyList(),
+                null,
+                null,
+                0
+        );
+
+        assertThat(output, is(rangeInfo));
+    }
+
+    @Test
+    public void getDateParametricValuesInBuckets() throws UnsupportedEncodingException, E {
+        final String fieldName = "birth&death";
+
+        final DateRangeInfo rangeInfo = DateRangeInfo.builder().build();
+        final BucketingParams<ZonedDateTime> expectedBucketingParams = new BucketingParams<>(5, ZonedDateTime.now().minusMinutes(5), ZonedDateTime.now());
+
+        when(parametricValuesService.getDateParametricValuesInBuckets(Matchers.any(), Matchers.any())).thenAnswer(invocation -> {
+            @SuppressWarnings("unchecked") final Map<FieldPath, BucketingParams<ZonedDateTime>> bucketingParamsPerField = invocation.getArgumentAt(1, Map.class);
+
+            final BucketingParams<ZonedDateTime> bucketingParams = bucketingParamsPerField.get(tagNameFactory.getFieldPath(fieldName));
+            return expectedBucketingParams.equals(bucketingParams)
+                    ? Collections.singletonList(rangeInfo)
+                    : Collections.emptyList();
+        });
+
+        final DateRangeInfo output = parametricValuesController.getDateParametricValuesInBucketsForField(
                 tagNameFactory.getFieldPath(fieldName),
                 expectedBucketingParams.getTargetNumberOfBuckets(),
                 expectedBucketingParams.getMin(),
@@ -216,11 +276,11 @@ public abstract class AbstractParametricValuesControllerTest<
 
         @Override
         public boolean matches(final Object item) {
-            if(!(item instanceof ParametricRequest)) {
+            if (!(item instanceof ParametricRequest)) {
                 return false;
             }
 
-            final ParametricRequest<?> request = (ParametricRequest<?>)item;
+            final ParametricRequest<?> request = (ParametricRequest<?>) item;
 
             return request.getFieldNames().equals(expectedFieldNames)
                     && request.getQueryRestrictions().getQueryText().equals(expectedQueryText)
