@@ -70,7 +70,6 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     @CreatedBy
     @ManyToOne
     @JoinColumn(name = Table.Column.USER_ID)
-    @JsonIgnore
     private UserEntity user;
 
     private String title;

@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,9 +30,17 @@ import static com.hp.autonomy.frontend.find.core.savedsearches.SharedToUser.Tabl
 @Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @JsonDeserialize(builder = SharedToUser.SharedToUserBuilder.class)
 public class SharedToUser {
+    private SharedToUser(final SharedToUser.SharedToUserBuilder builder) {
+        savedSearch = builder.savedSearch;
+        user = builder.user;
+        canEdit = builder.canEdit;
+        sharedDate = builder.sharedDate;
+        modifiedDate = builder.modifiedDate;
+        id = new SharedToUserPK(savedSearch.getId(), user.getUserId());
+    }
+
     @EmbeddedId
     public SharedToUserPK id;
 
@@ -73,10 +80,14 @@ public class SharedToUser {
             user = UserEntity.builder().userId(userId).build();
             return this;
         }
+
+        public SharedToUser build() {
+            return new SharedToUser(this);
+        }
     }
 
     public interface Table {
-        String NAME = "shared_to_user";
+        String NAME = "shared_to_users";
 
         @SuppressWarnings("InnerClassTooDeeplyNested")
         interface Column {

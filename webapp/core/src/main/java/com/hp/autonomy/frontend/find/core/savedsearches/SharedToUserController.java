@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,11 +24,11 @@ import java.util.Set;
 @RequestMapping(SharedToUserController.SHARED_SEARCHES_PATH)
 class SharedToUserController {
     static final String SHARED_SEARCHES_PATH = "/api/public/search/shared-searches";
-    private static final String PERMISSIONS_PATH = "permissions";
-    private static final String SAVE_PERMISSION_PATH = "save";
-    private static final String DELETE_PERMISSION_PATH = "delete";
-    private static final String SEARCH_ID_PARAM = "searchId";
-    private static final String DATA_PARAM = "data";
+    static final String PERMISSIONS_PATH = "/permissions";
+    static final String SAVE_PERMISSION_PATH = "/save";
+    static final String DELETE_PERMISSION_PATH = "/delete";
+    static final String SEARCH_ID_PARAM = "searchId";
+    static final String DATA_PARAM = "data";
 
     private final SharedToUserRepository sharedToUserRepository;
     private final ObjectMapper objectMapper;
@@ -40,14 +41,16 @@ class SharedToUserController {
     }
 
     @RequestMapping(PERMISSIONS_PATH)
+    @ResponseBody
     public Set<SharedToUser> getPermissionsForSearch(@RequestParam(SEARCH_ID_PARAM) final String searchId) {
         return sharedToUserRepository.findBySavedSearch_Id(Long.parseLong(searchId));
     }
 
     @RequestMapping(SAVE_PERMISSION_PATH)
-    public void save(@RequestParam(DATA_PARAM) final String data) throws IOException {
+    @ResponseBody
+    public Iterable<SharedToUser> save(@RequestParam(DATA_PARAM) final String data) throws IOException {
         final List<SharedToUser> sharedToUsers = parseData(data);
-        sharedToUserRepository.save(sharedToUsers);
+        return sharedToUserRepository.save(sharedToUsers);
     }
 
     @RequestMapping(DELETE_PERMISSION_PATH)

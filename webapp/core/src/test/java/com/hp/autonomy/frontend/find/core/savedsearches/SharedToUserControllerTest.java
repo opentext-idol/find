@@ -19,9 +19,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.Collections;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @JsonTest
 @AutoConfigureJsonTesters(enabled = false)
@@ -43,8 +47,8 @@ public class SharedToUserControllerTest {
 
     @Test
     public void getPermittedUsersForSearch() {
-        controller.getPermissionsForSearch("1");
-        verify(sharedToUserRepository).findBySavedSearch_Id(any());
+        when(sharedToUserRepository.findBySavedSearch_Id(any())).thenReturn(Collections.singleton(SharedToUser.builder().build()));
+        assertThat(controller.getPermissionsForSearch("1"), not(empty()));
     }
 
     @Test
