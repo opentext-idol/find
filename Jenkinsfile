@@ -28,7 +28,7 @@ node {
         echo "repository_location = ${repository}"
         echo "branch = ${branch}"
 
-        bash """
+        sh """
             FPLAYBOOKDIR=/home/fenkins/frontend-playbook/vagrant/ansible/frontendslave-playbook/
             config_template_name=onprem-config.json.j2
             config_template_location=\$(realpath webapp/hsod-dist/src/ansible/${webapp}/templates/\${config_template_name})
