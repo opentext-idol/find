@@ -243,6 +243,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.sommeri</groupId>
+            <artifactId>less4j</artifactId>
+            <version>1.17.2</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>haven-search-components-core</artifactId>
             <version>${haven.search.components.version}</version>
