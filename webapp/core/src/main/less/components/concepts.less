@@ -4,19 +4,6 @@
  */
 
 .concepts-controls {
-  .find-input[type="text"] {
-    .no-box-shadow;
-    &:extend(.form-control);
-
-    border-radius: @nil;
-    color: inherit;
-    transition: border-color 0s ease-in-out 0s;
-
-    &:focus {
-      &:extend(.form-control:focus);
-    }
-  }
-
   .find-input-button {
     .absolute;
     .no-box-shadow;
@@ -61,6 +48,10 @@
 
   &:not(last-child) {
     .m-r-xs;
+  }
+
+  textarea.edit-concept-input {
+    .text-muted;
   }
 
   .selected-related-concept {

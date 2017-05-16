@@ -139,6 +139,19 @@ h4.similar-dates-message {
   color: @text-color;
 }
 
+.find-input[type="text"] {
+  .text-muted;
+  .no-box-shadow;
+  &:extend(.form-control);
+
+  border-radius: @nil;
+  transition: border-color 0s ease-in-out 0s;
+
+  &:focus {
+    &:extend(.form-control:focus);
+  }
+}
+
 .label-secondary {
   background-color: @grey3;
 }
@@ -213,6 +226,14 @@ h4.similar-dates-message {
   h4 {
     width: 100%;
   }
+}
+
+div > label > select.form-control, div > label > input.form-control, // required by About Page
+div > input[type="text"].numeric-parametric-min-input.form-control, // required by Date Inputs
+div > input[type="text"].numeric-parametric-max-input.form-control, // required by Date Inputs
+.parametric-content select.form-control, .parametric-content input.form-control, // required by Table View
+.panel select.form-control, .panel select.form-control option, .panel input { // required for Settings Page
+  .text-muted;
 }
 
 .parametric-swap {

@@ -22,7 +22,7 @@
 }
 
 .find-banner-container {
-  background: @green2 url('../static-@{gitCommitHash}/img/Find_banner.png');
+  background: @green2 url('@{staticResourcesPath}/img/Find_banner.png');
   height: 125px;
 }
 
@@ -40,7 +40,7 @@
 .find-logo-large {
   .inline-block;
 
-  background: url('../static-@{gitCommitHash}/img/Find_Logo_lge.png') no-repeat;
+  background: url('@{staticResourcesPath}/img/Find_Logo_lge.png') no-repeat;
   color: @blue1;
   font-size: 90px;
   height: 45px;
@@ -51,7 +51,7 @@
 .find-logo-small {
   background-repeat: no-repeat;
   background-position: left center;
-  background-image: url('../static-@{gitCommitHash}/img/Find_Logo_sml.png');
+  background-image: url('@{staticResourcesPath}/img/Find_Logo_sml.png');
   height: 20px;
   width: 100px;
   &.side-nav {
@@ -64,7 +64,7 @@
 .hp-logo-footer {
   background-size: 140px 55px;
   background-repeat: no-repeat;
-  background-image: url('../static-@{gitCommitHash}/img/HPE_logo.png');
+  background-image: url('@{staticResourcesPath}/img/HPE_logo.png');
   bottom: 20px;
   height: 55px;
   left: ~'calc(50% - @{custom8})';

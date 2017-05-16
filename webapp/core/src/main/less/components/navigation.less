@@ -3,12 +3,6 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-.dropdown-menu {
-  li > a {
-    color: @text-color;
-  }
-}
-
 .dropdown-menu > .active > a,
 .dropdown-menu > .active > a:hover,
 .dropdown-menu > .active > a:focus {
@@ -42,6 +36,14 @@
   height: @navBarHeight;
   transition: @transitAllFast;
 
+  .dropdown {
+    .dropdown-menu {
+      li > a {
+        .text-muted;
+      }
+    }
+  }
+
   .navbar-right.drop-list {
     .m-nil;
   }
@@ -64,14 +66,14 @@
   background-color: @grey4;
 }
 
+.hide-navbar .nav-menu-btn-container a.nav-menu-toggle-btn {
+  color: @white;
+}
+
 .navbar .navbar-nav .open .dropdown-menu > .active > a,
 .navbar .navbar-nav .open .dropdown-menu > .active > a:hover {
   background-color: @hpeNavBarColour;
   background-image: none;
-}
-
-.nav-menu-btn-container a.nav-menu-toggle-btn {
-  color: @white;
 }
 
 .navbar-username {
