@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -22,7 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SuppressWarnings("ProhibitedExceptionDeclared")
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
         TransactionalTestExecutionListener.class,
-        DbUnitTestExecutionListener.class})
+        DbUnitTestExecutionListener.class,
+        SqlScriptsTestExecutionListener.class})
 @DatabaseSetup(value = "classpath:shared-to-user.xml", connection = "testConnection")
 @DbUnitConfiguration(databaseConnection = "testConnection")
 public abstract class SharedToUserControllerIT extends AbstractFindIT {
