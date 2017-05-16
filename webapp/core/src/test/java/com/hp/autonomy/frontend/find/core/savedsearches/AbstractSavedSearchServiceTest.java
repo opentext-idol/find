@@ -56,8 +56,8 @@ public abstract class AbstractSavedSearchServiceTest<T extends SavedSearch<T, B>
         when(crudRepository.findByActiveTrueAndUser_UserId(anyLong())).thenReturn(ownedQueries);
         final Set<SharedToUser> permissions = new HashSet<>();
         permissions.add(mockSharedToUser(false, 1L, 3L));
-        permissions.add(mockSharedToUser(false, 1L, 3L));
-        permissions.add(mockSharedToUser(true, 1L, 3L));
+        permissions.add(mockSharedToUser(false, 1L, 4L));
+        permissions.add(mockSharedToUser(true, 1L, 5L));
         when(sharedToUserRepository.findByUserId(anyLong(), any())).thenReturn(permissions);
     }
 
@@ -74,7 +74,7 @@ public abstract class AbstractSavedSearchServiceTest<T extends SavedSearch<T, B>
 
     private SharedToUser mockSharedToUser(final Boolean canEdit, final Long userId, final Long searchId) {
         return SharedToUser.builder()
-                .user(new UserEntity())
+                .user(UserEntity.builder().userId(userId).build())
                 .savedSearch(mockSavedSearchResult(searchId, true))
                 .sharedDate(ZonedDateTime.now())
                 .modifiedDate(ZonedDateTime.now())
