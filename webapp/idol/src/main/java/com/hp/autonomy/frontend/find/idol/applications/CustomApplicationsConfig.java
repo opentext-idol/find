@@ -23,11 +23,11 @@ import java.util.Collection;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Builder(toBuilder = true)
-@JsonDeserialize(builder = IdolCustomApplicationsConfig.IdolCustomApplicationsConfigBuilder.class)
-public class IdolCustomApplicationsConfig extends AbstractConfig<IdolCustomApplicationsConfig> {
+@JsonDeserialize(builder = CustomApplicationsConfig.CustomApplicationsConfigBuilder.class)
+public class CustomApplicationsConfig extends AbstractConfig<CustomApplicationsConfig> {
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     @Singular
-    private final Collection<IdolCustomApplication> applications;
+    private final Collection<CustomApplication> applications;
 
     /**
      * Combine this Config with another of the same type and returns a new Config.
@@ -40,7 +40,7 @@ public class IdolCustomApplicationsConfig extends AbstractConfig<IdolCustomAppli
      * @return A new Config which is a combination of this and other
      */
     @Override
-    public IdolCustomApplicationsConfig merge(final IdolCustomApplicationsConfig other) {
+    public CustomApplicationsConfig merge(final CustomApplicationsConfig other) {
         return ConfigurationUtils.defaultMerge(this, other);
     }
 
@@ -53,7 +53,7 @@ public class IdolCustomApplicationsConfig extends AbstractConfig<IdolCustomAppli
      */
     @Override
     public void basicValidate(final String section) throws ConfigException {
-        for(final IdolCustomApplication app : applications) {
+        for(final CustomApplication app : applications) {
             if(StringUtils.isEmpty(app.getApplicationName())) {
                 throw new ConfigException(section, "The application name must be a non-empty string, e.g. \"IDOL Admin\".");
             } else if(StringUtils.isEmpty(app.getUrl())) {
@@ -70,5 +70,5 @@ public class IdolCustomApplicationsConfig extends AbstractConfig<IdolCustomAppli
 
     @SuppressWarnings("WeakerAccess")
     @JsonPOJOBuilder(withPrefix = "")
-    public static class IdolCustomApplicationsConfigBuilder {}
+    public static class CustomApplicationsConfigBuilder {}
 }

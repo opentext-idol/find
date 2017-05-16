@@ -20,13 +20,13 @@ import java.util.Collection;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Builder(toBuilder = true)
-@JsonDeserialize(builder = IdolDashboardConfig.IdolDashboardConfigBuilder.class)
-public class IdolDashboardConfig extends AbstractConfig<IdolDashboardConfig> {
+@JsonDeserialize(builder = DashboardConfig.DashboardConfigBuilder.class)
+public class DashboardConfig extends AbstractConfig<DashboardConfig> {
     @Singular
     private final Collection<Dashboard> dashboards;
 
     @Override
-    public IdolDashboardConfig merge(final IdolDashboardConfig other) {
+    public DashboardConfig merge(final DashboardConfig other) {
         return ConfigurationUtils.defaultMerge(this, other);
     }
 
@@ -35,5 +35,5 @@ public class IdolDashboardConfig extends AbstractConfig<IdolDashboardConfig> {
 
     @SuppressWarnings("WeakerAccess")
     @JsonPOJOBuilder(withPrefix = "")
-    public static class IdolDashboardConfigBuilder {}
+    public static class DashboardConfigBuilder {}
 }

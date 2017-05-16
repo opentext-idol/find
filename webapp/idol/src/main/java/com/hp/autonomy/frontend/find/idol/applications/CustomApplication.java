@@ -17,8 +17,8 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Builder(toBuilder = true)
-@JsonDeserialize(builder = IdolCustomApplication.IdolCustomApplicationBuilder.class)
-public class IdolCustomApplication extends SimpleComponent<IdolCustomApplication> implements OptionalConfigurationComponent<IdolCustomApplication> {
+@JsonDeserialize(builder = CustomApplication.CustomApplicationBuilder.class)
+public class CustomApplication extends SimpleComponent<CustomApplication> implements OptionalConfigurationComponent<CustomApplication> {
     private final String applicationName;
     private final String url;
     private final String icon;
@@ -27,7 +27,7 @@ public class IdolCustomApplication extends SimpleComponent<IdolCustomApplication
 
     @SuppressWarnings("WeakerAccess")
     @JsonPOJOBuilder(withPrefix = "")
-    public static class IdolCustomApplicationBuilder {
+    public static class CustomApplicationBuilder {
         private String icon = "";
         private Boolean enabled = true;
     }

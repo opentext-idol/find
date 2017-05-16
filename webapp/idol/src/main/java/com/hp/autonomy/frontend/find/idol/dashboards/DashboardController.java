@@ -31,15 +31,15 @@ import java.util.Optional;
 
 @Slf4j
 @Controller
-public class IdolDashboardController {
+public class DashboardController {
     static final String DASHBOARD_CONFIG_RELOAD_PATH = "/api/admin/dashboards/reload";
     private static final String DASHBOARD_KEEP_ALIVE = "/api/bi/dashboards/keep-alive";
     private final ControllerUtils controllerUtils;
-    private final IdolDashboardConfigService dashConfig;
+    private final DashboardConfigService dashConfig;
 
     @Autowired
-    public IdolDashboardController(final IdolDashboardConfigService dashConfig,
-                                   final ControllerUtils controllerUtils) {
+    public DashboardController(final DashboardConfigService dashConfig,
+                               final ControllerUtils controllerUtils) {
         this.dashConfig = dashConfig;
         this.controllerUtils = controllerUtils;
     }

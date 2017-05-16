@@ -22,10 +22,10 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
-public class IdolCustomApplicationsConfigTest extends ConfigurationComponentTest<IdolCustomApplication> {
+public class CustomApplicationsConfigTest extends ConfigurationComponentTest<CustomApplication> {
     private final String APP_NAME = "Some app name";
     private final String EXAMPLE_URL = "http://some.url.com";
-    private IdolCustomApplicationsConfig config;
+    private CustomApplicationsConfig config;
 
     @Before
     public void setUp() {
@@ -34,13 +34,13 @@ public class IdolCustomApplicationsConfigTest extends ConfigurationComponentTest
     }
 
     @Override
-    protected Class<IdolCustomApplication> getType() {
-        return IdolCustomApplication.class;
+    protected Class<CustomApplication> getType() {
+        return CustomApplication.class;
     }
 
     @Override
-    protected IdolCustomApplication constructComponent() {
-        return IdolCustomApplication.builder()
+    protected CustomApplication constructComponent() {
+        return CustomApplication.builder()
                 .applicationName(APP_NAME)
                 .url(EXAMPLE_URL)
                 .icon("hp-app")
@@ -57,7 +57,7 @@ public class IdolCustomApplicationsConfigTest extends ConfigurationComponentTest
     }
 
     @Override
-    protected void validateJson(final JsonContent<IdolCustomApplication> jsonContent) {
+    protected void validateJson(final JsonContent<CustomApplication> jsonContent) {
         jsonContent.assertThat()
                 .hasJsonPathStringValue("$.applicationName", "Application name")
                 .hasJsonPathStringValue("$.url", "http://example.url.com")
@@ -67,9 +67,9 @@ public class IdolCustomApplicationsConfigTest extends ConfigurationComponentTest
     }
 
     @Override
-    protected void validateParsedComponent(final ObjectContent<IdolCustomApplication> objectContent) {
+    protected void validateParsedComponent(final ObjectContent<CustomApplication> objectContent) {
         objectContent.assertThat().isEqualTo(
-                IdolCustomApplication.builder()
+            CustomApplication.builder()
                         .applicationName("Application name")
                         .url("http://example.url.com")
                         .icon("hp-monitor")
@@ -80,9 +80,9 @@ public class IdolCustomApplicationsConfigTest extends ConfigurationComponentTest
     }
 
     @Override
-    protected void validateMergedComponent(final ObjectContent<IdolCustomApplication> objectContent) {
+    protected void validateMergedComponent(final ObjectContent<CustomApplication> objectContent) {
         objectContent.assertThat().isEqualTo(
-                IdolCustomApplication.builder()
+            CustomApplication.builder()
                         .applicationName(APP_NAME)
                         .url(EXAMPLE_URL)
                         .icon("hp-app")
@@ -131,9 +131,9 @@ public class IdolCustomApplicationsConfigTest extends ConfigurationComponentTest
 
     @Test
     public void testBasicValidateWorksEvenWhenAppIsDisabled() {
-        config = IdolCustomApplicationsConfig.builder()
+        config = CustomApplicationsConfig.builder()
                 .application(
-                        IdolCustomApplication.builder()
+                    CustomApplication.builder()
                                 .enabled(false)
                                 .build()
                 )
@@ -144,9 +144,9 @@ public class IdolCustomApplicationsConfigTest extends ConfigurationComponentTest
 
     @Test
     public void testOverridingDefaultsWorks() {
-        config = IdolCustomApplicationsConfig.builder()
+        config = CustomApplicationsConfig.builder()
                 .application(
-                        IdolCustomApplication.builder()
+                    CustomApplication.builder()
                                 .applicationName(APP_NAME)
                                 .url(EXAMPLE_URL)
                                 .icon("hp-monitor")
@@ -156,7 +156,7 @@ public class IdolCustomApplicationsConfigTest extends ConfigurationComponentTest
                 )
                 .build();
 
-        final IdolCustomApplication app = config.getApplications().iterator().next();
+        final CustomApplication app = config.getApplications().iterator().next();
         assertEquals(APP_NAME, app.getApplicationName());
         assertEquals(EXAMPLE_URL, app.getUrl());
         assertEquals("hp-monitor", app.getIcon());
@@ -188,11 +188,11 @@ public class IdolCustomApplicationsConfigTest extends ConfigurationComponentTest
         }
     }
 
-    private IdolCustomApplicationsConfig constructConfig(final String name, final String url) {
-        return IdolCustomApplicationsConfig.builder()
+    private CustomApplicationsConfig constructConfig(final String name, final String url) {
+        return CustomApplicationsConfig.builder()
                 .applications(
                         Collections.singletonList(
-                                IdolCustomApplication.builder()
+                            CustomApplication.builder()
                                         //Do not set optional values here to check default behaviour
                                         .applicationName(name)
                                         .url(url)

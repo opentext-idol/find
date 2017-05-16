@@ -9,13 +9,13 @@ import com.hp.autonomy.frontend.find.core.configuration.CustomizationConfigServi
 import org.springframework.stereotype.Service;
 
 @Service
-public class IdolCustomApplicationsConfigService extends CustomizationConfigService<IdolCustomApplicationsConfig> {
-    public IdolCustomApplicationsConfigService() {
+public class CustomApplicationsConfigService extends CustomizationConfigService<CustomApplicationsConfig> {
+    public CustomApplicationsConfigService() {
         super(
             "applications.json",
             "defaultApplicationsConfigFile.json",
-            IdolCustomApplicationsConfig.class,
-            IdolCustomApplicationsConfig.builder().build()
+            CustomApplicationsConfig.class,
+            CustomApplicationsConfig.builder().build()
         );
     }
 }

@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class IdolDashboardControllerTest {
+public class DashboardControllerTest {
     private static final String URL = "http://abc.xyz";
     private static final String ROOT_URL = "/";
     private static final String URL_VALID_DASHBOARD = "http://abc.xyz/public/dashboards/yup";
@@ -33,16 +33,16 @@ public class IdolDashboardControllerTest {
     @Mock
     private ControllerUtils controllerUtils;
     @Mock
-    private ConfigResponse<IdolDashboardConfig> configResponse;
+    private ConfigResponse<DashboardConfig> configResponse;
     @Mock
-    private IdolDashboardConfig config;
+    private DashboardConfig config;
     @Mock
-    private IdolDashboardConfigService configService;
+    private DashboardConfigService configService;
     @Mock
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
-    private IdolDashboardController controller;
+    private DashboardController controller;
 
     @Before
     public void setUp() throws Exception {
@@ -58,7 +58,7 @@ public class IdolDashboardControllerTest {
         Mockito.doReturn(config).when(configResponse).getConfig();
         Mockito.doReturn("abc.json").when(configResponse).getConfigPath();
 
-        controller = new IdolDashboardController(configService, controllerUtils);
+        controller = new DashboardController(configService, controllerUtils);
     }
 
     @Test
