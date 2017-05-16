@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.idol.web;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
+import com.hp.autonomy.frontend.find.core.configuration.TemplatesConfig;
 import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.FindController;
@@ -39,6 +40,7 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
     private final ConfigService<IdolDashboardConfig> dashConfig;
     private final ConfigService<IdolCustomApplicationsConfig> appsConfig;
+    private final ConfigService<TemplatesConfig> templatesConfig;
 
     @SuppressWarnings({"TypeMayBeWeakened", "ConstructorWithTooManyParameters"})
     @Autowired
@@ -48,11 +50,13 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
                                  final ConfigService<IdolFindConfig> configService,
                                  final ConfigService<IdolDashboardConfig> dashConfig,
                                  final ConfigService<IdolCustomApplicationsConfig> appsConfig,
-                                 final FieldDisplayNameGenerator fieldDisplayNameGenerator) {
+                                 final FieldDisplayNameGenerator fieldDisplayNameGenerator,
+                                 final ConfigService<TemplatesConfig> templatesConfig) {
         super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService, fieldDisplayNameGenerator);
         this.authenticationInformationRetriever = authenticationInformationRetriever;
         this.dashConfig = dashConfig;
         this.appsConfig = appsConfig;
+        this.templatesConfig = templatesConfig;
     }
 
     @Override
@@ -82,6 +86,7 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
                 .collect(Collectors.toList()));
         publicConfig.put(IdolMvcConstants.APPLICATIONS.getName(), enabledApps);
         publicConfig.put(MvcConstants.ANSWER_SERVER_ENABLED.value(), config.getAnswerServer().getEnabled());
+        publicConfig.put(MvcConstants.TEMPLATES_CONFIG.value(), templatesConfig.getConfig());
 
         return publicConfig;
     }

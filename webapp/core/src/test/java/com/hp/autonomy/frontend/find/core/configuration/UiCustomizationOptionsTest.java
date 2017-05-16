@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -25,13 +25,13 @@ public class UiCustomizationOptionsTest extends ConfigurationComponentTest<UiCus
     @Override
     protected UiCustomizationOptions constructComponent() {
         final UiCustomizationRule rule1 = UiCustomizationRule.builder()
-                .populateRule("user", false)
-                .build();
+            .populateRule("user", false)
+            .build();
 
         final UiCustomizationRule rule2 = UiCustomizationRule.builder()
-                .populateRule("user", true)
-                .populateRule("bi", false)
-                .build();
+            .populateRule("user", true)
+            .populateRule("bi", false)
+            .build();
 
         final UiCustomizationOptions uiCustomizationOptions = new UiCustomizationOptions();
         uiCustomizationOptions.populateRules("option2", rule1);
@@ -67,7 +67,5 @@ public class UiCustomizationOptionsTest extends ConfigurationComponentTest<UiCus
     }
 
     @Override
-    protected void validateString(final String s) {
-
-    }
+    protected void validateString(final String s) {}
 }

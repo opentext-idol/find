@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -7,20 +7,19 @@ package com.autonomy.abc.selenium.find.results;
 
 import com.autonomy.abc.selenium.find.Container;
 import com.autonomy.abc.selenium.query.QueryResultsPage;
+import com.google.common.base.Predicate;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ListView extends AppElement implements QueryResultsPage {
+    private static final int RESULTS_TIMEOUT_SECONDS = 50;
 
     public ListView(final WebElement element, final WebDriver driver) {
         super(element, driver);
@@ -49,11 +48,9 @@ public class ListView extends AppElement implements QueryResultsPage {
     }
 
     public List<String> getResultTitles() {
-        final List<String> titles = new ArrayList<>();
-        for(final FindResult result : getResults()) {
-            titles.add(result.getTitleString());
-        }
-        return titles;
+        return getResults().stream()
+                .map(FindResult::getTitleString)
+                .collect(Collectors.toList());
     }
 
     public List<String> getResultsReferences() {
@@ -71,11 +68,9 @@ public class ListView extends AppElement implements QueryResultsPage {
     }
 
     public List<FindResult> getResults() {
-        final List<FindResult> results = new ArrayList<>();
-        for(final WebElement result : findElements(By.className("main-results-container"))) {
-            results.add(new FindResult(result, getDriver()));
-        }
-        return results;
+        return findElements(By.className("main-results-container")).stream()
+                .map(resultElement -> new FindResult(resultElement, getDriver()))
+                .collect(Collectors.toList());
     }
 
     public List<FindResult> getResults(final int maxResults) {
@@ -88,36 +83,24 @@ public class ListView extends AppElement implements QueryResultsPage {
     }
 
     public List<String> getDisplayedDocumentsDocumentTypes() {
-        final List<String> documentTypes = new ArrayList<>();
-        for(final FindResult result : getResults()) {
-            documentTypes.add(result.icon().getAttribute("class"));
-        }
-        return documentTypes;
+        return getResults().stream()
+                .map(result -> result.icon().getAttribute("class"))
+                .collect(Collectors.toList());
     }
 
     public void waitForResultsToLoad() {
-        new WebDriverWait(getDriver(), 50).until(new LoadedCondition());
+        new WebDriverWait(getDriver(), RESULTS_TIMEOUT_SECONDS).until((Predicate<WebDriver>) driver -> {
+            if (loadingIndicatorPresent()) {
+                return false;
+            } else if (errorContainerShown() || !findElements(By.cssSelector(".result-message:not(.hide)")).isEmpty() || !getResults().isEmpty()) {
+                return true;
+            } else {
+                throw new IllegalStateException("No loading indicator, empty message, error message or result list present");
+            }
+        });
     }
 
     public FindResult searchResult(final int searchResultNumber) {
         return new FindResult(findElement(By.cssSelector(".results div:nth-child(" + searchResultNumber + ')')), getDriver());
-    }
-
-    private static class LoadedCondition implements ExpectedCondition<Boolean> {
-        @Override
-        public Boolean apply(final WebDriver input) {
-            return resultsLoaded(input);
-        }
-
-        private boolean resultsLoaded(final SearchContext driver) {
-            int loadingSpinners = driver.findElements(By.cssSelector(".loading-spinner:not(.hide)")).size();
-            loadingSpinners -= driver.findElements(By.cssSelector(".hide .loading-spinner")).size();
-
-            return loadingSpinners == 0
-                    && !driver.findElements(By.cssSelector(".results > div")).isEmpty()
-                    && (driver.findElements(By.cssSelector(".results-view-error.hide")).isEmpty()
-                    || !driver.findElements(By.cssSelector(".main-results-list.results .result-message")).isEmpty()
-                    || !driver.findElements(By.cssSelector(".main-results-list.results .main-results-container")).isEmpty());
-        }
     }
 }

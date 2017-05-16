@@ -1,0 +1,16 @@
+<dataset>
+    <users user_id="1"/>
+    <users user_id="2"/>
+    <users user_id="3"/>
+    <users user_id="4"/>
+    <searches search_id="1" user_id="1" title="Search1" active="true" search_type="0" min_score="0" created_date="2007-11-05" modified_date="2007-11-05"/>
+    <searches search_id="2" user_id="1" title="Search2" active="false" search_type="0" min_score="0" created_date="2007-11-05" modified_date="2007-11-05"/>
+    <searches search_id="3" user_id="1" title="Search3" active="true" search_type="1" min_score="0" created_date="2007-11-05" modified_date="2007-11-05"/>
+    <searches search_id="4" user_id="2" title="Search4" active="true" search_type="1" min_score="0" created_date="2007-11-05" modified_date="2007-11-05"/>
+    <shared_to_users search_id="1" user_id="3" can_edit="true" shared_date="2007-11-05" modified_date="2007-11-05"/>
+    <shared_to_users search_id="1" user_id="2" can_edit="true" shared_date="2007-11-05" modified_date="2007-11-05"/>
+    <shared_to_users search_id="2" user_id="2" can_edit="true" shared_date="2007-11-05" modified_date="2007-11-05"/>
+    <shared_to_users search_id="1" user_id="4" can_edit="true" shared_date="2007-11-05" modified_date="2007-11-05"/>
+    <shared_to_users search_id="2" user_id="4" can_edit="true" shared_date="2007-11-05" modified_date="2007-11-05"/>
+    <shared_to_users search_id="3" user_id="4" can_edit="true" shared_date="2007-11-05" modified_date="2007-11-05"/>
+</dataset>

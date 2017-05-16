@@ -64,7 +64,6 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     @CreatedBy
     @ManyToOne
     @JoinColumn(name = Table.Column.USER_ID)
-    @JsonIgnore
     private UserEntity user;
 
     private String title;
@@ -113,6 +112,9 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     @Column(name = Table.Column.MIN_SCORE, nullable = false)
     private Integer minScore = 0;
 
+    @Transient
+    private boolean canEdit = true;
+
     protected SavedSearch(final Builder<?, ?> builder) {
         id = builder.id;
         title = builder.title;
@@ -128,6 +130,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         dateRange = builder.dateRange;
         active = builder.active;
         minScore = builder.minScore;
+        canEdit = builder.canEdit;
     }
 
     /**
@@ -142,7 +145,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
      */
     @SuppressWarnings("OverlyComplexMethod")
     public void merge(final T other) {
-        if(other != null) {
+        if (other != null) {
             mergeInternal(other);
 
             title = other.getTitle() == null ? title : other.getTitle();
@@ -156,7 +159,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             numericRangeRestrictions = Optional.ofNullable(other.getNumericRangeRestrictions()).orElse(numericRangeRestrictions);
             dateRangeRestrictions = Optional.ofNullable(other.getDateRangeRestrictions()).orElse(dateRangeRestrictions);
 
-            if(other.getConceptClusterPhrases() != null) {
+            if (other.getConceptClusterPhrases() != null) {
                 conceptClusterPhrases.clear();
                 conceptClusterPhrases.addAll(other.getConceptClusterPhrases());
             }
@@ -179,7 +182,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     // WARNING: This logic is duplicated in the client-side search-data-util
     // Caution: Method has multiple exit points.
     public String toQueryText() {
-        if(conceptClusterPhrases.isEmpty()) {
+        if (conceptClusterPhrases.isEmpty()) {
             return "*";
         } else {
             final Collection<List<ConceptClusterPhrase>> groupedClusters = conceptClusterPhrases.stream()
@@ -292,6 +295,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         private DateRange dateRange;
         private Boolean active = true;
         private Integer minScore;
+        private boolean canEdit = true;
 
         protected Builder(final SavedSearch<T, B> search) {
             id = search.id;
@@ -308,6 +312,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             dateRange = search.dateRange;
             active = search.active;
             minScore = search.minScore;
+            canEdit = search.canEdit;
         }
 
         public abstract T build();
@@ -381,6 +386,11 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
 
         public Builder<T, B> setMinScore(final Integer minScore) {
             this.minScore = minScore;
+            return this;
+        }
+
+        public Builder<T, B> setCanEdit(final boolean canEdit) {
+            this.canEdit = canEdit;
             return this;
         }
     }

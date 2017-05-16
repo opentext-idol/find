@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -31,12 +31,12 @@ public abstract class FindConfigFileService<C extends FindConfig<C, B>, B extend
                                     final JsonDeserializer<FieldPath> fieldPathDeserializer) {
 
         final ObjectMapper objectMapper = new Jackson2ObjectMapperBuilder()
-                .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
-                .mixIns(customMixins())
-                .serializersByType(ImmutableMap.of(FieldPath.class, fieldPathSerializer))
-                .deserializersByType(ImmutableMap.of(FieldPath.class, fieldPathDeserializer))
-                .createXmlMapper(false)
-                .build();
+            .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
+            .mixIns(customMixins())
+            .serializersByType(ImmutableMap.of(FieldPath.class, fieldPathSerializer))
+            .deserializersByType(ImmutableMap.of(FieldPath.class, fieldPathDeserializer))
+            .createXmlMapper(false)
+            .build();
 
         setConfigFileLocation(CONFIG_FILE_LOCATION);
         setConfigFileName(CONFIG_FILE_NAME);
@@ -62,6 +62,5 @@ public abstract class FindConfigFileService<C extends FindConfig<C, B>, B extend
 
     @SuppressWarnings("NoopMethodInAbstractClass")
     @Override
-    public void postUpdate(final C config) {
-    }
+    public void postUpdate(final C config) {}
 }

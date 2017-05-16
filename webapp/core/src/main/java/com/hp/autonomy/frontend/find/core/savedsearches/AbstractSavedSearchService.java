@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -10,27 +10,48 @@ import org.springframework.data.domain.AuditorAware;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B extends SavedSearch.Builder<T, B>> implements SavedSearchService<T, B> {
     private final SavedSearchRepository<T, B> crudRepository;
+    private final SharedToUserRepository sharedToUserRepository;
     private final AuditorAware<UserEntity> userEntityAuditorAware;
     private final TagNameFactory tagNameFactory;
+    private final Class<T> type;
 
     protected AbstractSavedSearchService(final SavedSearchRepository<T, B> crudRepository,
+                                         final SharedToUserRepository sharedToUserRepository,
                                          final AuditorAware<UserEntity> userEntityAuditorAware,
-                                         final TagNameFactory tagNameFactory) {
+                                         final TagNameFactory tagNameFactory,
+                                         final Class<T> type) {
         this.crudRepository = crudRepository;
+        this.sharedToUserRepository = sharedToUserRepository;
         this.userEntityAuditorAware = userEntityAuditorAware;
         this.tagNameFactory = tagNameFactory;
+        this.type = type;
     }
 
     @Override
     public Set<T> getAll() {
         final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
-        final Set<T> results = crudRepository.findByActiveTrueAndUser_UserId(userId);
+
+        final Collection<T> results = new HashSet<>();
+        results.addAll(crudRepository.findByActiveTrueAndUser_UserId(userId));
+
+        // In addition to saved searches where the user is the owner, also return saved searches that the user has
+        // been given permission to view.
+        final Set<SharedToUser> permissions = sharedToUserRepository.findByUserId(userId, type);
+        // Set the canEdit field on the saved search from sharedToUser. By default saved search canEdit is true.
+        results.addAll(permissions.stream()
+                .map(sharedToUser -> type.cast(sharedToUser.getSavedSearch().toBuilder()
+                        .setCanEdit(sharedToUser.getCanEdit())
+                        .build()))
+                .collect(toSet()));
+
         return augmentOutputWithDisplayNames(results);
     }
 
@@ -81,7 +102,7 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
     private Set<T> augmentOutputWithDisplayNames(final Collection<T> results) {
         return results.stream()
                 .map(this::augmentOutputWithDisplayNames)
-                .collect(Collectors.toSet());
+                .collect(toSet());
     }
 
     private T augmentOutputWithDisplayNames(final T result) {
@@ -93,7 +114,7 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
                                         .displayName(tagNameFactory.buildTagName(parametricValue.getField()).getDisplayName())
                                         .displayValue(tagNameFactory.getTagDisplayValue(parametricValue.getField(), parametricValue.getValue()))
                                         .build())
-                                .collect(Collectors.toSet()))
+                                .collect(toSet()))
                         .orElse(Collections.emptySet()))
                 .setNumericRangeRestrictions(Optional.ofNullable(result.getNumericRangeRestrictions())
                         .map(numericRanges -> numericRanges.stream()
@@ -107,7 +128,7 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
                                 .map(dateRange -> dateRange.toBuilder()
                                         .displayName(tagNameFactory.buildTagName(dateRange.getField()).getDisplayName())
                                         .build())
-                                .collect(Collectors.toSet()))
+                                .collect(toSet()))
                         .orElse(Collections.emptySet()))
                 .build();
     }

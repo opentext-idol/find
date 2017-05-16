@@ -1,15 +1,14 @@
 /*
- * Copyright 2015-2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
-    'jquery',
     'underscore',
+    'jquery',
+    'backbone',
     'text!find/templates/app/page/search/results/results-view-augmentation.html'
-], function(Backbone, $, _, viewHtml) {
-
+], function(_, $, Backbone, viewHtml) {
     'use strict';
 
     // We always want a gap between the preview well and the container
@@ -28,7 +27,7 @@ define([
             this.previewModeModel = options.previewModeModel;
 
             this.listenTo(this.previewModeModel, 'change:document', function(model, documentModel) {
-                if (documentModel) {
+                if(documentModel) {
                     this.removePreviewModeView();
 
                     this.previewModeView = new this.PreviewModeView({
@@ -69,14 +68,14 @@ define([
             this.$('.main-results-content-container').toggleClass('col-md-12', !previewMode);
         },
 
-        remove: function () {
+        remove: function() {
             this.resultsView.remove();
             this.removePreviewModeView();
             Backbone.View.prototype.remove.call(this);
         },
 
         removePreviewModeView: function() {
-            if (this.previewModeView) {
+            if(this.previewModeView) {
                 this.previewModeView.remove();
                 this.stopListening(this.previewModeView);
                 this.previewModeView = null;
@@ -84,7 +83,7 @@ define([
         },
 
         scrollFollow: function() {
-            if (this.$el.is(':visible')) {
+            if(this.$el.is(':visible')) {
                 const augmentationRect = this.el.getBoundingClientRect();
                 const containerTop = this.scrollModel.get('top');
                 const containerBottom = this.scrollModel.get('bottom');
@@ -105,5 +104,4 @@ define([
             }
         }
     });
-
 });

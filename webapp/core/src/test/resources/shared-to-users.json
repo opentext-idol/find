@@ -1,0 +1,15 @@
+[
+  {
+    "userId": "3",
+    "searchId": "3",
+    "modifiedDate": null,
+    "sharedDate": null,
+    "canEdit": "true"
+  },{
+    "userId": "3",
+    "searchId": "2",
+    "modifiedDate": null,
+    "sharedDate": null,
+    "canEdit": "false"
+  }
+]

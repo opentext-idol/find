@@ -30,7 +30,10 @@ import static org.junit.Assert.assertNotNull;
 @AutoConfigureJsonTesters(enabled = false)
 @SpringBootTest(classes = {
         ConfigFileConfiguration.class, InMemoryConfiguration.class, IdolConfiguration.class, TestConfiguration.class, HavenSearchIdolConfiguration.class, IdolFindConfigFileService.class
-}, value = "hp.find.persistentState = INMEMORY", webEnvironment = SpringBootTest.WebEnvironment.NONE)
+}, value = {
+        "hp.find.persistentState = INMEMORY",
+        "mock.configuration=false"
+}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class IdolConfigurationTest {
     private static final String TEST_DIR = "./target/test";
 
