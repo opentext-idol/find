@@ -1,0 +1,13 @@
+[
+  {
+    "id": {
+      "userId": "2",
+      "searchId": "3"
+    },
+    "userId": "2",
+    "searchId": "3",
+    "modifiedDate": null,
+    "sharedDate": null,
+    "canEdit": "true"
+  }
+]

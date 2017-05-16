@@ -3,6 +3,7 @@ package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.savedsearches.AbstractSavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchRepository;
+import com.hp.autonomy.frontend.find.core.savedsearches.SharedToUserRepository;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
@@ -18,8 +19,9 @@ import org.springframework.stereotype.Service;
 public class SavedSnapshotService extends AbstractSavedSearchService<SavedSnapshot, SavedSnapshot.Builder> {
     @Autowired
     public SavedSnapshotService(final SavedSearchRepository<SavedSnapshot, SavedSnapshot.Builder> savedSnapshotRepository,
+                                final SharedToUserRepository sharedToUserRepository,
                                 final AuditorAware<UserEntity> userEntityAuditorAware,
                                 final TagNameFactory tagNameFactory) {
-        super(savedSnapshotRepository, userEntityAuditorAware, tagNameFactory);
+        super(savedSnapshotRepository, sharedToUserRepository, userEntityAuditorAware, tagNameFactory, SavedSnapshot.class);
     }
 }

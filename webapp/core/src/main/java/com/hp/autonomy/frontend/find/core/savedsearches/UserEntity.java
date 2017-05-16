@@ -5,8 +5,9 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,13 +15,10 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -36,8 +34,10 @@ import java.util.UUID;
 @Entity
 @Table(name = UserEntity.Table.NAME)
 @Data
-@EqualsAndHashCode(exclude = {"searches", "userId"})
+@Builder
+@EqualsAndHashCode(exclude = "userId")
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserEntity {
     @Id
     @Column(name = Table.Column.USER_ID)
@@ -54,13 +54,10 @@ public class UserEntity {
     @Type(type = "uuid-char")
     private UUID uuid;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<SavedSearch<?, ?>> searches;
-
     public interface Table {
         String NAME = "users";
 
+        @SuppressWarnings("InnerClassTooDeeplyNested")
         interface Column {
             String USER_ID = "user_id";
             String USER_STORE = "user_store";
