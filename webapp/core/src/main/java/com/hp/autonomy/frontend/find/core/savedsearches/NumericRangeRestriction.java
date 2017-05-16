@@ -13,8 +13,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Transient;
 
 @SuppressWarnings("WeakerAccess")
@@ -23,23 +21,15 @@ import javax.persistence.Transient;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@JsonDeserialize(builder = ParametricRange.ParametricRangeBuilder.class)
-public class ParametricRange {
+@JsonDeserialize(builder = NumericRangeRestriction.NumericRangeRestrictionBuilder.class)
+public class NumericRangeRestriction {
     private String field;
     @Transient
     private String displayName;
     private double min;
     private double max;
-    @Enumerated(EnumType.ORDINAL)
-    private Type type;
-
-    // Don't ever reorder these as we are using ordinal enumeration
-    public enum Type {
-        Date,
-        Numeric
-    }
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static class ParametricRangeBuilder {
+    public static class NumericRangeRestrictionBuilder {
     }
 }

@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,11 +52,27 @@ public class FieldTextParserTest {
     }
 
     @Test
-    public void toFieldTextWithOneRange() {
-        final ParametricRange range = ParametricRange.builder().field("YEAR").min(1066).max(1485).type(ParametricRange.Type.Numeric).build();
-        when(savedSearch.getParametricRanges()).thenReturn(Collections.singleton(range));
+    public void toFieldTextWithOneNumericRange() {
+        final NumericRangeRestriction range = NumericRangeRestriction.builder()
+                .field("YEAR")
+                .min(1066)
+                .max(1485)
+                .build();
+        when(savedSearch.getNumericRangeRestrictions()).thenReturn(Collections.singleton(range));
 
         assertThat(fieldTextParser.toFieldText(savedSearch), is("NRANGE{1066,1485}:YEAR"));
+    }
+
+    @Test
+    public void toFieldTextWithOneDateRange() {
+        final DateRangeRestriction range = DateRangeRestriction.builder()
+                .field("SOME_DATE")
+                .min(ZonedDateTime.parse("2017-02-15T15:39:00Z"))
+                .max(ZonedDateTime.parse("2017-02-15T15:40:00Z"))
+                .build();
+        when(savedSearch.getDateRangeRestrictions()).thenReturn(Collections.singleton(range));
+
+        assertThat(fieldTextParser.toFieldText(savedSearch), is("RANGE{2017-02-15T15:39:00Z,2017-02-15T15:40:00Z}:SOME_DATE"));
     }
 
     @Test
@@ -64,11 +81,19 @@ public class FieldTextParserTest {
         final FieldAndValue fieldAndValue2 = FieldAndValue.builder().field("SPECIES").value("dog").build();
         final FieldAndValue fieldAndValue3 = FieldAndValue.builder().field("COLOUR").value("white").build();
 
-        final ParametricRange range1 = ParametricRange.builder().field("YEAR").min(1066).max(1485).type(ParametricRange.Type.Numeric).build();
-        final ParametricRange range2 = ParametricRange.builder().field("DATE").min(123456789L).max(123456791L).type(ParametricRange.Type.Date).build();
+        final NumericRangeRestriction numericRange = NumericRangeRestriction.builder().field("YEAR")
+                .min(1066)
+                .max(1485)
+                .build();
+        final DateRangeRestriction dateRange = DateRangeRestriction.builder()
+                .field("DATE")
+                .min(ZonedDateTime.parse("2017-02-15T15:39:00Z"))
+                .max(ZonedDateTime.parse("2017-02-15T15:40:00Z"))
+                .build();
 
         when(savedSearch.getParametricValues()).thenReturn(ImmutableSet.of(fieldAndValue1, fieldAndValue2, fieldAndValue3));
-        when(savedSearch.getParametricRanges()).thenReturn(ImmutableSet.of(range1, range2));
+        when(savedSearch.getNumericRangeRestrictions()).thenReturn(Collections.singleton(numericRange));
+        when(savedSearch.getDateRangeRestrictions()).thenReturn(Collections.singleton(dateRange));
 
         final String fieldText = fieldTextParser.toFieldText(savedSearch);
 
@@ -87,6 +112,6 @@ public class FieldTextParserTest {
         assertThat(fieldToValues, hasEntry(is("COLOUR"), arrayContainingInAnyOrder("white")));
         assertThat(fieldToValues, hasEntry(is("SPECIES"), arrayContainingInAnyOrder("dog", "cat")));
         assertThat(fieldToValues, hasEntry(is("YEAR"), arrayContaining("1066", "1485")));
-        assertThat(fieldToValues, hasEntry(is("DATE"), arrayContaining("123456789e", "123456791e")));
+        assertThat(fieldToValues, hasEntry(is("DATE"), arrayContaining("2017-02-15T15:39:00Z", "2017-02-15T15:40:00Z")));
     }
 }

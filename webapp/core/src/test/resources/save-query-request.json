@@ -8,8 +8,11 @@
     "parametricValues": [
         {"field": "CATEGORY", "value": "COMPUTING"}
     ],
-    "parametricRanges": [
-        {"field": "SOME_DATE", "min": 123456789, "max": 123456791, "type": "Date"}
+    "numericRangeRestrictions": [
+        {"field": "SOME_NUMBER", "min": 123.5, "max": 124.5}
+    ],
+    "dateRangeRestrictions": [
+        {"field": "SOME_DATE", "min": 123456789, "max": 123456791}
     ],
     "conceptClusterPhrases": [
         {"phrase": "characters", "primary": true, "clusterId": 1},

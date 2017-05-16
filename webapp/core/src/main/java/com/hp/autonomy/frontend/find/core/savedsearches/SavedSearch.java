@@ -38,6 +38,7 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -77,8 +78,12 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     private Set<FieldAndValue> parametricValues;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = ParametricRangesTable.NAME, joinColumns = @JoinColumn(name = ParametricRangesTable.Column.SEARCH_ID))
-    private Set<ParametricRange> parametricRanges;
+    @CollectionTable(name = NumericRangeRestrictionsTable.NAME, joinColumns = @JoinColumn(name = NumericRangeRestrictionsTable.Column.SEARCH_ID))
+    private Set<NumericRangeRestriction> numericRangeRestrictions;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = DateRangeRestrictionsTable.NAME, joinColumns = @JoinColumn(name = DateRangeRestrictionsTable.Column.SEARCH_ID))
+    private Set<DateRangeRestriction> dateRangeRestrictions;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = ConceptClusterPhraseTable.NAME, joinColumns = @JoinColumn(name = ConceptClusterPhraseTable.Column.SEARCH_ID))
@@ -113,7 +118,8 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         title = builder.title;
         indexes = builder.indexes;
         parametricValues = builder.parametricValues;
-        parametricRanges = builder.parametricRanges;
+        numericRangeRestrictions = builder.numericRangeRestrictions;
+        dateRangeRestrictions = builder.dateRangeRestrictions;
         conceptClusterPhrases = builder.conceptClusterPhrases;
         minDate = builder.minDate;
         maxDate = builder.maxDate;
@@ -147,7 +153,8 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
 
             indexes = other.getIndexes() == null ? indexes : other.getIndexes();
             parametricValues = other.getParametricValues() == null ? parametricValues : other.getParametricValues();
-            parametricRanges = other.getParametricRanges() == null ? parametricRanges : other.getParametricRanges();
+            numericRangeRestrictions = Optional.ofNullable(other.getNumericRangeRestrictions()).orElse(numericRangeRestrictions);
+            dateRangeRestrictions = Optional.ofNullable(other.getDateRangeRestrictions()).orElse(dateRangeRestrictions);
 
             if(other.getConceptClusterPhrases() != null) {
                 conceptClusterPhrases.clear();
@@ -227,8 +234,17 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         }
     }
 
-    private interface ParametricRangesTable {
-        String NAME = "search_parametric_ranges";
+    private interface NumericRangeRestrictionsTable {
+        String NAME = "search_numeric_ranges";
+
+        @SuppressWarnings("InnerClassTooDeeplyNested")
+        interface Column {
+            String SEARCH_ID = "search_id";
+        }
+    }
+
+    private interface DateRangeRestrictionsTable {
+        String NAME = "search_date_ranges";
 
         @SuppressWarnings("InnerClassTooDeeplyNested")
         interface Column {
@@ -266,7 +282,8 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         private String title;
         private Set<EmbeddableIndex> indexes;
         private Set<FieldAndValue> parametricValues;
-        private Set<ParametricRange> parametricRanges;
+        private Set<NumericRangeRestriction> numericRangeRestrictions;
+        private Set<DateRangeRestriction> dateRangeRestrictions;
         private Set<ConceptClusterPhrase> conceptClusterPhrases;
         private ZonedDateTime minDate;
         private ZonedDateTime maxDate;
@@ -281,7 +298,8 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             title = search.title;
             indexes = search.indexes;
             parametricValues = search.parametricValues;
-            parametricRanges = search.parametricRanges;
+            numericRangeRestrictions = search.numericRangeRestrictions;
+            dateRangeRestrictions = search.dateRangeRestrictions;
             conceptClusterPhrases = search.conceptClusterPhrases;
             minDate = search.minDate;
             maxDate = search.maxDate;
@@ -314,8 +332,13 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             return this;
         }
 
-        public Builder<T, B> setParametricRanges(final Set<ParametricRange> parametricRanges) {
-            this.parametricRanges = new LinkedHashSet<>(parametricRanges);
+        public Builder<T, B> setNumericRangeRestrictions(final Set<NumericRangeRestriction> numericRangeRestrictions) {
+            this.numericRangeRestrictions = new LinkedHashSet<>(numericRangeRestrictions);
+            return this;
+        }
+
+        public Builder<T, B> setDateRangeRestrictions(final Set<DateRangeRestriction> dateRangeRestrictions) {
+            this.dateRangeRestrictions = new LinkedHashSet<>(dateRangeRestrictions);
             return this;
         }
 
