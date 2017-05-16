@@ -1,4 +1,3 @@
-@import "bootstrap.css";
 @import '../bower_components/fontawesome/css/font-awesome.css';
 @import "../bower_components/hp-autonomy-settings-page/src/css/settings.css";
 @import "../bower_components/hp-autonomy-js-whatever/src/css/javascript-utils.css";
@@ -12,5 +11,5 @@
 @import "../bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css";
 @import "../bower_components/leaflet.markercluster/dist/MarkerCluster.css";
 @import "../bower_components/leaflet.markercluster/dist/MarkerCluster.Default.css";
-@import "compiled.css";
-@import "icons.css";
+@import "../bower_components/metisMenu/dist/metisMenu.css";
+@import "./icons.css";
