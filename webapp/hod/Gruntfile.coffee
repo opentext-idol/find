@@ -89,6 +89,7 @@ module.exports = (grunt) ->
       copyResources:
         files: [
           '../core/src/main/public/static/**/*'
+          '../core/src/main/resources/less/**/*.less'
           'src/main/public/static/**/*'
         ]
         spawn: false
@@ -101,6 +102,11 @@ module.exports = (grunt) ->
     sync:
       devResources:
         files: [
+          {
+            cwd: '../core/src/main/resources/less'
+            src: '**/*'
+            dest: '../core/target/classes/less'
+          }
           {
             cwd: '../core/src/main/public/static'
             src: '**/*'

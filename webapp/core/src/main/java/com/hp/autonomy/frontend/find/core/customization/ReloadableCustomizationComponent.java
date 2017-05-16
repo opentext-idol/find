@@ -5,8 +5,9 @@
 
 package com.hp.autonomy.frontend.find.core.customization;
 
-import java.nio.file.Path;
-
-public interface Compiler {
-    String compile(Path path) throws CssGenerationException;
+/**
+ * This interface is used for bulk customizations and config reloading by the Spring container.
+ */
+public interface ReloadableCustomizationComponent {
+    void reload() throws Exception;
 }

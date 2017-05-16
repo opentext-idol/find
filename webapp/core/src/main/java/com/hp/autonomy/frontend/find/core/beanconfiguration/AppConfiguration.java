@@ -38,6 +38,7 @@ import java.util.Set;
 public class AppConfiguration<C extends FindConfig<C, ?>> {
     public static final String APPLICATION_RELEASE_VERSION_PROPERTY = "${application.releaseVersion}";
     public static final String GIT_COMMIT_PROPERTY = "${application.commit}";
+    public static final String SERVER_CONTEXT_PATH = "${server.context-path}";
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired

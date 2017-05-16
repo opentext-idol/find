@@ -3,7 +3,7 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.idol.dashboards;
+package com.hp.autonomy.frontend.find.idol.customization;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import com.hp.autonomy.frontend.find.core.web.FindController;
@@ -27,14 +27,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DirtiesContext
-public class DashboardControllerIT extends AbstractFindIT {
+public class CustomizationReloadControllerIT extends AbstractFindIT {
     private static final String UUID = "b1c71fad-a52d-47bf-a121-f71500bd7ddb";
     private static final String DASHBOARD_CONFIG = TEST_DIR + "/customization/dashboards.json";
     private static final String DASHBOARD_CONFIG_BACKUP = TEST_DIR + "/customization/dashboards.json.bak";
     private static final String REPLACEMENT_CONFIG = "target/test-classes/DashboardControllerIT-Config-1.json";
-    private static final String RENAMED_DASHBOARD_CONFIG = "target/test-classes/DashboardControllerIT-Config-2.json";
-    private static final String DASHBOARD_URL = "http://example.com/public/dashboards/Figs";
-    private static final String ROOT_URL = "/";
 
     @Override
     @Before
@@ -56,46 +53,13 @@ public class DashboardControllerIT extends AbstractFindIT {
         assertTrue("Replacement config contains UUID", replacementConfigContents.contains(UUID));
 
         currentConfigContainsUUID(false);
+
         // Replace current config file
         copyFileReplaceExisting(REPLACEMENT_CONFIG, DASHBOARD_CONFIG);
 
-        triggerConfigReload(DASHBOARD_URL, DASHBOARD_URL);
+        triggerConfigReload();
 
         currentConfigContainsUUID(true);
-    }
-
-    @Test
-    public void testReloadConfigDetectsDashboardWasRenamed() throws Exception {
-        // Replace current config file
-        copyFileReplaceExisting(REPLACEMENT_CONFIG, DASHBOARD_CONFIG);
-
-        triggerConfigReload(DASHBOARD_URL, DASHBOARD_URL);
-
-        // Load another config file, where the "Figs" dashboard had been deleted
-        copyFileReplaceExisting(RENAMED_DASHBOARD_CONFIG, DASHBOARD_CONFIG);
-
-        triggerConfigReload(DASHBOARD_URL, ROOT_URL);
-    }
-
-    private void currentConfigContainsUUID(final boolean expected) throws Exception {
-        final RequestBuilder requestToAppPath = get(FindController.APP_PATH)
-                .with(authentication(adminAuth()));
-
-        mockMvc.perform(requestToAppPath)
-                .andExpect(status().isOk())
-                .andDo(mvcResult -> {
-                    final String response = mvcResult.getResponse().getContentAsString();
-                    assertEquals(expected, response.contains(UUID));
-                });
-    }
-
-    private void triggerConfigReload(final String referer, final String redirect) throws Exception {
-        mockMvc.perform(
-                get(DashboardController.DASHBOARD_CONFIG_RELOAD_PATH)
-                        .with(authentication(adminAuth()))
-                        .header("referer", referer))
-                .andExpect(status().isFound())
-                .andExpect(redirectedUrl(redirect));
     }
 
     private void copyFileReplaceExisting(final String from, final String to) {
@@ -103,8 +67,8 @@ public class DashboardControllerIT extends AbstractFindIT {
         final Path toPath = Paths.get(to);
         try {
             Files.copy(fromPath, toPath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (final IOException e) {
-            throw new IllegalStateException("Could not replace current dashboard config file", e);
+        } catch(final IOException e) {
+            throw new IllegalStateException("Could not replace current config file", e);
         }
     }
 
@@ -113,8 +77,29 @@ public class DashboardControllerIT extends AbstractFindIT {
         final Path toPath = Paths.get(to);
         try {
             Files.move(fromPath, toPath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (final IOException e) {
-            throw new IllegalStateException("Could not replace current dashboard config file", e);
+        } catch(final IOException e) {
+            throw new IllegalStateException("Could not replace current config file", e);
         }
+    }
+
+    private void currentConfigContainsUUID(final boolean expected) throws Exception {
+        final RequestBuilder requestToAppPath = get(FindController.APP_PATH)
+            .with(authentication(adminAuth()));
+
+        mockMvc.perform(requestToAppPath)
+            .andExpect(status().isOk())
+            .andDo(mvcResult -> {
+                final String response = mvcResult.getResponse().getContentAsString();
+                assertEquals(expected, response.contains(UUID));
+            });
+    }
+
+    private void triggerConfigReload() throws Exception {
+        mockMvc.perform(
+            get(CustomizationReloadController.CUSTOMIZATION_PATH +
+                    CustomizationReloadController.CONFIG_RELOAD_PATH)
+                .with(authentication(adminAuth())))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl(FindController.APP_PATH));
     }
 }

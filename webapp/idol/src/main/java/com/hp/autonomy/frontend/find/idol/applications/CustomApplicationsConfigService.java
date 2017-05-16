@@ -6,10 +6,11 @@
 package com.hp.autonomy.frontend.find.idol.applications;
 
 import com.hp.autonomy.frontend.find.core.configuration.CustomizationConfigService;
+import com.hp.autonomy.frontend.find.core.customization.ReloadableCustomizationComponent;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CustomApplicationsConfigService extends CustomizationConfigService<CustomApplicationsConfig> {
+public class CustomApplicationsConfigService extends CustomizationConfigService<CustomApplicationsConfig> implements ReloadableCustomizationComponent {
     public CustomApplicationsConfigService() {
         super(
             "applications.json",
@@ -17,5 +18,10 @@ public class CustomApplicationsConfigService extends CustomizationConfigService<
             CustomApplicationsConfig.class,
             CustomApplicationsConfig.builder().build()
         );
+    }
+
+    @Override
+    public void reload() throws Exception {
+        init();
     }
 }

@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.find.core.configuration.CustomizationConfigService;
+import com.hp.autonomy.frontend.find.core.customization.ReloadableCustomizationComponent;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.TagNameSerializer;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.Widget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.WidgetMixins;
@@ -21,7 +22,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DashboardConfigService extends CustomizationConfigService<DashboardConfig> {
+public class DashboardConfigService extends CustomizationConfigService<DashboardConfig> implements ReloadableCustomizationComponent {
     @Autowired
     public DashboardConfigService(final JsonDeserializer<TagName> tagNameDeserializer) {
         super(
@@ -37,5 +38,10 @@ public class DashboardConfigService extends CustomizationConfigService<Dashboard
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
                                    DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
         );
+    }
+
+    @Override
+    public void reload() throws Exception {
+        init();
     }
 }

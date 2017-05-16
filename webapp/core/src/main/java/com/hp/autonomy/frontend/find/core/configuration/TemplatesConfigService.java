@@ -5,10 +5,11 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
+import com.hp.autonomy.frontend.find.core.customization.ReloadableCustomizationComponent;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TemplatesConfigService extends CustomizationConfigService<TemplatesConfig> {
+public class TemplatesConfigService extends CustomizationConfigService<TemplatesConfig> implements ReloadableCustomizationComponent {
     public TemplatesConfigService() {
         super(
             "templates.json",
@@ -16,5 +17,10 @@ public class TemplatesConfigService extends CustomizationConfigService<Templates
             TemplatesConfig.class,
             TemplatesConfig.builder().build()
         );
+    }
+
+    @Override
+    public void reload() throws Exception {
+        init();
     }
 }

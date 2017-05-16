@@ -23,8 +23,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StyleCompilerTest {
-    private Compiler compiler;
+public class Less4jStyleCompilerTest {
+    private StyleCompiler styleCompiler;
     @Mock
     private DefaultLessCompiler lessCompiler;
     @Mock
@@ -43,8 +43,8 @@ public class StyleCompilerTest {
 
         when(result.getCss()).thenReturn("css!");
         when(lessCompiler.compile(any(LessResource.class), eq(lessCompilerConfig))).thenReturn(result);
-        compiler = new StyleCompiler(extraVariables, lessCompiler, lessCompilerConfig);
-        output = compiler.compile(new InMemoryPath("./less/file.less"));
+        styleCompiler = new Less4jStyleCompiler(extraVariables, lessCompiler, lessCompilerConfig);
+        output = styleCompiler.compile(new InMemoryPath("./less/file.less"));
     }
 
     @Test
