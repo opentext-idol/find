@@ -87,6 +87,6 @@ class IdolStatsService implements StatsService {
     }
 
     private boolean isEnabled() {
-        return BooleanUtils.isTrue(configService.getConfig().getStatsServer().getEnabled());
+        return configService.getConfig().getStatsServer() != null && BooleanUtils.isTrue(configService.getConfig().getStatsServer().getEnabled());
     }
 }
