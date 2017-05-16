@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -52,7 +52,6 @@ public class AppConfiguration<C extends FindConfig<C, ?>> {
     public EmbeddedServletContainerCustomizer containerCustomizer() {
 
         return container -> {
-
             final ErrorPage error401Page = new ErrorPage(HttpStatus.UNAUTHORIZED, DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH);
             final ErrorPage error403Page = new ErrorPage(HttpStatus.FORBIDDEN, DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH);
             final ErrorPage error404Page = new ErrorPage(HttpStatus.NOT_FOUND, DispatcherServletConfiguration.NOT_FOUND_ERROR_PATH);

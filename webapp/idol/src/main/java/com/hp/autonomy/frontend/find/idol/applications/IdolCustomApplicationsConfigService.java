@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 public class IdolCustomApplicationsConfigService extends CustomizationConfigService<IdolCustomApplicationsConfig> {
     public IdolCustomApplicationsConfigService() {
         super(
-                "applications.json",
-                "defaultApplicationsConfigFile.json",
-                IdolCustomApplicationsConfig.class,
-                IdolCustomApplicationsConfig.builder().build()
+            "applications.json",
+            "defaultApplicationsConfigFile.json",
+            IdolCustomApplicationsConfig.class,
+            IdolCustomApplicationsConfig.builder().build()
         );
     }
 }

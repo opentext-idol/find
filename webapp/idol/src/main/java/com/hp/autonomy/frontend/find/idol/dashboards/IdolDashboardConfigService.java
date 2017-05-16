@@ -25,16 +25,16 @@ public class IdolDashboardConfigService extends CustomizationConfigService<IdolD
     @Autowired
     public IdolDashboardConfigService(final JsonDeserializer<TagName> tagNameDeserializer) {
         super(
-                "dashboards.json",
-                "defaultDashboardsConfigFile.json",
-                IdolDashboardConfig.class,
-                IdolDashboardConfig.builder().build(),
-                new Jackson2ObjectMapperBuilder()
-                        .mixIn(Widget.class, WidgetMixins.class)
-                        .mixIn(WidgetDatasource.class, WidgetDatasourceMixins.class)
-                        .deserializersByType(ImmutableMap.of(TagName.class, tagNameDeserializer))
-                        .serializersByType(ImmutableMap.of(TagName.class, new TagNameSerializer()))
-                        .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+            "dashboards.json",
+            "defaultDashboardsConfigFile.json",
+            IdolDashboardConfig.class,
+            IdolDashboardConfig.builder().build(),
+            new Jackson2ObjectMapperBuilder()
+                .mixIn(Widget.class, WidgetMixins.class)
+                .mixIn(WidgetDatasource.class, WidgetDatasourceMixins.class)
+                .deserializersByType(ImmutableMap.of(TagName.class, tagNameDeserializer))
+                .serializersByType(ImmutableMap.of(TagName.class, new TagNameSerializer()))
+                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
         );
     }
 }

@@ -19,7 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class IdolDashboardControllerTest {
@@ -48,7 +50,7 @@ public class IdolDashboardControllerTest {
 
         final Dashboard dashboard = Dashboard.builder().dashboardName("yup").build();
         Mockito.doReturn(Collections.singletonList(dashboard))
-                .when(config).getDashboards();
+            .when(config).getDashboards();
 
         Mockito.doNothing().when(configService).init();
         Mockito.doReturn(configResponse).when(configService).getConfigResponse();
@@ -90,7 +92,7 @@ public class IdolDashboardControllerTest {
 
         final Dashboard dashboard = Dashboard.builder().dashboardName("why not").build();
         Mockito.doReturn(Collections.singletonList(dashboard))
-                .when(config).getDashboards();
+            .when(config).getDashboards();
 
         controller.reloadConfig(request, response);
         verify(configService, times(1)).init();
