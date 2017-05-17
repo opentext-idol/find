@@ -125,6 +125,7 @@ define([
                         Constructor: CustomisationsPage,
                         icon: 'hp-icon hp-fw hp-view',
                         models: ['bigLogoCollection', 'smallLogoCollection'],
+                        navigation: 'dropdown',
                         title: i18n['app.customisations'],
                         order: dashboardCount + 3
                     }
