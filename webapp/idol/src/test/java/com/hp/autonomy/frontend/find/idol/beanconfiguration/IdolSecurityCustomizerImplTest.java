@@ -5,12 +5,17 @@
 
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.user.UserRoles;
 import com.hp.autonomy.user.UserService;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,8 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collection;
 
-import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizer.PRE_AUTHENTICATED_ROLES_PROPERTY_KEY;
-import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizer.REVERSE_PROXY_PROPERTY_KEY;
+import static com.hp.autonomy.frontend.find.idol.beanconfiguration.IdolSecurityCustomizerImpl.DEFAULT_ROLES_KEY;
 import static com.hp.autonomy.frontend.find.idol.beanconfiguration.GrantedAuthorityMatcher.authority;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -36,16 +40,18 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        classes = ReverseProxyIdolSecurityCustomizer.class,
+        classes = IdolSecurityCustomizerImpl.class,
         properties = {
-                REVERSE_PROXY_PROPERTY_KEY + "=true",
-                PRE_AUTHENTICATED_ROLES_PROPERTY_KEY + "=FindUser,FindBI,FindAdmin"
+                DEFAULT_ROLES_KEY + "=FindUser"
         },
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class ReverseProxyIdolSecurityCustomizerTest {
+public class IdolSecurityCustomizerImplTest {
 
     @Autowired
-    private ReverseProxyIdolSecurityCustomizer reverseProxyIdolSecurityCustomizer;
+    private IdolSecurityCustomizerImpl idolSecurityCustomizer;
+
+    @MockBean
+    private ConfigService<IdolFindConfig> configService;
 
     @MockBean
     private UserService userService;
@@ -53,11 +59,19 @@ public class ReverseProxyIdolSecurityCustomizerTest {
     @MockBean
     private GrantedAuthoritiesMapper authoritiesMapper;
 
+    // required for wiring but not used in test
+    @SuppressWarnings("unused")
+    @MockBean
+    private AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever;
+
     @Mock
     private Authentication foreignAuthentication;
 
     @Mock
-    private UserRoles userRoles;
+    private CommunityAuthentication communityAuthentication;
+
+    @Mock
+    private IdolFindConfig idolFindConfig;
 
     @Before
     public void setUp() {
@@ -69,22 +83,28 @@ public class ReverseProxyIdolSecurityCustomizerTest {
         //noinspection unchecked
         when(authoritiesMapper.mapAuthorities(anyCollection())).then(returnsFirstArg());
 
-        when(userService.getUser(anyString(), anyBoolean())).thenReturn(userRoles);
+        when(userService.authenticateUser(anyString(), anyString(), anyString())).thenReturn(true);
+        when(userService.getUser(anyString(), anyBoolean())).thenReturn(new UserRoles("Some Guy"));
+
+        when(communityAuthentication.getMethod()).thenReturn("LDAP");
+
+        // use the not type safe syntax as the usual version won't compile
+        Mockito.doReturn(communityAuthentication).when(idolFindConfig).getAuthentication();
+        when(configService.getConfig()).thenReturn(idolFindConfig);
     }
 
     @Test
-    public void testRoleFiltering() {
-        final Collection<AuthenticationProvider> authenticationProviders = reverseProxyIdolSecurityCustomizer.getAuthenticationProviders();
+    public void testDefaultRoles() {
+        final Collection<AuthenticationProvider> authenticationProviders = idolSecurityCustomizer.getAuthenticationProviders();
 
         assertThat(authenticationProviders, hasSize(1));
 
         final Authentication authentication = authenticationProviders.stream()
-                .map(authenticationProvider -> authenticationProvider.authenticate(this.foreignAuthentication))
                 .findFirst()
+                .map(authenticationProvider -> authenticationProvider.authenticate(this.foreignAuthentication))
                 .orElseThrow(() -> new AssertionError("AuthenticationProvider did not authenticate"));
 
-        assertThat(authentication.getAuthorities(), contains(authority("FindUser"), authority("FindBI")));
+        assertThat(authentication.getAuthorities(), contains(authority("FindUser")));
     }
-
 
 }

@@ -35,6 +35,9 @@ import java.util.Set;
 @Component
 @ConditionalOnProperty(value = "server.reverseProxy", havingValue = "false", matchIfMissing = true)
 public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
+
+    static final String DEFAULT_ROLES_KEY = "find.defaultRoles";
+
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> configService;
 
@@ -47,7 +50,7 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
     @Autowired
     private AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever;
 
-    @Value("${find.defaultRoles}")
+    @Value("${" + DEFAULT_ROLES_KEY + '}')
     private String defaultRolesProperty;
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
