@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.customisations;
 
+import com.hp.autonomy.frontend.find.core.configuration.CustomizationConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +21,7 @@ import java.util.List;
 @Service
 public class CustomisationServiceImpl implements CustomisationService {
 
-    private static final String CUSTOMIZATIONS_DIRECTORY = "customizations";
+    private static final String CUSTOMIZATIONS_DIRECTORY = CustomizationConfigService.CONFIG_DIRECTORY;
     private static final String ASSETS_DIRECTORY = "assets";
 
     private final String homeDirectory;
