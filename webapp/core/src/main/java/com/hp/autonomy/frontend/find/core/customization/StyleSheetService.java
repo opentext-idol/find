@@ -6,8 +6,8 @@
 package com.hp.autonomy.frontend.find.core.customization;
 
 import com.google.common.collect.ImmutableMap;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
-import com.hp.autonomy.frontend.find.core.configuration.CustomizationConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.style.StyleConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class StyleSheetService implements ReloadableCustomizationComponent {
+public class StyleSheetService {
     // LESS files which give rise to CSS files directly requested by the
     // browser have to be included here
     private static final Map<String, String> LESS_TO_CSS_FILE_MAP = ImmutableMap.<String, String>builder()
@@ -34,18 +34,18 @@ public class StyleSheetService implements ReloadableCustomizationComponent {
     private final Map<String, String> fileNameToCssMap = new ConcurrentHashMap<>();
 
     // Provides configured custom LESS variables
-    private final CustomizationConfigService<StyleConfiguration> configService;
+    private final ConfigService<StyleConfiguration> configService;
 
     @Value(AppConfiguration.GIT_COMMIT_PROPERTY)
     private String gitCommitHash;
 
     @Autowired
-    public StyleSheetService(final CustomizationConfigService<StyleConfiguration> configService) {
+    public StyleSheetService(final ConfigService<StyleConfiguration> configService) {
         this.configService = configService;
     }
 
     @PostConstruct
-    private void generateCss() throws CssGenerationException {
+    public void generateCss() throws CssGenerationException {
         final Map<String, String> extraVariables = lessVariables();
 
         final StyleCompiler styleCompiler = new Less4jStyleCompiler(extraVariables);
@@ -74,20 +74,18 @@ public class StyleSheetService implements ReloadableCustomizationComponent {
         // path to ./static directory inside the core .jar file relative to the ./less directory
         variables.put("compilationResourcesPath", "'../static'");
 
-        variables.putAll(configService.getConfig().getSimpleVariables().entrySet()
-                             .stream()
-                             .collect(
-                                 Collectors.toMap(
-                                     e -> "USER_CUSTOM_" + e.getKey(),
-                                     Map.Entry::getValue
-                                 )
-                             ));
+        final Map<String, String> customVariables = configService.getConfig().getSimpleVariables();
+        if(customVariables != null) {
+            final Map<String, String> mappedVariables = customVariables.entrySet()
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        e -> "USER_CUSTOM_" + e.getKey(),
+                        Map.Entry::getValue
+                    )
+                );
+            variables.putAll(mappedVariables);
+        }
         return variables;
-    }
-
-    @Override
-    public void reload() throws Exception {
-        configService.init();
-        generateCss();
     }
 }

@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/customization")
+@RequestMapping("/customization/style")
 public class StyleController {
     private final StyleSheetService service;
 
     @Autowired
     public StyleController(final StyleSheetService service) {this.service = service;}
 
-    @RequestMapping("/style/{fileName}")
+    @RequestMapping("/{fileName}")
     @ResponseBody
     public String getCss(@PathVariable final String fileName) {
         return service.getCss(fileName)
