@@ -23,7 +23,7 @@
   file: dest={{find_root_dir}}/{{find_archive_name}} mode=0755
 
 - name: Deploy configuration file
-  template: src=config.json.j2 dest={{find_root_dir}}/config.json owner={{find_user}} group={{find_group}} mode=0755 
+  template: src={{find_config_template}} dest={{find_root_dir}}/config.json owner={{find_user}} group={{find_group}} mode=0755
   notify: Restart Find
 
 - name: Deploy upstart script

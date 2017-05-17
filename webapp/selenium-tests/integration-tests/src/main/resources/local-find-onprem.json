@@ -1,0 +1,35 @@
+{
+  "app": {
+    "type": "On Premise",
+    "deployment": "develop",
+    "find": "http://localhost:8082"
+  },
+  "selenium": {
+    "browsers": [
+      "chrome"
+    ],
+    "url": "http://localhost:4444/wd/hub"
+  },
+  "users": {
+    "bifhi": {
+      "role": "BIFHI",
+      "username": "selenium",
+      "password": "q"
+    },
+    "dashboard": {
+      "role": "BIFHI",
+      "username": "selenium2",
+      "password": "q"
+    },
+    "dashboard2": {
+      "role": "BIFHI",
+      "username": "selenium3",
+      "password": "q"
+    },
+    "find": {
+      "role": "USER",
+      "username": "tellurium",
+      "password": "q"
+    }
+  }
+}

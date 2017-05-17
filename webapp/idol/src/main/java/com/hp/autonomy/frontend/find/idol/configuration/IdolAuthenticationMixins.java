@@ -6,7 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.configuration;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.hp.autonomy.frontend.configuration.CommunityAuthentication;
+import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "name", defaultImpl = CommunityAuthentication.class)
 public class IdolAuthenticationMixins {

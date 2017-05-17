@@ -28,12 +28,10 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @JsonDeserialize(builder = SavedSnapshot.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SavedSnapshot extends SavedSearch<SavedSnapshot> {
+public class SavedSnapshot extends SavedSearch<SavedSnapshot, SavedSnapshot.Builder> {
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = StoredStateTable.NAME, joinColumns = {
-            @JoinColumn(name = StoredStateTable.Column.SEARCH_ID)
-    })
+    @CollectionTable(name = StoredStateTable.NAME, joinColumns = @JoinColumn(name = StoredStateTable.Column.SEARCH_ID))
     private Set<TypedStateToken> stateTokens;
 
     @Column(name = Table.Column.TOTAL_RESULTS)
@@ -46,16 +44,21 @@ public class SavedSnapshot extends SavedSearch<SavedSnapshot> {
     }
 
     @Override
+    public Builder toBuilder() {
+        return new Builder(this);
+    }
+
+    @Override
     protected void mergeInternal(final SavedSnapshot other) {
-        stateTokens = other.getStateTokens() == null ? stateTokens : other.getStateTokens();
-        resultCount = other.getResultCount() == null ? resultCount : other.getResultCount();
+        stateTokens = other.stateTokens == null ? stateTokens : other.stateTokens;
+        resultCount = other.resultCount == null ? resultCount : other.resultCount;
     }
 
     @NoArgsConstructor
     @Setter
     @Accessors(chain = true)
     @JsonPOJOBuilder(withPrefix = "set")
-    public static class Builder extends SavedSearch.Builder<SavedSnapshot> {
+    public static class Builder extends SavedSearch.Builder<SavedSnapshot, Builder> {
         private Set<TypedStateToken> stateTokens;
         private Long resultCount;
 
@@ -67,7 +70,9 @@ public class SavedSnapshot extends SavedSearch<SavedSnapshot> {
         }
 
         @Override
-        public SavedSnapshot build() {return new SavedSnapshot(this);}
+        public SavedSnapshot build() {
+            return new SavedSnapshot(this);
+        }
     }
 
 }

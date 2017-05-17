@@ -8,9 +8,9 @@ import com.hp.autonomy.frontend.find.core.savedsearches.AbstractSavedSearchTest;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearch;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 
-public class SavedSnapshotTest extends AbstractSavedSearchTest<SavedSnapshot> {
+public class SavedSnapshotTest extends AbstractSavedSearchTest<SavedSnapshot, SavedSnapshot.Builder> {
     @Override
-    protected SavedSearch.Builder<SavedSnapshot> createBuilder() {
+    protected SavedSearch.Builder<SavedSnapshot, SavedSnapshot.Builder> createBuilder() {
         return new SavedSnapshot.Builder();
     }
 }

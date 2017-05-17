@@ -1,5 +1,5 @@
 define([], function () {
-    const DATE_WIDGET_FORMAT = 'YYYY-MM-DD HH:mm';
+    const DATE_WIDGET_FORMAT = 'YYYY-MM-DD HH:mm:ss';
     const render = function ($el, onSubmit) {
         $el.datetimepicker({
             format: DATE_WIDGET_FORMAT,

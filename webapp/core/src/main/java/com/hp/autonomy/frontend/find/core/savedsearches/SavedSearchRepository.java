@@ -11,10 +11,11 @@ import org.springframework.data.repository.NoRepositoryBean;
 import java.util.Set;
 
 @NoRepositoryBean
-public interface SavedSearchRepository<S extends SavedSearch<S>> extends CrudRepository<S, Long> {
+public interface SavedSearchRepository<S extends SavedSearch<S, B>, B extends SavedSearch.Builder<S, B>> extends CrudRepository<S, Long> {
 
     Set<S> findByActiveTrueAndUser_UserId(Long userId);
 
     S findByActiveTrueAndIdAndUser_UserId(Long id, Long userId);
 
+    S findByActiveTrueAndId(Long id);
 }

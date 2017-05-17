@@ -26,9 +26,9 @@ import static org.mockito.Mockito.when;
 public class FieldTextParserTest {
     private static final Pattern AND_SEPARATOR = Pattern.compile("\\+AND\\+");
     private static final Pattern FIELD_TEXT_EXPRESSION_PREFIX = Pattern.compile("^(MATCH|RANGE|NRANGE)\\{");
-    private static final Pattern FIELD_TEXT_EXPRESSION_SUFFIX = Pattern.compile("\\}:");
+    private static final Pattern FIELD_TEXT_EXPRESSION_SUFFIX = Pattern.compile("}:");
     @Mock
-    private SavedSearch<?> savedSearch;
+    private SavedSearch<?, ?> savedSearch;
 
     private FieldTextParser fieldTextParser;
 
@@ -44,7 +44,7 @@ public class FieldTextParserTest {
 
     @Test
     public void toFieldTextWithOneFieldAndValue() {
-        final FieldAndValue fieldAndValue = new FieldAndValue("SPECIES", "cat");
+        final FieldAndValue fieldAndValue = FieldAndValue.builder().field("SPECIES").value("cat").build();
         when(savedSearch.getParametricValues()).thenReturn(Collections.singleton(fieldAndValue));
 
         assertThat(fieldTextParser.toFieldText(savedSearch), is("MATCH{cat}:SPECIES"));
@@ -52,7 +52,7 @@ public class FieldTextParserTest {
 
     @Test
     public void toFieldTextWithOneRange() {
-        final ParametricRange range = new ParametricRange("YEAR", 1066, 1485, ParametricRange.Type.Numeric);
+        final ParametricRange range = ParametricRange.builder().field("YEAR").min(1066).max(1485).type(ParametricRange.Type.Numeric).build();
         when(savedSearch.getParametricRanges()).thenReturn(Collections.singleton(range));
 
         assertThat(fieldTextParser.toFieldText(savedSearch), is("NRANGE{1066,1485}:YEAR"));
@@ -60,12 +60,12 @@ public class FieldTextParserTest {
 
     @Test
     public void toFieldTextWithMultipleFieldsAndValuesAndRanges() {
-        final FieldAndValue fieldAndValue1 = new FieldAndValue("SPECIES", "cat");
-        final FieldAndValue fieldAndValue2 = new FieldAndValue("SPECIES", "dog");
-        final FieldAndValue fieldAndValue3 = new FieldAndValue("COLOUR", "white");
+        final FieldAndValue fieldAndValue1 = FieldAndValue.builder().field("SPECIES").value("cat").build();
+        final FieldAndValue fieldAndValue2 = FieldAndValue.builder().field("SPECIES").value("dog").build();
+        final FieldAndValue fieldAndValue3 = FieldAndValue.builder().field("COLOUR").value("white").build();
 
-        final ParametricRange range1 = new ParametricRange("YEAR", 1066, 1485, ParametricRange.Type.Numeric);
-        final ParametricRange range2 = new ParametricRange("DATE", 123456789L, 123456791L, ParametricRange.Type.Date);
+        final ParametricRange range1 = ParametricRange.builder().field("YEAR").min(1066).max(1485).type(ParametricRange.Type.Numeric).build();
+        final ParametricRange range2 = ParametricRange.builder().field("DATE").min(123456789L).max(123456791L).type(ParametricRange.Type.Date).build();
 
         when(savedSearch.getParametricValues()).thenReturn(ImmutableSet.of(fieldAndValue1, fieldAndValue2, fieldAndValue3));
         when(savedSearch.getParametricRanges()).thenReturn(ImmutableSet.of(range1, range2));

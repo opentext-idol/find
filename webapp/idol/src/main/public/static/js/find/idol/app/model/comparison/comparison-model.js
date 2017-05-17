@@ -1,18 +1,20 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
     'backbone',
     'find/app/util/search-data-util',
-    'find/app/model/saved-searches/saved-search-model'
-], function(Backbone, searchDataUtil, SavedSearchModel) {
+    'find/app/model/saved-searches/saved-search-model',
+    'underscore'
+], function(Backbone, searchDataUtil, SavedSearchModel, _) {
+    'use strict';
 
     var getComparisonAttributesFromSavedSearch = function(savedSearchModel, prefix) {
         var data = {};
 
-        data[prefix + 'Text'] = searchDataUtil.makeQueryText(savedSearchModel.get('queryText'), savedSearchModel.get('relatedConcepts'));
+        data[prefix + 'Text'] = searchDataUtil.makeQueryText(savedSearchModel.get('relatedConcepts'));
 
         if(savedSearchModel.get('type') === SavedSearchModel.Type.SNAPSHOT) {
             data[prefix + 'QueryStateToken'] = _.first(savedSearchModel.get('queryStateTokens'));
@@ -58,5 +60,4 @@ define([
     });
 
     return ComparisonModel;
-
 });

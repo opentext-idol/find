@@ -1,13 +1,13 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'find/app/page/search/selected-concepts/concept-cluster-view',
     'backbone',
-    'jquery'
-], function(ConceptClusterView, Backbone, $) {
+    'find/app/page/search/selected-concepts/concept-cluster-view'
+], function(Backbone, ConceptClusterView) {
+    'use strict';
 
     describe('ConceptClusterView', function() {
         beforeEach(function() {
@@ -41,7 +41,7 @@ define([
             });
         });
 
-        describe('if the model contains multiple concepts', function() {
+        describe('if multiple concepts are in a cluster', function() {
             beforeEach(function() {
                 this.conceptModel.set({
                     concepts: ['dog', 'canine', 'wolf']
@@ -53,16 +53,6 @@ define([
             it('displays the first concept in the model', function() {
                 expect(this.view.$el).toContainText('dog');
             });
-
-            it('displays every concept in a dropdown', function() {
-                const dropdownConcepts = this.view.$('.selected-related-concept-dropdown > li > a')
-                    .map(function(index, el) {
-                        return $(el).text();
-                    });
-
-                expect(dropdownConcepts).toEqual(['dog', 'canine', 'wolf']);
-            });
         });
     });
-
 });

@@ -1,12 +1,13 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
-    'find/app/page/search/filter-display/applied-filters-view',
     'backbone',
+    'find/app/page/search/filter-display/applied-filters-view',
     'i18n!find/nls/bundle'
-], function(AppliedFiltersView, Backbone, i18n) {
+], function(Backbone, AppliedFiltersView, i18n) {
     'use strict';
 
     describe('Applied Filters View', function() {
@@ -52,7 +53,7 @@ define([
             });
 
             it('displays a filter label', function() {
-                expect(this.view.$el.find('.filter-label').length).toBe(1);
+                expect(this.view.$el.find('.filter-label')).toHaveLength(1);
             });
 
             it('increments the counter accordingly', function() {
@@ -62,9 +63,8 @@ define([
             it('clicking the Remove All button removes test labels, the Remove All' +
                 ' button, and resets the counter', function() {
                 this.view.$el.find('.remove-all-filters').click();
-                debugger;
                 expect(this.view.collection.isEmpty()).toBe(true);
-                expect(this.view.$el.find('.filter-label').length).toBe(0);
+                expect(this.view.$el.find('.filter-label')).toHaveLength(0);
                 expect(this.view.getSectionControls()).toHaveClass('hide');
                 expect(this.view.getHeaderCounter()).toContainText('(0)');
             });

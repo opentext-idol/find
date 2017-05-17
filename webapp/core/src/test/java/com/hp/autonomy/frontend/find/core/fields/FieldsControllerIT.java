@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.core.fields;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
+import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -22,28 +23,7 @@ public abstract class FieldsControllerIT extends AbstractFindIT {
     @Test
     public void getParametricFields() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = get(FieldsController.FIELDS_PATH + FieldsController.GET_PARAMETRIC_FIELDS_PATH).with(authentication(userAuth()));
-        addParams(requestBuilder);
-
-        mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", not(empty())));
-    }
-
-    @Test
-    public void getParametricNumericFields() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(FieldsController.FIELDS_PATH + FieldsController.GET_PARAMETRIC_NUMERIC_FIELDS_PATH).with(authentication(userAuth()));
-        addParams(requestBuilder);
-
-        mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", not(empty())));
-    }
-
-    @Test
-    public void getParametricDateFields() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(FieldsController.FIELDS_PATH + FieldsController.GET_PARAMETRIC_DATE_FIELDS_PATH).with(authentication(userAuth()));
+        requestBuilder.param(FieldsController.FIELD_TYPES_PARAM, FieldTypeParam.Parametric.name(), FieldTypeParam.Numeric.name(), FieldTypeParam.NumericDate.name());
         addParams(requestBuilder);
 
         mockMvc.perform(requestBuilder)

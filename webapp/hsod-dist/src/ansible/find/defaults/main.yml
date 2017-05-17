@@ -41,3 +41,5 @@ find_hsod_landing_page: http://search.havenondemand.com
 
 find_qm_profile: search_default_profile
 find_qm_index: search_default_index
+
+find_config_template: config.json.j2

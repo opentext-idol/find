@@ -12,9 +12,7 @@ define([
 ], function(_, FilterView, configuration, Backbone, i18n, backboneMockFactory) {
     'use strict';
 
-    var MATCH_NOTHING = 'y54u65u4w5uy654u5eureuy654yht754wy54euy45';
-
-    var types = ['parametric', 'numeric parametric', 'date parametric'];
+    const MATCH_NOTHING = 'y54u65u4w5uy654u5eureuy654yht754wy54euy45';
 
     const MockIndexesView = Backbone.View.extend({
         initialize: function(options) {
@@ -30,29 +28,21 @@ define([
                 };
             });
 
+            const parametricFieldsCollection = new (backboneMockFactory.getCollection())();
+            const parametricCollection = new (backboneMockFactory.getCollection())();
             this.view = new FilterView({
                 IndexesView: MockIndexesView,
                 queryState: {},
-                numericParametricFieldsCollection: new (backboneMockFactory.getCollection())(),
-                dateParametricFieldsCollection: new (backboneMockFactory.getCollection())()
+                parametricFieldsCollection: parametricFieldsCollection,
+                parametricCollection: parametricCollection
             });
 
+            this.view.render();
+
             this.parametricInfo = {
-                parametric: {
-                    description: 'parametric',
-                    collection: this.view.parametricDisplayCollection,
-                    view: this.view.numericParametricView
-                },
-                'numeric parametric': {
-                    description: 'numeric parametric',
-                    collection: this.view.numericParametricFieldsCollection,
-                    view: this.view.parametricView
-                },
-                'date parametric': {
-                    description: 'date parametric',
-                    collection: this.view.dateParametricFieldsCollection,
-                    view: this.view.dateParametricView
-                }
+                description: 'parametric',
+                collection: parametricFieldsCollection,
+                view: this.view.parametricView
             };
         });
 
@@ -94,47 +84,41 @@ define([
             });
         });
 
-        types.forEach(function(type) {
-            describe(type + ' values filter', function() {
-                beforeEach(function() {
-                    this.parametricInfo[type].collection.reset();
+        describe('Parametric values filter', function () {
+            beforeEach(function () {
+                this.parametricInfo.collection.reset();
+            });
+
+            describe('with parametric values and the filter set to the empty string', function () {
+                it('should display when the displayCollection is not empty', function () {
+                    this.parametricInfo.collection.add({fakeAttribute: true});
+
+                    expect(this.parametricInfo.view.$el).not.toHaveClass('hide');
+                    expect(this.view.$emptyMessage).toHaveClass('hide');
                 });
 
-                describe('with parametric values and the filter set to the empty string', function() {
-                    beforeEach(function() {
-                        this.view.filterModel.set('');
-                    });
+                it('should not be displayed when there are no parametric values matching the filter', function () {
+                    this.view.filterModel.set('text', MATCH_NOTHING);
 
-                    it('should display when the displayCollection is not empty', function() {
-                        this.parametricInfo[type].collection.add({fakeAttribute: true});
-
-                        expect(this.parametricInfo[type].view.$el).not.toHaveClass('hide');
-                        expect(this.view.$emptyMessage).toHaveClass('hide');
-                    });
-
-                    it('should not be displayed when there are no parametric values matching the filter', function() {
-                        this.view.filterModel.set('text', MATCH_NOTHING);
-
-                        expect(this.parametricInfo[type].view.$el).toHaveClass('hide');
-                    });
-                });
-
-                describe('with no parametric values', function() {
-                    it('should display when the filter is empty', function() {
-                        this.view.filterModel.set('text', '');
-
-                        expect(this.parametricInfo[type].view.$el).not.toHaveClass('hide');
-                        expect(this.view.$emptyMessage).toHaveClass('hide');
-                    });
-
-                    it('should not display when the filter is non-empty', function() {
-                        this.view.filterModel.set('text', MATCH_NOTHING);
-
-                        expect(this.parametricInfo[type].view.$el).toHaveClass('hide');
-                    });
+                    expect(this.parametricInfo.view.$el).toHaveClass('hide');
                 });
             });
-        }, this);
+
+            describe('with no parametric values', function () {
+                it('should display when the filter is empty', function () {
+                    this.view.filterModel.set('text', '');
+
+                    expect(this.parametricInfo.view.$el).not.toHaveClass('hide');
+                    expect(this.view.$emptyMessage).toHaveClass('hide');
+                });
+
+                it('should not display when the filter is non-empty', function () {
+                    this.view.filterModel.set('text', MATCH_NOTHING);
+
+                    expect(this.parametricInfo.view.$el).toHaveClass('hide');
+                });
+            });
+        });
 
         it('should display the no filters matched message and hide everything when no filters are matched', function() {
             this.view.indexesViewWrapper.view.visibleIndexesCallback([]);
@@ -146,35 +130,33 @@ define([
             expect(this.view.$emptyMessage).not.toHaveClass('hide');
         });
 
-        it('should track the collapsible state of the indexes view', function() {
+        it('should track the collapsible state of the indexes view', function () {
             spyOn(this.view.indexesViewWrapper, 'toggle');
 
-            expect(this.view.collapsed.indexes).toBe(false);
+            expect(this.view.collapsed.indexes).toBe(true);
 
-            // user closes view
-            this.view.collapsed.indexes = true;
+            this.view.indexesViewWrapper.$('.collapsible-header').click();
             this.view.filterModel.set('text', 'ind');
 
             this.view.indexesViewWrapper.view.visibleIndexesCallback(['index1']);
 
             // this shouldn't change for auto toggle
-            expect(this.view.collapsed.indexes).toBe(true);
+            expect(this.view.collapsed.indexes).toBe(false);
 
             this.view.filterModel.set('text', '');
             this.view.indexesViewWrapper.view.visibleIndexesCallback(['index1']);
 
             expect(this.view.indexesViewWrapper.toggle.calls.count()).toBe(2);
             expect(this.view.indexesViewWrapper.toggle.calls.argsFor(0)[0]).toBeTruthy();
-            expect(this.view.indexesViewWrapper.toggle.calls.argsFor(1)[0]).toBe(false);
+            expect(this.view.indexesViewWrapper.toggle.calls.argsFor(1)[0]).toBe(true);
         });
 
-        it('should track the collapsible state of the date view', function() {
+        it('should track the collapsible state of the date view', function () {
             spyOn(this.view.dateViewWrapper, 'toggle');
 
-            expect(this.view.collapsed.dates).toBe(false);
+            expect(this.view.collapsed.dates).toBe(true);
 
-            // user closes view
-            this.view.collapsed.dates = true;
+            this.view.dateViewWrapper.$('.collapsible-header').click();
             this.view.filterModel.set('text', 'ind');
 
             expect(this.view.dateViewWrapper.toggle.calls.count()).toBe(1);
@@ -183,7 +165,7 @@ define([
 
             expect(this.view.dateViewWrapper.toggle.calls.count()).toBe(2);
             expect(this.view.dateViewWrapper.toggle.calls.argsFor(0)[0]).toBeTruthy();
-            expect(this.view.dateViewWrapper.toggle.calls.argsFor(1)[0]).toBe(false);
+            expect(this.view.dateViewWrapper.toggle.calls.argsFor(1)[0]).toBe(true);
         });
     });
 });

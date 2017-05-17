@@ -1,8 +1,10 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
+    'underscore',
     'backbone',
     'i18n!find/nls/bundle',
     'i18n!find/idol/nls/comparisons',
@@ -12,10 +14,11 @@ define([
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/util/results-view-container',
     'find/app/util/results-view-selection',
+    'find/app/configuration',
     'text!find/idol/templates/comparison/topic-map-comparison-view.html'
-
-], function(Backbone, i18n, comparisonsI18n, stateTokenStrategy, searchDataUtil, EntityCollection, TopicMapView,
-            ResultsViewContainer, ResultsViewSelection, html) {
+], function(_, Backbone, i18n, comparisonsI18n, stateTokenStrategy, searchDataUtil, EntityCollection,
+            TopicMapView, ResultsViewContainer, ResultsViewSelection, configuration, html) {
+    'use strict';
 
     return Backbone.View.extend({
         className: 'service-view-container',
@@ -23,46 +26,23 @@ define([
         initialize: function(options) {
             this.searchModels = options.searchModels;
 
-            var bothQueryModel = this.createQueryModel(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]);
-            var firstQueryModel = this.createQueryModel(this.model.get('firstText'), this.model.get('onlyInFirst'), [this.searchModels.first]);
-            var secondQueryModel = this.createQueryModel(this.model.get('secondText'), this.model.get('onlyInSecond'), [this.searchModels.second]);
+            const bothQueryModel = this.createQueryModel(this.model.get('bothText'), this.model.get('inBoth'), [this.searchModels.first, this.searchModels.second]);
+            const firstQueryModel = this.createQueryModel(this.model.get('firstText'), this.model.get('onlyInFirst'), [this.searchModels.first]);
+            const secondQueryModel = this.createQueryModel(this.model.get('secondText'), this.model.get('onlyInSecond'), [this.searchModels.second]);
 
-            var bothCollection = new EntityCollection([], {
-                getSelectedRelatedConcepts: _.constant([])
-            });
-            var firstCollection = new EntityCollection([], {
-                getSelectedRelatedConcepts: _.constant([])
-            });
-            var secondCollection = new EntityCollection([], {
-                getSelectedRelatedConcepts: _.constant([])
-            });
+            const commonContructorArguments = {
+                clickHandler: _.noop,
+                type: 'STATE_TOKEN',
+                configuration: configuration()
+            };
 
-            this.comparisons = [
-                {
-                    model: bothQueryModel,
-                    collection: bothCollection
-                },
-                {
-                    model: firstQueryModel,
-                    collection: firstCollection
-                },
-                {
-                    model: secondQueryModel,
-                    collection: secondCollection
-                }
-            ];
-
-            var resultsViews = [
+            const resultsViews = [
                 {
                     Constructor: TopicMapView,
                     id: 'first',
                     uniqueId: _.uniqueId('results-view-item-'),
-                    constructorArguments: {
-                        clickHandler: _.noop,
-                        entityCollection: firstCollection,
-                        queryModel: firstQueryModel,
-                        type: 'COMPARISON'
-                    },
+                    constructorArguments: _.extend({queryModel: firstQueryModel},
+                        commonContructorArguments),
                     selector: {
                         displayName: comparisonsI18n['list.title.first'](this.searchModels.first.get('title')),
                         icon: 'hp-divide-in-right'
@@ -72,12 +52,8 @@ define([
                     Constructor: TopicMapView,
                     id: 'both',
                     uniqueId: _.uniqueId('results-view-item-'),
-                    constructorArguments: {
-                        clickHandler: _.noop,
-                        entityCollection: bothCollection,
-                        queryModel: bothQueryModel,
-                        type: 'COMPARISON'
-                    },
+                    constructorArguments: _.extend({queryModel: bothQueryModel},
+                        commonContructorArguments),
                     selector: {
                         displayName: comparisonsI18n['list.title.both'],
                         icon: 'hp-divide-in-center'
@@ -87,12 +63,8 @@ define([
                     Constructor: TopicMapView,
                     id: 'second',
                     uniqueId: _.uniqueId('results-view-item-'),
-                    constructorArguments: {
-                        clickHandler: _.noop,
-                        entityCollection: secondCollection,
-                        queryModel: secondQueryModel,
-                        type: 'COMPARISON'
-                    },
+                    constructorArguments: _.extend({queryModel: secondQueryModel},
+                        commonContructorArguments),
                     selector: {
                         displayName: comparisonsI18n['list.title.second'](this.searchModels.second.get('title')),
                         icon: 'hp-divide-in-right hp-flip-horizontal'
@@ -101,9 +73,9 @@ define([
             ];
 
             // Initially, select the left-most tab
-            var initialTabId = resultsViews[0].id;
+            const initialTabId = resultsViews[0].id;
 
-            var resultsViewSelectionModel = new Backbone.Model({
+            const resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab
                 selectedTab: initialTabId
             });
@@ -117,8 +89,6 @@ define([
                 views: resultsViews,
                 model: resultsViewSelectionModel
             });
-
-            this.fetchRelatedConcepts();
         },
 
         render: function() {
@@ -130,30 +100,16 @@ define([
         },
 
         createQueryModel: function(queryText, stateTokens, searchModels) {
-            var indexes = _.chain(searchModels)
-                .map(function(model) {
-                    return searchDataUtil.buildIndexes(model.get('indexes'));
-                })
-                .flatten()
-                .uniq()
-                .value();
-
             return new Backbone.Model(_.extend({
                 queryText: queryText,
-                indexes: indexes
+                indexes: _.chain(searchModels)
+                    .map(function(model) {
+                        return searchDataUtil.buildIndexes(model.get('indexes'));
+                    })
+                    .flatten()
+                    .uniq()
+                    .value()
             }, stateTokens));
-        },
-
-        fetchRelatedConcepts: function() {
-            _.forEach(this.comparisons, function(comparison) {
-                comparison.collection.fetch({
-                    data: _.extend({
-                        queryText: comparison.model.get('queryText'),
-                        databases: comparison.model.get('indexes'),
-                        fieldText: comparison.model.get('fieldText')
-                    }, stateTokenStrategy.requestParams(comparison.model))
-                })
-            })
         }
     })
 });

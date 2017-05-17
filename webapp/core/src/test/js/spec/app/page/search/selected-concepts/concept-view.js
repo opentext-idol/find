@@ -1,27 +1,31 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'find/app/page/search/selected-concepts/concept-view',
-    'backbone'
-], function (ConceptView, Backbone) {
+    'backbone',
+    'find/app/page/search/selected-concepts/concept-view'
+], function(Backbone, ConceptView) {
+    'use strict';
 
-    describe('Concept View', function () {
-        const configurations = [{
-            description: 'with User configuration',
-            options: {}
-        }, {
-            description: 'with BI configuration',
-            options: {
-                hasBiRole: true
+    describe('Concept View', function() {
+        const configurations = [
+            {
+                description: 'with User configuration',
+                options: {}
+            },
+            {
+                description: 'with BI configuration',
+                options: {
+                    hasBiRole: true
+                }
             }
-        }];
+        ];
 
-        configurations.forEach(function (configuration) {
-            describe(configuration.description, function () {
-                beforeEach(function () {
+        configurations.forEach(function(configuration) {
+            describe(configuration.description, function() {
+                beforeEach(function() {
                     this.conceptGroups = new Backbone.Collection([
                         {concepts: ['cat']},
                         {concepts: ['monkey', 'ape']}
@@ -37,7 +41,7 @@ define([
                     this.view.render();
                 });
 
-                it('displays the first concept in each group in the conceptGroups collection', function () {
+                it('displays the first concept in each group in the conceptGroups collection', function() {
                     const $selectedConcepts = this.view.$('.selected-related-concept');
                     expect($selectedConcepts).toHaveLength(2);
 
@@ -51,11 +55,11 @@ define([
 
                 describe('when a remove button is clicked', function() {
                     beforeEach(function() {
-                        this.view.$('[data-cluster-cid="' + this.conceptGroups.at(0).cid +'"] .concept-remove-icon').click();
+                        this.view.$('[data-cluster-cid="' + this.conceptGroups.at(0).cid + '"] .concept-remove-icon').click();
                     });
 
                     it('removes the corresponding cluster model from the collection', function() {
-                        expect(this.conceptGroups.length).toBe(1);
+                        expect(this.conceptGroups).toHaveLength(1);
                         expect(this.conceptGroups.at(0).get('concepts')).toEqual(['monkey', 'ape']);
                     });
                 });
@@ -102,5 +106,4 @@ define([
             });
         });
     });
-
 });

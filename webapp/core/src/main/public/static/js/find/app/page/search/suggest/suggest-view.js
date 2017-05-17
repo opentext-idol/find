@@ -1,22 +1,20 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
     'underscore',
+    'backbone',
     'find/app/vent',
     'find/app/page/search/results/suggest-strategy',
     'find/app/model/similar-documents-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/suggest/suggest-view.html'
-], function(Backbone, _, vent, suggestStrategy, SimilarDocumentsCollection, i18n, template) {
-
+], function(_, Backbone, vent, suggestStrategy, SimilarDocumentsCollection, i18n, template) {
     'use strict';
 
     return Backbone.View.extend({
-        className: 'service-view-flex-container',
         template: _.template(template),
 
         // Abstract
@@ -34,7 +32,6 @@ define([
         },
 
         initialize: function(options) {
-            this.backUrl = options.backUrl;
             this.documentModel = options.documentModel;
             this.scrollModel = options.scrollModel;
             this.configuration = options.configuration;
@@ -44,7 +41,7 @@ define([
                 indexes: this.getIndexes(options.indexesCollection, this.documentModel)
             });
 
-            var previewModeModel = new Backbone.Model({document: null});
+            const previewModeModel = new Backbone.Model({document: null});
 
             this.resultsView = new this.ResultsView({
                 fetchStrategy: suggestStrategy,
@@ -55,10 +52,12 @@ define([
             });
 
             this.resultsViewAugmentation = new this.ResultsViewAugmentation({
+                indexesCollection: options.indexesCollection,
                 queryModel: this.queryModel,
                 resultsView: this.resultsView,
                 scrollModel: this.scrollModel,
-                previewModeModel: previewModeModel
+                previewModeModel: previewModeModel,
+                mmapTab: options.mmapTab
             });
 
             this.listenTo(options.indexesCollection, 'update reset', function() {
@@ -81,5 +80,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-
 });

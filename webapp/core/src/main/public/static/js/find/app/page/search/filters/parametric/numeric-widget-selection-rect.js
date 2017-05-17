@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -29,16 +29,16 @@ define([
         },
 
         getCurrentAttributes: function() {
-            var x = Number(this.element.attr('x'));
+            const x = +this.element.attr('x');
 
             return {
                 x1: x,
-                x2: x + Number(this.element.attr('width'))
+                x2: x + (+this.element.attr('width'))
             };
         },
 
         init: function(chart, height, newX) {
-            var rectElement = chart.append('rect')
+            const rectElement = chart.append('rect')
                 .attr({
                     rx: 4,
                     ry: 4,

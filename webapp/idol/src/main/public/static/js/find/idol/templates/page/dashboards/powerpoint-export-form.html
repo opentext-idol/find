@@ -1,0 +1,6 @@
+<!-- Since it's an async action, we have to keep it as target: _self to avoid the popup blocker -->
+<form class="hide" enctype="multipart/form-data" method="post" action="api/bi/export/pptx/report">
+    <input name="multiPage" type="hidden" value="<%-multiPage%>">
+    <textarea name="data" title="data"><%- data %></textarea>
+    <input type="submit">
+</form>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -16,39 +16,38 @@
     const XHR_DONE_STATE = XMLHttpRequest.DONE === undefined ? 4 : XMLHttpRequest.DONE;
     const NO_USER_TOKEN_CODE = 12102;
     const TRUE_STRING = 'true';
-    const APPLICATION_ROOT = location.pathname.substring(0, location.pathname.lastIndexOf(CONFIG.ssoEntryPage));
+    const APPLICATION_ROOT = location.pathname
+        .substring(0, location.pathname.lastIndexOf(CONFIG.ssoEntryPage));
 
     // Parse the given query string into an object of string keys and string values
     function parseQueryString(search) {
-        if (search === '') {
-            return {};
-        } else {
-            return search
-                // Remove the leading question mark
-                .substring(1)
-                .split('&')
-                .map(function(pairString) {
-                    return pairString.split('=').map(decodeURIComponent);
-                })
-                .reduce(function(output, pair) {
-                    var key = pair[0];
+        return search === ''
+            ? {}
+            : search
+               // Remove the leading question mark
+                   .substring(1)
+                   .split('&')
+                   .map(function(pairString) {
+                       return pairString.split('=').map(decodeURIComponent);
+                   })
+                   .reduce(function(output, pair) {
+                       const key = pair[0];
 
-                    if (!output[key]) {
-                        output[key] = pair[1];
-                    }
+                       if(!output[key]) {
+                           output[key] = pair[1];
+                       }
 
-                    return output;
-                }, {});
-        }
+                       return output;
+                   }, {});
     }
 
     // Build a query string from an object of string keys and string values
     function buildQueryString(parameters) {
         return '?' + Object.keys(parameters)
-            .map(function(key) {
-                return [key, parameters[key]].map(encodeURIComponent).join('=');
-            })
-            .join('&');
+                .map(function(key) {
+                    return [key, parameters[key]].map(encodeURIComponent).join('=');
+                })
+                .join('&');
     }
 
     // Returns a document fragment containing <input> elements with names and values extracted from the data argument
@@ -69,16 +68,16 @@
 
     function addReadyStateListener(xhr, callback) {
         xhr.addEventListener('readystatechange', function() {
-            if (xhr.readyState === XHR_DONE_STATE) {
+            if(xhr.readyState === XHR_DONE_STATE) {
                 let response;
 
                 try {
                     response = JSON.parse(xhr.response);
-                } catch (e) {
+                } catch(e) {
                     response = null;
                 }
 
-                if (xhr.status === 200) {
+                if(xhr.status === 200) {
                     callback(null, response);
                 } else {
                     callback({
@@ -99,7 +98,7 @@
 
         addReadyStateListener(xhr, callback);
 
-        if (request.body) {
+        if(request.body) {
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             xhr.send(request.body);
         } else {
@@ -122,7 +121,7 @@
         xhr.open('GET', APPLICATION_ROOT + CONFIG.ssoPatchTokenApi + buildQueryString({'redirect-url': redirectUrl}));
 
         addReadyStateListener(xhr, function(error, response) {
-            if (error) {
+            if(error) {
                 loadErrorPage();
             } else {
                 const form = document.createElement('form');
@@ -147,14 +146,18 @@
         form.setAttribute('action', APPLICATION_ROOT + CONFIG.authenticatePath);
 
         makeSignedRequest(CONFIG.patchRequest, function(error, response) {
-            if (error) {
-                if (error.response && error.response.error === NO_USER_TOKEN_CODE) {
-                    if (parseQueryString(location.search).authenticated === TRUE_STRING) {
+            if(error) {
+                if(error.response && error.response.error === NO_USER_TOKEN_CODE) {
+                    if(parseQueryString(location.search).authenticated === TRUE_STRING) {
                         // Cookie-less SSO redirect
                         postToDevConsole();
                     } else {
                         // Cookied SSO redirect
-                        location.assign(CONFIG.ssoPageGetUrl + buildQueryString({redirect_url: location.protocol + '//' + location.host + location.pathname}));
+                        location.assign(
+                            CONFIG.ssoPageGetUrl +
+                            buildQueryString({
+                                redirect_url: location.protocol + '//' + location.host + location.pathname
+                            }));
                     }
                 } else {
                     loadErrorPage();

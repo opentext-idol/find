@@ -1,43 +1,45 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
-    'backbone',
-    'jquery',
     'underscore',
+    'jquery',
+    'backbone',
     'moment',
+    'find/app/metrics',
     'find/app/model/dates-filter-model',
     'find/app/model/entity-collection',
     'find/app/model/query-model',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/parametric-collection',
     'find/app/model/parametric-fields-collection',
-    'find/app/model/numeric-parametric-fields-collection',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/results/state-token-strategy',
     'find/app/util/results-view-container',
     'find/app/util/results-view-selection',
     'find/app/page/search/related-concepts/related-concepts-view',
-    'find/app/util/model-any-changed-attribute-listener',
+    'js-whatever/js/model-any-changed-attribute-listener',
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/page/search/results/entity-topic-map-view',
     'find/app/page/search/results/sunburst-view',
     'find/app/page/search/results/map-results-view',
     'find/app/page/search/results/table/table-view',
+    'find/app/page/search/results/trending/trending-view',
     'find/app/page/search/time-bar-view',
     'find/app/configuration',
-    'parametric-refinement/prettify-field-name',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
-], function(Backbone, $, _, moment, DatesFilterModel, EntityCollection, QueryModel, SavedSearchModel, ParametricCollection,
-            ParametricFieldsCollection, NumericParametricFieldsCollection, queryStrategy, stateTokenStrategy, ResultsViewContainer,
-            ResultsViewSelection, RelatedConceptsView, addChangeListener, SavedSearchControlView, TopicMapView, SunburstView,
-            MapResultsView, TableView, TimeBarView, configuration, prettifyFieldName, i18n, templateString) {
-    "use strict";
+], function(_, $, Backbone, moment, metrics, DatesFilterModel, EntityCollection, QueryModel,
+            SavedSearchModel, ParametricCollection, ParametricFieldsCollection, queryStrategy,
+            stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView,
+            addChangeListener, SavedSearchControlView, TopicMapView, SunburstView, MapResultsView,
+            TableView, TrendingView, TimeBarView, configuration, i18n, templateString) {
+    'use strict';
 
-    var $window = $(window);
-    var template = _.template(templateString);
+    const $window = $(window);
+    const template = _.template(templateString);
 
     function updateScrollParameters() {
         if(this.$middleContainerContents) {
@@ -63,12 +65,11 @@ define([
         ResultsView: null,
         ResultsViewAugmentation: null,
         fetchParametricFields: null,
-        fetchParametricValues: null,
-
         timeBarView: null,
+        parametricFieldsCollection: null,
 
         initialize: function(options) {
-            var hasBiRole = configuration().hasBiRole;
+            const hasBiRole = configuration().hasBiRole;
 
             this.indexesCollection = options.indexesCollection;
             this.selectedTabModel = options.selectedTabModel;
@@ -79,22 +80,15 @@ define([
             this.searchTypes = options.searchTypes;
             this.searchCollections = options.searchCollections;
 
-            this.entityCollection = new EntityCollection([], {
-                getSelectedRelatedConcepts: function() {
-                    return _.flatten(this.queryState.conceptGroups.pluck('concepts'));
-                }.bind(this)
-            });
-
-            var searchType = this.savedSearchModel.get('type');
+            const searchType = this.savedSearchModel.get('type');
 
             this.queryModel = new QueryModel({
                 autoCorrect: this.searchTypes[searchType].autoCorrect,
                 stateMatchIds: this.savedSearchModel.get('queryStateTokens'),
                 promotionsStateMatchIds: this.savedSearchModel.get('promotionsStateTokens')
-            }, {queryState: this.queryState});
-
-            this.listenTo(this.queryModel, 'change:indexes', function() {
-                this.queryState.selectedParametricValues.reset();
+            }, {
+                enableAutoCorrect: this.searchTypes[searchType].autoCorrect,
+                queryState: this.queryState
             });
 
             this.listenTo(this.savedSearchModel, 'refresh', function() {
@@ -106,7 +100,7 @@ define([
             // Either:
             //      We have a change in the query model that is not related to the date filters
             this.listenTo(this.queryModel, 'change', function(model) {
-                if(!_.has(model.changed, 'minDate') && !_.has(model.changed, 'maxDate')) {
+                if(!(_.has(model.changed, 'minDate') || _.has(model.changed, 'maxDate'))) {
                     this.queryState.datesFilterModel.resetDateLastFetched();
                 }
             });
@@ -114,47 +108,46 @@ define([
             // Or:
             //      We have a change in the selected date filter (but not to NEW or from NEW to null)
             this.listenTo(this.queryState.datesFilterModel, 'change:dateRange', function(model, value) {
-                var changeToNewDocFilter = value === DatesFilterModel.DateRange.NEW;
-                var removeNewDocFilter = !value && model.previous('dateRange') === DatesFilterModel.DateRange.NEW;
+                const changeToNewDocFilter = value === DatesFilterModel.DateRange.NEW;
+                const removeNewDocFilter = !value && (model.previous('dateRange') === DatesFilterModel.DateRange.NEW);
 
-                if(!changeToNewDocFilter && !removeNewDocFilter) {
+                if(!(changeToNewDocFilter || removeNewDocFilter)) {
                     this.queryState.datesFilterModel.resetDateLastFetched();
                 }
             });
 
             // If the saved search is unmodified and not new, update the last fetched date
             this.listenTo(this.documentsCollection, 'sync', function() {
-                var changed = this.queryState ? !this.savedSearchModel.equalsQueryState(this.queryState) : false;
+                const changed = !(!this.queryState || this.savedSearchModel.equalsQueryState(this.queryState));
 
-                if(!changed && !this.savedSearchModel.isNew()) {
+                if(!(changed || this.savedSearchModel.isNew())) {
                     this.savedSearchModel.save({dateDocsLastFetched: moment()});
                 }
             });
 
-            this.parametricFieldsCollection = new ParametricFieldsCollection([]);
-            this.restrictedParametricCollection = new ParametricCollection([], {url: 'api/public/parametric/restricted'});
-            this.numericParametricFieldsCollection = new NumericParametricFieldsCollection([], {dataType: 'numeric'});
-            this.dateParametricFieldsCollection = new NumericParametricFieldsCollection([], {dataType: 'date'});
-            this.parametricCollection = new ParametricCollection([], {url: 'api/public/parametric'});
+            // [FIND-910] IDOL only needs one parametricFieldsCollection (as the field names are the same
+            // for all saved searches), therefore parametricFieldsCollection is set on the prototype. HOD's
+            // service view needs a per-instance parametricFieldsCollection, so it is instantiated here.
+            if(this.parametricFieldsCollection === null) {
+                this.parametricFieldsCollection = new ParametricFieldsCollection([]);
+            }
+
+            this.parametricCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
 
             // Tracks the document model which is currently shown in the preview
             this.previewModeModel = new Backbone.Model({document: null});
 
-            var subViewArguments = {
+            const subViewArguments = {
                 configuration: configuration(),
-                dateParametricFieldsCollection: this.dateParametricFieldsCollection,
                 delayedIndexesSelection: options.delayedIndexesSelection,
                 documentsCollection: this.documentsCollection,
-                entityCollection: this.entityCollection,
                 indexesCollection: this.indexesCollection,
                 highlightModel: this.highlightModel,
-                numericParametricFieldsCollection: this.numericParametricFieldsCollection,
                 queryModel: this.queryModel,
                 queryState: this.queryState,
                 parametricCollection: this.parametricCollection,
                 parametricFieldsCollection: this.parametricFieldsCollection,
                 previewModeModel: this.previewModeModel,
-                restrictedParametricCollection: this.restrictedParametricCollection,
                 savedSearchCollection: this.savedSearchCollection,
                 savedSearchModel: this.savedSearchModel,
                 searchCollections: this.searchCollections,
@@ -162,7 +155,7 @@ define([
                 selectedTabModel: this.selectedTabModel
             };
 
-            var clickHandlerArguments = {
+            const clickHandlerArguments = {
                 conceptGroups: this.queryState.conceptGroups,
                 savedQueryCollection: this.searchCollections.QUERY,
                 savedSearchModel: this.savedSearchModel,
@@ -170,109 +163,139 @@ define([
             };
 
             if(hasBiRole) {
-                this.savedSearchControlView = new SavedSearchControlView(_.extend(this.getSavedSearchControlViewOptions(), subViewArguments));
+                this.savedSearchControlView = new SavedSearchControlView(
+                    _.extend(
+                        this.getSavedSearchControlViewOptions(),
+                        subViewArguments
+                    )
+                );
 
                 if(this.searchTypes[searchType].showTimeBar) {
-                    this.timeBarModel = new Backbone.Model({
-                        graphedFieldName: null,
-                        graphedDataType: null
-                    });
+                    this.timeBarModel = new Backbone.Model({});
 
-                    this.listenTo(this.timeBarModel, 'change:graphedFieldName', this.updateTimeBar);
+                    this.listenTo(this.timeBarModel, 'change:graphedFieldId', this.updateTimeBar);
                 }
             }
 
-            this.leftSideFooterView = new this.searchTypes[searchType].LeftSideFooterView(_.extend({timeBarModel: this.timeBarModel}, subViewArguments));
+            this.leftSideFooterView = new this.searchTypes[searchType]
+                .LeftSideFooterView(_.extend({timeBarModel: this.timeBarModel}, subViewArguments));
 
-            var MiddleColumnHeaderView = this.searchTypes[searchType].MiddleColumnHeaderView;
-            this.middleColumnHeaderView = MiddleColumnHeaderView ? new MiddleColumnHeaderView(subViewArguments) : null;
+            const MiddleColumnHeaderView = this.searchTypes[searchType].MiddleColumnHeaderView;
+            this.middleColumnHeaderView = MiddleColumnHeaderView
+                ? new MiddleColumnHeaderView(subViewArguments)
+                : null;
 
-            var relatedConceptsClickHandler = this.searchTypes[searchType].relatedConceptsClickHandler(clickHandlerArguments);
+            const relatedConceptsClickHandler = this.searchTypes[searchType]
+                .relatedConceptsClickHandler(clickHandlerArguments);
 
             // TODO: genericise removal of feature (FIND-245)
             if(configuration().enableRelatedConcepts) {
+                this.entityCollection = new EntityCollection([], {
+                    getSelectedRelatedConcepts: function() {
+                        return _.flatten(this.queryState.conceptGroups.pluck('concepts'));
+                    }.bind(this)
+                });
                 this.relatedConceptsView = new RelatedConceptsView(_.extend({
+                    entityCollection: this.entityCollection,
                     clickHandler: relatedConceptsClickHandler
                 }, subViewArguments));
             }
 
             this.middleColumnScrollModel = new Backbone.Model();
 
-            var resultsView = new this.ResultsView(_.defaults({
+            const resultsView = new this.ResultsView(_.defaults({
                 relatedConceptsClickHandler: relatedConceptsClickHandler,
                 fetchStrategy: this.searchTypes[searchType].fetchStrategy,
                 scrollModel: this.middleColumnScrollModel
             }, subViewArguments));
 
-            this.resultsViews = _.where([{
-                Constructor: TopicMapView,
-                id: 'topic-map',
-                shown: hasBiRole,
-                uniqueId: _.uniqueId('results-view-item-'),
-                constructorArguments: _.extend({
-                    clickHandler: relatedConceptsClickHandler,
-                    type: 'QUERY'
-                }, subViewArguments),
-                selector: {
-                    displayNameKey: 'topic-map',
-                    icon: 'hp-grid'
-                }
-            }, {
-                Constructor: this.ResultsViewAugmentation,
-                id: 'list',
-                shown: true,
-                uniqueId: _.uniqueId('results-view-item-'),
-                constructorArguments: {
-                    resultsView: resultsView,
-                    queryModel: this.queryModel,
-                    indexesCollection: this.indexesCollection,
-                    previewModeModel: this.previewModeModel,
-                    scrollModel: this.middleColumnScrollModel
+            const resultsViewsMap = {
+                'topic-map': {
+                    Constructor: TopicMapView,
+                    shown: hasBiRole,
+                    constructorArguments: _.extend({
+                        clickHandler: relatedConceptsClickHandler,
+                        type: 'QUERY'
+                    }, subViewArguments),
+                    selector: {
+                        displayNameKey: 'topic-map',
+                        icon: 'hp-grid'
+                    }
                 },
-                events: {
-                    // needs binding as the view container will be the eventual listener
-                    'rightSideContainerHideToggle': _.bind(this.rightSideContainerHideToggle, this)
+                list: {
+                    Constructor: this.ResultsViewAugmentation,
+                    shown: true,
+                    constructorArguments: {
+                        resultsView: resultsView,
+                        queryModel: this.queryModel,
+                        indexesCollection: this.indexesCollection,
+                        previewModeModel: this.previewModeModel,
+                        scrollModel: this.middleColumnScrollModel,
+                        mmapTab: options.mmapTab
+                    },
+                    events: {
+                        // needs binding as the view container will be the eventual listener
+                        'rightSideContainerHideToggle': _.bind(this.rightSideContainerHideToggle, this)
+                    },
+                    selector: {
+                        displayNameKey: 'list',
+                        icon: 'hp-list'
+                    }
                 },
-                selector: {
-                    displayNameKey: 'list',
-                    icon: 'hp-list'
+                sunburst: {
+                    Constructor: SunburstView,
+                    constructorArguments: subViewArguments,
+                    shown: hasBiRole && this.displayDependentParametricViews,
+                    selector: {
+                        displayNameKey: 'sunburst',
+                        icon: 'hp-favorite'
+                    }
+                },
+                map: {
+                    Constructor: MapResultsView,
+                    shown: hasBiRole && configuration().map.enabled,
+                    constructorArguments: _.extend({
+                        resultsStep: this.mapViewResultsStep,
+                        allowIncrement: this.mapViewAllowIncrement
+                    }, subViewArguments),
+                    selector: {
+                        displayNameKey: 'map',
+                        icon: 'hp-map-view'
+                    }
+                },
+                table: {
+                    Constructor: TableView,
+                    constructorArguments: subViewArguments,
+                    shown: hasBiRole && this.displayDependentParametricViews,
+                    selector: {
+                        displayNameKey: 'table',
+                        icon: 'hp-table'
+                    }
+                },
+                trending: {
+                    Constructor: TrendingView,
+                    constructorArguments: subViewArguments,
+                    shown: hasBiRole,
+                    selector: {
+                        displayNameKey: 'trending',
+                        icon: 'hp-line-chart'
+                    }
                 }
-            }, {
-                Constructor: SunburstView,
-                constructorArguments: subViewArguments,
-                id: 'sunburst',
-                shown: hasBiRole && this.displayDependentParametricViews,
-                uniqueId: _.uniqueId('results-view-item-'),
-                selector: {
-                    displayNameKey: 'sunburst',
-                    icon: 'hp-favorite'
-                }
-            }, {
-                Constructor: MapResultsView,
-                id: 'map',
-                shown: hasBiRole && configuration().map.enabled,
-                uniqueId: _.uniqueId('results-view-item-'),
-                constructorArguments: _.extend({
-                    resultsStep: this.mapViewResultsStep,
-                    allowIncrement: this.mapViewAllowIncrement
-                }, subViewArguments),
-                selector: {
-                    displayNameKey: 'map',
-                    icon: 'hp-map-view'
-                }
-            }, {
-                Constructor: TableView,
-                constructorArguments: subViewArguments,
-                id: 'table',
-                shown: hasBiRole && this.displayDependentParametricViews,
-                uniqueId: _.uniqueId('results-view-item-'),
-                selector: {
-                    displayNameKey: 'table',
-                    icon: 'hp-table'
-                }
-            }], {shown: true});
+            };
 
-            var resultsViewSelectionModel = new Backbone.Model({
+            this.resultsViews = configuration().resultViewOrder
+                .filter(function(viewId) {
+                    const resultsView = resultsViewsMap[viewId];
+                    return resultsView && resultsView.shown;
+                })
+                .map(function(viewId) {
+                    return _.extend({
+                        id: viewId,
+                        uniqueId: _.uniqueId('results-view-item-')
+                    }, resultsViewsMap[viewId]);
+                });
+
+            this.resultsViewSelectionModel = new Backbone.Model({
                 // ID of the currently selected tab
                 selectedTab: this.resultsViews[0].id
             });
@@ -281,20 +304,30 @@ define([
             if(this.resultsViews.length > 1) {
                 this.resultsViewSelection = new ResultsViewSelection({
                     views: this.resultsViews,
-                    model: resultsViewSelectionModel
+                    model: this.resultsViewSelectionModel
                 });
             }
 
             this.resultsViewContainer = new ResultsViewContainer({
                 views: this.resultsViews,
-                model: resultsViewSelectionModel
+                model: this.resultsViewSelectionModel
+            });
+
+            this.listenTo(this.resultsViewSelectionModel, 'change:selectedTab', function(model, selectedTab) {
+                this.trigger('updateRouting', selectedTab);
             });
 
             this.listenTo(this.queryModel, 'refresh', this.fetchData);
 
-            this.fetchParametricFields(this.parametricFieldsCollection, _.bind(this.fetchParametricValueCollections, this));
-            this.fetchParametricFields(this.numericParametricFieldsCollection);
-            this.fetchParametricFields(this.dateParametricFieldsCollection);
+            addChangeListener(this, this.queryModel, ['correctedQuery', 'autoCorrect'], function(model) {
+                if(model.get('correctedQuery') || !model.get('autoCorrect')) {
+                    this.fetchData();
+                }
+            }.bind(this));
+
+            this.listenForParametricFieldMetrics();
+
+            this.fetchParametricFields();
             this.fetchEntities();
 
             this.updateScrollParameters = updateScrollParameters.bind(this);
@@ -305,11 +338,9 @@ define([
         },
 
         render: function() {
-            var hasBiRole = configuration().hasBiRole;
-
             this.$el.html(template({
                 relatedConcepts: configuration().enableRelatedConcepts,
-                hasBiRole: hasBiRole
+                hasBiRole: configuration().hasBiRole
             }));
 
             this.$middleContainer = this.$('.middle-container');
@@ -317,9 +348,9 @@ define([
 
             if(this.savedSearchControlView) {
                 // the padding looks silly if we don't have the view so add it here
-                var $searchOptionContainer = this.$('.search-options-container').addClass('p-sm');
-
-                this.savedSearchControlView.setElement($searchOptionContainer).render();
+                this.savedSearchControlView
+                    .setElement(this.$('.search-options-container').addClass('p-sm'))
+                    .render();
             }
 
             // TODO: genericise removal of feature (FIND-245)
@@ -340,10 +371,15 @@ define([
                 this.middleColumnHeaderView.setElement(this.$('.middle-column-header')).render();
             }
 
-            this.$('.container-toggle').on('click', this.containerToggle);
+            this.$('.container-toggle').click('click', _.bind(this.containerToggle, this));
 
-            this.$middleContainerContents = this.$('.middle-container-contents').scroll(this.updateScrollParameters);
+            this.$middleContainerContents = this.$('.middle-container-contents')
+                .scroll(this.updateScrollParameters);
             this.updateScrollParameters();
+        },
+
+        update: function() {
+            this.resultsViewContainer.updateTab();
         },
 
         renderTimeBar: function() {
@@ -354,12 +390,10 @@ define([
         },
 
         updateTimeBar: function() {
-            var graphedFieldName = this.timeBarModel.get('graphedFieldName');
-            var graphedDataType = this.timeBarModel.get('graphedDataType');
-            var collapsed = graphedFieldName === null;
+            const expanded = this.timeBarModel.get('graphedFieldId') !== null;
 
             if(this.$middleContainer) {
-                this.$middleContainer.toggleClass('middle-container-with-time-bar', !collapsed);
+                this.$middleContainer.toggleClass('middle-container-with-time-bar', expanded);
             }
 
             if(this.timeBarView) {
@@ -367,14 +401,13 @@ define([
                 this.timeBarView = null;
             }
 
-            if(!collapsed) {
+            if(expanded) {
                 this.timeBarView = new TimeBarView({
                     queryModel: this.queryModel,
                     queryState: this.queryState,
                     previewModeModel: this.previewModeModel,
                     timeBarModel: this.timeBarModel,
-                    numericParametricFieldsCollection: this.numericParametricFieldsCollection,
-                    dateParametricFieldsCollection: this.dateParametricFieldsCollection
+                    parametricFieldsCollection: this.parametricFieldsCollection
                 });
 
                 this.renderTimeBar();
@@ -383,51 +416,17 @@ define([
 
         fetchData: function() {
             this.fetchEntities();
-            this.fetchRestrictedParametricCollection();
+            this.fetchParametricCollection();
         },
 
         fetchEntities: function() {
-            if(this.queryModel.get('queryText') && this.queryModel.get('indexes').length !== 0) {
-                var data = {
-                    databases: this.queryModel.get('indexes'),
-                    queryText: this.queryModel.get('queryText'),
-                    fieldText: this.queryModel.get('fieldText'),
-                    minDate: this.queryModel.getIsoDate('minDate'),
-                    maxDate: this.queryModel.getIsoDate('maxDate'),
-                    minScore: this.queryModel.get('minScore'),
-                    stateTokens: this.queryModel.get('stateMatchIds')
-                };
-
-                this.entityCollection.fetch({data: data});
-            }
-        },
-
-        containerToggle: function(event) {
-            var $containerToggle = $(event.currentTarget);
-            var $sideContainer = $containerToggle.closest('.side-container');
-            var hide = !$sideContainer.hasClass('small-container');
-
-            $sideContainer.find('.side-panel-content').toggleClass('hide', hide);
-            $sideContainer.toggleClass('small-container', hide);
-            $containerToggle.toggleClass('fa-rotate-180', hide);
-        },
-
-        fetchParametricValueCollections: function() {
-            this.fetchParametricValues();
-            this.fetchRestrictedParametricCollection();
-        },
-
-        fetchRestrictedParametricCollection: function() {
-            this.restrictedParametricCollection.reset();
-
-            var fieldNames = this.parametricFieldsCollection.pluck('id');
-
-            if(fieldNames.length > 0 && this.queryModel.get('indexes').length !== 0) {
-                this.restrictedParametricCollection.fetch({
+            if(this.entityCollection && this.queryModel.get('queryText') && this.queryModel.get('indexes').length > 0) {
+                this.entityCollection.fetch({
                     data: {
-                        fieldNames: fieldNames,
                         databases: this.queryModel.get('indexes'),
-                        queryText: this.queryModel.get('queryText'),
+                        queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery')
+                            ? this.queryModel.get('correctedQuery')
+                            : this.queryModel.get('queryText'),
                         fieldText: this.queryModel.get('fieldText'),
                         minDate: this.queryModel.getIsoDate('minDate'),
                         maxDate: this.queryModel.getIsoDate('maxDate'),
@@ -438,8 +437,69 @@ define([
             }
         },
 
+        containerToggle: function(event) {
+            const $containerToggle = $(event.currentTarget);
+            const $sideContainer = $containerToggle.closest('.side-container');
+            const hide = !$sideContainer.hasClass('small-container');
+
+            $sideContainer.find('.side-panel-content').toggleClass('hide', hide);
+            $sideContainer.toggleClass('small-container', hide);
+            $containerToggle.toggleClass('fa-rotate-180', hide);
+            this.resultsViewContainer.updateTab();
+        },
+
+        listenForParametricFieldMetrics: function() {
+            if(metrics.enabled()) {
+                this.listenTo(this.parametricFieldsCollection, 'sync', function() {
+                    if(!(this.parametricFieldsCollection.isEmpty() || this.parametricFieldsLoaded)) {
+                        this.parametricFieldsLoaded = true;
+                        metrics.addTimeSincePageLoad('parametric-fields-first-loaded');
+                    }
+                });
+
+                this.listenTo(this.parametricCollection, 'sync', function() {
+                    if(!(this.parametricCollection.isEmpty() || this.parametricValuesLoaded)) {
+                        this.parametricValuesLoaded = true;
+                        metrics.addTimeSincePageLoad('parametric-values-first-loaded');
+                    }
+                });
+            }
+        },
+
+        fetchParametricCollection: function() {
+            this.parametricCollection.reset();
+
+            const fieldNames = _.pluck(this.parametricFieldsCollection.where({type: 'Parametric'}), 'id');
+
+            if(fieldNames.length > 0 && this.queryModel.get('indexes').length > 0) {
+                this.parametricCollection.fetch({
+                    data: {
+                        fieldNames: fieldNames,
+                        databases: this.queryModel.get('indexes'),
+                        queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery')
+                            ? this.queryModel.get('correctedQuery')
+                            : this.queryModel.get('queryText'),
+                        fieldText: this.queryModel.get('fieldText'),
+                        minDate: this.queryModel.getIsoDate('minDate'),
+                        maxDate: this.queryModel.getIsoDate('maxDate'),
+                        minScore: this.queryModel.get('minScore'),
+                        maxValues: 5,
+                        stateTokens: this.queryModel.get('stateMatchIds')
+                    }
+                });
+            }
+        },
+
         rightSideContainerHideToggle: function(toggle) {
             this.$('.right-side-container').toggle(toggle);
+        },
+
+        changeTab: function(tab) {
+            this.resultsViewSelection.switchTab(tab);
+        },
+
+        getSelectedTab: function() {
+            return this.resultsViewSelectionModel.get('selectedTab');
         },
 
         remove: function() {
@@ -457,9 +517,7 @@ define([
                 this.leftSideFooterView,
                 this.middleColumnHeaderView,
                 this.timeBarView
-            ])
-                .compact()
-                .invoke('remove');
+            ]).compact().invoke('remove');
 
             Backbone.View.prototype.remove.call(this);
         }

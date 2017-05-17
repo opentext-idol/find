@@ -1,0 +1,23 @@
+{
+  "app": {
+    "type": "On Premise",
+    "deployment": "staging",
+    "find": "http://cbg-find-releases-11-2.hpeswlab.net:8080"
+  },
+  "selenium": {
+    "browsers": ["chrome"],
+    "url": "http://localhost:4444/wd/hub"
+  },
+  "users": {
+    "bifhi": {
+      "role": "BIFHI",
+      "username": "BIFace",
+      "password": "soBIFace"
+    },
+    "find": {
+      "role": "USER",
+      "username": "face",
+      "password": "soface"
+    }
+  }
+}

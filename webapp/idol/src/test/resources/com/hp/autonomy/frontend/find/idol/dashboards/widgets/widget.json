@@ -1,0 +1,10 @@
+{
+  "name": "Default Widget",
+  "type": "ClockWidget",
+  "x": 0,
+  "y": 0,
+  "width": 1,
+  "height": 1,
+  "displayWidgetName": "never",
+  "widgetSettings": {}
+}

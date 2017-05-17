@@ -1,3 +1,8 @@
+#
+# Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
+# Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+#
+
 module.exports = (grunt) ->
   jasmineRequireTemplate = require 'grunt-template-jasmine-requirejs'
 
@@ -29,7 +34,7 @@ module.exports = (grunt) ->
       options:
         plugins: ['transform-es2015-block-scoping']
       transform:
-        files: [ {
+        files: [{
           expand: true
           cwd: 'target/classes/static/js'
           src: ['find/**/*.js']
@@ -41,7 +46,7 @@ module.exports = (grunt) ->
           src: ['**/*.js']
           dest: 'target/es5-jasmine-test-specs'
           ext: '.js'
-        } ]
+        }]
     clean: [
       jasmineSpecRunner
       'bin'
@@ -62,6 +67,9 @@ module.exports = (grunt) ->
           template: jasmineRequireTemplate
           templateOptions:
             requireConfigFile: testRequireConfig
+          junit:
+            path: "target/jasmine-tests"
+            consolidate: true
       'browser-test':
         src: sourcePath
         options:
@@ -81,6 +89,8 @@ module.exports = (grunt) ->
         options:
           strictMath: true
     watch:
+      options:
+        interval: 5000
       buildBrowserTest:
         files: testWatchFiles
         tasks: ['jasmine:browser-test:build']
@@ -95,6 +105,11 @@ module.exports = (grunt) ->
         ]
         spawn: false
         tasks: ['sync:devResources', 'less:build']
+      fieldtext:
+        files: [
+          '../core/src/main/public/static/bower_components/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
+        ],
+        tasks: ['peg:fieldtext']
     sync:
       devResources:
         files: [
@@ -110,6 +125,13 @@ module.exports = (grunt) ->
           }
         ]
         verbose: true
+    peg:
+      fieldtext:
+        src: '../core/src/main/public/static/bower_components/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
+        dest: 'target/classes/static/js/pegjs/fieldtext/parser.js'
+        options:
+          format: 'amd'
+          trackLineAndColumn: true
 
   grunt.loadNpmTasks 'grunt-babel'
   grunt.loadNpmTasks 'grunt-contrib-clean'
@@ -118,6 +140,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-sync'
+  grunt.loadNpmTasks 'grunt-peg'
 
   grunt.registerTask 'default', ['test']
   grunt.registerTask 'test', ['babel:transform', 'jasmine:test']

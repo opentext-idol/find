@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -7,6 +7,7 @@ define([
     'find/app/model-registry',
     'backbone'
 ], function(ModelRegistry, Backbone) {
+    'use strict';
 
     describe('ModelRegistry', function() {
         beforeEach(function() {
@@ -43,5 +44,4 @@ define([
             expect(this.syncSpy.calls.argsFor(0)[2].myOption).toBe('my-value');
         });
     });
-
 });

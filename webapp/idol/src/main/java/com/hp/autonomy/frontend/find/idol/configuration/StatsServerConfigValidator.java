@@ -7,9 +7,10 @@ package com.hp.autonomy.frontend.find.idol.configuration;
 
 import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.services.AciService;
-import com.hp.autonomy.frontend.configuration.ValidationResult;
-import com.hp.autonomy.frontend.configuration.Validator;
+import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
+import com.hp.autonomy.frontend.configuration.validation.Validator;
 import com.hp.autonomy.searchcomponents.idol.statsserver.Statistic;
+import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,20 +21,22 @@ import java.util.Set;
 public class StatsServerConfigValidator implements Validator<StatsServerConfig> {
 
     private final AciService aciService;
-    private final IdolAnnotationsProcessorFactory processorFactory;
+    private final ProcessorFactory processorFactory;
+    private final IdolAnnotationsProcessorFactory annotationsProcessorFactory;
 
     @Resource(name = "requiredStatistics")
     private Set<Statistic> requiredStatistics;
 
     @Autowired
-    public StatsServerConfigValidator(final AciService aciService,  final IdolAnnotationsProcessorFactory processorFactory) {
+    public StatsServerConfigValidator(final AciService aciService, final ProcessorFactory processorFactory, final IdolAnnotationsProcessorFactory annotationsProcessorFactory) {
         this.aciService = aciService;
         this.processorFactory = processorFactory;
+        this.annotationsProcessorFactory = annotationsProcessorFactory;
     }
 
     @Override
     public ValidationResult<?> validate(final StatsServerConfig config) {
-        return config.validate(aciService, requiredStatistics, processorFactory);
+        return config.validate(aciService, requiredStatistics, processorFactory, annotationsProcessorFactory);
     }
 
     @Override

@@ -5,16 +5,18 @@
 
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
-import com.hp.autonomy.frontend.configuration.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthenticationProvider;
 import com.hp.autonomy.frontend.configuration.authentication.Role;
 import com.hp.autonomy.frontend.configuration.authentication.Roles;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.web.FindController;
-import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
+import com.hp.autonomy.frontend.find.idol.authentication.FindCommunityRole;
 import com.hp.autonomy.user.UserService;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -26,10 +28,16 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
+@SuppressWarnings("SpringAutowiredFieldsWarningInspection")
 @Component
 @ConditionalOnProperty(value = "server.reverseProxy", havingValue = "false", matchIfMissing = true)
 public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
+
+    static final String DEFAULT_ROLES_KEY = "find.defaultRoles";
+
     @Autowired
     private ConfigService<? extends AuthenticationConfig<?>> configService;
 
@@ -42,6 +50,9 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
     @Autowired
     private AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever;
 
+    @Value("${" + DEFAULT_ROLES_KEY + '}')
+    private String defaultRolesProperty;
+
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     public void customize(final HttpSecurity http, final AuthenticationManager authenticationManager) throws Exception {
@@ -53,10 +64,10 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
         );
 
         http.formLogin()
-            .loginPage(FindController.DEFAULT_LOGIN_PAGE)
-            .loginProcessingUrl("/authenticate")
-            .successHandler(successHandler)
-            .failureUrl(FindController.DEFAULT_LOGIN_PAGE + "?error=auth");
+                .loginPage(FindController.DEFAULT_LOGIN_PAGE)
+                .loginProcessingUrl("/authenticate")
+                .successHandler(successHandler)
+                .failureUrl(FindController.DEFAULT_LOGIN_PAGE + "?error=auth");
     }
 
     @Override
@@ -66,16 +77,25 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
 
     private AuthenticationProvider communityAuthenticationProvider() {
         final Role user = new Role.Builder()
-            .setName(UserConfiguration.IDOL_USER_ROLE)
-            .setPrivileges(Collections.singleton("login"))
-            .build();
+                .setName(FindCommunityRole.USER.value())
+                .setPrivileges(Collections.singleton("login"))
+                .build();
+
+        final Set<String> defaultRoles;
+
+        if (defaultRolesProperty.isEmpty()) {
+            defaultRoles = Collections.emptySet();
+        } else {
+            defaultRoles = new HashSet<>(Arrays.asList(defaultRolesProperty.split(",")));
+        }
 
         return new CommunityAuthenticationProvider(
-            configService,
-            userService,
-            new Roles(Collections.singletonList(user)),
-            Collections.singleton("login"),
-            grantedAuthoritiesMapper
+                configService,
+                userService,
+                new Roles(Collections.singletonList(user)),
+                Collections.singleton("login"),
+                grantedAuthoritiesMapper,
+                defaultRoles
         );
     }
 }

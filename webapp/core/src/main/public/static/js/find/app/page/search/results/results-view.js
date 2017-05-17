@@ -1,11 +1,13 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
-    'backbone',
-    'jquery',
     'underscore',
+    'jquery',
+    'backbone',
+    'js-whatever/js/model-any-changed-attribute-listener',
     'find/app/vent',
     'find/app/model/document-model',
     'find/app/model/promotions-collection',
@@ -23,18 +25,18 @@ define([
     'moment',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
-], function(Backbone, $, _, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
+], function(_, $, Backbone, addChangeListener, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
             ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, configuration,
             generateErrorHtml, html, loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
-    "use strict";
+    'use strict';
 
-    var SCROLL_INCREMENT = 30;
-    var INFINITE_SCROLL_POSITION_PIXELS = 500;
+    const SCROLL_INCREMENT = 30;
+    const INFINITE_SCROLL_POSITION_PIXELS = 500;
 
     function infiniteScroll() {
-        var resultsPresent = this.documentsCollection.size() > 0 && this.fetchStrategy.validateQuery(this.queryModel);
+        const resultsPresent = this.documentsCollection.size() > 0 && this.fetchStrategy.validateQuery(this.queryModel);
 
-        if(resultsPresent && this.resultsFinished && !this.endOfResults) {
+        if(resultsPresent && this.loadingTracker.resultsFinished && !this.endOfResults) {
             this.start = this.maxResults + 1;
             this.maxResults += SCROLL_INCREMENT;
 
@@ -45,23 +47,26 @@ define([
     }
 
     return Backbone.View.extend({
+        // Overridden for HoD and IDOL implementations
+        getQuestionsViewConstructor: _.constant(null),
+
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         messageTemplate: _.template('<div class="result-message span10"><%-message%></div>'),
 
         events: function() {
-            var events = {
+            const events = {
                 'click .document-detail-mode [data-cid]': function(e) {
-                    var $target = $(e.currentTarget);
-                    var cid = $target.data('cid');
-                    var isPromotion = $target.closest('.main-results-list').hasClass('promotions');
-                    var collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
-                    var model = collection.get(cid);
+                    const $target = $(e.currentTarget);
+                    const cid = $target.data('cid');
+                    const isPromotion = $target.closest('.main-results-list').hasClass('promotions');
+                    const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
+                    const model = collection.get(cid);
                     vent.navigateToDetailRoute(model);
                 },
                 'click .similar-documents-trigger': function(event) {
                     event.stopPropagation();
-                    var cid = $(event.target).closest('[data-cid]').data('cid');
-                    var documentModel = this.documentsCollection.get(cid);
+                    const cid = $(event.target).closest('[data-cid]').data('cid');
+                    let documentModel = this.documentsCollection.get(cid);
                     if(!documentModel) {
                         documentModel = this.promotionsCollection.get(cid);
                     }
@@ -69,7 +74,7 @@ define([
                 }
             };
 
-            var selector = configuration().directAccessLink ? '.preview-link' : '.preview-mode [data-cid]';
+            const selector = configuration().directAccessLink ? '.preview-link' : '.preview-mode [data-cid]:not(.answered-question)';
             events['click ' + selector] = 'openPreview';
 
             return events;
@@ -84,6 +89,11 @@ define([
 
             this.indexesCollection = options.indexesCollection;
             this.scrollModel = options.scrollModel;
+            this.loadingTracker = {
+                resultsFinished: true,
+                promotionsFinished: true,
+                questionsFinished: true
+            };
 
             // Preview mode is enabled when a preview mode model is provided
             this.previewModeModel = options.previewModeModel;
@@ -100,6 +110,16 @@ define([
                 this.promotionsCollection = new PromotionsCollection();
             }
 
+            const QuestionsView = this.getQuestionsViewConstructor();
+
+            if(QuestionsView) {
+                this.questionsView = new QuestionsView({
+                    queryModel: this.queryModel,
+                    loadingTracker: this.loadingTracker,
+                    clearLoadingSpinner: _.bind(this.clearLoadingSpinner, this)
+                });
+            }
+
             this.sortView = new SortView({
                 queryModel: this.queryModel
             });
@@ -108,12 +128,15 @@ define([
                 documentsCollection: this.documentsCollection
             });
 
-            this.listenTo(this.queryModel, 'change refresh', this.refreshResults);
+            addChangeListener(this,
+                this.queryModel,
+                ['sort', 'autoCorrect'].concat(this.fetchStrategy.queryModelAttributes),
+                this.refreshResults);
 
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
 
             this.listenTo(this.scrollModel, 'change', function() {
-                if(this.scrollModel.get('scrollTop') > this.scrollModel.get('scrollHeight') - INFINITE_SCROLL_POSITION_PIXELS - this.scrollModel.get('innerHeight')) {
+                if(this.$el.is(':visible') && this.scrollModel.get('scrollTop') > this.scrollModel.get('scrollHeight') - INFINITE_SCROLL_POSITION_PIXELS - this.scrollModel.get('innerHeight')) {
                     this.infiniteScroll();
                 }
             });
@@ -133,13 +156,17 @@ define([
             this.sortView.setElement(this.$('.sort-container')).render();
             this.resultsNumberView.setElement(this.$('.results-number-container')).render();
 
+            if(this.questionsView) {
+                this.questionsView.setElement(this.$('.main-results-content .answered-questions')).render();
+            }
+
             if(this.showPromotions) {
                 this.listenTo(this.promotionsCollection, 'add', function(model) {
                     this.formatResult(model, true);
                 });
 
                 this.listenTo(this.promotionsCollection, 'sync', function() {
-                    this.promotionsFinished = true;
+                    this.loadingTracker.promotionsFinished = true;
                     this.clearLoadingSpinner();
                 });
 
@@ -147,7 +174,7 @@ define([
                 // The Find User shouldn't hear about promotions, but the way we are doing it now, the DataAdmin or
                 // SysAdmin may never find out that promotions-related errors are affecting Users' searches.
                 this.listenTo(this.promotionsCollection, 'error', function() {
-                    this.promotionsFinished = true;
+                    this.loadingTracker.promotionsFinished = true;
                     this.clearLoadingSpinner();
                 });
             }
@@ -157,7 +184,7 @@ define([
             });
 
             this.listenTo(this.documentsCollection, 'sync reset', function() {
-                this.resultsFinished = true;
+                this.loadingTracker.resultsFinished = true;
                 this.clearLoadingSpinner();
 
                 this.endOfResults = this.maxResults >= this.documentsCollection.totalResults;
@@ -170,12 +197,19 @@ define([
             });
 
             this.listenTo(this.documentsCollection, 'error', function(collection, xhr) {
-                this.resultsFinished = true;
+                this.loadingTracker.resultsFinished = true;
                 this.clearLoadingSpinner();
                 this.handleError(xhr);
             });
 
-            this.refreshResults();
+            if(this.indexesCollection) {
+                this.indexesCollection.currentRequest
+                    .always(function() {
+                        this.refreshResults();
+                    }.bind(this));
+            } else {
+                this.refreshResults();
+            }
 
             if(this.entityCollection) {
                 this.updateEntityHighlighting();
@@ -193,7 +227,8 @@ define([
             if(this.fetchStrategy.validateQuery(this.queryModel)) {
                 if(this.fetchStrategy.waitForIndexes(this.queryModel)) {
                     this.$loadingSpinner.addClass('hide');
-                    this.$('.main-results-content .results').html(this.messageTemplate({message: i18n_indexes['search.error.noIndexes']}));
+                    this.$('.main-results-content .results')
+                        .html(this.messageTemplate({message: i18n_indexes['search.error.noIndexes']}));
                 } else {
                     this.endOfResults = false;
                     this.start = 1;
@@ -211,13 +246,14 @@ define([
         },
 
         clearLoadingSpinner: function() {
-            if(this.resultsFinished && this.promotionsFinished || !this.showPromotions) {
+            if(this.loadingTracker.resultsFinished && this.loadingTracker.questionsFinished
+                && this.loadingTracker.promotionsFinished || !this.showPromotions) {
                 this.$loadingSpinner.addClass('hide');
             }
         },
 
         updateSelectedDocument: function() {
-            var documentModel = this.previewModeModel.get('document');
+            const documentModel = this.previewModeModel.get('document');
             this.$('.main-results-container').removeClass('selected-document');
 
             if(documentModel !== null) {
@@ -226,7 +262,7 @@ define([
         },
 
         formatResult: function(model, isPromotion) {
-            var $newResult = this.resultRenderer.getResult(model, isPromotion, Boolean(this.previewModeModel), configuration().directAccessLink);
+            const $newResult = this.resultRenderer.getResult(model, isPromotion, Boolean(this.previewModeModel), configuration().directAccessLink);
 
             if(isPromotion) {
                 this.$('.main-results-content .promotions').append($newResult);
@@ -249,13 +285,18 @@ define([
 
         handleError: function(xhr) {
             this.toggleError(true);
-            this.$('.main-results-content .results-view-error').empty().append(this.generateErrorMessage(xhr));
+            this.$('.main-results-content .results-view-error')
+                .html(this.generateErrorMessage(xhr));
         },
 
         toggleError: function(on) {
             this.$('.main-results-content .promotions').toggleClass('hide', on);
             this.$('.main-results-content .results').toggleClass('hide', on);
             this.$('.main-results-content .results-view-error').toggleClass('hide', !on);
+
+            if(this.questionsView) {
+                this.questionsView.$el.toggleClass('hide', on);
+            }
         },
 
         loadData: function(infiniteScroll) {
@@ -263,9 +304,13 @@ define([
                 this.$loadingSpinner.removeClass('hide');
             }
 
-            this.resultsFinished = false;
+            if(this.questionsView && !infiniteScroll) {
+                this.questionsView.fetchData();
+            }
 
-            var requestData = _.extend({
+            this.loadingTracker.resultsFinished = false;
+
+            const requestData = _.extend({
                 start: this.start,
                 max_results: this.maxResults,
                 sort: this.queryModel.get('sort'),
@@ -287,7 +332,7 @@ define([
                     if(this.indexesCollection && this.documentsCollection.warnings && this.documentsCollection.warnings.invalidDatabases) {
                         // Invalid databases have been deleted from IDOL; mark them as such in the indexes collection
                         this.documentsCollection.warnings.invalidDatabases.forEach(function(name) {
-                            var indexModel = this.indexesCollection.findWhere({name: name});
+                            const indexModel = this.indexesCollection.findWhere({name: name});
 
                             if(indexModel) {
                                 indexModel.set('deleted', true);
@@ -300,9 +345,9 @@ define([
             });
 
             if(!infiniteScroll && this.showPromotions) {
-                this.promotionsFinished = false;
+                this.loadingTracker.promotionsFinished = false;
 
-                var promotionsRequestData = _.extend({
+                const promotionsRequestData = _.extend({
                     start: this.start,
                     max_results: this.maxResults,
                     sort: this.queryModel.get('sort'),
@@ -320,17 +365,19 @@ define([
         },
 
         openPreview: function(e) {
-            var $target = $(e.currentTarget).closest('.main-results-container');
+            const $target = $(e.currentTarget).closest('.main-results-container');
 
             if($target.hasClass('selected-document')) {
                 // disable preview mode
                 this.previewModeModel.set({document: null});
             } else {
                 //enable/choose another preview view
-                var cid = $target.data('cid');
-                var isPromotion = $target.closest('.main-results-list').hasClass('promotions');
-                var collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
-                var model = collection.get(cid);
+                const cid = $target.data('cid');
+                const isPromotion = $target.closest('.main-results-list').hasClass('promotions');
+                const collection = isPromotion
+                    ? this.promotionsCollection
+                    : this.documentsCollection;
+                const model = collection.get(cid);
                 this.previewModeModel.set({document: model});
 
                 if(!isPromotion) {
@@ -342,6 +389,11 @@ define([
         remove: function() {
             this.sortView.remove();
             this.resultsNumberView.remove();
+
+            if(this.questionsView) {
+                this.questionsView.remove();
+            }
+
             Backbone.View.prototype.remove.call(this);
         }
     });

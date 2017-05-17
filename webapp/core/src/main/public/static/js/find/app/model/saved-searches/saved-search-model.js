@@ -1,12 +1,19 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'moment',
     'underscore',
     'find/app/util/array-equality',
+    'find/app/model/query-model',
+    'parametric-refinement/selected-values-collection',
     'find/app/util/database-name-resolver',
     'find/app/model/dates-filter-model'
-], function(Backbone, moment, _, arraysEqual, databaseNameResolver, DatesFilterModel) {
-    "use strict";
+], function (Backbone, moment, _, arraysEqual, QueryModel, SelectedParametricValuesCollection, databaseNameResolver, DatesFilterModel) {
+    'use strict';
 
     /**
      * Models representing the state of a search.
@@ -32,8 +39,7 @@ define([
      * @property {Moment} dateCreated
      * @property {DateRange} dateRange
      */
-
-    var DATE_FIELDS = [
+    const DATE_FIELDS = [
         'minDate',
         'maxDate',
         'dateCreated',
@@ -45,27 +51,30 @@ define([
      * @readonly
      * @enum {String}
      */
-    var Type = {
+    const Type = {
         QUERY: 'QUERY',
         SNAPSHOT: 'SNAPSHOT'
     };
 
     function parseParametricRestrictions(models) {
-        var parametricValues = [];
-        var parametricRanges = [];
+        const parametricValues = [];
+        const parametricRanges = [];
 
         models.forEach(function (model) {
             if (model.has('value')) {
                 parametricValues.push({
                     field: model.get('field'),
-                    value: model.get('value')
+                    displayName: model.get('displayName'),
+                    value: model.get('value'),
+                    displayValue: model.get('displayValue')
                 });
             } else if (model.has('range')) {
                 parametricRanges.push({
                     field: model.get('field'),
+                    displayName: model.get('displayName'),
                     min: model.get('range')[0],
                     max: model.get('range')[1],
-                    type: model.get('dataType') === 'numeric' ? 'Numeric' : 'Date'
+                    type: model.get('type') === 'Numeric' ? 'Numeric' : 'Date'
                 });
             }
         });
@@ -76,21 +85,25 @@ define([
         };
     }
 
+    function compareWithoutDisplayNames(x, y) {
+        return _.isEqual(_.omit(x, ['displayName', 'displayValue']), _.omit(y, 'displayName', 'displayValue'));
+    }
+
     function nullOrUndefined(input) {
         return input === null || input === undefined;
     }
 
-    var optionalMomentsEqual = optionalEqual(function(optionalMoment1, optionalMoment2) {
+    const optionalMomentsEqual = optionalEqual(function (optionalMoment1, optionalMoment2) {
         return optionalMoment1.isSame(optionalMoment2);
     });
 
-    var optionalExactlyEqual = optionalEqual(function(optionalItem1, optionalItem2) {
+    const optionalExactlyEqual = optionalEqual(function (optionalItem1, optionalItem2) {
         return optionalItem1 === optionalItem2;
     });
 
     // Treat as equal if they are both either null or undefined, or pass a regular equality test
     function optionalEqual(equalityTest) {
-        return function(optionalItem1, optionalItem2) {
+        return function (optionalItem1, optionalItem2) {
             if (nullOrUndefined(optionalItem1)) {
                 return nullOrUndefined(optionalItem2);
             } else if (nullOrUndefined(optionalItem2)) {
@@ -101,14 +114,14 @@ define([
         };
     }
 
-    var arrayEqualityPredicate = _.partial(arraysEqual, _, _, _.isEqual);
+    const arrayEqualityPredicate = _.partial(arraysEqual, _, _, _.isEqual);
 
     function relatedConceptsToClusterModel(relatedConcepts, clusterId) {
-        if(!relatedConcepts.length) {
+        if (!relatedConcepts.length) {
             return null;
         }
 
-        return _.map(relatedConcepts, function(concept, index) {
+        return _.map(relatedConcepts, function (concept, index) {
             return {
                 clusterId: clusterId,
                 phrase: concept,
@@ -132,14 +145,14 @@ define([
             minScore: 0
         },
 
-        parse: function(response) {
-            var dateAttributes = _.mapObject(_.pick(response, DATE_FIELDS), function(value) {
+        parse: function (response) {
+            const dateAttributes = _.mapObject(_.pick(response, DATE_FIELDS), function (value) {
                 return value && moment(value);
             });
 
-            var relatedConcepts = _.chain(response.conceptClusterPhrases)
+            const relatedConcepts = _.chain(response.conceptClusterPhrases)
                 .groupBy('clusterId')
-                .map(function(clusterPhrases) {
+                .map(function (clusterPhrases) {
                     return _.chain(clusterPhrases)
                         .sortBy('primary')
                         .reverse()
@@ -147,30 +160,36 @@ define([
                         .value();
                 })
                 .value();
-            
+
             // group token strings by type
-            var tokensByType = _.chain(response.stateTokens)
+            const tokensByType = _.chain(response.stateTokens)
                 .groupBy('type')
-                .mapObject(function(arr) {
+                .mapObject(function (arr) {
                     return _.pluck(arr, 'stateToken');
                 })
                 .value();
-            
+
             return _.defaults(dateAttributes, {queryStateTokens: tokensByType.QUERY}, {promotionsStateTokens: tokensByType.PROMOTIONS}, {relatedConcepts: relatedConcepts}, response);
         },
 
-        toJSON: function() {
+        toJSON: function () {
             return _.defaults({
                 conceptClusterPhrases: _.flatten(this.get('relatedConcepts').map(relatedConceptsToClusterModel))
             }, Backbone.Model.prototype.toJSON.call(this));
         },
 
-        destroy: function(options) {
-            return Backbone.Model.prototype.destroy.call(this, _.extend(options || options, {
+        destroy: function (options) {
+            return Backbone.Model.prototype.destroy.call(this, _.extend(options || {}, {
                 // The server returns an empty body (ie: not JSON)
-                // TODO: check for collision of names
                 dataType: 'text'
             }));
+        },
+
+        urlRoot: function() {
+            return 'api/bi/' +
+                (this.get('type') === 'QUERY'
+                    ? 'saved-query'
+                    : 'saved-snapshot');
         },
 
         /**
@@ -178,22 +197,22 @@ define([
          * @param {QueryState} queryState
          * @return {Boolean}
          */
-        equalsQueryState: function(queryState) {
-            var selectedIndexes = databaseNameResolver.getDatabaseInfoFromCollection(queryState.selectedIndexes);
+        equalsQueryState: function (queryState) {
+            const selectedIndexes = databaseNameResolver.getDatabaseInfoFromCollection(queryState.selectedIndexes);
 
-            var parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
+            const parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
             return this.equalsQueryStateDateFilters(queryState)
-                    && arraysEqual(this.get('relatedConcepts'), queryState.conceptGroups.pluck('concepts'), arrayEqualityPredicate)
-                    && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
-                    && this.get('minScore') === queryState.minScoreModel.get('minScore')
-                    && arraysEqual(this.get('parametricValues'), parametricRestrictions.parametricValues, _.isEqual)
-                    && arraysEqual(this.get('parametricRanges'), parametricRestrictions.parametricRanges, _.isEqual);
+                && arraysEqual(this.get('relatedConcepts'), queryState.conceptGroups.pluck('concepts'), arrayEqualityPredicate)
+                && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
+                && this.get('minScore') === queryState.minScoreModel.get('minScore')
+                && arraysEqual(this.get('parametricValues'), parametricRestrictions.parametricValues, compareWithoutDisplayNames)
+                && arraysEqual(this.get('parametricRanges'), parametricRestrictions.parametricRanges, compareWithoutDisplayNames);
         },
 
-        equalsQueryStateDateFilters: function(queryState) {
-            var datesAttributes = queryState.datesFilterModel.toQueryModelAttributes();
+        equalsQueryStateDateFilters: function (queryState) {
+            const datesAttributes = queryState.datesFilterModel.toQueryModelAttributes();
 
-            if(this.get('dateRange') === DatesFilterModel.DateRange.CUSTOM) {
+            if (this.get('dateRange') === DatesFilterModel.DateRange.CUSTOM) {
                 return this.get('dateRange') === datesAttributes.dateRange
                     && optionalMomentsEqual(this.get('minDate'), datesAttributes.minDate)
                     && optionalMomentsEqual(this.get('maxDate'), datesAttributes.maxDate);
@@ -202,9 +221,9 @@ define([
             }
         },
 
-        toDatesFilterModelAttributes: function() {
-            var minDate = this.get('minDate');
-            var maxDate = this.get('maxDate');
+        toDatesFilterModelAttributes: function () {
+            const minDate = this.get('minDate');
+            const maxDate = this.get('maxDate');
 
             return {
                 dateRange: this.get('dateRange'),
@@ -214,30 +233,50 @@ define([
             };
         },
 
-        toConceptGroups: function() {
-            return this.get('relatedConcepts').map(function(concepts) {
+        toConceptGroups: function () {
+            return this.get('relatedConcepts').map(function (concepts) {
                 return {concepts: concepts};
             });
         },
 
-        toMinScoreModelAttributes: function() {
+        toMinScoreModelAttributes: function () {
             return this.pick('minScore');
         },
 
-        toSelectedParametricValues: function() {
-            return this.get('parametricValues').concat(this.get('parametricRanges').map(function (range) {
+        toSelectedParametricValues: function () {
+            const selectedParametricValues = this.get('parametricValues').map(function (fieldAndValues) {
+                return _.defaults(fieldAndValues, {type: 'Parametric'});
+            });
+            const selectedParametricRanges = this.get('parametricRanges').map(function (range) {
                 return {
                     field: range.field,
+                    displayName: range.displayName,
                     range: [range.min, range.max],
-                    dataType: range.type === 'Numeric' ? 'numeric' : 'date',
-                    // TODO: Replace numeric with the more expressive dataType
-                    numeric: range.type === 'Numeric'
+                    type: range.type === 'Numeric' ? 'Numeric' : 'NumericDate'
                 };
-            }));
+            });
+            return selectedParametricValues.concat(selectedParametricRanges);
         },
 
-        toSelectedIndexes: function() {
+        toSelectedIndexes: function () {
             return this.get('indexes');
+        },
+
+        toQueryModel: function(IndexesCollection, autoCorrect) {
+            const queryState = {
+                conceptGroups: new Backbone.Collection(this.toConceptGroups()),
+                minScoreModel: new Backbone.Model({minScore: 0}),
+                datesFilterModel: new DatesFilterModel(this.toDatesFilterModelAttributes()),
+                selectedIndexes: new IndexesCollection(this.get('indexes')),
+                selectedParametricValues: new SelectedParametricValuesCollection(this.toSelectedParametricValues())
+            };
+
+            return new QueryModel({
+                autoCorrect: autoCorrect,
+                stateMatchIds: this.get('queryStateTokens'),
+                promotionsStateMatchIds: this.get('promotionsStateTokens')
+            }, {queryState: queryState});
+
         }
     }, {
         Type: Type,
@@ -247,9 +286,9 @@ define([
          * @param {QueryState} queryState
          * @return {SavedSearchModelAttributes}
          */
-        attributesFromQueryState: function(queryState) {
-            var indexes = databaseNameResolver.getDatabaseInfoFromCollection(queryState.selectedIndexes);
-            var parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
+        attributesFromQueryState: function (queryState) {
+            const indexes = databaseNameResolver.getDatabaseInfoFromCollection(queryState.selectedIndexes);
+            const parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
 
             return _.extend(
                 {
@@ -267,5 +306,4 @@ define([
             );
         }
     });
-
 });

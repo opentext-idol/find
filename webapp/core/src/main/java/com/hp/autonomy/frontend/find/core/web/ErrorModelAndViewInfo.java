@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -16,6 +16,8 @@ import java.net.URI;
 @Data
 public class ErrorModelAndViewInfo {
     private final HttpServletRequest request;
+    private final String mainMessage;
+    private final String subMessage;
     private final String mainMessageCode;
     private final String subMessageCode;
     private final Object[] subMessageArguments;
@@ -25,11 +27,27 @@ public class ErrorModelAndViewInfo {
     private final Exception exception;
     private final boolean isAuthError;
 
+    private ErrorModelAndViewInfo(final Builder builder) {
+        request = builder.request;
+        mainMessage = builder.mainMessage;
+        subMessage = builder.subMessage;
+        mainMessageCode = builder.mainMessageCode;
+        subMessageCode = builder.subMessageCode;
+        subMessageArguments = builder.subMessageArguments;
+        statusCode = builder.statusCode;
+        contactSupport = builder.contactSupport;
+        buttonHref = builder.buttonHref;
+        exception = builder.exception;
+        isAuthError = builder.isAuthError;
+    }
+
     @Accessors(chain = true)
     @NoArgsConstructor
     @Setter
     public static class Builder {
         private HttpServletRequest request;
+        private String mainMessage;
+        private String subMessage;
         private String mainMessageCode;
         private String subMessageCode;
         private Object[] subMessageArguments;
@@ -40,7 +58,7 @@ public class ErrorModelAndViewInfo {
         private boolean isAuthError;
 
         public ErrorModelAndViewInfo build() {
-            return new ErrorModelAndViewInfo(request, mainMessageCode, subMessageCode, subMessageArguments, statusCode, contactSupport, buttonHref, exception, isAuthError);
+            return new ErrorModelAndViewInfo(this);
         }
     }
 }

@@ -1,22 +1,29 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'databases-view/js/hod-databases-collection',
-    'underscore'
-], function (DatabasesCollection, _) {
+    'underscore',
+    'databases-view/js/hod-databases-collection'
+], function(_, DatabasesCollection) {
+    'use strict';
 
-    var DatabaseModel = DatabasesCollection.prototype.model;
+    const DatabaseModel = DatabasesCollection.prototype.model;
 
     return DatabasesCollection.extend({
         url: 'api/public/search/list-indexes',
 
-        parse: function (response) {
-            return _.map(response, function (responseItem) {
+        fetch: function() {
+            const deferred = DatabasesCollection.prototype.fetch.apply(this, arguments);
+            this.currentRequest = deferred.promise();
+            return deferred;
+        },
+
+        parse: function(response) {
+            return _.map(response, function(responseItem) {
                 responseItem.id = encodeURIComponent(responseItem.domain) + ':' + encodeURIComponent(responseItem.name);
-                if (!responseItem.displayName) {
+                if(!responseItem.displayName) {
                     responseItem.displayName = responseItem.name;
                 }
                 return responseItem;
@@ -29,5 +36,4 @@ define([
             }, DatabaseModel.prototype.defaults)
         })
     });
-
 });

@@ -59,7 +59,7 @@ define([
         return {
             minDate: model.get('minDate'),
             maxDate: model.get('maxDate'),
-            queryText: makeQueryText(model.get('queryText'), model.get('relatedConcepts')),
+            queryText: makeQueryText(model.get('relatedConcepts')),
             databases: buildIndexes(model.get('indexes')),
             fieldText: buildFieldText(model.get('parametricValues')),
             anyLanguage: true

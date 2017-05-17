@@ -1,7 +1,12 @@
+/*
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'backbone',
-    'jquery',
     'underscore',
+    'jquery',
+    'backbone',
     'moment',
     'i18n!find/nls/bundle',
     'find/app/model/dates-filter-model',
@@ -10,36 +15,35 @@ define([
     'js-whatever/js/list-view',
     'text!find/templates/app/page/search/filters/date/dates-filter-view.html',
     'bootstrap-datetimepicker'
-], function(Backbone, $, _, moment, i18n, DatesFilterModel, SavedSearchModel, datePicker, ListView, template) {
+], function(_, $, Backbone, moment, i18n, DatesFilterModel, SavedSearchModel,
+            datePicker, ListView, template) {
+    'use strict';
 
     function dateUpdater(attribute) {
         return function() {
-            var display = '';
-            var value = this.datesFilterModel.get(attribute);
+            const value = this.datesFilterModel.get(attribute);
+            const display = value
+                ? value.format(datePicker.DATE_WIDGET_FORMAT)
+                : '';
 
-            if(value) {
-                display = value.format(datePicker.DATE_WIDGET_FORMAT);
-            }
-
-            this.$('[data-date-attribute="' + attribute + '"]').find('input').val(display);
+            this.$('[data-date-attribute="' + attribute + '"] input')
+                .val(display);
         };
     }
 
     return Backbone.View.extend({
         events: {
             'click tr': function(event) {
-                var $targetRow = $(event.currentTarget);
-                var selected = $targetRow.attr('data-filter-id');
-                var previous = this.datesFilterModel.get('dateRange');
+                const $targetRow = $(event.currentTarget);
+                const selected = $targetRow.attr('data-filter-id');
+                const previous = this.datesFilterModel.get('dateRange');
 
-                if(selected === previous) {
-                    this.datesFilterModel.set('dateRange', null);
-                } else {
-                    this.datesFilterModel.set('dateRange', selected);
-                }
+                this.datesFilterModel.set('dateRange', selected === previous
+                    ? null
+                    : selected);
             },
             'dp.change .results-filter-date[data-date-attribute]': function(event) {
-                var attributes = {dateRange: DatesFilterModel.DateRange.CUSTOM};
+                const attributes = {dateRange: DatesFilterModel.DateRange.CUSTOM};
                 attributes[$(event.target).attr('data-date-attribute')] = event.date;
                 this.datesFilterModel.set(attributes);
             }
@@ -75,8 +79,7 @@ define([
 
             const generateDatePickerCallback = function(attribute) {
                 return function() {
-                    var attributes = {dateRange: DatesFilterModel.DateRange.CUSTOM};
-                    //noinspection JSUnresolvedFunction
+                    const attributes = {dateRange: DatesFilterModel.DateRange.CUSTOM};
                     const stringValue = this.$('[data-date-attribute="' + attribute + '"]').find('input').val();
                     attributes[attribute] = moment(stringValue, datePicker.DATE_WIDGET_FORMAT);
                     this.datesFilterModel.set(attributes);
@@ -100,7 +103,7 @@ define([
         updateMaxDate: dateUpdater('customMaxDate'),
 
         updateForDateRange: function() {
-            var dateRange = this.datesFilterModel.get('dateRange');
+            const dateRange = this.datesFilterModel.get('dateRange');
 
             // Clear all checkboxes, check selected
             this.$('.date-filters-list i').addClass('hide');
@@ -120,7 +123,7 @@ define([
         },
 
         getFilters: function() {
-            var filters = [
+            const filters = [
                 DatesFilterModel.DateRange.WEEK,
                 DatesFilterModel.DateRange.MONTH,
                 DatesFilterModel.DateRange.YEAR,

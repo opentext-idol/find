@@ -1,7 +1,8 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'find/app/page/search/filters/indexes/indexes-view',
     'databases-view/js/hod-database-helper',
@@ -12,14 +13,16 @@ define([
     'use strict';
 
     function getPublicIndexIds(enabled) {
-        return enabled ? [{
-            name: 'public',
-            displayName: i18n['search.indexes.publicIndexes'],
-            className: 'list-unstyled',
-            filter: function(model) {
-                return model.get('domain') === 'PUBLIC_INDEXES';
-            }
-        }] : [];
+        return enabled ?
+            [{
+                name: 'public',
+                displayName: i18n['search.indexes.publicIndexes'],
+                className: 'list-unstyled',
+                filter: function(model) {
+                    return model.get('domain') === 'PUBLIC_INDEXES';
+                }
+            }]
+            : [];
     }
 
     return IndexesView.extend({

@@ -1,12 +1,15 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 package com.hp.autonomy.frontend.find.core.view;
 
 import com.hp.autonomy.searchcomponents.core.view.ViewContentSecurityPolicy;
+import com.hp.autonomy.searchcomponents.core.view.ViewRequest;
+import com.hp.autonomy.searchcomponents.core.view.ViewRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,18 +22,21 @@ import java.io.Serializable;
 
 @Controller
 @RequestMapping(ViewController.VIEW_PATH)
-public abstract class ViewController<S extends Serializable, E extends Exception> {
+public abstract class ViewController<R extends ViewRequest<S>, S extends Serializable, E extends Exception> {
     public static final String VIEW_PATH = "/api/public/view";
     public static final String VIEW_DOCUMENT_PATH = "/viewDocument";
-    private static final String VIEW_STATIC_CONTENT_PROMOTION_PATH = "/viewStaticContentPromotion";
     public static final String REFERENCE_PARAM = "reference";
     public static final String DATABASE_PARAM = "index";
-    public static final String HIGHLIGHT_PARAM = "highlightExpressions";
+    private static final String VIEW_STATIC_CONTENT_PROMOTION_PATH = "/viewStaticContentPromotion";
+    private static final String HIGHLIGHT_PARAM = "highlightExpressions";
 
-    private final ViewServerService<S, E> viewServerService;
+    private final ViewServerService<R, S, E> viewServerService;
+    private final ObjectFactory<? extends ViewRequestBuilder<R, S, ?>> viewRequestBuilderFactory;
 
-    protected ViewController(final ViewServerService<S, E> viewServerService) {
+    protected ViewController(final ViewServerService<R, S, E> viewServerService,
+                             final ObjectFactory<? extends ViewRequestBuilder<R, S, ?>> viewRequestBuilderFactory) {
         this.viewServerService = viewServerService;
+        this.viewRequestBuilderFactory = viewRequestBuilderFactory;
     }
 
     @RequestMapping(value = VIEW_DOCUMENT_PATH, method = RequestMethod.GET)
@@ -42,7 +48,12 @@ public abstract class ViewController<S extends Serializable, E extends Exception
     ) throws E, IOException {
         response.setContentType(MediaType.TEXT_HTML_VALUE);
         ViewContentSecurityPolicy.addContentSecurityPolicy(response);
-        viewServerService.viewDocument(reference, database, highlightExpression, response.getOutputStream());
+        final R request = viewRequestBuilderFactory.getObject()
+                .documentReference(reference)
+                .database(database)
+                .highlightExpression(highlightExpression)
+                .build();
+        viewServerService.viewDocument(request, response.getOutputStream());
     }
 
     @RequestMapping(value = VIEW_STATIC_CONTENT_PROMOTION_PATH, method = RequestMethod.GET)

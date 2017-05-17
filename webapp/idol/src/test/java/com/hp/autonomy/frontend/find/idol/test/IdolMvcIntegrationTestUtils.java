@@ -10,7 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
+import com.hp.autonomy.searchcomponents.idol.test.IdolTestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -25,9 +29,17 @@ import static org.mockito.Mockito.when;
 @Component
 @ConditionalOnProperty(value = "mock.configuration", matchIfMissing = true)
 public class IdolMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
+    private final Environment environment;
+
+    @Autowired
+    public IdolMvcIntegrationTestUtils(final Environment environment) {
+        this.environment = environment;
+    }
+
     @Override
     public String[] getDatabases() {
-        return new String[]{"Wookiepedia"};
+        final String testDatabase = environment.getProperty(IdolTestUtils.TEST_DATABASE_PROPERTY, IdolTestUtils.DEFAULT_TEST_DATABASE);
+        return new String[]{testDatabase};
     }
 
     @Override
@@ -37,12 +49,12 @@ public class IdolMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
 
     @Override
     public EmbeddableIndex getEmbeddableIndex() {
-        return new EmbeddableIndex("Wookiepedia", null);
+        return new EmbeddableIndex(getDatabases()[0], null);
     }
 
     @Override
     protected Authentication createAuthentication(final Collection<GrantedAuthority> authorities) {
-        final CommunityPrincipal communityPrincipal = new CommunityPrincipal(1L, "user", null);
+        final CommunityPrincipal communityPrincipal = new CommunityPrincipal(1L, "user", null, Collections.emptySet());
 
         final UsernamePasswordAuthenticationToken authentication = mock(UsernamePasswordAuthenticationToken.class);
         when(authentication.isAuthenticated()).thenReturn(true);

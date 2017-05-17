@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -7,8 +7,9 @@ define([
     'backbone',
     'find/app/util/merge-collection'
 ], function(Backbone, MergeCollection) {
+    'use strict';
 
-    var Animal = {CAT: 'CAT', DOG: 'DOG'};
+    const Animal = {CAT: 'CAT', DOG: 'DOG'};
 
     describe('Merge collection', function() {
         beforeEach(function() {
@@ -36,7 +37,7 @@ define([
         });
 
         it('adds models added to the tracked collection from itself', function() {
-            var model = this.dogCollection.add({id: 1, name: 'Barky', animal: Animal.DOG});
+            const model = this.dogCollection.add({id: 1, name: 'Barky', animal: Animal.DOG});
 
             expect(this.mergeCollection.length).toBe(4);
             expect(this.mergeCollection.findWhere({name: 'Barky'})).toBe(model);

@@ -6,27 +6,58 @@
 package com.hp.autonomy.frontend.find.hod.search;
 
 import com.hp.autonomy.frontend.find.core.search.AbstractRelatedConceptsControllerTest;
-import com.hp.autonomy.frontend.find.core.search.QueryRestrictionsBuilderFactory;
-import com.hp.autonomy.frontend.find.core.search.RelatedConceptsController;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.api.textindex.query.search.Entity;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequest;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
-import com.hp.autonomy.searchcomponents.hod.search.HodRelatedConceptsRequest;
+import com.hp.autonomy.searchcomponents.hod.search.*;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.ObjectFactory;
 
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class HodRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<Entity, HodQueryRestrictions, HodRelatedConceptsRequest, ResourceIdentifier, HodErrorException> {
+public class HodRelatedConceptsControllerTest extends AbstractRelatedConceptsControllerTest<Entity, HodQueryRestrictions, HodRelatedConceptsRequest, ResourceName, HodErrorException> {
+    @Mock
+    private HodRelatedConceptsService hodRelatedConceptsService;
+
+    @Mock
+    private ObjectFactory<HodQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
+
+    @Mock
+    private HodQueryRestrictionsBuilder queryRestrictionsBuilder;
+
+    @Mock
+    private ObjectFactory<HodRelatedConceptsRequestBuilder> relatedConceptsRequestBuilderFactory;
+
+    @Mock
+    private HodRelatedConceptsRequestBuilder relatedConceptsRequestBuilder;
+
     @Override
-    protected RelatedConceptsController<Entity, HodQueryRestrictions, HodRelatedConceptsRequest, ResourceIdentifier, HodErrorException> buildController(final RelatedConceptsService<Entity, ResourceIdentifier, HodErrorException> relatedConceptsService, final QueryRestrictionsBuilderFactory<HodQueryRestrictions, ResourceIdentifier> queryRestrictionsBuilderFactory, final ObjectFactory<RelatedConceptsRequest.Builder<HodRelatedConceptsRequest, ResourceIdentifier>> relatedConceptsRequestBuilderFactory) {
-        when(queryRestrictionsBuilderFactory.createBuilder()).thenReturn(new HodQueryRestrictions.Builder());
-        when(relatedConceptsRequestBuilderFactory.getObject()).thenReturn(new HodRelatedConceptsRequest.Builder());
-        return new HodRelatedConceptsController(relatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory);
+    protected HodRelatedConceptsController buildController() {
+        when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.fieldText(anyString())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.minDate(any())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.maxDate(any())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.minScore(anyInt())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.stateMatchIds(any())).thenReturn(queryRestrictionsBuilder);
+        when(queryRestrictionsBuilder.stateDontMatchIds(any())).thenReturn(queryRestrictionsBuilder);
+
+        when(relatedConceptsRequestBuilderFactory.getObject()).thenReturn(relatedConceptsRequestBuilder);
+        when(relatedConceptsRequestBuilder.maxResults(anyInt())).thenReturn(relatedConceptsRequestBuilder);
+        when(relatedConceptsRequestBuilder.querySummaryLength(anyInt())).thenReturn(relatedConceptsRequestBuilder);
+        when(relatedConceptsRequestBuilder.queryRestrictions(any())).thenReturn(relatedConceptsRequestBuilder);
+
+        return new HodRelatedConceptsController(hodRelatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory);
+    }
+
+    @Override
+    protected RelatedConceptsService<HodRelatedConceptsRequest, Entity, HodQueryRestrictions, HodErrorException> buildService() {
+        return hodRelatedConceptsService;
     }
 }

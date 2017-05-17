@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -10,46 +10,54 @@ import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsRequest;
 import com.hp.autonomy.searchcomponents.core.fields.FieldsService;
+import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import com.hp.autonomy.types.requests.idol.actions.tags.ValueDetails;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RequestMapping(FieldsController.FIELDS_PATH)
-public abstract class FieldsController<R extends FieldsRequest, E extends Exception, S extends Serializable, Q extends QueryRestrictions<S>, P extends ParametricRequest<S>> {
+public abstract class FieldsController<R extends FieldsRequest, E extends Exception, Q extends QueryRestrictions<?>, P extends ParametricRequest<Q>> {
     public static final String FIELDS_PATH = "/api/public/fields";
     public static final String GET_PARAMETRIC_FIELDS_PATH = "/parametric";
-    static final String GET_PARAMETRIC_NUMERIC_FIELDS_PATH = "/parametric-numeric";
-    public static final String GET_PARAMETRIC_DATE_FIELDS_PATH = "/parametric-date";
-
+    public static final String FIELD_TYPES_PARAM = "fieldTypes";
     private final FieldsService<R, E> fieldsService;
-    private final ParametricValuesService<P, S, E> parametricValuesService;
-    private final ObjectFactory<ParametricRequest.Builder<P, S>> parametricRequestBuilderFactory;
-    private final ConfigService<? extends FindConfig> configService;
+    private final ParametricValuesService<P, Q, E> parametricValuesService;
+    private final ObjectFactory<? extends ParametricRequestBuilder<P, Q, ?>> parametricRequestBuilderFactory;
+    private final FieldComparatorFactory fieldComparatorFactory;
+    private final TagNameFactory tagNameFactory;
+    private final ConfigService<? extends FindConfig<?, ?>> configService;
 
+    @SuppressWarnings("ConstructorWithTooManyParameters")
     protected FieldsController(
             final FieldsService<R, E> fieldsService,
-            final ParametricValuesService<P, S, E> parametricValuesService,
-            final ObjectFactory<ParametricRequest.Builder<P, S>> parametricRequestBuilderFactory,
-            final ConfigService<? extends FindConfig> configService) {
+            final ParametricValuesService<P, Q, E> parametricValuesService,
+            final ObjectFactory<? extends ParametricRequestBuilder<P, Q, ?>> parametricRequestBuilderFactory,
+            final FieldComparatorFactory fieldComparatorFactory,
+            final TagNameFactory tagNameFactory,
+            final ConfigService<? extends FindConfig<?, ?>> configService
+    ) {
         this.fieldsService = fieldsService;
         this.parametricValuesService = parametricValuesService;
         this.parametricRequestBuilderFactory = parametricRequestBuilderFactory;
+        this.fieldComparatorFactory = fieldComparatorFactory;
+        this.tagNameFactory = tagNameFactory;
         this.configService = configService;
     }
 
@@ -58,110 +66,107 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
      */
     protected abstract Q createValueDetailsQueryRestrictions(R request);
 
-    @RequestMapping(value = GET_PARAMETRIC_FIELDS_PATH, method = RequestMethod.GET)
-    @ResponseBody
-    public List<TagName> getParametricFields(final R request) throws E {
-        final FieldTypeParam[] fieldTypeParams = {FieldTypeParam.Parametric, FieldTypeParam.Numeric, FieldTypeParam.NumericDate};
-        final Map<FieldTypeParam, List<TagName>> response = getFields(request, fieldTypeParams, Collections.emptyList());
-        final List<TagName> parametricFields = new ArrayList<>(response.get(FieldTypeParam.Parametric));
-        parametricFields.removeAll(response.get(FieldTypeParam.Numeric));
-        parametricFields.removeAll(response.get(FieldTypeParam.NumericDate));
-        return parametricFields;
+    protected List<FieldAndValueDetails> getParametricFields(final R request) throws E {
+        final Predicate<TagName> predicate = alwaysAndNeverShowFilter();
+        final Map<FieldTypeParam, Set<TagName>> response = fieldsService.getFields(request).entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream().filter(predicate).collect(Collectors.toSet())));
+        final TagName autnDateField;
+        if (request.getFieldTypes().contains(FieldTypeParam.NumericDate) && predicate.test(autnDateField = tagNameFactory.buildTagName(ParametricValuesService.AUTN_DATE_FIELD))) {
+            response.compute(FieldTypeParam.NumericDate, (key, maybeValue) -> Optional.ofNullable(maybeValue)
+                    .map(value -> {
+                        value.add(autnDateField);
+                        return value;
+                    })
+                    .orElse(Collections.singleton(autnDateField))
+            );
+        }
+
+        final List<FieldAndValueDetails> output = new ArrayList<>();
+        output.addAll(fetchNumericParametricFieldAndValueDetails(request, FieldTypeParam.NumericDate, response));
+        output.addAll(fetchNumericParametricFieldAndValueDetails(request, FieldTypeParam.Numeric, response));
+        output.addAll(fetchParametricFieldAndValueDetails(FieldTypeParam.Parametric, response));
+        output.sort(fieldComparatorFactory.parametricFieldComparator());
+
+        return output;
     }
 
-    @RequestMapping(value = GET_PARAMETRIC_NUMERIC_FIELDS_PATH, method = RequestMethod.GET)
-    @ResponseBody
-    public List<FieldAndValueDetails> getParametricNumericFields(final R request) throws E {
-        return fetchParametricFieldAndValueDetails(request, FieldTypeParam.Numeric, Collections.emptyList());
+    private Collection<FieldAndValueDetails> fetchParametricFieldAndValueDetails(final FieldTypeParam fieldType,
+                                                                                 final Map<FieldTypeParam, Set<TagName>> response) throws E {
+        return fetchParametricFieldAndValueDetails(fieldType, response, tagNames -> Collections.emptyMap());
     }
 
-    @RequestMapping(value = GET_PARAMETRIC_DATE_FIELDS_PATH, method = RequestMethod.GET)
-    @ResponseBody
-    public List<FieldAndValueDetails> getParametricDateFields(final R request) throws E {
-        return fetchParametricFieldAndValueDetails(request, FieldTypeParam.NumericDate, Collections.singletonList(ParametricValuesService.AUTN_DATE_FIELD));
+    private Collection<FieldAndValueDetails> fetchNumericParametricFieldAndValueDetails(final R request,
+                                                                                        final FieldTypeParam fieldType,
+                                                                                        final Map<FieldTypeParam, Set<TagName>> response) throws E {
+        return fetchParametricFieldAndValueDetails(fieldType, response, tagNames -> {
+            // Fetch the value details for the fields
+            final P parametricRequest = parametricRequestBuilderFactory.getObject()
+                    .fieldNames(tagNames.stream()
+                            .map(TagName::getId)
+                            .collect(Collectors.toList()))
+                    .queryRestrictions(createValueDetailsQueryRestrictions(request))
+                    .build();
+
+            return parametricValuesService.getValueDetails(parametricRequest);
+        });
     }
 
     /**
      * Fetch the parametric fields of the given type along with their min and max values.
      */
-    protected List<FieldAndValueDetails> fetchParametricFieldAndValueDetails(final R request, final FieldTypeParam fieldType, final Collection<String> additionalFields) throws E {
-        final FieldTypeParam[] fieldTypes = {FieldTypeParam.Parametric, fieldType};
-        final Map<FieldTypeParam, List<TagName>> response = getFields(request, fieldTypes, additionalFields);
-        final Collection<TagName> parametricFields = new ArrayList<>(response.get(FieldTypeParam.Parametric));
-        parametricFields.retainAll(response.get(fieldType));
-
-        parametricFields.addAll(additionalFields.stream().map(TagName::new).collect(Collectors.toList()));
-
-        final List<String> fieldNames = parametricFields.stream().map(TagName::getId).collect(Collectors.toCollection(LinkedList::new));
-
-        final P parametricRequest = parametricRequestBuilderFactory.getObject()
-                .setFieldNames(fieldNames)
-                .setQueryRestrictions(createValueDetailsQueryRestrictions(request))
-                .build();
-
-        final Map<TagName, ValueDetails> valueDetailsResponse = parametricValuesService.getValueDetails(parametricRequest);
-
-        final List<FieldAndValueDetails> output = new LinkedList<>();
-
-        for (final TagName tagName : parametricFields) {
-            final FieldAndValueDetails.Builder builder = new FieldAndValueDetails.Builder()
-                    .setId(tagName.getId())
-                    .setName(tagName.getName());
-
-            final ValueDetails valueDetails = valueDetailsResponse.get(tagName);
-
-            if (valueDetails != null) {
-                builder
-                        .setMax(valueDetails.getMax())
-                        .setMin(valueDetails.getMin())
-                        .setTotalValues(valueDetails.getTotalValues());
-            }
-
-            output.add(builder.build());
+    private Collection<FieldAndValueDetails> fetchParametricFieldAndValueDetails(final FieldTypeParam fieldType,
+                                                                                 final Map<FieldTypeParam, Set<TagName>> response,
+                                                                                 final ValueDetailsFetch<E> valueDetailsFetch) throws E {
+        if (!response.containsKey(fieldType)) {
+            return Collections.emptyList();
         }
 
-        return output;
+        final Set<TagName> tagNames = response.get(fieldType);
+        tagNames.forEach(tagName -> response.entrySet()
+                .stream()
+                .filter(entry -> entry.getKey() != fieldType)
+                .forEach(entry -> entry.getValue().remove(tagName)));
+
+        final Map<FieldPath, ValueDetails> valueDetailsResponse = valueDetailsFetch.fetch(tagNames);
+
+        return tagNames.stream()
+                .map(tagName -> {
+                    final FieldAndValueDetails.FieldAndValueDetailsBuilder builder = FieldAndValueDetails.builder()
+                            .id(tagName.getId().getNormalisedPath())
+                            .displayName(tagName.getDisplayName())
+                            .type(fieldType);
+
+                    final ValueDetails valueDetails = valueDetailsResponse.get(tagName.getId());
+
+                    if (valueDetails != null) {
+                        builder
+                                .max(valueDetails.getMax())
+                                .min(valueDetails.getMin())
+                                .totalValues(valueDetails.getTotalValues());
+                    }
+
+                    return builder.build();
+                })
+                .collect(Collectors.toList());
     }
 
-    private Map<FieldTypeParam, List<TagName>> getFields(final R request, final FieldTypeParam[] fieldTypeParams, final Collection<String> additionalFields) throws E {
-        final UiCustomization uiCustomization = configService.getConfig().getUiCustomization();
-        final Collection<String> parametricWhitelist = uiCustomization == null || uiCustomization.getParametricWhitelist() == null
-                ? Collections.emptyList()
-                : uiCustomization.getParametricWhitelist()
-                .stream()
-                .map(fieldName -> normaliseFieldName(fieldName, additionalFields))
-                .collect(Collectors.toList());
-        final Collection<String> parametricBlacklist = uiCustomization == null || uiCustomization.getParametricBlacklist() == null
-                ? Collections.emptyList()
-                : uiCustomization.getParametricBlacklist()
-                .stream()
-                .map(fieldName -> normaliseFieldName(fieldName, additionalFields))
-                .collect(Collectors.toList());
+    /**
+     * @return A function which returns true if the TagName matches should be displayed after applying the always and never show lists
+     */
+    private Predicate<TagName> alwaysAndNeverShowFilter() {
+        final UiCustomization maybeUiCustomization = configService.getConfig().getUiCustomization();
+        final Collection<FieldPath> parametricAlwaysShow = Optional.ofNullable(maybeUiCustomization)
+                .map(UiCustomization::getParametricAlwaysShow)
+                .orElse(Collections.emptyList());
+        final Collection<FieldPath> parametricNeverShow = Optional.ofNullable(maybeUiCustomization)
+                .map(UiCustomization::getParametricNeverShow)
+                .orElse(Collections.emptyList());
 
-        return fieldsService.getFields(request, fieldTypeParams)
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()
-                        .stream()
-                        .filter(tagName -> (parametricWhitelist.isEmpty() || parametricWhitelist.contains(tagName.getId())) && !parametricBlacklist.contains(tagName.getId()))
-                        .collect(Collectors.toList()))
-                );
+        return tagName -> (parametricAlwaysShow.isEmpty() || parametricAlwaysShow.contains(tagName.getId())) && !parametricNeverShow.contains(tagName.getId());
     }
 
-    //TODO: this logic should be in haven-search-components or somewhere similar
-
-    private static final String FULL_PATH_IDENTIFIER = "DOCUMENT/";
-
-    private String normaliseFieldName(final String fieldName, final Collection<String> specialFields) {
-        String normalisedFieldName = fieldName;
-        if (fieldName.contains(FULL_PATH_IDENTIFIER)) {
-            if (!fieldName.startsWith("/")) {
-                normalisedFieldName = '/' + fieldName;
-            }
-        } else if (!specialFields.contains(fieldName)) {
-            normalisedFieldName = '/' + FULL_PATH_IDENTIFIER + fieldName;
-        }
-
-        return normalisedFieldName;
+    @FunctionalInterface
+    private interface ValueDetailsFetch<E extends Exception> {
+        Map<FieldPath, ValueDetails> fetch(final Set<TagName> tagNames) throws E;
     }
 }

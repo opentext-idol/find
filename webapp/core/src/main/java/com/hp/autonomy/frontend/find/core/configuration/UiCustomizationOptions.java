@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.core.configuration;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.hp.autonomy.frontend.configuration.ConfigException;
+import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,9 +30,9 @@ public class UiCustomizationOptions implements ConfigurationComponent<UiCustomiz
 
     @Override
     public UiCustomizationOptions merge(final UiCustomizationOptions options) {
-        if (options != null) {
-            for (final Map.Entry<String, UiCustomizationRule> entry : options.rules.entrySet()) {
-                if (rules.containsKey(entry.getKey())) {
+        if(options != null) {
+            for(final Map.Entry<String, UiCustomizationRule> entry : options.rules.entrySet()) {
+                if(rules.containsKey(entry.getKey())) {
                     rules.get(entry.getKey()).merge(entry.getValue());
                 } else {
                     rules.put(entry.getKey(), entry.getValue());
@@ -43,6 +44,5 @@ public class UiCustomizationOptions implements ConfigurationComponent<UiCustomiz
     }
 
     @Override
-    public void basicValidate(final String section) throws ConfigException {
-    }
+    public void basicValidate(final String section) throws ConfigException {}
 }

@@ -1,0 +1,61 @@
+/*
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+package com.autonomy.abc.selenium.find.filters;
+
+import com.autonomy.abc.selenium.indexes.tree.IndexCategoryNode;
+import com.autonomy.abc.selenium.indexes.tree.IndexNodeElement;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+import java.util.ArrayList;
+import java.util.List;
+
+class FindIndexCategoryNode extends IndexCategoryNode {
+    private final WebElement container;
+    private final WebDriver driver;
+
+    FindIndexCategoryNode(final WebElement clickable, final WebDriver webDriver) {
+        super(new FindIndexLeafNode(clickable), clickable, webDriver);
+        container = clickable;
+        driver = webDriver;
+    }
+
+    @Override
+    protected void seeMore() {
+        final By toggleMore = By.className("toggle-more");
+
+        if(container.findElements(toggleMore).size() > 0) {
+            container.findElement(toggleMore).click();
+        }
+    }
+
+    @Override
+    public List<IndexNodeElement> getIndexNodes() {
+        final List<IndexNodeElement> nodes = new ArrayList<>();
+        for(final WebElement element : container.findElements(By.cssSelector(".clickable[data-name]"))) {
+            nodes.add(new FindIndexLeafNode(element));
+        }
+        return nodes;
+    }
+
+    @Override
+    protected IndexNodeElement find(final String name) {
+        final WebElement childElement = container.findElement(By.xpath(".//*[normalize-space(.)='" + name + "' and contains(@class,'clickable')]"));
+        return new FindIndexLeafNode(childElement);
+    }
+
+    @Override
+    protected IndexCategoryNode findCategory(final String name) {
+        final WebElement childElement = container.findElement(By.cssSelector(".clickable[data-category-id='" + name.toLowerCase() + "']"));
+        return new FindIndexCategoryNode(childElement, driver);
+    }
+
+    @Override
+    public String getName() {
+        return container.findElement(By.className("category-name")).getText();
+    }
+}

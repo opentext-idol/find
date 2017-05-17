@@ -1,23 +1,31 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
     'underscore',
     'jquery',
+    'backbone',
     'find/idol/app/page/search/filters/indexes/idol-indexes-view',
     'databases-view/js/idol-databases-collection',
     'jasmine-jquery'
-], function(Backbone, _, $, IndexesView, DatabasesCollection) {
+], function(_, $, Backbone, IndexesView, DatabasesCollection) {
+    'use strict';
 
     describe('Indexes View', function() {
-        var INDEXES = _.map(['a','b','c'], function(name) {
+        const INDEXES = _.map(['a', 'b', 'c'], function(name) {
             return {name: name, id: name};
         });
 
         beforeEach(function() {
+            jasmine.clock().install();
+            jasmine.clock().mockDate();
+
+            // underscore has already cached Date.now, so isn't using the fake version
+            this.originalNow = _.now;
+            _.now = Date.now;
+
             this.indexesCollection = new DatabasesCollection();
             this.selectedIndexesCollection = new DatabasesCollection();
 
@@ -39,11 +47,16 @@ define([
             this.queryModel.set('indexes', _.pluck(INDEXES, 'id'));
         });
 
+        afterEach(function() {
+            jasmine.clock().uninstall();
+            _.now = this.originalNow;
+        });
+
         describe('after initialization', function() {
             it('should display indexes in the IndexesCollection', function() {
-                var elements = this.indexesView.$el.find('[data-id]');
+                const elements = this.indexesView.$el.find('[data-id]');
 
-                var dataIds = _.map(elements, function (element) {
+                const dataIds = _.map(elements, function(element) {
                     return $(element).attr('data-id');
                 });
 
@@ -65,25 +78,50 @@ define([
                     this.idElement(INDEXES[0]).click();
                 });
 
-                it('updates the selected indexes collection', function() {
-                    expect(this.selectedIndexesCollection).toHaveLength(1);
-                    expect(this.selectedIndexesCollection.first().get('name')).toEqual(INDEXES[0].name);
+                it('should not update the selected indexes collection', function() {
+                    expect(this.selectedIndexesCollection.length).toBe(3);
+                    expect(this.selectedIndexesCollection.at(0).get('name')).toEqual(INDEXES[0].name);
+                    expect(this.selectedIndexesCollection.at(1).get('name')).toEqual(INDEXES[1].name);
+                    expect(this.selectedIndexesCollection.at(2).get('name')).toEqual(INDEXES[2].name);
                 });
 
                 it('should check the clicked index', function() {
-                    var checkedCheckbox = this.idElement(INDEXES[0]).find('i');
-                    var uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
-                    var uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
+                    const checkedCheckbox = this.idElement(INDEXES[0]).find('i');
+                    const uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
+                    const uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
 
                     expect(checkedCheckbox).toHaveClass('hp-check');
                     expect(uncheckedCheckboxOne).not.toHaveClass('hp-check');
                     expect(uncheckedCheckboxTwo).not.toHaveClass('hp-check');
+                });
+
+                describe('then the debounce timeout elapses', function() {
+                    beforeEach(function() {
+                        jasmine.clock().tick(1000);
+                    });
+
+                    it('updates the selected indexes collection', function() {
+                        expect(this.selectedIndexesCollection.length).toBe(1);
+                        expect(this.selectedIndexesCollection.first().get('name')).toEqual(INDEXES[0].name);
+                    });
+
+                    it('should check the clicked index', function() {
+                        const checkedCheckbox = this.idElement(INDEXES[0]).find('i');
+                        const uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
+                        const uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
+
+                        expect(checkedCheckbox).toHaveClass('hp-check');
+                        expect(uncheckedCheckboxOne).not.toHaveClass('hp-check');
+                        expect(uncheckedCheckboxTwo).not.toHaveClass('hp-check');
+                    });
                 });
             });
 
             describe('clicking an index twice', function() {
                 beforeEach(function() {
                     this.idElement(INDEXES[0]).click().click();
+
+                    jasmine.clock().tick(1000);
                 });
 
                 it('updates the selected indexes collection with all of the indexes', function() {
@@ -108,9 +146,9 @@ define([
                 });
 
                 it('should select the right indexes', function() {
-                    var uncheckedCheckbox = this.idElement(INDEXES[0]).find('i');
-                    var checkedCheckboxOne = this.idElement(INDEXES[1]).find('i');
-                    var checkedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
+                    const uncheckedCheckbox = this.idElement(INDEXES[0]).find('i');
+                    const checkedCheckboxOne = this.idElement(INDEXES[1]).find('i');
+                    const checkedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
 
                     expect(uncheckedCheckbox).not.toHaveClass('hp-check');
                     expect(checkedCheckboxOne).toHaveClass('hp-check');
@@ -124,9 +162,9 @@ define([
                 });
 
                 it('should select only the first index', function() {
-                    var checkedCheckbox = this.idElement(INDEXES[0]).find('i');
-                    var uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
-                    var uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
+                    const checkedCheckbox = this.idElement(INDEXES[0]).find('i');
+                    const uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
+                    const uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
 
                     expect(checkedCheckbox).toHaveClass('hp-check');
                     expect(uncheckedCheckboxOne).not.toHaveClass('hp-check');
@@ -134,7 +172,5 @@ define([
                 });
             });
         });
-
     });
-
 });

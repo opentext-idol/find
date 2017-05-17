@@ -7,39 +7,40 @@ package com.hp.autonomy.frontend.find.idol.view;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciServiceException;
-import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.view.AbstractViewControllerTest;
-import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
-import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
-import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
-import com.hp.autonomy.searchcomponents.idol.view.ViewDocumentNotFoundException;
-import com.hp.autonomy.searchcomponents.idol.view.ViewNoReferenceFieldException;
-import com.hp.autonomy.searchcomponents.idol.view.ViewServerErrorException;
-import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
+import com.hp.autonomy.searchcomponents.idol.view.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewController, String, AciErrorException> {
+public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewController, IdolViewRequest, String, AciErrorException> {
     @Mock
-    private ConfigService<? extends IdolSearchCapable> configService;
-
+    private IdolViewServerService idolViewServerService;
     @Mock
-    private ViewServerService<String, AciErrorException> idolViewServerService;
+    private ObjectFactory<IdolViewRequestBuilder> viewRequestBuilderFactory;
+    @Mock
+    private IdolViewRequestBuilder viewRequestBuilder;
 
     @Override
     @Before
     public void setUp() {
+        when(viewRequestBuilderFactory.getObject()).thenReturn(viewRequestBuilder);
+        when(viewRequestBuilder.documentReference(any())).thenReturn(viewRequestBuilder);
+        when(viewRequestBuilder.database(any())).thenReturn(viewRequestBuilder);
+        when(viewRequestBuilder.highlightExpression(any())).thenReturn(viewRequestBuilder);
+
+        viewController = new IdolViewController(idolViewServerService, viewRequestBuilderFactory, controllerUtils);
         viewServerService = idolViewServerService;
-        viewController = new IdolViewController(viewServerService, configService, controllerUtils);
         response = new MockHttpServletResponse();
         super.setUp();
     }
@@ -52,18 +53,6 @@ public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewC
     @Test
     public void viewDocumentNotFound() {
         assertNotNull(viewController.handleViewDocumentNotFoundException(new ViewDocumentNotFoundException("some reference"), new MockHttpServletRequest(), new MockHttpServletResponse()));
-    }
-
-    @Test
-    public void noReferenceField() {
-        when(configService.getConfig()).thenReturn(new IdolFindConfig.Builder().setView(new ViewConfig.Builder().build()).build());
-
-        assertNotNull(viewController.handleViewNoReferenceFieldException(new ViewNoReferenceFieldException("some reference", "some field"), new MockHttpServletRequest(), new MockHttpServletResponse()));
-    }
-
-    @Test
-    public void referenceFieldBlank() {
-        assertNotNull(viewController.handleReferenceFieldBlankException(new MockHttpServletRequest(), new MockHttpServletResponse()));
     }
 
     @Test

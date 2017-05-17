@@ -1,0 +1,32 @@
+{
+  "dashboards": [
+    {
+      "dashboardName": "Default Dashboard",
+      "enabled": false,
+      "width": 3,
+      "height": 3,
+      "updateInterval": 60,
+      "displayWidgetNames": "never",
+      "widgets": [
+        {
+          "name": "Sample Widget",
+          "type": "StaticContentWidget",
+          "x": 0,
+          "y": 0,
+          "width": 1,
+          "height": 1,
+          "datasource": {
+            "source": "SavedSearch",
+            "config": {
+              "id": 123,
+              "type": "QUERY"
+            }
+          },
+          "widgetSettings": {
+            "html": "Hello World!"
+          }
+        }
+      ]
+    }
+  ]
+}

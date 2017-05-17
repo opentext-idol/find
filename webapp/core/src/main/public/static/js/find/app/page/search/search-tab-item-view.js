@@ -1,21 +1,20 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'js-whatever/js/list-item-view',
     'underscore',
+    'js-whatever/js/list-item-view',
     'i18n!find/nls/bundle',
     'find/app/model/saved-searches/saved-search-model',
     'text!find/templates/app/page/search/search-tab-item-view.html',
     'bootstrap'
-], function(ListItemView, _, i18n, SavedSearchModel, template) {
-
+], function(_, ListItemView, i18n, SavedSearchModel, template) {
     'use strict';
 
-    var templateFunction = _.template(template);
-    var NEW_DOCS_LIMIT = 1000;
+    const templateFunction = _.template(template);
+    const NEW_DOCS_LIMIT = 1000;
 
     return ListItemView.extend({
         className: 'search-tab',
@@ -23,7 +22,7 @@ define([
         queryState: null,
 
         initialize: function(options) {
-            var cid = this.model.cid;
+            const cid = this.model.cid;
             this.queryStates = options.queryStates;
 
             ListItemView.prototype.initialize.call(this, _.defaults({
@@ -46,11 +45,15 @@ define([
         },
 
         render: function() {
-            ListItemView.prototype.render.apply(this, arguments);
+            ListItemView.prototype.render.apply(this);
+
+            if(this.$tooltip) {
+                this.$tooltip.tooltip('destroy');
+            }
 
             this.updateSavedness();
             this.updateTabBadge();
-            
+
             this.$tooltip = this.$('[data-toggle="tooltip"]');
 
             this.$tooltip.tooltip({
@@ -59,8 +62,13 @@ define([
             });
         },
 
+        remove: function() {
+            this.$tooltip.tooltip('destroy');
+            ListItemView.prototype.remove.call(this);
+        },
+
         updateTabBadge: function() {
-            var newDocuments = this.model.get('newDocuments');
+            const newDocuments = this.model.get('newDocuments');
 
             if(newDocuments > 0) {
                 this.$('.new-document-label')
@@ -73,15 +81,18 @@ define([
         },
 
         updateSavedness: function() {
-            var changed = this.queryState ? !this.model.equalsQueryState(this.queryState) : false;
-            this.$('.search-tab-anchor').toggleClass('bold', this.model.isNew() || changed);
-            this.$('.search-tab-anchor .hp-new').toggleClass('hide', !this.model.isNew() && !changed);
+            const changed = this.queryState
+                ? !this.model.equalsQueryState(this.queryState)
+                : false;
+            const differentFromServer = this.model.isNew() || changed;
+            this.$('.search-tab-anchor').toggleClass('bold', differentFromServer);
+            this.$('.search-tab-anchor .hp-new').toggleClass('hide', !differentFromServer);
         },
 
         updateQueryStateListeners: function() {
-            var newQueryState = this.queryStates.get(this.model.cid);
+            const newQueryState = this.queryStates.get(this.model.cid);
 
-            if (this.queryState) {
+            if(this.queryState) {
                 this.stopListening(this.queryState.selectedIndexes);
                 this.stopListening(this.queryState.conceptGroups);
                 this.stopListening(this.queryState.selectedParametricValues);
@@ -90,7 +101,7 @@ define([
 
             this.queryState = newQueryState;
 
-            if (this.queryState) {
+            if(this.queryState) {
                 this.listenTo(this.queryState.selectedIndexes, 'add remove', this.updateSavedness);
                 this.listenTo(this.queryState.conceptGroups, 'update change', this.updateSavedness);
                 this.listenTo(this.queryState.selectedParametricValues, 'add remove', this.updateSavedness);
@@ -98,5 +109,4 @@ define([
             }
         }
     });
-
 });

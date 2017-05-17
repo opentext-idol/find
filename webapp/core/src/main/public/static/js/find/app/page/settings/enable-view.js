@@ -1,11 +1,14 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'settings/js/controls/enable-view',
-    'text!find/templates/app/page/settings/enable-view.html'
-], function(EnableView, template) {
+    'text!find/templates/app/page/settings/enable-view.html',
+    'underscore'
+], function(EnableView, template, _) {
+    'use strict';
 
     return EnableView.extend({
         className: 'm-t-sm',

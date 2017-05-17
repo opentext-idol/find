@@ -6,36 +6,59 @@
 package com.hp.autonomy.frontend.find.hod.web;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.web.AbstractRequestMapper;
 import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
+import com.hp.autonomy.searchcomponents.hod.requests.HodQueryRequestMixin;
+import com.hp.autonomy.searchcomponents.hod.requests.HodQueryRestrictionsMixin;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-public class HodRequestMapper extends AbstractRequestMapper<ResourceIdentifier> {
-    @Override
-    protected void addCustomMixins(final ObjectMapper objectMapper) {
-        objectMapper.addMixIn(HodQueryRestrictions.Builder.class, HodQueryRestrictionsMixins.class);
+class HodRequestMapper extends AbstractRequestMapper<HodQueryRequest> {
+    @SuppressWarnings("TypeMayBeWeakened")
+    @Autowired
+    public HodRequestMapper(final HodQueryRestrictionsBuilder queryRestrictionsBuilder,
+                            final HodQueryRequestBuilder queryRequestBuilder) {
+        super(queryRestrictionsBuilder, queryRequestBuilder);
     }
 
     @Override
-    protected Class<ResourceIdentifier> getDatabaseType() {
-        return ResourceIdentifier.class;
+    protected void addCustomMixins(final ObjectMapper objectMapper, final QueryRestrictionsBuilder<?, ?, ?> queryRestrictionsBuilder, final QueryRequestBuilder<?, ?, ?> queryRequestBuilder) {
+        objectMapper.addMixIn(HodQueryRequest.class, HodQueryRequestMixin.class);
+        objectMapper.addMixIn(queryRequestBuilder.getClass(), HodQueryRequestBuilderMixins.class);
+        objectMapper.addMixIn(HodQueryRestrictions.class, HodQueryRestrictionsMixin.class);
+        objectMapper.addMixIn(queryRestrictionsBuilder.getClass(), HodQueryRestrictionsBuilderMixins.class);
     }
 
     @Override
-    protected Class<? extends SearchRequestMixins> getSearchRequestMixinType() {
-        return HodSearchRequestMixins.class;
+    protected Class<HodQueryRequest> getType() {
+        return HodQueryRequest.class;
     }
 
     @SuppressWarnings("unused")
-    private abstract static class HodQueryRestrictionsMixins {
+    private interface HodQueryRequestBuilderMixins {
+        @JsonProperty(value = "max_results", required = true)
+        HodQueryRequestBuilder maxResults(int maxResults);
+
+        @JsonProperty(required = true)
+        HodQueryRequestBuilder summary(String summary);
+
+        @JsonProperty("auto_correct")
+        HodQueryRequestBuilder autoCorrect(boolean autoCorrect);
+    }
+
+    @SuppressWarnings("unused")
+    private abstract static class HodQueryRestrictionsBuilderMixins {
         @JsonProperty(value = "text", required = true)
         private String queryText;
         @JsonProperty("field_text")
@@ -48,11 +71,5 @@ public class HodRequestMapper extends AbstractRequestMapper<ResourceIdentifier> 
         private DateTime maxDate;
         @JsonProperty("min_score")
         private Integer minScore;
-    }
-
-    @SuppressWarnings("unused")
-    private static class HodSearchRequestMixins extends SearchRequestMixins {
-        @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "queryRestrictions", defaultImpl = HodQueryRestrictions.class)
-        private QueryRestrictions<String> queryRestrictions;
     }
 }

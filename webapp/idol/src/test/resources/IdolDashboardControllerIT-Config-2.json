@@ -1,0 +1,31 @@
+{
+  "dashboards": [
+    {
+      "dashboardName": "Crumbs",
+      "enabled": true,
+      "width": 6,
+      "height": 5,
+      "updateInterval": 15,
+      "widgets": [
+        {
+          "name": "Nuts",
+          "type": "SunburstWidget",
+          "x": 0,
+          "y": 1,
+          "width": 4,
+          "height": 3,
+          "datasource": {
+            "source": "SavedSearch",
+            "config": {
+              "id": 770,
+              "type": "QUERY"
+            }
+          },
+          "widgetSettings": {
+            "firstField": "/DOCUMENT/PLUMS"
+          }
+        }
+      ]
+    }
+  ]
+}

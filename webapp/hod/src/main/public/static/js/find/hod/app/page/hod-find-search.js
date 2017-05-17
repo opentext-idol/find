@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -11,7 +11,8 @@ define([
     'find/hod/app/page/search/suggest/hod-suggest-view',
     'find/app/util/database-name-resolver',
     'find/hod/app/page/search/hod-query-left-side-view'
-], function(_, FindSearch, IndexesCollection, ServiceView, SuggestView, databaseNameResolver, HodQueryLeftSideView) {
+], function(_, FindSearch, IndexesCollection, ServiceView, SuggestView,
+            databaseNameResolver, HodQueryLeftSideView) {
     'use strict';
 
     return FindSearch.extend({
@@ -29,19 +30,19 @@ define([
             };
         },
 
-        documentDetailOptions: function (domain, index, reference) {
+        documentDetailOptions: function(domain, index, reference) {
             return {
-                reference: reference,
-                database: databaseNameResolver.constructDatabaseString(domain, index)
+                database: databaseNameResolver.constructDatabaseString(domain, index),
+                reference: reference
             };
         },
 
-        suggestOptions: function (domain, index, reference) {
-            var database = databaseNameResolver.constructDatabaseString(domain, index);
+        suggestOptions: function(domain, index, reference) {
+            const database = databaseNameResolver.constructDatabaseString(domain, index);
 
             return {
-                reference: reference,
                 database: database,
+                reference: reference,
                 suggestParams: {
                     indexes: [database]
                 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -16,15 +16,20 @@ define([
         describe('parse method', function() {
             describe('when only one field is wanted', function() {
                 beforeEach(function() {
-                    this.result = this.collection.parse([{
-                        count: '42',
-                        field: [],
-                        value: 'wine'
-                    }, {
-                        count: '36',
-                        field: [],
-                        value: 'cheese'
-                    }])
+                    this.result = this.collection.parse([
+                        {
+                            count: 42,
+                            subFields: [],
+                            value: 'wine',
+                            displayValue: 'wine'
+                        },
+                        {
+                            count: 36,
+                            subFields: [],
+                            value: 'cheese',
+                            displayValue: 'cheese'
+                        }
+                    ])
                 });
 
                 it('should have an empty array of column names', function() {
@@ -32,7 +37,7 @@ define([
                 });
 
                 it('should parse models correctly', function() {
-                    expect(this.result.length).toBe(2);
+                    expect(this.result).toHaveLength(2);
 
                     expect(this.result[0]).toEqual({
                         count: 42,
@@ -49,27 +54,42 @@ define([
             describe('when two fields are wanted', function() {
                 describe('and the empty string is not returned', function() {
                     beforeEach(function() {
-                        this.result = this.collection.parse([{
-                            count: '42',
-                            value: 'wine',
-                            field: [{
-                                count: '24',
-                                value: 'france'
-                            }, {
-                                count: '18',
-                                value: 'germany'
-                            }]
-                        }, {
-                            count: '36',
-                            value: 'cheese',
-                            field: [{
-                                count: '24',
-                                value: 'france'
-                            }, {
-                                count: '12',
-                                value: 'germany'
-                            }]
-                        }])
+                        this.result = this.collection.parse([
+                            {
+                                count: 42,
+                                value: 'wine',
+                                displayValue: 'wine',
+                                subFields: [
+                                    {
+                                        count: 24,
+                                        value: 'france',
+                                        displayValue: 'france'
+                                    },
+                                    {
+                                        count: 18,
+                                        value: 'germany',
+                                        displayValue: 'germany'
+                                    }
+                                ]
+                            },
+                            {
+                                count: 36,
+                                value: 'cheese',
+                                displayValue: 'cheese',
+                                subFields: [
+                                    {
+                                        count: 24,
+                                        value: 'france',
+                                        displayValue: 'france'
+                                    },
+                                    {
+                                        count: 12,
+                                        value: 'germany',
+                                        displayValue: 'germany'
+                                    }
+                                ]
+                            }
+                        ])
                     });
 
                     it('should have the correct array of column names', function() {
@@ -77,7 +97,7 @@ define([
                     });
 
                     it('should parse models correctly', function() {
-                        expect(this.result.length).toBe(2);
+                        expect(this.result).toHaveLength(2);
 
                         expect(this.result[0]).toEqual({
                             france: 24,
@@ -95,33 +115,52 @@ define([
 
                 describe('and the empty string is returned', function() {
                     beforeEach(function() {
-                        this.result = this.collection.parse([{
-                            count: '47',
-                            value: 'wine',
-                            field: [{
-                                count: '24',
-                                value: 'france'
-                            }, {
-                                count: '18',
-                                value: 'germany'
-                            }, {
-                                count: '5',
-                                value: ''
-                            }]
-                        }, {
-                            count: '40',
-                            value: 'cheese',
-                            field: [{
-                                count: '24',
-                                value: 'france'
-                            }, {
-                                count: '12',
-                                value: 'germany'
-                            }, {
-                                count: '4',
-                                value: ''
-                            }]
-                        }])
+                        this.result = this.collection.parse([
+                            {
+                                count: 47,
+                                value: 'wine',
+                                displayValue: 'wine',
+                                subFields: [
+                                    {
+                                        count: 24,
+                                        value: 'france',
+                                        displayValue: 'france'
+                                    },
+                                    {
+                                        count: 18,
+                                        value: 'germany',
+                                        displayValue: 'germany'
+                                    },
+                                    {
+                                        count: 5,
+                                        value: '',
+                                        displayValue: ''
+                                    }
+                                ]
+                            },
+                            {
+                                count: 40,
+                                value: 'cheese',
+                                displayValue: 'cheese',
+                                subFields: [
+                                    {
+                                        count: 24,
+                                        value: 'france',
+                                        displayValue: 'france'
+                                    },
+                                    {
+                                        count: 12,
+                                        value: 'germany',
+                                        displayValue: 'germany'
+                                    },
+                                    {
+                                        count: 4,
+                                        value: '',
+                                        displayValue: ''
+                                    }
+                                ]
+                            }
+                        ])
                     });
 
                     it('should have the correct array of column names', function() {
@@ -129,7 +168,7 @@ define([
                     });
 
                     it('should parse models correctly', function() {
-                        expect(this.result.length).toBe(2);
+                        expect(this.result).toHaveLength(2);
 
                         expect(this.result[0]).toEqual(jasmine.objectContaining({
                             france: 24,
@@ -151,5 +190,4 @@ define([
             });
         });
     });
-
 });

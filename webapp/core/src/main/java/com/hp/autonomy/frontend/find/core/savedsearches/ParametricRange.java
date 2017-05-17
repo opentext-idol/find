@@ -5,21 +5,29 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Transient;
 
 @SuppressWarnings("WeakerAccess")
 @Embeddable
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+@JsonDeserialize(builder = ParametricRange.ParametricRangeBuilder.class)
 public class ParametricRange {
     private String field;
+    @Transient
+    private String displayName;
     private double min;
     private double max;
     @Enumerated(EnumType.ORDINAL)
@@ -31,16 +39,7 @@ public class ParametricRange {
         Numeric
     }
 
-    @JsonCreator
-    public ParametricRange(
-            @JsonProperty("field") final String field,
-            @JsonProperty("min") final double min,
-            @JsonProperty("max") final double max,
-            @JsonProperty("type") final Type type
-    ) {
-        this.field = field;
-        this.min = min;
-        this.max = max;
-        this.type = type;
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class ParametricRangeBuilder {
     }
 }

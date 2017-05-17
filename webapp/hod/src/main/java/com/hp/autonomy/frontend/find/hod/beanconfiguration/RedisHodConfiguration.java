@@ -6,8 +6,8 @@
 package com.hp.autonomy.frontend.find.hod.beanconfiguration;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.configuration.HostAndPort;
-import com.hp.autonomy.frontend.configuration.RedisConfig;
+import com.hp.autonomy.frontend.configuration.redis.RedisConfig;
+import com.hp.autonomy.frontend.configuration.server.HostAndPort;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.RedisCondition;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.redis.RedisTokenRepository;

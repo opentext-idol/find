@@ -56,6 +56,11 @@
             }
         ]
     },
+    "export": {
+        "powerpoint": {
+            "templateFile": ""
+        }
+    },
     "uiCustomization": {
         "options": {
             "directAccessLink": {
@@ -68,10 +73,23 @@
             "enableRelatedConcepts": {
                 "user": true,
                 "bi": false
+            },
+            "enableSavedSearch": {
+                "user": false,
+                "bi": true
+            },
+            "enableTypeAhead": {
+                "user": true,
+                "bi": true
+            },
+            "resultViewOrder": {
+                "bi": ["list", "topic-map", "sunburst", "table", "map"],
+                "user": ["list"]
             }
         },
-        "parametricBlacklist": [],
-        "parametricWhitelist": [],
+        "parametricNeverShow": [],
+        "parametricAlwaysShow": [],
+        "parametricOrder": [],
         "specialUrlPrefixes": {
             "application/msword": "ms-word:ofv|u|",
             "application/mspowerpoint": "ms-powerpoint:ofv|u|",

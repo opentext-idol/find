@@ -9,101 +9,79 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.web.FindCacheNames;
 import com.hp.autonomy.frontend.find.hod.configuration.HodFindConfig;
 import com.hp.autonomy.hod.caching.CachingConfiguration;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
-import com.hp.autonomy.hod.client.api.textindex.query.content.GetContentService;
-import com.hp.autonomy.hod.client.api.textindex.query.search.FindSimilarService;
-import com.hp.autonomy.hod.client.api.textindex.query.search.QueryTextIndexService;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
 import com.hp.autonomy.hod.client.error.HodErrorCode;
 import com.hp.autonomy.hod.client.error.HodErrorException;
-import com.hp.autonomy.hod.sso.HodAuthenticationPrincipal;
-import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
-import com.hp.autonomy.searchcomponents.core.caching.CacheNames;
-import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
-import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
-import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
+import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequest;
-import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
-import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
-import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
+import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesService;
+import com.hp.autonomy.searchcomponents.hod.search.*;
 import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.Warnings;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+@Primary
 @Service
-public class FindHodDocumentService extends HodDocumentsService {
-    private final DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService;
+class FindHodDocumentService implements HodDocumentsService {
+    private final HodDatabasesService databasesService;
+    private final HodDocumentsService documentsService;
+    private final ObjectFactory<HodDatabasesRequestBuilder> databasesRequestBuilderFactory;
     private final ConfigService<HodFindConfig> findConfigService;
-    private final CacheManager cacheManager;
 
-    @SuppressWarnings("ConstructorWithTooManyParameters")
     @Autowired
     public FindHodDocumentService(
-            final FindSimilarService<HodSearchResult> findSimilarService,
-            final ConfigService<HodFindConfig> configService,
-            final QueryTextIndexService<HodSearchResult> queryTextIndexService,
-            final GetContentService<HodSearchResult> getContentService,
-            final AuthenticationInformationRetriever<?, HodAuthenticationPrincipal> authenticationRetriever,
-            final DatabasesService<Database, HodDatabasesRequest, HodErrorException> databasesService,
-            final DocumentFieldsService documentFieldsService,
-            final CacheManager cacheManager
+            final HodDatabasesService databasesService,
+            @Qualifier(DOCUMENTS_SERVICE_BEAN_NAME)
+            final HodDocumentsService documentsService,
+            final ObjectFactory<HodDatabasesRequestBuilder> databasesRequestBuilderFactory,
+            final ConfigService<HodFindConfig> configService
     ) {
-        super(findSimilarService, configService, queryTextIndexService, getContentService, authenticationRetriever, documentFieldsService);
         this.databasesService = databasesService;
+        this.documentsService = documentsService;
+        this.databasesRequestBuilderFactory = databasesRequestBuilderFactory;
         findConfigService = configService;
-        this.cacheManager = cacheManager;
     }
 
     @Override
     @Cacheable(value = FindCacheNames.DOCUMENTS, cacheResolver = CachingConfiguration.PER_USER_CACHE_RESOLVER_NAME)
-    public Documents<HodSearchResult> queryTextIndex(final SearchRequest<ResourceIdentifier> searchRequest) throws HodErrorException {
+    public Documents<HodSearchResult> queryTextIndex(final HodQueryRequest queryRequest) throws HodErrorException {
         try {
-            return super.queryTextIndex(searchRequest);
+            return documentsService.queryTextIndex(queryRequest);
         } catch (final HodErrorException e) {
             if (e.getErrorCode() == HodErrorCode.INDEX_NAME_INVALID) {
                 final Boolean publicIndexesEnabled = findConfigService.getConfig().getHod().getPublicIndexesEnabled();
-                final HodDatabasesRequest databasesRequest = new HodDatabasesRequest.Builder().setPublicIndexesEnabled(publicIndexesEnabled).build();
+                final HodDatabasesRequest databasesRequest = databasesRequestBuilderFactory.getObject().publicIndexesEnabled(publicIndexesEnabled).build();
 
-                final Cache cache = cacheManager.getCache(CacheNames.DATABASES);
-                if (cache != null) {
-                    cache.clear();
-                }
                 final Set<Database> updatedDatabases = databasesService.getDatabases(databasesRequest);
 
-                final QueryRestrictions<ResourceIdentifier> queryRestrictions = searchRequest.getQueryRestrictions();
-                final Set<ResourceIdentifier> badIndexes = new HashSet<>(queryRestrictions.getDatabases());
+                final QueryRestrictions<ResourceName> queryRestrictions = queryRequest.getQueryRestrictions();
+                final Set<ResourceName> badIndexes = new HashSet<>(queryRestrictions.getDatabases());
 
                 for (final Database database : updatedDatabases) {
-                    final ResourceIdentifier resourceIdentifier = new ResourceIdentifier(database.getDomain(), database.getName());
+                    final ResourceName resourceIdentifier = new ResourceName(database.getDomain(), database.getName());
                     badIndexes.remove(resourceIdentifier);
                 }
 
-                final List<ResourceIdentifier> goodIndexes = new ArrayList<>(queryRestrictions.getDatabases());
+                final Collection<ResourceName> goodIndexes = new ArrayList<>(queryRestrictions.getDatabases());
                 goodIndexes.removeAll(badIndexes);
 
-                searchRequest.setQueryRestrictions(new HodQueryRestrictions.Builder()
-                        .setQueryText(queryRestrictions.getQueryText())
-                        .setFieldText(queryRestrictions.getFieldText())
-                        .setDatabases(goodIndexes)
-                        .setMinDate(queryRestrictions.getMinDate())
-                        .setMaxDate(queryRestrictions.getMaxDate())
-                        .setMinScore(queryRestrictions.getMinScore())
-                        .setStateMatchId(queryRestrictions.getStateMatchId())
-                        .setStateDontMatchId(queryRestrictions.getStateDontMatchId())
-                        .build(
-                ));
-                final Documents<HodSearchResult> resultDocuments = super.queryTextIndex(searchRequest);
+                final HodQueryRequest queryRequestWithoutBadIndexes = queryRequest.toBuilder()
+                        .queryRestrictions(queryRequest.getQueryRestrictions()
+                                .toBuilder()
+                                .databases(goodIndexes)
+                                .build())
+                        .build();
+                final Documents<HodSearchResult> resultDocuments = documentsService.queryTextIndex(queryRequestWithoutBadIndexes);
                 final Warnings warnings = new Warnings(badIndexes);
                 return new Documents<>(
                         resultDocuments.getDocuments(),
@@ -120,7 +98,22 @@ public class FindHodDocumentService extends HodDocumentsService {
 
     @Override
     @Cacheable(value = FindCacheNames.SIMILAR_DOCUMENTS, cacheResolver = CachingConfiguration.PER_USER_CACHE_RESOLVER_NAME)
-    public Documents<HodSearchResult> findSimilar(final SuggestRequest<ResourceIdentifier> suggestRequest) throws HodErrorException {
-        return super.findSimilar(suggestRequest);
+    public Documents<HodSearchResult> findSimilar(final HodSuggestRequest suggestRequest) throws HodErrorException {
+        return documentsService.findSimilar(suggestRequest);
+    }
+
+    @Override
+    public List<HodSearchResult> getDocumentContent(final HodGetContentRequest getContentRequest) throws HodErrorException {
+        return documentsService.getDocumentContent(getContentRequest);
+    }
+
+    @Override
+    public String getStateToken(final HodQueryRestrictions queryRestrictions, final int maxResults, final boolean promotions) throws HodErrorException {
+        return documentsService.getStateToken(queryRestrictions, maxResults, promotions);
+    }
+
+    @Override
+    public StateTokenAndResultCount getStateTokenAndResultCount(final HodQueryRestrictions queryRestrictions, final int maxResults, final boolean promotions) throws HodErrorException {
+        return documentsService.getStateTokenAndResultCount(queryRestrictions, maxResults, promotions);
     }
 }

@@ -1,32 +1,45 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
     'underscore',
     'jquery',
+    'backbone',
     'find/hod/app/page/search/filters/indexes/hod-indexes-view',
+    'find/app/configuration',
     'databases-view/js/hod-databases-collection',
     'jasmine-jquery'
-], function(Backbone, _, $, IndexesView, DatabasesCollection) {
+], function(_, $, Backbone, IndexesView, configuration, DatabasesCollection) {
+    'use strict';
 
     describe('Indexes View', function() {
-        var DOMAIN = 'TEST';
+        const DOMAIN = 'TEST';
 
-        var indexId =  function(name) {
+        const indexId = function(name) {
             return DOMAIN + ':' + name;
         };
 
-        var INDEXES = _.map(['a','b','c'], function(name) {
+        const INDEXES = _.map(['a', 'b', 'c'], function(name) {
             return {name: name, domain: DOMAIN, id: indexId(name)};
         });
 
         // Convert index collection model attributes to a resource identifier object
-        var toResourceIdentifier = _.partial(_.pick, _, 'domain', 'name');
+        const toResourceIdentifier = _.partial(_.pick, _, 'domain', 'name');
 
         beforeEach(function() {
+            jasmine.clock().install();
+            jasmine.clock().mockDate();
+
+            // underscore has already cached Date.now, so isn't using the fake version
+            this.originalNow = _.now;
+            _.now = Date.now;
+
+            configuration.and.returnValue(function() {
+                return {};
+            });
+
             this.indexesCollection = new DatabasesCollection();
             this.selectedIndexesCollection = new DatabasesCollection();
             this.queryModel = new Backbone.Model();
@@ -34,6 +47,11 @@ define([
             this.idElement = function(indexAttributes) {
                 return this.indexesView.$('li[data-id="' + indexAttributes.id + '"]');
             };
+        });
+
+        afterEach(function() {
+            jasmine.clock().uninstall();
+            _.now = this.originalNow;
         });
 
         describe('initialized with a populated indexes collection', function() {
@@ -51,9 +69,9 @@ define([
             });
 
             it('should display indexes in the IndexesCollection', function() {
-                var elements = this.indexesView.$el.find('[data-id]');
+                const elements = this.indexesView.$el.find('[data-id]');
 
-                var dataIds = _.map(elements, function (element) {
+                const dataIds = _.map(elements, function(element) {
                     return $(element).attr('data-id');
                 });
 
@@ -78,9 +96,9 @@ define([
             });
 
             it('should display indexes in the IndexesCollection', function() {
-                var elements = this.indexesView.$el.find('[data-id]');
+                const elements = this.indexesView.$el.find('[data-id]');
 
-                var dataIds = _.map(elements, function (element) {
+                const dataIds = _.map(elements, function(element) {
                     return $(element).attr('data-id');
                 });
 
@@ -102,24 +120,50 @@ define([
                     this.idElement(INDEXES[0]).click();
                 });
 
-                it('updates the selected indexes collection', function() {
-                    expect(this.selectedIndexesCollection.toResourceIdentifiers()).toEqual([toResourceIdentifier(INDEXES[0])]);
+                it('should not update the selected indexes collection', function() {
+                    expect(this.selectedIndexesCollection.length).toBe(3);
+
+                    _.each(INDEXES, function(index) {
+                        expect(this.selectedIndexesCollection.findWhere({name: index.name})).toBeDefined();
+                    }, this);
                 });
 
                 it('should check the clicked index', function() {
-                    var checkedCheckbox = this.idElement(INDEXES[0]).find('i');
-                    var uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
-                    var uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
+                    const checkedCheckbox = this.idElement(INDEXES[0]).find('i');
+                    const uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
+                    const uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
 
                     expect(checkedCheckbox).toHaveClass('hp-check');
                     expect(uncheckedCheckboxOne).not.toHaveClass('hp-check');
                     expect(uncheckedCheckboxTwo).not.toHaveClass('hp-check');
                 });
+
+                describe('then the debounce timeout elapses', function() {
+                    beforeEach(function() {
+                        jasmine.clock().tick(1000);
+                    });
+
+                    it('should update the selected indexes collection', function() {
+                        expect(this.selectedIndexesCollection.toResourceIdentifiers()).toEqual([toResourceIdentifier(INDEXES[0])]);
+                    });
+
+                    it('should check the clicked index', function() {
+                        const checkedCheckbox = this.idElement(INDEXES[0]).find('i');
+                        const uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
+                        const uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
+
+                        expect(checkedCheckbox).toHaveClass('hp-check');
+                        expect(uncheckedCheckboxOne).not.toHaveClass('hp-check');
+                        expect(uncheckedCheckboxTwo).not.toHaveClass('hp-check');
+                    });
+                })
             });
 
             describe('clicking an index twice', function() {
                 beforeEach(function() {
                     this.idElement(INDEXES[0]).click().click();
+
+                    jasmine.clock().tick(1000);
                 });
 
                 it('updates the selected indexes collection with all of the indexes', function() {
@@ -142,9 +186,9 @@ define([
                     });
 
                     it('should select the right indexes', function() {
-                        var uncheckedCheckbox = this.idElement(INDEXES[0]).find('i');
-                        var checkedCheckboxOne = this.idElement(INDEXES[1]).find('i');
-                        var checkedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
+                        const uncheckedCheckbox = this.idElement(INDEXES[0]).find('i');
+                        const checkedCheckboxOne = this.idElement(INDEXES[1]).find('i');
+                        const checkedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
 
                         expect(uncheckedCheckbox).not.toHaveClass('hp-check');
                         expect(checkedCheckboxOne).toHaveClass('hp-check');
@@ -158,9 +202,9 @@ define([
                     });
 
                     it('should select only the first index', function() {
-                        var checkedCheckbox = this.idElement(INDEXES[0]).find('i');
-                        var uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
-                        var uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
+                        const checkedCheckbox = this.idElement(INDEXES[0]).find('i');
+                        const uncheckedCheckboxOne = this.idElement(INDEXES[1]).find('i');
+                        const uncheckedCheckboxTwo = this.idElement(INDEXES[2]).find('i');
 
                         expect(checkedCheckbox).toHaveClass('hp-check');
                         expect(uncheckedCheckboxOne).not.toHaveClass('hp-check');
@@ -169,7 +213,5 @@ define([
                 });
             });
         });
-
     });
-
 });

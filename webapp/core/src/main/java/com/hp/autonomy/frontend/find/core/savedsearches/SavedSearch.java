@@ -1,7 +1,8 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -20,7 +21,24 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -40,7 +58,7 @@ import static java.util.stream.Collectors.toList;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @TypeDefs(@TypeDef(name = SavedSearch.JADIRA_TYPE_NAME, typeClass = PersistentDateTime.class))
 @Access(AccessType.FIELD)
-public abstract class SavedSearch<T extends SavedSearch<T>> {
+public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSearch.Builder<T, B>> {
     public static final String JADIRA_TYPE_NAME = "jadira";
 
     @Id
@@ -52,7 +70,6 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
     @CreatedBy
     @ManyToOne
     @JoinColumn(name = Table.Column.USER_ID)
-    @JsonIgnore
     private UserEntity user;
 
     private String title;
@@ -101,7 +118,10 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
     @Column(name = Table.Column.MIN_SCORE, nullable = false)
     private Integer minScore = 0;
 
-    protected SavedSearch(final Builder<?> builder) {
+    @Transient
+    private boolean canEdit = true;
+
+    protected SavedSearch(final Builder<?, ?> builder) {
         id = builder.id;
         title = builder.title;
         indexes = builder.indexes;
@@ -115,6 +135,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         dateRange = builder.dateRange;
         active = builder.active;
         minScore = builder.minScore;
+        canEdit = builder.canEdit;
     }
 
     /**
@@ -122,12 +143,14 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
      */
     protected abstract void mergeInternal(T other);
 
+    public abstract B toBuilder();
+
     /**
      * Merge client-mutable fields from the other search into this one.
      */
     @SuppressWarnings("OverlyComplexMethod")
     public void merge(final T other) {
-        if(other != null) {
+        if (other != null) {
             mergeInternal(other);
 
             title = other.getTitle() == null ? title : other.getTitle();
@@ -140,7 +163,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             parametricValues = other.getParametricValues() == null ? parametricValues : other.getParametricValues();
             parametricRanges = other.getParametricRanges() == null ? parametricRanges : other.getParametricRanges();
 
-            if(other.getConceptClusterPhrases() != null) {
+            if (other.getConceptClusterPhrases() != null) {
                 conceptClusterPhrases.clear();
                 conceptClusterPhrases.addAll(other.getConceptClusterPhrases());
             }
@@ -163,7 +186,7 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
     // WARNING: This logic is duplicated in the client-side search-data-util
     // Caution: Method has multiple exit points.
     public String toQueryText() {
-        if(conceptClusterPhrases.isEmpty()) {
+        if (conceptClusterPhrases.isEmpty()) {
             return "*";
         } else {
             final Collection<List<ConceptClusterPhrase>> groupedClusters = conceptClusterPhrases.stream()
@@ -249,9 +272,10 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     @NoArgsConstructor
     @Getter
-    public abstract static class Builder<T extends SavedSearch<T>> {
+    public abstract static class Builder<T extends SavedSearch<T, B>, B extends Builder<T, B>> {
         private Long id;
         private String title;
         private Set<EmbeddableIndex> indexes;
@@ -265,8 +289,9 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
         private DateRange dateRange;
         private Boolean active = true;
         private Integer minScore;
+        private boolean canEdit = true;
 
-        protected Builder(final SavedSearch<T> search) {
+        protected Builder(final SavedSearch<T, B> search) {
             id = search.id;
             title = search.title;
             indexes = search.indexes;
@@ -280,74 +305,80 @@ public abstract class SavedSearch<T extends SavedSearch<T>> {
             dateRange = search.dateRange;
             active = search.active;
             minScore = search.minScore;
+            canEdit = search.canEdit;
         }
 
         public abstract T build();
 
-        public Builder<T> setId(final Long id) {
+        public Builder<T, B> setId(final Long id) {
             this.id = id;
             return this;
         }
 
-        public Builder<T> setTitle(final String title) {
+        public Builder<T, B> setTitle(final String title) {
             this.title = title;
             return this;
         }
 
-        public Builder<T> setIndexes(final Set<EmbeddableIndex> indexes) {
+        public Builder<T, B> setIndexes(final Set<EmbeddableIndex> indexes) {
             this.indexes = new LinkedHashSet<>(indexes);
             return this;
         }
 
-        public Builder<T> setParametricValues(final Set<FieldAndValue> parametricValues) {
+        public Builder<T, B> setParametricValues(final Set<FieldAndValue> parametricValues) {
             this.parametricValues = new LinkedHashSet<>(parametricValues);
             return this;
         }
 
-        public Builder<T> setParametricRanges(final Set<ParametricRange> parametricRanges) {
+        public Builder<T, B> setParametricRanges(final Set<ParametricRange> parametricRanges) {
             this.parametricRanges = new LinkedHashSet<>(parametricRanges);
             return this;
         }
 
-        public Builder<T> setConceptClusterPhrases(final Set<ConceptClusterPhrase> conceptClusterPhrases) {
+        public Builder<T, B> setConceptClusterPhrases(final Set<ConceptClusterPhrase> conceptClusterPhrases) {
             this.conceptClusterPhrases = new LinkedHashSet<>(conceptClusterPhrases);
             return this;
         }
 
-        public Builder<T> setMinDate(final DateTime minDate) {
+        public Builder<T, B> setMinDate(final DateTime minDate) {
             this.minDate = minDate;
             return this;
         }
 
-        public Builder<T> setMaxDate(final DateTime maxDate) {
+        public Builder<T, B> setMaxDate(final DateTime maxDate) {
             this.maxDate = maxDate;
             return this;
         }
 
         @SuppressWarnings("unused")
-        public Builder<T> setDateCreated(final DateTime dateCreated) {
+        public Builder<T, B> setDateCreated(final DateTime dateCreated) {
             this.dateCreated = dateCreated;
             return this;
         }
 
         @SuppressWarnings("unused")
-        public Builder<T> setDateModified(final DateTime dateModified) {
+        public Builder<T, B> setDateModified(final DateTime dateModified) {
             this.dateModified = dateModified;
             return this;
         }
 
-        public Builder<T> setDateRange(final DateRange dateRange) {
+        public Builder<T, B> setDateRange(final DateRange dateRange) {
             this.dateRange = dateRange;
             return this;
         }
 
-        public Builder<T> setActive(final Boolean active) {
+        public Builder<T, B> setActive(final Boolean active) {
             this.active = active;
             return this;
         }
 
-        public Builder<T> setMinScore(final Integer minScore) {
+        public Builder<T, B> setMinScore(final Integer minScore) {
             this.minScore = minScore;
+            return this;
+        }
+
+        public Builder<T, B> setCanEdit(final boolean canEdit) {
+            this.canEdit = canEdit;
             return this;
         }
     }

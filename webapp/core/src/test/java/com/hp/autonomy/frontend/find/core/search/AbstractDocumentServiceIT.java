@@ -6,7 +6,7 @@
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -40,12 +40,12 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
     public void queryWithPagination() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH)
                 .param(DocumentsController.TEXT_PARAM, "*")
-                .param(DocumentsController.RESULTS_START_PARAM, "51")
-                .param(DocumentsController.MAX_RESULTS_PARAM, "100")
+                .param(DocumentsController.RESULTS_START_PARAM, "10")
+                .param(DocumentsController.MAX_RESULTS_PARAM, "20")
                 .param(DocumentsController.AUTO_CORRECT_PARAM, "false")
                 .param(DocumentsController.SUMMARY_PARAM, "context")
                 .param(DocumentsController.INDEXES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                .param(DocumentsController.QUERY_TYPE_PARAM, SearchRequest.QueryType.MODIFIED.name())
+                .param(DocumentsController.QUERY_TYPE_PARAM, QueryRequest.QueryType.MODIFIED.name())
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)
@@ -62,7 +62,7 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
                 .param(DocumentsController.MAX_RESULTS_PARAM, "50")
                 .param(DocumentsController.SUMMARY_PARAM, "context")
                 .param(DocumentsController.INDEXES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                .param(DocumentsController.QUERY_TYPE_PARAM, SearchRequest.QueryType.PROMOTIONS.name())
+                .param(DocumentsController.QUERY_TYPE_PARAM, QueryRequest.QueryType.PROMOTIONS.name())
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)

@@ -1,17 +1,18 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
     'find/app/page/settings/aci-widget',
     'find/app/page/settings/enable-view',
-    'i18n!find/nls/bundle',
-    'underscore'
-], function(AciWidget, EnableView, i18n, _) {
+    'i18n!find/nls/bundle'
+], function(_, AciWidget, EnableView, i18n) {
+    'use strict';
 
     var getMessageFromKey = function(key) {
-        if (_.isString(key)) {
+        if(_.isString(key)) {
             return i18n['settings.statsserver.validation.' + key];
         }
 
@@ -19,7 +20,6 @@ define([
     };
 
     return AciWidget.extend({
-
         initialize: function(options) {
             AciWidget.prototype.initialize.apply(this, arguments);
 
@@ -30,7 +30,7 @@ define([
         },
 
         render: function() {
-            AciWidget.prototype.render.apply(this, arguments);
+            AciWidget.prototype.render.apply(this);
 
             this.enableView.render();
             var $validateButtonParent = this.$('button[name=validate]').parent();
@@ -61,5 +61,4 @@ define([
             return getMessageFromKey(response.data) || AciWidget.prototype.getValidationSuccessMessage.call(this, response);
         }
     });
-
 });

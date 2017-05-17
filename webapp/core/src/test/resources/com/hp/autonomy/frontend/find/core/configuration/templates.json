@@ -1,0 +1,25 @@
+{
+  "resultsList": [
+    {
+      "file": "sometemplate.tmpl",
+      "triggers": [
+        {
+          "field": "some_idol_field",
+          "values": ["some_value"]
+        }
+      ]
+    }
+  ],
+
+  "previewPanel": [
+    {
+      "file": "sometemplate.tmpl",
+      "triggers": [
+        {
+          "field": "some_idol_field",
+          "values": ["some_value", "some_other_value"]
+        }
+      ]
+    }
+  ]
+}

@@ -6,12 +6,15 @@
 package com.hp.autonomy.frontend.find.idol.configuration;
 
 import com.autonomy.aci.client.transport.AciServerDetails;
-import com.hp.autonomy.frontend.configuration.CommunityService;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
-import com.hp.autonomy.frontend.configuration.ConfigValidationException;
-import com.hp.autonomy.frontend.configuration.SecurityType;
+import com.hp.autonomy.frontend.configuration.LoginTypes;
+import com.hp.autonomy.frontend.configuration.aci.CommunityService;
+import com.hp.autonomy.frontend.configuration.validation.ConfigValidationException;
+import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
+import com.hp.autonomy.frontend.configuration.validation.ValidationResults;
 import com.hp.autonomy.frontend.logging.Markers;
+import com.hp.autonomy.types.idol.responses.SecurityType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +34,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequestMapping({"/api/admin/config", "/api/config/config"})
 public class IdolConfigurationController {
-
     private final CommunityService communityService;
     private final ConfigFileService<IdolFindConfig> configService;
 
@@ -51,6 +52,14 @@ public class IdolConfigurationController {
     @RequestMapping(value = "/config", method = {RequestMethod.POST, RequestMethod.PUT})
     public ResponseEntity<?> saveConfig(@RequestBody final IdolFindConfigWrapper configResponse) throws Exception {
         log.info(Markers.AUDIT, "REQUESTED UPDATE CONFIGURATION");
+
+        //TODO: move this to CommunityAuthentication validator once FIND-1254 is complete
+        if (LoginTypes.DEFAULT.equals(configResponse.getConfig().getAuthentication().getMethod())) {
+            final ValidationResults validationResults = new ValidationResults.Builder()
+                    .put("login", new ValidationResult<>(false, CommunityAuthenticationValidation.DEFAULT_LOGIN))
+                    .build();
+            return new ResponseEntity<>(Collections.singletonMap("validation", validationResults), HttpStatus.NOT_ACCEPTABLE);
+        }
 
         try {
             configService.updateConfig(configResponse.getConfig());
@@ -76,4 +85,7 @@ public class IdolConfigurationController {
         return Collections.singletonMap("securityTypes", typeNames);
     }
 
+    private enum CommunityAuthenticationValidation {
+        DEFAULT_LOGIN
+    }
 }

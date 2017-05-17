@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -11,7 +11,7 @@ define([
     'find/app/model/saved-searches/saved-search-model',
     'i18n!find/nls/bundle'
 ], function(Backbone, _, $, template, SavedSearchModel, i18n) {
-    "use strict";
+    'use strict';
 
     // The initial title for an unsaved search should be blank, not "New Title"
     function resolveCurrentTitle(savedSearchModel) {
@@ -118,14 +118,15 @@ define([
 
         updateLoading: function() {
             this.$('.save-title-confirm-button > i').toggleClass('hide', !this.model.get('loading'));
-            this.$('.search-title-input, .save-title-cancel-button, .save-title-confirm-button').prop('disabled', this.model.get('loading'));
+            this.$('.search-title-input, .save-title-cancel-button, .save-title-confirm-button')
+                .prop('disabled', this.model.get('loading'));
         },
 
         updateTitle: function() {
             var title = this.model.get('title');
             var $titleInput = this.$('.search-title-input');
 
-            if ($titleInput.val() !== title) {
+            if($titleInput.val() !== title) {
                 this.$('.search-title-input').val(title);
             }
 
@@ -139,5 +140,4 @@ define([
             this.$confirmButton.toggleClass('disabled not-clickable', disabled).prop('disabled', disabled);
         }
     });
-
 });

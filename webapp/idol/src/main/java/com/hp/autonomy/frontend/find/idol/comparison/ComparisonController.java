@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.comparison;
 
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.apache.commons.collections4.ListUtils;
@@ -16,12 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.Serializable;
 import java.util.List;
 
 @RestController
 @RequestMapping(ComparisonController.BASE_PATH)
-class ComparisonController<S extends Serializable, R extends SearchResult, E extends Exception> {
+class ComparisonController<Q extends QueryRestrictions<?>, R extends SearchResult, E extends Exception> {
     static final String BASE_PATH = "/api/bi/comparison";
     static final String COMPARE_PATH = "compare";
     static final String RESULTS_PATH = "results";
@@ -40,16 +40,16 @@ class ComparisonController<S extends Serializable, R extends SearchResult, E ext
     private static final String PROMOTIONS = "promotions";
 
     private final ComparisonService<R, E> comparisonService;
-    private final DocumentsService<S, R, E> documentsService;
+    private final DocumentsService<?, ?, ?, Q, R, E> documentsService;
 
     @Autowired
-    public ComparisonController(final ComparisonService<R, E> comparisonService, final DocumentsService<S, R, E> documentsService) {
+    public ComparisonController(final ComparisonService<R, E> comparisonService, final DocumentsService<?, ?, ?, Q, R, E> documentsService) {
         this.comparisonService = comparisonService;
         this.documentsService = documentsService;
     }
 
     @RequestMapping(value = COMPARE_PATH, method = RequestMethod.POST)
-    public ComparisonStateTokens getCompareStateTokens(@RequestBody final ComparisonRequest<S> body) throws E {
+    public ComparisonStateTokens getCompareStateTokens(@RequestBody final ComparisonRequest<Q> body) throws E {
         // If either query state token is null then try and fetch one using the query restrictions
         final String firstStateToken = body.getFirstQueryStateToken() != null ? body.getFirstQueryStateToken() : documentsService.getStateToken(body.getFirstRestrictions(), STATE_TOKEN_MAX_RESULTS, false);
         final String secondStateToken = body.getSecondQueryStateToken() != null ? body.getSecondQueryStateToken() : documentsService.getStateToken(body.getSecondRestrictions(), STATE_TOKEN_MAX_RESULTS, false);

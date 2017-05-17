@@ -1,8 +1,11 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
+    'backbone',
+    'moment',
     'js-testing/backbone-mock-factory',
     'find/app/model/dates-filter-model',
     'find/app/model/applied-filters-collection',
@@ -10,39 +13,29 @@ define([
     'databases-view/js/hod-databases-collection',
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
-    'find/app/configuration',
-    'backbone',
-    'moment'
-], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues, DatabasesCollection, i18n, fieldTextParser, configuration, Backbone, moment) {
+    'find/app/configuration'
+], function(Backbone, moment, mockFactory, DatesFilterModel, FiltersCollection,
+            SelectedParametricValues, DatabasesCollection, i18n, fieldTextParser, configuration) {
+    'use strict';
 
-    var WOOKIEPEDIA = {
+    const WOOKIEPEDIA = {
         id: 'TESTDOMAIN:wookiepedia',
         domain: 'TESTDOMAIN',
         name: 'wookiepedia',
         displayName: 'WookiePedia'
     };
 
-    var WIKI_ENG = {
+    const WIKI_ENG = {
         id: 'TESTDOMAIN:wiki_eng',
         domain: 'TESTDOMAIN',
         name: 'wiki_eng',
         displayName: 'Wikipedia (Eng)'
     };
 
-    var INITIAL_MIN_DATE = moment();
+    const INITIAL_MIN_DATE = moment();
 
     describe('Search filters collection initialised with an indexes filter, a DatesFilterModel with a min date set and a selected parametric value on the AGE field', function() {
         beforeEach(function() {
-            configuration.and.returnValue({
-                parametricDisplayValues: [{
-                    name: "FELINES",
-                    displayName: "cats",
-                    values: [{
-                        name: "MR_MISTOFFELEES",
-                        displayName: "Mr. Mistoffelees, the magical cat"
-                    }]
-                }]
-            });
             this.indexesCollection = new DatabasesCollection([WOOKIEPEDIA, WIKI_ENG]);
             this.selectedIndexesCollection = new DatabasesCollection([WIKI_ENG]);
 
@@ -56,7 +49,7 @@ define([
             });
 
             this.selectedParametricValues = new SelectedParametricValues([
-                {field: 'AGE', value: '4'}
+                {field: 'AGE', displayName: 'Age', value: '4', displayValue: '4', type: 'Parametric'}
             ]);
 
             this.collection = new FiltersCollection([], {
@@ -71,7 +64,7 @@ define([
         });
 
         it('contains a databases filter model', function() {
-            var model = this.collection.get(FiltersCollection.FilterType.INDEXES);
+            const model = this.collection.get(FiltersCollection.FilterType.INDEXES);
             expect(model).toBeDefined();
             expect(model.get('text')).toContain(WIKI_ENG.displayName);
             expect(model.get('text')).not.toContain(WOOKIEPEDIA.displayName);

@@ -1,7 +1,8 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.hp.autonomy.frontend.find.idol.configuration;
 
 import com.autonomy.aci.client.transport.AciServerDetails;
@@ -9,79 +10,98 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.hp.autonomy.frontend.configuration.*;
-import com.hp.autonomy.frontend.find.core.configuration.*;
+import com.hp.autonomy.frontend.configuration.AbstractConfig;
+import com.hp.autonomy.frontend.configuration.ConfigException;
+import com.hp.autonomy.frontend.configuration.authentication.Authentication;
+import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
+import com.hp.autonomy.frontend.configuration.server.ProductType;
+import com.hp.autonomy.frontend.configuration.server.ServerConfig;
+import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
+import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
+import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
+import com.hp.autonomy.frontend.find.core.configuration.TrendingConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
+import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
+import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
 import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import com.hp.autonomy.user.UserServiceConfig;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import org.apache.commons.lang3.BooleanUtils;
 
-import java.util.Set;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 @SuppressWarnings({"InstanceVariableOfConcreteClass", "DefaultAnnotationParam"})
 @Data
 @EqualsAndHashCode(callSuper = false)
-@JsonDeserialize(builder = IdolFindConfig.Builder.class)
-public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements UserServiceConfig, AuthenticationConfig<IdolFindConfig>, IdolSearchCapable, FindConfig {
+@Builder(toBuilder = true)
+@JsonDeserialize(builder = IdolFindConfigBuilder.class)
+public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements UserServiceConfig, IdolSearchCapable, FindConfig<IdolFindConfig, IdolFindConfigBuilder> {
+    private static final String SECTION = "Find Config Root";
 
     private final CommunityAuthentication login;
     private final ServerConfig content;
     private final QueryManipulation queryManipulation;
     private final ViewConfig view;
+    private final AnswerServerConfig answerServer;
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
     private final MMAP mmap;
     private final UiCustomization uiCustomization;
     private final FieldsInfo fieldsInfo;
     private final MapConfiguration map;
+    private final TrendingConfiguration trending;
     private final Integer minScore;
     private final StatsServerConfig statsServer;
     private final Integer topicMapMaxResults;
-    private final Set<ParametricDisplayValues> parametricDisplayValues;
+    private final ExportConfig export;
 
-    public IdolFindConfig(final Builder builder) {
-        login = builder.login;
-        content = builder.content;
-        queryManipulation = builder.queryManipulation;
-        view = builder.view;
-        savedSearchConfig = builder.savedSearchConfig;
-        mmap = builder.mmap;
-        uiCustomization = builder.uiCustomization;
-        fieldsInfo = builder.fieldsInfo;
-        map = builder.map;
-        minScore = builder.minScore;
-        statsServer = builder.statsServer;
-        topicMapMaxResults = builder.topicMapMaxResults;
-        parametricDisplayValues = builder.parametricDisplayValues;
-    }
+    @JsonIgnore
+    private volatile Map<String, Map<Integer, String>> productMap;
 
     @Override
-    public IdolFindConfig merge(final IdolFindConfig other) {
-        if (other == null) {
-            return this;
-        }
+    public IdolFindConfig merge(final IdolFindConfig maybeOther) {
+        return Optional.ofNullable(maybeOther)
+                .map(other -> builder()
+                        .content(content == null ? other.content : content.merge(other.content))
+                        .login(login == null ? other.login : login.merge(other.login))
+                        .queryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
+                        .view(view == null ? other.view : view.merge(other.view))
+                        .answerServer(answerServer == null ? other.answerServer : answerServer.merge(other.answerServer))
+                        .savedSearchConfig(savedSearchConfig == null ? other.savedSearchConfig : savedSearchConfig.merge(other.savedSearchConfig))
+                        .mmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
+                        .uiCustomization(uiCustomization == null ? other.uiCustomization : uiCustomization.merge(other.uiCustomization))
+                        .fieldsInfo(fieldsInfo == null ? other.fieldsInfo : fieldsInfo.merge(other.fieldsInfo))
+                        .map(map == null ? other.map : map.merge(other.map))
+                        .trending(trending == null ? other.trending : trending.merge(other.trending))
+                        .minScore(minScore == null ? other.minScore : minScore)
+                        .statsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
+                        .topicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
+                        .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(maybeOther.export)).orElse(maybeOther.export))
+                        .build())
+                .orElse(this);
+    }
 
-        return new IdolFindConfig.Builder()
-                .setContent(content == null ? other.content : content.merge(other.content))
-                .setLogin(login == null ? other.login : login.merge(other.login))
-                .setQueryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
-                .setView(view == null ? other.view : view.merge(other.view))
-                .setSavedSearchConfig(savedSearchConfig == null ? other.savedSearchConfig : savedSearchConfig.merge(other.savedSearchConfig))
-                .setMmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
-                .setUiCustomization(uiCustomization == null ? other.uiCustomization : uiCustomization.merge(other.uiCustomization))
-                .setFieldsInfo(fieldsInfo == null ? other.fieldsInfo : fieldsInfo.merge(other.fieldsInfo))
-                .setMap(map == null ? other.map : map.merge(other.map))
-                .setMinScore(minScore == null ? other.minScore : minScore)
-                .setStatsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
-                .setParametricDisplayValues(parametricDisplayValues == null ? other.parametricDisplayValues : parametricDisplayValues)
-                .setTopicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
-                .build();
+    // somewhat messy workaround for the fact that default method does not handle @JsonProperty annotations
+    @Override
+    public Map<String, OptionalConfigurationComponent<?>> getValidationMap() {
+        final Map<String, OptionalConfigurationComponent<?>> validationMap = super.getValidationMap();
+        if (validationMap.containsKey("savedSearchConfig")) {
+            validationMap.put("savedSearches", validationMap.remove("savedSearchConfig"));
+        }
+        return validationMap;
     }
 
     @JsonIgnore
@@ -98,15 +118,15 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
 
     @Override
     public IdolFindConfig withoutDefaultLogin() {
-        return new Builder(this)
-                .setLogin(login.withoutDefaultLogin())
+        return toBuilder()
+                .login(login.withoutDefaultLogin())
                 .build();
     }
 
     @Override
     public IdolFindConfig generateDefaultLogin() {
-        return new Builder(this)
-                .setLogin(login.generateDefaultLogin())
+        return toBuilder()
+                .login(login.generateDefaultLogin())
                 .build();
     }
 
@@ -117,17 +137,26 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     }
 
     @Override
-    public void basicValidate() throws ConfigException {
-        login.basicValidate();
+    public void basicValidate(final String section) throws ConfigException {
+        login.basicValidate(SECTION);
         content.basicValidate("content");
-        savedSearchConfig.basicValidate();
+        trending.basicValidate("trending");
+        savedSearchConfig.basicValidate(SECTION);
 
-        if (map != null) {
+        if(map != null) {
             map.basicValidate("map");
         }
 
-        if (queryManipulation != null) {
-            queryManipulation.basicValidate();
+        if(export != null) {
+            export.basicValidate(SECTION);
+        }
+
+        if(queryManipulation != null) {
+            queryManipulation.basicValidate(SECTION);
+        }
+
+        if(answerServer != null) {
+            answerServer.basicValidate("AnswerServer");
         }
     }
 
@@ -143,44 +172,59 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         return view;
     }
 
-    @Setter
-    @Accessors(chain = true)
-    @NoArgsConstructor
-    @JsonPOJOBuilder(withPrefix = "set")
-    public static class Builder {
-        private CommunityAuthentication login;
-        private ServerConfig content;
-        private QueryManipulation queryManipulation;
-        private ViewConfig view;
+    @Override
+    public String lookupComponentNameByHostAndPort(final String hostName, final int port) {
+        if(productMap == null) {
+            final Map<String, Map<Integer, String>> tempProductMap = new HashMap<>();
+            addEntriesToProductMap(tempProductMap, ProductType.AXE.getFriendlyName(), content.getHost(), content.getPort(), content.getServicePort());
+            addEntriesToProductMap(tempProductMap, ProductType.VIEW.getFriendlyName(), view.getHost(), view.getPort(), view.getServicePort());
+
+            if(!"default".equals(login.getMethod())) {
+                addEntriesToProductMap(tempProductMap, ProductType.UASERVER.getFriendlyName(), login.getCommunity().getHost(), login.getCommunity().getPort(), login.getCommunity().getServicePort());
+            }
+
+            if(isOptionalComponentEnabled(queryManipulation)) {
+                addEntriesToProductMap(tempProductMap, ProductType.QMS.getFriendlyName(), queryManipulation.getServer().getHost(), queryManipulation.getServer().getPort(), queryManipulation.getServer().getServicePort());
+            }
+
+            if(isOptionalComponentEnabled(answerServer)) {
+                addEntriesToProductMap(tempProductMap, ProductType.ANSWERSERVER.getFriendlyName(), answerServer.getServer().getHost(), answerServer.getServer().getPort(), answerServer.getServer().getServicePort());
+            }
+
+            if(isOptionalComponentEnabled(statsServer)) {
+                addEntriesToProductMap(tempProductMap, statsServer.getServer().getHost(), ProductType.STATS.getFriendlyName(), statsServer.getServer().getPort(), statsServer.getServer().getServicePort());
+            }
+
+            productMap = tempProductMap;
+        }
+
+        return productMap.getOrDefault(hostName, Collections.emptyMap()).get(port);
+    }
+
+    private <T extends OptionalConfigurationComponent<T>> Boolean isOptionalComponentEnabled(final OptionalConfigurationComponent<T> maybeComponent) {
+        return Optional.ofNullable(maybeComponent)
+                .map(component -> BooleanUtils.isTrue(component.getEnabled()))
+                .orElse(false);
+    }
+
+    private void addEntriesToProductMap(final Map<String, Map<Integer, String>> productMap,
+                                        final String productName,
+                                        final String hostName,
+                                        final Integer... ports) {
+        productMap.compute(hostName, (key, maybeMap) -> {
+            final Map<Integer, String> map = Optional.ofNullable(maybeMap).orElse(new HashMap<>());
+            Arrays.stream(ports)
+                    .filter(Objects::nonNull)
+                    .forEach(port -> map.put(port, productName));
+            return map;
+        });
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class IdolFindConfigBuilder implements FindConfigBuilder<IdolFindConfig, IdolFindConfigBuilder> {
+        @SuppressWarnings("unused")
         @JsonProperty("savedSearches")
         private SavedSearchConfig savedSearchConfig;
-        private MMAP mmap;
-        private UiCustomization uiCustomization;
-        private FieldsInfo fieldsInfo;
-        private MapConfiguration map;
-        private Integer minScore;
-        private StatsServerConfig statsServer;
-        private Set<ParametricDisplayValues> parametricDisplayValues;
-        private Integer topicMapMaxResults;
-
-        public Builder(final IdolFindConfig config) {
-            login = config.login;
-            content = config.content;
-            queryManipulation = config.queryManipulation;
-            view = config.view;
-            savedSearchConfig = config.savedSearchConfig;
-            mmap = config.mmap;
-            uiCustomization = config.uiCustomization;
-            fieldsInfo = config.fieldsInfo;
-            map = config.map;
-            minScore = config.minScore;
-            statsServer = config.statsServer;
-            topicMapMaxResults = config.topicMapMaxResults;
-            parametricDisplayValues = config.parametricDisplayValues;
-        }
-
-        public IdolFindConfig build() {
-            return new IdolFindConfig(this);
-        }
     }
 }

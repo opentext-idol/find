@@ -13,10 +13,11 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.stats.Event;
 import com.hp.autonomy.frontend.find.core.stats.StatsService;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
-import com.hp.autonomy.idolutils.processors.AciResponseJaxbProcessorFactory;
+import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.types.requests.idol.actions.stats.StatsServerActions;
 import com.hp.autonomy.types.requests.idol.actions.stats.params.EventParams;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -28,21 +29,21 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 @Service
 @Slf4j
-public class IdolStatsService implements StatsService {
+class IdolStatsService implements StatsService {
 
     private final BlockingQueue<Event> queue = new LinkedBlockingQueue<>();
 
     private final AciService statsServerAciService;
-    private final AciResponseJaxbProcessorFactory processorFactory;
+    private final ProcessorFactory processorFactory;
     private final XmlMapper xmlMapper;
     private final ConfigService<IdolFindConfig> configService;
 
     @Autowired
     public IdolStatsService(
-        final AciService statsServerAciService,
-        final AciResponseJaxbProcessorFactory processorFactory,
-        final XmlMapper xmlMapper,
-        final ConfigService<IdolFindConfig> configService
+            final AciService statsServerAciService,
+            final ProcessorFactory processorFactory,
+            final XmlMapper xmlMapper,
+            final ConfigService<IdolFindConfig> configService
     ) {
         this.statsServerAciService = statsServerAciService;
         this.processorFactory = processorFactory;
@@ -76,7 +77,7 @@ public class IdolStatsService implements StatsService {
                 final AciParameters parameters = new AciParameters(StatsServerActions.Event.name());
                 parameters.put(EventParams.Data.name(), xml);
 
-                statsServerAciService.executeAction(parameters, processorFactory.createEmptyAciResponseProcessor());
+                statsServerAciService.executeAction(parameters, processorFactory.getVoidProcessor());
             } catch (final JsonProcessingException e) {
                 // includes XML errors which should only occur during development
                 // throwing won't result in the exception going anywhere useful anyway
@@ -86,6 +87,6 @@ public class IdolStatsService implements StatsService {
     }
 
     private boolean isEnabled() {
-        return configService.getConfig().getStatsServer().isEnabled();
+        return configService.getConfig().getStatsServer() != null && BooleanUtils.isTrue(configService.getConfig().getStatsServer().getEnabled());
     }
 }

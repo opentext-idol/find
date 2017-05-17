@@ -1,12 +1,12 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
     'find/app/page/search/filters/parametric/numeric-parametric-field-collapsible-view',
     'backbone'
-], function(NumericParametricFieldCollapsibleView) {
+], function(NumericParametricFieldCollapsibleView, Backbone) {
     'use strict';
 
     describe('Numeric Parametric Field Collapsible View', function() {
@@ -15,7 +15,7 @@ define([
 
             this.view = new NumericParametricFieldCollapsibleView({
                 selectedParametricValues: new Backbone.Collection(),
-                dataType: 'Numeric',
+                type: 'Numeric',
                 filterModel: this.filterModel,
                 model: new Backbone.Model({id: 'the-model'})
             });
@@ -23,26 +23,24 @@ define([
             this.view.render();
         });
 
-        it('should open the view when there is filter text', function() {
-            this.filterModel.set('text', 'the');
+        describe('when there is filter text', function() {
+            beforeEach(function() {
+                this.filterModel.set('text', 'the');
+            });
 
-            expect(this.view.collapsible.collapsed).toBe(false);
-        });
+            it('should open the view', function() {
+                expect(this.view.collapseModel.get('collapsed')).toBe(false);
+            });
 
-        it('should remember the view state after the view is closed', function() {
-            spyOn(this.view.collapsible, 'toggle');
+            describe('and the filter text is removed again', function() {
+                beforeEach(function() {
+                    this.filterModel.set('text', '');
+                });
 
-            expect(this.view.collapsible.collapsed).toBe(true);
-
-            this.filterModel.set('text', 'the');
-
-            expect(this.view.collapsible.collapsed).toBe(false);
-
-            this.filterModel.set('text', '');
-
-            expect(this.view.collapsible.toggle.calls.count()).toBe(1);
-            expect(this.view.collapsible.toggle.calls.argsFor(0)[0]).toBe(false);
+                it('should hide the view', function() {
+                    expect(this.view.collapseModel.get('collapsed')).toBe(true);
+                });
+            });
         });
     })
-
 });

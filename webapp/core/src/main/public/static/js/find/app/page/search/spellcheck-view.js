@@ -1,15 +1,18 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
+    'jquery',
     'backbone',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/search/spellcheck-view.html'
-], function(Backbone, i18n, template) {
+    'text!find/templates/app/page/search/spellcheck-view.html',
+    'underscore'
+], function($, Backbone, i18n, template, _) {
+    'use strict';
 
     return Backbone.View.extend({
-
         template: _.template(template),
 
         events: {
@@ -39,7 +42,8 @@ define([
         update: function() {
             var autoCorrection = this.documentsCollection.getAutoCorrection();
 
-            if (this.$correctedQuery && autoCorrection) {
+            if(this.$correctedQuery && autoCorrection) {
+                this.queryModel.set('correctedQuery', autoCorrection.correctedQuery);
                 this.$correctedQuery.text(autoCorrection.correctedQuery);
                 this.$originalQuery.text(autoCorrection.originalQuery);
             }

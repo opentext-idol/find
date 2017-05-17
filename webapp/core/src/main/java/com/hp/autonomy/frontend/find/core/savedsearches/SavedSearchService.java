@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import java.util.Set;
 
-public interface SavedSearchService<T extends SavedSearch<T>> {
+public interface SavedSearchService<T extends SavedSearch<T, B>, B extends SavedSearch.Builder<T, B>> {
 
     Set<T> getAll();
 
@@ -16,6 +16,8 @@ public interface SavedSearchService<T extends SavedSearch<T>> {
     T create(T search);
 
     T update(T search);
+
+    T getDashboardSearch(long id);
 
     void deleteById(long id);
 

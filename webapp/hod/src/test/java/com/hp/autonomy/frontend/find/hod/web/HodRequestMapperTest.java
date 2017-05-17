@@ -7,8 +7,21 @@ package com.hp.autonomy.frontend.find.hod.web;
 
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
 import com.hp.autonomy.frontend.find.core.web.RequestMapperTest;
-import com.hp.autonomy.hod.client.api.resource.ResourceIdentifier;
+import com.hp.autonomy.hod.client.api.resource.ResourceName;
+import com.hp.autonomy.hod.client.api.textindex.query.search.Sort;
+import com.hp.autonomy.hod.client.api.textindex.query.search.Summary;
+import com.hp.autonomy.searchcomponents.hod.requests.HodRequestBuilderConfiguration;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
 import org.apache.commons.io.IOUtils;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,11 +29,25 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNull;
 
-public class HodRequestMapperTest extends RequestMapperTest<ResourceIdentifier> {
+
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
+@SpringBootTest(classes = HodRequestBuilderConfiguration.class)
+public class HodRequestMapperTest extends RequestMapperTest<HodQueryRequest, HodQueryRestrictions, ResourceName> {
+    @ClassRule
+    public static final SpringClassRule SCR = new SpringClassRule();
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    @Autowired
+    private HodQueryRestrictionsBuilder queryRestrictionsBuilder;
+    @Autowired
+    private HodQueryRequestBuilder queryRequestBuilder;
+
     @Override
-    protected RequestMapper<ResourceIdentifier> constructRequestMapper() {
-        return new HodRequestMapper();
+    protected RequestMapper<HodQueryRequest> constructRequestMapper() {
+        return new HodRequestMapper(queryRestrictionsBuilder, queryRequestBuilder);
     }
 
     @Override
@@ -34,8 +61,20 @@ public class HodRequestMapperTest extends RequestMapperTest<ResourceIdentifier> 
     }
 
     @Override
-    protected void validateDatabases(final List<ResourceIdentifier> databases) {
-        assertThat(databases, hasItem(is(new ResourceIdentifier("ClassicalDomain", "ClassicalLiterature"))));
-        assertThat(databases, hasItem(is(new ResourceIdentifier("ClassicalDomain", "EpicLiterature"))));
+    protected void validateDatabases(final List<ResourceName> databases) {
+        assertThat(databases, hasItem(is(new ResourceName("ClassicalDomain", "ClassicalLiterature"))));
+        assertThat(databases, hasItem(is(new ResourceName("ClassicalDomain", "EpicLiterature"))));
+    }
+
+    @Override
+    protected void validate(final HodQueryRequest queryRequest) {
+        assertThat(queryRequest.getSummary(), is(Summary.off.name()));
+        assertThat(queryRequest.getSort(), is(Sort.relevance.name()));
+    }
+
+    @Override
+    protected void validateMinimal(final HodQueryRequest queryRequest) {
+        assertThat(queryRequest.getSummary(), is(Summary.off.name()));
+        assertNull(queryRequest.getSort());
     }
 }

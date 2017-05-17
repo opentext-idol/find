@@ -1,0 +1,29 @@
+{
+  "name": "Map",
+  "type": "MapWidget",
+  "x": 1,
+  "y": 1,
+  "width": 2,
+  "height": 2,
+  "datasource": {
+    "source": "SavedSearch",
+    "config": {
+      "id": 290,
+      "type": "SNAPSHOT"
+    }
+  },
+  "widgetSettings": {
+    "maxResults": 1000,
+    "locationFieldPairs": [
+      "DefaultLocation",
+      "Secret Lair"
+    ],
+    "centerCoordinates": {
+      "latitude": 51.5,
+      "longitude": 0.12
+    },
+    "zoomLevel": 3,
+    "clusterMarkers": true,
+    "testing": "testing"
+  }
+}

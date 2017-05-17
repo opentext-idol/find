@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.hod.configuration;
 
 import com.hp.autonomy.frontend.find.core.beanconfiguration.InMemoryCondition;
 import com.hp.autonomy.frontend.find.core.configuration.AutoCreatingEhCacheCacheManager;
+import com.hp.autonomy.frontend.find.hod.web.HodFindCacheNames;
 import com.hp.autonomy.hod.caching.HodCacheNameResolver;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
@@ -21,7 +22,7 @@ public class HodAutoCreatingEhCacheCacheManager extends AutoCreatingEhCacheCache
 
     @Autowired
     public HodAutoCreatingEhCacheCacheManager(final CacheManager cacheManager, final CacheConfiguration defaults, final HodCacheNameResolver cacheNameResolver) {
-        super(cacheManager, defaults);
+        super(cacheManager, HodFindCacheNames.CACHE_EXPIRES, defaults);
         this.cacheNameResolver = cacheNameResolver;
     }
 

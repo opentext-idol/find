@@ -1,0 +1,35 @@
+{
+  "app": {
+    "type": "On Premise",
+    "deployment": "develop",
+    "find": "http://cbg-find-selenium-01.hpeswlab.net:8080/"
+  },
+  "selenium": {
+    "browsers": [
+      "chrome"
+    ],
+    "url": "http://localhost:4444/wd/hub"
+  },
+  "users": {
+    "bifhi": {
+      "role": "BIFHI",
+      "username": "BIFace",
+      "password": "soBIFace"
+    },
+    "find": {
+      "role": "ADMIN",
+      "username": "face",
+      "password": "soface"
+    },
+    "dashboard": {
+      "role": "BIFHI",
+      "username": "selenium2",
+      "password": "q"
+    },
+    "dashboard2": {
+      "role": "BIFHI",
+      "username": "selenium3",
+      "password": "q"
+    }
+  }
+}

@@ -7,12 +7,11 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'i18n!find/idol/nls/snapshots',
-    'parametric-refinement/prettify-field-name',
     'underscore',
     'moment'
-], function(rounder, i18n, indexesI18n, snapshotsI18n, prettifyFieldName, _, moment) {
+], function(rounder, i18n, indexesI18n, snapshotsI18n, _, moment) {
 
-    var DATE_FORMAT = 'YYYY/MM/DD HH:mm';
+    const DATE_FORMAT = 'YYYY/MM/DD HH:mm';
 
     function dateRestriction(title, date) {
         return date ? {title: title, content: date.format(DATE_FORMAT)} : null;
@@ -47,20 +46,20 @@ define([
          * @type {DataPanelAttributesProcessor}
          */
         processAttributes: function(attributes) {
-            var indexesContent = _.pluck(attributes.indexes, 'name').join(', ');
+            const indexesContent = _.pluck(attributes.indexes, 'name').join(', ');
 
-            var parametricRestrictions = _.map(_.groupBy(attributes.parametricValues, 'field'), function(items, field) {
+            const parametricRestrictions = _.map(_.groupBy(attributes.parametricValues, 'field'), function (items) {
                 return {
-                    title: prettifyFieldName(field),
-                    content: _.pluck(items, 'value').join(', ')
+                    title: items[0].displayName,
+                    content: _.pluck(items, 'displayValue').join(', ')
                 };
             });
 
-            var numericRestrictions = _.map(attributes.parametricRanges, function(range) {
-                var formatFunction = range.type === 'Date' ? formatEpoch : rounder().round;
+            const numericRestrictions = _.map(attributes.parametricRanges, function (range) {
+                const formatFunction = range.type === 'Date' ? formatEpoch : rounder().round;
 
                 return {
-                    title: prettifyFieldName(range.field),
+                    title: range.displayName,
                     content: formatFunction(range.min, range.min, range.max) + ' \u2013 ' + formatFunction(range.max, range.min, range.max)
                 };
             });

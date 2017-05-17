@@ -71,6 +71,17 @@
     },
     "highlighting": true
   },
+  "answerServer": {
+    "server": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 7700,
+      "productType": [
+        "ANSWERSERVER"
+      ]
+    },
+    "enabled": false
+  },
   "savedSearches": {
     "pollForUpdates": true,
     "pollingInterval": 5
@@ -88,9 +99,24 @@
       {
         "displayName": "DefaultLocation",
         "latitudeField": "latitude",
-        "longitudeField": "longitude"
+        "longitudeField": "longitude",
+        "iconName": "hp-record",
+        "iconColor": "white",
+        "markerColor": "blue"
       }
     ]
+  },
+  "trending" : {
+    "dateField" : "AUTN_DATE",
+    "numberOfValues": 10,
+    "defaultNumberOfBuckets": 20,
+    "minNumberOfBuckets": 3,
+    "maxNumberOfBuckets": 100
+  },
+  "export": {
+    "powerpoint": {
+      "templateFile": ""
+    }
   },
   "mmap": {
     "enabled": false,
@@ -98,62 +124,78 @@
   },
   "uiCustomization": {
     "options": {
-        "directAccessLink": {
-          "user": false
-        },
-        "enableMetaFilter": {
-          "user": false,
-          "bi": true
-        },
-        "enableRelatedConcepts": {
-          "user": true,
-          "bi": false
-        }
+      "directAccessLink": {
+        "user": false
       },
-      "parametricBlacklist": [],
-      "parametricWhitelist": [],
-      "specialUrlPrefixes": {
-        "application/msword": "ms-word:ofv|u|",
-        "application/mspowerpoint": "ms-powerpoint:ofv|u|",
-        "application/vnd.ms-powerpoint": "ms-powerpoint:ofv|u|",
-        "application/msexcel": "ms-excel:ofv|u|",
-        "application/vnd.ms-excel": "ms-excel:ofv|u|",
-        "application/vnd.visio": "ms-visio:ofv|u|",
-        "application/msaccess": "ms-access:ofv|u|",
-        "application/x-msaccess": "ms-access:ofv|u|",
-        "application/msproject": "ms-project:ofv|u|",
-        "application/vnd.ms-project": "ms-project:ofv|u|",
-        "application/x-mspublisher": "ms-publisher:ofv|u|"
+      "enableDashboards": {
+        "user": false,
+        "bi": true
       },
-      "errorCallSupportString": null
+      "enableMetaFilter": {
+        "user": false,
+        "bi": true
+      },
+      "enableRelatedConcepts": {
+        "user": true,
+        "bi": false
+      },
+      "enableSavedSearch": {
+        "user": false,
+        "bi": true
+      },
+      "enableSideBar": {
+        "user": false,
+        "bi": true
+      },
+      "enableTypeAhead": {
+        "user": true,
+        "bi": true
+      },
+      "resultViewOrder": {
+        "bi": [
+          "topic-map",
+          "list",
+          "sunburst",
+          "trending",
+          "table",
+          "map"
+        ],
+        "user": [
+          "list"
+        ]
+      }
+    },
+    "parametricNeverShow": [],
+    "parametricAlwaysShow": [],
+    "parametricOrder": [],
+    "specialUrlPrefixes": {
+      "application/msword": "ms-word:ofv|u|",
+      "application/mspowerpoint": "ms-powerpoint:ofv|u|",
+      "application/vnd.ms-powerpoint": "ms-powerpoint:ofv|u|",
+      "application/msexcel": "ms-excel:ofv|u|",
+      "application/vnd.ms-excel": "ms-excel:ofv|u|",
+      "application/vnd.visio": "ms-visio:ofv|u|",
+      "application/msaccess": "ms-access:ofv|u|",
+      "application/x-msaccess": "ms-access:ofv|u|",
+      "application/msproject": "ms-project:ofv|u|",
+      "application/vnd.ms-project": "ms-project:ofv|u|",
+      "application/x-mspublisher": "ms-publisher:ofv|u|"
+    },
+    "errorCallSupportString": null
   },
   "minScore": 0,
-  "parametricDisplayValues": [
-    {
-      "name": "COUNTRY_ORIGIN",
-      "displayName": "Country",
-      "values": [
-        {
-          "name": "UK",
-          "displayName": "United Kingdom of Great Britain and Northern Ireland"
-        }
-      ]
-    },
-    {
-      "name": "/DOCUMENT/PLACE_ELEVATION",
-      "displayName": "Place Elevation (ft)"
-    }
-  ],
   "topicMapMaxResults": 1000,
   "fieldsInfo": {
     "contentType": {
       "names": [
-        "AU_REPOSITORY_METADATA_TYPE_STRING"
+        "AU_REPOSITORY_METADATA_TYPE_STRING",
+        "REPOSITORY_METADATA_TYPE_STRING"
       ]
     },
     "url": {
       "names": [
-        "AU_REPOSITORY_METADATA_URL_FILE_STRING"
+        "AU_REPOSITORY_METADATA_URL_FILE_STRING",
+        "REPOSITORY_METADATA_URL_FILE_STRING"
       ]
     },
     "offset": {
@@ -164,25 +206,47 @@
     },
     "authors": {
       "names": [
-        "AU_DOCUMENT_METADATA_AUTHOR_STRING"
+        "AU_DOCUMENT_METADATA_AUTHOR_STRING",
+        "DOCUMENT_METADATA_AUTHOR_STRING"
       ]
     },
     "categories": {
       "names": [
-        "AU_REPOSITORY_METADATA_CATEGORY_STRING"
+        "AU_REPOSITORY_METADATA_CATEGORY_STRING",
+        "REPOSITORY_METADATA_CATEGORY_STRING"
       ]
     },
     "dateCreated": {
       "names": [
-        "AU_DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS"
+        "AU_DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS",
+        "DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS"
       ],
       "type": "Date"
     },
     "dateModified": {
       "names": [
-        "AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS"
+        "AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS",
+        "DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS"
       ],
       "type": "Date"
+    },
+    "mmapEventSourceType": {
+      "names": [
+        "MMAP_EVENT_SOURCE_TYPE"
+      ],
+      "advanced": true
+    },
+    "mmapEventSourceName": {
+      "names": [
+        "MMAP_EVENT_SOURCE_NAME"
+      ],
+      "advanced": true
+    },
+    "mmapEventTime": {
+      "names": [
+        "MMAP_EVENT_TIME"
+      ],
+      "advanced": true
     },
     "mmapUrl": {
       "names": [
@@ -191,6 +255,7 @@
       "advanced": true
     },
     "thumbnail": {
+      "advanced": true,
       "names": [
         "PREVIEW_THUMBNAIL_BASE64"
       ]
@@ -215,6 +280,7 @@
     },
     "latitude": {
       "names": [
+        "NODE_PLACE/LAT",
         "LAT"
       ],
       "type": "NUMBER",
@@ -222,6 +288,7 @@
     },
     "longitude": {
       "names": [
+        "NODE_PLACE/LON",
         "LON"
       ],
       "type": "NUMBER",

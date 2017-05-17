@@ -1,11 +1,12 @@
 /*
- * Copyright 2015-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
-    'find/app/page/search/abstract-section-view',
-    'jquery',
     'underscore',
+    'jquery',
+    'find/app/page/search/abstract-section-view',
     './concept-cluster-view',
     'find/app/page/search/input-view',
     'find/app/page/search/input-view-concept-strategy',
@@ -13,8 +14,9 @@ define([
     'i18n!find/nls/bundle',
     'js-whatever/js/list-view',
     'text!find/templates/app/page/search/concept-view.html'
-], function (AbstractSectionView, $, _, ConceptClusterView, InputView, conceptStrategy, FilteringCollection, i18n, ListView, template) {
-    "use strict";
+], function(_, $, AbstractSectionView, ConceptClusterView, InputView, conceptStrategy, FilteringCollection,
+            i18n, ListView, template) {
+    'use strict';
 
     /**
      * View for displaying the selected concept groups eg in the left side panel.
@@ -24,13 +26,13 @@ define([
         html: _.template(template)({i18n: i18n}),
 
         events: {
-            'click .concept-remove-icon': function (event) {
+            'click .concept-remove-icon': function(event) {
                 const cid = $(event.currentTarget).closest('.selected-related-concept').attr('data-cluster-cid');
                 this.conceptGroups.remove(cid);
             }
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             AbstractSectionView.prototype.initialize.apply(this, arguments);
 
             this.conceptGroups = options.queryState.conceptGroups;
@@ -38,44 +40,46 @@ define([
             const optionalViews = [{
                 enabled: options.configuration.hasBiRole,
                 selector: '.concept-view-container',
-                construct: function () {
+                construct: function() {
                     return new InputView({
+                        enableTypeAhead: options.configuration.enableTypeAhead,
                         strategy: conceptStrategy(options.queryState.conceptGroups)
                     });
                 },
-                onRender: function (view) {
+                onRender: function(view) {
                     view.focus();
                 }
             }];
-            //noinspection JSUnresolvedFunction
+
             this.optionalViews = _.where(optionalViews, {enabled: true});
 
-            //noinspection JSUnresolvedFunction
-            this.optionalViews.forEach(function (view) {
+            this.optionalViews.forEach(function(view) {
                 view.instance = view.construct();
             });
 
-
             this.filteringCollection = new FilteringCollection([], {
                 collection: this.conceptGroups,
-                predicate: function (model) {
+                predicate: function(model) {
                     return !model.has('hidden');
                 }
             });
             this.listView = new ListView({
                 collection: this.filteringCollection,
-                ItemView: ConceptClusterView
+                ItemView: ConceptClusterView,
+                collectionChangeEvents: {
+                    concepts: 'updateConcepts'
+                }
             });
 
             this.listenTo(this.conceptGroups, 'update reset', this.updateEmpty);
         },
 
         render: function() {
-            AbstractSectionView.prototype.render.apply(this, arguments);
+            AbstractSectionView.prototype.render.apply(this);
 
             this.getViewContainer().html(this.html);
 
-            this.optionalViews.forEach(function (view) {
+            this.optionalViews.forEach(function(view) {
                 view.instance.setElement(this.$(view.selector)).render();
                 view.onRender(view.instance);
             }, this);
@@ -84,14 +88,13 @@ define([
             this.updateEmpty();
         },
 
-        updateEmpty: function () {
+        updateEmpty: function() {
             const empty = this.filteringCollection.isEmpty();
             this.listView.$el.toggleClass('hide', empty);
             this.$('.concept-view-empty-message').toggleClass('hide', !empty);
         },
 
-        remove: function () {
-            //noinspection JSUnresolvedFunction
+        remove: function() {
             _.chain(this.optionalViews).pluck('instance').invoke('remove');
 
             this.listView.remove();

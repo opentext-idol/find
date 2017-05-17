@@ -5,28 +5,33 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
+import javax.persistence.Transient;
 
 @SuppressWarnings("WeakerAccess")
 @Embeddable
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
+@JsonDeserialize(builder = FieldAndValue.FieldAndValueBuilder.class)
 public class FieldAndValue {
 
     private String field;
+    @Transient
+    private String displayName;
     private String value;
+    @Transient
+    private String displayValue;
 
-    @JsonCreator
-    public FieldAndValue(
-            @JsonProperty("field") final String field,
-            @JsonProperty("value") final String value
-    ) {
-        this.field = field;
-        this.value = value;
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class FieldAndValueBuilder {
     }
 }
