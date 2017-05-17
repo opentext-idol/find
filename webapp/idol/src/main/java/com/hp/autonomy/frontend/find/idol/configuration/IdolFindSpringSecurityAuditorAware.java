@@ -29,7 +29,7 @@ public class IdolFindSpringSecurityAuditorAware extends AbstractFindSpringSecuri
     @Override
     protected UserEntity principalToUser(final CommunityPrincipal principal) {
         final UserEntity userEntity = new UserEntity();
-        userEntity.setUid(principal.getId());
+        userEntity.setUsername(principal.getUsername());
 
         return userEntity;
     }

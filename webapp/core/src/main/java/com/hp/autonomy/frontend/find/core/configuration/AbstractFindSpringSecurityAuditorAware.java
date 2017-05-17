@@ -11,6 +11,7 @@ import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationR
 import org.springframework.data.domain.AuditorAware;
 
 import java.security.Principal;
+import java.util.Optional;
 
 /**
  * Implements {@link AuditorAware<UserEntity>} which means it will automatically be picked up by
@@ -40,6 +41,7 @@ public abstract class AbstractFindSpringSecurityAuditorAware<P extends Principal
     /**
      * Return the current user as a {@link UserEntity} to be inserted into a {@link org.springframework.data.annotation.CreatedBy} field.
      */
+    @Override
     public UserEntity getCurrentAuditor() {
         final P principal = authenticationInformationRetriever.getPrincipal();
 
@@ -47,21 +49,15 @@ public abstract class AbstractFindSpringSecurityAuditorAware<P extends Principal
             return null;
         }
 
-        UserEntity currentUser = principalToUser(principal);
+        final UserEntity currentUser = principalToUser(principal);
 
-        final UserEntity persistedUser = userRepository.findByDomainAndUserStoreAndUuidAndUid(
+        final UserEntity persistedUser = userRepository.findByDomainAndUserStoreAndUuidAndUsername(
                 currentUser.getDomain(),
                 currentUser.getUserStore(),
                 currentUser.getUuid(),
-                currentUser.getUid()
+                currentUser.getUsername()
         );
 
-        if(persistedUser != null) {
-            currentUser = persistedUser;
-        } else {
-            userRepository.save(currentUser);
-        }
-
-        return currentUser;
+        return Optional.ofNullable(persistedUser).orElse(userRepository.save(currentUser));
     }
 }

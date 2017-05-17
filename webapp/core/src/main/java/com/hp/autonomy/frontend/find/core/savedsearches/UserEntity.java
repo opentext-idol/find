@@ -49,6 +49,7 @@ public class UserEntity {
 
     private String domain;
     private Long uid;
+    private String username;
 
     // Need to specify char-style UUID for Maria DB, otherwise hibernate tries to send binary
     @Type(type = "uuid-char")

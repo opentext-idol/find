@@ -19,9 +19,9 @@ import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 
 public abstract class UserEntityRepositoryIT extends AbstractFindIT {
-    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
+    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
     @Autowired
-    protected UserEntityRepository userEntityRepository;
+    private UserEntityRepository userEntityRepository;
 
     @Test
     public void fetchNone() {
@@ -32,7 +32,7 @@ public abstract class UserEntityRepositoryIT extends AbstractFindIT {
     @Test
     public void createWithUidAndFetch() {
         final UserEntity userEntity = new UserEntity();
-        userEntity.setUid(1L);
+        userEntity.setUsername("username@hpe.com");
 
         final UserEntity savedEntity = userEntityRepository.save(userEntity);
         assertThat(savedEntity.getUserId(), not(nullValue()));

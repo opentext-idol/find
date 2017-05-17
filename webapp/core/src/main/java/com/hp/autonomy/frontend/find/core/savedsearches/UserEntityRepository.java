@@ -17,5 +17,5 @@ public interface UserEntityRepository extends CrudRepository<UserEntity, Long> {
 
     // See: http://forum.spring.io/forum/spring-projects/data/106312-spring-data-jpa-infinite-loop-when-updating-but-not-saving-an-auditable-object
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
-    UserEntity findByDomainAndUserStoreAndUuidAndUid(String domain, String userStore, UUID uuid, Long uid);
+    UserEntity findByDomainAndUserStoreAndUuidAndUsername(String domain, String userStore, UUID uuid, String username);
 }
