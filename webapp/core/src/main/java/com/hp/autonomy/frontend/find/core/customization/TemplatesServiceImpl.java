@@ -21,7 +21,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.time.Instant;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -31,7 +34,8 @@ import java.util.stream.Stream;
 class TemplatesServiceImpl implements TemplatesService {
     static final String DIRECTORY_NAME = "templates";
 
-    private final AtomicReference<Map<String, String>> cachedTemplates = new AtomicReference<>(Collections.emptyMap());
+    private final AtomicReference<Templates> cachedTemplates = new AtomicReference<>(null);
+
     private final ConfigService<TemplatesConfig> configService;
     private final Path directoryPath;
 
@@ -80,11 +84,17 @@ class TemplatesServiceImpl implements TemplatesService {
             builder.put(fileName, template);
         }
 
-        cachedTemplates.set(builder.build());
+        final Templates output = Templates.builder()
+                .templates(builder.build())
+                .lastModified(Instant.now())
+                .build();
+
+        cachedTemplates.set(output);
     }
 
     @Override
-    public Map<String, String> getTemplates() {
-        return new HashMap<>(cachedTemplates.get());
+    public Templates getTemplates() {
+        return Optional.ofNullable(cachedTemplates.get())
+                .orElseThrow(() -> new IllegalStateException("Templates service not initialised"));
     }
 }

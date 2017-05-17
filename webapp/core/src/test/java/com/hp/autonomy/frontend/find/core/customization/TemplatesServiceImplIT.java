@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.junit.Assert.assertThat;
@@ -69,11 +69,14 @@ public class TemplatesServiceImplIT {
 
         templatesService.loadTemplates();
 
-        final Map<String, String> templates = templatesService.getTemplates();
-        assertThat(templates.entrySet(), hasSize(3));
-        assertThat(templates, hasEntry("preview.html", "<p>Preview</p>"));
-        assertThat(templates, hasEntry("person.html", "<p>Person</p>"));
-        assertThat(templates, hasEntry("document.html", "<p>Document</p>"));
+        final Templates templates = templatesService.getTemplates();
+        assertThat(templates.getLastModified(), not(nullValue()));
+
+        final Map<String, String> templateMap = templates.getTemplates();
+        assertThat(templateMap.entrySet(), hasSize(3));
+        assertThat(templateMap, hasEntry("preview.html", "<p>Preview</p>"));
+        assertThat(templateMap, hasEntry("person.html", "<p>Person</p>"));
+        assertThat(templateMap, hasEntry("document.html", "<p>Document</p>"));
     }
 
     @Test
@@ -109,7 +112,10 @@ public class TemplatesServiceImplIT {
         templatesService.loadTemplates();
         templatesService.loadTemplates();
 
-        final Map<String, String> templates = templatesService.getTemplates();
+        final Templates templatesAndLastModified = templatesService.getTemplates();
+        assertThat(templatesAndLastModified.getLastModified(), not(nullValue()));
+
+        final Map<String, String> templates = templatesAndLastModified.getTemplates();
         assertThat(templates.entrySet(), hasSize(3));
         assertThat(templates, hasEntry("preview.html", "<p>Preview</p>"));
         assertThat(templates, hasEntry("animal.html", "<p>Animal</p>"));

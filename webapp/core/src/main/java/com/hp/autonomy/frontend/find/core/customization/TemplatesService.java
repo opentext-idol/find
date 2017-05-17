@@ -6,12 +6,11 @@
 package com.hp.autonomy.frontend.find.core.customization;
 
 import java.io.IOException;
-import java.util.Map;
 
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface TemplatesService {
 
-    Map<String, String> getTemplates();
+    Templates getTemplates();
 
     void loadTemplates() throws IOException, TemplateNotFoundException;
 
