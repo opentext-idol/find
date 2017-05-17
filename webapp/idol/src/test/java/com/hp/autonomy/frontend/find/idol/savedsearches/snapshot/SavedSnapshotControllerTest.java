@@ -13,7 +13,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.frontend.find.idol.dashboards.Dashboard;
-import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
+import com.hp.autonomy.frontend.find.idol.dashboards.DashboardConfig;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.ResultsListWidget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearch;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchConfig;
@@ -55,9 +55,9 @@ public class SavedSnapshotControllerTest {
     @Mock
     private IdolQueryRestrictionsBuilder queryRestrictionsBuilder;
     @Mock
-    private ConfigService<IdolDashboardConfig> idolDashboardConfigService;
+    private ConfigService<DashboardConfig> idolDashboardConfigService;
     @Mock
-    private IdolDashboardConfig idolDashboardConfig;
+    private DashboardConfig dashboardConfig;
     private SavedSnapshotController savedSnapshotController;
     private SavedSnapshot savedSnapshot;
 
@@ -74,8 +74,8 @@ public class SavedSnapshotControllerTest {
         when(queryRestrictionsBuilder.minScore(anyInt())).thenReturn(queryRestrictionsBuilder);
         when(queryRestrictionsBuilder.stateMatchIds(any())).thenReturn(queryRestrictionsBuilder);
         when(queryRestrictionsBuilder.stateDontMatchIds(any())).thenReturn(queryRestrictionsBuilder);
-        when(idolDashboardConfigService.getConfig()).thenReturn(idolDashboardConfig);
-        when(idolDashboardConfig.getDashboards()).thenReturn(Collections.emptyList());
+        when(idolDashboardConfigService.getConfig()).thenReturn(dashboardConfig);
+        when(dashboardConfig.getDashboards()).thenReturn(Collections.emptyList());
 
         savedSnapshot = new SavedSnapshot.Builder()
                 .setTitle("Any old saved search")
@@ -133,7 +133,7 @@ public class SavedSnapshotControllerTest {
 
     @Test
     public void get() {
-        when(idolDashboardConfig.getDashboards()).thenReturn(mockSnapshotDashboard);
+        when(dashboardConfig.getDashboards()).thenReturn(mockSnapshotDashboard);
 
         when(savedSnapshotService.getDashboardSearch(any(long.class))).thenReturn(savedSnapshot);
 
@@ -143,7 +143,7 @@ public class SavedSnapshotControllerTest {
 
     @Test
     public void getWhenSearchDoesNotExist() throws Exception {
-        when(idolDashboardConfig.getDashboards()).thenReturn(mockSnapshotDashboard);
+        when(dashboardConfig.getDashboards()).thenReturn(mockSnapshotDashboard);
 
         when(savedSnapshotService.getDashboardSearch(any(long.class))).thenReturn(null);
 

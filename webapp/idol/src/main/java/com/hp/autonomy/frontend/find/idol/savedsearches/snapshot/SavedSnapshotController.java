@@ -14,7 +14,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot.Builder;
-import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
+import com.hp.autonomy.frontend.find.idol.dashboards.DashboardConfig;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.DatasourceDependentWidget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchDatasource;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
@@ -52,7 +52,7 @@ class SavedSnapshotController {
     private final SavedSearchService<SavedSnapshot, Builder> service;
     private final FieldTextParser fieldTextParser;
     private final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
-    private final ConfigService<IdolDashboardConfig> dashboardConfigService;
+    private final ConfigService<DashboardConfig> dashboardConfigService;
 
     @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
@@ -60,7 +60,7 @@ class SavedSnapshotController {
                                    final SavedSearchService<SavedSnapshot, Builder> service,
                                    final FieldTextParser fieldTextParser,
                                    final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
-                                   final ConfigService<IdolDashboardConfig> dashboardConfigService) {
+                                   final ConfigService<DashboardConfig> dashboardConfigService) {
         this.documentsService = documentsService;
         this.service = service;
         this.fieldTextParser = fieldTextParser;

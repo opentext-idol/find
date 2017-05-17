@@ -1,0 +1,174 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+//
+// This file contains overrides for commit-dependent various file paths found in libraries
+//
+
+//
+// Font Awesome
+//
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('@{staticResourcesPath}/bower_components/fontawesome/fonts/fontawesome-webfont.eot?v=4.5.0');
+  src: url('@{staticResourcesPath}/bower_components/fontawesome/fonts/fontawesome-webfont.eot?#iefix&v=4.5.0') format('embedded-opentype'), url('@{staticResourcesPath}/bower_components/fontawesome/fonts/fontawesome-webfont.woff2?v=4.5.0') format('woff2'), url('@{staticResourcesPath}/bower_components/fontawesome/fonts/fontawesome-webfont.woff?v=4.5.0') format('woff'), url('@{staticResourcesPath}/bower_components/fontawesome/fonts/fontawesome-webfont.ttf?v=4.5.0') format('truetype'), url('@{staticResourcesPath}/bower_components/fontawesome/fonts/fontawesome-webfont.svg?v=4.5.0#fontawesomeregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+//
+// Leaflet
+//
+
+.leaflet-control-layers-toggle {
+  background-image: url('@{staticResourcesPath}/bower_components/leaflet/dist/images/layers.png');
+}
+
+//
+// HPE Elements HPEIcons.less
+//
+
+@font-face {
+  font-family: "HPEIcons2";
+  src: url('@{staticResourcesPath}/fonts/HPEIcons.eot');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "HPEIcons2";
+  src: url('@{staticResourcesPath}/fonts/HPEIcons.eot');
+  src: url('@{staticResourcesPath}/fonts/HPEIcons.eot?#iefix') format("embedded-opentype"),
+  url('@{staticResourcesPath}/fonts/HPEIcons.woff') format("woff"),
+  url('@{staticResourcesPath}/fonts/HPEIcons.ttf') format("truetype"),
+  url('@{staticResourcesPath}/fonts/HPEIcons.svg?#HPEIcons') format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.hp-icon {
+  font-family: "HPEIcons2";
+}
+
+//
+// HPE Elements typography.less
+//
+
+@font-face {
+  font-family: Metric-Light;
+  src: url('@{staticResourcesPath}/fonts/Metric-Light.eot');
+  src: url('@{staticResourcesPath}/fonts/Metric-Light.eot?#iefix') format('embedded-opentype'), url('@{staticResourcesPath}/fonts/Metric-Light.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Metric-Thin;
+  src: url('@{staticResourcesPath}/fonts/Metric-Thin.eot');
+  src: url('@{staticResourcesPath}/fonts/Metric-Thin.eot?#iefix') format('embedded-opentype'), url('@{staticResourcesPath}/fonts/Metric-Thin.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Metric;
+  src: url('@{staticResourcesPath}/fonts/Metric-Regular.eot');
+  src: url('@{staticResourcesPath}/fonts/Metric-Regular.eot?#iefix') format('embedded-opentype'), url('@{staticResourcesPath}/fonts/Metric-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Metric-Semibold;
+  src: url('@{staticResourcesPath}/fonts/Metric-Semibold.eot');
+  src: url('@{staticResourcesPath}/fonts/Metric-Semibold.eot?#iefix') format('embedded-opentype'), url('@{staticResourcesPath}/fonts/Metric-Semibold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Metric-Bold;
+  src: url('@{staticResourcesPath}/fonts/Metric-Bold.eot');
+  src: url('@{staticResourcesPath}/fonts/Metric-Bold.eot?#iefix') format('embedded-opentype'), url('@{staticResourcesPath}/fonts/Metric-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Simple-regular;
+  src: url('@{staticResourcesPath}/fonts/Simple-regular.eot');
+  src: url('@{staticResourcesPath}/fonts/Simple-regular.eot?#iefix') format('embedded-opentype'), url('@{staticResourcesPath}/fonts/Simple-regular.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+//
+//HPE Elements controls.less
+//
+.icheckbox-hp,
+.iradio-hp {
+  background-image: url('@{staticResourcesPath}/img/blue_checkboxes.png');
+}
+
+/* HiDPI support */
+@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
+  .icheckbox-hp,
+  .iradio-hp {
+    background-image: url('@{staticResourcesPath}/img/blue@2x_checkboxes.png');
+  }
+}
+
+//===============================
+// multi-select-checkbox styling
+//===============================
+
+.multi-select-checkbox {
+  background-image: url('@{staticResourcesPath}/img/blue_checkboxes.png');
+}
+
+/* @group Single Chosen */
+.chosen-container-single .chosen-single abbr {
+  background-image: url('@{staticResourcesPath}/img/chosen-sprite.png');
+}
+
+.chosen-container-single .chosen-single div b {
+  background-image: url('@{staticResourcesPath}/img/chosen-sprite.png');
+}
+
+.chosen-container-single .chosen-search input[type="text"] {
+  background-image: url('@{staticResourcesPath}/img/chosen-sprite.png');
+}
+
+/* @end */
+/* @group Results */
+.chosen-container-multi .chosen-choices li.search-choice .search-choice-close {
+  background-image: url('@{staticResourcesPath}/img/chosen-sprite.png');
+}
+
+/* @end */
+/* @group Disabled Support */
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-resolution: 144dpi) {
+  .chosen-rtl .chosen-search input[type="text"],
+  .chosen-container-single .chosen-single abbr,
+  .chosen-container-single .chosen-single div b,
+  .chosen-container-single .chosen-search input[type="text"],
+  .chosen-container-multi .chosen-choices .search-choice .search-choice-close,
+  .chosen-container .chosen-results-scroll-down span,
+  .chosen-container .chosen-results-scroll-up span {
+    background-image: url('@{staticResourcesPath}/img/chosen-sprite@2x.png') !important;
+  }
+}
+
+/* Additional styles to display a spinner image while options are loading */
+.localytics-chosen.loading + .chosen-container-multi .chosen-choices {
+  background-image: url('@{staticResourcesPath}/img/spinner.gif');
+}
+
+.localytics-chosen.loading + .chosen-container-single .chosen-single span {
+  background-image: url('@{staticResourcesPath}/img/spinner.gif');
+}
+
+/* @end */
