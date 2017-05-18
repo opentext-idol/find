@@ -8,7 +8,7 @@ define([
 ], function(FindBaseCollection) {
     'use strict';
 
-    const URL_ROOT = 'api/public/parametric/buckets';
+    const URL_ROOT = 'api/public/parametric/numeric/buckets';
 
     const Model = FindBaseCollection.Model.extend({
         urlRoot: URL_ROOT,

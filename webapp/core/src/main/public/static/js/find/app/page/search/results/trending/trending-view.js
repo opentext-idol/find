@@ -18,8 +18,7 @@ define([
     'find/app/page/search/results/parametric-results-view',
     'find/app/page/search/results/field-selection-view',
     'find/app/page/search/filters/parametric/calibrate-buckets',
-    'find/app/model/bucketed-parametric-collection',
-    'find/app/model/parametric-field-details-model',
+    'find/app/model/bucketed-date-collection',
     'find/app/model/parametric-collection',
     'find/app/page/search/results/trending/trending',
     'find/app/page/search/results/trending/trending-strategy',
@@ -28,12 +27,10 @@ define([
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-date-input.html'
 ], function(_, $, moment, d3, Backbone, i18n, configuration, vent, RangeInput, generateErrorHtml,
             datePicker, ParametricResultsView, FieldSelectionView, calibrateBuckets,
-            BucketedParametricCollection, ParametricDetailsModel, ParametricCollection,
+            BucketedParametricCollection, ParametricCollection,
             Trending, trendingStrategy, loadingSpinnerHtml, template, dateInputTemplate) {
     'use strict';
 
-    const MILLISECONDS_TO_SECONDS = 1000;
-    const SECONDS_IN_ONE_DAY = 86400;
     const DEBOUNCE_TIME = 500;
     const ERROR_MESSAGE_ARGUMENTS = {messageToUser: i18n['search.resultsView.trending.error.query']};
 
@@ -56,20 +53,20 @@ define([
     };
 
     function zoomCallback(min, max) {
-        this.setMinMax(min, max);
+        this.setMinMax(moment.unix(min), moment.unix(max));
         this.viewStateModel.set('currentState', renderState.ZOOMING);
         this.updateChart();
         this.debouncedFetchBucketedData();
     }
 
     function dragMoveCallback(min, max) {
-        this.setMinMax(min, max);
+        this.setMinMax(moment.unix(min), moment.unix(max));
         this.viewStateModel.set('currentState', renderState.DRAGGING);
         this.updateChart();
     }
 
     function dragEndCallback(min, max) {
-        this.setMinMax(min, max);
+        this.setMinMax(moment.unix(min), moment.unix(max));
         this.viewStateModel.set('currentState', renderState.DRAGGING);
         this.debouncedFetchBucketedData();
     }
@@ -83,10 +80,10 @@ define([
                 this.snapToNow();
             },
             'dp.change .results-filter-date[data-date-attribute="min-date"]': function(event) {
-                this.inputMinValue(event.date.unix());
+                this.inputMinValue(moment(event.date));
             },
             'dp.change .results-filter-date[data-date-attribute="max-date"]': function(event) {
-                this.inputMaxValue(event.date.unix());
+                this.inputMaxValue(moment(event.date));
             },
         },
         dateInputTemplate: _.template(dateInputTemplate),
@@ -288,7 +285,7 @@ define([
                     datePicker.render(
                         options.$el.closest('.results-filter-date'),
                         function() {
-                            if(this.validateDateFormat(options.$el.val())) {
+                            if (this.validateDateFormat(options.$el.val())) {
                                 options.inputFunction(this.parseDate(options.$el.val()));
                             } else {
                                 this.indicateNonValidDateInput({
@@ -327,7 +324,7 @@ define([
                     } else {
                         return $.when(trendingStrategy.fetchRange(this.selectedFieldValues, fetchOptions))
                             .then(function(data) {
-                                this.setMinMax(data.min, data.max);
+                                this.setMinMax(moment(data.min), moment(data.max));
                             }.bind(this));
                     }
                 }.bind(this))
@@ -343,7 +340,7 @@ define([
             const minDate = this.model.get('currentMin'), maxDate = this.model.get('currentMax');
 
             if(minDate === maxDate) {
-                this.setMinMax(minDate - SECONDS_IN_ONE_DAY, maxDate + SECONDS_IN_ONE_DAY);
+                this.setMinMax(minDate.clone().subtract(1, 'day'), maxDate.clone().add(1, 'day'));
             }
 
             if(this.bucketedDataReqest) {
@@ -407,10 +404,10 @@ define([
                         chartData: chartData,
                         minDate: reloaded
                             ? chartData.data[0].points[0].mid
-                            : new Date(this.model.get('currentMin') * MILLISECONDS_TO_SECONDS),
+                            : this.model.get('currentMin').toDate(),
                         maxDate: reloaded
                             ? chartData.data[chartData.data.length - 1].points[chartData.data[0].points.length - 1].mid
-                            : new Date(this.model.get('currentMax') * MILLISECONDS_TO_SECONDS),
+                            : this.model.get('currentMax').toDate(),
                         zoomCallback: zoomCallback.bind(this),
                         dragMoveCallback: dragMoveCallback.bind(this),
                         dragEndCallback: dragEndCallback.bind(this)
@@ -421,18 +418,18 @@ define([
 
         setMinMax: function(min, max) {
             this.model.set({
-                currentMin: Math.floor(min),
-                currentMax: Math.ceil(max)
+                currentMin: min,
+                currentMax: max
             });
         },
 
         snapToNow: function() {
             const currentMin = this.model.get('currentMin');
-            const now = Math.ceil(Date.now() / MILLISECONDS_TO_SECONDS);
+            const now = moment(Date.now());
             this.setMinMax(
-                currentMin < now
+                currentMin.isBefore(now)
                     ? currentMin
-                    : now - (this.model.get('currentMax') - currentMin),
+                    : now.clone().subtract((this.model.get('currentMax').clone().subtract(currentMin))),
                 now
             );
             this.fetchBucketedData();
@@ -445,7 +442,7 @@ define([
         },
 
         inputMinValue: function(min) {
-            if(min < this.model.get('currentMax')) {
+            if (min.isBefore(this.model.get('currentMax'))) {
                 this.model.set('currentMin', min);
             } else {
                 this.indicateNonValidDateInput({
@@ -457,7 +454,7 @@ define([
         },
 
         inputMaxValue: function(max) {
-            if(this.model.get('currentMin') < max) {
+            if(this.model.get('currentMin').isBefore(max)) {
                 this.model.set('currentMax', max);
             } else {
                 this.indicateNonValidDateInput({
@@ -468,12 +465,12 @@ define([
             }
         },
 
-        formatDate: function(unformattedString) {
-            return moment(Math.round(unformattedString * MILLISECONDS_TO_SECONDS)).format(datePicker.DATE_WIDGET_FORMAT);
+        formatDate: function(date) {
+            return date.format(datePicker.DATE_WIDGET_FORMAT);
         },
 
         parseDate: function(dateString) {
-            return moment(dateString, datePicker.DATE_WIDGET_FORMAT).unix();
+            return moment(dateString, datePicker.DATE_WIDGET_FORMAT);
         },
 
         validateDateFormat: function(dateString) {

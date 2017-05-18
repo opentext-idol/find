@@ -13,7 +13,7 @@ define([
     'find/app/page/search/filters/parametric/calibrate-buckets',
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/page/search/filters/parametric/numeric-widget',
-    'find/app/model/bucketed-parametric-collection',
+    'find/app/model/bucketed-numeric-collection',
     'parametric-refinement/to-field-text-node',
     'find/app/util/date-picker',
     'js-whatever/js/model-any-changed-attribute-listener',

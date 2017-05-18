@@ -6,6 +6,7 @@
 define([
     'underscore',
     'jquery',
+    'moment',
     'd3',
     'backbone',
     'i18n!find/nls/bundle',
@@ -15,18 +16,17 @@ define([
     'find/app/page/search/results/parametric-results-view',
     'find/app/page/search/results/field-selection-view',
     'find/app/page/search/filters/parametric/calibrate-buckets',
-    'find/app/model/bucketed-parametric-collection',
-    'find/app/model/parametric-field-details-model',
+    'find/app/model/bucketed-date-collection',
+    'find/app/model/date-field-details-model',
     'find/app/model/parametric-collection',
     'find/app/page/search/results/trending/trending',
     'parametric-refinement/to-field-text-node',
-], function(_, $, d3, Backbone, i18n, configuration, vent, generateErrorHtml, ParametricResultsView,
+], function(_, $, moment, d3, Backbone, i18n, configuration, vent, generateErrorHtml, ParametricResultsView,
             FieldSelectionView, calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel,
             ParametricCollection, Trending, toFieldTextNode
 ) {
     'use strict';
 
-    const SECONDS_TO_MILLISECONDS = 1000;
     const HOURS_TO_SECONDS = 3600;
     const MINUTES_TO_SECONDS = 60;
     const DAYS_TO_SECONDS = 86400;
@@ -109,18 +109,21 @@ define([
                         minScore: options.queryModel.get('minScore'),
                         databases: options.queryModel.get('indexes'),
                         targetNumberOfBuckets: options.targetNumberOfBuckets,
-                        bucketMin: options.currentMin,
-                        bucketMax: options.currentMax
+                        bucketMin: options.currentMin.toISOString(),
+                        bucketMax: options.currentMax.toISOString()
                     }
                 });
 
             const promise = xhr.then(function(data) {
-                return _.extend({
+                return _.extend(data, {
+                    min: moment(data.min),
+                    max: moment(data.max),
+                    values: data.values.map(function (value) { return _.extend(value, { min: moment(value.min), max: moment(value.max)} ); }),
                     valueName: value.value,
                     color: options.values
                         ? _.findWhere(options.values, {'name': value.value}).color
                         : null
-                }, data);
+                });
             });
 
             return {promise: promise, xhr: xhr};
@@ -146,7 +149,7 @@ define([
     function createChartData(options) {
         // Assume all buckets have the same width
         const firstPoint = options.bucketedValues[0].values[0];
-        const bucketWidthSecs = firstPoint.max - firstPoint.min;
+        const bucketWidthSecs = firstPoint.bucketSize;
         const halfBucketWidthSecs = 0.5 * bucketWidthSecs;
 
         const flatCountsChain = _.chain(options.bucketedValues)
@@ -184,18 +187,20 @@ define([
                 color: bucketedValue.color,
                 points: _.chain(bucketedValue.values)
                     .map(function(value) {
-                        const midTime = Math.floor(value.min + halfBucketWidthSecs);
+                        const midTime = value.min.clone().add(Math.floor(halfBucketWidthSecs), 'seconds');
 
                         return {
                             rate: value.count * rateCoefficient,
-                            mid: new Date(midTime * SECONDS_TO_MILLISECONDS),
-                            min: new Date(value.min * SECONDS_TO_MILLISECONDS),
-                            max: new Date(value.max * SECONDS_TO_MILLISECONDS)
+                            mid: midTime.toDate(),
+                            min: value.min.toDate(),
+                            max: value.max.toDate()
                         };
                     })
                     .filter(function(value) {
-                        const midSeconds = value.mid.getTime() / SECONDS_TO_MILLISECONDS;
-                        return midSeconds >= options.currentMin && midSeconds <= options.currentMax;
+                        const mid = moment(value.mid);
+                        const currentMin = options.currentMin;
+                        const currentMax = options.currentMax;
+                        return mid.diff(currentMin) >= 0 && mid.diff(currentMax) <= 0;
                     })
                     .value()
             };

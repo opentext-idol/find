@@ -2,7 +2,7 @@ define([
     'backbone',
     'jquery',
     'find/app/page/search/time-bar-view',
-    'find/app/model/bucketed-parametric-collection'
+    'find/app/model/bucketed-numeric-collection'
 ], function(Backbone, $, TimeBarView, BucketedParametricCollection) {
 
     describe('TimeBarView', function() {
