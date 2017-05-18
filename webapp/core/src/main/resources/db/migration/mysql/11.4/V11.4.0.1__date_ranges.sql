@@ -42,6 +42,6 @@ WHERE type IS 1;
 INSERT INTO search_date_ranges (search_id, field, min, max)
 SELECT search_id, field, FROM_UNIXTIME(FLOOR(min)), FROM_UNIXTIME(CEILING(max))
 FROM search_parametric_ranges
-WHERE type IS 0;
+WHERE type IS 0 AND min >= 0 AND min <= 2147483647 AND max >= 0 AND max <= 2147483647;
 
 DROP TABLE search_parametric_ranges;
