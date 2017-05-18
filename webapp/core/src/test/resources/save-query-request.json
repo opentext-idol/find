@@ -12,14 +12,14 @@
         {"field": "SOME_NUMBER", "min": 123.5, "max": 124.5}
     ],
     "dateRangeRestrictions": [
-        {"field": "SOME_DATE", "min": 123456789, "max": 123456791}
+        {"field": "SOME_DATE", "min": "2017-05-17T15:51:20Z", "max": "2017-05-17T15:51:40Z"}
     ],
     "conceptClusterPhrases": [
         {"phrase": "characters", "primary": true, "clusterId": 1},
         {"phrase": "faces", "primary": false, "clusterId": 1},
         {"phrase": "animals", "primary": true, "clusterId": 2}
     ],
-    "minDate": 1400000000,
-    "maxDate": 1500000000,
+    "minDate": "2017-05-17T15:51:20Z",
+    "maxDate": "2017-05-17T15:51:40Z",
     "minScore": 88
 }

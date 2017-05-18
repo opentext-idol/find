@@ -28,8 +28,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
-import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.time.chrono.ChronoZonedDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -142,8 +142,8 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$[0].id", is(id)))
                 .andExpect(jsonPath("$[0].title", is("\u30e2\u30f3\u30ad\u30fc")))
-                .andExpect(jsonPath("$[0].minDate", new BigDecimalMatcher(1400000000d)))
-                .andExpect(jsonPath("$[0].maxDate", new BigDecimalMatcher(1500000000d)))
+                .andExpect(jsonPath("$[0].minDate", new ZonedDateTimeMatcher("2017-05-17T15:51:20Z")))
+                .andExpect(jsonPath("$[0].maxDate", new ZonedDateTimeMatcher("2017-05-17T15:51:40Z")))
                 .andExpect(jsonPath("$[0].conceptClusterPhrases", hasSize(3)))
                 .andExpect(jsonPath("$[0].conceptClusterPhrases[*].phrase", containsInAnyOrder("characters", "faces", "animals")))
                 .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='characters')].primary", contains(true)))
@@ -161,8 +161,8 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .andExpect(jsonPath("$[0].numericRangeRestrictions[0].max", is(124.5)))
                 .andExpect(jsonPath("$[0].dateRangeRestrictions", hasSize(1)))
                 .andExpect(jsonPath("$[0].dateRangeRestrictions[0].field", is("SOME_DATE")))
-                .andExpect(jsonPath("$[0].dateRangeRestrictions[0].min", new BigDecimalMatcher(123456789d)))
-                .andExpect(jsonPath("$[0].dateRangeRestrictions[0].max", new BigDecimalMatcher(123456791d)))
+                .andExpect(jsonPath("$[0].dateRangeRestrictions[0].min", new ZonedDateTimeMatcher("2017-05-17T15:51:20Z")))
+                .andExpect(jsonPath("$[0].dateRangeRestrictions[0].max", new ZonedDateTimeMatcher("2017-05-17T15:51:40Z")))
                 .andExpect(jsonPath("$[0].indexes", hasSize(2)))
                 .andExpect(jsonPath("$[0].indexes[*].name", containsInAnyOrder("English Wikipedia", "\u65e5\u672c\u8a9e Wikipedia")))
                 .andExpect(jsonPath("$[0].indexes[?(@.name=='English Wikipedia')].domain", contains("MY_DOMAIN")))
@@ -338,20 +338,21 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .build();
     }
 
-    private static class BigDecimalMatcher extends BaseMatcher<BigDecimal> {
-        private final BigDecimal expectation;
+    private static class ZonedDateTimeMatcher extends BaseMatcher<ChronoZonedDateTime<?>> {
+        private final ChronoZonedDateTime<?> expectation;
 
-        private BigDecimalMatcher(final double expectation) {
-            this.expectation = BigDecimal.valueOf(expectation);
+        private ZonedDateTimeMatcher(final CharSequence expectation) {
+            this.expectation = ZonedDateTime.parse(expectation);
         }
 
         @Override
         public boolean matches(final Object o) {
-            return o instanceof BigDecimal && ((BigDecimal) o).stripTrailingZeros().equals(expectation);
+            return o instanceof CharSequence && ZonedDateTime.parse((CharSequence) o).isEqual(expectation);
         }
 
         @Override
         public void describeTo(final Description description) {
+            description.appendText(expectation.toString());
         }
     }
 }

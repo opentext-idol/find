@@ -121,7 +121,7 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
                                 .map(numericRange -> numericRange.toBuilder()
                                         .displayName(tagNameFactory.buildTagName(numericRange.getField()).getDisplayName())
                                         .build())
-                                .collect(Collectors.toSet()))
+                                .collect(toSet()))
                         .orElse(Collections.emptySet()))
                 .setDateRangeRestrictions(Optional.ofNullable(result.getDateRangeRestrictions())
                         .map(dateRanges -> dateRanges.stream()
