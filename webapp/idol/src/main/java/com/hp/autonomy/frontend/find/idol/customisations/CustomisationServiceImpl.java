@@ -75,6 +75,10 @@ public class CustomisationServiceImpl implements CustomisationService {
 
     @Override
     public boolean deleteAsset(final AssetType assetType, final String name) {
+        if (name == null) {
+            return false;
+        }
+
         return getAsset(assetType, name).delete();
     }
 

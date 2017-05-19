@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.customisations;
 
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -17,7 +18,11 @@ abstract class AbstractCustomisationController {
         this.customisationService = customisationService;
     }
 
-    protected ResponseEntity<FileSystemResource> logo(final AssetType assetType, final String name) {
+    protected ResponseEntity<Resource> logo(final AssetType assetType, final String name) {
+        if (name == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         final FileSystemResource fileSystemResource = new FileSystemResource(customisationService.getAsset(assetType, name));
 
         if (!fileSystemResource.exists()) {
