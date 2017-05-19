@@ -36,6 +36,7 @@ define([
                     _.extend({
                         collection: options.bigLogoCollection,
                         description: i18n['customisations.bigLogo.description'],
+                        imageClass: 'big-logo-background',
                         title: i18n['customisations.bigLogo'],
                     }, ASSET_TYPES.bigLogo),
                     _.extend({
