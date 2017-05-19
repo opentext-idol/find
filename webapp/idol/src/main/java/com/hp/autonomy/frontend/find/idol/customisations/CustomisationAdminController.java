@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find.idol.customisations;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -68,7 +68,7 @@ class CustomisationAdminController extends AbstractCustomisationController {
 
     @Override
     @RequestMapping(value = ASSET_ID_PATH, method = RequestMethod.GET)
-    public ResponseEntity<FileSystemResource> logo(
+    public ResponseEntity<Resource> logo(
         @PathVariable("type") final AssetType assetType,
         @PathVariable("name") final String name
     ) {

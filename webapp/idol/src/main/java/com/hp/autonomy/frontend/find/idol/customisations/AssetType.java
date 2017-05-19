@@ -5,16 +5,16 @@
 
 package com.hp.autonomy.frontend.find.idol.customisations;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 enum AssetType {
-    BIG_LOGO("big-logo"),
-    SMALL_LOGO("small-logo");
+    BIG_LOGO("big-logo", "/static/img/Find_Logo_lge.png"),
+    SMALL_LOGO("small-logo", "/static/img/Find_Logo_sml.png");
 
     private final String directory;
+    private final String defaultValue;
 
-    AssetType(final String directory) {
-        this.directory = directory;
-    }
 }
