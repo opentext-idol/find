@@ -3,6 +3,28 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
+.asset-viewer {
+  .asset {
+    align-items: center;
+    display: flex;
+    min-height: 50px;
+  }
+
+  .asset-apply,
+  .asset-delete  {
+    .m-l-sm;
+  }
+
+  .asset-preview {
+    flex: 1;
+    .m-l-sm;
+  }
+
+  .asset-selected {
+    flex: 0 0 1em;
+  }
+}
+
 .big-logo-background {
   background-color: @gray;
 }

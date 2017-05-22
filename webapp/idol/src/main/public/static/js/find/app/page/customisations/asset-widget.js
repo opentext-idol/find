@@ -1,49 +1,23 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
     'backbone',
     'dropzone',
-    'find/app/page/customisations/collection-dropdown-view',
-    'find/app/util/confirm-view',
+    'find/app/page/customisations/asset-viewer',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/customisations/asset-widget.html'
-], function(Backbone, Dropzone, CollectionDropdownView, Confirm, i18n, template) {
+], function(Backbone, Dropzone, AssetViewer, i18n, template) {
     'use strict';
-
-    const BASE_URL = '/api/admin/customisation/assets/';
 
     return Backbone.View.extend({
 
-        className: 'col-sm-4',
+        className: 'col-md-12 col-lg-4',
 
         template: _.template(template),
         headerTemplate: _.template('<option value=""><%-i18n["customisations.selectFile"]%></option>'),
-
-        events: {
-            'click .delete-asset': function() {
-                var file = this.dropdownView.getValue();
-
-                new Confirm({
-                    cancelClass: 'btn-white',
-                    cancelIcon: '',
-                    cancelText: i18n['app.cancel'],
-                    hiddenEvent: 'hidden.bs.modal',
-                    message: i18n['customisations.delete.message'](file),
-                    okText: i18n['app.button.delete'],
-                    okClass: 'btn-danger',
-                    okIcon: '',
-                    title: i18n['customisations.delete.title'],
-                    okHandler: _.bind(function () {
-                        this.collection.get(file).destroy({
-                            wait: true
-                        });
-                    }, this)
-                });
-            }
-        },
 
         initialize: function(options) {
             this.description = options.description;
@@ -56,11 +30,11 @@ define([
 
             this.url = _.result(this.collection, 'url');
 
-            this.dropdownView = new CollectionDropdownView({
+            this.assetViewer = new AssetViewer({
                 collection: this.collection,
-                headerHtml: this.headerTemplate({i18n: i18n}),
-                textAttribute: 'id',
-                valueAttribute: 'id'
+                imageClass: this.imageClass,
+                height: this.height,
+                width: this.width
             });
         },
 
@@ -74,8 +48,7 @@ define([
                 width: this.width
             }));
 
-            this.$image = this.$('.asset-image');
-            this.$deleteAsset = this.$('.delete-asset').tooltip();
+            this.assetViewer.setElement(this.$('.asset-viewer')).render();
 
             var width = this.width;
             var height = this.height;
@@ -128,24 +101,10 @@ define([
                     })
                 }
             });
-
-            this.dropdownView.render();
-            this.$('.asset-dropdown').prepend(this.dropdownView.el);
-
-            this.listenTo(this.dropdownView, 'change', function(value) {
-                if (value === '') {
-                    this.$image.css('background-image', '');
-                    this.$deleteAsset.addClass('hidden');
-                }
-                else {
-                    this.$image.css('background-image', 'url(' + this.url + '/' + encodeURIComponent(value) + ')');
-                    this.$deleteAsset.removeClass('hidden');
-                }
-            });
         },
 
         remove: function() {
-            this.$deleteAsset.tooltip('destroy');
+            this.assetViewer.remove();
 
             Backbone.View.prototype.remove.apply(this, arguments);
         }
