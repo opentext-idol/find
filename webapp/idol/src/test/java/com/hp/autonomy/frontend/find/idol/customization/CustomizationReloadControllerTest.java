@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.customization;
 
-import com.hp.autonomy.frontend.find.core.customization.CssGenerationException;
+import com.hp.autonomy.frontend.find.core.customization.style.CssGenerationException;
 import com.hp.autonomy.frontend.find.core.customization.ReloadableCustomizationComponent;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.FindController;
