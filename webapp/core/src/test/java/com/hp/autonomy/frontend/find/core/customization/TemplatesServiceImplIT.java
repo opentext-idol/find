@@ -5,7 +5,6 @@
 
 package com.hp.autonomy.frontend.find.core.customization;
 
-import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.CustomizationConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.Template;
 import com.hp.autonomy.frontend.find.core.configuration.TemplatesConfig;
@@ -43,9 +42,9 @@ public class TemplatesServiceImplIT {
     ));
 
     @Mock
-    private ConfigService<TemplatesConfig> configService;
+    private CustomizationConfigService<TemplatesConfig> configService;
 
-    private TemplatesService templatesService;
+    private TemplatesServiceImpl templatesService;
 
     @Before
     public void setUp() throws IOException, TemplateNotFoundException {
@@ -94,7 +93,7 @@ public class TemplatesServiceImplIT {
     }
 
     @Test
-    public void reloadTemplates() throws IOException, TemplateNotFoundException {
+    public void reloadTemplates() throws Exception {
         final TemplatesConfig secondConfig = TemplatesConfig.builder()
                 .previewPanel(Arrays.asList(
                         template("animal.html"),
@@ -110,7 +109,7 @@ public class TemplatesServiceImplIT {
                 .thenReturn(secondConfig);
 
         templatesService.loadTemplates();
-        templatesService.loadTemplates();
+        templatesService.reload();
 
         final Templates templatesAndLastModified = templatesService.getTemplates();
         assertThat(templatesAndLastModified.getLastModified(), not(nullValue()));

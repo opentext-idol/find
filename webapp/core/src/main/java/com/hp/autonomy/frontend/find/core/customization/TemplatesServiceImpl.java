@@ -6,7 +6,6 @@
 package com.hp.autonomy.frontend.find.core.customization;
 
 import com.google.common.collect.ImmutableMap;
-import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.CustomizationConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService;
 import com.hp.autonomy.frontend.find.core.configuration.Template;
@@ -31,16 +30,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-class TemplatesServiceImpl implements TemplatesService {
+class TemplatesServiceImpl implements TemplatesService, ReloadableCustomizationComponent {
     static final String DIRECTORY_NAME = "templates";
 
     private final AtomicReference<Templates> cachedTemplates = new AtomicReference<>(null);
 
-    private final ConfigService<TemplatesConfig> configService;
+    private final CustomizationConfigService<TemplatesConfig> configService;
     private final Path directoryPath;
 
     public TemplatesServiceImpl(
-            final ConfigService<TemplatesConfig> configService,
+            final CustomizationConfigService<TemplatesConfig> configService,
             @Value("${" + FindConfigFileService.CONFIG_FILE_LOCATION + '}') final String homeDirectory
     ) {
         this.configService = configService;
@@ -96,5 +95,11 @@ class TemplatesServiceImpl implements TemplatesService {
     public Templates getTemplates() {
         return Optional.ofNullable(cachedTemplates.get())
                 .orElseThrow(() -> new IllegalStateException("Templates service not initialised"));
+    }
+
+    @Override
+    public void reload() throws Exception {
+        configService.init();
+        loadTemplates();
     }
 }
