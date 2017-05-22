@@ -5,7 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.web;
 
-import com.hp.autonomy.frontend.find.core.customization.StyleSheetService;
+import com.hp.autonomy.frontend.find.core.customization.style.StyleSheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

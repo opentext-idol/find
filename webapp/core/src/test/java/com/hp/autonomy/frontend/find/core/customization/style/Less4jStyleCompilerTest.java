@@ -1,9 +1,9 @@
 /*
- * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.customization;
+package com.hp.autonomy.frontend.find.core.customization.style;
 
 import com.github.sommeri.less4j.LessCompiler;
 import com.github.sommeri.less4j.core.DefaultLessCompiler;
@@ -18,9 +18,7 @@ import java.util.HashMap;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Less4jStyleCompilerTest {
@@ -28,7 +26,7 @@ public class Less4jStyleCompilerTest {
     @Mock
     private DefaultLessCompiler lessCompiler;
     @Mock
-    private com.github.sommeri.less4j.LessCompiler.Configuration lessCompilerConfig;
+    private LessCompiler.Configuration lessCompilerConfig;
     @Mock
     private LessCompiler.CompilationResult result;
 

@@ -3,9 +3,9 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.idol.customization;
+package com.hp.autonomy.frontend.find.idol.customization.templates;
 
-import com.hp.autonomy.frontend.find.core.customization.TemplatesController;
+import com.hp.autonomy.frontend.find.core.customization.templates.TemplatesController;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.junit.Test;
 import org.springframework.http.MediaType;

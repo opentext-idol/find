@@ -3,13 +3,14 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.customization;
+package com.hp.autonomy.frontend.find.core.customization.templates;
 
 import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.find.core.configuration.CustomizationConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService;
 import com.hp.autonomy.frontend.find.core.configuration.Template;
 import com.hp.autonomy.frontend.find.core.configuration.TemplatesConfig;
+import com.hp.autonomy.frontend.find.core.customization.ReloadableCustomizationComponent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
