@@ -11,7 +11,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryControllerTest;
 import com.hp.autonomy.frontend.find.idol.dashboards.Dashboard;
-import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
+import com.hp.autonomy.frontend.find.idol.dashboards.DashboardConfig;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.ResultsListWidget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearch;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchConfig;
@@ -54,10 +54,10 @@ public class IdolSavedQueryControllerTest extends SavedQueryControllerTest<IdolQ
     private IdolQueryRequestBuilder queryRequestBuilder;
 
     @Mock
-    private ConfigService<IdolDashboardConfig> idolDashboardConfigService;
+    private ConfigService<DashboardConfig> idolDashboardConfigService;
 
     @Mock
-    private IdolDashboardConfig idolDashboardConfig;
+    private DashboardConfig dashboardConfig;
     private SavedQuery savedQuery;
 
     private List<Dashboard> mockQueryDashboard;
@@ -78,8 +78,8 @@ public class IdolSavedQueryControllerTest extends SavedQueryControllerTest<IdolQ
         when(queryRequestBuilder.queryRestrictions(any())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.maxResults(anyInt())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.queryType(any())).thenReturn(queryRequestBuilder);
-        when(idolDashboardConfigService.getConfig()).thenReturn(idolDashboardConfig);
-        when(idolDashboardConfig.getDashboards()).thenReturn(Collections.emptyList());
+        when(idolDashboardConfigService.getConfig()).thenReturn(dashboardConfig);
+        when(dashboardConfig.getDashboards()).thenReturn(Collections.emptyList());
 
         return new IdolSavedQueryController(savedQueryService, idolDocumentsService, fieldTextParser, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, idolDashboardConfigService);
     }
@@ -116,7 +116,7 @@ public class IdolSavedQueryControllerTest extends SavedQueryControllerTest<IdolQ
 
     @Test
     public void get() {
-        when(idolDashboardConfig.getDashboards()).thenReturn(mockQueryDashboard);
+        when(dashboardConfig.getDashboards()).thenReturn(mockQueryDashboard);
 
         when(savedQueryService.getDashboardSearch(savedQuery.getId())).thenReturn(savedQuery);
 
@@ -126,7 +126,7 @@ public class IdolSavedQueryControllerTest extends SavedQueryControllerTest<IdolQ
 
     @Test
     public void getWhenSearchDoesNotExist() throws Exception {
-        when(idolDashboardConfig.getDashboards()).thenReturn(mockQueryDashboard);
+        when(dashboardConfig.getDashboards()).thenReturn(mockQueryDashboard);
 
         when(savedQueryService.getDashboardSearch(any(long.class))).thenReturn(null);
 

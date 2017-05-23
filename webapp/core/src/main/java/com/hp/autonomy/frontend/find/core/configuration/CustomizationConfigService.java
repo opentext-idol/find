@@ -21,19 +21,19 @@ public abstract class CustomizationConfigService<T extends Config<T>> extends Ba
     private final T emptyConfig;
 
     protected CustomizationConfigService(
-            final String configFileName,
-            final String defaultFileName,
-            final Class<T> configClass,
-            final T emptyConfig,
-            final Jackson2ObjectMapperBuilder objectMapperBuilder
+        final String configFileName,
+        final String defaultFileName,
+        final Class<T> configClass,
+        final T emptyConfig,
+        final Jackson2ObjectMapperBuilder objectMapperBuilder
     ) {
         this.configClass = configClass;
         this.emptyConfig = emptyConfig;
 
         final ObjectMapper objectMapper = objectMapperBuilder
-                .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
-                .createXmlMapper(false)
-                .build();
+            .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
+            .createXmlMapper(false)
+            .build();
 
         setMapper(objectMapper);
         setConfigFileLocation(FindConfigFileService.CONFIG_FILE_LOCATION);
@@ -42,10 +42,10 @@ public abstract class CustomizationConfigService<T extends Config<T>> extends Ba
     }
 
     protected CustomizationConfigService(
-            final String configFileName,
-            final String defaultFileName,
-            final Class<T> configClass,
-            final T emptyConfig
+        final String configFileName,
+        final String defaultFileName,
+        final Class<T> configClass,
+        final T emptyConfig
     ) {
         this(configFileName, defaultFileName, configClass, emptyConfig, new Jackson2ObjectMapperBuilder());
     }

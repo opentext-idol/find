@@ -7,8 +7,6 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
 import com.hp.autonomy.user.UserRoles;
 import com.hp.autonomy.user.UserService;
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -26,7 +23,7 @@ import java.util.Collection;
 
 import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizer.PRE_AUTHENTICATED_ROLES_PROPERTY_KEY;
 import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizer.REVERSE_PROXY_PROPERTY_KEY;
-import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizerTest.GrantedAuthorityMatcher.authority;
+import static com.hp.autonomy.frontend.find.idol.beanconfiguration.GrantedAuthorityMatcher.authority;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -87,31 +84,6 @@ public class ReverseProxyIdolSecurityCustomizerTest {
                 .orElseThrow(() -> new AssertionError("AuthenticationProvider did not authenticate"));
 
         assertThat(authentication.getAuthorities(), contains(authority("FindUser"), authority("FindBI")));
-    }
-
-    static class GrantedAuthorityMatcher extends TypeSafeMatcher<GrantedAuthority> {
-
-        private final String authority;
-
-        private GrantedAuthorityMatcher(final String authority) {
-            super();
-
-            this.authority = authority;
-        }
-
-        static GrantedAuthorityMatcher authority(final String authority) {
-            return new GrantedAuthorityMatcher(authority);
-        }
-
-        @Override
-        protected boolean matchesSafely(final GrantedAuthority item) {
-            return item.getAuthority().equals(authority);
-        }
-
-        @Override
-        public void describeTo(final Description description) {
-            description.appendText(authority);
-        }
     }
 
 

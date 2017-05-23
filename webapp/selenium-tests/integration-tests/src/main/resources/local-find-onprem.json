@@ -8,7 +8,8 @@
     "browsers": [
       "chrome"
     ],
-    "url": "http://localhost:4444/wd/hub"
+    "url": "http://localhost:4444/wd/hub",
+    "timeout": 1
   },
   "users": {
     "bifhi": {

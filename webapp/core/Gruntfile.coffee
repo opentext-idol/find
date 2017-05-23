@@ -79,15 +79,6 @@ module.exports = (grunt) ->
           template: jasmineRequireTemplate
           templateOptions:
             requireConfigFile: browserTestRequireConfig
-    less:
-      build:
-        files:
-          'target/classes/static/css/bootstrap.css': 'src/main/less/bootstrap.less',
-          'target/classes/static/css/compiled.css': 'src/main/less/app.less',
-          'target/classes/static/css/login.css': 'src/main/less/login.less',
-          'target/classes/static/css/result-highlighting.css': 'src/main/less/result-highlighting.less'
-      options:
-        strictMath: true
     watch:
       buildBrowserTest:
         files: watchFiles
@@ -108,7 +99,6 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-connect'
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-watch'
-  grunt.loadNpmTasks 'grunt-contrib-less'
   grunt.loadNpmTasks 'grunt-peg'
 
   grunt.registerTask 'default', ['test']

@@ -50,7 +50,6 @@ import java.util.Optional;
 @JsonDeserialize(builder = IdolFindConfigBuilder.class)
 public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements UserServiceConfig, IdolSearchCapable, FindConfig<IdolFindConfig, IdolFindConfigBuilder> {
     private static final String SECTION = "Find Config Root";
-
     private final CommunityAuthentication login;
     private final ServerConfig content;
     private final QueryManipulation queryManipulation;
@@ -74,31 +73,31 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     @Override
     public IdolFindConfig merge(final IdolFindConfig maybeOther) {
         return Optional.ofNullable(maybeOther)
-                .map(other -> builder()
-                        .content(content == null ? other.content : content.merge(other.content))
-                        .login(login == null ? other.login : login.merge(other.login))
-                        .queryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
-                        .view(view == null ? other.view : view.merge(other.view))
-                        .answerServer(answerServer == null ? other.answerServer : answerServer.merge(other.answerServer))
-                        .savedSearchConfig(savedSearchConfig == null ? other.savedSearchConfig : savedSearchConfig.merge(other.savedSearchConfig))
-                        .mmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
-                        .uiCustomization(uiCustomization == null ? other.uiCustomization : uiCustomization.merge(other.uiCustomization))
-                        .fieldsInfo(fieldsInfo == null ? other.fieldsInfo : fieldsInfo.merge(other.fieldsInfo))
-                        .map(map == null ? other.map : map.merge(other.map))
-                        .trending(trending == null ? other.trending : trending.merge(other.trending))
-                        .minScore(minScore == null ? other.minScore : minScore)
-                        .statsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
-                        .topicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
-                        .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(maybeOther.export)).orElse(maybeOther.export))
-                        .build())
-                .orElse(this);
+            .map(other -> builder()
+                .content(content == null ? other.content : content.merge(other.content))
+                .login(login == null ? other.login : login.merge(other.login))
+                .queryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
+                .view(view == null ? other.view : view.merge(other.view))
+                .answerServer(answerServer == null ? other.answerServer : answerServer.merge(other.answerServer))
+                .savedSearchConfig(savedSearchConfig == null ? other.savedSearchConfig : savedSearchConfig.merge(other.savedSearchConfig))
+                .mmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
+                .uiCustomization(uiCustomization == null ? other.uiCustomization : uiCustomization.merge(other.uiCustomization))
+                .fieldsInfo(fieldsInfo == null ? other.fieldsInfo : fieldsInfo.merge(other.fieldsInfo))
+                .map(map == null ? other.map : map.merge(other.map))
+                .trending(trending == null ? other.trending : trending.merge(other.trending))
+                .minScore(minScore == null ? other.minScore : minScore)
+                .statsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
+                .topicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
+                .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(maybeOther.export)).orElse(maybeOther.export))
+                .build())
+            .orElse(this);
     }
 
     // somewhat messy workaround for the fact that default method does not handle @JsonProperty annotations
     @Override
     public Map<String, OptionalConfigurationComponent<?>> getValidationMap() {
         final Map<String, OptionalConfigurationComponent<?>> validationMap = super.getValidationMap();
-        if (validationMap.containsKey("savedSearchConfig")) {
+        if(validationMap.containsKey("savedSearchConfig")) {
             validationMap.put("savedSearches", validationMap.remove("savedSearchConfig"));
         }
         return validationMap;
@@ -119,15 +118,15 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     @Override
     public IdolFindConfig withoutDefaultLogin() {
         return toBuilder()
-                .login(login.withoutDefaultLogin())
-                .build();
+            .login(login.withoutDefaultLogin())
+            .build();
     }
 
     @Override
     public IdolFindConfig generateDefaultLogin() {
         return toBuilder()
-                .login(login.generateDefaultLogin())
-                .build();
+            .login(login.generateDefaultLogin())
+            .build();
     }
 
     @Override
@@ -203,8 +202,8 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
 
     private <T extends OptionalConfigurationComponent<T>> Boolean isOptionalComponentEnabled(final OptionalConfigurationComponent<T> maybeComponent) {
         return Optional.ofNullable(maybeComponent)
-                .map(component -> BooleanUtils.isTrue(component.getEnabled()))
-                .orElse(false);
+            .map(component -> BooleanUtils.isTrue(component.getEnabled()))
+            .orElse(false);
     }
 
     private void addEntriesToProductMap(final Map<String, Map<Integer, String>> productMap,
@@ -214,8 +213,8 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         productMap.compute(hostName, (key, maybeMap) -> {
             final Map<Integer, String> map = Optional.ofNullable(maybeMap).orElse(new HashMap<>());
             Arrays.stream(ports)
-                    .filter(Objects::nonNull)
-                    .forEach(port -> map.put(port, productName));
+                .filter(Objects::nonNull)
+                .forEach(port -> map.put(port, productName));
             return map;
         });
     }

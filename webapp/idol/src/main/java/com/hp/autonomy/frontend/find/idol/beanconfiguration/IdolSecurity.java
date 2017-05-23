@@ -42,7 +42,9 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(final WebSecurity web) {
-        web.ignoring().antMatchers("/static-*/**");
+        web.ignoring()
+            .antMatchers("/static-*/**")
+            .antMatchers("/customization/**");
     }
 
     @SuppressWarnings("ProhibitedExceptionDeclared")

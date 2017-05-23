@@ -15,7 +15,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery.Builder;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
-import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
+import com.hp.autonomy.frontend.find.idol.dashboards.DashboardConfig;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.DatasourceDependentWidget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchDatasource;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @RestController
 @ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
 class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
-    private final ConfigService<IdolDashboardConfig> dashboardConfigService;
+    private final ConfigService<DashboardConfig> dashboardConfigService;
 
     @SuppressWarnings({"TypeMayBeWeakened", "ConstructorWithTooManyParameters"})
     @Autowired
@@ -50,7 +50,7 @@ class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, St
                              final FieldTextParser fieldTextParser,
                              final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
                              final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory,
-                             final ConfigService<IdolDashboardConfig> dashboardConfigService) {
+                             final ConfigService<DashboardConfig> dashboardConfigService) {
         super(service, documentsService, fieldTextParser, queryRestrictionsBuilderFactory, queryRequestBuilderFactory);
         this.dashboardConfigService = dashboardConfigService;
     }

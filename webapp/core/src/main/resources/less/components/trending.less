@@ -1,0 +1,55 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+.graph-area {
+  cursor: move
+}
+
+.guide-line {
+  opacity: 0.5;
+  stroke: @black;
+  stroke-dasharray: 3, 3;
+}
+
+.legend-text p {
+  font-size: 12px;
+  line-height: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legend-text.bold p {
+  font-size: 15px;
+}
+
+.tick p {
+  text-align: center;
+}
+
+.trending-chart {
+  height: ~'calc(100vh - 260px)';
+}
+
+.trending-snap-to-now {
+  .inline-block;
+}
+
+.trending-range-selector {
+  .input-group {
+    margin-right: 5px;
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+}
+
+.x-axis path,
+.y-axis path,
+.x-axis line,
+.y-axis line {
+  fill: none;
+  stroke: black;
+  shape-rendering: cripsEdges;
+}

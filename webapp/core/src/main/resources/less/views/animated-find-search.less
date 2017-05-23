@@ -1,0 +1,124 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+.animated-container {
+  .absolute;
+
+  top: ~'calc(10px - @{navBarHeight})';
+  transition: @transitAll;
+
+  .find-form {
+    transition-property: width;
+    transition: @transitAll;
+  }
+
+  .find-input {
+    border-bottom: none;
+    font-size: @fontSizeLarge;
+    transition: @transitAll;
+  }
+}
+
+.find-banner-container {
+  background: @green2 url('@{staticResourcesPath}/img/Find_banner.png');
+  height: 125px;
+}
+
+.find {
+  .text-center;
+
+  z-index: @findInputZIndex;
+}
+
+.find-logo {
+  font-size: 25px;
+  font-weight: bolder;
+}
+
+.find-logo-large {
+  .inline-block;
+
+  background: url('@{staticResourcesPath}/img/Find_Logo_lge.png') no-repeat;
+  color: @blue1;
+  font-size: 90px;
+  height: 45px;
+  vertical-align: middle;
+  width: 240px;
+}
+
+.find-logo-small {
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-image: url('@{staticResourcesPath}/img/Find_Logo_sml.png');
+  height: 20px;
+  width: 100px;
+  &.side-nav {
+    float: none;
+    padding-right: 165px;
+    margin-top: 0;
+  }
+}
+
+.hp-logo-footer {
+  background-size: 140px 55px;
+  background-repeat: no-repeat;
+  background-image: url('@{staticResourcesPath}/img/HPE_logo.png');
+  bottom: 20px;
+  height: 55px;
+  left: ~'calc(50% - @{custom8})';
+  position: fixed;
+  width: 140px;
+}
+
+.reverse-animated-container {
+  margin-top: 15%;
+  transition: @transitAll;
+
+  .find-form {
+    transition-property: width;
+    transition: @transitAll;
+  }
+
+  .find-input {
+    .italic;
+    .p-l-sm;
+
+    border: 2px solid @grey !important;
+    font-family: inherit;
+    font-size: 23px !important;
+    height: @findInputHeight !important;
+    transition: @transitAll;
+  }
+
+  .search-controls .find-input-button {
+    height: @findInputHeight;
+  }
+}
+
+.reverse-animated-container .find-form:focus,
+.reverse-animated-container .find-input:focus,
+.animated-container .find-form:focus,
+.animated-container .find-input:focus {
+  outline: @nil;
+}
+
+.reverse-animated-container .find-input-button,
+.reverse-animated-container .find-input-button:hover {
+  border: 2px solid @grey;
+}
+
+//Media queries
+@media @xsmWidthScreen {
+  .reverse-animated-container .find-form {
+    width: 100%;
+  }
+}
+
+@media @mWidthScreen {
+  .find-input {
+    height: 25px;
+    font-size: @fontSizeExtraLarge;
+  }
+}

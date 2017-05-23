@@ -1,0 +1,90 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+.find-form {
+  .text-left;
+  .relative;
+
+  .twitter-typeahead {
+    margin-bottom: 5px;
+    width: 100%;
+  }
+
+  .tt-menu {
+    background: @white;
+    border: 2px solid @grey;
+    margin-top: 3px;
+    padding: @custom6 @nil;
+    width: 100%;
+  }
+
+  .tt-suggestion {
+    padding: @nil @custom6;
+    cursor: pointer;
+  }
+
+  .tt-suggestion.tt-cursor {
+    background: @grey15;
+  }
+}
+
+input.find-input {
+  line-height: initial;
+  padding-right: 26px;
+  text-indent: 3px;
+  width: 100%;
+}
+
+.search-controls {
+  .find-input[type="text"],
+  .find-input[type="text"]:focus {
+    .no-box-shadow;
+
+    border-color: transparent;
+    border-radius: @nil;
+    height: @custom9;
+    padding-right: @custom3;
+  }
+
+  input::-webkit-input-placeholder,
+  input::-moz-placeholder {
+    color: @blue1;
+    opacity: 0.5;
+  }
+
+  .find-input-button {
+    .absolute;
+
+    height: @custom9;
+    right: @nil;
+    top: @nil;
+  }
+
+  .find-input-button,
+  .find-input-button:hover {
+    .no-box-shadow;
+
+    border-left: 1px solid @grey;
+    border: @nil;
+  }
+}
+
+:-moz-placeholder {
+  color: @dark-gray;
+  opacity: 1;
+}
+
+::-moz-placeholder {
+  color: @dark-gray;
+  opacity: 1;
+}
+
+:-ms-input-placeholder {
+  color: @dark-gray;
+}
+
+::-webkit-input-placeholder {
+  color: @dark-gray;
+}

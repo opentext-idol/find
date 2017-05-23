@@ -13,13 +13,13 @@ import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.core.web.MvcConstants;
-import com.hp.autonomy.frontend.find.idol.applications.IdolCustomApplication;
-import com.hp.autonomy.frontend.find.idol.applications.IdolCustomApplicationsConfig;
+import com.hp.autonomy.frontend.find.idol.applications.CustomApplication;
+import com.hp.autonomy.frontend.find.idol.applications.CustomApplicationsConfig;
 import com.hp.autonomy.frontend.find.idol.authentication.FindCommunityRole;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
-import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
+import com.hp.autonomy.frontend.find.idol.dashboards.DashboardConfig;
 import com.hp.autonomy.frontend.find.idol.export.service.IdolMetadataNode;
 import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
@@ -38,8 +38,8 @@ import java.util.stream.Collectors;
 @Controller
 public class IdolFindController extends FindController<IdolFindConfig, IdolFindConfigBuilder> {
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
-    private final ConfigService<IdolDashboardConfig> dashConfig;
-    private final ConfigService<IdolCustomApplicationsConfig> appsConfig;
+    private final ConfigService<DashboardConfig> dashConfig;
+    private final ConfigService<CustomApplicationsConfig> appsConfig;
     private final ConfigService<TemplatesConfig> templatesConfig;
 
     @SuppressWarnings({"TypeMayBeWeakened", "ConstructorWithTooManyParameters"})
@@ -48,8 +48,8 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
                                  final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
                                  final ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService,
                                  final ConfigService<IdolFindConfig> configService,
-                                 final ConfigService<IdolDashboardConfig> dashConfig,
-                                 final ConfigService<IdolCustomApplicationsConfig> appsConfig,
+                                 final ConfigService<DashboardConfig> dashConfig,
+                                 final ConfigService<CustomApplicationsConfig> appsConfig,
                                  final FieldDisplayNameGenerator fieldDisplayNameGenerator,
                                  final ConfigService<TemplatesConfig> templatesConfig) {
         super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService, fieldDisplayNameGenerator);
@@ -63,10 +63,10 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
     protected Map<String, Object> getPublicConfig() {
         final Map<String, Object> publicConfig = new HashMap<>();
         final IdolFindConfig config = configService.getConfig();
-        final List<IdolCustomApplication> enabledApps = appsConfig.getConfig()
+        final List<CustomApplication> enabledApps = appsConfig.getConfig()
                 .getApplications()
                 .stream()
-                .filter(IdolCustomApplication::getEnabled)
+                .filter(CustomApplication::getEnabled)
                 .collect(Collectors.toList());
 
         final MMAP mmap = config.getMmap();
