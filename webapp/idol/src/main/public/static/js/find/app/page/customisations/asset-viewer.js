@@ -53,16 +53,18 @@ define([
 
             this.pageCollection = new Backbone.Collection();
 
+            const currentAsset = configuration().assetsConfig.assets[options.type];
+            
             this.assetList = new ListView({
                 collection: this.collection,
                 headerHtml: defaultAssetTemplate({
+                    currentAsset: currentAsset,
                     height: this.height,
                     imageClass: options.imageClass,
                     i18n: i18n,
                     width: this.width,
                     data: {
                         deletable: false,
-                        id: 'DEFAULT',
                         url: '/static-' + configuration().commit + options.defaultImage
                     }
                 }),
@@ -70,6 +72,7 @@ define([
                     className: 'asset',
                     template: this.assetTemplate,
                     templateOptions: {
+                        currentAsset: currentAsset,
                         height: this.height,
                         imageClass: options.imageClass,
                         i18n: i18n,
@@ -77,7 +80,21 @@ define([
                         url: _.result(this.collection, 'url')
                     }
                 }
-            })
+            });
+
+            this.listenTo(this.collection, 'update', function() {
+                const currentAssetExists = Boolean(this.collection.find(function(model) {
+                    return currentAsset === model.id
+                }));
+
+                this.$('.asset:first-child i').toggleClass('hide', currentAssetExists);
+            });
+
+            this.listenTo(this.collection, 'remove', function(model) {
+                if (currentAsset === model.id) {
+                    this.$('.asset:first-child i').removeClass('hide');
+                }
+            });
         },
 
         render: function() {

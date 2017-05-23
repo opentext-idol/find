@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.customisations;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.AbstractConfig;
@@ -24,6 +25,8 @@ import java.util.Map;
 @JsonDeserialize(builder = AssetConfig.AssetConfigBuilder.class)
 public class AssetConfig extends AbstractConfig<AssetConfig> {
 
+    // annotate this to avoid need for getter
+    @JsonProperty
     private final Map<AssetType, String> assets;
 
     String getAssetPath(final AssetType type) {
@@ -41,10 +44,6 @@ public class AssetConfig extends AbstractConfig<AssetConfig> {
     @Override
     public void basicValidate(final String section) throws ConfigException {
         
-    }
-
-    Map<AssetType, String> getAssets() {
-        return Collections.unmodifiableMap(assets);
     }
 
     @SuppressWarnings("WeakerAccess")

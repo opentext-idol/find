@@ -24,7 +24,8 @@ public enum MvcConstants {
     METADATA_FIELD_INFO("metadataFieldInfo"),
     ANSWER_SERVER_ENABLED("answerServerEnabled"),
     PUBLIC_INDEXES_ENABLED("publicIndexesEnabled"),
-    TEMPLATES_CONFIG("templatesConfig");
+    TEMPLATES_CONFIG("templatesConfig"),
+    ASSETS_CONFIG("assetsConfig");
 
     private final String value;
 

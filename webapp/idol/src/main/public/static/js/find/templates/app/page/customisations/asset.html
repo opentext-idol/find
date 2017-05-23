@@ -1,4 +1,4 @@
-<div class="asset-selected"><i class="fa fa-check"></i></div>
+<div class="asset-selected"><i class="fa fa-check <%- (data.id !== currentAsset) ? 'hide' : '' %>"></i></div>
 <div class="asset-preview" ><div class="<%-imageClass%>" style="height: <%- height %>px;
                 width: <%- width %>px;
                 background-image: url('<%- data.url || (url + '/' + encodeURIComponent(data.id)) %>')"></div></div>

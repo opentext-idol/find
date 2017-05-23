@@ -23,7 +23,6 @@ define([
             this.description = options.description;
             this.height = options.height;
             this.title = options.title;
-            this.type = options.type;
             this.width = options.width;
 
             this.imageClass = options.imageClass || '';
@@ -33,8 +32,9 @@ define([
             this.assetViewer = new AssetViewer({
                 collection: this.collection,
                 defaultImage: options.defaultImage,
-                imageClass: this.imageClass,
                 height: this.height,
+                imageClass: this.imageClass,
+                type: options.type,
                 width: this.width
             });
         },
