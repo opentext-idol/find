@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
 import com.hp.autonomy.searchcomponents.core.test.CoreTestContext;
 import org.apache.commons.io.IOUtils;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -22,6 +23,7 @@ import java.util.Collections;
 import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CLASSES_PROPERTY;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.*;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
@@ -49,18 +51,20 @@ public class TemplatesConfigTest extends ConfigurationComponentTest<TemplatesCon
                 .field("some_idol_field")
                 .values(Collections.singletonList("some_value"))
                 .build();
+
         final Trigger trigger2 = Trigger.builder()
                 .field("some_other_idol_field")
                 .values(Arrays.asList("some_value", "some_other_value"))
                 .build();
+
         final Template template = Template.builder()
                 .file("some_file.tmpl")
                 .triggers(Arrays.asList(trigger1, trigger2))
                 .build();
 
         return TemplatesConfig.builder()
-                .resultsList(Collections.singletonList(template))
-                .previewPanel(Collections.singletonList(template))
+                .searchResultTemplate(template)
+                .previewPanelTemplate(template)
                 .build();
     }
 
@@ -71,12 +75,12 @@ public class TemplatesConfigTest extends ConfigurationComponentTest<TemplatesCon
 
     @Override
     protected void validateJson(final JsonContent<TemplatesConfig> jsonContent) {
-        jsonContent.assertThat().hasJsonPathStringValue("@.resultsList[0].file", "some_file.tmpl");
-        jsonContent.assertThat().hasJsonPathStringValue("@.resultsList[0].triggers[0].field", "some_idol_field");
-        jsonContent.assertThat().hasJsonPathStringValue("@.resultsList[0].triggers[0].values[0]", "some_value");
-        jsonContent.assertThat().hasJsonPathStringValue("@.resultsList[0].triggers[1].field", "some_other_idol_field");
-        jsonContent.assertThat().hasJsonPathStringValue("@.resultsList[0].triggers[1].values[0]", "some_value");
-        jsonContent.assertThat().hasJsonPathStringValue("@.resultsList[0].triggers[1].values[1]", "some_other_value");jsonContent.assertThat().hasJsonPathStringValue("@.resultsList[0].file", "some_file.tmpl");
+        jsonContent.assertThat().hasJsonPathStringValue("@.searchResult[0].file", "some_file.tmpl");
+        jsonContent.assertThat().hasJsonPathStringValue("@.searchResult[0].triggers[0].field", "some_idol_field");
+        jsonContent.assertThat().hasJsonPathStringValue("@.searchResult[0].triggers[0].values[0]", "some_value");
+        jsonContent.assertThat().hasJsonPathStringValue("@.searchResult[0].triggers[1].field", "some_other_idol_field");
+        jsonContent.assertThat().hasJsonPathStringValue("@.searchResult[0].triggers[1].values[0]", "some_value");
+        jsonContent.assertThat().hasJsonPathStringValue("@.searchResult[0].triggers[1].values[1]", "some_other_value");jsonContent.assertThat().hasJsonPathStringValue("@.searchResult[0].file", "some_file.tmpl");
         jsonContent.assertThat().hasJsonPathStringValue("@.previewPanel[0].triggers[0].field", "some_idol_field");
         jsonContent.assertThat().hasJsonPathStringValue("@.previewPanel[0].triggers[0].values[0]", "some_value");
         jsonContent.assertThat().hasJsonPathStringValue("@.previewPanel[0].triggers[1].field", "some_other_idol_field");
@@ -86,9 +90,9 @@ public class TemplatesConfigTest extends ConfigurationComponentTest<TemplatesCon
 
     @Override
     protected void validateParsedComponent(final ObjectContent<TemplatesConfig> objectContent) {
-        assertThat(objectContent.getObject().getResultsList().get(0).getFile(), is("sometemplate.tmpl"));
-        assertThat(objectContent.getObject().getResultsList().get(0).getTriggers().get(0).getField(), is("some_idol_field"));
-        assertThat(objectContent.getObject().getResultsList().get(0).getTriggers().get(0).getValues(), hasItem("some_value"));
+        assertThat(objectContent.getObject().getSearchResult().get(0).getFile(), is("sometemplate.tmpl"));
+        assertThat(objectContent.getObject().getSearchResult().get(0).getTriggers().get(0).getField(), is("some_idol_field"));
+        assertThat(objectContent.getObject().getSearchResult().get(0).getTriggers().get(0).getValues(), hasItem("some_value"));
         assertThat(objectContent.getObject().getPreviewPanel().get(0).getFile(), is("sometemplate.tmpl"));
         assertThat(objectContent.getObject().getPreviewPanel().get(0).getTriggers().get(0).getField(), is("some_idol_field"));
         assertThat(objectContent.getObject().getPreviewPanel().get(0).getTriggers().get(0).getValues(), hasItem("some_value"));
@@ -96,7 +100,7 @@ public class TemplatesConfigTest extends ConfigurationComponentTest<TemplatesCon
 
     @Override
     protected void validateMergedComponent(final ObjectContent<TemplatesConfig> objectContent) {
-        assertThat(objectContent.getObject().getResultsList(), hasItem(Template.builder()
+        assertThat(objectContent.getObject().getSearchResult(), hasItem(Template.builder()
                 .file("some_file.tmpl")
                 .triggers(Arrays.asList(Trigger.builder()
                         .field("some_idol_field")
@@ -123,6 +127,21 @@ public class TemplatesConfigTest extends ConfigurationComponentTest<TemplatesCon
 
     @Override
     protected void validateString(final String s) {
-        assertTrue(s.contains("resultsList"));
+        assertTrue(s.contains("searchResult"));
+    }
+
+    @Test
+    public void listsTemplateFiles() {
+        final TemplatesConfig config = TemplatesConfig.builder()
+                .promotionTemplate(template("person.html"))
+                .searchResultTemplate(template("person.html"))
+                .searchResultTemplate(template("document.html"))
+                .build();
+
+        assertThat(config.listTemplateFiles(), containsInAnyOrder("person.html", "document.html"));
+    }
+
+    private Template template(final String fileName) {
+        return Template.builder().file(fileName).build();
     }
 }
