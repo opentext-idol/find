@@ -58,6 +58,7 @@ define([
                 headerHtml: defaultAssetTemplate({
                     height: this.height,
                     imageClass: options.imageClass,
+                    i18n: i18n,
                     width: this.width,
                     data: {
                         deletable: false,
@@ -71,6 +72,7 @@ define([
                     templateOptions: {
                         height: this.height,
                         imageClass: options.imageClass,
+                        i18n: i18n,
                         width: this.width,
                         url: _.result(this.collection, 'url')
                     }
