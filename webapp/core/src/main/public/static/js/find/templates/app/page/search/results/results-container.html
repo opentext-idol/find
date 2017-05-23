@@ -1,7 +1,4 @@
-<% var promoted = data.isPromotion ? 'promoted-document' : ''; %>
-<% var directAccessLink = data.directAccessLink ? 'direct-access' : ''; %>
-
-<div class="main-results-container m-b-sm <%-promoted%> <%-directAccessLink%>" data-cid="<%-model.cid %>">
+<div class="main-results-container m-b-sm <%-data.isPromotion ? 'promoted-document' : ''%>" data-cid="<%-model.cid %>">
     <span class="pull-left m-t-xs text-muted m-r-sm content-type">
         <i class="icomoon-file-<%-data.contentType%>"></i>
     </span>
@@ -12,15 +9,7 @@
                 <i class="hp-icon hp-fw hp-favorite"></i> <%-i18n['search.promoted']%>
             </span>
         <% } %>
-        <h4 class="pull-left m-b-nil m-t-xs result-header">
-        <% if (data.directAccessLink && href) {%>
-            <a class="pull-left m-b-nil m-t-xs result-header direct-access-title h4" href="<%= href %>" target="_blank">
-                <%- model.get('title') %>
-            </a>
-        <% } else { %>
-            <%- model.get('title') %>
-        <% } %>
-        </h4>
+        <h4 class="pull-left m-b-nil m-t-xs result-header"><%- model.get('title') %></h4>
         <span class="document-date pull-left m-t-xs m-l-xs">
             <%- data.date %>
         </span>
@@ -34,12 +23,9 @@
             <%= data.highlightedSummary %>
         </p>
         <span class="text-right results-small-links">
-            <% if (!data.staticPromotion) { %>
-                <a class="similar-documents-trigger result-container-control" role="button" tabindex="-1"><%-i18n['search.similarDocuments']%></a>
-            <% }
-            if (data.directAccessLink && data.enablePreview) { %>
-                <a class="preview-link result-container-control" role="button" tabindex="-1"><%-i18n['search.preview']%></a>
-            <% } %>
+            <a class="similar-documents-trigger result-container-control" role="button" tabindex="-1">
+                <%-i18n['search.similarDocuments']%>
+            </a>
         </span>
     </div>
 </div>

@@ -27,7 +27,8 @@ define([
     'i18n!find/nls/indexes'
 ], function(_, $, Backbone, addChangeListener, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
             ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, configuration,
-            generateErrorHtml, html, loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
+            generateErrorHtml, html, loadingSpinnerTemplate, moment, i18n, i18n_indexes
+) {
     'use strict';
 
     const SCROLL_INCREMENT = 30;
@@ -36,7 +37,7 @@ define([
     function infiniteScroll() {
         const resultsPresent = this.documentsCollection.size() > 0 && this.fetchStrategy.validateQuery(this.queryModel);
 
-        if(resultsPresent && this.loadingTracker.resultsFinished && !this.endOfResults) {
+        if (resultsPresent && this.loadingTracker.resultsFinished && !this.endOfResults) {
             this.start = this.maxResults + 1;
             this.maxResults += SCROLL_INCREMENT;
 
@@ -53,31 +54,25 @@ define([
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         messageTemplate: _.template('<div class="result-message span10"><%-message%></div>'),
 
-        events: function() {
-            const events = {
-                'click .document-detail-mode [data-cid]': function(e) {
-                    const $target = $(e.currentTarget);
-                    const cid = $target.data('cid');
-                    const isPromotion = $target.closest('.main-results-list').hasClass('promotions');
-                    const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
-                    const model = collection.get(cid);
-                    vent.navigateToDetailRoute(model);
-                },
-                'click .similar-documents-trigger': function(event) {
-                    event.stopPropagation();
-                    const cid = $(event.target).closest('[data-cid]').data('cid');
-                    let documentModel = this.documentsCollection.get(cid);
-                    if(!documentModel) {
-                        documentModel = this.promotionsCollection.get(cid);
-                    }
-                    vent.navigateToSuggestRoute(documentModel);
+        events: {
+            'click .preview-mode [data-cid]:not(.answered-question)': 'openPreview',
+            'click .document-detail-mode [data-cid]': function(e) {
+                const $target = $(e.currentTarget);
+                const cid = $target.data('cid');
+                const isPromotion = $target.closest('.main-results-list').hasClass('promotions');
+                const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
+                const model = collection.get(cid);
+                vent.navigateToDetailRoute(model);
+            },
+            'click .similar-documents-trigger': function(event) {
+                event.stopPropagation();
+                const cid = $(event.target).closest('[data-cid]').data('cid');
+                let documentModel = this.documentsCollection.get(cid);
+                if (!documentModel) {
+                    documentModel = this.promotionsCollection.get(cid);
                 }
-            };
-
-            const selector = configuration().directAccessLink ? '.preview-link' : '.preview-mode [data-cid]:not(.answered-question)';
-            events['click ' + selector] = 'openPreview';
-
-            return events;
+                vent.navigateToSuggestRoute(documentModel);
+            }
         },
 
         initialize: function(options) {
@@ -98,7 +93,7 @@ define([
             // Preview mode is enabled when a preview mode model is provided
             this.previewModeModel = options.previewModeModel;
 
-            if(this.indexesCollection) {
+            if (this.indexesCollection) {
                 this.selectedIndexesCollection = options.queryState.selectedIndexes;
             }
 
@@ -106,7 +101,7 @@ define([
                 config: resultsRendererConfig
             });
 
-            if(this.showPromotions) {
+            if (this.showPromotions) {
                 this.promotionsCollection = new PromotionsCollection();
             }
 
@@ -138,12 +133,12 @@ define([
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
 
             this.listenTo(this.scrollModel, 'change', function() {
-                if(this.$el.is(':visible') && this.scrollModel.get('scrollTop') > this.scrollModel.get('scrollHeight') - INFINITE_SCROLL_POSITION_PIXELS - this.scrollModel.get('innerHeight')) {
+                if (this.$el.is(':visible') && this.scrollModel.get('scrollTop') > this.scrollModel.get('scrollHeight') - INFINITE_SCROLL_POSITION_PIXELS - this.scrollModel.get('innerHeight')) {
                     this.infiniteScroll();
                 }
             });
 
-            if(this.previewModeModel) {
+            if (this.previewModeModel) {
                 this.listenTo(this.previewModeModel, 'change:document', this.updateSelectedDocument);
             }
         },
@@ -158,11 +153,11 @@ define([
             this.sortView.setElement(this.$('.sort-container')).render();
             this.resultsNumberView.setElement(this.$('.results-number-container')).render();
 
-            if(this.questionsView) {
+            if (this.questionsView) {
                 this.questionsView.setElement(this.$('.main-results-content .answered-questions')).render();
             }
 
-            if(this.showPromotions) {
+            if (this.showPromotions) {
                 this.listenTo(this.promotionsCollection, 'add', function(model) {
                     this.formatResult(model, true);
                 });
@@ -191,10 +186,12 @@ define([
 
                 this.endOfResults = this.maxResults >= this.documentsCollection.totalResults;
 
-                if(this.endOfResults && !this.documentsCollection.isEmpty()) {
-                    this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noMoreResults"]}));
-                } else if(this.documentsCollection.isEmpty()) {
-                    this.$('.main-results-content .results').append(this.messageTemplate({message: i18n["search.noResults"]}));
+                if (this.endOfResults && !this.documentsCollection.isEmpty()) {
+                    this.$('.main-results-content .results')
+                        .append(this.messageTemplate({message: i18n["search.noMoreResults"]}));
+                } else if (this.documentsCollection.isEmpty()) {
+                    this.$('.main-results-content .results')
+                        .append(this.messageTemplate({message: i18n["search.noResults"]}));
                 }
             });
 
@@ -204,7 +201,7 @@ define([
                 this.handleError(xhr);
             });
 
-            if(this.indexesCollection) {
+            if (this.indexesCollection) {
                 this.indexesCollection.currentRequest
                     .always(function() {
                         this.refreshResults();
@@ -213,11 +210,11 @@ define([
                 this.refreshResults();
             }
 
-            if(this.entityCollection) {
+            if (this.entityCollection) {
                 this.updateEntityHighlighting();
             }
 
-            if(this.previewModeModel) {
+            if (this.previewModeModel) {
                 this.$('.main-results-content').addClass('preview-mode');
                 this.updateSelectedDocument();
             } else {
@@ -226,8 +223,8 @@ define([
         },
 
         refreshResults: function() {
-            if(this.fetchStrategy.validateQuery(this.queryModel)) {
-                if(this.fetchStrategy.waitForIndexes(this.queryModel)) {
+            if (this.fetchStrategy.validateQuery(this.queryModel)) {
+                if (this.fetchStrategy.waitForIndexes(this.queryModel)) {
                     this.$loadingSpinner.addClass('hide');
                     this.$('.main-results-content .results')
                         .html(this.messageTemplate({message: i18n_indexes['search.error.noIndexes']}));
@@ -238,7 +235,7 @@ define([
                     this.loadData(false);
                     this.$('.main-results-content .promotions').empty();
 
-                    if(this.$loadingSpinner) {
+                    if (this.$loadingSpinner) {
                         this.$loadingSpinner.removeClass('hide');
                     }
                     this.toggleError(false);
@@ -248,7 +245,7 @@ define([
         },
 
         clearLoadingSpinner: function() {
-            if(this.loadingTracker.resultsFinished && this.loadingTracker.questionsFinished
+            if (this.loadingTracker.resultsFinished && this.loadingTracker.questionsFinished
                 && this.loadingTracker.promotionsFinished || !this.showPromotions) {
                 this.$loadingSpinner.addClass('hide');
             }
@@ -258,15 +255,15 @@ define([
             const documentModel = this.previewModeModel.get('document');
             this.$('.main-results-container').removeClass('selected-document');
 
-            if(documentModel !== null) {
+            if (documentModel !== null) {
                 this.$('.main-results-container[data-cid="' + documentModel.cid + '"]').addClass('selected-document');
             }
         },
 
         formatResult: function(model, isPromotion) {
-            const $newResult = this.resultRenderer.getResult(model, isPromotion, Boolean(this.previewModeModel), configuration().directAccessLink);
+            const $newResult = this.resultRenderer.getResult(model, isPromotion);
 
-            if(isPromotion) {
+            if (isPromotion) {
                 this.$('.main-results-content .promotions').append($newResult);
             } else {
                 this.$('.main-results-content .results').append($newResult);
@@ -274,7 +271,7 @@ define([
         },
 
         generateErrorMessage: function(xhr) {
-            if(xhr.responseJSON) {
+            if (xhr.responseJSON) {
                 return generateErrorHtml({
                     errorDetails: xhr.responseJSON.message,
                     errorUUID: xhr.responseJSON.uuid,
@@ -296,17 +293,17 @@ define([
             this.$('.main-results-content .results').toggleClass('hide', on);
             this.$('.main-results-content .results-view-error').toggleClass('hide', !on);
 
-            if(this.questionsView) {
+            if (this.questionsView) {
                 this.questionsView.$el.toggleClass('hide', on);
             }
         },
 
         loadData: function(infiniteScroll) {
-            if(this.$loadingSpinner) {
+            if (this.$loadingSpinner) {
                 this.$loadingSpinner.removeClass('hide');
             }
 
-            if(this.questionsView && !infiniteScroll) {
+            if (this.questionsView && !infiniteScroll) {
                 this.questionsView.fetchData();
             }
 
@@ -326,17 +323,17 @@ define([
                 remove: !infiniteScroll,
                 error: function(collection) {
                     // if returns an error remove previous models from documentsCollection
-                    if(collection) {
+                    if (collection) {
                         collection.reset();
                     }
                 },
                 success: function() {
-                    if(this.indexesCollection && this.documentsCollection.warnings && this.documentsCollection.warnings.invalidDatabases) {
+                    if (this.indexesCollection && this.documentsCollection.warnings && this.documentsCollection.warnings.invalidDatabases) {
                         // Invalid databases have been deleted from IDOL; mark them as such in the indexes collection
                         this.documentsCollection.warnings.invalidDatabases.forEach(function(name) {
                             const indexModel = this.indexesCollection.findWhere({name: name});
 
-                            if(indexModel) {
+                            if (indexModel) {
                                 indexModel.set('deleted', true);
                             }
 
@@ -346,7 +343,7 @@ define([
                 }.bind(this)
             });
 
-            if(!infiniteScroll && this.showPromotions) {
+            if (!infiniteScroll && this.showPromotions) {
                 this.loadingTracker.promotionsFinished = false;
 
                 const promotionsRequestData = _.extend({
@@ -369,7 +366,7 @@ define([
         openPreview: function(e) {
             const $target = $(e.currentTarget).closest('.main-results-container');
 
-            if($target.hasClass('selected-document')) {
+            if ($target.hasClass('selected-document')) {
                 // disable preview mode
                 this.previewModeModel.set({document: null});
             } else {
@@ -382,7 +379,7 @@ define([
                 const model = collection.get(cid);
                 this.previewModeModel.set({document: model});
 
-                if(!isPromotion) {
+                if (!isPromotion) {
                     events().preview(collection.indexOf(model) + 1);
                 }
             }
@@ -392,7 +389,7 @@ define([
             this.sortView.remove();
             this.resultsNumberView.remove();
 
-            if(this.questionsView) {
+            if (this.questionsView) {
                 this.questionsView.remove();
             }
 

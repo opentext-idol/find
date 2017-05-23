@@ -15,9 +15,9 @@ define([
     };
 
     _.extend(ResultRenderer.prototype, {
-        getResult: function(model, isPromotion, enablePreview, directAccessLink) {
+        getResult: function(model, isPromotion) {
             var templateData = _.find(this.config, function(templateData) {
-                return templateData.predicate.call(this, model, isPromotion, enablePreview, directAccessLink);
+                return templateData.predicate.call(this, model, isPromotion);
             });
 
             var href;
@@ -26,7 +26,7 @@ define([
             }
             return templateData.template({
                 i18n: i18n,
-                data: templateData.data.call(this, model, isPromotion, enablePreview, directAccessLink),
+                data: templateData.data.call(this, model, isPromotion),
                 model: model,
                 href: href
             });
