@@ -32,6 +32,7 @@ define([
 
             this.assetViewer = new AssetViewer({
                 collection: this.collection,
+                defaultImage: options.defaultImage,
                 imageClass: this.imageClass,
                 height: this.height,
                 width: this.width

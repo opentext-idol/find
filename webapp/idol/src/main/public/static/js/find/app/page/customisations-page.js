@@ -13,13 +13,13 @@ define([
     // matches the AssetType enum on the server
     const ASSET_TYPES = {
         bigLogo: {
-            defaultImage: '',
+            defaultImage: '/img/Find_Logo_lge.png',
             height: 45,
             type: 'BIG_LOGO',
             width: 240
         },
         smallLogo: {
-            defaultImage: '',
+            defaultImage: '/img/Find_Logo_sml.png',
             height: 20,
             type: 'SMALL_LOGO',
             width: 100

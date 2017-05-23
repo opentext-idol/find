@@ -24,7 +24,13 @@ define([
             return _.map(data, function(datum) {
                 return {id: datum};
             });
-        }
+        },
+
+        model: Backbone.Model.extend({
+            defaults: {
+                deletable: true
+            }
+        })
 
     });
 
