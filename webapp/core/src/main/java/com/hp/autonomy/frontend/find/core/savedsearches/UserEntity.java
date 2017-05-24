@@ -34,7 +34,7 @@ import java.util.UUID;
 @Entity
 @Table(name = UserEntity.Table.NAME)
 @Data
-@Builder
+@Builder(toBuilder = true)
 @EqualsAndHashCode(exclude = "userId")
 @NoArgsConstructor
 @AllArgsConstructor

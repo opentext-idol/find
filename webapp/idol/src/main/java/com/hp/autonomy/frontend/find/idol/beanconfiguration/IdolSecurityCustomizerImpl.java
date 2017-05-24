@@ -11,6 +11,7 @@ import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentica
 import com.hp.autonomy.frontend.configuration.authentication.Role;
 import com.hp.autonomy.frontend.configuration.authentication.Roles;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
+import com.hp.autonomy.frontend.find.core.savedsearches.UserEntityRepository;
 import com.hp.autonomy.frontend.find.core.web.FindController;
 import com.hp.autonomy.frontend.find.idol.authentication.FindCommunityRole;
 import com.hp.autonomy.user.UserService;
@@ -50,6 +51,9 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
     @Autowired
     private AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever;
 
+    @Autowired
+    private UserEntityRepository userEntityRepository;
+
     @Value("${" + DEFAULT_ROLES_KEY + '}')
     private String defaultRolesProperty;
 
@@ -60,7 +64,8 @@ public class IdolSecurityCustomizerImpl implements IdolSecurityCustomizer {
                 FindController.CONFIG_PATH,
                 FindController.APP_PATH,
                 FindRole.CONFIG.toString(),
-                authenticationInformationRetriever
+                authenticationInformationRetriever,
+                userEntityRepository
         );
 
         http.formLogin()

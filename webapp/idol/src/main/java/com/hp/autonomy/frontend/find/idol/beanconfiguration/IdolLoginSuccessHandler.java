@@ -5,30 +5,61 @@
 
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
+import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
+import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
+import com.hp.autonomy.frontend.find.core.savedsearches.UserEntityRepository;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public class IdolLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
     private final String configUrl;
     private final String applicationUrl;
     private final String roleDefault;
     private final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever;
+    private final UserEntityRepository userEntityRepository;
 
     public IdolLoginSuccessHandler(
             final String configUrl,
             final String applicationUrl,
             final String roleDefault,
-            final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever
-    ) {
+            final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever,
+            final UserEntityRepository userEntityRepository
+            ) {
         this.configUrl = configUrl;
         this.applicationUrl = applicationUrl;
         this.roleDefault = roleDefault;
         this.authenticationInformationRetriever = authenticationInformationRetriever;
+        this.userEntityRepository = userEntityRepository;
+    }
+
+    @Override
+    public void onAuthenticationSuccess(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) throws ServletException, IOException {
+        final CommunityPrincipal principal = (CommunityPrincipal) authenticationInformationRetriever.getPrincipal();
+
+        if(principal != null) {
+            final UserEntity currentUser =  new UserEntity();
+            currentUser.setUsername(principal.getUsername());
+
+            final UserEntity persistedUser = userEntityRepository.findByDomainAndUserStoreAndUuidAndUsername(
+                    null,
+                    null,
+                    null,
+                    currentUser.getUsername()
+            );
+
+            if (persistedUser == null) {
+                userEntityRepository.saveAndFlush(currentUser);
+            }
+        }
+
+        super.onAuthenticationSuccess(request, response, authentication);
     }
 
     @Override
