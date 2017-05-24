@@ -5,6 +5,8 @@
 
 package com.hp.autonomy.frontend.find.idol.customisations;
 
+import com.hp.autonomy.frontend.configuration.WriteableConfigService;
+import com.hp.autonomy.frontend.configuration.validation.ConfigValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -13,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -35,12 +39,16 @@ class CustomisationAdminController extends AbstractCustomisationController {
     private static final MediaType IMAGE_MEDIA_TYPE = new MediaType("image");
 
     private final CustomisationService customisationService;
+    private final WriteableConfigService<AssetConfig> assetConfigService;
 
     @Autowired
-    public CustomisationAdminController(final CustomisationService customisationService) {
+    public CustomisationAdminController(
+            final CustomisationService customisationService,
+            final WriteableConfigService<AssetConfig> assetConfigService) {
         super(customisationService);
 
         this.customisationService = customisationService;
+        this.assetConfigService = assetConfigService;
     }
 
     @RequestMapping(value = TYPED_ASSETS_PATH, method = RequestMethod.POST)
@@ -82,6 +90,19 @@ class CustomisationAdminController extends AbstractCustomisationController {
         @PathVariable("name") final String name
     ) {
         customisationService.deleteAsset(assetType, name);
+    }
+
+    @RequestMapping(value = "/config", method = RequestMethod.POST)
+    public ResponseEntity<?> updateConfig(
+            @RequestBody final AssetConfig assetConfig
+    ) throws Exception {
+        try {
+            assetConfigService.updateConfig(assetConfig);
+
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (final ConfigValidationException cve) {
+            return new ResponseEntity<>(Collections.singletonMap("validation", cve.getValidationErrors()), HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     @ExceptionHandler(CustomisationException.class)

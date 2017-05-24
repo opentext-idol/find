@@ -5,17 +5,23 @@
 
 package com.hp.autonomy.frontend.find.idol.customisations;
 
+import com.hp.autonomy.frontend.configuration.validation.ValidationService;
 import com.hp.autonomy.frontend.find.core.configuration.CustomizationConfigService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AssetConfigService extends CustomizationConfigService<AssetConfig> {
-    protected AssetConfigService() {
+
+    @Autowired
+    protected AssetConfigService(final ValidationService<AssetConfig> validationService) {
         super(
                 "assets.json",
                 "defaultAssetsConfigFile.json",
                 AssetConfig.class,
                 AssetConfig.builder().build()
         );
+
+        setValidationService(validationService);
     }
 }

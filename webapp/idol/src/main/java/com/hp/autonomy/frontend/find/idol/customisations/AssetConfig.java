@@ -11,11 +11,12 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.AbstractConfig;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigurationUtils;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ import java.util.Map;
 @JsonDeserialize(builder = AssetConfig.AssetConfigBuilder.class)
 public class AssetConfig extends AbstractConfig<AssetConfig> {
 
-    // annotate this to avoid need for getter
+    @Getter(AccessLevel.NONE)
     @JsonProperty
     private final Map<AssetType, String> assets;
 
