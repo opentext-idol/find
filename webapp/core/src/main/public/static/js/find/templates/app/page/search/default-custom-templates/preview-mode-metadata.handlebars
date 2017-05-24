@@ -1,0 +1,16 @@
+{{#hasField 'transcript'}}
+    <div class="font-bold">{{i18n 'search.document.transcript'}}</div>
+    <div class="preview-mode-metadata-value">{{getFieldValue 'transcript'}}</div>
+{{/hasField}}
+{{#each fields}}
+    {{#unless advanced}}
+        <div class="break-all">
+            <div class="font-bold">{{displayName}}</div>
+            <ul class="list-unstyled m-b-nil">
+                {{#each values}}
+                    <li>{{.}}</li>
+                {{/each}}
+            </ul>
+        </div>
+    {{/unless}}
+{{/each}}

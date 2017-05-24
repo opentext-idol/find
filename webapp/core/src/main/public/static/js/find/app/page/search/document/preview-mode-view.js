@@ -9,6 +9,7 @@ define([
     'backbone',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
+    '../document-renderer',
     'find/app/vent',
     'find/app/util/view-server-client',
     'find/app/model/document-model',
@@ -17,13 +18,11 @@ define([
     'find/app/util/events',
     'find/app/util/url-manipulator',
     'text!find/templates/app/page/search/document/preview-mode-view.html',
-    'text!find/templates/app/page/search/document/preview-mode-metadata.html',
     'text!find/templates/app/page/search/document/view-mode-document.html',
     'text!find/templates/app/page/search/document/view-media-player.html',
     'text!css/result-highlighting.css'
-], function(_, $, Backbone, i18n, i18nIndexes, vent, viewClient, DocumentModel, configuration,
-            databaseNameResolver, events, urlManipulator, template, metaDataTemplate,
-            documentTemplate, mediaTemplate, highlightingRule) {
+], function(_, $, Backbone, i18n, i18nIndexes, DocumentRenderer, vent, viewClient, DocumentModel, configuration,
+            databaseNameResolver, events, urlManipulator, template, documentTemplate, mediaTemplate, highlightingRule) {
     'use strict';
 
     function highlighting(innerWindow) {
@@ -39,7 +38,6 @@ define([
         className: 'well flex-column m-b-nil full-height',
 
         template: _.template(template),
-        metaDataTemplate: _.template(metaDataTemplate),
         documentTemplate: _.template(documentTemplate),
         mediaTemplate: _.template(mediaTemplate),
 
@@ -55,8 +53,10 @@ define([
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
             this.previewModeModel = options.previewModeModel;
-            this.highlightingModel = new Backbone.Model({highlighting: false});
             this.mmapTab = options.mmapTab;
+
+            this.highlightingModel = new Backbone.Model({highlighting: false});
+            this.documentRenderer = new DocumentRenderer();
 
             const queryText = options.queryText;
 
@@ -103,11 +103,7 @@ define([
             this.$('.preview-mode-document-url').text(reference).toggleClass('hide', !reference);
 
             //noinspection JSUnresolvedFunction
-            this.$('.preview-mode-metadata').html(this.metaDataTemplate({
-                i18n: i18n,
-                i18nIndexes: i18nIndexes,
-                model: this.model,
-            }));
+            this.$('.preview-mode-metadata').html(this.documentRenderer.renderPreviewMetadata(this.model));
 
             const $preview = this.$('.preview-mode-document');
 

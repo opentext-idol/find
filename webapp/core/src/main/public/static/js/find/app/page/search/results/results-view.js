@@ -13,21 +13,21 @@ define([
     'find/app/model/promotions-collection',
     'find/app/page/search/sort-view',
     'find/app/page/search/results/results-number-view',
-    'find/app/page/search/results/result-rendering/result-renderer',
-    'find/app/page/search/results/result-rendering/result-renderer-config',
+    '../document-renderer',
     'find/app/util/view-server-client',
     'find/app/util/events',
     'find/app/page/search/results/add-links-to-summary',
     'find/app/configuration',
     'find/app/util/generate-error-support-message',
+    'text!find/templates/app/page/search/results/search-result-container.html',
     'text!find/templates/app/page/search/results/results-view.html',
     'text!find/templates/app/page/loading-spinner.html',
     'moment',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(_, $, Backbone, addChangeListener, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
-            ResultRenderer, resultsRendererConfig, viewClient, events, addLinksToSummary, configuration,
-            generateErrorHtml, html, loadingSpinnerTemplate, moment, i18n, i18n_indexes
+            DocumentRenderer, viewClient, events, addLinksToSummary, configuration, generateErrorHtml, resultTemplate,
+            html, loadingSpinnerTemplate, moment, i18n, i18n_indexes
 ) {
     'use strict';
 
@@ -53,6 +53,7 @@ define([
 
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         messageTemplate: _.template('<div class="result-message span10"><%-message%></div>'),
+        resultTemplate: _.template(resultTemplate),
 
         events: {
             'click .preview-mode [data-cid]:not(.answered-question)': 'openPreview',
@@ -84,6 +85,7 @@ define([
 
             this.indexesCollection = options.indexesCollection;
             this.scrollModel = options.scrollModel;
+
             this.loadingTracker = {
                 resultsFinished: true,
                 promotionsFinished: true,
@@ -97,9 +99,7 @@ define([
                 this.selectedIndexesCollection = options.queryState.selectedIndexes;
             }
 
-            this.resultRenderer = new ResultRenderer({
-                config: resultsRendererConfig
-            });
+            this.documentRenderer = new DocumentRenderer();
 
             if (this.showPromotions) {
                 this.promotionsCollection = new PromotionsCollection();
@@ -261,13 +261,18 @@ define([
         },
 
         formatResult: function(model, isPromotion) {
-            const $newResult = this.resultRenderer.getResult(model, isPromotion);
+            const resultHtml = isPromotion
+                ? this.documentRenderer.renderPromotion(model)
+                : this.documentRenderer.renderResult(model);
 
-            if (isPromotion) {
-                this.$('.main-results-content .promotions').append($newResult);
-            } else {
-                this.$('.main-results-content .results').append($newResult);
-            }
+            const $el = isPromotion
+                ? this.$('.main-results-content .promotions')
+                : this.$('.main-results-content .results');
+
+            $el.append(this.resultTemplate({
+                cid: model.cid,
+                content: resultHtml
+            }));
         },
 
         generateErrorMessage: function(xhr) {
