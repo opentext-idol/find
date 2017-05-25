@@ -7,6 +7,7 @@ define([
     'backbone',
     'underscore',
     'handlebars',
+    'jquery',
     'find/app/page/search/results/add-links-to-summary',
     'find/app/util/document-mime-types',
     'find/app/util/url-manipulator',
@@ -19,26 +20,21 @@ define([
     './template-helpers/get-field-value-helper',
     './template-helpers/with-field-helper',
     './template-helpers/i18n-helper'
-], function(Backbone, _, Handlebars, addLinksToSummary, documentMimeTypes, urlManipulator, defaultResultTemplate,
+], function(Backbone, _, Handlebars, $, addLinksToSummary, documentMimeTypes, urlManipulator, defaultResultTemplate,
             defaultPreviewTemplate, defaultPromotionTemplate, equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper,
             withFieldHelper, i18nHelper) {
 
-    function DocumentRenderer() {
-        const handlebars = Handlebars.create();
+    function templatePredicate(triggers) {
+        return function(model) {
+            return _.every(triggers, function(trigger) {
+                const documentField = _.findWhere(model.get('fields'), {id: trigger.field});
 
-        handlebars.registerHelper({
-            equal: equalHelper,
-            i18n: i18nHelper,
-            hasField: hasFieldHelper,
-            hasFieldValue: hasFieldValueHelper,
-            getFieldValue: getFieldValueHelper,
-            withField: withFieldHelper
-        });
-
-        this.defaultTemplates = {
-            promotion: handlebars.compile(defaultPromotionTemplate),
-            previewMetadata: handlebars.compile(defaultPreviewTemplate),
-            result: handlebars.compile(defaultResultTemplate)
+                if (documentField) {
+                    return _.isEmpty(trigger.values) || _.some(trigger.values, _.partial(_.contains, documentField.values));
+                } else {
+                    return false;
+                }
+            });
         };
     }
 
@@ -57,7 +53,6 @@ define([
     function buildContext(model) {
         const url = model.get('url');
         const date = model.get('date');
-        const promotionCategory = model.get('promotionCategory');
 
         let thumbnail;
 
@@ -82,18 +77,60 @@ define([
         };
     }
 
+    function renderTemplate(key) {
+        return function(model) {
+            const template = _.find(this.templates[key], function(data) {
+                return data.predicate(model);
+            }).template;
+
+            return template(buildContext(model));
+        };
+    }
+
+    function DocumentRenderer(configuration) {
+        const handlebars = Handlebars.create();
+
+        handlebars.registerHelper({
+            equal: equalHelper,
+            i18n: i18nHelper,
+            hasField: hasFieldHelper,
+            hasFieldValue: hasFieldValueHelper,
+            getFieldValue: getFieldValueHelper,
+            withField: withFieldHelper
+        });
+
+        this.loadPromise = $.get('customization/result-templates')
+            .done(function(templateFiles) {
+                this.templates = _.chain([
+                        {defaultTemplate: defaultResultTemplate, key: 'searchResult'},
+                        {defaultTemplate: defaultPreviewTemplate, key: 'previewPanel'},
+                        {defaultTemplate: defaultPromotionTemplate, key: 'promotion'}
+                    ])
+                    .map(function(type) {
+                        const configuredTemplates = configuration[type.key]
+                            .map(function(templateConfig) {
+                                return {
+                                    predicate: templatePredicate(templateConfig.triggers),
+                                    template: handlebars.compile(templateFiles[templateConfig.file])
+                                };
+                            });
+
+                        const templateList = configuredTemplates.concat({
+                            template: handlebars.compile(type.defaultTemplate),
+                            predicate: _.constant(true)
+                        });
+
+                        return [type.key, templateList];
+                    })
+                    .object()
+                    .value();
+            }.bind(this));
+    }
+
     _.extend(DocumentRenderer.prototype, {
-        renderResult: function(model) {
-            return this.defaultTemplates.result(buildContext(model));
-        },
-
-        renderPromotion: function(model) {
-            return this.defaultTemplates.promotion(buildContext(model));
-        },
-
-        renderPreviewMetadata: function(model) {
-            return this.defaultTemplates.previewMetadata(buildContext(model));
-        }
+        renderResult: renderTemplate('searchResult'),
+        renderPromotion: renderTemplate('promotion'),
+        renderPreviewMetadata: renderTemplate('previewPanel')
     });
 
     return DocumentRenderer;
