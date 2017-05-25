@@ -32,6 +32,7 @@ define([
 
                     this.previewModeView = new this.PreviewModeView({
                         model: documentModel,
+                        documentRenderer: options.documentRenderer,
                         previewModeModel: this.previewModeModel,
                         queryText: this.queryModel.get('queryText'),
                         indexesCollection: options.indexesCollection,

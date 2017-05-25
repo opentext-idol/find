@@ -46,6 +46,7 @@ define([
             this.resultsView = new this.ResultsView({
                 fetchStrategy: suggestStrategy,
                 documentsCollection: new SimilarDocumentsCollection(),
+                documentRenderer: options.documentRenderer,
                 queryModel: this.queryModel,
                 scrollModel: this.scrollModel,
                 previewModeModel: previewModeModel

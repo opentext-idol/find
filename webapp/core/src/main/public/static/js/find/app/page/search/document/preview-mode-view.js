@@ -9,7 +9,6 @@ define([
     'backbone',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
-    '../document-renderer',
     'find/app/vent',
     'find/app/util/view-server-client',
     'find/app/model/document-model',
@@ -21,8 +20,8 @@ define([
     'text!find/templates/app/page/search/document/view-mode-document.html',
     'text!find/templates/app/page/search/document/view-media-player.html',
     'text!css/result-highlighting.css'
-], function(_, $, Backbone, i18n, i18nIndexes, DocumentRenderer, vent, viewClient, DocumentModel, configuration,
-            databaseNameResolver, events, urlManipulator, template, documentTemplate, mediaTemplate, highlightingRule) {
+], function(_, $, Backbone, i18n, i18nIndexes, vent, viewClient, DocumentModel, configuration, databaseNameResolver,
+            events, urlManipulator, template, documentTemplate, mediaTemplate, highlightingRule) {
     'use strict';
 
     function highlighting(innerWindow) {
@@ -54,9 +53,9 @@ define([
             this.indexesCollection = options.indexesCollection;
             this.previewModeModel = options.previewModeModel;
             this.mmapTab = options.mmapTab;
+            this.documentRenderer = options.documentRenderer;
 
             this.highlightingModel = new Backbone.Model({highlighting: false});
-            this.documentRenderer = new DocumentRenderer();
 
             const queryText = options.queryText;
 

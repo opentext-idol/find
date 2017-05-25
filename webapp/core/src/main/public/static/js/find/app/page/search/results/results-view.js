@@ -13,7 +13,6 @@ define([
     'find/app/model/promotions-collection',
     'find/app/page/search/sort-view',
     'find/app/page/search/results/results-number-view',
-    '../document-renderer',
     'find/app/util/view-server-client',
     'find/app/util/events',
     'find/app/page/search/results/add-links-to-summary',
@@ -26,9 +25,8 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(_, $, Backbone, addChangeListener, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
-            DocumentRenderer, viewClient, events, addLinksToSummary, configuration, generateErrorHtml, resultTemplate,
-            html, loadingSpinnerTemplate, moment, i18n, i18n_indexes
-) {
+            viewClient, events, addLinksToSummary, configuration, generateErrorHtml, resultTemplate, html,
+            loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
     'use strict';
 
     const SCROLL_INCREMENT = 30;
@@ -78,6 +76,7 @@ define([
 
         initialize: function(options) {
             this.fetchStrategy = options.fetchStrategy;
+            this.documentRenderer = options.documentRenderer;
 
             this.queryModel = options.queryModel;
             this.showPromotions = this.fetchStrategy.promotions(this.queryModel) && !options.hidePromotions;
@@ -98,8 +97,6 @@ define([
             if (this.indexesCollection) {
                 this.selectedIndexesCollection = options.queryState.selectedIndexes;
             }
-
-            this.documentRenderer = new DocumentRenderer();
 
             if (this.showPromotions) {
                 this.promotionsCollection = new PromotionsCollection();
