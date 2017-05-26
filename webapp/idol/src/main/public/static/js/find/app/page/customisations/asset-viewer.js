@@ -29,6 +29,14 @@ define([
         assetTemplate: _.template(assetTemplate),
 
         events: {
+            'click .previous:not(.disabled)': function() {
+                this.page--;
+                this.changePage();
+            },
+            'click .next:not(.disabled)': function() {
+                this.page++;
+                this.changePage();
+            },
             'click .apply-asset': function(e) {
                 const file = getFile(e);
 
@@ -91,21 +99,23 @@ define([
             this.pageCollection = new Backbone.Collection();
 
             this.currentAsset = configuration().assetsConfig.assets[options.type];
-            
+
+            this.$headerHtml = $(defaultAssetTemplate({
+                currentAsset: this.currentAsset,
+                height: this.height,
+                imageClass: options.imageClass,
+                i18n: i18n,
+                width: this.width,
+                data: {
+                    id: null,
+                    deletable: false,
+                    url: '/static-' + configuration().commit + options.defaultImage
+                }
+            }));
+
             this.assetList = new ListView({
-                collection: this.collection,
-                headerHtml: defaultAssetTemplate({
-                    currentAsset: this.currentAsset,
-                    height: this.height,
-                    imageClass: options.imageClass,
-                    i18n: i18n,
-                    width: this.width,
-                    data: {
-                        id: null,
-                        deletable: false,
-                        url: '/static-' + configuration().commit + options.defaultImage
-                    }
-                }),
+                collection: this.pageCollection,
+                headerHtml: this.$headerHtml,
                 itemOptions: {
                     className: 'asset',
                     template: this.assetTemplate,
@@ -125,23 +135,36 @@ define([
                     return this.currentAsset === model.id
                 }, this));
 
-                this.$('.asset:first-child i').toggleClass('hide', currentAssetExists);
+                this.$headerHtml.find('i').toggleClass('hide', currentAssetExists);
+
+                this.page = 0;
+
+                this.changePage();
             });
 
             this.listenTo(this.collection, 'remove', function(model) {
                 if (this.currentAsset === model.id) {
                     this.$('.asset:first-child i').removeClass('hide');
                 }
+
+                this.pageCollection.remove(model);
             });
         },
 
         render: function() {
-            this.$el.html(this.template({
-                collection: this.collection
-            }));
+            this.$el.html(this.template());
 
             this.assetList.render();
             this.$('.asset-list').append(this.assetList.$el);
+        },
+
+        changePage: function() {
+            this.pageCollection.reset();
+
+            this.pageCollection.add(this.collection.slice(this.page * PAGE_SIZE, (this.page + 1) * PAGE_SIZE));
+
+            this.$('.previous').toggleClass('disabled', this.page === 0);
+            this.$('.next').toggleClass('disabled', this.page === Math.floor(Math.max(this.collection.length - 1, 0) / PAGE_SIZE));
         }
 
     });
