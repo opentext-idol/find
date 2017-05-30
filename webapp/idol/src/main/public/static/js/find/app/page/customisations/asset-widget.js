@@ -21,7 +21,6 @@ define([
         className: 'col-md-12 col-lg-4',
 
         template: _.template(template),
-        headerTemplate: _.template('<option value=""><%-i18n["customisations.selectFile"]%></option>'),
 
         initialize: function(options) {
             this.description = options.description;
