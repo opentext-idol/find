@@ -37,7 +37,7 @@ define([
                 this.page++;
                 this.changePage();
             },
-            'click .apply-asset': function(e) {
+            'click .apply-asset:not(.disabled)': function(e) {
                 const file = getFile(e);
 
                 const body = {
@@ -59,12 +59,13 @@ define([
                         this.currentAsset = file;
 
                         this.$('.asset i').addClass('hide');
+                        this.$('.asset .apply-asset').removeClass('disabled');
 
                         if (file) {
-                            this.$('.asset[data-id="' + file +'"] i').removeClass('hide');
+                            this.toggleAsset(true, file);
                         }
                         else {
-                            this.$('.asset:first-child i').removeClass('hide');
+                            this.toggleAsset(true);
                         }
                     }.bind(this)
                 })
@@ -135,7 +136,7 @@ define([
                     return this.currentAsset === model.id
                 }, this));
 
-                this.$headerHtml.find('i').toggleClass('hide', currentAssetExists);
+                this.toggleAsset(!currentAssetExists);
 
                 this.page = 0;
 
@@ -144,7 +145,7 @@ define([
 
             this.listenTo(this.collection, 'remove', function(model) {
                 if (this.currentAsset === model.id) {
-                    this.$('.asset:first-child i').removeClass('hide');
+                    this.toggleAsset(true);
                 }
 
                 this.pageCollection.remove(model);
@@ -165,6 +166,20 @@ define([
 
             this.$('.previous').toggleClass('disabled', this.page === 0);
             this.$('.next').toggleClass('disabled', this.page === Math.floor(Math.max(this.collection.length - 1, 0) / PAGE_SIZE));
+        },
+
+        toggleAsset: function(active, asset) {
+            let $el;
+
+            if (asset) {
+                $el = this.$('[data-id="' + asset + '"]');
+            }
+            else {
+                $el = this.$headerHtml;
+            }
+
+            $el.find('i').toggleClass('hide', !active);
+            $el.find('.apply-asset').toggleClass('disabled', active);
         }
 
     });
