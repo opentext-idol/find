@@ -12,6 +12,10 @@ define([
 ], function(Backbone, Dropzone, AssetViewer, i18n, template) {
     'use strict';
 
+    const DEFAULT_MESSAGE = _.template('<i class="hp-icon hp-3x hp-document-upload"></i><p><%-message%></p>')({
+        message: i18n['dropzone.dictDefaultMessage']
+    });
+
     return Backbone.View.extend({
 
         className: 'col-md-12 col-lg-4',
@@ -63,7 +67,7 @@ define([
                 // matches Spring Boot setting
                 maxFilesize: 1,
                 url: this.url,
-                dictDefaultMessage: i18n['dropzone.dictDefaultMessage'],
+                dictDefaultMessage: DEFAULT_MESSAGE,
                 dictFallbackMessage: i18n['dropzone.dictFallbackMessage'],
                 dictFallbackText: i18n['dropzone.dictFallbackText'],
                 dictFileTooBig: i18n['dropzone.dictFileTooBig'],
