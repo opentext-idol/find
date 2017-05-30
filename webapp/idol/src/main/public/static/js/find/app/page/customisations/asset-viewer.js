@@ -15,11 +15,17 @@ define([
 ], function(Backbone, _, Confirm, ListView, configuration, i18n, template, assetTemplate) {
     'use strict';
 
+    const MESSAGE_CLASSES = {
+        error: 'text-error',
+        success: 'text-success'
+    };
+
     const PAGE_SIZE = 5;
 
     const defaultAssetTemplate = _.template('<div class="asset">' + assetTemplate + '</div>');
 
     function getFile(e) {
+        // use null over undefined as it's easier to send null to the server
         return $(e.target).closest('.asset').attr('data-id') || null;
     }
 
@@ -44,7 +50,6 @@ define([
                     assets: {}
                 };
 
-                // undefined drops it from the JSON
                 body.assets[this.type] = file;
 
                 $.ajax('../api/admin/customisation/config', {
@@ -52,9 +57,11 @@ define([
                     data: JSON.stringify(body),
                     dataType: 'json',
                     method: 'POST',
-                    error: function() {
-                        // TODO handle validation errors
-                    },
+                    error: function(xhr) {
+                        this.setMessage(i18n['customisations.apply.error'](file), MESSAGE_CLASSES.error);
+
+                        this.collection.remove(file);
+                    }.bind(this),
                     success: function() {
                         this.currentAsset = file;
 
@@ -63,9 +70,13 @@ define([
 
                         if (file) {
                             this.toggleAsset(true, file);
+
+                            this.setMessage(i18n['customisations.apply.success'](file), MESSAGE_CLASSES.success);
                         }
                         else {
                             this.toggleAsset(true);
+
+                            this.setMessage(i18n['customisations.applyDefault.success'], MESSAGE_CLASSES.success);
                         }
                     }.bind(this)
                 })
@@ -87,6 +98,8 @@ define([
                         this.collection.get(file).destroy({
                             wait: true
                         });
+
+                        this.setMessage(i18n['customisations.delete.success'](file), MESSAGE_CLASSES.success);
                     }, this)
                 });
             }
@@ -157,6 +170,8 @@ define([
 
             this.assetList.render();
             this.$('.asset-list').append(this.assetList.$el);
+
+            this.$message = this.$('.message');
         },
 
         changePage: function() {
@@ -166,6 +181,12 @@ define([
 
             this.$('.previous').toggleClass('disabled', this.page === 0);
             this.$('.next').toggleClass('disabled', this.page === Math.floor(Math.max(this.collection.length - 1, 0) / PAGE_SIZE));
+        },
+
+        setMessage: function(message, className) {
+            this.$message.removeClass(_.values(MESSAGE_CLASSES));
+
+            this.$message.addClass(className).text(message);
         },
 
         toggleAsset: function(active, asset) {
