@@ -33,11 +33,12 @@ class CustomisationAdminController extends AbstractCustomisationController {
 
     static final String CUSTOMISATIONS_PATH = "/api/admin/customisation";
     static final String ASSETS_PATH = "/assets";
+    static final String CONFIG_PATH = "/config";
     private static final String TYPED_ASSETS_PATH = ASSETS_PATH + "/{type}";
+
     private static final String ASSET_ID_PATH = TYPED_ASSETS_PATH + "/{name:.+}";
 
     private static final MediaType IMAGE_MEDIA_TYPE = new MediaType("image");
-
     private final CustomisationService customisationService;
     private final WriteableConfigService<AssetConfig> assetConfigService;
 
@@ -92,7 +93,7 @@ class CustomisationAdminController extends AbstractCustomisationController {
         customisationService.deleteAsset(assetType, name);
     }
 
-    @RequestMapping(value = "/config", method = RequestMethod.POST)
+    @RequestMapping(value = CONFIG_PATH, method = RequestMethod.POST)
     public ResponseEntity<?> updateConfig(
             @RequestBody final AssetConfig assetConfig
     ) throws Exception {

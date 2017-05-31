@@ -14,6 +14,9 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
@@ -21,19 +24,22 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SuppressWarnings("ProhibitedExceptionDeclared")
 public class CustomisationAdminControllerIT extends AbstractFindIT {
 
     private static final AssetType ASSET_TYPE = AssetType.BIG_LOGO;
+    private final String TARGET_FILE = AbstractFindIT.TEST_DIR + "/customization/assets/" + ASSET_TYPE.getDirectory() + "/logo.png";
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @After
     public void tearDown() throws IOException {
         // remove the test files after each test
-        new File(AbstractFindIT.TEST_DIR + "/customizations/assets/" + ASSET_TYPE.getDirectory() + "/logo.png").delete();
+        new File(TARGET_FILE).delete();
     }
 
     @Test
@@ -122,6 +128,32 @@ public class CustomisationAdminControllerIT extends AbstractFindIT {
 
         mockMvc.perform(delete)
             .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void updateConfig() throws Exception {
+        final Path path = Paths.get(TARGET_FILE);
+        Files.createDirectories(path.getParent());
+        Files.createFile(path);
+
+        final RequestBuilder requestBuilder = post(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.CONFIG_PATH)
+                .content("{\"assets\":{\"BIG_LOGO\": \"logo.png\"}}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(authentication(adminAuth()));
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void updateConfigWithBadFile() throws Exception {
+        final RequestBuilder requestBuilder = post(CustomisationAdminController.CUSTOMISATIONS_PATH + CustomisationAdminController.CONFIG_PATH)
+                .content("{\"assets\":{\"BIG_LOGO\": \"logo.png\"}}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(authentication(adminAuth()));
+
+        mockMvc.perform(requestBuilder)
+                .andExpect(status().isNotAcceptable());
     }
 
 }
