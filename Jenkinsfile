@@ -21,7 +21,61 @@ node {
 		repository = getOrgRepoName().toLowerCase()
 		branch = getBranchName(gitCommit).toLowerCase()
 
+		echo "Building ${gitCommit}, from ${repository}, branch ${branch}"
+
 		def webapp = "find"
+
+	stage 'Maven Build'
+		env.JAVA_HOME="${tool 'Java 8 OpenJDK'}"
+		env.PATH="${tool 'Maven3'}/bin:${env.JAVA_HOME}/bin:${env.PATH}"
+
+		try {
+			sh "mvn clean install -f webapp/pom.xml -U -pl on-prem-dist,selenium-tests/mockui -am -Dapplication.buildNumber=${gitCommit} -Dtest.content.host=cbg-data-admin-dev.hpeswlab.net -Dtest.view.host=cbg-data-admin-dev.hpeswlab.net -Dtest.answer.host=cbg-data-admin-dev.hpeswlab.net -Dtest.database=GenericDocuments"
+		} catch (e) {
+			emailext attachLog: true, body: "Check console output at ${env.BUILD_URL} to view the results.", subject: "Fenkins - ${env.JOB_NAME} - Build # ${env.BUILD_NUMBER} - ${currentBuild.result}", to: '$DEFAULT_RECIPIENTS'
+			throw e
+		}
+
+	stage 'Archive output'
+		archive 'idol/target/${webapp}.war'
+		archive 'on-prem-dist/target/${webapp}.zip'
+
+		// These are the JUnit tests as outputted by the surefire maven plugin
+		step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+
+		// These are the Jasmine tests
+		step([$class: 'JUnitResultArchiver', testResults: '**/target/jasmine-tests/TEST-*.xml'])
+
+	stage 'Artifactory'
+		try {
+			def server = Artifactory.server "idol" // "idol" is the name of the Artifactory server configured in Jenkins
+			def artifactLocation = "applications/${repository}/${branch}/"
+
+			def uploadSpec = """{
+				"files": [
+					{
+						"pattern": "webapp/idol/target/*.war",
+						"target": "${artifactLocation}"
+					},
+					{
+						"pattern": "webapp/on-prem-dist/target/*.zip",
+						"target": "${artifactLocation}"
+					}
+				]
+			}"""
+
+			withEnv(["GIT_COMMIT=${gitCommit}"]) {
+				def buildInfo = Artifactory.newBuildInfo()
+				buildInfo.env.capture = true
+				buildInfo.env.collect()
+
+				server.upload(uploadSpec, buildInfo)
+			}
+		} catch (org.acegisecurity.acls.NotFoundException e) {
+			echo "No Artifactory 'idol' server configured, skipping stage"
+		} catch (groovy.lang.MissingPropertyException e) {
+		    echo "No Artifactory plugin installed, skipping stage"
+		}
 
     stage 'Deploy'
         echo "webapp = ${webapp}"
