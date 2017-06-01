@@ -54,6 +54,7 @@ public abstract class AbstractSavedSearchServiceTest<T extends SavedSearch<T, B>
         ownedQueries.add(mockSavedSearchResult(1L, true));
         ownedQueries.add(mockSavedSearchResult(2L, true));
         when(crudRepository.findByActiveTrueAndUser_UserId(anyLong())).thenReturn(ownedQueries);
+
         final Set<SharedToUser> permissions = new HashSet<>();
         permissions.add(mockSharedToUser(false, 1L, 3L));
         permissions.add(mockSharedToUser(false, 1L, 4L));
@@ -86,9 +87,24 @@ public abstract class AbstractSavedSearchServiceTest<T extends SavedSearch<T, B>
     @Test
     public void getAll() {
         final Set<T> results = service.getAll();
-        assertThat(results, hasSize(5));
+        assertThat(results, hasSize(2));
 
-        final Set<T> canEditTrueResults = results.stream().filter(SavedSearch::isCanEdit).collect(Collectors.toSet());
-        assertThat(canEditTrueResults, hasSize(3));
+        final Set<T> canEditTrueResults = results.stream()
+                .filter(SavedSearch::isCanEdit)
+                .collect(Collectors.toSet());
+
+        assertThat(canEditTrueResults, hasSize(2));
+    }
+
+    @Test
+    public void getShared() {
+        final Set<T> results = service.getShared();
+        assertThat(results, hasSize(3));
+
+        final Set<T> canEditTrueResults = results.stream()
+                .filter(SavedSearch::isCanEdit)
+                .collect(Collectors.toSet());
+
+        assertThat(canEditTrueResults, hasSize(1));
     }
 }
