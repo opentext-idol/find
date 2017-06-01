@@ -9,6 +9,11 @@ define([], function() {
     var spy = jasmine.createSpy('configuration');
     spy.and.returnValue({
         answerServerEnabled: true,
+        assetsConfig: {
+            assets: {
+                'BIG_LOGO': 'foo.png'
+            }
+        },
         map: {
             enabled: true,
             resultsStep: 2500,

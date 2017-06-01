@@ -60,6 +60,7 @@ define([
         'customisations.delete.message': 'Are you sure you want to delete the file {0}?',
         'customisations.delete.success': 'File {0} successfully deleted',
         'customisations.delete.title': 'Delete File',
+        'customisations.error.default': 'An unknown error occurred uploading the file',
         'customisations.error.DIRECTORY_ERROR': 'An error occurred creating the customisations directory',
         'customisations.error.FILE_EXISTS': 'A file with the given name already exists',
         'customisations.error.IO_ERROR': 'An error occurred uploading the file',
