@@ -19,7 +19,7 @@
   .no-overflow;
 
   height: @searchTabsHeight;
-  padding-top: 5px;
+  flex: 1;
 }
 
 .search-tab-title {
@@ -46,6 +46,10 @@
   background-color: @white;
   min-height: @nil;
 
+  .open .dropdown-toggle {
+    box-shadow: none;
+  }
+
   .nav-tabs {
     border-bottom: none;
   }
@@ -62,12 +66,45 @@
   .nav-tabs > li.start-new-search > a {
     background-color: transparent;
     background-image: none;
-    border-radius: @custom3;
-    border: 2px solid;
+    border: none;
     color: @accent;
     height: @custom9;
     line-height: @custom5;
     padding: 5px;
+  }
+
+  .saved-searches-tabs-dropdown {
+    flex: 1;
+  }
+
+  .shared-by-others {
+    .m-t-xs;
+    .p-t-xs;
+    .p-r-xs;
+    .p-b-nil;
+    .p-l-xs;
+
+    border: 1px solid @grey16;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+
+    &.active {
+      background-color: @grey18;
+    }
+
+    ul {
+      margin-left: -30px; //dropdown hack, similar to saved-searches dropdown
+
+      .no-shared-searches-message {
+        white-space: normal;
+      }
+
+      .search-tab-title {
+        .hp-new {
+          top: auto;
+        }
+      }
+    }
   }
 }
 
@@ -81,9 +118,10 @@
   }
 }
 
-.tab-dropdown {
+.saved-searches-tabs-dropdown {
+  .p-t-sm;
+
   padding-right: 16px;
-  padding-top: 12px;
 
   .dropdown-menu {
     margin-left: -115px;

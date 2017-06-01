@@ -11,6 +11,7 @@ define([
     'find/app/configuration',
     'find/idol/app/model/idol-indexes-collection',
     'find/idol/app/model/saved-searches/saved-snapshot-collection',
+    'find/idol/app/model/saved-searches/shared-saved-snapshot-collection',
     'find/idol/app/idol-navigation',
     'find/idol/app/page/idol-find-search',
     'find/idol/app/page/find-about-page',
@@ -18,7 +19,7 @@ define([
     'find/app/page/find-settings-page',
     'i18n!find/nls/bundle'
 ], function(_, Backbone, BaseApp, logout, configuration, IndexesCollection, SavedSnapshotCollection,
-            Navigation, FindSearch, AboutPage, DashboardPage, SettingsPage, i18n) {
+            SharedSavedSnapshotCollection, Navigation, FindSearch, AboutPage, DashboardPage, SettingsPage, i18n) {
     'use strict';
 
     return BaseApp.extend({
@@ -38,6 +39,10 @@ define([
                         Constructor: Backbone.Collection,
                         fetchOptions: {},
                         fetch: false
+                    },
+                    sharedSavedSnapshotCollection: {
+                        Constructor: SharedSavedSnapshotCollection,
+                        fetchOptions: {remove: false, reset: false}
                     }
                 }, modelData);
             }
@@ -79,7 +84,7 @@ define([
                         'windowScrollModel'
                     ].concat(
                         config.hasBiRole
-                            ? ['savedSnapshotCollection', 'readOnlySearchCollection']
+                            ? ['savedSnapshotCollection', 'sharedSavedQueryCollection', 'sharedSavedSnapshotCollection', 'readOnlySearchCollection']
                             : []
                     ),
                     title: i18n['app.search'],

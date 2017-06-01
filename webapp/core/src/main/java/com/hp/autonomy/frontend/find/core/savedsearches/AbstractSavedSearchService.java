@@ -10,7 +10,6 @@ import org.springframework.data.domain.AuditorAware;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -39,20 +38,19 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
     public Set<T> getAll() {
         final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
 
-        final Collection<T> results = new HashSet<>();
-        results.addAll(crudRepository.findByActiveTrueAndUser_UserId(userId));
+        return augmentOutputWithDisplayNames(crudRepository.findByActiveTrueAndUser_UserId(userId));
+    }
 
-        // In addition to saved searches where the user is the owner, also return saved searches that the user has
-        // been given permission to view.
+    @Override
+    public Set<T> getShared() {
+        final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
         final Set<SharedToUser> permissions = sharedToUserRepository.findByUserId(userId, type);
-        // Set the canEdit field on the saved search from sharedToUser. By default saved search canEdit is true.
-        results.addAll(permissions.stream()
+
+        return augmentOutputWithDisplayNames(permissions.stream()
                 .map(sharedToUser -> type.cast(sharedToUser.getSavedSearch().toBuilder()
                         .setCanEdit(sharedToUser.getCanEdit())
                         .build()))
                 .collect(toSet()));
-
-        return augmentOutputWithDisplayNames(results);
     }
 
     @Override

@@ -31,13 +31,12 @@ define([
             expect(output[1].content).toEqual(25);
         });
 
-        it('returns "Unknown" when the result count is not present in the attributes', function() {
+        it('returns null when the result count is not present in the attributes', function() {
             const output = runProcessAttributes({
                 dateCreated: moment(1455026659454)
             });
 
-            expect(output[1].title).toBe(snapshotsI18n['detail.resultCount']);
-            expect(output[1].content).toBe(i18n['app.unknown']);
+            expect(output[1]).toBe(null);
         });
 
         it('returns 0 when the result count is 0', function() {

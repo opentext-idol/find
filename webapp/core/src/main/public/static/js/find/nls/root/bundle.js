@@ -259,6 +259,8 @@ define([
         'search.savedSearchControl.titleBlank': 'Title must not be blank',
         'search.savedSearchControl.nameAlreadyExists': 'Search with this name already exists',
         'search.savedSearchControl.nameEmptyOrWhitespace': 'Name must contain at least one printable character',
+        'search.savedSearchControl.sharedByOthers': 'Shared by others',
+        'search.savedSearchControl.sharedByOthers.empty': 'No shared searches found.',
         'search.suggest.title': 'Similar results to "{0}"',
         'search.topicMap.empty': 'No topics found for this query',
         'search.topicMap.error': 'Error: could not retrieve topics for this search',

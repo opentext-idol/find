@@ -117,6 +117,7 @@ define([
             this.optionalViews = _.where(optionalViews, {enabled: true});
 
             this.savedQueryCollection = options.savedQueryCollection;
+            this.sharedSavedQueryCollection = options.sharedSavedQueryCollection;
             this.indexesCollection = options.indexesCollection;
             this.windowScrollModel = options.windowScrollModel;
 
@@ -126,8 +127,27 @@ define([
                 return options[data.collection];
             });
 
+            // determine wich collections are shared and which are unshared
+            // searchCollections[0] is the shared collections, and [1] is unshared
+            const searchCollections = _.chain(this.searchTypes)
+                .pairs()
+                .partition(function(pair) {
+                    return pair[1].isShared;
+                })
+                .map(function(pairs) {
+                    return _.map(pairs, function(pair) {
+                        return this.searchCollections[pair[0]];
+                    }, this)
+                }, this)
+                .value();
+
+
             this.savedSearchCollection = new MergeCollection([], {
-                collections: _.values(this.searchCollections)
+                collections: searchCollections[1]
+            });
+
+            this.sharedSavedSearchCollection = new MergeCollection([], {
+                collections: searchCollections[0]
             });
 
             this.selectedTabModel = new Backbone.Model({
@@ -171,6 +191,7 @@ define([
             if(config().hasBiRole) {
                 this.tabView = new TabbedSearchView({
                     savedSearchCollection: this.savedSearchCollection,
+                    sharedSavedSearchCollection: this.sharedSavedSearchCollection,
                     model: this.selectedTabModel,
                     queryStates: this.queryStates,
                     searchTypes: this.searchTypes
@@ -237,6 +258,18 @@ define([
                         break;
                     case 'READ_ONLY':
                         collection = options.readOnlySearchCollection;
+                        break;
+                    case 'SHARED_QUERY':
+                        collection = options.sharedSavedQueryCollection;
+                        break;
+                    case 'SHARED_SNAPSHOT':
+                        collection = options.sharedSavedSnapshotCollection;
+                        break;
+                    case 'SHARED_READ_ONLY_QUERY':
+                        collection = options.sharedSavedQueryCollection;
+                        break;
+                    case 'SHARED_READY_ONLY_SNAPSHOT':
+                        collection = options.sharedSavedSnapshotCollection;
                         break;
                 }
 
@@ -330,25 +363,25 @@ define([
             }.bind(this));
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(html);
 
-            this.optionalViews.forEach(function(view) {
+            this.optionalViews.forEach(function (view) {
                 view.instance.setElement(this.$(view.selector)).render();
             }, this);
 
-            if(this.tabView) {
+            if (this.tabView) {
                 this.tabView.setElement(this.$('.search-tabs-container')).render();
             }
 
             this.toggleExpandedState(this.selectedTabModel.get('selectedSearchCid') !== null || config().hasBiRole);
 
-            _.each(this.serviceViews, function(data) {
+            _.each(this.serviceViews, function (data) {
                 this.$('.query-service-view-container').append(data.view.$el);
                 data.view.render();
             }, this);
 
-            if(config().hasBiRole && this.selectedTabModel.get('selectedSearchCid') === null) {
+            if (config().hasBiRole && this.selectedTabModel.get('selectedSearchCid') === null) {
                 this.createNewTab();
             } else {
                 this.selectContentView();
@@ -356,17 +389,17 @@ define([
         },
 
         // Overrides method in BasePage
-        update: function() {
+        update: function () {
             const viewData = this.serviceViews[this.selectedTabModel.get('selectedSearchCid')];
 
-            if(viewData && viewData.view.update) {
+            if (viewData && viewData.view.update) {
                 // Inform the service view that it is visible again so (e.g.) the topic map can be re-drawn
                 viewData.view.update();
             }
         },
 
         // Can be overridden
-        getSearchTypes: function() {
+        getSearchTypes: function () {
             return {
                 QUERY: {
                     cssClass: 'query',
@@ -384,17 +417,17 @@ define([
                         create: i18n['search.savedSearchControl.openEdit.create'],
                         edit: i18n['search.savedSearchControl.openEdit.edit']
                     },
-                    createSearchModelAttributes: function(conceptGroups) {
+                    createSearchModelAttributes: function (conceptGroups) {
                         return {
                             inputString: conceptGroups.length > 0
                                 ? conceptGroups.first().get('concepts')[0]
                                 : '*'
                         };
                     },
-                    searchModelChange: function(options) {
-                        return function() {
+                    searchModelChange: function (options) {
+                        return function () {
                             const inputText = options.searchModel.get('inputText');
-                            if(inputText && inputText !== '*') {
+                            if (inputText && inputText !== '*') {
                                 options.queryState.conceptGroups.set([{concepts: [inputText], hidden: true}]);
                             } else {
                                 options.queryState.conceptGroups.reset();
@@ -405,7 +438,7 @@ define([
             };
         },
 
-        createNewTab: function(queryText) {
+        createNewTab: function (queryText) {
             const newSearch = new SavedSearchModel({
                 relatedConcepts: queryText ? [[queryText]] : [],
                 title: i18n['search.newSearch'],
@@ -417,28 +450,34 @@ define([
             this.selectedTabModel.set('selectedSearchCid', newSearch.cid);
         },
 
-        selectContentView: function() {
+        selectContentView: function () {
             const cid = this.selectedTabModel.get('selectedSearchCid');
 
-            _.each(this.serviceViews, function(data) {
+            _.each(this.serviceViews, function (data) {
                 data.view.$el.addClass('hide');
             }, this);
 
-            if(this.searchModel && this.searchChangeCallback !== null) {
+            if (this.searchModel && this.searchChangeCallback !== null) {
                 this.stopListening(this.searchModel, 'change', this.searchChangeCallback);
                 this.searchChangeCallback = null;
             }
 
-            if(cid) {
+            if (cid) {
                 let viewData;
-                const savedSearchModel = this.savedSearchCollection.get(cid);
+                let savedSearchModel = this.savedSearchCollection.get(cid);
+
+                // if not found, it must be a shared search
+                if (!savedSearchModel) {
+                    savedSearchModel = this.sharedSavedSearchCollection.get(cid);
+                }
+
                 const searchType = savedSearchModel.get('type');
 
                 events(cid);
 
                 let creating;
 
-                if(this.serviceViews[cid]) {
+                if (this.serviceViews[cid]) {
                     viewData = this.serviceViews[cid];
 
                     creating = false;
@@ -491,7 +530,7 @@ define([
                     creating = true;
                 }
 
-                if(this.searchModel) {
+                if (this.searchModel) {
                     this.searchModel.set(this.searchTypes[searchType]
                         .createSearchModelAttributes(viewData.queryState.conceptGroups));
 
@@ -507,11 +546,11 @@ define([
 
                 viewData.view.$el.removeClass('hide');
 
-                if(!creating && viewData.view.update) {
+                if (!creating && viewData.view.update) {
                     viewData.view.update();
                 }
 
-                if(this.selectedTabModel.get('selectedResultsView')) {
+                if (this.selectedTabModel.get('selectedResultsView')) {
                     viewData.view.changeTab(this.selectedTabModel.get('selectedResultsView'));
                     this.selectedTabModel.set('selectedResultsView', '');
                 }
@@ -520,7 +559,7 @@ define([
             }
         },
 
-        generateURL: function() {
+        generateURL: function () {
             const inputText = this.searchModel
                 ? this.searchModel.get('inputText')
                 : null;
@@ -532,17 +571,17 @@ define([
                     : 'search/splash');
         },
 
-        generateSuggestURL: function(model) {
+        generateSuggestURL: function (model) {
             return 'search/suggest/' + vent.addSuffixForDocument(model);
         },
 
         // bool == true. expanded state. Run fancy animation from large central search bar to main search page
         // bool == false: reduced state. Set view to initial state (large central search bar)
-        toggleExpandedState: function(bool) {
+        toggleExpandedState: function (bool) {
             this.$('.find').toggleClass(expandedClasses, bool).toggleClass(reducedClasses, !bool);
             this.$('.service-view-container').addClass('hide');
 
-            if(bool) {
+            if (bool) {
                 this.$('.query-service-view-container').removeClass('hide');
             }
 
@@ -551,7 +590,7 @@ define([
             this.removeDocumentDetailView();
             this.removeSuggestView();
 
-            this.optionalViews.forEach(function(view) {
+            this.optionalViews.forEach(function (view) {
                 view[bool ? 'onExpand' : 'onReduce'](view.instance);
             });
 
@@ -559,27 +598,27 @@ define([
             $('.container-fluid, .find-logo-small').toggleClass('reduced', !bool);
         },
 
-        isExpanded: function() {
+        isExpanded: function () {
             return this.$('.find').hasClass(expandedClasses);
         },
 
-        removeDocumentDetailView: function() {
-            if(this.documentDetailView) {
+        removeDocumentDetailView: function () {
+            if (this.documentDetailView) {
                 this.documentDetailView.remove();
                 this.stopListening(this.documentDetailView);
                 this.documentDetailView = null;
             }
         },
 
-        removeSuggestView: function() {
-            if(this.suggestView) {
+        removeSuggestView: function () {
+            if (this.suggestView) {
                 this.suggestView.remove();
                 this.stopListening(this.suggestView);
                 this.suggestView = null;
             }
         },
 
-        remove: function() {
+        remove: function () {
             _.chain(this.optionalViews).pluck('instance').invoke('remove');
 
             this.savedQueryResultPoller.destroy();
@@ -587,7 +626,7 @@ define([
             Backbone.View.prototype.remove.call(this);
         },
 
-        updateRouting: function(savedSearchModel, selectedTab) {
+        updateRouting: function (savedSearchModel, selectedTab) {
             const type = savedSearchModel.get('type') === 'READ_ONLY' ? savedSearchModel.get('searchType') : savedSearchModel.get('type');
             const id = savedSearchModel.get('id');
             const modelId = type + ':' + id;
@@ -600,7 +639,7 @@ define([
             this.currentRoute = Backbone.history.getFragment();
         },
 
-        getSelectedRoute: function() {
+        getSelectedRoute: function () {
             return this.currentRoute;
         }
     });

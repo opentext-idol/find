@@ -232,13 +232,19 @@ define([
         render: function() {
             var isMutable = this.searchTypes[this.savedSearchModel.get('type')].isMutable;
 
+            // only allow Save As buttons for these search types
+            var saveAsSearchTypes = [SavedSearchModel.Type.QUERY, SavedSearchModel.Type.SNAPSHOT];
+            var savedSearchModelType = this.savedSearchModel.get('type');
+
             this.$el.html(this.template({
                 i18n: i18n,
                 showCompare: Boolean(this.comparisonModalCallback),
                 showSaveAs: isMutable,
-                searchTypes: this.searchTypes,
+                searchTypes: saveAsSearchTypes,
                 showOpenAsQuery: !isMutable,
-                readOnly: this.savedSearchModel.get('type') === 'READ_ONLY'
+                readOnly: savedSearchModelType === 'READ_ONLY'
+                || savedSearchModelType === 'SHARED_READ_ONLY_QUERY'
+                || savedSearchModelType === 'SHARED_READ_ONLY_SNAPSHOT'
             }));
 
             this.renderTitleInput();
