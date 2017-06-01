@@ -269,15 +269,15 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         final SavedQuery savedQuery2 = createAndParseSavedQuery(saveRequest2);
         final long id2 = savedQuery2.getId();
 
-        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + id1).with(authentication(biAuth())))
+        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + '/' + id1).with(authentication(biAuth())))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", greaterThan(0)));
 
-        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + id2).with(authentication(biAuth())))
+        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + '/' + id2).with(authentication(biAuth())))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", is(0))); // likely to work though not full-proof
+                .andExpect(jsonPath("$", is(0))); // likely to work though not foolproof
     }
 
     private ResultActions createSavedQuery(final SavedQuery savedQuery) throws Exception {
