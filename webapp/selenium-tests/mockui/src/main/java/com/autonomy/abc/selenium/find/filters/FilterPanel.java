@@ -22,6 +22,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.hp.autonomy.frontend.selenium.util.CssUtil.cssifyIndex;
@@ -48,9 +49,8 @@ public class FilterPanel {
     }
 
     public void waitForIndexes() {
-        new WebDriverWait(driver, 10).until((com.google.common.base.Predicate<WebDriver>) webDriver -> {
-            return ElementUtil.hasClass("hide", panel.findElement(By.cssSelector(".no-active-databases")));
-        });
+        new WebDriverWait(driver, 10).until(webDriver ->
+                ElementUtil.hasClass("hide", panel.findElement(By.cssSelector(".no-active-databases"))));
     }
 
     public IndexesTreeContainer indexesTreeContainer() {

@@ -35,7 +35,7 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
 
     public void waitForTabToLoad() {
         new WebDriverWait(getDriver(), 5)
-                .until((Predicate<WebDriver>) driver -> !tabLoadingIndicator().isDisplayed());
+                .until(driver -> !tabLoadingIndicator().isDisplayed());
     }
 
     public WebElement frame() {

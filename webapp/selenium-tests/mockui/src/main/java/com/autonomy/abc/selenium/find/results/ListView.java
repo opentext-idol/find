@@ -7,7 +7,6 @@ package com.autonomy.abc.selenium.find.results;
 
 import com.autonomy.abc.selenium.find.Container;
 import com.autonomy.abc.selenium.query.QueryResultsPage;
-import com.google.common.base.Predicate;
 import com.hp.autonomy.frontend.selenium.util.AppElement;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
@@ -89,7 +88,7 @@ public class ListView extends AppElement implements QueryResultsPage {
     }
 
     public void waitForResultsToLoad() {
-        new WebDriverWait(getDriver(), RESULTS_TIMEOUT_SECONDS).until((Predicate<WebDriver>) driver -> {
+        new WebDriverWait(getDriver(), RESULTS_TIMEOUT_SECONDS).until(driver -> {
             if (loadingIndicatorPresent()) {
                 return false;
             } else if (errorContainerShown() || !findElements(By.cssSelector(".result-message:not(.hide)")).isEmpty() || !getResults().isEmpty()) {

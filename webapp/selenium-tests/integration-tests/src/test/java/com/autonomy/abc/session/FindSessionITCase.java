@@ -10,6 +10,8 @@ import com.autonomy.abc.selenium.find.results.ListView;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
+import com.hp.autonomy.frontend.selenium.framework.Session.SessionReuse;
+import com.hp.autonomy.frontend.selenium.framework.Session.SessionReuseParam;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +28,7 @@ import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+@SessionReuse(SessionReuseParam.CLEAN)
 public class FindSessionITCase extends FindTestBase {
     private FindService findService;
 
