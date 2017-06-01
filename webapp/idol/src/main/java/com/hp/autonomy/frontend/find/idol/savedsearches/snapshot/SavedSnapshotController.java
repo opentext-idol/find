@@ -25,19 +25,9 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -45,6 +35,7 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
 class SavedSnapshotController {
     static final String PATH = "/api/bi/saved-snapshot";
+    private static final String GET_SHARED = "/shared";
 
     private static final Integer STATE_TOKEN_MAX_RESULTS = Integer.MAX_VALUE;
 
@@ -83,6 +74,11 @@ class SavedSnapshotController {
     @RequestMapping(method = RequestMethod.GET)
     public Set<SavedSnapshot> getAll() {
         return service.getAll();
+    }
+
+    @RequestMapping(value = GET_SHARED, method = RequestMethod.GET)
+    public Set<SavedSnapshot> getShared() {
+        return service.getShared();
     }
 
     @RequestMapping(method = RequestMethod.POST)

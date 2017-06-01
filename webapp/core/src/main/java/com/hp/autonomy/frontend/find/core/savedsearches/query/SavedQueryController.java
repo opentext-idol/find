@@ -31,7 +31,8 @@ import java.util.Set;
 @RequestMapping(SavedQueryController.PATH)
 public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends Serializable, Q extends QueryRestrictions<S>, D extends SearchResult, E extends Exception> {
     static final String PATH = "/api/bi/saved-query";
-    static final String NEW_RESULTS_PATH = "/new-results/";
+    static final String NEW_RESULTS_PATH = "/new-results";
+    private static final String GET_SHARED = "/shared";
 
     protected final SavedSearchService<SavedQuery, SavedQuery.Builder> service;
     private final DocumentsService<RQ, ?, ?, Q, D, E> documentsService;
@@ -60,6 +61,11 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
         return service.getAll();
     }
 
+    @RequestMapping(value = GET_SHARED, method = RequestMethod.GET)
+    public Set<SavedQuery> getShared() {
+        return service.getShared();
+    }
+
     @RequestMapping(method = RequestMethod.POST)
     public SavedQuery create(
             @RequestBody final SavedQuery query
@@ -82,7 +88,7 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
         service.deleteById(id);
     }
 
-    @RequestMapping(value = NEW_RESULTS_PATH + "{id}", method = RequestMethod.GET)
+    @RequestMapping(value = NEW_RESULTS_PATH + "/{id}", method = RequestMethod.GET)
     public int checkForNewQueryResults(@SuppressWarnings("MVCPathVariableInspection") @PathVariable("id") final long id) throws E {
         int newResults = 0;
 

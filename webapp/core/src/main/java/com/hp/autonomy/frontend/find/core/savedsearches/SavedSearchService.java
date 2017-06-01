@@ -11,6 +11,8 @@ public interface SavedSearchService<T extends SavedSearch<T, B>, B extends Saved
 
     Set<T> getAll();
 
+    Set<T> getShared();
+
     T get(long id);
 
     T create(T search);
@@ -20,5 +22,4 @@ public interface SavedSearchService<T extends SavedSearch<T, B>, B extends Saved
     T getDashboardSearch(long id);
 
     void deleteById(long id);
-
 }

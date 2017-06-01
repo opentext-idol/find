@@ -41,6 +41,9 @@ define([
     const $window = $(window);
     const template = _.template(templateString);
 
+    // TODO add SHARED_QUERY when supported
+    const SEARCH_TYPES_WITH_LAST_FETCH_TIME = [SavedSearchModel.Type.QUERY];
+
     function updateScrollParameters() {
         if(this.$middleContainerContents) {
             this.middleColumnScrollModel.set({
@@ -118,10 +121,13 @@ define([
 
             // If the saved search is unmodified and not new, update the last fetched date
             this.listenTo(this.documentsCollection, 'sync', function() {
-                const changed = !(!this.queryState || this.savedSearchModel.equalsQueryState(this.queryState));
+                // don't do this for snapshots as they don't have dateDocsLastFetched in the database
+                if (_.contains(SEARCH_TYPES_WITH_LAST_FETCH_TIME, this.savedSearchModel.get('type'))) {
+                    const changed = this.queryState && !this.savedSearchModel.equalsQueryState(this.queryState);
 
-                if(!(changed || this.savedSearchModel.isNew())) {
-                    this.savedSearchModel.save({dateDocsLastFetched: moment()});
+                    if(!(changed || this.savedSearchModel.isNew())) {
+                        this.savedSearchModel.save({dateDocsLastFetched: moment()});
+                    }
                 }
             });
 
