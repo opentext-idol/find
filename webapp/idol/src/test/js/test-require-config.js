@@ -6,6 +6,7 @@
 require.config({
     baseUrl: 'target/classes/static/js',
     paths: {
+        'jasmine-ajax': '../bower_components/jasmine-ajax/lib/mock-ajax',
         'jasmine-jquery': '../bower_components/jasmine-jquery/lib/jasmine-jquery',
         'js-testing': '../bower_components/hp-autonomy-js-testing-utils/src/js',
         'mock': '../../../../src/test/js/mock'

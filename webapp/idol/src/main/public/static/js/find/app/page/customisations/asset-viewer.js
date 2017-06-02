@@ -110,6 +110,8 @@ define([
             this.width = options.width;
             this.type = options.type;
 
+            this.page = 0;
+
             this.pageCollection = new Backbone.Collection();
 
             this.currentAsset = configuration().assetsConfig.assets[options.type];
@@ -167,6 +169,8 @@ define([
 
         render: function() {
             this.$el.html(this.template());
+
+            this.changePage();
 
             this.assetList.render();
             this.$('.asset-list').append(this.assetList.$el);
