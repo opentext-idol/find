@@ -18,10 +18,12 @@ node {
 		sh 'git clean -ffdx' // Clean workspace: ultra-force (ff), untracked directories as well as files (d), don't use .gitignore (x)
 
 		gitCommit = getGitCommit()
-		repository = getOrgRepoName()
-		branch = getBranchName(gitCommit)
+		repository = getOrgRepoName().toLowerCase()
+		branch = getBranchName(gitCommit).toLowerCase()
 
 		echo "Building ${gitCommit}, from ${repository}, branch ${branch}"
+
+		def webapp = "find"
 
 	stage 'Maven Build'
 		env.JAVA_HOME="${tool 'Java 8 OpenJDK'}"
@@ -35,8 +37,8 @@ node {
 		}
 
 	stage 'Archive output'
-		archive 'idol/target/find.war'
-		archive 'on-prem-dist/target/find.zip'
+		archive 'idol/target/${webapp}.war'
+		archive 'on-prem-dist/target/${webapp}.zip'
 
 		// These are the JUnit tests as outputted by the surefire maven plugin
 		step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
@@ -47,7 +49,7 @@ node {
 	stage 'Artifactory'
 		try {
 			def server = Artifactory.server "idol" // "idol" is the name of the Artifactory server configured in Jenkins
-			def artifactLocation = "applications/find/${repository}/${branch}/"
+			def artifactLocation = "applications/${repository}/${branch}/"
 
 			def uploadSpec = """{
 				"files": [
@@ -74,6 +76,17 @@ node {
 		} catch (groovy.lang.MissingPropertyException e) {
 		    echo "No Artifactory plugin installed, skipping stage"
 		}
+
+    stage 'Deploy'
+        echo "webapp = ${webapp}"
+        echo "repository_location = ${repository}"
+        echo "branch = ${branch}"
+
+        sh """
+            config_template_name=onprem-config.json.j2
+            config_template_location=\$(realpath webapp/hsod-dist/src/ansible/${webapp}/templates/\${config_template_name})
+            ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_ROLES_PATH=\${FRONTEND_PLAYBOOK_PATH}/roles ansible-playbook \${FRONTEND_PLAYBOOK_PATH}/playbooks/app-playbook.yml -vv -i \${FRONTEND_PLAYBOOK_PATH}/hosts --become-user=fenkins --extra-vars "webapp=${webapp} repository_location=${repository} branch=${branch} docker_build_location=/home/fenkins/docker_build config_template_location=\${config_template_location} config_template_name=\${config_template_name}"
+        """
 }
 
 def getGitCommit() {
