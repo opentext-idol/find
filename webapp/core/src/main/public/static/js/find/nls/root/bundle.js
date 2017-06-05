@@ -36,7 +36,7 @@ define([
         'app.logout': 'Logout',
         'app.less': "less",
         'app.more': "more",
-        'app.name': "HPE Find",
+        'app.name': "Spinach",
         'app.ok': 'OK',
         'app.rename': 'Rename',
         'app.reset': 'Reset',
