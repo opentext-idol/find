@@ -41,7 +41,7 @@ define([
                     collection: this.appliedFiltersCollection,
                     title: i18n['search.filters.applied'],
                     containerClass: 'left-side-applied-filters-view',
-                    titleClass: 'block'
+                    titleClass: ''
                 }),
                 new FilterView(_.extend({
                     IndexesView: this.IndexesView,
