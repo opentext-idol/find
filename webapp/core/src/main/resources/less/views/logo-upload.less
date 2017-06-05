@@ -1,0 +1,45 @@
+/*
+ * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+.asset-viewer {
+  .asset {
+    align-items: center;
+    display: flex;
+    min-height: 50px;
+  }
+
+  .asset-apply,
+  .asset-delete  {
+    .m-l-sm;
+  }
+
+  .asset-preview {
+    flex: 1;
+    .m-l-sm;
+  }
+
+  .asset-selected {
+    flex: 0 0 1em;
+  }
+}
+
+.dropzone.big-logo-background {
+  background-color: @gray;
+}
+
+.dropzone.small-logo-background {
+  // need to duplicate this as we need the extra specificity
+  background-color: @hpeNavBarColour;
+  border-color: @hpeNavBarColour;
+  color: @white;
+
+  .dz-preview.dz-image-preview {
+    background-color: @hpeNavBarColour;
+  }
+}
+
+.small-logo-background {
+  background-color: @hpeNavBarColour;
+}

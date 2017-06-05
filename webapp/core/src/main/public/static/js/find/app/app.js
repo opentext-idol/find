@@ -7,6 +7,7 @@ define([
     'underscore',
     'jquery',
     'backbone',
+    'dropzone',
     'find/app/util/test-browser',
     'find/app/model/window-scroll-model',
     'find/app/model/saved-searches/saved-query-collection',
@@ -22,7 +23,7 @@ define([
     'find/app/router',
     'js-whatever/js/escape-regex',
     'text!find/templates/app/app.html'
-], function(_, $, Backbone, testBrowser, WindowScrollModel, SavedQueryCollection, SharedSavedQueryCollection, parseUrl, ModelRegistry,
+], function(_, $, Backbone, Dropzone, testBrowser, WindowScrollModel, SavedQueryCollection, SharedSavedQueryCollection, parseUrl, ModelRegistry,
             Navigation, configuration, metrics, Pages, logout, vent, router, escapeRegex, template) {
     'use strict';
 
@@ -75,6 +76,9 @@ define([
         initialize: function() {
             $.ajaxSetup({cache: false});
             $(document).ajaxError(this.ajaxErrorHandler.bind(this));
+
+            // disable auto-discover for dropzones
+            Dropzone.autoDiscover = false;
 
             // disable Datatables alerting behaviour
             if($.fn.dataTableExt) {

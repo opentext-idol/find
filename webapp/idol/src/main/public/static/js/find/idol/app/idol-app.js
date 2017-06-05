@@ -12,14 +12,17 @@ define([
     'find/idol/app/model/idol-indexes-collection',
     'find/idol/app/model/saved-searches/saved-snapshot-collection',
     'find/idol/app/model/saved-searches/shared-saved-snapshot-collection',
+    'find/app/model/asset-collection',
     'find/idol/app/idol-navigation',
     'find/idol/app/page/idol-find-search',
     'find/idol/app/page/find-about-page',
     'find/idol/app/page/dashboard-page',
     'find/app/page/find-settings-page',
+    'find/app/page/customisations-page',
     'i18n!find/nls/bundle'
 ], function(_, Backbone, BaseApp, logout, configuration, IndexesCollection, SavedSnapshotCollection,
-            SharedSavedSnapshotCollection, Navigation, FindSearch, AboutPage, DashboardPage, SettingsPage, i18n) {
+            SharedSavedSnapshotCollection, AssetCollection, Navigation, FindSearch, AboutPage, DashboardPage,
+            SettingsPage, CustomisationsPage, i18n) {
     'use strict';
 
     return BaseApp.extend({
@@ -46,6 +49,21 @@ define([
                     }
                 }, modelData);
             }
+
+            modelData = _.extend({
+                bigLogoCollection: {
+                    Constructor: AssetCollection,
+                    options: {
+                        type: CustomisationsPage.AssetTypes.bigLogo.type
+                    }
+                },
+                smallLogoCollection: {
+                    Constructor: AssetCollection,
+                    options: {
+                        type: CustomisationsPage.AssetTypes.smallLogo.type
+                    }
+                }
+            }, modelData);
 
             return modelData;
         },
@@ -101,13 +119,23 @@ define([
             });
 
             if(_.contains(config.roles, 'ROLE_ADMIN')) {
-                pageData.settings = {
-                    Constructor: SettingsPage,
-                    icon: 'hp-icon hp-fw hp-settings',
-                    title: i18n['app.settings'],
-                    order: dashboardCount + 2,
-                    navigation: 'dropdown'
-                };
+                _.extend(pageData, {
+                    settings: {
+                        Constructor: SettingsPage,
+                        icon: 'hp-icon hp-fw hp-settings',
+                        navigation: 'dropdown',
+                        title: i18n['app.settings'],
+                        order: dashboardCount + 2
+                    },
+                    customisations: {
+                        Constructor: CustomisationsPage,
+                        icon: 'hp-icon hp-fw hp-view',
+                        models: ['bigLogoCollection', 'smallLogoCollection'],
+                        navigation: 'dropdown',
+                        title: i18n['app.customisations'],
+                        order: dashboardCount + 3
+                    }
+                });
             }
 
             return pageData;

@@ -1,0 +1,8 @@
+<div class="asset-selected text-success"><i class="fa fa-check <%- (data.id !== currentAsset) ? 'hide' : '' %>"></i></div>
+<div class="asset-preview" ><div class="<%-imageClass%>" style="height: <%- height %>px;
+                width: <%- width %>px;
+                background-image: url('<%- data.url || (url + '/' + encodeURIComponent(data.id)) %>')"></div></div>
+<div class="asset-apply"><button class="btn button-primary apply-asset <%- (data.id === currentAsset) ? 'disabled' : '' %>"><%- i18n['app.apply'] %></button></div>
+<% if (data.deletable) { %>
+    <div class="asset-delete"><button class="btn btn-alert delete-asset"><%- i18n['app.delete'] %></button></div>
+<% } %>

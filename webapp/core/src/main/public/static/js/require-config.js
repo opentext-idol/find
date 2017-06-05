@@ -15,6 +15,7 @@ require.config({
         'datatables.net': '../bower_components/datatables.net/js/jquery.dataTables',
         'datatables.net-bs': '../bower_components/datatables.net-bs/js/dataTables.bootstrap',
         'datatables.net-fixedColumns': '../bower_components/datatables.net-fixedcolumns/js/dataTables.fixedColumns',
+        'dropzone': '../bower_components/dropzone/dist/dropzone-amd-module',
         'd3': '../bower_components/d3/d3',
         'fieldtext/js/parser': 'pegjs/fieldtext/parser',
         'html2canvas': '../bower_components/html2canvas/build/html2canvas',
