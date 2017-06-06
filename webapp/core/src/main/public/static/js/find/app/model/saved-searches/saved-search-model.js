@@ -191,10 +191,13 @@ define([
         },
 
         urlRoot: function() {
+            const modelType = this.get('type');
+            const isShared = modelType.indexOf('SHARED') !== -1;
+            const isQuery = modelType.indexOf('QUERY') !== -1;
+
             return 'api/bi/' +
-                (this.get('type') === 'QUERY'
-                    ? 'saved-query'
-                    : 'saved-snapshot');
+                (isQuery ? 'saved-query' : 'saved-snapshot') +
+                (isShared ? '/shared' : '');
         },
 
         /**

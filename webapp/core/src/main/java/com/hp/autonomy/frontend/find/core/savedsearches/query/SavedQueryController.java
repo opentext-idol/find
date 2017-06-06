@@ -83,6 +83,16 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
         );
     }
 
+    @RequestMapping(value = GET_SHARED + "/{id}", method = RequestMethod.PUT)
+    public SavedQuery updateShared(
+            @PathVariable("id") final long id,
+            @RequestBody final SavedQuery query
+    ) {
+        return service.updateShared(
+                new SavedQuery.Builder(query).setId(id).build()
+        );
+    }
+
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public void delete(@SuppressWarnings("MVCPathVariableInspection") @PathVariable("id") final long id) {
         service.deleteById(id);

@@ -122,6 +122,20 @@ class SavedSnapshotController {
         );
     }
 
+    @RequestMapping(value = "shared/{id}", method = RequestMethod.PUT)
+    public SavedSnapshot updateShared(
+            @PathVariable("id") final long id,
+            @RequestBody final SavedSnapshot snapshot
+    ) throws AciErrorException {
+        // It is only possible to update a snapshot's title
+        return service.update(
+                new Builder()
+                        .setId(id)
+                        .setTitle(snapshot.getTitle())
+                        .build()
+        );
+    }
+
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public void delete(
             @PathVariable("id") final long id

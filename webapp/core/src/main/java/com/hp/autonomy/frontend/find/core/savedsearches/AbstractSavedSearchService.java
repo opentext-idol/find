@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
+import org.springframework.dao.PermissionDeniedDataAccessException;
 import org.springframework.data.domain.AuditorAware;
 
 import java.util.Collection;
@@ -74,6 +75,19 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
     }
 
     @Override
+    public T updateShared(final T search) {
+        final T savedQuery = getSearch(search.getId());
+
+        if(savedQuery.isCanEdit()) {
+            savedQuery.merge(search);
+            final T result = crudRepository.save(savedQuery);
+            return augmentOutputWithDisplayNames(result);
+        } else {
+            throw new PermissionDeniedDataAccessException("User does not have permission to edit the search", new Throwable("User does not have permission to edit the search"));
+        }
+    }
+
+    @Override
     public void deleteById(final long id) {
         final T savedQuery = getSearch(id);
         savedQuery.setActive(false);
@@ -87,11 +101,15 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
     }
 
     private T getSearch(final long id) throws IllegalArgumentException {
-        final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
-        final T byIdAndUser_userId = crudRepository.findByActiveTrueAndIdAndUser_UserId(id, userId);
+        final Long currentUserId = userEntityAuditorAware.getCurrentAuditor().getUserId();
+        final T savedSearch = crudRepository.findByActiveTrueAndId(id);
 
-        if (null != byIdAndUser_userId) {
-            return byIdAndUser_userId;
+        if(null != savedSearch) {
+            if (savedSearch.getUser().getUserId().equals(currentUserId) || sharedToUserRepository.findOne(new SharedToUserPK(id, currentUserId)) != null) {
+                return savedSearch;
+            } else {
+                throw new IllegalArgumentException("User has no permissions to edit this saved search");
+            }
         } else {
             throw new IllegalArgumentException("Saved search not found");
         }
