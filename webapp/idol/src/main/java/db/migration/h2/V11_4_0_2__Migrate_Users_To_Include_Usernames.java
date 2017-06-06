@@ -8,6 +8,7 @@ import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactoryImpl;
 import com.hp.autonomy.types.idol.marshalling.marshallers.jaxb2.Jaxb2MarshallerFactory;
@@ -32,6 +33,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// Warning, this migration depends on access to system properties that are added in IdolFindConfigService
+
 @SuppressWarnings("unused")
 public class V11_4_0_2__Migrate_Users_To_Include_Usernames implements SpringJdbcMigration {
     private static final String[] TABLES = {
@@ -42,17 +45,20 @@ public class V11_4_0_2__Migrate_Users_To_Include_Usernames implements SpringJdbc
             "search_stored_state"
     };
 
-    private static final int HTTP_SOCKET_TIMEOUT = 90000;
-    private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
-    private static final int MAX_CONNECTIONS_TOTAL = 120;
+    private static final int HTTP_SOCKET_TIMEOUT = 9000;
+    private static final int MAX_CONNECTIONS_PER_ROUTE = 5;
+    private static final int MAX_CONNECTIONS_TOTAL = 5;
 
     private final AciService aciService;
     private final AciServerDetails serverDetails;
     private final ProcessorFactory processorFactory;
 
     public V11_4_0_2__Migrate_Users_To_Include_Usernames() {
-//        // ToDo get these details from the config file
-        serverDetails = new AciServerDetails("cbg-data-admin-dev.hpeswlab.net", 9030);
+        final String host = System.getProperty(IdolFindConfigFileService.COMMUNITY_HOST);
+        final int port = Integer.parseInt(System.getProperty(IdolFindConfigFileService.COMMUNITY_PORT));
+        final AciServerDetails.TransportProtocol transportProtocol = AciServerDetails.TransportProtocol.valueOf(System.getProperty(IdolFindConfigFileService.COMMUNITY_PROTOCOL));
+
+        serverDetails = new AciServerDetails(transportProtocol, host, port);
         processorFactory = new ProcessorFactoryImpl(new Jaxb2MarshallerFactory());
 
         final SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(HTTP_SOCKET_TIMEOUT).build();
@@ -63,8 +69,8 @@ public class V11_4_0_2__Migrate_Users_To_Include_Usernames implements SpringJdbc
                 .setDefaultSocketConfig(socketConfig)
                 .build();
 
-        final AciHttpClient AciHttpClient = new AciHttpClientImpl(httpClient);
-        aciService = new AciServiceImpl(AciHttpClient, serverDetails);
+        final AciHttpClient aciHttpClient = new AciHttpClientImpl(httpClient);
+        aciService = new AciServiceImpl(aciHttpClient, serverDetails);
     }
 
     private String getUsername(final Long uid) {
@@ -76,7 +82,7 @@ public class V11_4_0_2__Migrate_Users_To_Include_Usernames implements SpringJdbc
             final User user = aciService.executeAction(serverDetails, parameters, processorFactory.getResponseDataProcessor(User.class));
             return user.getUsername();
         } catch (final AciErrorException e) {
-            // TODO: Abort migration if this happens? Check error code and if is a real fail then fail
+            // TODO: Abort migration if it isn't that the user isn't present in Community, but another reason for failure.
 //            if (e.getErrorId() == "UASERVERUSERREAD-2147438053") {
 //
 //            }
