@@ -15,11 +15,11 @@ import static org.openqa.selenium.support.ui.ExpectedConditions.stalenessOf;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 public class SearchOptionsBar {
-    private final WebDriver driver;
+    private final WebDriver webDriver;
     private final WebElement bar;
 
     public SearchOptionsBar(final WebDriver driver) {
-        this.driver = driver;
+        webDriver = driver;
         bar = driver.findElement(By.cssSelector(".query-service-view-container > :not(.hide):not(.search-tabs-container) .search-options-container"));
     }
 
@@ -28,7 +28,7 @@ public class SearchOptionsBar {
     }
 
     FormInput searchTitleInput() {
-        return new FormInput(findElement(By.className("search-title-input")), driver);
+        return new FormInput(findElement(By.className("search-title-input")), webDriver);
     }
 
     public void cancelSave(){
@@ -38,14 +38,9 @@ public class SearchOptionsBar {
     void confirmSave() {
         final WebElement confirmButton = saveConfirmButton();
         confirmButton.click();
-        new WebDriverWait(driver, 120)
+        new WebDriverWait(webDriver, 120)
                 .withMessage("saving a search")
-                .until(new ExpectedCondition<Boolean>() {
-                @Override
-                public Boolean apply(final WebDriver driver) {
-                    return bar.findElements(By.cssSelector(".search-title-input-container")).isEmpty();
-                }
-                });
+                .until((ExpectedCondition<Boolean>) driver -> bar.findElements(By.cssSelector(".search-title-input-container")).isEmpty());
     }
 
     public WebElement saveConfirmButton() {
@@ -83,15 +78,15 @@ public class SearchOptionsBar {
 
     private Menu<String> extraOptions() {
         final WebElement dropdown = findElement(By.cssSelector("[data-toggle=dropdown]"));
-        return new Dropdown(ElementUtil.getParent(dropdown), driver);
+        return new Dropdown(ElementUtil.getParent(dropdown), webDriver);
     }
 
     public void confirmModalOperation() {
-        final WebElement confirmModal = new WebDriverWait(driver, 10)
+        final WebElement confirmModal = new WebDriverWait(webDriver, 10)
                 .until(visibilityOfElementLocated(By.className("modal-content")));
 
         confirmModal.findElement(By.className("okButton")).click();
-        new WebDriverWait(driver, 10).until(stalenessOf(confirmModal));
+        new WebDriverWait(webDriver, 10).until(stalenessOf(confirmModal));
     }
 
     private WebElement findElement(final By locator) {
