@@ -27,22 +27,24 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.hp.autonomy.frontend.find.idol.customization.CustomizationReloadController.CUSTOMIZATION_PATH;
+import static com.hp.autonomy.frontend.find.idol.customization.CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH;
 
 @Controller
 @Slf4j
-@RequestMapping(CUSTOMIZATION_PATH)
+@RequestMapping(ADMIN_CUSTOMIZATION_PATH)
 public class CustomizationReloadController {
-    public final static String CUSTOMIZATION_PATH = "/api/admin/customization";
+    public final static String ADMIN_CUSTOMIZATION_PATH = "/api/admin/customization";
     public final static String CONFIG_RELOAD_PATH = "/config/reload";
     private final ControllerUtils controllerUtils;
     private final Collection<ReloadableCustomizationComponent> reloadableCustomizationComponents;
     private final String contextPath;
 
     @Autowired
-    public CustomizationReloadController(@Value(AppConfiguration.SERVER_CONTEXT_PATH) String contextPath,
-                                         final Collection<ReloadableCustomizationComponent> reloadableCustomizationComponents,
-                                         final ControllerUtils controllerUtils) {
+    public CustomizationReloadController(
+        @Value(AppConfiguration.SERVER_CONTEXT_PATH) String contextPath,
+        final Collection<ReloadableCustomizationComponent> reloadableCustomizationComponents,
+        final ControllerUtils controllerUtils)
+    {
         this.reloadableCustomizationComponents = reloadableCustomizationComponents;
         this.controllerUtils = controllerUtils;
         this.contextPath = contextPath;
@@ -68,8 +70,8 @@ public class CustomizationReloadController {
     @ExceptionHandler(Exception.class)
     public ModelAndView errorHandler(
         final HttpServletRequest request,
-        final Exception e
-    ) {
+        final Exception e)
+    {
         log.error("Failed to reload customization component", e);
 
         return controllerUtils.buildErrorModelAndView(

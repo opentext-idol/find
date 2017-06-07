@@ -1,20 +1,20 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'find/app/page/customisations/asset-widget',
+    'jquery',
     'backbone',
+    'find/app/page/customizations/asset-widget',
     'i18n!find/nls/bundle'
-], function(AssetWidget, Backbone, i18n) {
+], function($, Backbone, AssetWidget, i18n) {
     'use strict';
 
     // data uri for a 1x1 black png
     const DATA_URI = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjExR/NCNwAAAAxJREFUGFdjYGBgAAAABAABXM3/aQAAAABJRU5ErkJggg==';
 
     describe('Asset widget', function() {
-
         beforeEach(function() {
             this.collection = new Backbone.Collection();
 
@@ -83,8 +83,8 @@ define([
             this.view.dropzone.emit('addedfile', file);
             this.view.dropzone.accept(file, spy);
             this.view.dropzone.emit('thumbnail', file, DATA_URI);
-            
-            expect(spy.calls.argsFor(0)[0]).toBe(i18n['customisations.fileDimensionsInvalid']);
+
+            expect(spy.calls.argsFor(0)[0]).toBe(i18n['customizations.fileDimensionsInvalid']);
         });
 
         it('should not allow files of other types', function() {
@@ -115,7 +115,7 @@ define([
                 status: 500
             });
 
-            expect(previewElement.find('.dz-error-message')).toHaveText(i18n['customisations.error.IO_ERROR']);
+            expect(previewElement.find('.dz-error-message')).toHaveText(i18n['customizations.error.IO_ERROR']);
         });
 
         it('should display a stock error message for unknown errors', function() {
@@ -127,7 +127,7 @@ define([
                 status: 500
             });
 
-            expect(previewElement.find('.dz-error-message')).toHaveText(i18n['customisations.error.default']);
+            expect(previewElement.find('.dz-error-message')).toHaveText(i18n['customizations.error.default']);
         });
 
         it('should add files to the collection when uploaded', function() {
@@ -138,7 +138,5 @@ define([
             expect(this.collection.length).toBe(1);
             expect(this.collection.at(0).id).toBe('logo.png');
         })
-
     });
-
 });

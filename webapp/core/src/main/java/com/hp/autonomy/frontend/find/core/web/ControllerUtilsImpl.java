@@ -39,7 +39,12 @@ class ControllerUtilsImpl implements ControllerUtils {
     private final ConfigService<? extends FindConfig<?, ?>> configService;
 
     @Autowired
-    public ControllerUtilsImpl(final ObjectMapper objectMapper, final MessageSource messageSource, @Value(AppConfiguration.GIT_COMMIT_PROPERTY) final String commit, final ConfigService<? extends FindConfig<?, ?>> configService) {
+    public ControllerUtilsImpl(
+        final ObjectMapper objectMapper,
+        final MessageSource messageSource,
+        @Value(AppConfiguration.GIT_COMMIT_PROPERTY) final String commit,
+        final ConfigService<? extends FindConfig<?, ?>> configService)
+    {
         this.objectMapper = objectMapper;
         this.messageSource = messageSource;
         this.commit = commit;
@@ -62,20 +67,20 @@ class ControllerUtilsImpl implements ControllerUtils {
         final ModelAndView modelAndView = new ModelAndView(ViewNames.ERROR.viewName());
         modelAndView.addObject(ErrorAttributes.MAIN_MESSAGE.value(),
                                errorInfo.getMainMessageCode() == null
-                                       ? errorInfo.getMainMessage()
-                                       : getMessage(errorInfo.getMainMessageCode(), null));
+                                   ? errorInfo.getMainMessage()
+                                   : getMessage(errorInfo.getMainMessageCode(), null));
         modelAndView.addObject(ErrorAttributes.SUB_MESSAGE.value(),
                                errorInfo.getSubMessageCode() == null
-                                       ? errorInfo.getSubMessage()
-                                       : getMessage(errorInfo.getSubMessageCode(), errorInfo.getSubMessageArguments()));
+                                   ? errorInfo.getSubMessage()
+                                   : getMessage(errorInfo.getSubMessageCode(), errorInfo.getSubMessageArguments()));
         modelAndView.addObject(ErrorAttributes.BASE_URL.value(), RequestUtils.buildBaseUrl(errorInfo.getRequest()));
         modelAndView.addObject(ErrorAttributes.STATUS_CODE.value(), errorInfo.getStatusCode());
         modelAndView.addObject(ErrorAttributes.AUTH_ERROR.value(), errorInfo.isAuthError());
 
         final String contactSupportMessage = Optional
-                .ofNullable(configService.getConfig().getUiCustomization())
-                .map(UiCustomization::getErrorCallSupportString)
-                .orElse(null);
+            .ofNullable(configService.getConfig().getUiCustomization())
+            .map(UiCustomization::getErrorCallSupportString)
+            .orElse(null);
 
         if(errorInfo.isContactSupport()) {
             if(errorInfo.getException() != null) {
@@ -84,13 +89,13 @@ class ControllerUtilsImpl implements ControllerUtils {
                 log.error("Stack trace", errorInfo.getException());
                 modelAndView.addObject(ErrorAttributes.CONTACT_SUPPORT.value(),
                                        contactSupportMessage == null
-                                               ? getMessage(MESSAGE_CODE_CONTACT_SUPPORT_UUID, new Object[]{uuid})
-                                               : contactSupportMessage);
+                                           ? getMessage(MESSAGE_CODE_CONTACT_SUPPORT_UUID, new Object[]{uuid})
+                                           : contactSupportMessage);
             } else {
                 modelAndView.addObject(ErrorAttributes.CONTACT_SUPPORT.value(),
                                        contactSupportMessage == null
-                                               ? getMessage(MESSAGE_CODE_CONTACT_SUPPORT_NO_UUID, null)
-                                               : contactSupportMessage);
+                                           ? getMessage(MESSAGE_CODE_CONTACT_SUPPORT_NO_UUID, null)
+                                           : contactSupportMessage);
             }
         }
 

@@ -1,9 +1,9 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.idol.customisations;
+package com.hp.autonomy.frontend.find.idol.customization;
 
 import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
 import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
@@ -18,12 +18,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class AssetValidationService implements ValidationService<AssetConfig> {
-
-    private final CustomisationService customisationService;
+    private final CustomizationService customizationService;
 
     @Autowired
-    public AssetValidationService(final CustomisationService customisationService) {
-        this.customisationService = customisationService;
+    public AssetValidationService(final CustomizationService customizationService) {
+        this.customizationService = customizationService;
     }
 
     @Override
@@ -31,23 +30,22 @@ public class AssetValidationService implements ValidationService<AssetConfig> {
         final ValidationResults.Builder builder = new ValidationResults.Builder();
 
         Arrays.stream(AssetType.values())
-                .collect(Collectors.toMap(
-                        Enum::name,
-                        type -> {
-                            final String assetPath = config.getAssetPath(type);
+            .collect(Collectors.toMap(
+                Enum::name,
+                type -> {
+                    final String assetPath = config.getAssetPath(type);
 
-                            if (assetPath == null) {
-                                return new ValidationResult<>(true);
-                            }
+                    if(assetPath == null) {
+                        return new ValidationResult<>(true);
+                    }
 
-                            final File asset = customisationService.getAsset(type, assetPath);
+                    final File asset = customizationService.getAsset(type, assetPath);
 
-                            return new ValidationResult<>(asset.exists());
-                        }))
-                .forEach(builder::put);
+                    return new ValidationResult<>(asset.exists());
+                }))
+            .forEach(builder::put);
 
         return builder.build();
-
     }
 
     @Override

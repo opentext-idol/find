@@ -1,7 +1,8 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.hp.autonomy.frontend.find.core.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,7 +38,7 @@ public class ControllerUtilsTest<C extends FindConfig<?, ?>> {
     private ConfigService<C> configService;
 
     @Mock
-    private UiCustomization uiCustomisation;
+    private UiCustomization uiCustomization;
 
     @Mock
     private C config;
@@ -51,7 +52,7 @@ public class ControllerUtilsTest<C extends FindConfig<?, ?>> {
         when(messageSource.getMessage(anyString(), any(Object[].class), any(Locale.class))).thenReturn("Some Message");
 
         when(configService.getConfig()).thenReturn(config);
-        when(config.getUiCustomization()).thenReturn(uiCustomisation);
+        when(config.getUiCustomization()).thenReturn(uiCustomization);
     }
 
     @Test
@@ -70,14 +71,14 @@ public class ControllerUtilsTest<C extends FindConfig<?, ?>> {
     @Test
     public void buildErrorModelAndView() {
         final ErrorModelAndViewInfo errorModelAndViewInfo = new ErrorModelAndViewInfo.Builder()
-                .setRequest(new MockHttpServletRequest())
-                .setMainMessageCode("some.code")
-                .setSubMessageCode("some.code")
-                .setSubMessageArguments(new Object[]{})
-                .setStatusCode(HttpStatus.SC_FAILED_DEPENDENCY)
-                .setContactSupport(true)
-                .setButtonHref(URI.create("http://some-address"))
-                .build();
+            .setRequest(new MockHttpServletRequest())
+            .setMainMessageCode("some.code")
+            .setSubMessageCode("some.code")
+            .setSubMessageArguments(new Object[]{})
+            .setStatusCode(HttpStatus.SC_FAILED_DEPENDENCY)
+            .setContactSupport(true)
+            .setButtonHref(URI.create("http://some-address"))
+            .build();
         final ModelAndView modelAndView = controllerUtils.buildErrorModelAndView(errorModelAndViewInfo);
         assertNotNull(modelAndView.getModel().get(ErrorAttributes.MAIN_MESSAGE.value()));
         assertNotNull(modelAndView.getModel().get(ErrorAttributes.CONTACT_SUPPORT.value()));

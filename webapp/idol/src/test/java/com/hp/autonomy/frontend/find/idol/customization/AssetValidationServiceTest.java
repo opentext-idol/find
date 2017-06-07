@@ -1,9 +1,9 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.idol.customisations;
+package com.hp.autonomy.frontend.find.idol.customization;
 
 import com.hp.autonomy.frontend.configuration.validation.ValidationResults;
 import org.hamcrest.Description;
@@ -16,7 +16,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
 
-import static com.hp.autonomy.frontend.find.idol.customisations.AssetValidationServiceTest.ValidationResultsMatcher.valid;
+import static com.hp.autonomy.frontend.find.idol.customization.AssetValidationServiceTest.ValidationResultsMatcher.valid;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -24,11 +24,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AssetValidationServiceTest {
-
     private static final String EXISTING_FILE_NAME = "existing-big.png";
     private static final String NON_EXISTENT_FILE_NAME = "non-existent-big.png";
     @Mock
-    private CustomisationService customisationService;
+    private CustomizationService customizationService;
 
     @Mock
     private File existingAsset;
@@ -46,10 +45,10 @@ public class AssetValidationServiceTest {
         when(existingAsset.exists()).thenReturn(true);
         when(nonExistentAsset.exists()).thenReturn(false);
 
-        when(customisationService.getAsset(AssetType.BIG_LOGO, EXISTING_FILE_NAME)).thenReturn(existingAsset);
-        when(customisationService.getAsset(AssetType.BIG_LOGO, NON_EXISTENT_FILE_NAME)).thenReturn(nonExistentAsset);
+        when(customizationService.getAsset(AssetType.BIG_LOGO, EXISTING_FILE_NAME)).thenReturn(existingAsset);
+        when(customizationService.getAsset(AssetType.BIG_LOGO, NON_EXISTENT_FILE_NAME)).thenReturn(nonExistentAsset);
 
-        assetValidationService = new AssetValidationService(customisationService);
+        assetValidationService = new AssetValidationService(customizationService);
     }
 
     @Test
@@ -102,5 +101,4 @@ public class AssetValidationServiceTest {
             mismatchDescription.appendText("not a valid result");
         }
     }
-
 }

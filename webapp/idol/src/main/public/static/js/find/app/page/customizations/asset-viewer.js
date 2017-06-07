@@ -1,18 +1,19 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
     'underscore',
+    'jquery',
+    'backbone',
     'find/app/util/confirm-view',
     'js-whatever/js/list-view',
     'find/app/configuration',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/customisations/asset-viewer.html',
-    'text!find/templates/app/page/customisations/asset.html'
-], function(Backbone, _, Confirm, ListView, configuration, i18n, template, assetTemplate) {
+    'text!find/templates/app/page/customizations/asset-viewer.html',
+    'text!find/templates/app/page/customizations/asset.html'
+], function(_, $, Backbone, Confirm, ListView, configuration, i18n, template, assetTemplate) {
     'use strict';
 
     const MESSAGE_CLASSES = {
@@ -30,7 +31,6 @@ define([
     }
 
     return Backbone.View.extend({
-
         template: _.template(template),
         assetTemplate: _.template(assetTemplate),
 
@@ -52,13 +52,13 @@ define([
 
                 body.assets[this.type] = file;
 
-                $.ajax('../api/admin/customisation/config', {
+                $.ajax('../api/admin/customization/config', {
                     contentType: "application/json",
                     data: JSON.stringify(body),
                     dataType: 'json',
                     method: 'POST',
                     error: function(xhr) {
-                        this.setMessage(i18n['customisations.apply.error'](file), MESSAGE_CLASSES.error);
+                        this.setMessage(i18n['customizations.apply.error'](file), MESSAGE_CLASSES.error);
 
                         this.collection.remove(file);
                     }.bind(this),
@@ -68,15 +68,14 @@ define([
                         this.$('.asset i').addClass('hide');
                         this.$('.asset .apply-asset').removeClass('disabled');
 
-                        if (file) {
+                        if(file) {
                             this.toggleAsset(true, file);
 
-                            this.setMessage(i18n['customisations.apply.success'](file), MESSAGE_CLASSES.success);
-                        }
-                        else {
+                            this.setMessage(i18n['customizations.apply.success'](file), MESSAGE_CLASSES.success);
+                        } else {
                             this.toggleAsset(true);
 
-                            this.setMessage(i18n['customisations.applyDefault.success'], MESSAGE_CLASSES.success);
+                            this.setMessage(i18n['customizations.applyDefault.success'], MESSAGE_CLASSES.success);
                         }
                     }.bind(this)
                 })
@@ -89,17 +88,17 @@ define([
                     cancelIcon: '',
                     cancelText: i18n['app.cancel'],
                     hiddenEvent: 'hidden.bs.modal',
-                    message: i18n['customisations.delete.message'](file),
+                    message: i18n['customizations.delete.message'](file),
                     okText: i18n['app.button.delete'],
                     okClass: 'btn-danger',
                     okIcon: '',
-                    title: i18n['customisations.delete.title'],
-                    okHandler: _.bind(function () {
+                    title: i18n['customizations.delete.title'],
+                    okHandler: _.bind(function() {
                         this.collection.get(file).destroy({
                             wait: true
                         });
 
-                        this.setMessage(i18n['customisations.delete.success'](file), MESSAGE_CLASSES.success);
+                        this.setMessage(i18n['customizations.delete.success'](file), MESSAGE_CLASSES.success);
                     }, this)
                 });
             }
@@ -159,7 +158,7 @@ define([
             });
 
             this.listenTo(this.collection, 'remove', function(model) {
-                if (this.currentAsset === model.id) {
+                if(this.currentAsset === model.id) {
                     this.toggleAsset(true);
                 }
 
@@ -188,25 +187,19 @@ define([
         },
 
         setMessage: function(message, className) {
-            this.$message.removeClass(_.values(MESSAGE_CLASSES));
-
-            this.$message.addClass(className).text(message);
+            this.$message
+                .removeClass(_.values(MESSAGE_CLASSES))
+                .addClass(className)
+                .text(message);
         },
 
         toggleAsset: function(active, asset) {
-            let $el;
-
-            if (asset) {
-                $el = this.$('[data-id="' + asset + '"]');
-            }
-            else {
-                $el = this.$headerHtml;
-            }
+            const $el = asset
+                ? this.$('[data-id="' + asset + '"]')
+                : this.$headerHtml;
 
             $el.find('i').toggleClass('hide', !active);
             $el.find('.apply-asset').toggleClass('disabled', active);
         }
-
     });
-
 });

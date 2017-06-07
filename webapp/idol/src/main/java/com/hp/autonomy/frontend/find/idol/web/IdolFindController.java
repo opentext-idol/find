@@ -19,7 +19,7 @@ import com.hp.autonomy.frontend.find.idol.authentication.FindCommunityRole;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
-import com.hp.autonomy.frontend.find.idol.customisations.AssetConfig;
+import com.hp.autonomy.frontend.find.idol.customization.AssetConfig;
 import com.hp.autonomy.frontend.find.idol.dashboards.DashboardConfig;
 import com.hp.autonomy.frontend.find.idol.export.service.IdolMetadataNode;
 import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;

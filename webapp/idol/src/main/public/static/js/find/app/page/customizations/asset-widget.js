@@ -1,15 +1,17 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
+    'jquery',
     'backbone',
     'dropzone',
-    'find/app/page/customisations/asset-viewer',
+    'find/app/page/customizations/asset-viewer',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/customisations/asset-widget.html'
-], function(Backbone, Dropzone, AssetViewer, i18n, template) {
+    'text!find/templates/app/page/customizations/asset-widget.html'
+], function(_, $, Backbone, Dropzone, AssetViewer, i18n, template) {
     'use strict';
 
     const DEFAULT_MESSAGE = _.template('<i class="hp-icon hp-3x hp-document-upload"></i><p><%-message%></p>')({
@@ -57,7 +59,7 @@ define([
             var width = this.width;
             var height = this.height;
 
-            var self  = this;
+            var self = this;
 
             this.dropzone = new Dropzone(this.$('.dropzone')[0], {
                 acceptedFiles: 'image/*',
@@ -80,17 +82,18 @@ define([
                 // see https://github.com/enyo/dropzone/wiki/FAQ#reject-images-based-on-image-dimensions
                 accept: function(file, done) {
                     file.acceptDimensions = done;
-                    file.rejectDimensions = function() { done(i18n['customisations.fileDimensionsInvalid']); };
+                    file.rejectDimensions = function() {
+                        done(i18n['customizations.fileDimensionsInvalid']);
+                    };
                 },
                 init: function() {
                     // Register for the thumbnail callback
                     // When the thumbnail is created the image dimensions are set
                     this.on('thumbnail', function(file) {
-                        if (file.width !== width || file.height !== height) {
-                            file.rejectDimensions()
-                        }
-                        else {
+                        if(file.width === width && file.height === height) {
                             file.acceptDimensions();
+                        } else {
+                            file.rejectDimensions()
                         }
                     });
 
@@ -100,7 +103,7 @@ define([
 
                     // default error handling displays the server response as is, which is no good
                     this.on('error', function(file, response) {
-                        var errorMessage = i18n['customisations.error.' + response] || i18n['customisations.error.default'];
+                        var errorMessage = i18n['customizations.error.' + response] || i18n['customizations.error.default'];
                         $(file.previewElement).find('.dz-error-message').text(errorMessage);
                     })
                 }
@@ -112,7 +115,5 @@ define([
 
             Backbone.View.prototype.remove.apply(this, arguments);
         }
-
     });
-
 });

@@ -1,9 +1,9 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.idol.customisations;
+package com.hp.autonomy.frontend.find.idol.customization;
 
 import com.hp.autonomy.frontend.configuration.WriteableConfigService;
 import com.hp.autonomy.frontend.configuration.validation.ConfigValidationException;
@@ -28,10 +28,8 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@RequestMapping({CustomisationAdminController.CUSTOMISATIONS_PATH})
-class CustomisationAdminController extends AbstractCustomisationController {
-
-    static final String CUSTOMISATIONS_PATH = "/api/admin/customisation";
+@RequestMapping({CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH})
+class CustomizationAdminController extends AbstractCustomizationController {
     static final String ASSETS_PATH = "/assets";
     static final String CONFIG_PATH = "/config";
     private static final String TYPED_ASSETS_PATH = ASSETS_PATH + "/{type}";
@@ -39,16 +37,16 @@ class CustomisationAdminController extends AbstractCustomisationController {
     private static final String ASSET_ID_PATH = TYPED_ASSETS_PATH + "/{name:.+}";
 
     private static final MediaType IMAGE_MEDIA_TYPE = new MediaType("image");
-    private final CustomisationService customisationService;
+    private final CustomizationService customizationService;
     private final WriteableConfigService<AssetConfig> assetConfigService;
 
     @Autowired
-    public CustomisationAdminController(
-            final CustomisationService customisationService,
-            final WriteableConfigService<AssetConfig> assetConfigService) {
-        super(customisationService);
+    public CustomizationAdminController(
+        final CustomizationService customizationService,
+        final WriteableConfigService<AssetConfig> assetConfigService) {
+        super(customizationService);
 
-        this.customisationService = customisationService;
+        this.customizationService = customizationService;
         this.assetConfigService = assetConfigService;
     }
 
@@ -56,7 +54,7 @@ class CustomisationAdminController extends AbstractCustomisationController {
     public ResponseEntity<Status> postLogo(
         @PathVariable("type") final AssetType assetType,
         @RequestPart("file") final MultipartFile file
-    ) throws CustomisationException {
+    ) throws CustomizationException {
         return saveLogo(assetType, file, false);
     }
 
@@ -64,15 +62,15 @@ class CustomisationAdminController extends AbstractCustomisationController {
     public ResponseEntity<Status> putLogo(
         @PathVariable("type") final AssetType assetType,
         @RequestPart("file") final MultipartFile file
-    ) throws CustomisationException {
+    ) throws CustomizationException {
         return saveLogo(assetType, file, true);
     }
 
     @RequestMapping(value = TYPED_ASSETS_PATH, method = RequestMethod.GET)
     public List<String> logos(
         @PathVariable("type") final AssetType assetType
-    ) throws CustomisationException {
-        return customisationService.getAssets(assetType);
+    ) throws CustomizationException {
+        return customizationService.getAssets(assetType);
     }
 
     @Override
@@ -90,41 +88,40 @@ class CustomisationAdminController extends AbstractCustomisationController {
         @PathVariable("type") final AssetType assetType,
         @PathVariable("name") final String name
     ) {
-        customisationService.deleteAsset(assetType, name);
+        customizationService.deleteAsset(assetType, name);
     }
 
     @RequestMapping(value = CONFIG_PATH, method = RequestMethod.POST)
     public ResponseEntity<?> updateConfig(
-            @RequestBody final AssetConfig assetConfig
+        @RequestBody final AssetConfig assetConfig
     ) throws Exception {
         try {
             assetConfigService.updateConfig(assetConfig);
 
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (final ConfigValidationException cve) {
+        } catch(final ConfigValidationException cve) {
             return new ResponseEntity<>(Collections.singletonMap("validation", cve.getValidationErrors()), HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
-    @ExceptionHandler(CustomisationException.class)
-    public ResponseEntity<Status> handleException(final CustomisationException e) {
+    @ExceptionHandler(CustomizationException.class)
+    public ResponseEntity<Status> handleException(final CustomizationException e) {
         return new ResponseEntity<>(e.getStatus(), e.getStatus().getHttpStatus());
     }
 
-    private ResponseEntity<Status> saveLogo(final AssetType assetType, final MultipartFile file, final boolean overwrite) throws CustomisationException {
-        if (file == null) {
+    private ResponseEntity<Status> saveLogo(final AssetType assetType, final MultipartFile file, final boolean overwrite) throws CustomizationException {
+        if(file == null) {
             return new ResponseEntity<>(Status.INVALID_FILE, Status.INVALID_FILE.getHttpStatus());
         }
 
         final String contentType = file.getContentType();
 
-        if (contentType == null || !IMAGE_MEDIA_TYPE.includes(MediaType.parseMediaType(contentType))) {
+        if(contentType == null || !IMAGE_MEDIA_TYPE.includes(MediaType.parseMediaType(contentType))) {
             return new ResponseEntity<>(Status.INVALID_FILE, Status.INVALID_FILE.getHttpStatus());
         }
 
-        customisationService.saveAsset(assetType, file, overwrite);
+        customizationService.saveAsset(assetType, file, overwrite);
 
         return new ResponseEntity<>(Status.SUCCESS, HttpStatus.CREATED);
     }
-
 }

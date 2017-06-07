@@ -40,7 +40,8 @@
 .find-logo-large {
   .inline-block;
 
-  background: url('../../api/public/customisation/logo/BIG_LOGO/current') no-repeat;
+  background-repeat: no-repeat;
+  background-image: url('@{publicApiPath}/customization/logo/BIG_LOGO/current');
   color: @blue1;
   font-size: 90px;
   height: 45px;
@@ -51,7 +52,7 @@
 .find-logo-small {
   background-repeat: no-repeat;
   background-position: left center;
-  background-image: url('../../api/public/customisation/logo/SMALL_LOGO/current');
+  background-image: url('@{publicApiPath}/customization/logo/SMALL_LOGO/current');
   height: 20px;
   width: 100px;
   &.side-nav {

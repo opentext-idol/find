@@ -1,18 +1,18 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'find/app/page/customisations/asset-viewer',
+    'underscore',
+    'jquery',
     'backbone',
-    'find/app/configuration',
+    'find/app/page/customizations/asset-viewer',
     'jasmine-ajax'
-], function(AssetViewer, Backbone, configuration) {
+], function(_, $, Backbone, AssetViewer) {
     'use strict';
 
     describe('Asset Viewer', function() {
-
         describe('with a single page of assets', function() {
             beforeEach(function() {
                 jasmine.Ajax.install();
@@ -117,7 +117,7 @@ define([
 
         describe('with several pages of assets', function() {
             beforeEach(function() {
-                this.collection = new Backbone.Collection([{id: 'foo.png'}].concat(_.range(0,12).map(function(i) {
+                this.collection = new Backbone.Collection([{id: 'foo.png'}].concat(_.range(0, 12).map(function(i) {
                     return {id: i + '.png'}
                 })));
 
@@ -205,7 +205,5 @@ define([
                 })
             });
         });
-
     });
-
 });

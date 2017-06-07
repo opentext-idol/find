@@ -1,13 +1,16 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
+    'underscore',
+    'jquery',
     'js-whatever/js/base-page',
-    'find/app/page/customisations/asset-widget',
+    'find/app/page/customizations/asset-widget',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/customisations-page.html'
-], function(BasePage, AssetWidget, i18n, template) {
+    'text!find/templates/app/page/customizations-page.html'
+], function(_, $, BasePage, AssetWidget, i18n, template) {
     'use strict';
 
     // matches the AssetType enum on the server
@@ -27,7 +30,6 @@ define([
     };
 
     return BasePage.extend({
-
         template: _.template(template),
 
         className: 'container-fluid',
@@ -37,15 +39,15 @@ define([
                 [
                     _.extend({
                         collection: options.bigLogoCollection,
-                        description: i18n['customisations.bigLogo.description'],
+                        description: i18n['customizations.bigLogo.description'],
                         imageClass: 'big-logo-background',
-                        title: i18n['customisations.bigLogo'],
+                        title: i18n['customizations.bigLogo'],
                     }, ASSET_TYPES.bigLogo),
                     _.extend({
                         collection: options.smallLogoCollection,
-                        description: i18n['customisations.smallLogo.description'],
+                        description: i18n['customizations.smallLogo.description'],
                         imageClass: 'small-logo-background',
-                        title: i18n['customisations.smallLogo'],
+                        title: i18n['customizations.smallLogo'],
                     }, ASSET_TYPES.smallLogo)
                 ]
             ];
@@ -80,6 +82,4 @@ define([
     }, {
         AssetTypes: ASSET_TYPES
     });
-
 });
-

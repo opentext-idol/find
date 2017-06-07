@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.style.StyleConfiguration;
-import com.hp.autonomy.frontend.find.core.customization.style.StyleSheet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +31,9 @@ public class StyleSheetServiceImpl implements StyleSheetService {
     // LESS files which give rise to CSS files directly requested by the
     // browser have to be included here
     private static final Map<String, String> LESS_TO_CSS_FILE_MAP = ImmutableMap.<String, String>builder()
-            .put("login.less", "login")
-            .put("app.less", "app")
-            .build();
+        .put("login.less", "login")
+        .put("app.less", "app")
+        .build();
 
     private static final Pattern FILE_EXTENSION_PATTERN = Pattern.compile("\\.css");
 
@@ -59,7 +58,7 @@ public class StyleSheetServiceImpl implements StyleSheetService {
 
         final ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
 
-        for (final Map.Entry<String, String> entry : LESS_TO_CSS_FILE_MAP.entrySet()) {
+        for(final Map.Entry<String, String> entry : LESS_TO_CSS_FILE_MAP.entrySet()) {
             final Path path = new InMemoryPath("less/" + entry.getKey());
             final String css = styleCompiler.compile(path);
 
@@ -73,14 +72,14 @@ public class StyleSheetServiceImpl implements StyleSheetService {
     @SuppressWarnings("WeakerAccess")
     public Optional<StyleSheet> getCss(final String fileName) {
         final Pair<Instant, Map<String, String>> pair = Optional.ofNullable(cssCache.get())
-                .orElseThrow(() -> new IllegalStateException("CSS not loaded"));
+            .orElseThrow(() -> new IllegalStateException("CSS not loaded"));
 
         final String fileKey = FILE_EXTENSION_PATTERN.split(fileName)[0];
 
         return Optional.ofNullable(pair.getRight().get(fileKey)).map(css -> StyleSheet.builder()
-                .lastModified(pair.getLeft())
-                .styleSheet(css)
-                .build());
+            .lastModified(pair.getLeft())
+            .styleSheet(css)
+            .build());
     }
 
     // LESS variables used to customize the stylesheet, including git commit hash
@@ -90,17 +89,19 @@ public class StyleSheetServiceImpl implements StyleSheetService {
         variables.put("staticResourcesPath", "'../../static-" + gitCommitHash + '\'');
         // path to ./static directory inside the core .jar file relative to the ./less directory
         variables.put("compilationResourcesPath", "'../static'");
+        // Path for making public API calls (logo customization, etc.)
+        variables.put("publicApiPath", "'../../api/public'");
 
         final Map<String, String> customVariables = configService.getConfig().getSimpleVariables();
-        if (customVariables != null) {
+        if(customVariables != null) {
             final Map<String, String> mappedVariables = customVariables.entrySet()
-                    .stream()
-                    .collect(
-                            Collectors.toMap(
-                                    e -> "USER_CUSTOM_" + e.getKey(),
-                                    Map.Entry::getValue
-                            )
-                    );
+                .stream()
+                .collect(
+                    Collectors.toMap(
+                        e -> "USER_CUSTOM_" + e.getKey(),
+                        Map.Entry::getValue
+                    )
+                );
             variables.putAll(mappedVariables);
         }
         return variables;

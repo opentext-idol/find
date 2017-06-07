@@ -96,7 +96,7 @@ public class CustomizationReloadControllerIT extends AbstractFindIT {
 
     private void triggerConfigReload() throws Exception {
         mockMvc.perform(
-            get(CustomizationReloadController.CUSTOMIZATION_PATH +
+            get(CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH +
                     CustomizationReloadController.CONFIG_RELOAD_PATH)
                 .with(authentication(adminAuth())))
             .andExpect(status().isFound())

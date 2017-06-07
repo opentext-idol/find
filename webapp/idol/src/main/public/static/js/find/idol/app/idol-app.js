@@ -18,11 +18,11 @@ define([
     'find/idol/app/page/find-about-page',
     'find/idol/app/page/dashboard-page',
     'find/app/page/find-settings-page',
-    'find/app/page/customisations-page',
+    'find/app/page/customizations-page',
     'i18n!find/nls/bundle'
 ], function(_, Backbone, BaseApp, logout, configuration, IndexesCollection, SavedSnapshotCollection,
             SharedSavedSnapshotCollection, AssetCollection, Navigation, FindSearch, AboutPage, DashboardPage,
-            SettingsPage, CustomisationsPage, i18n) {
+            SettingsPage, CustomizationsPage, i18n) {
     'use strict';
 
     return BaseApp.extend({
@@ -54,13 +54,13 @@ define([
                 bigLogoCollection: {
                     Constructor: AssetCollection,
                     options: {
-                        type: CustomisationsPage.AssetTypes.bigLogo.type
+                        type: CustomizationsPage.AssetTypes.bigLogo.type
                     }
                 },
                 smallLogoCollection: {
                     Constructor: AssetCollection,
                     options: {
-                        type: CustomisationsPage.AssetTypes.smallLogo.type
+                        type: CustomizationsPage.AssetTypes.smallLogo.type
                     }
                 }
             }, modelData);
@@ -90,7 +90,9 @@ define([
                 }, {}));
             }
 
-            const dashboardCount = dashboards ? dashboards.length : 0;
+            const dashboardCount = dashboards
+                ? dashboards.length
+                : 0;
 
             _.extend(pageData, {
                 search: {
@@ -102,12 +104,19 @@ define([
                         'windowScrollModel'
                     ].concat(
                         config.hasBiRole
-                            ? ['savedSnapshotCollection', 'sharedSavedQueryCollection', 'sharedSavedSnapshotCollection', 'readOnlySearchCollection']
+                            ? [
+                                'savedSnapshotCollection',
+                                'sharedSavedQueryCollection',
+                                'sharedSavedSnapshotCollection',
+                                'readOnlySearchCollection'
+                            ]
                             : []
                     ),
                     title: i18n['app.search'],
                     order: dashboardCount,
-                    navigation: config.enableSideBar ? 'sidebar' : 'dropdown'
+                    navigation: config.enableSideBar
+                        ? 'sidebar'
+                        : 'dropdown'
                 },
                 about: {
                     Constructor: AboutPage,
@@ -127,12 +136,12 @@ define([
                         title: i18n['app.settings'],
                         order: dashboardCount + 2
                     },
-                    customisations: {
-                        Constructor: CustomisationsPage,
+                    customizations: {
+                        Constructor: CustomizationsPage,
                         icon: 'hp-icon hp-fw hp-view',
                         models: ['bigLogoCollection', 'smallLogoCollection'],
                         navigation: 'dropdown',
-                        title: i18n['app.customisations'],
+                        title: i18n['app.customizations'],
                         order: dashboardCount + 3
                     }
                 });
