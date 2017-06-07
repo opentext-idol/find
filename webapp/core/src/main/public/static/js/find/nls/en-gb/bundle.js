@@ -7,5 +7,7 @@ define([
 ], function(substitution) {
     return substitution({
         // en-GB translation goes here
+        'app.customisations': 'Customisations',
+        'customisations.error.DIRECTORY_ERROR': 'An error occurred creating the customisations directory',
     });
 });
