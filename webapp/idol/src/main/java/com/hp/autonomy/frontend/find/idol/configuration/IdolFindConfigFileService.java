@@ -25,7 +25,6 @@ import com.hp.autonomy.searchcomponents.core.config.FieldValueConfigMixins;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
-import db.migration.h2.V11_4_0_2__Migrate_Users_To_Include_Usernames;
 import org.flywaydb.core.Flyway;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
