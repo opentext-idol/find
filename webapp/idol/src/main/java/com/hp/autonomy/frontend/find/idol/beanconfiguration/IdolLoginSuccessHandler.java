@@ -25,13 +25,15 @@ public class IdolLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
     private final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever;
     private final UserEntityRepository userEntityRepository;
 
-    public IdolLoginSuccessHandler(
+    private final Object newUserLock = new Object();
+
+    IdolLoginSuccessHandler(
             final String configUrl,
             final String applicationUrl,
             final String roleDefault,
             final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever,
             final UserEntityRepository userEntityRepository
-            ) {
+    ) {
         this.configUrl = configUrl;
         this.applicationUrl = applicationUrl;
         this.roleDefault = roleDefault;
@@ -39,23 +41,28 @@ public class IdolLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
         this.userEntityRepository = userEntityRepository;
     }
 
+    // Check if we have a user entity for the current user in the database, if not, create one.
     @Override
     public void onAuthenticationSuccess(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) throws ServletException, IOException {
-        final CommunityPrincipal principal = (CommunityPrincipal) authenticationInformationRetriever.getPrincipal();
+        if (authentication.getPrincipal() instanceof CommunityPrincipal) {
+            final CommunityPrincipal principal = (CommunityPrincipal) authenticationInformationRetriever.getPrincipal();
+            final String principalUsername = principal.getUsername();
 
-        if(principal != null) {
-            final UserEntity currentUser =  new UserEntity();
-            currentUser.setUsername(principal.getUsername());
-
-            final UserEntity persistedUser = userEntityRepository.findByDomainAndUserStoreAndUuidAndUsername(
-                    null,
-                    null,
-                    null,
-                    currentUser.getUsername()
-            );
+            final UserEntity persistedUser = userEntityRepository.findByUsername(principalUsername);
 
             if (persistedUser == null) {
-                userEntityRepository.saveAndFlush(currentUser);
+                // Ensure if, say, two applications log in as the same user at same time, one will be made to wait for lock.
+                synchronized (newUserLock) {
+                    // Check that there is still no existing user entity after lock is released.
+                    final UserEntity persistedUser2 = userEntityRepository.findByUsername(principalUsername);
+
+                    if (persistedUser2 == null) {
+                        final UserEntity currentUser = new UserEntity();
+                        currentUser.setUsername(principalUsername);
+
+                        userEntityRepository.save(currentUser);
+                    }
+                }
             }
         }
 
