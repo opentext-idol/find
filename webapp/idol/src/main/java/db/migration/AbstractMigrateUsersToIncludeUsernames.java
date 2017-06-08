@@ -38,6 +38,7 @@ public abstract class AbstractMigrateUsersToIncludeUsernames implements SpringJd
     private static final int HTTP_SOCKET_TIMEOUT = 9000;
     private static final int MAX_CONNECTIONS_PER_ROUTE = 5;
     private static final int MAX_CONNECTIONS_TOTAL = 5;
+    private static final String NO_USER_IN_COMMUNITY_ERROR_CODE = "UASERVERUSERREAD-2147438053";
 
     private final AciService aciService;
     private final AciServerDetails serverDetails;
@@ -96,7 +97,7 @@ public abstract class AbstractMigrateUsersToIncludeUsernames implements SpringJd
         return jdbcTemplate.query("SELECT * FROM users", new BeanPropertyRowMapper<>(UserEntity.class));
     }
 
-    private String getUsernameFromCommunity(final UserEntity userEntity) {
+    private String getUsernameFromCommunity(final UserEntity userEntity) throws AciErrorException {
         try {
             final AciParameters parameters = new AciParameters(UserActions.UserRead.name());
             parameters.add(UserReadParams.UID.name(), userEntity.getUid());
@@ -104,9 +105,11 @@ public abstract class AbstractMigrateUsersToIncludeUsernames implements SpringJd
             final User user = aciService.executeAction(serverDetails, parameters, processorFactory.getResponseDataProcessor(User.class));
             return user.getUsername();
         } catch (final AciErrorException e) {
-            // TODO: Abort migration if it isn't that the user isn't present in Community, but another reason for failure.
-            // if (e.getErrorId() == "UASERVERUSERREAD-2147438053") {}
-            return null;
+            if (NO_USER_IN_COMMUNITY_ERROR_CODE.equals(e.getErrorId())) {
+                return null;
+            } else {
+                throw new AciErrorException(e);
+            }
         }
     }
 
