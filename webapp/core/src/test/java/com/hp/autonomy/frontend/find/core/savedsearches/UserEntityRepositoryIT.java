@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
@@ -44,9 +43,6 @@ public abstract class UserEntityRepositoryIT extends AbstractFindIT {
     @Test
     public void createWithUuidAndUserStore() {
         final UserEntity userEntity = new UserEntity();
-        userEntity.setDomain("DOMAIN");
-        userEntity.setUserStore("DEFAULT_USERSTORE");
-        userEntity.setUuid(UUID.randomUUID());
 
         final UserEntity savedEntity = userEntityRepository.save(userEntity);
         assertThat(savedEntity.getUserId(), not(nullValue()));

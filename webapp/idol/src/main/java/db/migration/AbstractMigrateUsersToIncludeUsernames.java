@@ -7,7 +7,7 @@ import com.autonomy.aci.client.transport.AciHttpClient;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
 import com.autonomy.aci.client.util.AciParameters;
-import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
+import com.hp.autonomy.frontend.find.core.savedsearches.OldUserEntity;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactoryImpl;
@@ -67,20 +67,20 @@ public abstract class AbstractMigrateUsersToIncludeUsernames implements SpringJd
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     public void migrate(final JdbcTemplate jdbcTemplate) throws Exception {
-        final List<UserEntity> userEntities = getAllUserEntities(jdbcTemplate);
+        final List<OldUserEntity> userEntities = getAllUserEntities(jdbcTemplate);
 
-        final Collection<UserEntity> hasUids = userEntities.stream()
+        final Collection<OldUserEntity> hasUids = userEntities.stream()
                 .filter(userEntity -> userEntity.getUid() != null)
                 .collect(Collectors.toList());
 
-        final List<UserEntity> userEntitiesToChange = hasUids.stream()
+        final List<OldUserEntity> userEntitiesToChange = hasUids.stream()
                 .map(userEntity -> userEntity.toBuilder()
                         .username(getUsernameFromCommunity(userEntity))
                         .uid(null)
                         .build())
                 .collect(Collectors.toList());
 
-        final List<UserEntity> userEntitiesToDelete = userEntitiesToChange.stream()
+        final List<OldUserEntity> userEntitiesToDelete = userEntitiesToChange.stream()
                 .filter(userEntity -> userEntity.getUsername() == null)
                 .collect(Collectors.toList());
 
@@ -91,13 +91,13 @@ public abstract class AbstractMigrateUsersToIncludeUsernames implements SpringJd
 
     protected abstract String getUpdateUserSql();
 
-    protected abstract void getBatchParameters(final PreparedStatement ps, final UserEntity userEntity) throws SQLException;
+    protected abstract void getBatchParameters(final PreparedStatement ps, final OldUserEntity userEntity) throws SQLException;
 
-    private List<UserEntity> getAllUserEntities(final JdbcOperations jdbcTemplate) {
-        return jdbcTemplate.query("SELECT * FROM users", new BeanPropertyRowMapper<>(UserEntity.class));
+    private List<OldUserEntity> getAllUserEntities(final JdbcOperations jdbcTemplate) {
+        return jdbcTemplate.query("SELECT * FROM users", new BeanPropertyRowMapper<>(OldUserEntity.class));
     }
 
-    private String getUsernameFromCommunity(final UserEntity userEntity) throws AciErrorException {
+    private String getUsernameFromCommunity(final OldUserEntity userEntity) throws AciErrorException {
         try {
             final AciParameters parameters = new AciParameters(UserActions.UserRead.name());
             parameters.add(UserReadParams.UID.name(), userEntity.getUid());
@@ -113,7 +113,7 @@ public abstract class AbstractMigrateUsersToIncludeUsernames implements SpringJd
         }
     }
 
-    private void updateUserEntities(final JdbcOperations jdbcTemplate, final List<UserEntity> userEntities) {
+    private void updateUserEntities(final JdbcOperations jdbcTemplate, final List<OldUserEntity> userEntities) {
         final String sql = getUpdateUserSql();
 
         jdbcTemplate.batchUpdate(sql, new UserEntitiesBatchPreparedStatementSetter(
@@ -122,7 +122,7 @@ public abstract class AbstractMigrateUsersToIncludeUsernames implements SpringJd
         ));
     }
 
-    private void deleteUserEntities(final JdbcOperations jdbcTemplate, final List<UserEntity> userEntities) {
+    private void deleteUserEntities(final JdbcOperations jdbcTemplate, final List<OldUserEntity> userEntities) {
         final String sql = "DELETE FROM users WHERE user_id=?";
 
         jdbcTemplate.batchUpdate(sql, new UserEntitiesBatchPreparedStatementSetter(
@@ -134,7 +134,7 @@ public abstract class AbstractMigrateUsersToIncludeUsernames implements SpringJd
     @AllArgsConstructor
     private static class UserEntitiesBatchPreparedStatementSetter implements BatchPreparedStatementSetter {
 
-        private final List<UserEntity> userEntities;
+        private final List<OldUserEntity> userEntities;
         private final SQLConsumer consumer;
 
         @Override

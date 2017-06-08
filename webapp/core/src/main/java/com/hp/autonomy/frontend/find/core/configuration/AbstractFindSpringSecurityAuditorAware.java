@@ -50,10 +50,7 @@ public abstract class AbstractFindSpringSecurityAuditorAware<P extends Principal
 
         final UserEntity currentUser = principalToUser(principal);
 
-        return userRepository.findByDomainAndUserStoreAndUuidAndUsername(
-                currentUser.getDomain(),
-                currentUser.getUserStore(),
-                currentUser.getUuid(),
+        return userRepository.findByUsername(
                 currentUser.getUsername()
         );
     }
