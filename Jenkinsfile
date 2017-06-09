@@ -85,7 +85,7 @@ node {
         sh """
             config_template_name=onprem-config.json.j2
             config_template_location=\$(realpath webapp/hsod-dist/src/ansible/${webapp}/templates/\${config_template_name})
-            ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_ROLES_PATH=\${FRONTEND_PLAYBOOK_PATH}/roles ansible-playbook \${FRONTEND_PLAYBOOK_PATH}/playbooks/app-playbook.yml -vv -i \${FRONTEND_PLAYBOOK_PATH}/hosts --become-user=fenkins --extra-vars "webapp=${webapp} repository_location=${repository} branch=${branch} docker_build_location=/home/fenkins/docker_build config_template_location=\${config_template_location} config_template_name=\${config_template_name}"
+            ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_ROLES_PATH=\${FRONTEND_PLAYBOOK_PATH}/roles ansible-playbook \${FRONTEND_PLAYBOOK_PATH}/playbooks/app-playbook.yml -vv -i \${FRONTEND_PLAYBOOK_PATH}/hosts --become-user=fenkins --extra-vars "webapp=${webapp} docker_compose_src=find-selenium-docker-compose.yml repository_location=${repository} branch=${branch} docker_build_location=/home/fenkins/docker_build config_template_location=\${config_template_location} config_template_name=\${config_template_name}"
         """
 }
 
