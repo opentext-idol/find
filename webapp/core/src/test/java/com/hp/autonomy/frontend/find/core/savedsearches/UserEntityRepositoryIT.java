@@ -23,9 +23,9 @@ public abstract class UserEntityRepositoryIT extends AbstractFindIT {
     private UserEntityRepository userEntityRepository;
 
     @Test
-    public void fetchNone() {
+    public void fetchAll() {
         final List<UserEntity> users = listUsers();
-        assertThat(users, hasSize(0));
+        assertThat(users, hasSize(1));
     }
 
     @Test
@@ -33,22 +33,26 @@ public abstract class UserEntityRepositoryIT extends AbstractFindIT {
         final UserEntity userEntity = new UserEntity();
         userEntity.setUsername("username@hpe.com");
 
+        final int startingNumberOfUsers = listUsers().size();
+
         final UserEntity savedEntity = userEntityRepository.save(userEntity);
         assertThat(savedEntity.getUserId(), not(nullValue()));
 
         final List<UserEntity> users = listUsers();
-        assertThat(users, hasSize(1));
+        assertThat(users, hasSize(startingNumberOfUsers + 1));
     }
 
     @Test
     public void createWithUuidAndUserStore() {
         final UserEntity userEntity = new UserEntity();
 
+        final int startingNumberOfUsers = listUsers().size();
+
         final UserEntity savedEntity = userEntityRepository.save(userEntity);
         assertThat(savedEntity.getUserId(), not(nullValue()));
 
         final List<UserEntity> users = listUsers();
-        assertThat(users, hasSize(1));
+        assertThat(users, hasSize(startingNumberOfUsers + 1));
     }
 
     private List<UserEntity> listUsers() {

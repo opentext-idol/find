@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
+import com.hp.autonomy.frontend.find.core.savedsearches.UserEntityRepository;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.user.UserRoles;
 import com.hp.autonomy.user.UserService;
@@ -26,15 +27,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collection;
 
-import static com.hp.autonomy.frontend.find.idol.beanconfiguration.IdolSecurityCustomizerImpl.DEFAULT_ROLES_KEY;
 import static com.hp.autonomy.frontend.find.idol.beanconfiguration.GrantedAuthorityMatcher.authority;
+import static com.hp.autonomy.frontend.find.idol.beanconfiguration.IdolSecurityCustomizerImpl.DEFAULT_ROLES_KEY;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyCollection;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
