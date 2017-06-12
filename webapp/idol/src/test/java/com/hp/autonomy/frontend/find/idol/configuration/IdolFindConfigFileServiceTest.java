@@ -5,50 +5,26 @@
 
 package com.hp.autonomy.frontend.find.idol.configuration;
 
-import com.autonomy.aci.client.services.impl.AciServiceImpl;
-import com.autonomy.aci.client.transport.AciHttpClient;
-import com.autonomy.aci.client.transport.AciServerDetails;
-import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
-import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigFileServiceTest;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
-import org.flywaydb.core.Flyway;
+import com.hp.autonomy.frontend.find.idol.beanconfiguration.IdolConfigUpdateHandler;
 import org.junit.Before;
-import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 public class IdolFindConfigFileServiceTest extends FindConfigFileServiceTest<IdolFindConfig, IdolFindConfig.IdolFindConfigBuilder> {
 
     @MockBean
-    private Flyway flyway;
-
-    @MockBean
-    private AciHttpClient aciHttpClient;
-
-    @MockBean
-    private ProcessorFactory processorFactory;
+    private IdolConfigUpdateHandler configUpdateHandler;
 
     @Mock
     private IdolFindConfig config;
-
-    @Mock
-    private CommunityAuthentication community;
-
-    @SuppressWarnings("rawtypes")
-    @Mock
-    private ValidationResult validationResult;
-
-    @Mock
-    private AciServerDetails serverDetails;
 
     @Override
     protected FindConfigFileService<IdolFindConfig, IdolFindConfig.IdolFindConfigBuilder> constructConfigFileService() {
@@ -57,23 +33,13 @@ public class IdolFindConfigFileServiceTest extends FindConfigFileServiceTest<Ido
                 textEncryptor,
                 fieldPathSerializer,
                 fieldPathDeserializer,
-                aciHttpClient,
-                processorFactory,
-                flyway);
+                configUpdateHandler);
     }
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        when(config.getLogin()).thenReturn(community);
-        when(config.getCommunityDetails()).thenReturn(serverDetails);
-        //noinspection unchecked
-        when(community.validate(any(AciServiceImpl.class), any(ProcessorFactory.class))).thenReturn(validationResult);
-
-        when(serverDetails.getProtocol()).thenReturn(AciServerDetails.TransportProtocol.HTTP);
-        when(serverDetails.getHost()).thenReturn("communityHost");
-        when(serverDetails.getPort()).thenReturn(9000);
     }
 
     @Override
@@ -94,27 +60,8 @@ public class IdolFindConfigFileServiceTest extends FindConfigFileServiceTest<Ido
 
     @Override
     public void postUpdate() {
-        when(validationResult.isValid()).thenReturn(true);
-
         findConfigFileService.postUpdate(config);
 
-        verify(flyway, times(1)).migrate();
-
-        assertThat(System.getProperty(IdolFindConfigFileService.COMMUNITY_HOST), is(nullValue()));
-        assertThat(System.getProperty(IdolFindConfigFileService.COMMUNITY_PORT), is(nullValue()));
-        assertThat(System.getProperty(IdolFindConfigFileService.COMMUNITY_PROTOCOL), is(nullValue()));
-    }
-
-    @Test
-    public void postUpdateNoCommunity() {
-        when(validationResult.isValid()).thenReturn(false);
-
-        findConfigFileService.postUpdate(config);
-
-        verify(flyway, times(0)).migrate();
-
-        assertThat(System.getProperty(IdolFindConfigFileService.COMMUNITY_HOST), is(nullValue()));
-        assertThat(System.getProperty(IdolFindConfigFileService.COMMUNITY_PORT), is(nullValue()));
-        assertThat(System.getProperty(IdolFindConfigFileService.COMMUNITY_PROTOCOL), is(nullValue()));
+        verify(configUpdateHandler, times(1)).update(config);
     }
 }

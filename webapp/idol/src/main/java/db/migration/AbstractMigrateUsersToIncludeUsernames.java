@@ -8,7 +8,6 @@ import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.find.core.savedsearches.OldUserEntity;
-import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactoryImpl;
 import com.hp.autonomy.types.idol.marshalling.marshallers.jaxb2.Jaxb2MarshallerFactory;
@@ -35,6 +34,10 @@ import java.util.stream.Collectors;
 // Warning: this migration depends on access to system properties that are added in IdolFindConfigService
 public abstract class AbstractMigrateUsersToIncludeUsernames implements SpringJdbcMigration {
 
+    public static final String COMMUNITY_PROTOCOL = "find.community.protocol";
+    public static final String COMMUNITY_HOST = "find.community.host";
+    public static final String COMMUNITY_PORT = "find.community.port";
+
     private static final int HTTP_SOCKET_TIMEOUT = 9000;
     private static final int MAX_CONNECTIONS_PER_ROUTE = 5;
     private static final int MAX_CONNECTIONS_TOTAL = 5;
@@ -45,9 +48,9 @@ public abstract class AbstractMigrateUsersToIncludeUsernames implements SpringJd
     private final ProcessorFactory processorFactory;
 
     protected AbstractMigrateUsersToIncludeUsernames() {
-        final String host = System.getProperty(IdolFindConfigFileService.COMMUNITY_HOST);
-        final int port = Integer.parseInt(System.getProperty(IdolFindConfigFileService.COMMUNITY_PORT));
-        final AciServerDetails.TransportProtocol transportProtocol = AciServerDetails.TransportProtocol.valueOf(System.getProperty(IdolFindConfigFileService.COMMUNITY_PROTOCOL));
+        final String host = System.getProperty(COMMUNITY_HOST);
+        final int port = Integer.parseInt(System.getProperty(COMMUNITY_PORT));
+        final AciServerDetails.TransportProtocol transportProtocol = AciServerDetails.TransportProtocol.valueOf(System.getProperty(COMMUNITY_PROTOCOL));
 
         serverDetails = new AciServerDetails(transportProtocol, host, port);
         processorFactory = new ProcessorFactoryImpl(new Jaxb2MarshallerFactory());
@@ -108,7 +111,7 @@ public abstract class AbstractMigrateUsersToIncludeUsernames implements SpringJd
             if (NO_USER_IN_COMMUNITY_ERROR_CODE.equals(e.getErrorId())) {
                 return null;
             } else {
-                throw new AciErrorException(e);
+                throw e;
             }
         }
     }
