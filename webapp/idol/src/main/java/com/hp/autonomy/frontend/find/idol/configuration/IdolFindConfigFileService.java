@@ -13,6 +13,7 @@ import com.hp.autonomy.frontend.configuration.authentication.Authentication;
 import com.hp.autonomy.frontend.configuration.filter.ConfigurationFilterMixin;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService;
+import com.hp.autonomy.frontend.find.idol.beanconfiguration.IdolConfigUpdateHandler;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfoConfigMixins;
 import com.hp.autonomy.searchcomponents.core.config.FieldValue;
@@ -27,12 +28,20 @@ import java.util.Map;
 
 @Component
 public class IdolFindConfigFileService extends FindConfigFileService<IdolFindConfig, IdolFindConfig.IdolFindConfigBuilder> {
+
+    private final IdolConfigUpdateHandler idolConfigUpdateHandler;
+
     @Autowired
-    public IdolFindConfigFileService(final FilterProvider filterProvider,
-                                     final TextEncryptor textEncryptor,
-                                     final JsonSerializer<FieldPath> fieldPathSerializer,
-                                     final JsonDeserializer<FieldPath> fieldPathDeserializer) {
+    public IdolFindConfigFileService(
+            final FilterProvider filterProvider,
+            final TextEncryptor textEncryptor,
+            final JsonSerializer<FieldPath> fieldPathSerializer,
+            final JsonDeserializer<FieldPath> fieldPathDeserializer,
+            final IdolConfigUpdateHandler idolConfigUpdateHandler
+    ) {
         super(filterProvider, textEncryptor, fieldPathSerializer, fieldPathDeserializer);
+
+        this.idolConfigUpdateHandler = idolConfigUpdateHandler;
     }
 
     @Override
@@ -48,6 +57,11 @@ public class IdolFindConfigFileService extends FindConfigFileService<IdolFindCon
     @Override
     protected String getDefaultConfigFile() {
         return "/defaultIdolConfigFile.json";
+    }
+
+    @Override
+    public void postUpdate(final IdolFindConfig config) {
+        idolConfigUpdateHandler.update(config);
     }
 
     @Override

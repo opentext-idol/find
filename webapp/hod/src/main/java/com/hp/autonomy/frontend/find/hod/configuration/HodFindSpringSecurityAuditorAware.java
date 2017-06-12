@@ -27,11 +27,6 @@ public class HodFindSpringSecurityAuditorAware extends AbstractFindSpringSecurit
 
     @Override
     protected UserEntity principalToUser(final HodAuthenticationPrincipal principal) {
-        final UserEntity userEntity = new UserEntity();
-        userEntity.setUuid(principal.getUserUuid());
-        userEntity.setUserStore(principal.getUserStoreInformation().getUuid().toString());
-        userEntity.setDomain(principal.getUserStoreInformation().getDomain());
-
-        return userEntity;
+        return new UserEntity();
     }
 }

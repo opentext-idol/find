@@ -19,7 +19,7 @@ public class IdolLoginSuccessHandler extends SavedRequestAwareAuthenticationSucc
     private final String roleDefault;
     private final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever;
 
-    public IdolLoginSuccessHandler(
+    IdolLoginSuccessHandler(
             final String configUrl,
             final String applicationUrl,
             final String roleDefault,

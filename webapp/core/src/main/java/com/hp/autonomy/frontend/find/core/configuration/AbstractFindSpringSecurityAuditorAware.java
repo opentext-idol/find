@@ -40,6 +40,7 @@ public abstract class AbstractFindSpringSecurityAuditorAware<P extends Principal
     /**
      * Return the current user as a {@link UserEntity} to be inserted into a {@link org.springframework.data.annotation.CreatedBy} field.
      */
+    @Override
     public UserEntity getCurrentAuditor() {
         final P principal = authenticationInformationRetriever.getPrincipal();
 
@@ -47,21 +48,10 @@ public abstract class AbstractFindSpringSecurityAuditorAware<P extends Principal
             return null;
         }
 
-        UserEntity currentUser = principalToUser(principal);
+        final UserEntity currentUser = principalToUser(principal);
 
-        final UserEntity persistedUser = userRepository.findByDomainAndUserStoreAndUuidAndUid(
-                currentUser.getDomain(),
-                currentUser.getUserStore(),
-                currentUser.getUuid(),
-                currentUser.getUid()
+        return userRepository.findByUsername(
+                currentUser.getUsername()
         );
-
-        if(persistedUser != null) {
-            currentUser = persistedUser;
-        } else {
-            userRepository.save(currentUser);
-        }
-
-        return currentUser;
     }
 }

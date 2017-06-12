@@ -15,6 +15,8 @@ public interface SavedSearchRepository<S extends SavedSearch<S, B>, B extends Sa
 
     Set<S> findByActiveTrueAndUser_UserId(Long userId);
 
+    Set<S> findByUser_UserId(Long userId);
+
     S findByActiveTrueAndIdAndUser_UserId(Long id, Long userId);
 
     S findByActiveTrueAndId(Long id);
