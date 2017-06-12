@@ -2,4 +2,4 @@
 
 SET SCHEMA find;
 
-INSERT INTO users VALUES(1, 'user');
+MERGE INTO users VALUES(1, 'user');
