@@ -66,7 +66,7 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
     }
 
     private void verifyDocumentViewer(final DocumentViewer docViewer) {
-        final Frame frame = new Frame(getWindow(), docViewer.frame());
+        final Frame frame = new Frame(getDriver(), docViewer.frame());
 
         verifyThat("document visible", docViewer, displayed());
 
@@ -111,16 +111,16 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
 
         for(final FindResult queryResult : results.getResults(5)) {
             final DocumentViewer documentViewer = queryResult.openDocumentPreview();
-            checkDocumentPreview(getMainSession(), documentViewer, index);
+            checkDocumentPreview(documentViewer, index);
             documentViewer.close();
         }
     }
 
-    private void checkDocumentPreview(final Session session, final DocumentViewer documentViewer, final Index index) {
+    private void checkDocumentPreview(final DocumentViewer documentViewer, final Index index) {
         verifyThat(documentViewer.getIndex(), is(index));
         verifyThat("Reference is displayed", documentViewer.getReference(), CoreMatchers.not(isEmptyOrNullString()));
 
-        final String frameText = new Frame(session.getActiveWindow(), documentViewer.frame()).getText();
+        final String frameText = new Frame(getDriver(), documentViewer.frame()).getText();
 
         verifyThat("Frame has content", frameText, CoreMatchers.not(isEmptyOrNullString()));
         verifyThat(frameText, CoreMatchers.not(CoreMatchers.containsString("server error")));
@@ -129,23 +129,19 @@ public class HodDocumentPreviewITCase extends HodFindTestBase {
     @Test
     @ResolvedBug("FIND-497")
     public void testOpenDocumentFromSearch() {
-        final Window original = getWindow();
-
         final ListView results = findService.search("Window");
+        final String mainWindowHandle = getDriver().getWindowHandle();
 
         for(int i = 1; i <= 5; i++) {
             final FindResult result = results.getResult(i);
             final String reference = result.getReference();
             result.title().click();
             assertThat("Link does not contain 'undefined'", result.link(), not(containsString("undefined")));
-            final Window newWindow = getMainSession().switchWindow(getMainSession().countWindows() - 1);
+            final String newWindowHandle = getDriver().getWindowHandles().stream().filter(s -> !s.equals(mainWindowHandle)).findFirst().get();
+            getDriver().switchTo().window(newWindowHandle);
             verifyThat(getDriver().getCurrentUrl(), containsString(PROTOCOL_SUFFIX.split(reference)[1]));
-
-            if(!newWindow.equals(original)) {
-                newWindow.close();
-            }
-
-            original.activate();
+            getDriver().close();
+            getDriver().switchTo().window(mainWindowHandle);
         }
     }
 }

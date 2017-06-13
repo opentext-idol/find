@@ -5,13 +5,11 @@
 
 package com.autonomy.abc.selenium.find.application;
 
-import com.hp.autonomy.frontend.selenium.application.Application;
-import com.hp.autonomy.frontend.selenium.control.Window;
+import org.openqa.selenium.WebDriver;
 
 public class BIHodFind extends HodFind<BIHodFindElementFactory> {
     @Override
-    public Application<BIHodFindElementFactory> inWindow(final Window window) {
-        setElementFactory(new BIHodFindElementFactory(window.getSession().getDriver()));
-        return this;
+    public void withDriver(final WebDriver webDriver) {
+        setElementFactory(new BIHodFindElementFactory(webDriver));
     }
 }

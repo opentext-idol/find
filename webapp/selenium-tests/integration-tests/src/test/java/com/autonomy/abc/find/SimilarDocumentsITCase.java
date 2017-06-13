@@ -62,7 +62,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
             final String title = results.getResult(i).getTitleString();
             similarDocuments = findService.goToSimilarDocuments(i);
 
-            verifyThat(getWindow(), urlContains("suggest"));
+            verifyThat(getDriver().getCurrentUrl(), containsString("suggest"));
 
             verifyThat(similarDocuments.getTitle(), allOf(containsIgnoringCase("Similar results"), containsIgnoringCase('"' + title + '"')));
             verifyThat(similarDocuments.getTotalResults(), greaterThan(0));
@@ -220,7 +220,7 @@ public class SimilarDocumentsITCase extends FindTestBase {
             verifyThat("Index displayed", docPreview.getIndexName(), not(nullValue()));
             verifyThat("Reference displayed", docPreview.getReference(), not(nullValue()));
 
-            final Frame previewFrame = new Frame(getWindow(), docPreview.frame());
+            final Frame previewFrame = new Frame(getDriver(), docPreview.frame());
             final String frameText = previewFrame.getText();
 
             verifyThat("Preview document has content", previewFrame.operateOnContent(WebElement::getTagName), Matchers.is("body"));

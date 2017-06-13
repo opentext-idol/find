@@ -165,7 +165,7 @@ public class SavedSearchITCase extends IdolFindTestBase {
         saveService.saveCurrentAs("oasis", SearchType.QUERY);
 
         final BIIdolFind other = new BIIdolFind();
-        launchInNewSession(other);
+        launchInNewInstance(other);
         other.loginService().login(getInitialUser());
         other.findService().searchAnyView("blur");
 

@@ -17,11 +17,8 @@ import com.autonomy.abc.selenium.find.results.ListView;
 import com.hp.autonomy.frontend.selenium.config.Browser;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
-import com.hp.autonomy.frontend.selenium.control.Session;
-import com.hp.autonomy.frontend.selenium.control.Window;
 import com.hp.autonomy.frontend.selenium.framework.logging.ActiveBug;
 import com.hp.autonomy.frontend.selenium.framework.logging.ResolvedBug;
-import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
@@ -30,6 +27,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,7 +67,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         assertThat("Index displayed", docPreview.getIndexName(), not(isEmptyOrNullString()));
         assertThat("Reference displayed", docPreview.getReference(), not(isEmptyOrNullString()));
 
-        final Frame previewFrame = new Frame(getWindow(), docPreview.frame());
+        final Frame previewFrame = new Frame(getDriver(), docPreview.frame());
         final String frameText = previewFrame.getText();
 
         verifyThat("Preview document has content", previewFrame.operateOnContent(WebElement::getTagName), is("body"));
@@ -82,8 +80,6 @@ public class DocumentPreviewITCase extends FindTestBase {
     @ResolvedBug("FIND-497")
     //WARNING: may fail for some data if indexed URL now redirects to a newer version of the wiki page.
     public void testOpenOriginalDocInNewTab() {
-        final Session session = getMainSession();
-
         final ListView results = findService.search("general");
         results.waitForResultsToLoad();
 
@@ -93,20 +89,17 @@ public class DocumentPreviewITCase extends FindTestBase {
             final String reference = docViewer.getReference();
             final DetailedPreviewPage detailedPreviewPage = docViewer.openPreview();
 
-            final Window original = session.getActiveWindow();
-
             assertThat("Link does not contain 'undefined'", detailedPreviewPage.originalDocLink(), not(containsString("undefined")));
             assertThat("Page not blank", detailedPreviewPage.frameExists());
+            final String originalWindowHandle = getDriver().getWindowHandle();
+            final Set<String> oldWindows = getDriver().getWindowHandles();
 
             detailedPreviewPage.openOriginalDoc();
-            final Window newWindow = session.switchWindow(session.countWindows() - 1);
-            newWindow.activate();
-            Waits.loadOrFadeWait();
-            final String decodedURL = decodeURL(session.getDriver().getCurrentUrl());
+            switchToNewWindow(oldWindows);
+            final String decodedURL = decodeURL(getDriver().getCurrentUrl());
             verifyThat(decodedURL, containsString(reformatReference(reference)));
-
-            newWindow.close();
-            original.activate();
+            getDriver().close();
+            getDriver().switchTo().window(originalWindowHandle);
 
             detailedPreviewPage.goBackToSearch();
         }
@@ -132,7 +125,7 @@ public class DocumentPreviewITCase extends FindTestBase {
         final InlinePreview inlinePreview = results.getResult(1).openDocumentPreview();
         final DetailedPreviewPage detailedPreviewPage = inlinePreview.openPreview();
 
-        final String frameText = new Frame(getMainSession().getActiveWindow(), detailedPreviewPage.frame()).getText();
+        final String frameText = new Frame(getDriver(), detailedPreviewPage.frame()).getText();
         verifyThat("Frame has content", frameText, not(isEmptyOrNullString()));
         verifyThat("Preview frame has no error", frameText, not(containsString("encountered an error")));
 

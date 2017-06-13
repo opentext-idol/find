@@ -17,7 +17,7 @@
     <version>11.4.0-SNAPSHOT</version>
 
     <properties>
-        <qa.infrastructure.version>3.0.0</qa.infrastructure.version>
+        <qa.infrastructure.version>4.0.0</qa.infrastructure.version>
     </properties>
 
     <modules>

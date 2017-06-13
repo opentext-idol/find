@@ -154,6 +154,24 @@
             </build>
         </profile>
         <profile>
+            <id>parallel</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.18.1</version>
+                        <configuration>
+                            <parallel>classesAndMethods</parallel>
+                            <forkCount>1.0C</forkCount>
+                            <threadCount>5</threadCount>
+                            <rerunFailingTestsCount>2</rerunFailingTestsCount>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>skipSlow</id>
             <build>
                 <plugins>
