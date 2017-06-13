@@ -49,7 +49,7 @@ define([
         // Overridden for HoD and IDOL implementations
         getQuestionsViewConstructor: _.constant(null),
 
-        loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
+        loadingHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         messageTemplate: _.template('<div class="result-message span10"><%-message%></div>'),
         resultTemplate: _.template(resultTemplate),
 
@@ -143,9 +143,8 @@ define([
         render: function() {
             this.$el.html(html);
 
-            this.$loadingSpinner = $(this.loadingTemplate);
-
-            this.$el.find('.results').after(this.$loadingSpinner);
+            this.$loadingSpinner = this.$('.results-view-loading')
+                .html(this.loadingHtml);
 
             this.sortView.setElement(this.$('.sort-container')).render();
             this.resultsNumberView.setElement(this.$('.results-number-container')).render();
