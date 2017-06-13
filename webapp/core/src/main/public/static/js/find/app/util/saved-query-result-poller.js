@@ -1,12 +1,13 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'jquery',
-    'underscore'
-], function ($, _) {
+    'underscore',
+    'jquery'
+], function(_, $) {
+    'use strict';
 
     function SavedQueryResultPoller(options) {
         this.config = options.config;
@@ -37,7 +38,7 @@ define([
     };
 
     function isPollable(savedQueryModel, queryStates) {
-        var queryState = queryStates.get(savedQueryModel.cid);
+        const queryState = queryStates.get(savedQueryModel.cid);
 
         // To be pollable the model must be saved and either unmodified or have no query state (tab not yet selected)
         return !savedQueryModel.isNew() &&

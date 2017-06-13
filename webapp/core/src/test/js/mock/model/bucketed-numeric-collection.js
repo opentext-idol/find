@@ -4,10 +4,10 @@
  */
 
 define([
-    'js-testing/backbone-mock-factory',
+    'underscore',
     'jquery',
-    'underscore'
-], function(backboneMockFactory, $, _) {
+    'js-testing/backbone-mock-factory'
+], function(_, $, backboneMockFactory) {
     'use strict';
 
     const modelSyncSpy = jasmine.createSpy('sync');

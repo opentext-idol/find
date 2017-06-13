@@ -118,9 +118,9 @@ define([
 
             // If the saved search is unmodified and not new, update the last fetched date
             this.listenTo(this.documentsCollection, 'sync', function() {
-                const changed = !(!this.queryState || this.savedSearchModel.equalsQueryState(this.queryState));
+                const unchanged = !this.queryState || this.savedSearchModel.equalsQueryState(this.queryState);
 
-                if(!(changed || this.savedSearchModel.isNew())) {
+                if(unchanged && !this.savedSearchModel.isNew()) {
                     this.savedSearchModel.save({dateDocsLastFetched: moment()});
                 }
             });

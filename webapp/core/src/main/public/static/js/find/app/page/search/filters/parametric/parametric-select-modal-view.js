@@ -1,13 +1,18 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'backbone',
-    'jquery',
     'underscore',
+    'jquery',
+    'backbone',
     'find/app/util/search-data-util',
     'find/app/page/search/filters/parametric/parametric-select-modal-list-view',
     './parametric-paginator',
     'text!find/templates/app/page/search/filters/parametric/parametric-select-modal-view.html',
     'iCheck'
-], function (Backbone, $, _, searchDataUtil, ParametricSelectModalListView, ParametricPaginator, template) {
+], function(_, $, Backbone, searchDataUtil, ParametricSelectModalListView, ParametricPaginator, template) {
     'use strict';
 
     return Backbone.View.extend({
@@ -15,16 +20,18 @@ define([
         className: 'full-height',
 
         events: {
-            'click .fields-list a': function (e) {
+            'click .fields-list a': function(e) {
                 e.preventDefault();
                 this.fieldSelectionModel.set('field', $(e.currentTarget).closest('[data-field]').attr('data-field'));
             }
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             const fetchRestrictions = {
                 databases: options.queryModel.get('indexes'),
-                queryText: options.queryModel.get('autoCorrect') && options.queryModel.get('correctedQuery') ? options.queryModel.get('correctedQuery') : options.queryModel.get('queryText'),
+                queryText: options.queryModel.get('autoCorrect') && options.queryModel.get('correctedQuery')
+                    ? options.queryModel.get('correctedQuery')
+                    : options.queryModel.get('queryText'),
                 fieldText: options.queryModel.get('fieldText'),
                 minDate: options.queryModel.getIsoDate('minDate'),
                 maxDate: options.queryModel.getIsoDate('maxDate'),
@@ -36,16 +43,16 @@ define([
                 return model.pick('domain', 'name');
             }));
 
-            this.fieldData = options.parametricFieldsCollection.where({type: 'Parametric'}).map(function (fieldModel) {
+            this.fieldData = options.parametricFieldsCollection.where({type: 'Parametric'}).map(function(fieldModel) {
                 const paginator = new ParametricPaginator({
                     fieldName: fieldModel.id,
                     fieldDisplayName: fieldModel.get('displayName'),
                     allIndexes: allIndexes,
                     selectedValues: options.selectedParametricValues,
                     fetchRestrictions: fetchRestrictions,
-                    fetchFunction: function (data) {
+                    fetchFunction: function(data) {
                         return $.ajax({url: 'api/public/parametric/values', traditional: true, data: data})
-                            .then(function (response) {
+                            .then(function(response) {
                                 return {
                                     totalValues: response[0] ? response[0].totalValues : 0,
                                     values: response[0] ? response[0].values : []
@@ -65,7 +72,7 @@ define([
             this.listenTo(this.fieldSelectionModel, 'change', this.updateSelectedField);
         },
 
-        render: function () {
+        render: function() {
             this.$el.html(this.template({
                 initialField: this.initialField,
                 fields: this.fieldData
@@ -73,7 +80,7 @@ define([
 
             const $tabContent = this.$('.tab-content');
 
-            this.fieldData.forEach(function (data) {
+            this.fieldData.forEach(function(data) {
                 $tabContent.append(data.view.$el);
                 data.view.render();
             });
@@ -85,25 +92,25 @@ define([
             _.findWhere(this.fieldData, {id: this.fieldSelectionModel.get('field')}).view.checkScroll();
         },
 
-        updateSelectedField: function () {
+        updateSelectedField: function() {
             const currentField = this.fieldSelectionModel.get('field');
 
             this.$('.fields-list li:not([data-field="' + currentField + '"])').removeClass('active');
             this.$('.fields-list li[data-field="' + currentField + '"]').addClass('active');
 
-            this.fieldData.forEach(function (data) {
+            this.fieldData.forEach(function(data) {
                 const isCurrentField = data.id === currentField;
                 data.view.$el.toggleClass('active', isCurrentField);
 
-                if (isCurrentField) {
+                if(isCurrentField) {
                     // Check scroll after showing the view so it can check if more values need to be fetched
                     data.view.checkScroll();
                 }
             });
         },
 
-        remove: function () {
-            this.fieldData.forEach(function (data) {
+        remove: function() {
+            this.fieldData.forEach(function(data) {
                 data.view.remove();
             });
 

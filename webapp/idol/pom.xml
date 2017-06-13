@@ -223,11 +223,11 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>
+                                <configuration>
                             <configFile>${basedir}/build.js</configFile>
                             <optimizerFile>${basedir}/node_modules/requirejs/bin/r.js</optimizerFile>
                             <filterConfig>true</filterConfig>
-                        </configuration>
+                                </configuration>
                     </plugin>
                 </plugins>
             </build>

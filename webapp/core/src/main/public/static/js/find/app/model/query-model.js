@@ -79,10 +79,15 @@ define([
                 this.set('indexes', collectionBuildIndexes(this.queryState.selectedIndexes));
             }, this));
 
-            this.listenTo(this.queryState.selectedParametricValues, 'add remove reset change', _.debounce(_.bind(function() {
-                const fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
-                this.set('fieldText', fieldTextNode ? fieldTextNode : null);
-            }, this), DEBOUNCE_WAIT_MILLISECONDS));
+            this.listenTo(this.queryState.selectedParametricValues,
+                'add remove reset change',
+                _.debounce(_.bind(function() {
+                    const fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
+                    this.set('fieldText',
+                        fieldTextNode
+                            ? fieldTextNode
+                            : null);
+                }, this), DEBOUNCE_WAIT_MILLISECONDS));
 
             const fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
 
@@ -90,18 +95,18 @@ define([
                 queryText: makeQueryText(this.queryState),
                 minScore: this.queryState.minScoreModel.get('minScore'),
                 indexes: collectionBuildIndexes(this.queryState.selectedIndexes),
-                fieldText: fieldTextNode ? fieldTextNode : null
+                fieldText: fieldTextNode
+                    ? fieldTextNode
+                    : null
             }, this.queryState.datesFilterModel.toQueryModelAttributes()));
         },
 
         getIsoDate: function(type) {
             const date = this.get(type);
 
-            if(date) {
-                return date.toISOString();
-            } else {
-                return null;
-            }
+            return date
+                ? date.toISOString()
+                : null;
         }
     }, {
         Sort: Sort

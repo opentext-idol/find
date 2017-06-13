@@ -79,7 +79,8 @@ define([
             this.listenTo(this.savedSearchCollection, 'update', this.checkTabSize);
 
             this.listenTo(this.savedSearchCollection, 'change:newDocuments', function() {
-                const dropdownCids = this.$('.tab-dropdown .dropdown-menu li:not(.hide)').map(function(arg, el) {
+                const dropdownCids = this.$('.tab-dropdown .dropdown-menu li:not(.hide)')
+                    .map(function(arg, el) {
                     return $(el).find('a').attr('data-search-cid');
                 });
 

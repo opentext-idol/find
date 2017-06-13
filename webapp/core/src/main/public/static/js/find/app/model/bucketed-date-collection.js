@@ -14,7 +14,9 @@ define([
         urlRoot: URL_ROOT,
 
         url: function() {
-            const base = this.collection ? this.collection.url() : URL_ROOT;
+            const base = this.collection
+                ? this.collection.url()
+                : URL_ROOT;
             // Double encode since Spring doesn't like %2F in URLs
             return this.isNew()
                 ? base

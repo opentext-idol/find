@@ -23,8 +23,7 @@ define([
     'parametric-refinement/to-field-text-node',
 ], function(_, $, moment, d3, Backbone, i18n, configuration, vent, generateErrorHtml, ParametricResultsView,
             FieldSelectionView, calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel,
-            ParametricCollection, Trending, toFieldTextNode
-) {
+            ParametricCollection, Trending, toFieldTextNode) {
     'use strict';
 
     const HOURS_TO_SECONDS = 3600;
@@ -118,7 +117,9 @@ define([
                 return _.extend(data, {
                     min: moment(data.min),
                     max: moment(data.max),
-                    values: data.values.map(function (value) { return _.extend(value, { min: moment(value.min), max: moment(value.max)} ); }),
+                    values: data.values.map(function(value) {
+                        return _.extend(value, {min: moment(value.min), max: moment(value.max)});
+                    }),
                     valueName: value.value,
                     color: options.values
                         ? _.findWhere(options.values, {'name': value.value}).color
@@ -164,16 +165,16 @@ define([
         let yUnit;
         let rateCoefficient;
 
-        if (maxRatePerSec >= 1) {
+        if(maxRatePerSec >= 1) {
             yUnit = 'SECOND';
             rateCoefficient = 1 / bucketWidthSecs;
-        } else if (maxRatePerSec >= (1 / MINUTES_TO_SECONDS)) {
+        } else if(maxRatePerSec >= (1 / MINUTES_TO_SECONDS)) {
             yUnit = 'MINUTE';
             rateCoefficient = MINUTES_TO_SECONDS / bucketWidthSecs;
-        } else if (maxRatePerSec >= (1 / HOURS_TO_SECONDS)) {
+        } else if(maxRatePerSec >= (1 / HOURS_TO_SECONDS)) {
             yUnit = 'HOUR';
             rateCoefficient = HOURS_TO_SECONDS / bucketWidthSecs;
-        } else if (maxRatePerSec >= (1 / DAYS_TO_SECONDS)) {
+        } else if(maxRatePerSec >= (1 / DAYS_TO_SECONDS)) {
             yUnit = 'DAY';
             rateCoefficient = DAYS_TO_SECONDS / bucketWidthSecs;
         } else {

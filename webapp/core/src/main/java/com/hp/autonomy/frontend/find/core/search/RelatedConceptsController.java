@@ -1,7 +1,8 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
@@ -58,15 +59,15 @@ public abstract class RelatedConceptsController<T extends QuerySummaryElement, Q
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public List<T> findRelatedConcepts(
-            @RequestParam(QUERY_TEXT_PARAM) final String queryText,
-            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-            @RequestParam(DATABASES_PARAM) final Collection<S> databases,
-            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
-            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime maxDate,
-            @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final Integer minScore,
-            @RequestParam(value = STATE_MATCH_TOKEN_PARAM, required = false) final List<String> stateMatchTokens,
-            @RequestParam(value = STATE_DONT_MATCH_TOKEN_PARAM, required = false) final List<String> stateDontMatchTokens,
-            @RequestParam(value = MAX_RESULTS, required = false) final Integer maxResults
+        @RequestParam(QUERY_TEXT_PARAM) final String queryText,
+        @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+        @RequestParam(DATABASES_PARAM) final Collection<S> databases,
+        @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
+        @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime maxDate,
+        @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final Integer minScore,
+        @RequestParam(value = STATE_MATCH_TOKEN_PARAM, required = false) final List<String> stateMatchTokens,
+        @RequestParam(value = STATE_DONT_MATCH_TOKEN_PARAM, required = false) final List<String> stateDontMatchTokens,
+        @RequestParam(value = MAX_RESULTS, required = false) final Integer maxResults
     ) throws E {
         final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                 .queryText(queryText)
@@ -80,10 +81,11 @@ public abstract class RelatedConceptsController<T extends QuerySummaryElement, Q
                 .build();
 
         final R relatedConceptsRequest = relatedConceptsRequestBuilderFactory.getObject()
-                .maxResults(maxResults)
-                .querySummaryLength(QUERY_SUMMARY_LENGTH)
-                .queryRestrictions(queryRestrictions)
-                .build();
+            .maxResults(maxResults)
+            .querySummaryLength(QUERY_SUMMARY_LENGTH)
+            .queryRestrictions(queryRestrictions)
+            .build();
+
         return relatedConceptsService.findRelatedConcepts(relatedConceptsRequest);
     }
 }

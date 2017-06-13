@@ -18,7 +18,6 @@ define([
     'find/app/page/search/results/parametric-results-view',
     'find/app/page/search/results/field-selection-view',
     'find/app/page/search/filters/parametric/calibrate-buckets',
-    'find/app/model/bucketed-date-collection',
     'find/app/model/parametric-collection',
     'find/app/page/search/results/trending/trending',
     'find/app/page/search/results/trending/trending-strategy',
@@ -26,8 +25,7 @@ define([
     'text!find/templates/app/page/search/results/trending/trending-results-view.html',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-date-input.html'
 ], function(_, $, moment, d3, Backbone, i18n, configuration, vent, RangeInput, generateErrorHtml,
-            datePicker, ParametricResultsView, FieldSelectionView, calibrateBuckets,
-            BucketedParametricCollection, ParametricCollection,
+            datePicker, ParametricResultsView, FieldSelectionView, calibrateBuckets, ParametricCollection,
             Trending, trendingStrategy, loadingSpinnerHtml, template, dateInputTemplate) {
     'use strict';
 
@@ -89,9 +87,8 @@ define([
         dateInputTemplate: _.template(dateInputTemplate),
 
         initialize: function(options) {
-            const config = configuration();
-            this.dateField = config.trending.dateField;
-            this.numberOfValuesToDisplay = config.trending.numberOfValues;
+            this.dateField = configuration().trending.dateField;
+            this.numberOfValuesToDisplay = configuration().trending.numberOfValues;
             this.queryModel = options.queryModel;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.parametricFieldsCollection = options.parametricFieldsCollection;
@@ -101,11 +98,11 @@ define([
             this.bucketedValues = {};
 
             this.model = new Backbone.Model({
-                value: config.trending.defaultNumberOfBuckets
+                value: configuration().trending.defaultNumberOfBuckets
             });
 
-            this.minBuckets = config.trending.minNumberOfBuckets;
-            this.maxBuckets = config.trending.maxNumberOfBuckets;
+            this.minBuckets = configuration().trending.minNumberOfBuckets;
+            this.maxBuckets = configuration().trending.maxNumberOfBuckets;
 
             this.viewStateModel = new Backbone.Model({
                 currentState: renderState.RENDERING_NEW_DATA,
@@ -285,7 +282,7 @@ define([
                     datePicker.render(
                         options.$el.closest('.results-filter-date'),
                         function() {
-                            if (this.validateDateFormat(options.$el.val())) {
+                            if(this.validateDateFormat(options.$el.val())) {
                                 options.inputFunction(this.parseDate(options.$el.val()));
                             } else {
                                 this.indicateNonValidDateInput({
@@ -352,8 +349,8 @@ define([
                 selectedFieldValues: this.selectedFieldValues,
                 selectedParametricValues: this.selectedParametricValues,
                 field: this.model.get('field'),
-                currentMax: this.model.get('currentMax'),
                 currentMin: this.model.get('currentMin'),
+                currentMax: this.model.get('currentMax'),
                 dateField: this.dateField,
                 numberOfValuesToDisplay: this.numberOfValuesToDisplay,
                 targetNumberOfBuckets: this.model.get('value')
@@ -442,7 +439,7 @@ define([
         },
 
         inputMinValue: function(min) {
-            if (min.isBefore(this.model.get('currentMax'))) {
+            if(min.isBefore(this.model.get('currentMax'))) {
                 this.model.set('currentMin', min);
             } else {
                 this.indicateNonValidDateInput({

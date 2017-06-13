@@ -88,14 +88,14 @@ define([
             'dp.change .results-filter-date[data-date-attribute="min-date"]': function(event) {
                 // The first time a user clicks the calendar a change event will be fired even though there is no change
                 const minInput = event.date.unix();
-                if (minInput !== this.minInput) {
+                if(minInput !== this.minInput) {
                     this.updateRestrictions([minInput, null]);
                 }
             },
             'dp.change .results-filter-date[data-date-attribute="max-date"]': function(event) {
                 // The first time a user clicks the calendar a change event will be fired even though there is no change
                 const maxInput = event.date.unix();
-                if (maxInput !== this.maxInput) {
+                if(maxInput !== this.maxInput) {
                     this.updateRestrictions([null, maxInput]);
                 }
             },

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -40,13 +40,15 @@ class IdolFieldsController extends FieldsController<IdolFieldsRequest, AciErrorE
     @SuppressWarnings({"TypeMayBeWeakened", "ConstructorWithTooManyParameters"})
     @Autowired
     IdolFieldsController(
-            final IdolFieldsService fieldsService,
-            final IdolParametricValuesService parametricValuesService,
-            final ObjectFactory<IdolParametricRequestBuilder> parametricRequestBuilderFactory,
-            final FieldComparatorFactory fieldComparatorFactory,
-            final TagNameFactory tagNameFactory,
-            final ConfigService<? extends FindConfig<?, ?>> configService,
-            final ObjectFactory<IdolFieldsRequestBuilder> fieldsRequestBuilderFactory, final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory) {
+        final IdolFieldsService fieldsService,
+        final IdolParametricValuesService parametricValuesService,
+        final ObjectFactory<IdolParametricRequestBuilder> parametricRequestBuilderFactory,
+        final FieldComparatorFactory fieldComparatorFactory,
+        final TagNameFactory tagNameFactory,
+        final ConfigService<? extends FindConfig<?, ?>> configService,
+        final ObjectFactory<IdolFieldsRequestBuilder> fieldsRequestBuilderFactory,
+        final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory)
+    {
         super(fieldsService, parametricValuesService, parametricRequestBuilderFactory, fieldComparatorFactory, tagNameFactory, configService);
         this.fieldsRequestBuilderFactory = fieldsRequestBuilderFactory;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
@@ -54,17 +56,19 @@ class IdolFieldsController extends FieldsController<IdolFieldsRequest, AciErrorE
 
     @RequestMapping(value = GET_PARAMETRIC_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public List<FieldAndValueDetails<?>> getParametricFields(@RequestParam(FIELD_TYPES_PARAM) final Collection<FieldTypeParam> fieldTypes) throws AciErrorException {
+    public List<FieldAndValueDetails<?>> getParametricFields(
+        @RequestParam(FIELD_TYPES_PARAM) final Collection<FieldTypeParam> fieldTypes)
+        throws AciErrorException
+    {
         return getParametricFields(fieldsRequestBuilderFactory.getObject()
-                .fieldTypes(fieldTypes)
-                .build());
+                                       .fieldTypes(fieldTypes)
+                                       .build());
     }
-
 
     @Override
     protected IdolQueryRestrictions createValueDetailsQueryRestrictions(final IdolFieldsRequest request) {
         return queryRestrictionsBuilderFactory.getObject()
-                .queryText("*")
-                .build();
+            .queryText("*")
+            .build();
     }
 }

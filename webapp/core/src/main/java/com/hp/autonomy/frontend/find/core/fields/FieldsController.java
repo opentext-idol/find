@@ -48,12 +48,12 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
 
     @SuppressWarnings("ConstructorWithTooManyParameters")
     protected FieldsController(
-            final FieldsService<R, E> fieldsService,
-            final ParametricValuesService<P, Q, E> parametricValuesService,
-            final ObjectFactory<? extends ParametricRequestBuilder<P, Q, ?>> parametricRequestBuilderFactory,
-            final FieldComparatorFactory fieldComparatorFactory,
-            final TagNameFactory tagNameFactory,
-            final ConfigService<? extends FindConfig<?, ?>> configService
+        final FieldsService<R, E> fieldsService,
+        final ParametricValuesService<P, Q, E> parametricValuesService,
+        final ObjectFactory<? extends ParametricRequestBuilder<P, Q, ?>> parametricRequestBuilderFactory,
+        final FieldComparatorFactory fieldComparatorFactory,
+        final TagNameFactory tagNameFactory,
+        final ConfigService<? extends FindConfig<?, ?>> configService
     ) {
         this.fieldsService = fieldsService;
         this.parametricValuesService = parametricValuesService;
@@ -71,15 +71,15 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
     protected List<FieldAndValueDetails<?>> getParametricFields(final R request) throws E {
         final Predicate<TagName> predicate = alwaysAndNeverShowFilter();
         final Map<FieldTypeParam, Set<TagName>> response = fieldsService.getFields(request).entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream().filter(predicate).collect(Collectors.toSet())));
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream().filter(predicate).collect(Collectors.toSet())));
         final TagName autnDateField;
-        if (request.getFieldTypes().contains(FieldTypeParam.NumericDate) && predicate.test(autnDateField = tagNameFactory.buildTagName(ParametricValuesService.AUTN_DATE_FIELD))) {
+        if(request.getFieldTypes().contains(FieldTypeParam.NumericDate) && predicate.test(autnDateField = tagNameFactory.buildTagName(ParametricValuesService.AUTN_DATE_FIELD))) {
             response.compute(FieldTypeParam.NumericDate, (key, maybeValue) -> Optional.ofNullable(maybeValue)
-                    .map(value -> {
-                        value.add(autnDateField);
-                        return value;
-                    })
-                    .orElse(Collections.singleton(autnDateField))
+                .map(value -> {
+                    value.add(autnDateField);
+                    return value;
+                })
+                .orElse(Collections.singleton(autnDateField))
             );
         }
 
@@ -101,26 +101,28 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
         return fetchParametricFieldAndValueDetails(FieldTypeParam.Numeric, response, tagNames -> {
             // Fetch the value details for the fields
             final P parametricRequest = parametricRequestBuilderFactory.getObject()
-                    .fieldNames(tagNames.stream()
-                            .map(TagName::getId)
-                            .collect(Collectors.toList()))
-                    .queryRestrictions(createValueDetailsQueryRestrictions(request))
-                    .build();
+                .fieldNames(tagNames.stream()
+                                .map(TagName::getId)
+                                .collect(Collectors.toList()))
+                .queryRestrictions(createValueDetailsQueryRestrictions(request))
+                .build();
 
             return parametricValuesService.getNumericValueDetails(parametricRequest);
         });
     }
 
-    private Collection<FieldAndValueDetails<ZonedDateTime>> fetchDateParametricFieldAndValueDetails(final R request,
-                                                                                                    final Map<FieldTypeParam, Set<TagName>> response) throws E {
+    private Collection<FieldAndValueDetails<ZonedDateTime>> fetchDateParametricFieldAndValueDetails(
+        final R request,
+        final Map<FieldTypeParam, Set<TagName>> response
+    ) throws E {
         return fetchParametricFieldAndValueDetails(FieldTypeParam.NumericDate, response, tagNames -> {
             // Fetch the value details for the fields
             final P parametricRequest = parametricRequestBuilderFactory.getObject()
-                    .fieldNames(tagNames.stream()
-                            .map(TagName::getId)
-                            .collect(Collectors.toList()))
-                    .queryRestrictions(createValueDetailsQueryRestrictions(request))
-                    .build();
+                .fieldNames(tagNames.stream()
+                                .map(TagName::getId)
+                                .collect(Collectors.toList()))
+                .queryRestrictions(createValueDetailsQueryRestrictions(request))
+                .build();
 
             return parametricValuesService.getDateValueDetails(parametricRequest);
         });
@@ -130,40 +132,42 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
      * Fetch the parametric fields of the given type along with their min and max values.
      */
     private <T extends Comparable<? super T> & Serializable, V extends ValueDetails<T>>
-    Collection<FieldAndValueDetails<T>> fetchParametricFieldAndValueDetails(final FieldTypeParam fieldType,
-                                                                            final Map<FieldTypeParam, Set<TagName>> response,
-                                                                            final ValueDetailsFetch<T, V, E> valueDetailsFetch) throws E {
-        if (!response.containsKey(fieldType)) {
+    Collection<FieldAndValueDetails<T>> fetchParametricFieldAndValueDetails(
+        final FieldTypeParam fieldType,
+        final Map<FieldTypeParam, Set<TagName>> response,
+        final ValueDetailsFetch<T, V, E> valueDetailsFetch
+    ) throws E {
+        if(!response.containsKey(fieldType)) {
             return Collections.emptyList();
         }
 
         final Set<TagName> tagNames = response.get(fieldType);
         tagNames.forEach(tagName -> response.entrySet()
-                .stream()
-                .filter(entry -> entry.getKey() != fieldType)
-                .forEach(entry -> entry.getValue().remove(tagName)));
+            .stream()
+            .filter(entry -> entry.getKey() != fieldType)
+            .forEach(entry -> entry.getValue().remove(tagName)));
 
         final Map<FieldPath, V> valueDetailsResponse = valueDetailsFetch.fetch(tagNames);
 
         return tagNames.stream()
-                .map(tagName -> {
-                    final FieldAndValueDetails.FieldAndValueDetailsBuilder<T> builder = FieldAndValueDetails.<T>builder()
-                            .id(tagName.getId().getNormalisedPath())
-                            .displayName(tagName.getDisplayName())
-                            .type(fieldType);
+            .map(tagName -> {
+                final FieldAndValueDetails.FieldAndValueDetailsBuilder<T> builder = FieldAndValueDetails.<T>builder()
+                    .id(tagName.getId().getNormalisedPath())
+                    .displayName(tagName.getDisplayName())
+                    .type(fieldType);
 
-                    final V valueDetails = valueDetailsResponse.get(tagName.getId());
+                final V valueDetails = valueDetailsResponse.get(tagName.getId());
 
-                    if (valueDetails != null) {
-                        builder
-                                .max(valueDetails.getMax())
-                                .min(valueDetails.getMin())
-                                .totalValues(valueDetails.getTotalValues());
-                    }
+                if(valueDetails != null) {
+                    builder
+                        .max(valueDetails.getMax())
+                        .min(valueDetails.getMin())
+                        .totalValues(valueDetails.getTotalValues());
+                }
 
-                    return builder.build();
-                })
-                .collect(Collectors.toList());
+                return builder.build();
+            })
+            .collect(Collectors.toList());
     }
 
     /**
@@ -172,11 +176,11 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
     private Predicate<TagName> alwaysAndNeverShowFilter() {
         final UiCustomization maybeUiCustomization = configService.getConfig().getUiCustomization();
         final Collection<FieldPath> parametricAlwaysShow = Optional.ofNullable(maybeUiCustomization)
-                .map(UiCustomization::getParametricAlwaysShow)
-                .orElse(Collections.emptyList());
+            .map(UiCustomization::getParametricAlwaysShow)
+            .orElse(Collections.emptyList());
         final Collection<FieldPath> parametricNeverShow = Optional.ofNullable(maybeUiCustomization)
-                .map(UiCustomization::getParametricNeverShow)
-                .orElse(Collections.emptyList());
+            .map(UiCustomization::getParametricNeverShow)
+            .orElse(Collections.emptyList());
 
         return tagName -> (parametricAlwaysShow.isEmpty() || parametricAlwaysShow.contains(tagName.getId())) && !parametricNeverShow.contains(tagName.getId());
     }

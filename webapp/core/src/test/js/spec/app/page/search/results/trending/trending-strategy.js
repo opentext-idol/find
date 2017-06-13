@@ -1,3 +1,8 @@
+/*
+ *  Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ *  Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'underscore',
     'jquery',
@@ -11,12 +16,12 @@ define([
     'find/app/model/bucketed-date-collection',
     'find/app/page/search/results/trending/trending-strategy',
     'mock/page/results/trending'
-], function (_, $, moment, Backbone, i18n, backboneMockFactory, configuration, ParametricCollection, ParametricDetailsModel,
-             BucketedParametricCollection, trendingStrategy, Trending) {
+], function(_, $, moment, Backbone, i18n, backboneMockFactory, configuration, ParametricCollection,
+            ParametricDetailsModel, BucketedParametricCollection, trendingStrategy, Trending) {
     'use strict';
 
-    describe('Trending Strategy', function () {
-        beforeEach(function () {
+    describe('Trending Strategy', function() {
+        beforeEach(function() {
             const QueryModel = Backbone.Model.extend({
                 getIsoDate: _.constant(null)
             });
@@ -101,58 +106,58 @@ define([
             };
         });
 
-        afterEach(function () {
+        afterEach(function() {
             BucketedParametricCollection.Model.reset();
             ParametricDetailsModel.reset();
             ParametricCollection.reset();
         });
 
-        describe('when fetching the field data', function () {
-            beforeEach(function () {
+        describe('when fetching the field data', function() {
+            beforeEach(function() {
                 this.fieldResult = trendingStrategy.fetchField(this.fetchOptions);
             });
 
-            it('should trigger a fetch on the parametric collection', function () {
+            it('should trigger a fetch on the parametric collection', function() {
                 expect(ParametricCollection.instances[0].fetch).toHaveBeenCalled();
             });
 
-            it('with the correct arguments', function () {
+            it('with the correct arguments', function() {
                 expect(ParametricCollection.instances[0].fetch.calls.argsFor(0)[0].data.fieldNames).toEqual(['cheeses']);
                 expect(ParametricCollection.instances[0].fetch.calls.argsFor(0)[0].data.queryText).toBe(this.queryModel.get('queryText'));
             });
 
-            describe('when the fetch fails then the method returns a rejected promise', function () {
-                beforeEach(function () {
+            describe('when the fetch fails then the method returns a rejected promise', function() {
+                beforeEach(function() {
                     ParametricCollection.fetchPromises[0].reject();
                 });
 
-                it('returns a rejected promise', function () {
+                it('returns a rejected promise', function() {
                     expect(this.fieldResult.state()).toBe('rejected');
                 });
             });
 
-            describe('when the fetch returns empty', function () {
-                beforeEach(function () {
+            describe('when the fetch returns empty', function() {
+                beforeEach(function() {
                     ParametricCollection.fetchPromises[0].resolve([]);
                 });
 
-                it('has returned a promise that contains the correct information', function () {
+                it('has returned a promise that contains the correct information', function() {
                     let fetchResult = null;
-                    this.fieldResult.then(function (result) {
+                    this.fieldResult.then(function(result) {
                         fetchResult = result;
                     });
                     expect(fetchResult).toEqual([]);
                 });
             });
 
-            describe('when the fetch returns an array', function () {
-                beforeEach(function () {
+            describe('when the fetch returns an array', function() {
+                beforeEach(function() {
                     ParametricCollection.fetchPromises[0].resolve(this.fetchData);
                 });
 
-                it('has returned a promise that contains the correct information', function () {
+                it('has returned a promise that contains the correct information', function() {
                     let fetchResult = null;
-                    this.fieldResult.then(function (result) {
+                    this.fieldResult.then(function(result) {
                         fetchResult = result;
                     });
                     expect(fetchResult).toEqual(this.fetchData[0].values);
@@ -160,38 +165,38 @@ define([
             });
         });
 
-        describe('when fetching the range data', function () {
-            beforeEach(function () {
+        describe('when fetching the range data', function() {
+            beforeEach(function() {
                 this.rangeResult = trendingStrategy.fetchRange(this.fetchData[0].values, this.fetchOptions);
             });
 
-            it('should trigger a fetch on the parametric collection', function () {
+            it('should trigger a fetch on the parametric collection', function() {
                 expect(ParametricDetailsModel.instances[0].fetch).toHaveBeenCalled();
             });
 
-            it('with the correct arguments', function () {
+            it('with the correct arguments', function() {
                 expect(ParametricDetailsModel.instances[0].fetch.calls.argsFor(0)[0].data.fieldName).toEqual('AUTN_DATE');
                 expect(ParametricDetailsModel.instances[0].fetch.calls.argsFor(0)[0].data.queryText).toBe(this.queryModel.get('queryText'));
             });
 
-            describe('when the fetch fails then the method returns a rejected promise', function () {
-                beforeEach(function () {
+            describe('when the fetch fails then the method returns a rejected promise', function() {
+                beforeEach(function() {
                     ParametricDetailsModel.fetchPromises[0].reject();
                 });
 
-                it('returns a rejected promise', function () {
+                it('returns a rejected promise', function() {
                     expect(this.rangeResult.state()).toBe('rejected');
                 });
             });
 
-            describe('when the fetch returns an array', function () {
-                beforeEach(function () {
+            describe('when the fetch returns an array', function() {
+                beforeEach(function() {
                     ParametricDetailsModel.fetchPromises[0].resolve(this.rangeFetchData);
                 });
 
-                it('has returned a promise that contains the correct information', function () {
+                it('has returned a promise that contains the correct information', function() {
                     let rangeResult = null;
-                    this.rangeResult.then(function (result) {
+                    this.rangeResult.then(function(result) {
                         rangeResult = result;
                     });
                     expect(rangeResult).toEqual(this.rangeFetchData);
@@ -199,8 +204,8 @@ define([
             });
         });
 
-        describe('when fetching the bucketed data', function () {
-            beforeEach(function () {
+        describe('when fetching the bucketed data', function() {
+            beforeEach(function() {
                 const bucketedFetchOptions = _.extend({
                     selectedFieldValues: this.fetchData[0].values
                 }, this.fetchOptions);
@@ -208,30 +213,30 @@ define([
                 this.bucketedResult = trendingStrategy.fetchBucketedData(bucketedFetchOptions);
             });
 
-            it('should trigger a fetch for each of the selected values', function () {
+            it('should trigger a fetch for each of the selected values', function() {
                 expect(BucketedParametricCollection.Model.fetchPromises).toHaveLength(4);
             });
 
-            describe('one of the fetches fails', function () {
-                beforeEach(function () {
+            describe('one of the fetches fails', function() {
+                beforeEach(function() {
                     BucketedParametricCollection.Model.fetchPromises[0].reject();
                 });
 
-                it('returns a rejected promise', function () {
+                it('returns a rejected promise', function() {
                     expect(this.bucketedResult.state()).toBe('rejected');
                 });
             });
 
-            describe('the fetches all succeed', function () {
-                beforeEach(function () {
-                    _.each(BucketedParametricCollection.Model.fetchPromises, function (promise) {
+            describe('the fetches all succeed', function() {
+                beforeEach(function() {
+                    _.each(BucketedParametricCollection.Model.fetchPromises, function(promise) {
                         promise.resolve(this.bucketData);
                     }, this);
                 });
 
-                it('returns the bucketed value data', function () {
+                it('returns the bucketed value data', function() {
                     let bucketedResult = null;
-                    this.bucketedResult.then(function () {
+                    this.bucketedResult.then(function() {
                         bucketedResult = Array.prototype.slice.call(arguments);
                     });
                     expect(bucketedResult).toHaveLength(4);
@@ -239,21 +244,21 @@ define([
                 });
             });
 
-            describe('when the returned abort method is called', function () {
-                beforeEach(function () {
+            describe('when the returned abort method is called', function() {
+                beforeEach(function() {
                     this.bucketedResult.abort();
                 });
 
-                it('calls abort on the bucketed parametric XHR objects', function () {
-                    BucketedParametricCollection.Model.fetchPromises.forEach(function (promise) {
+                it('calls abort on the bucketed parametric XHR objects', function() {
+                    BucketedParametricCollection.Model.fetchPromises.forEach(function(promise) {
                         expect(promise.abort.calls.count()).toBe(1);
                     });
                 });
             });
         });
 
-        describe('when converting bucketed values to chart data', function () {
-            beforeEach(function () {
+        describe('when converting bucketed values to chart data', function() {
+            beforeEach(function() {
                 this.bucketedValues = [{
                     valueName: "CHEDDAR",
                     count: 2,
@@ -304,11 +309,11 @@ define([
                 }];
 
                 this.chartData = trendingStrategy.createChartData({
-                    bucketedValues: this.bucketedValues.map(function (data) {
+                    bucketedValues: this.bucketedValues.map(function(data) {
                         return _.extend(data, {
                             min: moment(data.min),
                             max: moment(data.max),
-                            values: data.values.map(function (value) {
+                            values: data.values.map(function(value) {
                                 return _.extend(value, {min: moment(value.min), max: moment(value.max)});
                             })
                         });
@@ -318,27 +323,27 @@ define([
                 });
             });
 
-            it('should return only the values that fit in the current min-max range', function () {
+            it('should return only the values that fit in the current min-max range', function() {
                 expect(this.chartData.data).toHaveLength(4);
                 expect(this.chartData.data[0].points).toHaveLength(4);
             });
 
-            it('should return data with mid points', function () {
+            it('should return data with mid points', function() {
                 expect(this.chartData.data[0].points[2].mid).toBeTruthy();
                 expect(this.chartData.data[1].points[2].mid).toBeTruthy();
                 expect(this.chartData.data[2].points[2].mid).toBeTruthy();
                 expect(this.chartData.data[3].points[2].mid).toBeTruthy();
             });
 
-            it('returns the y axis unit', function () {
+            it('returns the y axis unit', function() {
                 expect(this.chartData.yUnit).toBe('MINUTE');
             });
 
-            it('converts the counts to rates', function () {
+            it('converts the counts to rates', function() {
                 expect(this.chartData.data[0].points[0].rate).toBe(12);
             });
 
-            it('returns out the minRate and maxRate', function () {
+            it('returns out the minRate and maxRate', function() {
                 expect(this.chartData.minRate).toBe(0);
                 expect(this.chartData.maxRate).toBe(12);
             });
