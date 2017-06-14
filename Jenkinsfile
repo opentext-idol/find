@@ -19,7 +19,7 @@ node {
 
 		gitCommit = getGitCommit()
 		repository = getOrgRepoName().toLowerCase()
-		branch = ${env.GIT_BRANCH}.toLowerCase()
+		branch = "${env.GIT_BRANCH}"
 
 		echo "Building ${gitCommit}, from ${repository}, branch ${branch}"
 
