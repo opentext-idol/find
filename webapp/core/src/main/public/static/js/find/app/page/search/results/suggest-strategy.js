@@ -9,6 +9,7 @@ define([
     'use strict';
 
     return {
+        answers: _.constant(false),
         promotions: _.constant(false),
 
         queryModelAttributes: [

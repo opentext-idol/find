@@ -110,14 +110,16 @@ define([
                 this.promotionsCollection = new PromotionsCollection();
             }
 
-            const QuestionsView = this.getQuestionsViewConstructor();
+            if (this.fetchStrategy.answers(this.queryModel)) {
+                const QuestionsView = this.getQuestionsViewConstructor();
 
-            if(QuestionsView) {
-                this.questionsView = new QuestionsView({
-                    queryModel: this.queryModel,
-                    loadingTracker: this.loadingTracker,
-                    clearLoadingSpinner: _.bind(this.clearLoadingSpinner, this)
-                });
+                if (QuestionsView) {
+                    this.questionsView = new QuestionsView({
+                        queryModel: this.queryModel,
+                        loadingTracker: this.loadingTracker,
+                        clearLoadingSpinner: _.bind(this.clearLoadingSpinner, this)
+                    });
+                }
             }
 
             this.sortView = new SortView({

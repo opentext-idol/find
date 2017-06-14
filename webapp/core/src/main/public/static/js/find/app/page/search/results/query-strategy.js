@@ -7,6 +7,7 @@ define(['underscore'], function(_) {
     'use strict';
 
     return {
+        answers: _.constant(true),
         promotions: _.constant(true),
 
         queryModelAttributes: [
