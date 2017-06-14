@@ -155,7 +155,9 @@ define([
 
             if (this.showPromotions) {
                 this.listenTo(this.promotionsCollection, 'add', function(model) {
-                    this.formatResult(model, true);
+                    if (this.documentRenderer.loadPromise.state() === 'resolved') {
+                        this.formatResult(model, true);
+                    }
                 });
 
                 this.listenTo(this.promotionsCollection, 'sync', function() {
@@ -166,14 +168,18 @@ define([
                 // TODO: We're basically ignoring promotions errors here -- implement robust logging procedure.
                 // The Find User shouldn't hear about promotions, but the way we are doing it now, the DataAdmin or
                 // SysAdmin may never find out that promotions-related errors are affecting Users' searches.
-                this.listenTo(this.promotionsCollection, 'error', function() {
-                    this.loadingTracker.promotionsFinished = true;
-                    this.clearLoadingSpinner();
+                this.listenTo(this.promotionsCollection, 'error', function(collection, xhr) {
+                    if (xhr.statusText !== 'abort') {
+                        this.loadingTracker.promotionsFinished = true;
+                        this.clearLoadingSpinner();
+                    }
                 });
             }
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
-                this.formatResult(model, false);
+                if (this.documentRenderer.loadPromise.state() === 'resolved') {
+                    this.formatResult(model, false);
+                }
             });
 
             this.listenTo(this.documentsCollection, 'sync reset', function() {
@@ -192,9 +198,11 @@ define([
             });
 
             this.listenTo(this.documentsCollection, 'error', function(collection, xhr) {
-                this.loadingTracker.resultsFinished = true;
-                this.clearLoadingSpinner();
-                this.handleError(xhr);
+                if (xhr.statusText !== 'abort') {
+                    this.loadingTracker.resultsFinished = true;
+                    this.clearLoadingSpinner();
+                    this.handleError(xhr);
+                }
             });
 
             if (this.indexesCollection) {
@@ -216,10 +224,25 @@ define([
             } else {
                 this.$('.main-results-content').addClass('document-detail-mode');
             }
+
+            this.documentRenderer.loadPromise
+                .done(function() {
+                    this.documentsCollection.each(function(model) {
+                        this.formatResult(model, false);
+                    }.bind(this));
+
+                    if (this.showPromotions) {
+                        this.promotionsCollection.each(function(model) {
+                            this.formatResult(model, true);
+                        }.bind(this));
+                    }
+                }.bind(this))
+                .fail(this.handleError.bind(this))
+                .always(this.clearLoadingSpinner.bind(this));
         },
 
         refreshResults: function() {
-            if (this.fetchStrategy.validateQuery(this.queryModel)) {
+            if (this.fetchStrategy.validateQuery(this.queryModel) && this.documentRenderer.loadPromise.state() !== 'rejected') {
                 if (this.fetchStrategy.waitForIndexes(this.queryModel)) {
                     this.$loadingSpinner.addClass('hide');
                     this.$('.main-results-content .results')
@@ -241,8 +264,11 @@ define([
         },
 
         clearLoadingSpinner: function() {
-            if (this.loadingTracker.resultsFinished && this.loadingTracker.questionsFinished
-                && this.loadingTracker.promotionsFinished || !this.showPromotions) {
+            const notLoading = this.documentRenderer.loadPromise.state() !== 'pending' &&
+                this.loadingTracker.resultsFinished && this.loadingTracker.questionsFinished
+                && this.loadingTracker.promotionsFinished || !this.showPromotions;
+
+            if (notLoading) {
                 this.$loadingSpinner.addClass('hide');
             }
         },
@@ -322,9 +348,9 @@ define([
                 data: requestData,
                 reset: false,
                 remove: !infiniteScroll,
-                error: function(collection) {
+                error: function(collection, xhr) {
                     // if returns an error remove previous models from documentsCollection
-                    if (collection) {
+                    if (collection && xhr.statusText !== 'abort') {
                         collection.reset();
                     }
                 },
