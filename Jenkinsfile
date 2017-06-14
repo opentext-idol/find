@@ -89,12 +89,9 @@ node {
         """
 }
 
-/**
-* Looks up branch of the current commit on the remote to determine the branch being built.
-*/
-def getBranchName(gitCommit) {
+def getGitCommit() {
 	sh (
-		script: "git branch --remote --contains ${gitCommit}",
+		script: "git rev-parse --short HEAD",
 		returnStdout: true
 	).trim()
 }
