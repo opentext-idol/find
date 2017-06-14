@@ -194,22 +194,24 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>com.github.mcheely</groupId>
-                        <artifactId>requirejs-maven-plugin</artifactId>
-                        <version>2.0.0</version>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>optimize</id>
+                                <id>combine-javascript</id>
+                                <phase>compile</phase>
                                 <goals>
-                                    <goal>optimize</goal>
+                                    <goal>exec</goal>
                                 </goals>
+                                <configuration>
+                                    <executable>${project.basedir}/node_modules/.bin/grunt${npm.binExtension}</executable>
+                                    <workingDirectory>${basedir}</workingDirectory>
+                                    <arguments>
+                                        <argument>compile</argument>
+                                    </arguments>
+                                </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <configFile>${basedir}/build.js</configFile>
-                            <optimizerFile>${basedir}/node_modules/requirejs/bin/r.js</optimizerFile>
-                            <filterConfig>true</filterConfig>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
