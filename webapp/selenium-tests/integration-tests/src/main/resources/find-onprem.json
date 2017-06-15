@@ -8,7 +8,7 @@
     "browsers": [
       "chrome"
     ],
-    "url": "http://localhost:4444/wd/hub",
+    "url": "http://cbgdevdocker01.hpeswlab.net:4444/wd/hub",
     "timeout": "1"
   },
   "users": {

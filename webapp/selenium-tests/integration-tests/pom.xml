@@ -163,9 +163,7 @@
                         <version>2.18.1</version>
                         <configuration>
                             <parallel>classesAndMethods</parallel>
-                            <forkCount>1.0C</forkCount>
                             <threadCount>5</threadCount>
-                            <rerunFailingTestsCount>2</rerunFailingTestsCount>
                         </configuration>
                     </plugin>
                 </plugins>
