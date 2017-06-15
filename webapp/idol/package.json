@@ -19,6 +19,6 @@
     "grunt-peg": "github:jdesrosiers/grunt-peg#11252e0",
     "grunt-sync": "~0.5.1",
     "grunt-template-jasmine-requirejs": "~0.2.3",
-    "requirejs": "~2.3.3"
+    "requirejs": "2.3.3"
   }
 }
