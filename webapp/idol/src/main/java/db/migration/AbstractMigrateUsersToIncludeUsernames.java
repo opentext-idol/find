@@ -1,3 +1,8 @@
+/*
+ * Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package db.migration;
 
 import com.autonomy.aci.client.services.AciErrorException;
@@ -7,7 +12,6 @@ import com.autonomy.aci.client.transport.AciHttpClient;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
 import com.autonomy.aci.client.util.AciParameters;
-import com.hp.autonomy.frontend.find.core.savedsearches.OldUserEntity;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactoryImpl;
 import com.hp.autonomy.types.idol.marshalling.marshallers.jaxb2.Jaxb2MarshallerFactory;
@@ -15,12 +19,12 @@ import com.hp.autonomy.types.idol.responses.User;
 import com.hp.autonomy.types.requests.idol.actions.user.UserActions;
 import com.hp.autonomy.types.requests.idol.actions.user.params.UserReadParams;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.apache.http.client.HttpClient;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.flywaydb.core.api.migration.spring.SpringJdbcMigration;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -70,43 +74,44 @@ public abstract class AbstractMigrateUsersToIncludeUsernames implements SpringJd
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     public void migrate(final JdbcTemplate jdbcTemplate) throws Exception {
-        final List<OldUserEntity> userEntities = getAllUserEntities(jdbcTemplate);
+        final List<DeprecatedUser> users = getAllUsers(jdbcTemplate);
 
-        final Collection<OldUserEntity> hasUids = userEntities.stream()
-                .filter(userEntity -> userEntity.getUid() != null)
+        final Collection<DeprecatedUser> hasUids = users.stream()
+                .filter(user -> user.getUid() != null)
                 .collect(Collectors.toList());
 
-        final List<OldUserEntity> userEntitiesToChange = hasUids.stream()
-                .map(userEntity -> userEntity.toBuilder()
-                        .username(getUsernameFromCommunity(userEntity))
-                        .uid(null)
-                        .build())
+        final List<DeprecatedUser> usersToChange = hasUids.stream()
+                .map(user -> new DeprecatedUser(user.getUserId(), getUsernameFromCommunity(user), null))
                 .collect(Collectors.toList());
 
-        final List<OldUserEntity> userEntitiesToDelete = userEntitiesToChange.stream()
-                .filter(userEntity -> userEntity.getUsername() == null)
+        final List<DeprecatedUser> usersToDelete = usersToChange.stream()
+                .filter(user -> user.getUsername() == null)
                 .collect(Collectors.toList());
 
-        updateUserEntities(jdbcTemplate, userEntitiesToChange);
+        updateUsers(jdbcTemplate, usersToChange);
 
-        deleteUserEntities(jdbcTemplate, userEntitiesToDelete);
+        deleteUsers(jdbcTemplate, usersToDelete);
     }
 
     protected abstract String getUpdateUserSql();
 
-    protected abstract void getBatchParameters(final PreparedStatement ps, final OldUserEntity userEntity) throws SQLException;
+    protected abstract void getBatchParameters(final PreparedStatement ps, final DeprecatedUser user) throws SQLException;
 
-    private List<OldUserEntity> getAllUserEntities(final JdbcOperations jdbcTemplate) {
-        return jdbcTemplate.query("SELECT * FROM users", new BeanPropertyRowMapper<>(OldUserEntity.class));
+    private List<DeprecatedUser> getAllUsers(final JdbcOperations jdbcTemplate) {
+        return jdbcTemplate.query("SELECT user_id, uid FROM users", (rs, rowNum) -> {
+            final Long userId = rs.getLong("user_id");
+            final Long uid = rs.getLong("uid");
+            return new AbstractMigrateUsersToIncludeUsernames.DeprecatedUser(userId, null, uid);
+        });
     }
 
-    private String getUsernameFromCommunity(final OldUserEntity userEntity) throws AciErrorException {
+    private String getUsernameFromCommunity(final DeprecatedUser user) throws AciErrorException {
         try {
             final AciParameters parameters = new AciParameters(UserActions.UserRead.name());
-            parameters.add(UserReadParams.UID.name(), userEntity.getUid());
+            parameters.add(UserReadParams.UID.name(), user.getUid());
 
-            final User user = aciService.executeAction(serverDetails, parameters, processorFactory.getResponseDataProcessor(User.class));
-            return user.getUsername();
+            final User communityUser = aciService.executeAction(serverDetails, parameters, processorFactory.getResponseDataProcessor(User.class));
+            return communityUser.getUsername();
         } catch (final AciErrorException e) {
             if (NO_USER_IN_COMMUNITY_ERROR_CODE.equals(e.getErrorId())) {
                 return null;
@@ -116,28 +121,28 @@ public abstract class AbstractMigrateUsersToIncludeUsernames implements SpringJd
         }
     }
 
-    private void updateUserEntities(final JdbcOperations jdbcTemplate, final List<OldUserEntity> userEntities) {
+    private void updateUsers(final JdbcOperations jdbcTemplate, final List<DeprecatedUser> users) {
         final String sql = getUpdateUserSql();
 
-        jdbcTemplate.batchUpdate(sql, new UserEntitiesBatchPreparedStatementSetter(
-                userEntities,
-                (ps, i) -> getBatchParameters(ps, userEntities.get(i))
+        jdbcTemplate.batchUpdate(sql, new UsersBatchPreparedStatementSetter(
+                users,
+                (ps, i) -> getBatchParameters(ps, users.get(i))
         ));
     }
 
-    private void deleteUserEntities(final JdbcOperations jdbcTemplate, final List<OldUserEntity> userEntities) {
+    private void deleteUsers(final JdbcOperations jdbcTemplate, final List<DeprecatedUser> users) {
         final String sql = "DELETE FROM users WHERE user_id=?";
 
-        jdbcTemplate.batchUpdate(sql, new UserEntitiesBatchPreparedStatementSetter(
-                userEntities,
-                (ps, i) -> ps.setLong(1, userEntities.get(i).getUserId()))
+        jdbcTemplate.batchUpdate(sql, new UsersBatchPreparedStatementSetter(
+                users,
+                (ps, i) -> ps.setLong(1, users.get(i).getUserId()))
         );
     }
 
     @AllArgsConstructor
-    private static class UserEntitiesBatchPreparedStatementSetter implements BatchPreparedStatementSetter {
+    private static class UsersBatchPreparedStatementSetter implements BatchPreparedStatementSetter {
 
-        private final List<OldUserEntity> userEntities;
+        private final List<DeprecatedUser> users;
         private final SQLConsumer consumer;
 
         @Override
@@ -147,7 +152,7 @@ public abstract class AbstractMigrateUsersToIncludeUsernames implements SpringJd
 
         @Override
         public int getBatchSize() {
-            return userEntities.size();
+            return users.size();
         }
     }
 
@@ -156,4 +161,11 @@ public abstract class AbstractMigrateUsersToIncludeUsernames implements SpringJd
         void accept(PreparedStatement ps, int i) throws SQLException;
     }
 
+    @Data
+    @AllArgsConstructor
+    protected static class DeprecatedUser {
+        private final Long userId;
+        private String username;
+        private Long uid;
+    }
 }
