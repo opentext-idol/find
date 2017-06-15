@@ -1,8 +1,8 @@
 <dataset>
     <users user_id="1" username="user"/>
-    <users user_id="2"/>
-    <users user_id="3"/>
-    <users user_id="4"/>
+    <users user_id="2" username="user2"/>
+    <users user_id="3" username="user3"/>
+    <users user_id="4" username="user4"/>
     <searches search_id="1" user_id="1" title="Search1" active="true" search_type="0" min_score="0" created_date="2007-11-05" modified_date="2007-11-05"/>
     <searches search_id="2" user_id="1" title="Search2" active="false" search_type="0" min_score="0" created_date="2007-11-05" modified_date="2007-11-05"/>
     <searches search_id="3" user_id="1" title="Search3" active="true" search_type="1" min_score="0" created_date="2007-11-05" modified_date="2007-11-05"/>

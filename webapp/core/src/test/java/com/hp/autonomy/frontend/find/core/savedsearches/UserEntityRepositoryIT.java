@@ -29,22 +29,9 @@ public abstract class UserEntityRepositoryIT extends AbstractFindIT {
     }
 
     @Test
-    public void createWithUidAndFetch() {
+    public void saveNew() {
         final UserEntity userEntity = new UserEntity();
         userEntity.setUsername("username@hpe.com");
-
-        final int startingNumberOfUsers = listUsers().size();
-
-        final UserEntity savedEntity = userEntityRepository.save(userEntity);
-        assertThat(savedEntity.getUserId(), not(nullValue()));
-
-        final List<UserEntity> users = listUsers();
-        assertThat(users, hasSize(startingNumberOfUsers + 1));
-    }
-
-    @Test
-    public void createWithUuidAndUserStore() {
-        final UserEntity userEntity = new UserEntity();
 
         final int startingNumberOfUsers = listUsers().size();
 
