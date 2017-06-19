@@ -8,6 +8,7 @@ define([
     'underscore',
     'handlebars',
     'jquery',
+    'find/app/vent',
     'find/app/page/search/results/add-links-to-summary',
     'find/app/util/document-mime-types',
     'find/app/util/url-manipulator',
@@ -20,7 +21,7 @@ define([
     './template-helpers/get-field-value-helper',
     './template-helpers/with-field-helper',
     './template-helpers/i18n-helper'
-], function(Backbone, _, Handlebars, $, addLinksToSummary, documentMimeTypes, urlManipulator, defaultResultTemplate,
+], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator, defaultResultTemplate,
             defaultPreviewTemplate, defaultPromotionTemplate, equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper,
             withFieldHelper, i18nHelper) {
 
@@ -68,6 +69,7 @@ define([
             date: date.format('LLLL'),
             database: model.get('index'),
             promotionName: model.get('promotionName'),
+            similarDocumentsUrl: vent.suggestUrlForDocument(model),
             summary: addLinksToSummary(model.get('summary')),
             url: url ? urlManipulator.addSpecialUrlPrefix(model.get('contentType'), url) : null,
             icon: 'icomoon-file-' + getContentTypeClass(model),

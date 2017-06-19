@@ -54,7 +54,29 @@ define([
         resultTemplate: _.template(resultTemplate),
 
         events: {
-            'click .preview-mode [data-cid]:not(.answered-question)': 'openPreview',
+            'click .preview-mode [data-cid]:not(.answered-question)': function(e) {
+                const $target = $(e.target);
+
+                if (!$target.is('a')) {
+                    const $result = $(e.currentTarget).closest('.main-results-container');
+
+                    if ($result.hasClass('selected-document')) {
+                        // disable preview mode
+                        this.previewModeModel.set({document: null});
+                    } else {
+                        // enable/choose another preview view
+                        const cid = $result.data('cid');
+                        const isPromotion = $result.closest('.main-results-list').hasClass('promotions');
+                        const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
+                        const model = collection.get(cid);
+                        this.previewModeModel.set({document: model});
+
+                        if (!isPromotion) {
+                            events().preview(collection.indexOf(model) + 1);
+                        }
+                    }
+                }
+            },
             'click .document-detail-mode [data-cid]': function(e) {
                 const $target = $(e.currentTarget);
                 const cid = $target.data('cid');
@@ -62,15 +84,6 @@ define([
                 const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
                 const model = collection.get(cid);
                 vent.navigateToDetailRoute(model);
-            },
-            'click .similar-documents-trigger': function(event) {
-                event.stopPropagation();
-                const cid = $(event.target).closest('[data-cid]').data('cid');
-                let documentModel = this.documentsCollection.get(cid);
-                if (!documentModel) {
-                    documentModel = this.promotionsCollection.get(cid);
-                }
-                vent.navigateToSuggestRoute(documentModel);
             }
         },
 
@@ -344,6 +357,10 @@ define([
                 queryType: 'MODIFIED'
             }, this.fetchStrategy.requestParams(this.queryModel, infiniteScroll));
 
+            if (!infiniteScroll) {
+                this.documentsCollection.reset();
+            }
+
             this.documentsCollection.fetch({
                 data: requestData,
                 reset: false,
@@ -387,28 +404,6 @@ define([
 
                 // we're not scrolling, so should be a new search
                 events().reset(requestData.text);
-            }
-        },
-
-        openPreview: function(e) {
-            const $target = $(e.currentTarget).closest('.main-results-container');
-
-            if ($target.hasClass('selected-document')) {
-                // disable preview mode
-                this.previewModeModel.set({document: null});
-            } else {
-                //enable/choose another preview view
-                const cid = $target.data('cid');
-                const isPromotion = $target.closest('.main-results-list').hasClass('promotions');
-                const collection = isPromotion
-                    ? this.promotionsCollection
-                    : this.documentsCollection;
-                const model = collection.get(cid);
-                this.previewModeModel.set({document: model});
-
-                if (!isPromotion) {
-                    events().preview(collection.indexOf(model) + 1);
-                }
             }
         },
 

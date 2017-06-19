@@ -9,5 +9,5 @@ define([
 ], function(Backbone, _) {
     'use strict';
 
-    return _.extend(jasmine.createSpyObj('vent', ['navigate', 'navigateToDetailRoute']), Backbone.Events);
+    return _.extend(jasmine.createSpyObj('vent', ['navigate', 'navigateToDetailRoute', 'suggestUrlForDocument']), Backbone.Events);
 });
