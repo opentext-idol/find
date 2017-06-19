@@ -55,7 +55,7 @@ define([
                                 edit: snapshotsI18n['openEdit.edit']
                             }
                         },
-                        READ_ONLY: {
+                        READ_ONLY_QUERY: {
                             cssClass: 'readonly',
                             autoCorrect: false,
                             queryTextModelChange: _.constant(_.noop),
@@ -63,6 +63,24 @@ define([
                             icon: 'hp-dashboard',
                             isMutable: false,
                             fetchStrategy: queryStrategy,
+                            showTimeBar: false,
+                            DocumentsCollection: DocumentsCollection,
+                            LeftSideFooterView: SnapshotDataView,
+                            MiddleColumnHeaderView: null,
+                            relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
+                            openEditText: {
+                                create: snapshotsI18n['openEdit.create'],
+                                edit: snapshotsI18n['openEdit.edit']
+                            }
+                        },
+                        READ_ONLY_SNAPSHOT: {
+                            cssClass: 'readonly',
+                            autoCorrect: false,
+                            queryTextModelChange: _.constant(_.noop),
+                            collection: 'readOnlySearchCollection',
+                            icon: 'hp-dashboard',
+                            isMutable: false,
+                            fetchStrategy: stateTokenStrategy,
                             showTimeBar: false,
                             DocumentsCollection: DocumentsCollection,
                             LeftSideFooterView: SnapshotDataView,

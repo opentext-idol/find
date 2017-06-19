@@ -234,7 +234,6 @@ define([
 
             // only allow Save As buttons for these search types
             var saveAsSearchTypes = [SavedSearchModel.Type.QUERY, SavedSearchModel.Type.SNAPSHOT];
-            var savedSearchModelType = this.savedSearchModel.get('type');
 
             this.$el.html(this.template({
                 i18n: i18n,
@@ -242,9 +241,7 @@ define([
                 showSaveAs: isMutable,
                 searchTypes: saveAsSearchTypes,
                 showOpenAsQuery: !isMutable,
-                readOnly: savedSearchModelType === 'READ_ONLY'
-                || savedSearchModelType === 'SHARED_READ_ONLY_QUERY'
-                || savedSearchModelType === 'SHARED_READ_ONLY_SNAPSHOT'
+                readOnly: this.savedSearchModel.get('type').indexOf('READ_ONLY') !== -1
             }));
 
             this.renderTitleInput();

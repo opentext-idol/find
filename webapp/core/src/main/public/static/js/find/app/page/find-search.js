@@ -250,25 +250,28 @@ define([
 
                 let collection;
                 switch(type) {
-                    case 'QUERY':
+                    case SavedSearchModel.Type.QUERY:
                         collection = options.savedQueryCollection;
                         break;
-                    case 'SNAPSHOT':
+                    case SavedSearchModel.Type.SNAPSHOT:
                         collection = options.savedSnapshotCollection;
                         break;
-                    case 'READ_ONLY':
+                    case SavedSearchModel.Type.READ_ONLY_QUERY:
                         collection = options.readOnlySearchCollection;
                         break;
-                    case 'SHARED_QUERY':
+                    case SavedSearchModel.Type.READ_ONLY_SNAPSHOT:
+                        collection = options.readOnlySearchCollection;
+                        break;
+                    case SavedSearchModel.Type.SHARED_QUERY:
                         collection = options.sharedSavedQueryCollection;
                         break;
-                    case 'SHARED_SNAPSHOT':
+                    case SavedSearchModel.Type.SHARED_SNAPSHOT:
                         collection = options.sharedSavedSnapshotCollection;
                         break;
-                    case 'SHARED_READ_ONLY_QUERY':
+                    case SavedSearchModel.Type.SHARED_READ_ONLY_QUERY:
                         collection = options.sharedSavedQueryCollection;
                         break;
-                    case 'SHARED_READY_ONLY_SNAPSHOT':
+                    case SavedSearchModel.Type.SHARED_READ_ONLY_SNAPSHOT:
                         collection = options.sharedSavedSnapshotCollection;
                         break;
                 }
@@ -291,7 +294,7 @@ define([
                         newModel.fetch().done(function () {
                             collection = options.readOnlySearchCollection;
                             newModel.set('searchType', newModel.get('type'));
-                            newModel.set('type', 'READ_ONLY');
+                            newModel.set('type', 'READ_ONLY_' + newModel.get('type'));
                             newModel.set('validForSave', false);
                             collection.add(newModel);
                             this.selectedTabModel.set({
@@ -627,7 +630,11 @@ define([
         },
 
         updateRouting: function (savedSearchModel, selectedTab) {
-            const type = savedSearchModel.get('type') === 'READ_ONLY' ? savedSearchModel.get('searchType') : savedSearchModel.get('type');
+            let type = savedSearchModel.get('type');
+
+            if (type === SavedSearchModel.Type.READ_ONLY_QUERY) { type = SavedSearchModel.Type.QUERY; }
+            else if (type === SavedSearchModel.Type.READ_ONLY_SNAPSHOT) { type = SavedSearchModel.Type.SNAPSHOT; }
+
             const id = savedSearchModel.get('id');
             const modelId = type + ':' + id;
 
