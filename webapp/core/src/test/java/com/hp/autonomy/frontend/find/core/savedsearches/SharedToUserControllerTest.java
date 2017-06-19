@@ -6,8 +6,6 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
-import org.apache.commons.io.IOUtils;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -25,24 +23,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @JsonTest
 @AutoConfigureJsonTesters(enabled = false)
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SharedToUserController.class, properties = BiConfiguration.BI_PROPERTY, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class SharedToUserControllerTest {
-    private static String json;
-
-    @BeforeClass
-    public static void init() throws IOException {
-        json = IOUtils.toString(SharedToUserControllerTest.class.getResourceAsStream("/shared-to-users.json"));
-    }
-
     @MockBean
     private SharedToUserRepository sharedToUserRepository;
+
+    @MockBean
+    private UserEntityService userEntityService;
 
     @Autowired
     private SharedToUserController controller;
@@ -50,18 +42,25 @@ public class SharedToUserControllerTest {
     @Test
     public void getPermittedUsersForSearch() {
         when(sharedToUserRepository.findBySavedSearch_Id(anyLong())).thenReturn(Collections.singleton(mock(SharedToUser.class)));
-        assertThat(controller.getPermissionsForSearch("1"), not(empty()));
+        assertThat(controller.getPermissionsForSearch(1L, null), not(empty()));
     }
 
     @Test
     public void save() throws IOException {
-        controller.save(json);
-        verify(sharedToUserRepository).save(Matchers.<Iterable<? extends SharedToUser>>any());
+        final UserEntity user = new UserEntity();
+        user.setUserId(2L);
+        user.setUsername("bob");
+
+        final SharedToUser join = new SharedToUser();
+        join.setUser(user);
+
+        controller.save(join, 3);
+        verify(sharedToUserRepository).save(Matchers.<SharedToUser>any());
     }
 
     @Test
     public void delete() throws IOException {
-        controller.delete(json);
-        verify(sharedToUserRepository).delete(Matchers.<Iterable<? extends SharedToUser>>any());
+        controller.delete(2L, 3L);
+        verify(sharedToUserRepository).delete(Matchers.<SharedToUserPK>any());
     }
 }

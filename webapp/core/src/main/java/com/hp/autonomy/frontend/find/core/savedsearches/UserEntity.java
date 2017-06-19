@@ -33,7 +33,7 @@ import javax.persistence.Table;
 @Table(name = UserEntity.Table.NAME)
 @Data
 @Builder(toBuilder = true)
-@EqualsAndHashCode(exclude = "userId")
+@EqualsAndHashCode(exclude = "username")
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEntity {

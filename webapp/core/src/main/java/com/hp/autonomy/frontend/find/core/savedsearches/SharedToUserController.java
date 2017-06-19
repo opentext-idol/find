@@ -5,18 +5,13 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 @Controller
@@ -29,37 +24,74 @@ class SharedToUserController {
     static final String DELETE_PERMISSION_PATH = "/delete";
     static final String SEARCH_ID_PARAM = "searchId";
     static final String DATA_PARAM = "data";
+    static final String USERNAME_PARAM = "username";
 
     private final SharedToUserRepository sharedToUserRepository;
-    private final ObjectMapper objectMapper;
+    private final UserEntityService userEntityService;
 
     @Autowired
-    public SharedToUserController(final SharedToUserRepository sharedToUserRepository,
-                                  final ObjectMapper objectMapper) {
+    public SharedToUserController(
+            final SharedToUserRepository sharedToUserRepository,
+            final UserEntityService userEntityService
+    ) {
         this.sharedToUserRepository = sharedToUserRepository;
-        this.objectMapper = objectMapper;
+        this.userEntityService = userEntityService;
     }
 
-    @RequestMapping(PERMISSIONS_PATH)
+    @RequestMapping(value = PERMISSIONS_PATH + "/{searchId}", method = RequestMethod.GET)
     @ResponseBody
-    public Set<SharedToUser> getPermissionsForSearch(@RequestParam(SEARCH_ID_PARAM) final String searchId) {
-        return sharedToUserRepository.findBySavedSearch_Id(Long.parseLong(searchId));
+    public Set<SharedToUser> getPermissionsForSearch(
+            @PathVariable(SEARCH_ID_PARAM) final Long searchId,
+            @RequestParam(value = USERNAME_PARAM, required = false) final String username
+    ) {
+        if (username != null) {
+            return sharedToUserRepository.findByUsernameAndSearchId(username, searchId);
+        }
+        else {
+            return sharedToUserRepository.findBySavedSearch_Id(searchId);
+        }
     }
 
-    @RequestMapping(SAVE_PERMISSION_PATH)
+    @RequestMapping(value = PERMISSIONS_PATH + "/{searchId}", method = {RequestMethod.PUT, RequestMethod.POST})
     @ResponseBody
-    public Iterable<SharedToUser> save(@RequestParam(DATA_PARAM) final String data) throws IOException {
-        final List<SharedToUser> sharedToUsers = parseData(data);
-        return sharedToUserRepository.save(sharedToUsers);
+    public SharedToUser save(
+            @RequestBody final SharedToUser sharedToUser,
+            @PathVariable("searchId") final long searchId
+    ) {
+        final Long userId = sharedToUser.getUser().getUserId();
+        final String username = sharedToUser.getUser().getUsername();
+
+        if (userId == null) {
+            final UserEntity userInDatabase = userEntityService.getOrCreate(username);
+
+            sharedToUser.setUser(userInDatabase);
+        }
+
+        sharedToUser.setId(new SharedToUserPK(searchId, userId));
+
+        return sharedToUserRepository.save(sharedToUser);
     }
 
-    @RequestMapping(DELETE_PERMISSION_PATH)
-    public void delete(@RequestParam(DATA_PARAM) final String data) throws IOException {
-        final List<SharedToUser> permissionsToDelete = parseData(data);
-        sharedToUserRepository.delete(permissionsToDelete);
+    @RequestMapping(value = PERMISSIONS_PATH + "/{searchId}/{userId}", method = RequestMethod.PUT)
+    @ResponseBody
+    public SharedToUser save(
+            @RequestBody final SharedToUser sharedToUser,
+            @PathVariable("searchId") final long searchId,
+            @PathVariable("userId") final long userId
+    ) {
+        sharedToUser.setId(new SharedToUserPK(searchId, userId));
+
+        return sharedToUserRepository.save(sharedToUser);
     }
 
-    private List<SharedToUser> parseData(final String data) throws IOException {
-        return objectMapper.readValue(data, new TypeReference<List<SharedToUser>>() {});
+    @RequestMapping(value = PERMISSIONS_PATH + "/{searchId}/{userId}", method = RequestMethod.DELETE)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(
+            @PathVariable("searchId") final long searchId,
+            @PathVariable("userId") final long userId
+    ) {
+        sharedToUserRepository.delete(new SharedToUserPK(searchId, userId));
     }
+
 }

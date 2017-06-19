@@ -6,7 +6,6 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
-import org.springframework.dao.PermissionDeniedDataAccessException;
 import org.springframework.data.domain.AuditorAware;
 
 import java.util.Collection;
@@ -83,7 +82,7 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
             final T result = crudRepository.save(savedQuery);
             return augmentOutputWithDisplayNames(result);
         } else {
-            throw new PermissionDeniedDataAccessException("User does not have permission to edit the search", new Throwable("User does not have permission to edit the search"));
+            throw new IllegalArgumentException("User does not have permission to edit the search");
         }
     }
 

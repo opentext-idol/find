@@ -75,7 +75,7 @@ public abstract class AbstractSavedSearchServiceTest<T extends SavedSearch<T, B>
 
     private SharedToUser mockSharedToUser(final Boolean canEdit, final Long userId, final Long searchId) {
         return SharedToUser.builder()
-                .user(UserEntity.builder().userId(userId).build())
+                .userId(userId)
                 .savedSearch(mockSavedSearchResult(searchId, true))
                 .sharedDate(ZonedDateTime.now())
                 .modifiedDate(ZonedDateTime.now())

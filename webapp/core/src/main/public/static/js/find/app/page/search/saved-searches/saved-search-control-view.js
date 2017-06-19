@@ -11,12 +11,12 @@ define([
     'find/app/model/saved-searches/saved-search-model',
     'find/app/util/confirm-view',
     'find/app/util/csv-field-selection-view',
-    'js-whatever/js/modal',
+    'find/app/util/sharing-options',
     'text!find/templates/app/page/search/saved-searches/saved-search-control-view.html',
     'i18n!find/nls/bundle',
     'find/app/util/popover',
     'underscore'
-], function(Backbone, $, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, CsvFieldSelectView, Modal,
+], function(Backbone, $, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, CsvFieldSelectView, SharingOptions,
             template, i18n, popover, _) {
     'use strict';
 
@@ -163,6 +163,11 @@ define([
                         this.resetQueryState();
                     }, this)
                 });
+            },
+            'click .js-open-sharing-options-modal': function() {
+                new SharingOptions({
+                    savedSearchModel: this.savedSearchModel
+                });
             }
         },
 
@@ -219,7 +224,10 @@ define([
                 this.model.set(attributes);
             }, this);
 
-            this.listenTo(this.savedSearchCollection, 'reset update', this.updateCompareModalButton);
+            this.listenTo(this.savedSearchCollection, 'reset update', function() {
+                this.updateCompareModalButton();
+                this.updateSharingOptionsModalButton();
+            });
             this.listenTo(this.savedSearchModel, 'change', updateSavedState);
             this.listenTo(options.queryModel, 'change', updateSavedState);
 
@@ -251,6 +259,7 @@ define([
             this.updateLoading();
             this.createPopover();
             this.updateCompareModalButton();
+            this.updateSharingOptionsModalButton();
 
             this.$saveButtons = this.$('.save-button');
 
@@ -259,6 +268,13 @@ define([
 
         updateCompareModalButton: function() {
             this.$('.compare-modal-button').toggleClass('disabled not-clickable', this.savedSearchCollection.length <= 1);
+        },
+
+        updateSharingOptionsModalButton: function() {
+            var savedSearchModelType = this.savedSearchModel.get('type');
+            var showButton = savedSearchModelType === 'QUERY' || savedSearchModelType === 'SNAPSHOT';
+
+            this.$('.js-open-sharing-options-modal').toggleClass('hidden', !showButton);
         },
 
         createPopover: function() {
@@ -293,6 +309,7 @@ define([
 
             this.$('.search-reset-option, .save-search-button').toggleClass('hide', savedState !== SavedState.MODIFIED);
             this.$('.show-rename-button').toggleClass('hide', savedState === SavedState.NEW);
+            this.$('.js-open-sharing-options-modal').toggleClass('hide', savedState === SavedState.NEW);
 
             if(this.searchTypes[this.savedSearchModel.get('type')].isMutable) {
                 var createOrEdit = savedState === SavedState.NEW ? 'create' : 'edit';

@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SavedSearchRepositoryTestConfiguration.class,
-        properties = {"flyway.enabled=false", "spring.jpa.hibernate.ddl-auto=create-drop", SAVED_SEARCH_REPOSITORY_TEST_PROPERTY},
+        properties = {"flyway.enabled=false", "spring.jpa.hibernate.ddl-auto=getOrCreate-drop", SAVED_SEARCH_REPOSITORY_TEST_PROPERTY},
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
         TransactionalTestExecutionListener.class,
@@ -52,7 +52,7 @@ public class SharedToUserRepositoryTest {
         final SharedToUser sharedToUser = SharedToUser.builder()
                 .id(new SharedToUserPK())
                 .savedSearch(savedQuery)
-                .user(user)
+                .userId(user.getUserId())
                 .canEdit(true)
                 .modifiedDate(ZonedDateTime.now())
                 .sharedDate(ZonedDateTime.now())
@@ -77,7 +77,7 @@ public class SharedToUserRepositoryTest {
         sharedToUserList.add(SharedToUser.builder()
                 .id(new SharedToUserPK())
                 .savedSearch(savedQuery)
-                .user(user)
+                .userId(user.getUserId())
                 .canEdit(true)
                 .modifiedDate(ZonedDateTime.now())
                 .sharedDate(ZonedDateTime.now())
@@ -86,7 +86,7 @@ public class SharedToUserRepositoryTest {
         sharedToUserList.add(SharedToUser.builder()
                 .id(new SharedToUserPK())
                 .savedSearch(savedQuery2)
-                .user(user)
+                .userId(user.getUserId())
                 .canEdit(true)
                 .modifiedDate(ZonedDateTime.now())
                 .sharedDate(ZonedDateTime.now())
@@ -156,7 +156,7 @@ public class SharedToUserRepositoryTest {
         final SharedToUser sharedToUser = SharedToUser.builder()
                 .id(new SharedToUserPK())
                 .savedSearch(savedQuery)
-                .user(user)
+                .userId(user.getUserId())
                 .canEdit(true)
                 .modifiedDate(ZonedDateTime.now())
                 .sharedDate(ZonedDateTime.now())

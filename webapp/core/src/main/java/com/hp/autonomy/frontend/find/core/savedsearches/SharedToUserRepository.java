@@ -17,5 +17,9 @@ public interface SharedToUserRepository extends CrudRepository<SharedToUser, Sha
             "WHERE r.id.userId = :userId AND s.active = true AND TYPE(s) = :type")
     Set<SharedToUser> findByUserId(@Param("userId") Long userId, @Param("type") Class<?> type);
 
+    @Query("SELECT r FROM com.hp.autonomy.frontend.find.core.savedsearches.SharedToUser r JOIN r.savedSearch s " +
+            "JOIN r.user u WHERE u.username LIKE :username AND s.id = :searchId AND s.active = true")
+    Set<SharedToUser> findByUsernameAndSearchId(@Param("username") String username, @Param("searchId") Long searchId);
+
     Set<SharedToUser> findBySavedSearch_Id(Long searchId);
 }

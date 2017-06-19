@@ -9,9 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -34,7 +32,7 @@ import static com.hp.autonomy.frontend.find.core.savedsearches.SharedToUser.Tabl
 public class SharedToUser {
     private SharedToUser(final SharedToUser.SharedToUserBuilder builder) {
         savedSearch = builder.savedSearch;
-        user = builder.user;
+        user = builder.user.build();
         canEdit = builder.canEdit;
         sharedDate = builder.sharedDate;
         modifiedDate = builder.modifiedDate;
@@ -67,7 +65,7 @@ public class SharedToUser {
     @JsonPOJOBuilder(withPrefix = "")
     public static class SharedToUserBuilder {
         private SavedSearch<?, ?> savedSearch;
-        private UserEntity user;
+        private final UserEntity.UserEntityBuilder user = UserEntity.builder();
 
         @JsonProperty("searchId")
         public SharedToUserBuilder searchId(final Long searchId) {
@@ -77,7 +75,18 @@ public class SharedToUser {
 
         @JsonProperty("userId")
         public SharedToUserBuilder userId(final Long userId) {
-            user = UserEntity.builder().userId(userId).build();
+            user.userId(userId);
+            return this;
+        }
+
+        @JsonProperty("username")
+        public SharedToUserBuilder username(final String username) {
+            user.username(username);
+            return this;
+        }
+
+        // used to suppress generated method
+        private SharedToUserBuilder user(final UserEntity userEntity) {
             return this;
         }
 

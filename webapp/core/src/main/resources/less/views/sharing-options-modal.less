@@ -1,0 +1,38 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+.not-shared-with-list-container {
+  flex: 1;
+}
+
+.shared-with-list-container {
+  flex: 1;
+  border-right: 1px solid #e5e5e5;
+
+  .unshare-with-button {
+
+    i {
+      .absolute;
+
+      &.fa-close {
+        top: 9px;
+        left: 4px;
+      }
+
+      &.fa-share-alt {
+        top: 5px;
+      }
+    }
+  }
+
+  .can-edit-text {
+    font-size: @font-size-small;
+  }
+
+  .user-name-container {
+    flex: 1;
+  }
+}
+
