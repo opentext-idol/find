@@ -20,10 +20,7 @@ import java.util.Set;
 class SharedToUserController {
     static final String SHARED_SEARCHES_PATH = "/api/public/search/shared-searches";
     static final String PERMISSIONS_PATH = "/permissions";
-    static final String SAVE_PERMISSION_PATH = "/save";
-    static final String DELETE_PERMISSION_PATH = "/delete";
     static final String SEARCH_ID_PARAM = "searchId";
-    static final String DATA_PARAM = "data";
     static final String USERNAME_PARAM = "username";
 
     private final SharedToUserRepository sharedToUserRepository;
@@ -44,12 +41,9 @@ class SharedToUserController {
             @PathVariable(SEARCH_ID_PARAM) final Long searchId,
             @RequestParam(value = USERNAME_PARAM, required = false) final String username
     ) {
-        if (username != null) {
-            return sharedToUserRepository.findByUsernameAndSearchId(username, searchId);
-        }
-        else {
-            return sharedToUserRepository.findBySavedSearch_Id(searchId);
-        }
+        return username != null
+                ? sharedToUserRepository.findByUsernameAndSearchId(username, searchId)
+                : sharedToUserRepository.findBySavedSearch_Id(searchId);
     }
 
     @RequestMapping(value = PERMISSIONS_PATH + "/{searchId}", method = {RequestMethod.PUT, RequestMethod.POST})

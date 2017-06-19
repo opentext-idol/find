@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SavedSearchRepositoryTestConfiguration.class,
-        properties = {"flyway.enabled=false", "spring.jpa.hibernate.ddl-auto=getOrCreate-drop", SAVED_SEARCH_REPOSITORY_TEST_PROPERTY},
+        properties = {"flyway.enabled=false", "spring.jpa.hibernate.ddl-auto=create-drop", SAVED_SEARCH_REPOSITORY_TEST_PROPERTY},
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
         TransactionalTestExecutionListener.class,
