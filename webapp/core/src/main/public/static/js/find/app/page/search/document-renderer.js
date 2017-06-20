@@ -55,12 +55,12 @@ define([
         const url = model.get('url');
         const date = model.get('date');
 
-        let thumbnail;
+        let thumbnailSrc;
 
         if (model.has('thumbnail')) {
-            thumbnail = 'data:image/jpeg;base64,' + model.get('thumbnail');
+            thumbnailSrc = 'data:image/jpeg;base64,' + model.get('thumbnail');
         } else if (model.has('thumbnailUrl')) {
-            thumbnail = model.get('thumbnailUrl');
+            thumbnailSrc = model.get('thumbnailUrl');
         }
 
         return {
@@ -73,7 +73,7 @@ define([
             summary: addLinksToSummary(model.get('summary')),
             url: url ? urlManipulator.addSpecialUrlPrefix(model.get('contentType'), url) : null,
             icon: 'icomoon-file-' + getContentTypeClass(model),
-            thumbnail: thumbnail,
+            thumbnailSrc: thumbnailSrc,
             age: date.fromNow(),
             fields: model.get('fields').map(_.partial(_.pick, _, ['id', 'displayName', 'advanced', 'values']))
         };

@@ -68,7 +68,7 @@ interface ResultTemplateData {
   url: string|undefined; // URL of the original document or media file
   icon: string; // Icon class based on content type
   similarDocumentsUrl: string|undefined; // URL for linking to the similar documents view, only in result and promotion
-  thumbnail: string|undefined, // Source attribute to load the thumbnail in an <img> tag
+  thumbnailSrc: string|undefined, // Source attribute to load the thumbnail in an <img> tag
   age: string; // Internationalised age of the document (e.g. "3 years ago") 
   fields: {id: string, values: string[], displayName: string, advanced: boolean}[];
 }
