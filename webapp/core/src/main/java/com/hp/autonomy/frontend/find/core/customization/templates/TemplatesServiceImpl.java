@@ -8,7 +8,6 @@ package com.hp.autonomy.frontend.find.core.customization.templates;
 import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.find.core.configuration.CustomizationConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService;
-import com.hp.autonomy.frontend.find.core.configuration.Template;
 import com.hp.autonomy.frontend.find.core.configuration.TemplatesConfig;
 import com.hp.autonomy.frontend.find.core.customization.ReloadableCustomizationComponent;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -69,14 +67,9 @@ class TemplatesServiceImpl implements TemplatesService, ReloadableCustomizationC
         }
 
         final TemplatesConfig config = configService.getConfig();
-
-        final List<String> fileNames = Stream.concat(config.getPreviewPanel().stream(), config.getResultsList().stream())
-                .map(Template::getFile)
-                .collect(Collectors.toList());
-
         final ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
 
-        for (final String fileName : fileNames) {
+        for (final String fileName : config.listTemplateFiles()) {
             final Path path = Optional.ofNullable(directoryMap.get(fileName))
                     .orElseThrow(() -> new TemplateNotFoundException(fileName, directoryPath.toString()));
 

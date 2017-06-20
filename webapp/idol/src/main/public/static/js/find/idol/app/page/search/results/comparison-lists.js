@@ -24,6 +24,7 @@ define([
 
         initialize: function(options) {
             this.searchModels = options.searchModels;
+            this.documentRenderer = options.documentRenderer;
             this.escapeCallback = options.escapeCallback;
             this.scrollModel = options.scrollModel;
 
@@ -87,6 +88,7 @@ define([
                 // ToDo Add support for promotions with comparison view (part of FIND-30)
                 // Can then remove hidePromotions param
                 hidePromotions: true,
+                documentRenderer: this.documentRenderer,
                 queryModel: queryModel,
                 documentsCollection: collection,
                 fetchStrategy: stateTokenStrategy,

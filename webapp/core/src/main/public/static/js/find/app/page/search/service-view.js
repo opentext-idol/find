@@ -147,6 +147,7 @@ define([
                 configuration: configuration(),
                 delayedIndexesSelection: options.delayedIndexesSelection,
                 documentsCollection: this.documentsCollection,
+                documentRenderer: options.documentRenderer,
                 indexesCollection: this.indexesCollection,
                 highlightModel: this.highlightModel,
                 queryModel: this.queryModel,
@@ -232,6 +233,7 @@ define([
                     Constructor: this.ResultsViewAugmentation,
                     shown: true,
                     constructorArguments: {
+                        documentRenderer: options.documentRenderer,
                         resultsView: resultsView,
                         queryModel: this.queryModel,
                         indexesCollection: this.indexesCollection,

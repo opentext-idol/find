@@ -1,5 +1,5 @@
 {
-  "resultsList": [
+  "searchResult": [
     {
       "file": "sometemplate.tmpl",
       "triggers": [
@@ -10,7 +10,6 @@
       ]
     }
   ],
-
   "previewPanel": [
     {
       "file": "sometemplate.tmpl",
@@ -21,5 +20,6 @@
         }
       ]
     }
-  ]
+  ],
+  "promotion": []
 }

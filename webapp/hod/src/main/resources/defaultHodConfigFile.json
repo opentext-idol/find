@@ -63,9 +63,6 @@
     },
     "uiCustomization": {
         "options": {
-            "directAccessLink": {
-                "user": true
-            },
             "enableMetaFilter": {
                 "user": false,
                 "bi": true

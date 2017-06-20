@@ -32,7 +32,6 @@ define([
                 const uiCustomization = config.uiCustomization;
 
                 if(uiCustomization) {
-                    config.directAccessLink = parseBooleanOption(config, uiCustomization, 'directAccessLink');
                     config.enableDashboards = parseBooleanOption(config, uiCustomization, 'enableDashboards') && !_.isEmpty(config.dashboards);
                     config.enableMetaFilter = parseBooleanOption(config, uiCustomization, 'enableMetaFilter');
                     config.enableRelatedConcepts = parseBooleanOption(config, uiCustomization, 'enableRelatedConcepts');
