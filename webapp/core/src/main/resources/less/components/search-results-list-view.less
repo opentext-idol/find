@@ -3,6 +3,8 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
+@import "variables";
+
 .answered-question {
   border: 3px solid @blue2;
 
@@ -32,12 +34,6 @@
   }
 }
 
-.direct-access-title {
-  &:hover {
-    color: @green0;
-  }
-}
-
 .document-date {
   .italic;
 
@@ -45,6 +41,22 @@
   cursor: default;
   font-size: small;
   font-weight: bold;
+}
+
+.main-results-container {
+  .p-nil;
+  .m-b-sm;
+  width: 100%;
+}
+
+.default-result-container {
+  .p-t-nil;
+  .p-b-nil;
+  .p-l-sm;
+  .p-r-sm;
+
+  width: 100%;
+  border-bottom: 1px solid @secondary-hover;
 }
 
 .document-detail-mode {

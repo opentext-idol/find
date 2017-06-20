@@ -14,7 +14,7 @@ define([
     return SimilarAbstractTab.extend({
         events: _.extend({
             'click .similar-documents-tab-see-more': function() {
-                vent.navigateToSuggestRoute(this.model);
+                vent.navigate(vent.suggestRouteForDocument(this.model));
             }
         }, SimilarAbstractTab.prototype.events),
 

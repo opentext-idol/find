@@ -1,41 +1,30 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
     'underscore',
-    'js-whatever/js/vent-constructor',
+    './core-vent',
+    'find/app/configuration',
     'find/app/router'
-], function(_, VentConstructor, router) {
+], function(_, CoreVent, configuration, router) {
 
     'use strict';
 
     function HodVent(router) {
-        VentConstructor.call(this, router);
+        CoreVent.call(this, router);
     }
 
-    function suffixForDocument(documentModel) {
-        return [documentModel.get('domain'), documentModel.get('index'), documentModel.get('reference')]
-            .map(encodeURIComponent)
-            .join('/');
-    }
-
-    HodVent.prototype = Object.create(VentConstructor.prototype);
+    HodVent.prototype = Object.create(CoreVent.prototype);
 
     _.extend(HodVent.prototype, {
         constructor: HodVent,
 
-        navigateToDetailRoute: function(model) {
-            this.navigate('search/document/' + suffixForDocument(model));
-        },
-
-        navigateToSuggestRoute: function(model) {
-            this.navigate('search/suggest/' + suffixForDocument(model));
-        },
-
         addSuffixForDocument: function(model) {
-            return suffixForDocument(model);
+            return [model.get('domain'), model.get('index'), model.get('reference')]
+                .map(encodeURIComponent)
+                .join('/');
         }
     });
 

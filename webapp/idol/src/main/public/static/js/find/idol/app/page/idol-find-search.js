@@ -184,6 +184,7 @@ define([
 
                             this.comparisonView = new ComparisonView({
                                 model: model,
+                                documentRenderer: this.documentRenderer,
                                 searchModels: searchModels,
                                 scrollModel: this.windowScrollModel,
                                 escapeCallback: function() {

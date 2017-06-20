@@ -99,7 +99,7 @@ public class TemplatesServiceImplIT {
                         template("animal.html"),
                         template("preview.html")
                 ))
-                .resultsList(Collections.singletonList(
+                .searchResult(Collections.singletonList(
                         template("document.html")
                 ))
                 .build();
@@ -126,7 +126,7 @@ public class TemplatesServiceImplIT {
                 .previewPanel(Collections.singletonList(
                         template("preview.html")
                 ))
-                .resultsList(Arrays.asList(
+                .searchResult(Arrays.asList(
                         template("person.html"),
                         template("document.html")
                 ))

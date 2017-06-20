@@ -10,6 +10,7 @@ define([
     'js-whatever/js/base-page',
     'find/app/configuration',
     'find/app/model/dates-filter-model',
+    './search/document-renderer',
     'parametric-refinement/selected-values-collection',
     'find/app/model/documents-collection',
     'find/app/page/search/input-view',
@@ -32,7 +33,7 @@ define([
     'find/app/vent',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/find-search.html'
-], function(_, $, Backbone, BasePage, config, DatesFilterModel, SelectedParametricValuesCollection,
+], function(_, $, Backbone, BasePage, config, DatesFilterModel, DocumentRenderer, SelectedParametricValuesCollection,
             DocumentsCollection, InputView, queryTextStrategy, TabbedSearchView, MergeCollection,
             SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel, QueryTextModel, DocumentModel,
             DocumentContentView, DocumentDetailContentView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver,
@@ -153,6 +154,8 @@ define([
             this.selectedTabModel = new Backbone.Model({
                 selectedSearchCid: null
             });
+
+            this.documentRenderer = new DocumentRenderer(this.configuration.templatesConfig);
 
             // Model mapping saved search cids to query state
             this.queryStates = new Backbone.Model();
@@ -331,6 +334,7 @@ define([
                     ContentView: DocumentDetailContentView,
                     contentViewOptions: {
                         indexesCollection: this.indexesCollection,
+                        documentRenderer: this.documentRenderer,
                         mmapTab: this.mmapTab
                     }
                 }, this.documentDetailOptions.apply(this, arguments)));
@@ -349,6 +353,7 @@ define([
                     ContentView: this.SuggestView,
                     contentViewOptions: {
                         configuration: config(),
+                        documentRenderer: this.documentRenderer,
                         indexesCollection: this.indexesCollection,
                         mmapTab: this.mmapTab,
                         scrollModel: this.windowScrollModel,
@@ -513,6 +518,7 @@ define([
                         view: new this.ServiceView(_.extend({
                             delayedIndexesSelection: selectInitialIndexes,
                             documentsCollection: documentsCollection,
+                            documentRenderer: this.documentRenderer,
                             indexesCollection: this.indexesCollection,
                             queryState: queryState,
                             savedSearchCollection: this.savedSearchCollection,

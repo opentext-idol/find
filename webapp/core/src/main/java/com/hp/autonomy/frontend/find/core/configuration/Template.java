@@ -1,5 +1,6 @@
 package com.hp.autonomy.frontend.find.core.configuration;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.SimpleComponent;
@@ -7,7 +8,6 @@ import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationCo
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 
@@ -19,9 +19,10 @@ public class Template extends SimpleComponent<Template> implements OptionalConfi
     private final String file;
     private final List<Trigger> triggers;
 
+    @JsonIgnore
     @Override
     public Boolean getEnabled() {
-        return !triggers.isEmpty() && StringUtils.isNotBlank(file);
+        return true;
     }
 
     @SuppressWarnings("WeakerAccess")

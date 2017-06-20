@@ -1,0 +1,22 @@
+<div class="default-result-container promoted-document">
+    <span class="pull-left m-t-xs text-muted m-r-sm content-type"><i class="{{icon}}"></i></span>
+    <div class="results-contents">
+        <span class="pull-right m-t-xs text-muted promoted-label">
+            <i class="hp-icon hp-fw hp-favorite"></i> {{i18n 'search.promoted'}}
+        </span>
+        <h4 class="pull-left m-b-nil m-t-xs result-header">{{title}}</h4>
+        <span class="document-date pull-left m-t-xs m-l-xs">{{age}}</span>
+        <span class="document-reference shorten">{{reference}}</span>
+        {{#if thumbnailSrc}}
+            <img class="document-thumbnail mr-sm pull-left" src="{{thumbnailSrc}}"/>
+        {{/if}}
+        <p class="result-summary">
+            {{{summary}}}
+        </p>
+        <span class="text-right results-small-links">
+            <a href="{{similarDocumentsUrl}}" class="similar-documents-trigger result-container-control" role="button" tabindex="-1">
+                {{i18n 'search.similarDocuments'}}
+            </a>
+        </span>
+    </div>
+</div>
