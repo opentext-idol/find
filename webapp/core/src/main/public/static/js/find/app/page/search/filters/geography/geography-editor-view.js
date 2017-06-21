@@ -43,6 +43,8 @@ define([
                 touchZoom: true
             });
 
+            const drawnItems = leaflet.featureGroup().addTo(map);
+
             leaflet
                 .tileLayer(configuration().map.tileUrlTemplate)
                 .addTo(map);
@@ -69,6 +71,30 @@ define([
             map.setView([initialLatitude, initialLongitude], this.initialZoom
                 ? this.initialZoom
                 : INITIAL_ZOOM);
+
+            map.addControl(new leaflet.Control.Draw({
+                edit: {
+                    featureGroup: drawnItems,
+                    poly: {
+                        allowIntersection: false
+                    }
+                },
+                draw: {
+                    marker: false,
+                    polyline: false,
+                    rectangle: false,
+                    polygon: {
+                        allowIntersection: false,
+                        showArea: true
+                    }
+                }
+            }));
+
+            map.on(leaflet.Draw.Event.CREATED, function (event) {
+                var layer = event.layer;
+
+                drawnItems.addLayer(layer);
+            });
         },
 
         updateMapSize: function(){
