@@ -37,16 +37,33 @@ define([
 
             const fieldNodes = [];
 
-            const fieldsInfo = configuration().fieldsInfo;
+            const config = configuration();
+            const fieldsInfo = config.fieldsInfo;
+
+            let LAT, LON;
+
+            function getFieldName(fieldName) {
+                const fieldMeta = fieldsInfo[fieldName];
+                if (fieldMeta) {
+                    return fieldMeta.names[0];
+                }
+            }
+
+            // TODO: what if they have multiple lat and lon fields?
+            // TODO: what if a lat/lon field has multiple names?
+            if (config.map && config.map.locationFields) {
+                const firstField = config.map.locationFields[0];
+
+                if (firstField) {
+                    const latField = firstField.latitudeField;
+                    const lonField = firstField.longitudeField;
+
+                    LAT = getFieldName(latField);
+                    LON = getFieldName(lonField);
+                }
+            }
 
             // TODO: read map config for the latitude field
-            // TODO: what if they have multiple lat and lon fields?
-            // TODO: what if a lat/lon field has multiple areas?
-            // const LAT = fieldsInfo.latitude && fieldsInfo.latitude.names && fieldsInfo.latitude.names[0]
-            // const LON = fieldsInfo.longitude && fieldsInfo.longitude.names && fieldsInfo.longitude.names[0]
-            const LAT = 'lat';
-            const LON = 'lon';
-
             if (!LAT || !LON) {
                 return null;
             }
