@@ -194,6 +194,7 @@ define([
         'search.geography.filterCount': '{0} {1} defined',
         'search.geography.filter': 'filter',
         'search.geography.filters': 'filters',
+        'search.geography.apply.filters': 'Search',
         'search.indexes': 'Indexes',
         'search.indexes.all': 'All',
         'search.indexes.publicIndexes': 'Public Indexes',

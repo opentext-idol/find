@@ -9,8 +9,9 @@ define([
     'backbone',
     'i18n!find/nls/bundle',
     'find/app/model/saved-searches/saved-search-model',
+    'find/app/page/search/filters/geography/geography-modal',
     'text!find/templates/app/page/search/filters/geography/geography-view.html'
-], function(_, $, Backbone, i18n, SavedSearchModel, template) {
+], function(_, $, Backbone, i18n, SavedSearchModel, GeographyModal, template) {
     'use strict';
 
     return Backbone.View.extend({
@@ -24,6 +25,10 @@ define([
                 this.geographyModel.set('geography', selected === previous
                     ? null
                     : selected);
+            },
+            'click .geography-show-map': function(evt){
+                this.showMapModal();
+                return false;
             }
         },
 
@@ -56,6 +61,12 @@ define([
                 i18n['search.geography.filterCount'](count, count === 1 ? i18n['search.geography.filter'] : i18n['search.geography.filters']))
 
             this.$('.check-cell i').toggleClass('hide', !!count);
+        },
+
+        showMapModal: function() {
+            new GeographyModal({
+                geography: this.geographyModel.get('geography') || []
+            });
         }
     });
 });
