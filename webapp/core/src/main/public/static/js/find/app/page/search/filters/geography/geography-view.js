@@ -17,14 +17,8 @@ define([
     return Backbone.View.extend({
         events: {
             'click tr': function(event) {
-                // TODO: toggle on/off of the filters and apply them
-                const $targetRow = $(event.currentTarget);
-                const selected = $targetRow.attr('data-filter-id');
-                const previous = this.geographyModel.get('geography');
-
-                this.geographyModel.set('geography', selected === previous
-                    ? null
-                    : selected);
+                const previous = this.geographyModel.get('shapes');
+                this.geographyModel.set('shapes', previous && previous.length ? null : this.shapes);
             },
             'click .geography-show-map': function(evt){
                 this.showMapModal();
@@ -36,9 +30,11 @@ define([
             this.geographyModel = options.geographyModel;
             this.savedSearchModel = options.savedSearchModel;
 
+            this.shapes = options.geographyModel.get('shapes') || [];
+
             this.template = _.template(template);
 
-            this.listenTo(this.geographyModel, 'change:geography', function() {
+            this.listenTo(this.geographyModel, 'change:shapes', function() {
                 this.updateForGeography();
             });
 
@@ -54,18 +50,32 @@ define([
         },
 
         updateForGeography: function() {
-            const geographyFilters = this.geographyModel.get('geography');
+            const shapesInUse = this.geographyModel.get('shapes');
 
-            const count = geographyFilters && geographyFilters.length;
-            this.$('.geography-list-count-text').text(!count ? i18n['search.geography.none'] :
-                i18n['search.geography.filterCount'](count, count === 1 ? i18n['search.geography.filter'] : i18n['search.geography.filters']))
+            var shapeFiltering = false;
+            if (shapesInUse && shapesInUse.length) {
+                this.shapes = shapesInUse;
+                shapeFiltering = true;
+            }
 
-            this.$('.check-cell i').toggleClass('hide', !!count);
+            const count = this.shapes.length;
+
+            this.$('.geography-list-count-text').text(!count ? i18n['search.geography.none']
+                : i18n['search.geography.filterCount'](
+                    count,
+                    count === 1 ? i18n['search.geography.filter'] : i18n['search.geography.filters'],
+                    shapeFiltering ? '' : i18n['search.geography.disabled']))
+
+            this.$('.check-cell i').toggleClass('hide', !shapeFiltering);
         },
 
         showMapModal: function() {
             new GeographyModal({
-                geography: this.geographyModel.get('geography') || []
+                shapes: this.shapes,
+                actionButtonCallback: _.bind(function(shapes){
+                    this.shapes = shapes;
+                    this.geographyModel.set('shapes', shapes);
+                }, this)
             });
         }
     });

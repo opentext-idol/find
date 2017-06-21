@@ -20,7 +20,7 @@ define([
         },
 
         initialize: function (options) {
-            options.geography;
+            this.shapes = options.shapes;
         },
 
         render: function () {
@@ -43,7 +43,7 @@ define([
                 touchZoom: true
             });
 
-            const drawnItems = leaflet.featureGroup().addTo(map);
+            const drawnItems = this.drawnItems = leaflet.featureGroup().addTo(map);
 
             leaflet
                 .tileLayer(configuration().map.tileUrlTemplate)
@@ -95,6 +95,23 @@ define([
 
                 drawnItems.addLayer(layer);
             });
+
+            if (this.shapes) {
+                _.each(this.shapes, function(shape){
+                    switch(shape.type) {
+                        case 'circle':
+                            const center = shape.center;
+                            drawnItems.addLayer(leaflet.circle(leaflet.latLng(center[0], center[1]), shape.radius));
+                            break;
+                        case 'polygon':
+                            const pts = _.map(shape.points, function(pt){
+                                return leaflet.latLng(pt[0], pt[1]);
+                            });
+                            drawnItems.addLayer(leaflet.polygon(pts));
+                            break;
+                    }
+                }, this);
+            }
         },
 
         updateMapSize: function(){
@@ -108,9 +125,28 @@ define([
             Backbone.View.prototype.remove.call(this);
         },
 
+        getShapes: function() {
+            var shapes = []
+            if (this.drawnItems) {
+                _.each(this.drawnItems.getLayers(), function(layer){
+                    if (layer instanceof leaflet.Circle) {
+                        const latLng = layer.getLatLng();
+                        shapes.push({ type: 'circle', center: [latLng.lat, latLng.lng], radius: layer.getRadius() });
+                    }
+                    else if (layer instanceof leaflet.Polygon) {
+                        shapes.push({ type: 'polygon', points: _.map(layer.getLatLngs()[0], function(latLng){
+                            return [latLng.lat, latLng.lng]
+                        }) });
+                    }
+                });
+            }
+            return shapes;
+        },
+
         removeMap: function() {
             if(this.map) {
                 this.map.remove();
+                this.map = this.drawnItems = undefined;
             }
         }
     });

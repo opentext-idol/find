@@ -16,8 +16,11 @@ define([
         className: Modal.prototype.className + ' fixed-height-modal',
 
         initialize: function(options) {
+            const shapes = options.shapes || [];
+            const actionButtonCallback = options.actionButtonCallback;
+
             this.geographyEditorView = new GeographyEditorView({
-                geography: options.geography
+                shapes: shapes
             });
 
             Modal.prototype.initialize.call(this, {
@@ -27,9 +30,8 @@ define([
                 contentView: this.geographyEditorView,
                 title: i18n['search.geography'],
                 actionButtonCallback: _.bind(function() {
-                    // Update the search with new selected values on close
-                    // TODO: edit the filters
-
+                    const shapes = this.geographyEditorView.getShapes();
+                    actionButtonCallback && actionButtonCallback(shapes);
                     this.hide();
                 }, this)
             });

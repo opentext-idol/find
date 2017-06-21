@@ -5,13 +5,13 @@ define([
     return Backbone.Model.extend({
         /**
          * @typedef {Object} GeographyModelAttributes
-         * @property {?Array} geography
+         * @property {?Array} shapes
          */
         /**
          * @type GeographyModelAttributes
          */
         defaults: {
-            geography: []
+            shapes: []
         },
 
         // TODO: implement this bit
