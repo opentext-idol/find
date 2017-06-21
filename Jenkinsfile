@@ -19,7 +19,7 @@ node {
 
 		gitCommit = getGitCommit()
 		repository = getOrgRepoName().toLowerCase()
-		branch = getBranchName(gitCommit).toLowerCase()
+		branch = "${env.BRANCH_NAME}"
 
 		echo "Building ${gitCommit}, from ${repository}, branch ${branch}"
 
@@ -92,16 +92,6 @@ node {
 def getGitCommit() {
 	sh (
 		script: "git rev-parse --short HEAD",
-		returnStdout: true
-	).trim()
-}
-
-/**
-* Looks up branch of the current commit on the remote to determine the branch being built.
-*/
-def getBranchName(gitCommit) {
-	sh (
-		script: "git branch --remote --contains ${gitCommit}",
 		returnStdout: true
 	).trim()
 }
