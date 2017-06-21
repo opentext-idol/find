@@ -4,6 +4,38 @@ define([
     'find/app/configuration'
 ], function(Backbone, parser, configuration) {
 
+    const config = configuration();
+    const fieldsInfo = config.fieldsInfo;
+    const latLonFields = [];
+
+    let latFields, lonFields;
+
+    function getFieldName(fieldName) {
+        const fieldMeta = fieldsInfo[fieldName];
+        if (fieldMeta && fieldMeta.names && fieldMeta.names.length) {
+            return fieldMeta.names;
+        }
+    }
+
+    if (config.map && config.map.locationFields) {
+        // TODO: what if they have multiple locationField types?
+        const firstField = config.map.locationFields[0];
+
+        if (firstField) {
+            const latField = firstField.latitudeField;
+            const lonField = firstField.longitudeField;
+
+            latFields = getFieldName(latField);
+            lonFields = getFieldName(lonField);
+
+            if (latFields && lonFields) {
+                for (var ii = 0, max = Math.min(latFields.length, lonFields.length); ii < max; ++ii) {
+                    latLonFields.push([latFields[ii], lonFields[ii]])
+                }
+            }
+        }
+    }
+
     return Backbone.Model.extend({
         /**
          * @typedef {Object} GeographyModelAttributes
@@ -31,54 +63,30 @@ define([
          */
         toFieldText: function() {
             const shapes = this.get('shapes');
-            if (!shapes || !shapes.length) {
+            if (!shapes || !shapes.length || !latLonFields.length) {
                 return null;
             }
 
             const fieldNodes = [];
 
-            const config = configuration();
-            const fieldsInfo = config.fieldsInfo;
-
-            let LAT, LON;
-
-            function getFieldName(fieldName) {
-                const fieldMeta = fieldsInfo[fieldName];
-                if (fieldMeta) {
-                    return fieldMeta.names[0];
-                }
-            }
-
-            // TODO: what if they have multiple lat and lon fields?
-            // TODO: what if a lat/lon field has multiple names?
-            if (config.map && config.map.locationFields) {
-                const firstField = config.map.locationFields[0];
-
-                if (firstField) {
-                    const latField = firstField.latitudeField;
-                    const lonField = firstField.longitudeField;
-
-                    LAT = getFieldName(latField);
-                    LON = getFieldName(lonField);
-                }
-            }
-
-            // TODO: read map config for the latitude field
-            if (!LAT || !LON) {
-                return null;
-            }
-
             _.each(shapes, function (shape) {
                 if (shape.type === 'circle') {
-                    fieldNodes.push(new parser.ExpressionNode('DISTSPHERICAL', [ LAT, LON ], [
-                        shape.center[0],
-                        shape.center[1],
-                        Math.round(shape.radius / 1000) // IDOL uses kilometers, while we use meters
-                    ]));
+                    // IDOL uses kilometers, while leaflet uses meters.
+                    const km = Math.round(shape.radius / 1000);
+
+                    _.each(latLonFields, function(fieldPair) {
+                        fieldNodes.push(new parser.ExpressionNode('DISTSPHERICAL', fieldPair, [
+                            shape.center[0],
+                            shape.center[1],
+                            km
+                        ]));
+                    })
                 }
                 else if (shape.type === 'polygon') {
                     var points = _.flatten(shape.points);
-                    fieldNodes.push(new parser.ExpressionNode('POLYGON', [ LAT, LON ], points));
+                    _.each(latLonFields, function(fieldPair) {
+                        fieldNodes.push(new parser.ExpressionNode('POLYGON', fieldPair, points));
+                    });
                 }
             });
 
