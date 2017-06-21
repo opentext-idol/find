@@ -42,6 +42,7 @@
     "hp-autonomy-js-parametric-refinement": "1.0.0",
     "html2canvas": "0.4.1",
     "leaflet": "1.0.3",
+    "leaflet-draw": "0.4.9",
     "Leaflet.awesome-markers": "2.0.2",
     "leaflet.markercluster": "1.0.4",
     "leaflet.markercluster.layersupport": "1.0.3",

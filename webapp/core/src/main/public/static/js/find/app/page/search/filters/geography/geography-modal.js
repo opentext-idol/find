@@ -33,6 +33,8 @@ define([
                     this.hide();
                 }, this)
             });
+
+            this.$el.on('shown.bs.modal', _.bind(this.geographyEditorView.updateMapSize, this.geographyEditorView))
         },
 
         remove: function() {
