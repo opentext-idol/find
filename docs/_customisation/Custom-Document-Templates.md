@@ -100,6 +100,6 @@ The following template could be used as a search result template.
     {{/hasField}}
     <p>{{{summary}}}</p>
     <p>Author: {{getFieldValue "Author"}}</p>
-    <a href="{{simlarDocumentsUrl}}">See similar documents</a>
+    <a href="{{similarDocumentsUrl}}">See similar documents</a>
 </div>
 ```
