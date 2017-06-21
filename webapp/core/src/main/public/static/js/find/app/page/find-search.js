@@ -501,7 +501,7 @@ define([
                         conceptGroups: new Backbone.Collection(savedSearchModel.toConceptGroups()),
                         minScoreModel: new MinScoreModel({minScore: 0}),
                         datesFilterModel: new DatesFilterModel(savedSearchModel.toDatesFilterModelAttributes()),
-                        geographyModel: new GeographyModel(),
+                        geographyModel: new GeographyModel(savedSearchModel.toGeographyModelAttributes()),
                         selectedIndexes: new this.IndexesCollection(
                             savedSelectedIndexes.length === 0
                                 ? (this.indexesCollection.isEmpty()

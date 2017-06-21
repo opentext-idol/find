@@ -243,6 +243,12 @@ define([
             };
         },
 
+        toGeographyModelAttributes: function() {
+            return {
+                shapes: this.get('shapes') || []
+            }
+        },
+
         toConceptGroups: function() {
             return this.get('relatedConcepts').map(function(concepts) {
                 return {concepts: concepts};

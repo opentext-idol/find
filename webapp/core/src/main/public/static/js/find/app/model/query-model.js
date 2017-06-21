@@ -71,6 +71,10 @@ define([
                 this.set(this.queryState.datesFilterModel.toQueryModelAttributes());
             });
 
+            this.listenTo(this.queryState.geographyModel, 'change', function() {
+                this.set('fieldText', this.getMergedFieldText());
+            });
+
             this.listenTo(this.queryState.minScoreModel, 'change', function() {
                 this.set('minScore', this.queryState.minScoreModel.get('minScore'));
             });
@@ -82,23 +86,21 @@ define([
             this.listenTo(this.queryState.selectedParametricValues,
                 'add remove reset change',
                 _.debounce(_.bind(function() {
-                    const fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
-                    this.set('fieldText',
-                        fieldTextNode
-                            ? fieldTextNode
-                            : null);
+                    this.set('fieldText', this.getMergedFieldText());
                 }, this), DEBOUNCE_WAIT_MILLISECONDS));
-
-            const fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
 
             this.set(_.extend({
                 queryText: makeQueryText(this.queryState),
                 minScore: this.queryState.minScoreModel.get('minScore'),
                 indexes: collectionBuildIndexes(this.queryState.selectedIndexes),
-                fieldText: fieldTextNode
-                    ? fieldTextNode
-                    : null
+                fieldText: this.getMergedFieldText()
             }, this.queryState.datesFilterModel.toQueryModelAttributes()));
+        },
+
+        getMergedFieldText: function() {
+            const fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
+            const geographyModel = this.queryState.geographyModel;
+            return (geographyModel ? geographyModel.appendFieldText(fieldTextNode) : fieldTextNode) || null;
         },
 
         getIsoDate: function(type) {
