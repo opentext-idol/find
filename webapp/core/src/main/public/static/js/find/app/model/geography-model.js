@@ -4,11 +4,18 @@ define([
     'find/app/configuration'
 ], function(Backbone, parser, configuration) {
 
+    function MapLatLonFields(id, name, latLonFieldPairs, cfg) {
+        this.id = id;
+        this.name = name;
+        this.fields = latLonFieldPairs;
+        this.cfg = cfg;
+    }
+
     const config = configuration();
     const fieldsInfo = config.fieldsInfo;
-    const latLonFields = [];
 
-    let latFields, lonFields;
+    const locationFields = [];
+    const locationFieldsById = {};
 
     function getFieldName(fieldName) {
         const fieldMeta = fieldsInfo[fieldName];
@@ -18,22 +25,29 @@ define([
     }
 
     if (config.map && config.map.locationFields) {
-        // TODO: what if they have multiple locationField types?
-        const firstField = config.map.locationFields[0];
+        _.each(config.map.locationFields, function(field){
+            const latField = field.latitudeField;
+            const lonField = field.longitudeField;
 
-        if (firstField) {
-            const latField = firstField.latitudeField;
-            const lonField = firstField.longitudeField;
-
-            latFields = getFieldName(latField);
-            lonFields = getFieldName(lonField);
+            const latFields = getFieldName(latField);
+            const lonFields = getFieldName(lonField);
 
             if (latFields && lonFields) {
+                const latLonFields = [];
+
                 for (var ii = 0, max = Math.min(latFields.length, lonFields.length); ii < max; ++ii) {
                     latLonFields.push([latFields[ii], lonFields[ii]])
                 }
+
+                if (latLonFields.length) {
+                    const name = field.displayName;
+                    const id = field.id || name;
+                    const newField = new MapLatLonFields(id, name, latLonFields, field);
+                    locationFields.push(newField);
+                    locationFieldsById[id] = newField;
+                }
             }
-        }
+        })
     }
 
     return Backbone.Model.extend({
@@ -62,10 +76,13 @@ define([
          * Convert this model to fieldtext queries
          */
         toFieldText: function() {
+            const locationField = locationFields[0];
             const shapes = this.get('shapes');
-            if (!shapes || !shapes.length || !latLonFields.length) {
+            if (!shapes || !shapes.length || !locationField) {
                 return null;
             }
+
+            const latLonFields = locationField.fields;
 
             const fieldNodes = [];
 
@@ -96,6 +113,9 @@ define([
                 return null;
             }
         }
+    }, {
+        LocationFields: locationFields,
+        LocationFieldsById: locationFieldsById
     });
 
 });
