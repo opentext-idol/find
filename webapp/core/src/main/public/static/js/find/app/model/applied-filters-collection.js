@@ -8,11 +8,12 @@ define([
     'backbone',
     'moment',
     'find/app/model/dates-filter-model',
+    'find/app/model/geography-model',
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/util/database-name-resolver',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
-], function(_, Backbone, moment, DatesFilterModel, rounder, databaseNameResolver,
+], function(_, Backbone, moment, DatesFilterModel, GeographyModel, rounder, databaseNameResolver,
             i18n, i18nIndexes) {
     'use strict';
 
@@ -25,7 +26,8 @@ define([
         MAX_DATE: 'MAX_DATE',
         MIN_DATE: 'MIN_DATE',
         DATE_RANGE: 'DATE_RANGE',
-        PARAMETRIC: 'PARAMETRIC'
+        PARAMETRIC: 'PARAMETRIC',
+        GEOGRAPHY: 'GEOGRAPHY'
     };
 
     const customDatesFilters = [
@@ -42,7 +44,16 @@ define([
 
     // Get the filter model id for a given parametric field name
     function parametricFilterId(fieldName) {
-        return fieldName;
+        return 'param-' + fieldName;
+    }
+
+    // Get the filter model id for a given location field name
+    function locationFilterId(locationId) {
+        return 'loc-' + locationId;
+    }
+
+    function locationLabel(shapes, name) {
+        return name + ' (' + shapes.length + ')';
     }
 
     function formatDate(autnDate, format) {
@@ -99,6 +110,7 @@ define([
             this.indexesCollection = options.indexesCollection;
 
             this.datesFilterModel = options.queryState.datesFilterModel;
+            this.geographyModel = options.queryState.geographyModel;
             this.selectedIndexesCollection = options.queryState.selectedIndexes;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
 
@@ -106,6 +118,7 @@ define([
             this.listenTo(this.selectedParametricValues, 'reset', this.resetParametricSelection);
             this.listenTo(this.selectedIndexesCollection, 'reset update', this.updateDatabases);
             this.listenTo(this.datesFilterModel, 'change', this.updateDateFilters);
+            this.listenTo(this.geographyModel, 'change', this.updateGeographyFilters);
 
             this.on('remove', function(model) {
                 const type = model.get('type');
@@ -123,6 +136,8 @@ define([
                     this.datesFilterModel.set('customMaxDate', null);
                 } else if(type === FilterType.MIN_DATE) {
                     this.datesFilterModel.set('customMinDate', null);
+                } else if(type === FilterType.GEOGRAPHY) {
+                    this.geographyModel.set(model.get('locationId'), null);
                 }
             });
 
@@ -157,6 +172,19 @@ define([
                     text: this.getDatabasesFilterText()
                 });
             }
+
+            _.each(this.geographyModel.attributes, function(shapes, id){
+                if (shapes && shapes.length) {
+                    const locationField = GeographyModel.LocationFieldsById[id];
+                    this.add({
+                        id: locationFilterId(id),
+                        locationId: id,
+                        type: FilterType.GEOGRAPHY,
+                        text: locationLabel(shapes, locationField.displayName),
+                        heading: i18n['search.geography']
+                    });
+                }
+            }, this);
 
             Array.prototype.push.apply(models, extractParametricFilters(this.selectedParametricValues));
         },
@@ -278,6 +306,35 @@ define([
                     return _.contains([FilterType.DATE_RANGE, FilterType.MAX_DATE, FilterType.MIN_DATE], model.id);
                 }));
             }
+        },
+
+        updateGeographyFilters: function() {
+            _.each(GeographyModel.LocationFields, function(locationField){
+                const id = locationField.id;
+
+                const existing = this.findWhere({ type: FilterType.GEOGRAPHY, locationId: id });
+                const shapes = this.geographyModel.get(id);
+                const shouldShow = shapes && shapes.length;
+
+                if (shouldShow) {
+                    const text = locationLabel(shapes, locationField.displayName);
+                    if (existing) {
+                        existing.set('text', text);
+                    }
+                    else {
+                        this.add({
+                            id: locationFilterId(id),
+                            locationId: id,
+                            type: FilterType.GEOGRAPHY,
+                            text: text,
+                            heading: i18n['search.geography']
+                        });
+                    }
+                }
+                else if(existing) {
+                    this.remove(existing);
+                }
+            }, this);
         },
 
         resetParametricSelection: function() {
