@@ -88,6 +88,10 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     @CollectionTable(name = ConceptClusterPhraseTable.NAME, joinColumns = @JoinColumn(name = ConceptClusterPhraseTable.Column.SEARCH_ID))
     private Set<ConceptClusterPhrase> conceptClusterPhrases;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = GeographyFilterTable.NAME, joinColumns = @JoinColumn(name = GeographyFilterTable.Column.SEARCH_ID))
+    private Set<GeographyFilter> geographyFilters;
+
     @Column(name = Table.Column.START_DATE)
     private ZonedDateTime minDate;
 
@@ -123,6 +127,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         numericRangeRestrictions = builder.numericRangeRestrictions;
         dateRangeRestrictions = builder.dateRangeRestrictions;
         conceptClusterPhrases = builder.conceptClusterPhrases;
+        geographyFilters = builder.geographyFilters;
         minDate = builder.minDate;
         maxDate = builder.maxDate;
         dateCreated = builder.dateCreated;
@@ -162,6 +167,11 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             if (other.getConceptClusterPhrases() != null) {
                 conceptClusterPhrases.clear();
                 conceptClusterPhrases.addAll(other.getConceptClusterPhrases());
+            }
+
+            if (other.getGeographyFilters() != null) {
+                geographyFilters.clear();
+                geographyFilters.addAll(other.getGeographyFilters());
             }
         }
     }
@@ -277,6 +287,18 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         }
     }
 
+    interface GeographyFilterTable {
+        String NAME = "search_geography_filters";
+
+        @SuppressWarnings("InnerClassTooDeeplyNested")
+        interface Column {
+            String ID = "search_geography_filter_id";
+            String SEARCH_ID = "search_id";
+            String FIELD = "field";
+            String JSON = "json";
+        }
+    }
+
     @SuppressWarnings("WeakerAccess")
     @NoArgsConstructor
     @Getter
@@ -288,6 +310,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         private Set<NumericRangeRestriction> numericRangeRestrictions;
         private Set<DateRangeRestriction> dateRangeRestrictions;
         private Set<ConceptClusterPhrase> conceptClusterPhrases;
+        private Set<GeographyFilter> geographyFilters;
         private ZonedDateTime minDate;
         private ZonedDateTime maxDate;
         private ZonedDateTime dateCreated;
@@ -305,6 +328,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             numericRangeRestrictions = search.numericRangeRestrictions;
             dateRangeRestrictions = search.dateRangeRestrictions;
             conceptClusterPhrases = search.conceptClusterPhrases;
+            geographyFilters = search.geographyFilters;
             minDate = search.minDate;
             maxDate = search.maxDate;
             dateCreated = search.dateCreated;
@@ -349,6 +373,11 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
 
         public Builder<T, B> setConceptClusterPhrases(final Set<ConceptClusterPhrase> conceptClusterPhrases) {
             this.conceptClusterPhrases = new LinkedHashSet<>(conceptClusterPhrases);
+            return this;
+        }
+
+        public Builder<T, B> setGeographyFilters(final Set<GeographyFilter> geographyFilters) {
+            this.geographyFilters = new LinkedHashSet<>(geographyFilters);
             return this;
         }
 

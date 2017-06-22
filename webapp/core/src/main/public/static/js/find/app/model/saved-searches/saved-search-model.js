@@ -11,9 +11,10 @@ define([
     'find/app/model/query-model',
     'parametric-refinement/selected-values-collection',
     'find/app/util/database-name-resolver',
-    'find/app/model/dates-filter-model'
+    'find/app/model/dates-filter-model',
+    'find/app/model/geography-model'
 ], function(_, Backbone, moment, arraysEqual, QueryModel, SelectedParametricValuesCollection,
-            databaseNameResolver, DatesFilterModel) {
+            databaseNameResolver, DatesFilterModel, GeographyModel) {
     'use strict';
 
     /**
@@ -92,6 +93,20 @@ define([
         };
     }
 
+    function parseGeographyModel(model) {
+        const parsed = [];
+
+        if (model) {
+            _.each(model.toJSON(), function(filters, locationField){
+                _.each(filters, function(filter){
+                    parsed.push({ field: locationField, json: JSON.stringify(filter) });
+                })
+            })
+        }
+
+        return parsed;
+    }
+
     function compareWithoutDisplayNames(x, y) {
         return _.isEqual(_.omit(x, ['displayName', 'displayValue']), _.omit(y, 'displayName', 'displayValue'));
     }
@@ -141,6 +156,7 @@ define([
         defaults: {
             title: null,
             indexes: [],
+            geographyFilters: [],
             parametricValues: [],
             parametricRanges: [],
             relatedConcepts: [],
@@ -211,12 +227,15 @@ define([
             const selectedIndexes = databaseNameResolver.getDatabaseInfoFromCollection(queryState.selectedIndexes);
 
             const parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
+            const geographyFilters = parseGeographyModel(queryState.geographyModel);
+
             return this.equalsQueryStateDateFilters(queryState)
                 && arraysEqual(this.get('relatedConcepts'), queryState.conceptGroups.pluck('concepts'), arrayEqualityPredicate)
                 && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
                 && this.get('minScore') === queryState.minScoreModel.get('minScore')
                 && arraysEqual(this.get('parametricValues'), parametricRestrictions.parametricValues, compareWithoutDisplayNames)
-                && arraysEqual(this.get('parametricRanges'), parametricRestrictions.parametricRanges, compareWithoutDisplayNames);
+                && arraysEqual(this.get('parametricRanges'), parametricRestrictions.parametricRanges, compareWithoutDisplayNames)
+                && arraysEqual(this.get('geographyFilters'), geographyFilters, _.isEqual);
         },
 
         equalsQueryStateDateFilters: function(queryState) {
@@ -244,9 +263,16 @@ define([
         },
 
         toGeographyModelAttributes: function() {
-            return {
-                shapes: this.get('shapes') || []
-            }
+            const geographyFilters = this.get('geographyFilters') || [];
+            const map = {};
+
+            _.each(_.groupBy(geographyFilters, f => f.field), function(filterList, locationField){
+                if (GeographyModel.LocationFieldsById.hasOwnProperty(locationField)) {
+                    map[locationField] = _.map(filterList, filter => JSON.parse(filter.json));
+                }
+            });
+
+            return map
         },
 
         toConceptGroups: function() {
@@ -305,11 +331,13 @@ define([
         attributesFromQueryState: function(queryState) {
             const indexes = databaseNameResolver.getDatabaseInfoFromCollection(queryState.selectedIndexes);
             const parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
+            const geographyFilters = parseGeographyModel(queryState.geographyModel);
 
             return _.extend(
                 {
                     relatedConcepts: queryState.conceptGroups.pluck('concepts'),
                     indexes: indexes,
+                    geographyFilters: geographyFilters,
                     parametricValues: parametricRestrictions.parametricValues,
                     parametricRanges: parametricRestrictions.parametricRanges,
                     minScore: queryState.minScoreModel.get('minScore')
