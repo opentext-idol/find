@@ -52,10 +52,6 @@ define([
         return 'loc-' + locationId;
     }
 
-    function locationLabel(shapes, name) {
-        return name + ' (' + shapes.length + ')';
-    }
-
     function formatDate(autnDate, format) {
         return moment(autnDate * 1000).format(format);
     }
@@ -176,11 +172,11 @@ define([
             _.each(this.geographyModel.attributes, function(shapes, id){
                 if (shapes && shapes.length) {
                     const locationField = GeographyModel.LocationFieldsById[id];
-                    this.add({
+                    models.push({
                         id: locationFilterId(id),
                         locationId: id,
                         type: FilterType.GEOGRAPHY,
-                        text: locationLabel(shapes, locationField.displayName),
+                        text: locationField.displayName,
                         heading: i18n['search.geography']
                     });
                 }
@@ -317,7 +313,7 @@ define([
                 const shouldShow = shapes && shapes.length;
 
                 if (shouldShow) {
-                    const text = locationLabel(shapes, locationField.displayName);
+                    const text = locationField.displayName;
                     if (existing) {
                         existing.set('text', text);
                     }
