@@ -11,7 +11,6 @@ define([
     'i18n!find/nls/bundle',
     'find/app/configuration',
     'find/app/vent',
-    'find/app/util/generate-error-support-message',
     'find/app/page/search/results/parametric-results-view',
     'find/app/page/search/results/field-selection-view',
     'find/app/page/search/filters/parametric/calibrate-buckets',
@@ -20,9 +19,9 @@ define([
     'find/app/model/parametric-collection',
     'find/app/page/search/results/trending/trending',
     'parametric-refinement/to-field-text-node',
-], function(_, $, d3, Backbone, i18n, configuration, vent, generateErrorHtml, ParametricResultsView,
-            FieldSelectionView, calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel,
-            ParametricCollection, Trending, toFieldTextNode
+], function(_, $, d3, Backbone, i18n, configuration, vent, ParametricResultsView, FieldSelectionView,
+            calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel, ParametricCollection,
+            Trending, toFieldTextNode
 ) {
     'use strict';
 

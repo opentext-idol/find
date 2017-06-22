@@ -63,6 +63,7 @@ public class IdolGlobalExceptionHandler extends GlobalExceptionHandler {
             "DAHGETQUERYTAGVALUES538",
             "QMSQUERY-2147435967",
             "QMSQUERY-2147435888",
+            "QMSGETQUERYTAGVALUES-2147483377",
             "AXEGETQUERYTAGVALUES504",
             "DAHGETQUERYTAGVALUES504",
             "AXEGETQUERYTAGVALUES509",
@@ -85,7 +86,9 @@ public class IdolGlobalExceptionHandler extends GlobalExceptionHandler {
 
         final IdolErrorResponse errorResponse = new IdolErrorResponse(exception.getMessage(), exception.getErrorId());
 
-        if (!userErrors.contains(exception.getErrorId())) {
+        if (userErrors.contains(exception.getErrorId())) {
+            errorResponse.setIsUserError(true);
+        } else {
             log.error("Unhandled Idol Error with uuid {}", errorResponse.getUuid());
             log.error("Stack trace", exception);
         }
@@ -101,10 +104,10 @@ public class IdolGlobalExceptionHandler extends GlobalExceptionHandler {
     }
 
     @Getter
-    private final class SpellingErrorResponse extends ErrorResponse{
+    private static final class SpellingErrorResponse extends ErrorResponse{
         private final Spelling autoCorrection;
 
-        SpellingErrorResponse(final String message, final Spelling autoCorrection) {
+        private SpellingErrorResponse(final String message, final Spelling autoCorrection) {
             super(message);
             this.autoCorrection = autoCorrection;
         }

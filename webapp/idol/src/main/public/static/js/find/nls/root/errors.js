@@ -13,7 +13,7 @@ define([
         // TODO: Copypasted from userErrors in IdolGlobalExceptionHandler.java to enable lookup by
         // generate-error-support-message.js. This is used on the frontend to decide if it is
         // a user error and if a 'contact support' message should be displayed. Establish what these errors mean and
-        // provide prettified user mesages.
+        // provide prettified user messages.
         // 'error.code.AXEQUERY504': '',
         // 'error.code.DAHQUERY504': '',
         // 'error.code.AXEQUERY505': '',
@@ -42,6 +42,7 @@ define([
         // 'error.code.DAHGETQUERYTAGVALUES538': '',
         // 'error.code.QMSQUERY-2147435967': '',
         // 'error.code.QMSQUERY-2147435888': '',
+        // 'error.code.QMSGETQUERYTAGVALUES-2147483377': '',
         // 'error.code.AXEGETQUERYTAGVALUES504': '',
         // 'error.code.DAHGETQUERYTAGVALUES504': '',
         // 'error.code.AXEGETQUERYTAGVALUES509': '',

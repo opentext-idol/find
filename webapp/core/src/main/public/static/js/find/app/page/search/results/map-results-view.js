@@ -62,7 +62,8 @@ define([
                         ? {
                             errorDetails: errorInfo.responseJSON.message,
                             errorUUID: errorInfo.responseJSON.uuid,
-                            errorLookup: errorInfo.responseJSON.backendErrorCode
+                            errorLookup: errorInfo.responseJSON.backendErrorCode,
+                            isUserError: errorInfo.responseJSON.isUserError
                         }
                         : {}));
                     this.$error.toggleClass('hide', !errorInfo.hasError);

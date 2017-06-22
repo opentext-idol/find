@@ -136,7 +136,8 @@ define([
                     const messageArguments = _.extend({
                         errorDetails: xhr.responseJSON.message,
                         errorLookup: xhr.responseJSON.backendErrorCode,
-                        errorUUID: xhr.responseJSON.uuid
+                        errorUUID: xhr.responseJSON.uuid,
+                        isUserError: xhr.responseJSON.isUserError
                     }, this.errorMessageArguments);
 
                     this.updateErrorMessage(generateErrorHtml(messageArguments));

@@ -315,7 +315,8 @@ define([
                 return generateErrorHtml({
                     errorDetails: xhr.responseJSON.message,
                     errorUUID: xhr.responseJSON.uuid,
-                    errorLookup: xhr.responseJSON.backendErrorCode
+                    errorLookup: xhr.responseJSON.backendErrorCode,
+                    isUserError: xhr.responseJSON.isUserError
                 });
             } else {
                 return generateErrorHtml();

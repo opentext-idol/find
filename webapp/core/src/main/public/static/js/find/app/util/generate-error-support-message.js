@@ -31,28 +31,19 @@ define([
             messageToUser: '',
             errorDetails: '',
             errorLookup: '',
-            errorUUID: ''
+            errorUUID: '',
+            isUserError: false,
         }, argumentHash);
 
         const detailsTemplate = i18n['error.details'];
         const uuidTemplate = i18n['error.UUID'];
-        let needTechSupport;
+        const prettifiedError = i18nErrors['error.code.' + options.errorLookup];
 
-        if(options.errorLookup) {
-            const prettifiedError = i18nErrors['error.code.' + options.errorLookup];
-            if(prettifiedError) {
-                options.errorDetails = prettifiedError +
-                    (options.errorDetails
-                        ? ' / ' + options.errorDetails
-                        : '');
-                // Errors in the bundle are user-created errors, so we don't want them to contact support
-                needTechSupport = false;
-            } else {
-                needTechSupport = true;
-            }
-        } else {
-            needTechSupport = true;
+        if (prettifiedError) {
+            options.errorDetails = prettifiedError + (options.errorDetails ? ' / ' + options.errorDetails : '');
         }
+
+        const needTechSupport = !options.isUserError;
 
         // If app's config.json contains a custom "call support" string, print it. Otherwise fall back on bundle.js
         const messageContactSupport = needTechSupport

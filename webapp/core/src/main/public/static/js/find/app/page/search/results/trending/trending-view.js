@@ -514,7 +514,8 @@ define([
                 this.viewStateModel.set('dataState', dataState.ERROR);
                 const messageArguments = _.extend({
                     errorDetails: xhr.responseJSON.message,
-                    errorUUID: xhr.responseJSON.uuid
+                    errorUUID: xhr.responseJSON.uuid,
+                    isUserError: xhr.responseJSON.isUserError
                 }, ERROR_MESSAGE_ARGUMENTS);
                 this.$errorMessage.html(generateErrorHtml(messageArguments));
             }

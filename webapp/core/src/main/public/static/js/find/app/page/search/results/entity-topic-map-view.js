@@ -193,7 +193,8 @@ define([
                             errorDetails: xhr.responseJSON.message,
                             errorDetailsFallback: xhr.responseJSON.uuid,
                             errorUUID: xhr.responseJSON.uuid,
-                            errorLookup: xhr.responseJSON.backendErrorCode
+                            errorLookup: xhr.responseJSON.backendErrorCode,
+                            isUserError: xhr.responseJSON.isUserError
                         }
                         : {}
                 )
