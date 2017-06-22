@@ -8,20 +8,25 @@ define([
     'jquery',
     'backbone',
     'i18n!find/nls/bundle',
+    'find/app/model/geography-model',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/page/search/filters/geography/geography-modal',
     'text!find/templates/app/page/search/filters/geography/geography-view.html'
-], function(_, $, Backbone, i18n, SavedSearchModel, GeographyModal, template) {
+], function(_, $, Backbone, i18n, GeographyModel, SavedSearchModel, GeographyModal, template) {
     'use strict';
+
+    const LocationFields = GeographyModel.LocationFields;
 
     return Backbone.View.extend({
         events: {
-            'click tr': function(event) {
-                const previous = this.geographyModel.get('shapes');
-                this.geographyModel.set('shapes', previous && previous.length ? null : this.shapes);
+            'click tr': function(evt) {
+                const locationId = $(evt.currentTarget).closest('tr').data('locationId');
+                const previous = this.geographyModel.get(locationId);
+                this.geographyModel.set(locationId, previous && previous.length ? null : this.shapes[locationId]);
             },
             'click .geography-show-map': function(evt){
-                this.showMapModal();
+                const locationId = $(evt.currentTarget).closest('tr').data('locationId');
+                this.showMapModal(locationId);
                 return false;
             }
         },
@@ -30,11 +35,11 @@ define([
             this.geographyModel = options.geographyModel;
             this.savedSearchModel = options.savedSearchModel;
 
-            this.shapes = options.geographyModel.get('shapes') || [];
+            this.shapes = _.mapObject(options.geographyModel.toJSON(), val => val || []);
 
             this.template = _.template(template);
 
-            this.listenTo(this.geographyModel, 'change:shapes', function() {
+            this.listenTo(this.geographyModel, 'change', function() {
                 this.updateForGeography();
             });
 
@@ -43,38 +48,46 @@ define([
 
         render: function() {
             this.$el.html(this.template({
-                i18n: i18n
+                i18n: i18n,
+                LocationFields: LocationFields
             }));
 
             this.updateForGeography();
         },
 
         updateForGeography: function() {
-            const shapesInUse = this.geographyModel.get('shapes');
+            const $el = this.$('tr[data-location-id]')
 
-            var shapeFiltering = false;
-            if (shapesInUse && shapesInUse.length) {
-                this.shapes = shapesInUse;
-                shapeFiltering = true;
-            }
+            _.each(LocationFields, function(field, idx){
+                const $child = $el.get(idx);
+                const id = field.id;
 
-            const count = this.shapes.length;
+                const shapesInUse = this.geographyModel.get(id);
 
-            this.$('.geography-list-count-text').text(!count ? i18n['search.geography.none']
-                : i18n['search.geography.filterCount'](
-                    count,
-                    count === 1 ? i18n['search.geography.filter'] : i18n['search.geography.filters'],
-                    shapeFiltering ? '' : i18n['search.geography.disabled']))
+                let shapeFiltering = false;
+                if (shapesInUse && shapesInUse.length) {
+                    this.shapes[id] = shapesInUse;
+                    shapeFiltering = true;
+                }
 
-            this.$('.check-cell i').toggleClass('hide', !shapeFiltering);
+                const count = this.shapes[id].length;
+
+                $('.geography-list-count-text', $child).text(!count ? i18n['search.geography.none']
+                    : i18n['search.geography.filterCount'](
+                        count,
+                        count === 1 ? i18n['search.geography.filter'] : i18n['search.geography.filters'],
+                        shapeFiltering ? '' : i18n['search.geography.disabled']))
+
+                $('.check-cell i', $child).toggleClass('hide', !shapeFiltering);
+            }, this)
         },
 
-        showMapModal: function() {
+        showMapModal: function(locationId) {
             new GeographyModal({
-                shapes: this.shapes,
+                shapes: this.shapes[locationId] || [],
                 actionButtonCallback: _.bind(function(shapes){
-                    this.shapes = shapes;
-                    this.geographyModel.set('shapes', shapes);
+                    this.shapes[locationId] = shapes;
+                    this.geographyModel.set(locationId, shapes);
                 }, this)
             });
         }

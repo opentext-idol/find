@@ -1,11 +1,14 @@
 <table class="table geography-list">
-    <tr class="clickable">
-        <td class="text-right check-cell">
-            <i class="hp-icon hp-fw hp-check hide"></i>
-        </td>
-        <td class="geography-list-count-text"><%- i18n['search.geography.none'] %></td>
-        <td class="text-right geography-show-map">
-            <i class="hp-icon hp-globe"></i>
-        </td>
-    </tr>
+    <% _.each(LocationFields, function(locationField) { %>
+        <tr data-location-id="<%- locationField.id %>" class="clickable">
+            <td class="text-right check-cell">
+                <i class="hp-icon hp-fw hp-check hide"></i>
+            </td>
+            <td><%- locationField.displayName %></td>
+            <td class="geography-list-count-text"></td>
+            <td class="text-right geography-show-map">
+                <i class="hp-icon hp-globe"></i>
+            </td>
+        </tr>
+    <% }) %>
 </table>
