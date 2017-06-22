@@ -83,7 +83,11 @@ define([
                     marker: false,
                     polyline: false,
                     rectangle: false,
+                    circle: {
+                        repeatMode: true
+                    },
                     polygon: {
+                        repeatMode: true,
                         allowIntersection: false,
                         showArea: true
                     }
@@ -115,8 +119,17 @@ define([
         },
 
         updateMapSize: function(){
+            // This is called when the containing modal is shown (and therefore the size is available).
             if (this.map) {
                 this.map.invalidateSize();
+
+                // If we have shapes on the screen, resize the visible map area to cover them all.
+                const layers = this.drawnItems.getLayers();
+                if (layers.length) {
+                    let bounds = layers[0].getBounds();
+                    layers.slice(1).forEach(layer => bounds.extend(layer.getBounds()))
+                    this.map.fitBounds(bounds);
+                }
             }
         },
 
