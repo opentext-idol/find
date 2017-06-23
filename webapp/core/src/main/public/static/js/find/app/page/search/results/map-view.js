@@ -197,7 +197,9 @@ define([
         clearMarkers: function() {
             this.layers.forEach(function(layer) {
                 layer.clearLayers();
-            });
+                this.control && this.control.removeLayer(layer);
+                this.map.removeLayer(layer);
+            }, this);
             this.layers = [];
         },
 
