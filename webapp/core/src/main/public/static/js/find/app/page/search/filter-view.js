@@ -7,6 +7,7 @@ define([
     'underscore',
     'jquery',
     'backbone',
+    'find/app/model/geography-model',
     'find/app/page/search/abstract-section-view',
     'find/app/page/search/filters/date/dates-filter-view',
     'find/app/page/search/filters/geography/geography-view',
@@ -19,7 +20,7 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
-], function(_, $, Backbone, AbstractSectionView, DateView, GeographyView, FilteredParametricFieldsCollection,
+], function(_, $, Backbone, GeographyModel, AbstractSectionView, DateView, GeographyView, FilteredParametricFieldsCollection,
             ParametricView, NumericParametricFieldView, TextInput, Collapsible, FilteringCollection,
             configuration, i18n, i18nIndexes) {
     'use strict';
@@ -30,6 +31,8 @@ define([
     function searchMatches(text, search) {
         return text.toLowerCase().indexOf(search.toLowerCase()) > -1;
     }
+
+    const showGeographyFilter = GeographyModel.LocationFields.length > 0;
 
     return AbstractSectionView.extend({
         initialize: function(options) {
@@ -156,7 +159,9 @@ define([
                     });
                 }.bind(this),
                 get$els: function() {
-                    return [this.dateViewWrapper.$el, this.geographyViewWrapper.$el];
+                    const els = [this.dateViewWrapper.$el];
+                    showGeographyFilter && els.push(this.geographyViewWrapper.$el)
+                    return els;
                 }.bind(this),
                 render: function() {
                     this.dateViewWrapper.render();
