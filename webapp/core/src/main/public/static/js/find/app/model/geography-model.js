@@ -14,19 +14,20 @@ define([
     }
 
     const config = configuration();
-    const fieldsInfo = config.fieldsInfo;
 
     const locationFields = [];
     const locationFieldsById = {};
 
-    function getFieldName(fieldName) {
-        const fieldMeta = fieldsInfo[fieldName];
-        if (fieldMeta && fieldMeta.names && fieldMeta.names.length) {
-            return fieldMeta.names;
-        }
-    }
+    if (config && config.map && config.map.locationFields) {
+        const fieldsInfo = config.fieldsInfo;
 
-    if (config.map && config.map.locationFields) {
+        function getFieldName(fieldName) {
+            const fieldMeta = fieldsInfo[fieldName];
+            if (fieldMeta && fieldMeta.names && fieldMeta.names.length) {
+                return fieldMeta.names;
+            }
+        }
+
         _.each(config.map.locationFields, function(field){
             const latField = field.latitudeField;
             const lonField = field.longitudeField;
