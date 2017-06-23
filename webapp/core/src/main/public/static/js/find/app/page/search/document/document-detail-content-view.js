@@ -107,7 +107,10 @@ define([
 
                 // The src attribute has to be added retrospectively to avoid a race condition
                 const url = viewClient.getHref(this.documentModel.get('reference'), this.documentModel);
-                iframe.attr('src', url);
+
+                const urlWithHashFragment = urlManipulator.appendHashFragment(this.documentModel, url);
+
+                iframe.attr('src', urlWithHashFragment);
             }
         },
 

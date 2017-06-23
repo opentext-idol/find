@@ -150,7 +150,10 @@ define([
                     this.highlighting
                         ? this.queryText
                         : null);
-                $iframe.attr('src', src);
+
+                const srcWithHashFragment = urlManipulator.appendHashFragment(this.model, src);
+
+                $iframe.attr('src', srcWithHashFragment);
             }
 
             this.listenTo(this.model, 'remove destroy', this.triggerClose);

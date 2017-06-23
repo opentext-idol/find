@@ -15,7 +15,6 @@ define([
     'use strict';
 
     const DOCUMENT_MODEL_REF = 'reference';
-    const URL_LIKE_REFERENCE = 'http://www.example.com';
     const ANY_OLD_URL = 'www.example.com';
 
     const MOCK_TABS = [
@@ -183,25 +182,7 @@ define([
             });
         });
 
-        describe('when the view renders and the document has no url but a reference that could be a url', function() {
-            beforeEach(function() {
-                this.view = new ContentView({
-                    documentModel: new DocumentModel({
-                        url: URL_LIKE_REFERENCE
-                    }),
-                    indexesCollection: new Backbone.Collection(),
-                    mmapTab: NO_MMAP
-                });
-                this.view.render();
-            });
-
-            it('should render an open original button with the correct href', function() {
-                expect(this.view.$('.document-detail-open-original-link')).toHaveLength(1);
-                expect(this.view.$('.document-detail-open-original-link')).toHaveAttr('href', URL_LIKE_REFERENCE);
-            });
-        });
-
-        describe('when the view renders but the document has no url or url-like reference', function() {
+        describe('when the view renders but the document has no url', function() {
             beforeEach(function() {
                 this.view = new ContentView({
                     documentModel: new DocumentModel({
