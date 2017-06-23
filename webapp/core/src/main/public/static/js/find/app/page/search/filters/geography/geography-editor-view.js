@@ -6,7 +6,7 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/geography/geography-editor-view.html',
-    'leaflet.draw'
+    'leaflet.draw.i18n'
 ], function (Backbone, $, _, leaflet, configuration, i18n, template) {
     'use strict';
 

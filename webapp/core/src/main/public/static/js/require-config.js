@@ -33,6 +33,7 @@ require.config({
         leaflet: '../bower_components/leaflet/dist/leaflet-src',
         'Leaflet.awesome-markers': '../bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers',
         'leaflet.draw': '../bower_components/leaflet-draw/dist/leaflet.draw-src',
+        'leaflet.draw.i18n': 'leaflet.draw.i18n/leaflet.draw.i18n',
         'leaflet.markercluster': '../bower_components/leaflet.markercluster/dist/leaflet.markercluster-src',
         'leaflet.markercluster.layersupport': '../bower_components/leaflet.markercluster.layersupport/src/layersupport',
         'leaflet.notransform': 'leaflet.notransform/leaflet.notransform',
