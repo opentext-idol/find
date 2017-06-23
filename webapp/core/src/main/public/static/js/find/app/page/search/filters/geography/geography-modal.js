@@ -13,7 +13,7 @@ define([
     'use strict';
 
     return Modal.extend({
-        className: Modal.prototype.className + ' fixed-height-modal',
+        className: Modal.prototype.className + ' fixed-height-modal geography-modal',
 
         initialize: function(options) {
             const shapes = options.shapes || [];
