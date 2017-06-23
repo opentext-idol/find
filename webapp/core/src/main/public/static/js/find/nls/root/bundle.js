@@ -196,6 +196,7 @@ define([
         'search.geography.filters': 'filters',
         'search.geography.disabled': '(but disabled)',
         'search.geography.apply.filters': 'Search',
+        'search.geography.deleteAll': 'Delete All',
         'search.geography.draw.toolbar.actions.title': 'Cancel drawing',
         'search.geography.draw.toolbar.actions.text': 'Cancel',
         'search.geography.draw.toolbar.finish.title': 'Finish drawing',

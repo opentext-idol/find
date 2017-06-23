@@ -100,6 +100,26 @@ define([
                 drawnItems.addLayer(layer);
             });
 
+            // Add a delete-all button.
+            map.addControl(new (leaflet.Control.extend({
+                options: {
+                    position: 'topleft'
+                },
+                onAdd: function (map) {
+                    const container = leaflet.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-touch');
+                    container.innerHTML = '<a class="" href="#" title="'+_.escape(i18n['search.geography.deleteAll'])+'"><i class="hp-icon hp-trash text-danger"></i></a>';
+                    $(container).on('click', function(evt){
+                        drawnItems.clearLayers();
+                        return false;
+                    }).on('mousemove', function(){
+                        return false;
+                    }).on('mousedown', function(){
+                        return false;
+                    })
+                    return container;
+                }
+            })))
+
             if (this.shapes) {
                 _.each(this.shapes, function(shape){
                     switch(shape.type) {
