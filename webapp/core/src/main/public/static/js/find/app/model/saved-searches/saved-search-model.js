@@ -309,6 +309,7 @@ define([
                 conceptGroups: new Backbone.Collection(this.toConceptGroups()),
                 minScoreModel: new Backbone.Model({minScore: 0}),
                 datesFilterModel: new DatesFilterModel(this.toDatesFilterModelAttributes()),
+                geographyModel: new GeographyModel(this.toGeographyModelAttributes()),
                 selectedIndexes: new IndexesCollection(this.get('indexes')),
                 selectedParametricValues: new SelectedParametricValuesCollection(this.toSelectedParametricValues())
             };
