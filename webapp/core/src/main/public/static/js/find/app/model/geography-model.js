@@ -18,7 +18,7 @@ define([
     const locationFields = [];
     const locationFieldsById = {};
 
-    if (config && config.map && config.map.locationFields) {
+    if (config && config.map && config.map.locationFields && config.fieldsInfo) {
         const fieldsInfo = config.fieldsInfo;
 
         function getFieldName(fieldName) {
