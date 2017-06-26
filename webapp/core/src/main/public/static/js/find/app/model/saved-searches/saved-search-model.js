@@ -266,9 +266,9 @@ define([
             const geographyFilters = this.get('geographyFilters') || [];
             const map = {};
 
-            _.each(_.groupBy(geographyFilters, f => f.field), function(filterList, locationField){
+            _.each(_.groupBy(geographyFilters, 'field'), function(filterList, locationField){
                 if (GeographyModel.LocationFieldsById.hasOwnProperty(locationField)) {
-                    map[locationField] = _.map(filterList, filter => JSON.parse(filter.json));
+                    map[locationField] = _.map(filterList, function(filter) { return JSON.parse(filter.json) });
                 }
             });
 

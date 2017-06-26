@@ -66,7 +66,7 @@ define([
         /**
          * @type GeographyModelAttributes
          */
-        defaults: _.mapObject(locationFieldsById, () => []),
+        defaults: _.mapObject(locationFieldsById, function(){ return [] }),
 
         appendFieldText: function(existingFieldText){
             const toAppend = this.toFieldText();

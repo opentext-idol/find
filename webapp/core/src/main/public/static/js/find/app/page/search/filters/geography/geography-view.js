@@ -35,7 +35,7 @@ define([
             this.geographyModel = options.geographyModel;
             this.savedSearchModel = options.savedSearchModel;
 
-            this.shapes = _.mapObject(options.geographyModel.toJSON(), val => val || []);
+            this.shapes = _.mapObject(options.geographyModel.toJSON(), function(val){ return val || [] });
 
             this.template = _.template(template);
 

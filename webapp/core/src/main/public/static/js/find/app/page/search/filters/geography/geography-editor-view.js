@@ -147,7 +147,7 @@ define([
                 const layers = this.drawnItems.getLayers();
                 if (layers.length) {
                     let bounds = layers[0].getBounds();
-                    layers.slice(1).forEach(layer => bounds.extend(layer.getBounds()))
+                    layers.slice(1).forEach(function(layer) { return bounds.extend(layer.getBounds()) })
                     this.map.fitBounds(bounds);
                 }
             }

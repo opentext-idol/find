@@ -141,7 +141,7 @@ define([
                     });
 
                     const geographyModel = options.queryState.geographyModel;
-                    this.collapsed.geography = !_.find(_.map(geographyModel.attributes, v => v && v.length));
+                    this.collapsed.geography = !_.find(_.map(geographyModel.attributes, function(v){ return v && v.length }));
 
                     const geographyView = new GeographyView({
                         geographyModel: geographyModel,
