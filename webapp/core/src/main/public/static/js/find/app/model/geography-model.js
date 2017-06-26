@@ -72,7 +72,7 @@ define([
             const toAppend = this.toFieldText();
 
             if (toAppend) {
-                return existingFieldText ? toAppend.AND(toAppend) : toAppend;
+                return existingFieldText ? existingFieldText.AND(toAppend) : toAppend;
             }
 
             return existingFieldText;
