@@ -129,11 +129,6 @@
             <artifactId>powerpoint-report</artifactId>
             <version>${powerpoint.report.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.frontend</groupId>
-            <artifactId>idol-types</artifactId>
-            <version>1.5.2</version>
-        </dependency>
 
         <dependency>
             <groupId>commons-io</groupId>

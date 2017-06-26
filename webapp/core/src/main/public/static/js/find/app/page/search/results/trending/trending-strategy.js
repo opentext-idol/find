@@ -20,7 +20,7 @@ define([
     'find/app/model/parametric-collection',
     'find/app/page/search/results/trending/trending',
     'parametric-refinement/to-field-text-node',
-], function(_, $, moment, d3, Backbone, i18n, configuration, vent, generateErrorHtml, ParametricResultsView,
+], function(_, $, moment, d3, Backbone, i18n, configuration, vent, ParametricResultsView,
             FieldSelectionView, calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel,
             ParametricCollection, Trending, toFieldTextNode) {
     'use strict';

@@ -1,18 +1,18 @@
 /*-------------------------------------------
 -- Description: Handle date ranges differently from numeric ranges
 
--- Previous Version: 11.4.0.0
--- Target Version: 11.4.0.1
+-- Previous Version: 11.4.0.6
+-- Target Version: 11.5.0.0
 --------------------------------------------*/
 
-USE find;
+SET SCHEMA find;
 
 
 CREATE TABLE search_numeric_ranges
 (
   search_numeric_ranges_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   search_id BIGINT NOT NULL,
-  field TEXT NOT NULL,
+  field NVARCHAR(21844) NOT NULL,
   min DOUBLE NOT NULL,
   max DOUBLE NOT NULL
 );
@@ -25,7 +25,7 @@ CREATE TABLE search_date_ranges
 (
   search_date_ranges_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   search_id BIGINT NOT NULL,
-  field TEXT NOT NULL,
+  field NVARCHAR(21844) NOT NULL,
   min DATETIME NOT NULL,
   max DATETIME NOT NULL
 );
@@ -40,7 +40,7 @@ FROM search_parametric_ranges
 WHERE type IS 1;
 
 INSERT INTO search_date_ranges (search_id, field, min, max)
-SELECT search_id, field, FROM_UNIXTIME(FLOOR(min)), FROM_UNIXTIME(CEILING(max))
+SELECT search_id, field, DATEADD('SECOND', FLOOR(min), DATE '1970-01-01'), DATEADD('SECOND', CEILING(max), DATE '1970-01-01')
 FROM search_parametric_ranges
 WHERE type IS 0 AND min >= 0 AND min <= 2147483647 AND max >= 0 AND max <= 2147483647;
 
