@@ -57,9 +57,7 @@ define([
                 selectionEnabled: true,
                 selectedParametricValues: this.selectedParametricValues,
                 zoomEnabled: true,
-                dataType: this.dataType,
                 model: fieldModel,
-                formatting: currentGraphConfig.formatting,
                 inputTemplate: currentGraphConfig.template
             });
 

@@ -23,6 +23,10 @@ define([
                 : base.replace(/[^\/]$/, '$&/') + encodeURIComponent(encodeURIComponent(this.id));
         },
 
+        set: function() {
+            FindBaseCollection.Model.prototype.set.apply(this, arguments);
+        },
+
         defaults: {
             values: []
         }
