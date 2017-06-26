@@ -1,8 +1,9 @@
 define([
     'backbone',
+    'underscore',
     'fieldtext/js/field-text-parser',
     'find/app/configuration'
-], function(Backbone, parser, configuration) {
+], function(Backbone, _, parser, configuration) {
 
     function MapLatLonFields(id, name, latLonFieldPairs, cfg) {
         this.id = id;
