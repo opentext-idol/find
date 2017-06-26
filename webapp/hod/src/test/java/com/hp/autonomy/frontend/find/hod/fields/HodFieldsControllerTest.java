@@ -100,7 +100,7 @@ public class HodFieldsControllerTest extends AbstractFieldsControllerTest<HodFie
     }
 
     @Override
-    protected List<FieldAndValueDetails> getParametricFields(final FieldTypeParam... fieldTypes) throws HodErrorException {
+    protected List<FieldAndValueDetails<?>> getParametricFields(final FieldTypeParam... fieldTypes) throws HodErrorException {
         when(fieldsRequest.getFieldTypes()).thenReturn(Arrays.asList(fieldTypes));
         return controller.getParametricFields(Arrays.asList(fieldTypes), Collections.singleton(ResourceName.WIKI_ENG));
     }

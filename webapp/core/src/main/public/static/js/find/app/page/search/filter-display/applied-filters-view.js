@@ -16,12 +16,12 @@ define([
 ], function(_, $, AbstractSectionView, ListView, ListItemView, i18n, template, itemTemplate) {
     'use strict';
 
-    var html = _.template(template)({i18n: i18n});
+    const html = _.template(template)({i18n: i18n});
 
-    var removeAllButton = '<span class="inline clickable hyperlink text-muted remove-all-filters">' +
+    const removeAllButton = '<span class="inline clickable hyperlink text-muted remove-all-filters">' +
         i18n["search.filters.removeAll"] + '</span>';
 
-    var FilterListItemView = ListItemView.extend({
+    const FilterListItemView = ListItemView.extend({
         render: function() {
             ListItemView.prototype.render.apply(this);
 
@@ -46,7 +46,7 @@ define([
 
         events: {
             'click .filters-remove-icon': function(e) {
-                var id = $(e.currentTarget).closest('[data-id]').attr('data-id');
+                const id = $(e.currentTarget).closest('[data-id]').attr('data-id');
                 this.collection.remove(id);
             },
             'click .remove-all-filters': function() {
@@ -78,7 +78,7 @@ define([
         },
 
         render: function() {
-            AbstractSectionView.prototype.render.apply(this, arguments);
+            AbstractSectionView.prototype.render.apply(this);
 
             this.getSectionControls().html(removeAllButton);
 

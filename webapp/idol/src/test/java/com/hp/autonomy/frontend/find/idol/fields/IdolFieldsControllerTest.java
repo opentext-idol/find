@@ -87,7 +87,7 @@ public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolF
     }
 
     @Override
-    protected List<FieldAndValueDetails> getParametricFields(final FieldTypeParam... fieldTypes) {
+    protected List<FieldAndValueDetails<?>> getParametricFields(final FieldTypeParam... fieldTypes) {
         when(fieldsRequest.getFieldTypes()).thenReturn(Arrays.asList(fieldTypes));
         return controller.getParametricFields(Arrays.asList(fieldTypes));
     }

@@ -44,7 +44,9 @@ define([
                     data: {
                         fieldNames: fieldIds,
                         databases: this.queryModel.get('indexes'),
-                        queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery') ? this.queryModel.get('correctedQuery') : this.queryModel.get('queryText'),
+                        queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery')
+                            ? this.queryModel.get('correctedQuery')
+                            : this.queryModel.get('queryText'),
                         fieldText: this.queryModel.get('fieldText'),
                         minDate: this.queryModel.getIsoDate('minDate'),
                         maxDate: this.queryModel.getIsoDate('maxDate'),

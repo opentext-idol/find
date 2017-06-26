@@ -1,14 +1,18 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'underscore',
     'parametric-refinement/to-field-text-node'
 ], function(_, toFieldTextNode) {
+    'use strict';
 
     function wrapInBrackets(concept) {
-        return concept ? '(' + concept + ')' : concept;
+        return concept
+            ? '(' + concept + ')'
+            : concept;
     }
 
     // WARNING: This logic is duplicated in the server-side SavedSearch class
@@ -46,7 +50,7 @@ define([
      * @return {string} A field text string or null
      */
     function buildFieldText(parametricValues) {
-        var fieldTextNode = toFieldTextNode(parametricValues);
+        const fieldTextNode = toFieldTextNode(parametricValues);
         return fieldTextNode && fieldTextNode.toString();
     }
 

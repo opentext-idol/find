@@ -1,14 +1,15 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'find/app/util/search-data-util',
     'parametric-refinement/to-field-text-node'
 ], function(searchDataUtil, toFieldTextNode) {
+    'use strict';
 
     describe('Search Data Utils', function() {
-
         describe('makeQueryText', function() {
             it('called with no concepts returns *', function() {
                 expect(searchDataUtil.makeQueryText([])).toEqual('*');
@@ -46,7 +47,7 @@ define([
             });
 
             it('called with the non-empty array returns the result of the toString method on the return value of the toFieldTextNode function', function() {
-                var parametricValues = [
+                const parametricValues = [
                     {
                         field: 'CATEGORY',
                         value: 'GENERAL'

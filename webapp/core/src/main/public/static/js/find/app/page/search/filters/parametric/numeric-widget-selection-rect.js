@@ -17,7 +17,9 @@ define([
 
     function getNewAttributes(currentX, originX) {
         return {
-            x: currentX < originX ? currentX : originX,
+            x: currentX < originX
+                ? currentX
+                : originX,
             width: Math.abs(currentX - originX)
         };
     }
@@ -67,19 +69,18 @@ define([
         },
 
         remove: function() {
-            if (this.element) {
+            if(this.element) {
                 this.element.remove();
                 this.element = null;
             }
         },
 
         removePrevious: function() {
-            if (this.previousElement) {
+            if(this.previousElement) {
                 this.previousElement.remove();
             }
         }
     });
 
     return SelectionRect;
-
 });

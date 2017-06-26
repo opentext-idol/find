@@ -12,7 +12,6 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
@@ -113,11 +113,11 @@ public abstract class SavedQueryControllerTest<RQ extends QueryRequest<Q>, S ext
     @Test
     public void checkForNewQueryResultsButIncompatibleRestrictions() throws E {
         final long id = 123L;
-        final DateTime lastFetchTime = DateTime.now();
+        final ZonedDateTime lastFetchTime = ZonedDateTime.now();
         final SavedQuery savedQuery = new SavedQuery.Builder()
-                .setDateNewDocsLastFetched(lastFetchTime)
+                .setDateDocsLastFetched(lastFetchTime)
                 .setId(id)
-                .setMaxDate(lastFetchTime.minus(1))
+                .setMaxDate(lastFetchTime.minusMinutes(1))
                 .build();
         when(savedQueryService.get(id)).thenReturn(savedQuery);
         final int numberOfResults = 0;

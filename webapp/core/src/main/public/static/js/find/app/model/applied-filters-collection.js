@@ -12,7 +12,8 @@ define([
     'find/app/util/database-name-resolver',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
-], function(_, Backbone, moment, DatesFilterModel, rounder, databaseNameResolver, i18n, i18nIndexes) {
+], function(_, Backbone, moment, DatesFilterModel, rounder, databaseNameResolver,
+            i18n, i18nIndexes) {
     'use strict';
 
     const DATE_FORMAT = 'YYYY-MM-DD HH:mm';
@@ -33,7 +34,9 @@ define([
     ];
 
     function getDateFilterText(filterType, dateString) {
-        const textPrefixKey = filterType === FilterType.MAX_DATE ? 'app.until' : 'app.from';
+        const textPrefixKey = filterType === FilterType.MAX_DATE
+            ? 'app.until'
+            : 'app.from';
         return i18n[textPrefixKey] + ': ' + dateString;
     }
 
@@ -60,11 +63,9 @@ define([
         } else if(type === 'NumericDate') {
             values = ranges.map(function(range) {
                 //Discard time of day if range greater than 1 week
-                if(range[1] - range[0] <= DATE_SHORTEN_CUTOFF) {
-                    return formatDate(range[0], DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], DATE_FORMAT);
-                } else {
-                    return formatDate(range[0], SHORT_DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], SHORT_DATE_FORMAT);
-                }
+                return range[1] - range[0] > DATE_SHORTEN_CUTOFF
+                    ? formatDate(range[0], SHORT_DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], SHORT_DATE_FORMAT)
+                    : formatDate(range[0], DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], DATE_FORMAT);
             });
         }
 
@@ -78,7 +79,12 @@ define([
                 id: parametricFilterId(field),
                 field: field,
                 heading: data.displayName,
-                text: parametricFilterText(data.displayValues, data.range ? [data.range] : [], data.type),
+                text: parametricFilterText(
+                    data.displayValues,
+                    data.range
+                        ? [data.range]
+                        : [],
+                    data.type),
                 type: FilterType.PARAMETRIC
             };
         });

@@ -1,7 +1,6 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +23,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 public abstract class AbstractSavedSearchServiceTest<T extends SavedSearch<T, B>, B extends SavedSearch.Builder<T, B>> {
+    private final Supplier<B> builderConstructor;
     @MockBean
     private SharedToUserRepository sharedToUserRepository;
     @SuppressWarnings("unused")
@@ -32,13 +32,10 @@ public abstract class AbstractSavedSearchServiceTest<T extends SavedSearch<T, B>
     @SuppressWarnings("unused")
     @MockBean
     private TagNameFactory tagNameFactory;
-
     @Autowired
     private SavedSearchService<T, B> service;
     @Autowired
     private SavedSearchRepository<T, B> crudRepository;
-
-    private final Supplier<B> builderConstructor;
 
     protected AbstractSavedSearchServiceTest(final Supplier<B> builderConstructor) {
         this.builderConstructor = builderConstructor;
@@ -66,7 +63,7 @@ public abstract class AbstractSavedSearchServiceTest<T extends SavedSearch<T, B>
         return builderConstructor.get()
                 .setTitle("Title " + searchId.toString())
                 .setId(searchId)
-                .setDateCreated(DateTime.now())
+                .setDateCreated(ZonedDateTime.now())
                 .setActive(active)
                 .setMinScore(0)
                 .setCanEdit(true)

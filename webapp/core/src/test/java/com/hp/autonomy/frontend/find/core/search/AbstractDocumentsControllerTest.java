@@ -14,12 +14,12 @@ import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
 import com.hp.autonomy.searchcomponents.core.search.SearchRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 
 import static org.junit.Assert.assertNotNull;
@@ -59,7 +59,7 @@ public abstract class AbstractDocumentsControllerTest<RQ extends QueryRequest<Q>
     @Test
     public void findSimilar() throws E {
         final String reference = "SomeReference";
-        documentsController.findSimilar(reference, 1, 30, "context", Collections.emptyList(), "", getSort(), null, DateTime.now(), true, 0);
+        documentsController.findSimilar(reference, 1, 30, "context", Collections.emptyList(), "", getSort(), null, ZonedDateTime.now(), true, 0);
         verify(documentsService).findSimilar(any());
     }
 

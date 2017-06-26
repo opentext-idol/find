@@ -69,7 +69,7 @@ class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, St
     public SavedQuery get(@PathVariable("id") final long id) {
         if(getValidIds().contains(id)) {
             return Optional.ofNullable(service.getDashboardSearch(id))
-                    .orElseThrow(() -> new IllegalArgumentException("Configured ID " + id + " does not match any known Saved Query"));
+                .orElseThrow(() -> new IllegalArgumentException("Configured ID " + id + " does not match any known Saved Query"));
         } else {
             throw new IllegalArgumentException("Saved Query ID " + id + " is not in the dashboards configuration file");
         }
@@ -77,13 +77,13 @@ class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, St
 
     private Collection<Long> getValidIds() {
         return dashboardConfigService.getConfig().getDashboards().stream()
-                .flatMap(dashboard -> dashboard.getWidgets().stream()
-                        .filter(widget -> widget instanceof DatasourceDependentWidget)
-                        .map(widget -> (DatasourceDependentWidget) widget)
-                        .filter(widget -> widget.getDatasource() instanceof SavedSearchDatasource)
-                        .map(widget -> (SavedSearchDatasource)widget.getDatasource())
-                        .filter(datasource -> datasource.getConfig().getType() == SavedSearchType.QUERY)
-                        .map(datasource -> datasource.getConfig().getId()))
-                .collect(Collectors.toSet());
+            .flatMap(dashboard -> dashboard.getWidgets().stream()
+                .filter(widget -> widget instanceof DatasourceDependentWidget)
+                .map(widget -> (DatasourceDependentWidget)widget)
+                .filter(widget -> widget.getDatasource() instanceof SavedSearchDatasource)
+                .map(widget -> (SavedSearchDatasource)widget.getDatasource())
+                .filter(datasource -> datasource.getConfig().getType() == SavedSearchType.QUERY)
+                .map(datasource -> datasource.getConfig().getId()))
+            .collect(Collectors.toSet());
     }
 }

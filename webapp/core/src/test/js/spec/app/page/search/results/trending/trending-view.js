@@ -11,13 +11,12 @@ define([
     'js-testing/backbone-mock-factory',
     'find/app/configuration',
     'find/app/model/parametric-collection',
-    'find/app/model/parametric-field-details-model',
-    'find/app/model/bucketed-parametric-collection',
+    'find/app/model/date-field-details-model',
     'find/app/page/search/results/trending/trending-view',
     'mock/page/results/trending-strategy',
     'mock/page/results/trending'
-], function(_, $, Backbone, i18n, backboneMockFactory, configuration, ParametricCollection, ParametricDetailsModel,
-            BucketedParametricCollection, TrendingView, TrendingStrategy, Trending) {
+], function(_, $, Backbone, i18n, backboneMockFactory, configuration, ParametricCollection,
+            ParametricDetailsModel, TrendingView, TrendingStrategy, Trending) {
     'use strict';
 
     const originalDebounce = _.debounce;
@@ -137,7 +136,6 @@ define([
             _.debounce = originalDebounce;
             ParametricCollection.reset();
             ParametricDetailsModel.reset();
-            BucketedParametricCollection.Model.reset();
             TrendingStrategy.reset();
             Trending.reset();
         });

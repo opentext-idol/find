@@ -12,13 +12,16 @@ import com.hp.autonomy.aci.content.fieldtext.RANGE;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 @Component
 public class FieldTextParserImpl implements FieldTextParser {
@@ -26,20 +29,34 @@ public class FieldTextParserImpl implements FieldTextParser {
     @Override
     public String toFieldText(final SavedSearch<?, ?> savedSearch) {
         final Set<FieldAndValue> parametricValues = savedSearch.getParametricValues();
-        final Set<ParametricRange> parametricRanges = savedSearch.getParametricRanges();
+        final Set<NumericRangeRestriction> numericRangeRestrictions = savedSearch.getNumericRangeRestrictions();
+        final Set<DateRangeRestriction> dateRangeRestrictions = savedSearch.getDateRangeRestrictions();
 
-        final FieldText valuesFieldText = valuesToFieldText(parametricValues);
-        final FieldText rangesFieldText = rangesToFieldText(parametricRanges);
-        if (valuesFieldText == null && rangesFieldText == null) {
-            return "";
-        }
-
-        return (valuesFieldText != null && rangesFieldText != null ? valuesFieldText.AND(rangesFieldText) : valuesFieldText != null ? valuesFieldText : rangesFieldText).toString();
+        return andFieldText(Arrays.asList(
+                valuesToFieldText(parametricValues),
+                rangesToFieldText(numericRangeRestrictions, this::numericRangeToFieldText),
+                rangesToFieldText(dateRangeRestrictions, this::dateRangeToFieldText)));
     }
 
-    private FieldText valuesToFieldText(final Collection<FieldAndValue> parametricValues) {
+    private String andFieldText(final Iterable<Optional<FieldText>> fieldTextItems) {
+        final Iterator<Optional<FieldText>> iterator = fieldTextItems.iterator();
+        Optional<FieldText> maybeFieldText = iterator.next();
+        while (iterator.hasNext()) {
+            final Optional<FieldText> nextMaybeFieldText = iterator.next();
+            maybeFieldText = maybeFieldText
+                    .map(fieldText -> Optional.of(nextMaybeFieldText
+                            .map(fieldText::AND)
+                            .orElse(fieldText)))
+                    .orElse(nextMaybeFieldText);
+        }
+        return maybeFieldText
+                .map(FieldText::toString)
+                .orElse("");
+    }
+
+    private Optional<FieldText> valuesToFieldText(final Collection<FieldAndValue> parametricValues) {
         if (CollectionUtils.isEmpty(parametricValues)) {
-            return null;
+            return Optional.empty();
         } else {
             final Map<String, List<String>> fieldToValues = new HashMap<>();
 
@@ -55,21 +72,22 @@ public class FieldTextParserImpl implements FieldTextParser {
                 fieldText = fieldText.AND(fieldAndValuesToFieldText(iterator.next()));
             }
 
-            return fieldText;
+            return Optional.of(fieldText);
         }
     }
 
-    private FieldText rangesToFieldText(final Collection<ParametricRange> parametricRanges) {
-        if (CollectionUtils.isEmpty(parametricRanges)) {
-            return null;
+    private <T> Optional<FieldText> rangesToFieldText(final Collection<T> rangeRestrictions,
+                                            final Function<T, FieldText> toFieldText) {
+        if (CollectionUtils.isEmpty(rangeRestrictions)) {
+            return Optional.empty();
         } else {
-            final Iterator<ParametricRange> iterator = parametricRanges.iterator();
-            FieldText fieldText = rangeToFieldText(iterator.next());
+            final Iterator<T> iterator = rangeRestrictions.iterator();
+            FieldText fieldText = toFieldText.apply(iterator.next());
             while (iterator.hasNext()) {
-                fieldText = fieldText.AND(rangeToFieldText(iterator.next()));
+                fieldText = fieldText.AND(toFieldText.apply(iterator.next()));
             }
 
-            return fieldText;
+            return Optional.of(fieldText);
         }
     }
 
@@ -77,19 +95,11 @@ public class FieldTextParserImpl implements FieldTextParser {
         return new MATCH(fieldAndValues.getKey(), fieldAndValues.getValue());
     }
 
-    private FieldText rangeToFieldText(final ParametricRange range) {
-        FieldText fieldText = null;
-        switch (range.getType()) {
-            case Date:
-                // RANGE.Type.EPOCH expects milliseconds
-                // Cast to long as they should be timestamps
-                fieldText = new RANGE(range.getField(), (long) range.getMin() * 1000, (long) range.getMax() * 1000, RANGE.Type.EPOCH);
-                break;
-            case Numeric:
-                fieldText = new NRANGE(range.getField(), range.getMin(), range.getMax());
-                break;
-        }
+    private FieldText numericRangeToFieldText(final NumericRangeRestriction range) {
+        return new NRANGE(range.getField(), range.getMin(), range.getMax());
+    }
 
-        return fieldText;
+    private FieldText dateRangeToFieldText(final DateRangeRestriction range) {
+        return new RANGE(range.getField(), range.getMin(), range.getMax());
     }
 }

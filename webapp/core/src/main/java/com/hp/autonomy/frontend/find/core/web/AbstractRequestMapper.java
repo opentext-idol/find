@@ -6,7 +6,7 @@
 package com.hp.autonomy.frontend.find.core.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
@@ -19,7 +19,7 @@ public abstract class AbstractRequestMapper<R extends QueryRequest<?>> implement
     protected AbstractRequestMapper(final QueryRestrictionsBuilder<?, ?, ?> queryRestrictionsBuilder,
                                     final QueryRequestBuilder<?, ?, ?> queryRequestBuilder) {
         objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JodaModule());
+        objectMapper.registerModule(new JavaTimeModule());
         addCustomMixins(objectMapper, queryRestrictionsBuilder, queryRequestBuilder);
     }
 

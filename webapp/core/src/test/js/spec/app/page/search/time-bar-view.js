@@ -1,9 +1,15 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'backbone',
     'jquery',
+    'backbone',
     'find/app/page/search/time-bar-view',
-    'find/app/model/bucketed-parametric-collection'
-], function(Backbone, $, TimeBarView, BucketedParametricCollection) {
+    'find/app/model/bucketed-numeric-collection'
+], function($, Backbone, TimeBarView, BucketedParametricCollection) {
+    'use strict';
 
     describe('TimeBarView', function() {
         beforeEach(function() {
@@ -45,5 +51,4 @@ define([
             expect(this.timeBarModel.get('graphedFieldName')).toBeNull();
         });
     });
-
 });

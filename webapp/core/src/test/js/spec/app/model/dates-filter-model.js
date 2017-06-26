@@ -1,15 +1,15 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'find/app/model/dates-filter-model',
-    'moment'
-], function(DatesFilterModel, moment) {
+    'moment',
+    'find/app/model/dates-filter-model'
+], function(moment, DatesFilterModel) {
     'use strict';
 
-    var NOW = 1455000000000;
+    const NOW = 1455000000000;
 
     describe('Dates Filter Model', function() {
         beforeEach(function() {
@@ -40,7 +40,7 @@ define([
             it('returns the custom min and max dates if the date range is custom', function() {
                 this.model.set('dateRange', DatesFilterModel.DateRange.CUSTOM);
 
-                var output = this.model.toQueryModelAttributes();
+                const output = this.model.toQueryModelAttributes();
                 expect(output.minDate).toBeNull();
                 expect(output.maxDate.unix() * 1000).toBe(NOW);
             });
@@ -48,7 +48,7 @@ define([
             it('returns the last week if the date range is last week', function() {
                 this.model.set('dateRange', DatesFilterModel.DateRange.WEEK);
 
-                var output = this.model.toQueryModelAttributes();
+                const output = this.model.toQueryModelAttributes();
                 expect(output.minDate.unix()).toBe(moment(NOW).subtract(1, 'week').unix());
                 expect(output.maxDate.unix() * 1000).toBe(NOW);
             });
@@ -56,7 +56,7 @@ define([
             it('returns the range since the last fetch if the date range is new', function() {
                 this.model.set('dateRange', DatesFilterModel.DateRange.NEW);
 
-                var output = this.model.toQueryModelAttributes();
+                const output = this.model.toQueryModelAttributes();
                 expect(output.minDate.unix()).toBe(moment(NOW).subtract(1, 'week').unix());
                 expect(output.maxDate).toBeNull();
             });

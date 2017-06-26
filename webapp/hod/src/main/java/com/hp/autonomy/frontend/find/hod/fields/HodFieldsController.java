@@ -51,7 +51,7 @@ class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorExc
             final ObjectFactory<HodParametricRequestBuilder> parametricRequestBuilderFactory,
             final FieldComparatorFactory fieldComparatorFactory,
             final TagNameFactory tagNameFactory,
-            final ConfigService<? extends FindConfig<?, ?>> configService,
+            @SuppressWarnings("SpringJavaAutowiringInspection") final ConfigService<? extends FindConfig<?, ?>> configService,
             final ObjectFactory<HodFieldsRequestBuilder> fieldsRequestBuilderFactory,
             final ObjectFactory<HodQueryRestrictionsBuilder> queryRestrictionsBuilderFactory) {
         super(fieldsService, parametricValuesService, parametricRequestBuilderFactory, fieldComparatorFactory, tagNameFactory, configService);
@@ -61,7 +61,7 @@ class HodFieldsController extends FieldsController<HodFieldsRequest, HodErrorExc
 
     @RequestMapping(value = GET_PARAMETRIC_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public List<FieldAndValueDetails> getParametricFields(@RequestParam(FIELD_TYPES_PARAM) final Collection<FieldTypeParam> fieldTypes,
+    public List<FieldAndValueDetails<?>> getParametricFields(@RequestParam(FIELD_TYPES_PARAM) final Collection<FieldTypeParam> fieldTypes,
                                                           @RequestParam(DATABASES_PARAM) final Collection<ResourceName> databases) throws HodErrorException {
         return getParametricFields(fieldsRequestBuilderFactory.getObject()
                 .fieldTypes(fieldTypes)

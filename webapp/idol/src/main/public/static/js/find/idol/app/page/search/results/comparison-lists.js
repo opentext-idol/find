@@ -1,21 +1,21 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
+    'underscore',
     'jquery',
+    'backbone',
     'find/idol/app/model/comparison/comparison-documents-collection',
     'find/idol/app/page/search/results/idol-results-view',
     'find/app/page/search/results/state-token-strategy',
     'text!find/idol/templates/comparison/comparison-list-container.html',
     'find/app/util/search-data-util',
     'i18n!find/nls/bundle',
-    'i18n!find/idol/nls/comparisons',
-    'underscore'
-], function(Backbone, $, ComparisonDocumentsCollection, ResultsView, stateTokenStrategy, comparisonListContainer,
-            searchDataUtil, i18n, comparisonsI18n, _) {
+    'i18n!find/idol/nls/comparisons'
+], function(_, $, Backbone, ComparisonDocumentsCollection, ResultsView, stateTokenStrategy,
+            comparisonListContainer, searchDataUtil, i18n, comparisonsI18n) {
     'use strict';
 
     return Backbone.View.extend({
@@ -73,13 +73,13 @@ define([
         },
 
         constructComparisonResultsView: function(queryText, stateTokens, searchModels) {
-            var collection = new ComparisonDocumentsCollection();
+            const collection = new ComparisonDocumentsCollection();
 
-            var indexes = _.chain(searchModels).reduce(function(indexes, model) {
+            const indexes = _.chain(searchModels).reduce(function(indexes, model) {
                 return indexes.concat(searchDataUtil.buildIndexes(model.get('indexes')));
             }, []).uniq().value();
 
-            var queryModel = new Backbone.Model(_.extend({
+            const queryModel = new Backbone.Model(_.extend({
                 queryText: queryText,
                 indexes: indexes
             }, stateTokens));

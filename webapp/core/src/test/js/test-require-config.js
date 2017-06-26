@@ -26,10 +26,11 @@ require.config({
             'find/app/util/confirm-view': 'mock/util/confirm-view',
             'find/app/page/search/document/location-tab': 'mock/page/search/document/location-tab',
             'find/app/util/topic-map-view': 'mock/util/topic-map-view',
-            'find/app/model/bucketed-parametric-collection': 'mock/model/bucketed-parametric-collection',
+            'find/app/model/bucketed-numeric-collection': 'mock/model/bucketed-numeric-collection',
+            'find/app/model/bucketed-date-collection': 'mock/model/bucketed-date-collection',
             'css/result-highlighting.css': 'mock/css/result-highlighting.css',
             'find/app/model/parametric-collection': 'mock/model/parametric-collection',
-            'find/app/model/parametric-field-details-model': 'mock/model/parametric-details-model'
+            'find/app/model/date-field-details-model': 'mock/model/parametric-details-model'
         },
         'find/app/page/search/related-concepts/related-concepts-view': {
             'find/app/model/documents-collection': 'mock/model/documents-collection'
