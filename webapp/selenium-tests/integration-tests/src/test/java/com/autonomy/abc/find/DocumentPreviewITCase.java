@@ -91,16 +91,12 @@ public class DocumentPreviewITCase extends FindTestBase {
 
             assertThat("Link does not contain 'undefined'", detailedPreviewPage.originalDocLink(), not(containsString("undefined")));
             assertThat("Page not blank", detailedPreviewPage.frameExists());
-            final String originalWindowHandle = getDriver().getWindowHandle();
-            final Set<String> oldWindows = getDriver().getWindowHandles();
 
-            detailedPreviewPage.openOriginalDoc();
-            switchToNewWindow(oldWindows);
+            switchToNewWindow(detailedPreviewPage::openOriginalDoc);
             final String decodedURL = decodeURL(getDriver().getCurrentUrl());
             verifyThat(decodedURL, containsString(reformatReference(reference)));
             getDriver().close();
-            getDriver().switchTo().window(originalWindowHandle);
-
+            getMainWindow().activate();
             detailedPreviewPage.goBackToSearch();
         }
     }
