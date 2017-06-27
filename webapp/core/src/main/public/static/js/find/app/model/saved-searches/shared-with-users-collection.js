@@ -43,7 +43,6 @@ define([
                     canEdit: response.canEdit,
                     userId: response.id.userId,
                     searchId: response.id.searchId,
-                    modifiedDate: response.modifiedDate,
                     username: response.user.username
                 }
             }

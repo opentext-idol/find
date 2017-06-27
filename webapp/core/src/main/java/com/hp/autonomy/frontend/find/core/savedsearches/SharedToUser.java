@@ -9,11 +9,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -27,6 +33,7 @@ import static com.hp.autonomy.frontend.find.core.savedsearches.SharedToUser.Tabl
 @Table(name = NAME)
 @Data
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @JsonDeserialize(builder = SharedToUser.SharedToUserBuilder.class)
 public class SharedToUser {
@@ -55,9 +62,11 @@ public class SharedToUser {
     @Column(name = Table.Column.CAN_EDIT)
     private Boolean canEdit;
 
+    @CreatedDate
     @Column(name = Table.Column.SHARED_DATE)
     private ZonedDateTime sharedDate;
 
+    @LastModifiedDate
     @Column(name = Table.Column.MODIFIED_DATE)
     private ZonedDateTime modifiedDate;
 
@@ -92,6 +101,12 @@ public class SharedToUser {
 
         public SharedToUser build() {
             return new SharedToUser(this);
+        }
+    }
+
+    public void merge(final SharedToUser other) {
+        if (other != null) {
+            sharedDate = other.sharedDate == null ? sharedDate : other.sharedDate;
         }
     }
 

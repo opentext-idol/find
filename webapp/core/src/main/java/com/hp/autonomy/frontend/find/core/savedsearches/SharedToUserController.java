@@ -21,16 +21,19 @@ class SharedToUserController {
     static final String SHARED_SEARCHES_PATH = "/api/public/search/shared-searches";
     static final String PERMISSIONS_PATH = "/permissions";
     static final String SEARCH_ID_PARAM = "searchId";
-    static final String USERNAME_PARAM = "username";
+    private static final String USERNAME_PARAM = "username";
 
+    private final SharedToUserService sharedToUserService;
     private final SharedToUserRepository sharedToUserRepository;
     private final UserEntityService userEntityService;
 
     @Autowired
     public SharedToUserController(
+            final SharedToUserService sharedToUserService,
             final SharedToUserRepository sharedToUserRepository,
             final UserEntityService userEntityService
     ) {
+        this.sharedToUserService = sharedToUserService;
         this.sharedToUserRepository = sharedToUserRepository;
         this.userEntityService = userEntityService;
     }
@@ -63,7 +66,7 @@ class SharedToUserController {
 
         sharedToUser.setId(new SharedToUserPK(searchId, userId));
 
-        return sharedToUserRepository.save(sharedToUser);
+        return sharedToUserService.save(sharedToUser);
     }
 
     @RequestMapping(value = PERMISSIONS_PATH + "/{searchId}/{userId}", method = RequestMethod.PUT)
@@ -75,7 +78,7 @@ class SharedToUserController {
     ) {
         sharedToUser.setId(new SharedToUserPK(searchId, userId));
 
-        return sharedToUserRepository.save(sharedToUser);
+        return sharedToUserService.save(sharedToUser);
     }
 
     @RequestMapping(value = PERMISSIONS_PATH + "/{searchId}/{userId}", method = RequestMethod.DELETE)

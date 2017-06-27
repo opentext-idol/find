@@ -34,6 +34,9 @@ public class SharedToUserControllerTest {
     private SharedToUserRepository sharedToUserRepository;
 
     @MockBean
+    private SharedToUserService sharedToUserService;
+
+    @MockBean
     private UserEntityService userEntityService;
 
     @Autowired
@@ -55,7 +58,7 @@ public class SharedToUserControllerTest {
         join.setUser(user);
 
         controller.save(join, 3);
-        verify(sharedToUserRepository).save(Matchers.<SharedToUser>any());
+        verify(sharedToUserService).save(Matchers.<SharedToUser>any());
     }
 
     @Test
