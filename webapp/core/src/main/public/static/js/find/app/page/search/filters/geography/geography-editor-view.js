@@ -72,7 +72,7 @@ define([
                 ? this.initialZoom
                 : INITIAL_ZOOM);
 
-            map.addControl(new leaflet.Control.Draw({
+            const drawControls = new leaflet.Control.Draw({
                 edit: {
                     featureGroup: drawnItems,
                     poly: {
@@ -92,7 +92,9 @@ define([
                         showArea: true
                     }
                 }
-            }));
+            });
+
+            map.addControl(drawControls);
 
             map.on(leaflet.Draw.Event.CREATED, function (event) {
                 drawnItems.addLayer(event.layer);
@@ -131,6 +133,10 @@ define([
                     return container;
                 },
                 clearLayers: function(evt){
+                    // If the user was partway deleting shapes, pressing the 'Delete all' button must clear the delete
+                    //   toolbar's internal list to prevent user-deleted shapes coming back when they press 'Cancel'.
+                    const deleted = drawControls._toolbars.edit._modes.remove.handler._deletedLayers;
+                    deleted && deleted.clearLayers();
                     drawnItems.clearLayers();
                     this.updateStatus();
                     leaflet.DomEvent.stopPropagation(evt);
