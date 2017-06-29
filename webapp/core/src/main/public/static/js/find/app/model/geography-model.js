@@ -14,20 +14,6 @@ define([
         this.markerColor = cfg.markerColor;
     }
 
-    function parenthesize(ORterms) {
-        // This is required since the fieldText parser's (version 1.5.0) toString doesn't automatically append brackets,
-        //   and they're required to avoid incorrect boolean processing e.g. with two OR-ed shapes and a ANDed fieldtext.
-        // Everything else in Find uses AND, so it's fine to leave AND terms without brackets.
-        if (ORterms) {
-            const origFn = ORterms.toString;
-            ORterms.toString = function(){
-                return '(' + origFn.apply(this, arguments) + ')';
-            }
-        }
-
-        return ORterms;
-    }
-
     const config = configuration();
 
     const locationFields = [];
@@ -126,7 +112,7 @@ define([
                     }
                 });
 
-                return fieldNodes.length ? parenthesize(_.reduce(fieldNodes, parser.OR)) : null;
+                return fieldNodes.length ? _.reduce(fieldNodes, parser.OR) : null;
             }, this));
 
             return allLocationFields.length ? _.reduce(allLocationFields, parser.AND) : null;
