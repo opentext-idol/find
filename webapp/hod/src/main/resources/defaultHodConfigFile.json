@@ -63,6 +63,10 @@
     },
     "uiCustomization": {
         "options": {
+            "enableDashboards": {
+                "user": false,
+                "bi": true
+            },
             "enableMetaFilter": {
                 "user": false,
                 "bi": true
@@ -72,6 +76,10 @@
                 "bi": false
             },
             "enableSavedSearch": {
+                "user": false,
+                "bi": true
+            },
+            "enableSideBar": {
                 "user": false,
                 "bi": true
             },
