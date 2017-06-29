@@ -106,17 +106,20 @@ define([
                     position: 'topleft'
                 },
                 onAdd: function (map) {
-                    const container = leaflet.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-touch');
+                    const container = this.clearAllBtn = leaflet.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-touch');
                     container.innerHTML = '<a class="" href="#" title="'+_.escape(i18n['search.geography.deleteAll'])+'"><i class="hp-icon hp-trash text-danger"></i></a>';
-                    $(container).on('click', function(evt){
-                        drawnItems.clearLayers();
-                        return false;
-                    }).on('mousemove', function(){
-                        return false;
-                    }).on('mousedown', function(){
-                        return false;
-                    })
+                    leaflet.DomEvent.on(container, 'click', this.clearLayers)
+                    leaflet.DomEvent.on(container, leaflet.Draggable.START.join(' '), leaflet.DomEvent.stopPropagation);
                     return container;
+                },
+                clearLayers: function(evt){
+                    drawnItems.clearLayers();
+                    leaflet.DomEvent.stopPropagation(evt);
+                    leaflet.DomEvent.preventDefault(evt);
+                },
+                onRemove: function(){
+                    leaflet.DomEvent.removeListener(this.clearAllBtn, 'click', this.clearLayers);
+                    leaflet.DomEvent.removeListener(this.clearAllBtn, leaflet.Draggable.START.join(' '), leaflet.DomEvent.stopPropagation);
                 }
             })))
 
