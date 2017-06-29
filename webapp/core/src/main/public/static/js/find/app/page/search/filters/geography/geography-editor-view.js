@@ -100,29 +100,6 @@ define([
                 drawnItems.addLayer(layer);
             });
 
-            // Add a delete-all button.
-            map.addControl(new (leaflet.Control.extend({
-                options: {
-                    position: 'topleft'
-                },
-                onAdd: function (map) {
-                    const container = this.clearAllBtn = leaflet.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-touch');
-                    container.innerHTML = '<a class="" href="#" title="'+_.escape(i18n['search.geography.deleteAll'])+'"><i class="hp-icon hp-trash text-danger"></i></a>';
-                    leaflet.DomEvent.on(container, 'click', this.clearLayers)
-                    leaflet.DomEvent.on(container, leaflet.Draggable.START.join(' '), leaflet.DomEvent.stopPropagation);
-                    return container;
-                },
-                clearLayers: function(evt){
-                    drawnItems.clearLayers();
-                    leaflet.DomEvent.stopPropagation(evt);
-                    leaflet.DomEvent.preventDefault(evt);
-                },
-                onRemove: function(){
-                    leaflet.DomEvent.removeListener(this.clearAllBtn, 'click', this.clearLayers);
-                    leaflet.DomEvent.removeListener(this.clearAllBtn, leaflet.Draggable.START.join(' '), leaflet.DomEvent.stopPropagation);
-                }
-            })))
-
             if (this.shapes) {
                 _.each(this.shapes, function(shape){
                     switch(shape.type) {
@@ -139,6 +116,38 @@ define([
                     }
                 }, this);
             }
+
+            // Add a delete-all button.
+            map.addControl(new (leaflet.Control.extend({
+                options: {
+                    position: 'topleft'
+                },
+                onAdd: function (map) {
+                    const container = this.clearAllBtn = leaflet.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-touch');
+                    container.innerHTML = '<a title="'+_.escape(i18n['search.geography.deleteAll'])+'"><i class="hp-icon hp-trash text-danger"></i></a>';
+                    leaflet.DomEvent.on(container, 'click', this.clearLayers, this)
+                    leaflet.DomEvent.on(container, leaflet.Draggable.START.join(' '), leaflet.DomEvent.stopPropagation);
+                    map.on(leaflet.Draw.Event.CREATED, this.updateStatus, this);
+                    map.on(leaflet.Draw.Event.DELETED, this.updateStatus, this);
+                    this.updateStatus();
+                    return container;
+                },
+                clearLayers: function(evt){
+                    drawnItems.clearLayers();
+                    this.updateStatus();
+                    leaflet.DomEvent.stopPropagation(evt);
+                    leaflet.DomEvent.preventDefault(evt);
+                },
+                updateStatus: function(){
+                    $('i', this.clearAllBtn).toggleClass('geography-btn-disabled', drawnItems.getLayers().length === 0);
+                },
+                onRemove: function(){
+                    leaflet.DomEvent.removeListener(this.clearAllBtn, 'click', this.clearLayers, this);
+                    leaflet.DomEvent.removeListener(this.clearAllBtn, leaflet.Draggable.START.join(' '), leaflet.DomEvent.stopPropagation);
+                    map.off(leaflet.Draw.Event.CREATED, this.updateStatus, this);
+                    map.off(leaflet.Draw.Event.DELETED, this.updateStatus, this);
+                }
+            })))
         },
 
         updateMapSize: function(){
