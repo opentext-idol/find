@@ -95,9 +95,7 @@ define([
             }));
 
             map.on(leaflet.Draw.Event.CREATED, function (event) {
-                var layer = event.layer;
-
-                drawnItems.addLayer(layer);
+                drawnItems.addLayer(event.layer);
             });
 
             if (this.shapes) {
@@ -171,7 +169,7 @@ define([
         },
 
         getShapes: function() {
-            var shapes = []
+            const shapes = []
             if (this.drawnItems) {
                 _.each(this.drawnItems.getLayers(), function(layer){
                     if (layer instanceof leaflet.Circle) {
