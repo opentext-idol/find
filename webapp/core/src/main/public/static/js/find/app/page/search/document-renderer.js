@@ -66,7 +66,7 @@ define([
         return {
             reference: model.get('reference'),
             title: model.get('title'),
-            date: date.format('LLLL'),
+            date: date && date.format('LLLL'),
             database: model.get('index'),
             promotionName: model.get('promotionName'),
             similarDocumentsUrl: vent.suggestUrlForDocument(model),
@@ -74,7 +74,7 @@ define([
             url: url ? urlManipulator.addSpecialUrlPrefix(model.get('contentType'), url) : null,
             icon: 'icomoon-file-' + getContentTypeClass(model),
             thumbnailSrc: thumbnailSrc,
-            age: date.fromNow(),
+            age: date && date.fromNow(),
             fields: model.get('fields').map(_.partial(_.pick, _, ['id', 'displayName', 'advanced', 'values']))
         };
     }
