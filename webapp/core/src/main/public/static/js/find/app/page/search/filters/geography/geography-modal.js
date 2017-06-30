@@ -28,7 +28,7 @@ define([
                 actionButtonText: i18n['app.apply'],
                 secondaryButtonText: i18n['app.cancel'],
                 contentView: this.geographyEditorView,
-                title: i18n['search.geography'],
+                title: i18n['search.geography.modal.title'],
                 actionButtonCallback: _.bind(function() {
                     const shapes = this.geographyEditorView.getShapes();
                     actionButtonCallback && actionButtonCallback(shapes);

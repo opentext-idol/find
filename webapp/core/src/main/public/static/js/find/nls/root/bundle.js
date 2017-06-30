@@ -190,6 +190,7 @@ define([
         'search.filters.empty': 'No filters matched',
         'search.filters.removeAll': 'remove all',
         'search.geography': 'Geography',
+        'search.geography.modal.title': 'Geographic Filters',
         'search.geography.none': 'No filters defined',
         'search.geography.filterCount': '{0} {1} defined {2}',
         'search.geography.filter': 'filter',
