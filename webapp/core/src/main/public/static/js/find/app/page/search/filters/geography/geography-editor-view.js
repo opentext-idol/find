@@ -107,6 +107,24 @@ define([
 
             map.addControl(drawControls);
 
+            {
+                // We want to auto-persist deletions, since the user can cancel the dialog to revert their changes.
+                const origGetActions = drawControls._toolbars.edit.getActions;
+                drawControls._toolbars.edit.getActions = function(handler){
+                    if (handler instanceof leaflet.EditToolbar.Delete || handler instanceof leaflet.EditToolbar.Negate) {
+                        return [];
+                    }
+                    return origGetActions.apply(this);
+                }
+
+                const origRemoveLayer = drawControls._toolbars.edit._modes.remove.handler._removeLayer;
+                drawControls._toolbars.edit._modes.remove.handler._removeLayer = function(layer){
+                    const ret = origRemoveLayer.apply(this, arguments);
+                    this._deletedLayers.clearLayers();
+                    return ret;
+                };
+            }
+
             map.on(leaflet.Draw.Event.CREATED, function (event) {
                 drawnItems.addLayer(event.layer);
             });
