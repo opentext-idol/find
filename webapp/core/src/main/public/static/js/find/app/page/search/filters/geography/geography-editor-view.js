@@ -108,24 +108,39 @@ define([
             map.addControl(drawControls);
 
             {
-                // Disable the save/cancel menu from Leaflet.draw, since the user can cancel the dialog to revert all
-                //   changes, and in practice people tend to forget to save their changes before switching tools,
-                //   causing the changes to be lost.
-                drawControls._toolbars.edit.getActions = function(handler){
-                    return [];
+                // Disable automatic revert, so people can hit manual revert if they like.
+                drawControls._toolbars.edit.disable = function () {
+                    if (!this.enabled()) {
+                        return;
+                    }
+
+                    // This line is commented out from the original.
+                    // this._activeMode.handler.revertLayers();
+
+                    leaflet.Toolbar.prototype.disable.call(this);
                 }
 
-                // Auto-persist deletions.
-                const origRemoveLayer = drawControls._toolbars.edit._modes.remove.handler._removeLayer;
-                drawControls._toolbars.edit._modes.remove.handler._removeLayer = function(layer){
-                    const ret = origRemoveLayer.apply(this, arguments);
-                    this._deletedLayers.clearLayers();
-                    return ret;
-                };
-
-                // Auto-persist edits (by disabling the revert).
-                drawControls._toolbars.edit._modes.edit.handler._revertLayer = function(layer){
-                    layer.edited = false;
+                // We need to make the 'cancel' button trigger an explicit revert now.
+                drawControls._toolbars.edit.getActions = function(handler){
+                    if (handler instanceof leaflet.EditToolbar.Negate) {
+                        return [];
+                    }
+                    return [{
+                        title: leaflet.drawLocal.edit.toolbar.actions.save.title,
+                        text: leaflet.drawLocal.edit.toolbar.actions.save.text,
+                        callback: this._save,
+                        context: this
+                    }, {
+                        title: leaflet.drawLocal.edit.toolbar.actions.cancel.title,
+                        text: leaflet.drawLocal.edit.toolbar.actions.cancel.text,
+                        context: this,
+                        callback: function () {
+                            if (this.enabled()) {
+                                this._activeMode.handler.revertLayers();
+                                this.disable();
+                            }
+                        }
+                    }];
                 }
             }
 
