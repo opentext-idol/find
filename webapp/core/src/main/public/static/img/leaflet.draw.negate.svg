@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 120 60" height="60" width="120">
+    <g id="enabled" fill="#464646">
+        <g id="negate">
+            <path d="M18 36v6h6v-6h-6zm4 4h-2v-2h2v2z"/>
+            <path d="M36 18v6h6v-6h-6zm4 4h-2v-2h2v2z"/>
+            <path d="M23.142 39.145l-2.285-2.29 16-15.998 2.285 2.285z"/>
+        </g>
+    </g>
+    <g id="disabled" fill="#bbb" transform="translate(60)">
+        <use xlink:href="#negate" id="negate-disabled"/>
+    </g>
+</svg>

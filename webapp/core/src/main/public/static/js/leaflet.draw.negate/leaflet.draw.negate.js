@@ -2,7 +2,8 @@ define([
     'leaflet', 'leaflet.draw'
 ], function(L, leafletDraw){
 
-    L.drawLocal.edit.toolbar.buttons.negate = 'Negate';
+    L.drawLocal.edit.toolbar.buttons.negate = 'Negate layers.';
+    L.drawLocal.edit.toolbar.buttons.negateDisabled = 'No layers to negate.';
     L.drawLocal.edit.handlers.negate = {
         tooltip: {
             text: 'Click on a shape to negate'
@@ -159,13 +160,13 @@ define([
     
     L.EditToolbar.prototype.options.negate = {};
 
-    const origFn = L.EditToolbar.prototype.getModeHandlers;
+    const origGetModeHandlers = L.EditToolbar.prototype.getModeHandlers;
     L.EditToolbar.prototype.getModeHandlers = function(map){
-        const handlers = origFn.apply(this, arguments);
+        const handlers = origGetModeHandlers.apply(this, arguments);
 
         const featureGroup = this.options.featureGroup;
 
-        handlers.push({
+        handlers.unshift({
             enabled: this.options.negate,
             handler: new L.EditToolbar.Negate(map, {
                 featureGroup: featureGroup
@@ -174,6 +175,32 @@ define([
         });
 
         return handlers;
+    }
+
+
+    const orig_checkDisabled = L.EditToolbar.prototype._checkDisabled;
+    L.EditToolbar.prototype._checkDisabled = function(){
+        const featureGroup = this.options.featureGroup,
+            hasLayers = featureGroup.getLayers().length !== 0;
+
+        if (this.options.negate) {
+            const button = this._modes[L.EditToolbar.Negate.TYPE].button;
+
+            if (hasLayers) {
+                L.DomUtil.removeClass(button, 'leaflet-disabled');
+            } else {
+                L.DomUtil.addClass(button, 'leaflet-disabled');
+            }
+
+            button.setAttribute(
+                'title',
+                hasLayers ?
+                    L.drawLocal.edit.toolbar.buttons.negate
+                    : L.drawLocal.edit.toolbar.buttons.negateDisabled
+            );
+        }
+
+        return orig_checkDisabled.apply(this, arguments);
     }
 
     return leafletDraw;
