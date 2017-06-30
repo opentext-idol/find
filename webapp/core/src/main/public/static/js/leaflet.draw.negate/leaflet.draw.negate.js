@@ -15,7 +15,7 @@ define([
 
     /**
      * @class L.EditToolbar.Negate
-     * @aka EditToolbar.Delete
+     * @aka EditToolbar.Negate
      */
     L.EditToolbar.Negate = L.Handler.extend({
         statics: {
@@ -59,7 +59,7 @@ define([
         },
 
         // @method disable(): void
-        // Disable the delete toolbar
+        // Disable the negation toolbar
         disable: function () {
             if (!this._enabled) {
                 return;
