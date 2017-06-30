@@ -85,7 +85,6 @@ define([
                 map.getContainer().focus();
 
                 this._negatableLayers.eachLayer(this._enableLayerNegate, this);
-                this._negatedLayers = new L.LayerGroup();
 
                 this._tooltip = new L.Draw.Tooltip(this._map);
                 this._tooltip.updateContent({ text: L.drawLocal.edit.handlers.negate.tooltip.text });
@@ -99,8 +98,7 @@ define([
         removeHooks: function () {
             if (this._map) {
                 this._negatableLayers.eachLayer(this._disableLayerNegate, this);
-                this._negatedLayers = null;
-
+                
                 this._tooltip.dispose();
                 this._tooltip = null;
 
@@ -111,40 +109,34 @@ define([
         // @method revertLayers(): void
         // Revert the negated layers back to their prior state.
         revertLayers: function () {
-            // Iterate of the negated layers and add them back into the featureGroup
-            this._negatedLayers.eachLayer(function (layer) {
-                this._negatableLayers.addLayer(layer);
-                layer.fire('revert-negated', { layer: layer });
-            }, this);
         },
 
         // @method save(): void
         // Save negated layers
         save: function () {
-            this._map.fire(L.Draw.Event.NEGATED, { layers: this._negatedLayers });
         },
 
         _enableLayerNegate: function (e) {
             var layer = e.layer || e.target || e;
 
-            layer.on('click', this._removeLayer, this);
+            layer.on('click', this._negateLayer, this);
         },
 
         _disableLayerNegate: function (e) {
             var layer = e.layer || e.target || e;
 
-            layer.off('click', this._removeLayer, this);
-
-            // Remove from the negated layers so we can't accidentally revert if the user presses cancel
-            this._negatedLayers.removeLayer(layer);
+            layer.off('click', this._negateLayer, this);
         },
 
-        _removeLayer: function (e) {
+        _negateLayer: function (e) {
+            L.DomEvent.stopPropagation(e);
+            L.DomEvent.preventDefault(e);
             var layer = e.layer || e.target || e;
 
-            this._negatableLayers.removeLayer(layer);
+            layer.negated = !layer.negated;
 
-            this._negatedLayers.addLayer(layer);
+            const color = this.options.shapeOptions[layer.negated ? 'negatedColor' : 'color'];
+            layer.setStyle({ color: color, fillColor: color })
 
             layer.fire('negated');
         },
@@ -158,7 +150,12 @@ define([
         }
     });
     
-    L.EditToolbar.prototype.options.negate = {};
+    L.EditToolbar.prototype.options.negate = {
+        shapeOptions: {
+            color: '#3388ff',
+            negatedColor: '#ff0000'
+        }
+    };
 
     const origGetModeHandlers = L.EditToolbar.prototype.getModeHandlers;
     L.EditToolbar.prototype.getModeHandlers = function(map){
@@ -169,7 +166,8 @@ define([
         handlers.unshift({
             enabled: this.options.negate,
             handler: new L.EditToolbar.Negate(map, {
-                featureGroup: featureGroup
+                featureGroup: featureGroup,
+                shapeOptions: this.options.negate.shapeOptions
             }),
             title: L.drawLocal.edit.toolbar.buttons.negate
         });
@@ -201,6 +199,15 @@ define([
         }
 
         return orig_checkDisabled.apply(this, arguments);
+    }
+
+    const origGetActions = L.EditToolbar.prototype.getActions;
+    L.EditToolbar.prototype.getActions = function(handler){
+        if (handler instanceof L.EditToolbar.Negate) {
+            return [];
+        }
+
+        return origGetActions.apply(this);
     }
 
     return leafletDraw;

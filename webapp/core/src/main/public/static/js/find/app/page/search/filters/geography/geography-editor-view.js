@@ -77,7 +77,14 @@ define([
                     featureGroup: drawnItems,
                     poly: {
                         allowIntersection: false
+                    },
+                    negate: {
+                        shapeOptions: {
+                            color: '#3388ff',
+                            negatedColor: '#ff0000'
+                        }
                     }
+
                 },
                 draw: {
                     marker: false,
