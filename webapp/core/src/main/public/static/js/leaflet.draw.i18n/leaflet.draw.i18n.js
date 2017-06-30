@@ -13,7 +13,7 @@ define([
                     break;
                 case 'string':
                     const translation = i18n[mappedPath];
-                    if (translation) {
+                    if (translation != null) {
                         obj[key] = translation;
                     }
                     break;
