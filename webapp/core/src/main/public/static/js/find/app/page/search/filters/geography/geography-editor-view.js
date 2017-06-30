@@ -108,21 +108,25 @@ define([
             map.addControl(drawControls);
 
             {
-                // We want to auto-persist deletions, since the user can cancel the dialog to revert their changes.
-                const origGetActions = drawControls._toolbars.edit.getActions;
+                // Disable the save/cancel menu from Leaflet.draw, since the user can cancel the dialog to revert all
+                //   changes, and in practice people tend to forget to save their changes before switching tools,
+                //   causing the changes to be lost.
                 drawControls._toolbars.edit.getActions = function(handler){
-                    if (handler instanceof leaflet.EditToolbar.Delete || handler instanceof leaflet.EditToolbar.Negate) {
-                        return [];
-                    }
-                    return origGetActions.apply(this);
+                    return [];
                 }
 
+                // Auto-persist deletions.
                 const origRemoveLayer = drawControls._toolbars.edit._modes.remove.handler._removeLayer;
                 drawControls._toolbars.edit._modes.remove.handler._removeLayer = function(layer){
                     const ret = origRemoveLayer.apply(this, arguments);
                     this._deletedLayers.clearLayers();
                     return ret;
                 };
+
+                // Auto-persist edits (by disabling the revert).
+                drawControls._toolbars.edit._modes.edit.handler._revertLayer = function(layer){
+                    layer.edited = false;
+                }
             }
 
             map.on(leaflet.Draw.Event.CREATED, function (event) {

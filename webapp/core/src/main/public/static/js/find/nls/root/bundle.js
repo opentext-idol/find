@@ -225,7 +225,7 @@ define([
         'search.geography.edit.toolbar.buttons.negate': 'Toggle inclusive/exclusive filters.',
         'search.geography.edit.toolbar.buttons.negateDisabled': 'No layers to toggle inclusive/exclusive filters.',
         'search.geography.edit.handlers.edit.tooltip.text': 'Drag handles, or marker to edit feature.',
-        'search.geography.edit.handlers.edit.tooltip.subtext': 'Click cancel to undo changes.',
+        'search.geography.edit.handlers.edit.tooltip.subtext': '',
         'search.geography.edit.handlers.remove.tooltip.text': 'Click on a feature to remove',
         'search.geography.edit.handlers.negate.tooltip.text': 'Click on a feature to toggle between inclusion and exclusion filters',
         'search.indexes': 'Indexes',
