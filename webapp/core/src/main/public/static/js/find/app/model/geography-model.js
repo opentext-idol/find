@@ -69,13 +69,7 @@ define([
         defaults: _.mapObject(locationFieldsById, function(){ return [] }),
 
         appendFieldText: function(existingFieldText){
-            const toAppend = this.toFieldText();
-
-            if (toAppend) {
-                return existingFieldText ? existingFieldText.AND(toAppend) : toAppend;
-            }
-
-            return existingFieldText;
+            return parser.AND(existingFieldText, this.toFieldText());
         },
 
         /**
@@ -114,18 +108,14 @@ define([
                     }
                 });
 
-                function coalesce(nodes) {
+                function coalesceOR(nodes) {
                     return nodes.length ? _.reduce(nodes, parser.OR) : null;
                 }
 
-                const fieldText = coalesce(fieldNodes);
-                const negateFieldText = coalesce(negatedFieldNodes);
+                const fieldText = coalesceOR(fieldNodes);
+                const negateFieldText = coalesceOR(negatedFieldNodes);
 
-                if (fieldText) {
-                    return negateFieldText ? fieldText.AND(negateFieldText.NOT()) : fieldText;
-                }
-
-                return negateFieldText ? negateFieldText.NOT() : null;
+                return parser.AND(fieldText, negateFieldText && negateFieldText.NOT());
             }, this));
 
             return allLocationFields.length ? _.reduce(allLocationFields, parser.AND) : null;
