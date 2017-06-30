@@ -72,6 +72,9 @@ define([
                 ? this.initialZoom
                 : INITIAL_ZOOM);
 
+            const color = '#01a982';
+            const negatedColor = '#ff0000';
+
             const drawControls = new leaflet.Control.Draw({
                 edit: {
                     featureGroup: drawnItems,
@@ -80,23 +83,24 @@ define([
                     },
                     negate: {
                         shapeOptions: {
-                            color: '#3388ff',
-                            negatedColor: '#ff0000'
+                            color: color,
+                            negatedColor: negatedColor
                         }
                     }
-
                 },
                 draw: {
                     marker: false,
                     polyline: false,
                     rectangle: false,
                     circle: {
-                        repeatMode: true
+                        repeatMode: true,
+                        shapeOptions: { color: color }
                     },
                     polygon: {
                         repeatMode: true,
                         allowIntersection: false,
-                        showArea: true
+                        showArea: true,
+                        shapeOptions: { color: color }
                     }
                 }
             });
@@ -109,17 +113,25 @@ define([
 
             if (this.shapes) {
                 _.each(this.shapes, function(shape){
+                    const colorOpts = { color: shape.NOT ? negatedColor : color };
+                    let layer;
+
                     switch(shape.type) {
                         case 'circle':
                             const center = shape.center;
-                            drawnItems.addLayer(leaflet.circle(leaflet.latLng(center[0], center[1]), shape.radius));
+                            layer = leaflet.circle(leaflet.latLng(center[0], center[1]), shape.radius, colorOpts)
                             break;
                         case 'polygon':
                             const pts = _.map(shape.points, function(pt){
                                 return leaflet.latLng(pt[0], pt[1]);
                             });
-                            drawnItems.addLayer(leaflet.polygon(pts));
+                            layer = leaflet.polygon(pts, colorOpts);
                             break;
+                    }
+
+                    if (layer) {
+                        layer.negated = shape.NOT;
+                        drawnItems.addLayer(layer);
                     }
                 }, this);
             }
@@ -185,14 +197,23 @@ define([
             const shapes = []
             if (this.drawnItems) {
                 _.each(this.drawnItems.getLayers(), function(layer){
+                    let shape;
+
                     if (layer instanceof leaflet.Circle) {
                         const latLng = layer.getLatLng();
-                        shapes.push({ type: 'circle', center: [latLng.lat, latLng.lng], radius: layer.getRadius() });
+                        shape = { type: 'circle', center: [latLng.lat, latLng.lng], radius: layer.getRadius() };
                     }
                     else if (layer instanceof leaflet.Polygon) {
-                        shapes.push({ type: 'polygon', points: _.map(layer.getLatLngs()[0], function(latLng){
+                        shape = { type: 'polygon', points: _.map(layer.getLatLngs()[0], function(latLng){
                             return [latLng.lat, latLng.lng]
-                        }) });
+                        }) };
+                    }
+
+                    if (shape) {
+                        if (layer.negated) {
+                            shape.NOT = true;
+                        }
+                        shapes.push(shape);
                     }
                 });
             }

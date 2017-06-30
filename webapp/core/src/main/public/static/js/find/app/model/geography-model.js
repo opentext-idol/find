@@ -90,14 +90,16 @@ define([
 
                 const latLonFields = locationField.fields;
                 const fieldNodes = [];
+                const negatedFieldNodes = [];
 
                 _.each(shapes, function (shape) {
+                    const toAdd = shape.NOT ? negatedFieldNodes : fieldNodes;
                     if (shape.type === 'circle') {
                         // IDOL uses kilometers, while leaflet uses meters.
                         const km = Math.round(shape.radius / 1000);
 
                         _.each(latLonFields, function(fieldPair) {
-                            fieldNodes.push(new parser.ExpressionNode('DISTSPHERICAL', fieldPair, [
+                            toAdd.push(new parser.ExpressionNode('DISTSPHERICAL', fieldPair, [
                                 shape.center[0],
                                 shape.center[1],
                                 km
@@ -107,12 +109,23 @@ define([
                     else if (shape.type === 'polygon') {
                         const points = _.flatten(shape.points);
                         _.each(latLonFields, function(fieldPair) {
-                            fieldNodes.push(new parser.ExpressionNode('POLYGON', fieldPair, points));
+                            toAdd.push(new parser.ExpressionNode('POLYGON', fieldPair, points));
                         });
                     }
                 });
 
-                return fieldNodes.length ? _.reduce(fieldNodes, parser.OR) : null;
+                function coalesce(nodes) {
+                    return nodes.length ? _.reduce(nodes, parser.OR) : null;
+                }
+
+                const fieldText = coalesce(fieldNodes);
+                const negateFieldText = coalesce(negatedFieldNodes);
+
+                if (fieldText) {
+                    return negateFieldText ? fieldText.AND(negateFieldText.NOT()) : fieldText;
+                }
+
+                return negateFieldText ? negateFieldText.NOT() : null;
             }, this));
 
             return allLocationFields.length ? _.reduce(allLocationFields, parser.AND) : null;
