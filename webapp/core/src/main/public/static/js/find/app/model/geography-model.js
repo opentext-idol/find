@@ -69,7 +69,13 @@ define([
         defaults: _.mapObject(locationFieldsById, function(){ return [] }),
 
         appendFieldText: function(existingFieldText){
-            return parser.AND(existingFieldText, this.toFieldText());
+            const toAppend = this.toFieldText();
+
+            if (toAppend) {
+                return existingFieldText ? existingFieldText.AND(toAppend) : toAppend;
+            }
+
+            return existingFieldText;
         },
 
         /**
