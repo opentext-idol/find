@@ -78,6 +78,9 @@ define([
             const drawControls = new leaflet.Control.Draw({
                 edit: {
                     featureGroup: drawnItems,
+                    edit: {
+                        selectedPathOptions: { maintainColor: true }
+                    },
                     poly: {
                         allowIntersection: false
                     },
