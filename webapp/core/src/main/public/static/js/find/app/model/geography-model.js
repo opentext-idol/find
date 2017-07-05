@@ -108,8 +108,22 @@ define([
                     }
                     else if (shape.type === 'polygon') {
                         const points = _.flatten(shape.points);
+                        // We need to account for wrap-around the international date line, since we're using cartesian
+                        //   polygon lookup but the world can wrap around.
+                        // Test with locations e.g. Fiji 17.7134° S, 178.0650° E and Samoa 14.2710° S, 170.1322° W,
+                        //   a polygon search drawn over both should find both, but without this, it'll only find one.
+                        // You have to test both cases (scrolling left, and scrolling right).
+                        const plus360 = points.slice(0);
+                        const minus360 = points.slice(0);
+                        for (let ii = 1, max = points.length; ii < max; ii += 2) {
+                            plus360[ii] += 360;
+                            minus360[ii] -= 360;
+                        }
+
                         _.each(latLonFields, function(fieldPair) {
                             toAdd.push(new parser.ExpressionNode('POLYGON', fieldPair, points));
+                            toAdd.push(new parser.ExpressionNode('POLYGON', fieldPair, plus360));
+                            toAdd.push(new parser.ExpressionNode('POLYGON', fieldPair, minus360));
                         });
                     }
                 });
