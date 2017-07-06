@@ -20,6 +20,11 @@ define([
     parseConfiguration(configuration());
 
     function parseConfiguration(config) {
+        locationFields.length = 0;
+        _.each(locationFieldsById, function(val, key){
+            delete locationFieldsById[key];
+        });
+
         if (config && config.map && config.map.enabled && config.map.locationFields && config.fieldsInfo) {
             const fieldsInfo = config.fieldsInfo;
 

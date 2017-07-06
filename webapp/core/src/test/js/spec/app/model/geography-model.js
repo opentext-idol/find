@@ -10,81 +10,109 @@ define([
 ], function(GeographyModel, configuration, parser) {
     'use strict';
 
-    function resetLocationFields() {
-        GeographyModel.LocationFields.length = 0;
-        _.each(GeographyModel.LocationFieldsById, function(val, key){
-            delete GeographyModel.LocationFieldsById[key];
-        });
-    }
+    const configWithTwoFields = {
+        map: {
+            "enabled" : true,
+            "locationFields" : [
+                {
+                    "id": "DefaultLocation",
+                    "displayName": "Default Location",
+                    "latitudeField": "latitude",
+                    "longitudeField": "longitude",
+                    "iconName": null,
+                    "iconColor": null,
+                    "markerColor": null
+                },
+                {
+                    "id": "OGLocation",
+                    "displayName": "OG Location",
+                    "latitudeField": "oglatitude",
+                    "longitudeField": "oglongitude",
+                    "iconName": "hp-pin",
+                    "iconColor": "blue",
+                    "markerColor": "orange"
+                }
+            ]
+        },
+        fieldsInfo: {
+            "latitude": {
+                "names": [
+                    "NODE_PLACE/LAT",
+                    "LAT"
+                ],
+                "type": "NUMBER",
+                "advanced": true
+            },
+            "longitude": {
+                "names": [
+                    "NODE_PLACE/LON",
+                    "LON"
+                ],
+                "type": "NUMBER",
+                "advanced": true
+            },
+            "oglatitude": {
+                "names": [
+                    "OG_LATITUDE"
+                ],
+                "type": "NUMBER",
+                "advanced": true
+            },
+            "oglongitude": {
+                "names": [
+                    "OG_LONGITUDE"
+                ],
+                "type": "NUMBER",
+                "advanced": true
+            }
+        }
+    };
 
     describe('Geography Model', function() {
         beforeEach(function() {
-            resetLocationFields();
-
-            GeographyModel.parseConfiguration({
-                map: {
-                    "enabled" : true,
-                    "locationFields" : [
-                        {
-                            "id": "DefaultLocation",
-                            "displayName": "Default Location",
-                            "latitudeField": "latitude",
-                            "longitudeField": "longitude",
-                            "iconName": null,
-                            "iconColor": null,
-                            "markerColor": null
-                        },
-                        {
-                            "id": "OGLocation",
-                            "displayName": "OG Location",
-                            "latitudeField": "oglatitude",
-                            "longitudeField": "oglongitude",
-                            "iconName": "hp-pin",
-                            "iconColor": "blue",
-                            "markerColor": "orange"
-                        }
-                    ]
-                },
-                fieldsInfo: {
-                    "latitude": {
-                        "names": [
-                            "NODE_PLACE/LAT",
-                            "LAT"
-                        ],
-                        "type": "NUMBER",
-                        "advanced": true
-                    },
-                    "longitude": {
-                        "names": [
-                            "NODE_PLACE/LON",
-                            "LON"
-                        ],
-                        "type": "NUMBER",
-                        "advanced": true
-                    },
-                    "oglatitude": {
-                        "names": [
-                            "OG_LATITUDE"
-                        ],
-                        "type": "NUMBER",
-                        "advanced": true
-                    },
-                    "oglongitude": {
-                        "names": [
-                            "OG_LONGITUDE"
-                        ],
-                        "type": "NUMBER",
-                        "advanced": true
-                    }
-                }
-            })
+            GeographyModel.parseConfiguration(configWithTwoFields)
 
             this.model = new GeographyModel({});
         });
 
         afterEach(function(){
-            resetLocationFields();
             GeographyModel.parseConfiguration(configuration());
+        })
+
+        describe('configuration parsing', function(){
+            const locationFields = GeographyModel.LocationFields;
+            const locationFieldsById = GeographyModel.LocationFieldsById;
+
+            it('should have parsed two location fields', function(){
+                expect(locationFields.length).toEqual(2);
+                expect(locationFieldsById['DefaultLocation']).toExist();
+                expect(locationFieldsById['OGLocation']).toExist();
+            })
+
+            it('should not parse any fields for an empty configuration', function(){
+                GeographyModel.parseConfiguration(null);
+                expect(locationFields.length).toEqual(0);
+                expect(_.keys(locationFieldsById).length).toEqual(0);
+            })
+
+            it('should not parse any fields if the map is disabled', function(){
+                const config = _.clone(configWithTwoFields);
+                config.map = _.clone(config.map);
+                config.map.enabled = false;
+
+                GeographyModel.parseConfiguration(config);
+                expect(locationFields.length).toEqual(0);
+                expect(_.keys(locationFieldsById).length).toEqual(0);
+            })
+
+            it('should not parse any fields if the map is not configured', function(){
+                const config = _.clone(configWithTwoFields);
+                delete config.map;
+
+                GeographyModel.parseConfiguration(config);
+                expect(locationFields.length).toEqual(0);
+                expect(_.keys(locationFieldsById).length).toEqual(0);
+            })
         })
 
         describe('toFieldText function', function() {
