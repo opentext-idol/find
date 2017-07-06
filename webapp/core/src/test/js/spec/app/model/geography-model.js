@@ -5,8 +5,9 @@
 
 define([
     'find/app/model/geography-model',
-    'find/app/configuration'
-], function(GeographyModel, configuration) {
+    'find/app/configuration',
+    'fieldtext/js/field-text-parser'
+], function(GeographyModel, configuration, parser) {
     'use strict';
 
     function resetLocationFields() {
@@ -217,6 +218,9 @@ define([
                 this.model.set('NoSuchField', [
                     {"type":"circle","center":[-7.013,-193.007],"radius":3511716.726}]
                 )
+
+                expect(this.model.toFieldText()).toBeNull();
+
                 this.model.set('OGLocation', [
                     {"type":"circle","center":[40.123,60.321],"radius":123456.1}]
                 )
@@ -227,5 +231,35 @@ define([
                 );
             });
         });
+
+        describe('appendFieldText function', function(){
+            const original = new parser.ExpressionNode('MATCH', ['field'], ['value']);
+
+            it('should return null if both the original fieldtext and the model are empty', function(){
+                expect(this.model.appendFieldText(null)).toBeNull();
+            })
+
+            it('should return original fieldtext if the model is empty', function(){
+                expect(this.model.appendFieldText(original).toString()).toEqual('MATCH{value}:field');
+            })
+
+            it('should return fieldtext if original fieldtext is empty', function(){
+                this.model.set('OGLocation', [
+                    {"type":"circle","center":[-7.013,-193.007],"radius":3511716.726}]
+                )
+
+                expect(this.model.appendFieldText(null).toString()).toEqual(
+                    'DISTSPHERICAL{-7.013,-193.007,3512}:OG_LATITUDE:OG_LONGITUDE');
+            })
+
+            it('should return AND of geographic restriction filters and original fieldtext', function(){
+                this.model.set('OGLocation', [
+                    {"type":"circle","center":[-7.013,-193.007],"radius":3511716.726}]
+                )
+
+                expect(this.model.appendFieldText(original).toString()).toEqual(
+                    'MATCH{value}:field AND DISTSPHERICAL{-7.013,-193.007,3512}:OG_LATITUDE:OG_LONGITUDE');
+            })
+        })
     });
 });
