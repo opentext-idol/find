@@ -159,6 +159,30 @@ define([
                 );
             });
 
+            it('allow mixing multiple inclusion and exclusion filters', function() {
+                this.model.set('OGLocation', [
+                    {"type":"circle","center":[-7.013,-193.007],"radius":3511716.726},
+                    {"type":"polygon","points":[[-12.76,-206.71],[-5.09,-170.51],[-27.21,-168.75],[-29.07,-200.12]]},
+                    {"type":"circle","center":[40.123,60.321],"radius":123456.1,"NOT":true},
+                    {"type":"polygon","points":[[50.76,-206.71],[11.12,-170.51],[17,-168.75]],"NOT":true}
+                ])
+
+                const fieldtext = this.model.toFieldText();
+                expect(fieldtext.toString()).toEqual(
+                    '(' +
+                    'DISTSPHERICAL{-7.013,-193.007,3512}:OG_LATITUDE:OG_LONGITUDE OR ' +
+                    'POLYGON{-12.76,-206.71,-5.09,-170.51,-27.21,-168.75,-29.07,-200.12}:OG_LATITUDE:OG_LONGITUDE OR ' +
+                    'POLYGON{-12.76,153.29,-5.09,189.49,-27.21,191.25,-29.07,159.88}:OG_LATITUDE:OG_LONGITUDE OR ' +
+                    'POLYGON{-12.76,-566.71,-5.09,-530.51,-27.21,-528.75,-29.07,-560.12}:OG_LATITUDE:OG_LONGITUDE' +
+                    ') AND NOT (' +
+                    'DISTSPHERICAL{40.123,60.321,123}:OG_LATITUDE:OG_LONGITUDE OR ' +
+                    'POLYGON{50.76,-206.71,11.12,-170.51,17,-168.75}:OG_LATITUDE:OG_LONGITUDE OR ' +
+                    'POLYGON{50.76,153.29,11.12,189.49,17,191.25}:OG_LATITUDE:OG_LONGITUDE OR ' +
+                    'POLYGON{50.76,-566.71,11.12,-530.51,17,-528.75}:OG_LATITUDE:OG_LONGITUDE' +
+                    ')'
+                );
+            });
+
             it('returns one DISTSPHERICAL per IDOL field for documents with multiple fields', function() {
                 this.model.set('DefaultLocation', [
                     {"type":"circle","center":[-7.013,-193.007],"radius":3511716.726}]
