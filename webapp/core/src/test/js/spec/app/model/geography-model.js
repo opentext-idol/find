@@ -300,6 +300,18 @@ define([
                     '(DISTSPHERICAL{-7.013,-193.007,3512}:OG_LATITUDE:OG_LONGITUDE OR ' +
                     'DISTSPHERICAL{40.123,60.321,123}:OG_LATITUDE:OG_LONGITUDE)');
             })
+
+            it('should correctly handle AND, OR and NOT when all three are in use', function(){
+                this.model.set('OGLocation', [
+                    {"type":"circle","center":[-7.013,-193.007],"radius":3511716.726},
+                    {"type":"circle","center":[40.123,60.321],"radius":123456.1,"NOT":true}
+                ])
+
+                expect(this.model.appendFieldText(original).toString()).toEqual(
+                    'MATCH{value}:field AND ' +
+                    'DISTSPHERICAL{-7.013,-193.007,3512}:OG_LATITUDE:OG_LONGITUDE AND ' +
+                    'NOT DISTSPHERICAL{40.123,60.321,123}:OG_LATITUDE:OG_LONGITUDE');
+            })
         })
     });
 });
