@@ -108,7 +108,7 @@ define([
                 expect(fieldtext.toString()).toEqual('DISTSPHERICAL{-7.013,-193.007,3512}:OG_LATITUDE:OG_LONGITUDE');
             });
 
-            it('returns POLYGON for a polygon', function() {
+            it('returns three POLYGON fieldtext (with ±360° offsets) for a polygon', function() {
                 this.model.set('OGLocation', [
                     {"type":"polygon","points":[[-12.76,-206.71],[-5.09,-170.51],[-27.21,-168.75],[-29.07,-200.12]]}
                 ])
@@ -141,6 +141,65 @@ define([
                     'POLYGON{-12.76,153.29,-5.09,189.49,-27.21,191.25,-29.07,159.88}:OG_LATITUDE:OG_LONGITUDE OR ' +
                     'POLYGON{-12.76,-566.71,-5.09,-530.51,-27.21,-528.75,-29.07,-560.12}:OG_LATITUDE:OG_LONGITUDE' +
                     ')'
+                );
+            });
+
+            it('returns DISTSPHERICAL OR POLYGON for a circle + polygon', function() {
+                this.model.set('OGLocation', [
+                    {"type":"circle","center":[-7.013,-193.007],"radius":3511716.726},
+                    {"type":"polygon","points":[[-12.76,-206.71],[-5.09,-170.51],[-27.21,-168.75],[-29.07,-200.12]]}
+                ])
+
+                const fieldtext = this.model.toFieldText();
+                expect(fieldtext.toString()).toEqual(
+                    'DISTSPHERICAL{-7.013,-193.007,3512}:OG_LATITUDE:OG_LONGITUDE OR ' +
+                    'POLYGON{-12.76,-206.71,-5.09,-170.51,-27.21,-168.75,-29.07,-200.12}:OG_LATITUDE:OG_LONGITUDE OR ' +
+                    'POLYGON{-12.76,153.29,-5.09,189.49,-27.21,191.25,-29.07,159.88}:OG_LATITUDE:OG_LONGITUDE OR ' +
+                    'POLYGON{-12.76,-566.71,-5.09,-530.51,-27.21,-528.75,-29.07,-560.12}:OG_LATITUDE:OG_LONGITUDE'
+                );
+            });
+
+            it('returns one DISTSPHERICAL per IDOL field for documents with multiple fields', function() {
+                this.model.set('DefaultLocation', [
+                    {"type":"circle","center":[-7.013,-193.007],"radius":3511716.726}]
+                )
+
+                const fieldtext = this.model.toFieldText();
+                expect(fieldtext.toString()).toEqual(
+                    'DISTSPHERICAL{-7.013,-193.007,3512}:NODE_PLACE/LAT:NODE_PLACE/LON OR ' +
+                    'DISTSPHERICAL{-7.013,-193.007,3512}:LAT:LON'
+                );
+            });
+
+            it('returns AND-ed geographic restrictions if multiple fields have geographic restrictions', function() {
+                this.model.set('DefaultLocation', [
+                    {"type":"circle","center":[-7.013,-193.007],"radius":3511716.726}]
+                )
+                this.model.set('OGLocation', [
+                    {"type":"circle","center":[40.123,60.321],"radius":123456.1}]
+                )
+
+                const fieldtext = this.model.toFieldText();
+                expect(fieldtext.toString()).toEqual(
+                    '(' +
+                    'DISTSPHERICAL{-7.013,-193.007,3512}:NODE_PLACE/LAT:NODE_PLACE/LON OR ' +
+                    'DISTSPHERICAL{-7.013,-193.007,3512}:LAT:LON' +
+                    ') AND ' +
+                    'DISTSPHERICAL{40.123,60.321,123}:OG_LATITUDE:OG_LONGITUDE'
+                );
+            });
+
+            it('ignores geographic restrictions from fields which are not configured (e.g. deleted fields in a saved search)', function() {
+                this.model.set('NoSuchField', [
+                    {"type":"circle","center":[-7.013,-193.007],"radius":3511716.726}]
+                )
+                this.model.set('OGLocation', [
+                    {"type":"circle","center":[40.123,60.321],"radius":123456.1}]
+                )
+
+                const fieldtext = this.model.toFieldText();
+                expect(fieldtext.toString()).toEqual(
+                    'DISTSPHERICAL{40.123,60.321,123}:OG_LATITUDE:OG_LONGITUDE'
                 );
             });
         });
