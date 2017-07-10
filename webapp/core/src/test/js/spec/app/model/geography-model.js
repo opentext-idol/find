@@ -124,6 +124,18 @@ define([
                 expect(locationFieldsById['DefaultLocation']).toBeUndefined();
                 expect(locationFieldsById['OGLocation']).toExist();
             })
+
+            it('should work with a single field', function(){
+                const config = _.clone(configWithTwoFields);
+                config.map = _.clone(config.map);
+                config.map.locationFields = _.clone(config.map.locationFields);
+                config.map.locationFields.length = 1;
+
+                GeographyModel.parseConfiguration(config);
+                expect(locationFields.length).toEqual(1);
+                expect(locationFieldsById['DefaultLocation']).toExist();
+                expect(locationFieldsById['OGLocation']).toBeUndefined();
+            })
         })
 
         describe('toFieldText function', function() {
