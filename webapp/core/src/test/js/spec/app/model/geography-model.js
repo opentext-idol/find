@@ -113,6 +113,17 @@ define([
                 expect(locationFields.length).toEqual(0);
                 expect(_.keys(locationFieldsById).length).toEqual(0);
             })
+
+            it('should ignore any fields where the IDOL field config is missing', function(){
+                const config = _.clone(configWithTwoFields);
+                config.fieldsInfo = _.clone(config.fieldsInfo);
+                delete config.fieldsInfo['latitude'];
+
+                GeographyModel.parseConfiguration(config);
+                expect(locationFields.length).toEqual(1);
+                expect(locationFieldsById['DefaultLocation']).toBeUndefined();
+                expect(locationFieldsById['OGLocation']).toExist();
+            })
         })
 
         describe('toFieldText function', function() {
