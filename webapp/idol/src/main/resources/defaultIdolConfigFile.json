@@ -290,6 +290,14 @@
       ],
       "type": "NUMBER",
       "advanced": true
+    },
+    "rating": {
+      "editable": ["*"],
+      "names": [
+        "RATING"
+      ],
+      "type": "NUMBER",
+      "advanced": true
     }
   }
 }

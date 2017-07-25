@@ -18,6 +18,7 @@ define([
     'find/app/page/search/results/add-links-to-summary',
     'find/app/configuration',
     'find/app/util/generate-error-support-message',
+    'find/app/page/search/template-helpers/stars-helper',
     'text!find/templates/app/page/search/results/search-result-container.html',
     'text!find/templates/app/page/search/results/results-view.html',
     'text!find/templates/app/page/loading-spinner.html',
@@ -25,7 +26,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(_, $, Backbone, addChangeListener, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
-            viewClient, events, addLinksToSummary, configuration, generateErrorHtml, resultTemplate, html,
+            viewClient, events, addLinksToSummary, configuration, generateErrorHtml, starsHelper, resultTemplate, html,
             loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
     'use strict';
 
@@ -84,6 +85,25 @@ define([
                 const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
                 const model = collection.get(cid);
                 vent.navigateToDetailRoute(model);
+            },
+            'click .star-rating': function(e){
+                const $el = $(e.currentTarget);
+                const rating = e.ctrlKey ? undefined : +$el.data('rating');
+                const reference = $el.data('reference');
+                const database = $el.data('database');
+                $el.siblings('.star-rating').remove();
+                $el.replaceWith(starsHelper(rating, reference, database) + '');
+                $.post('api/public/search/edit-document', {
+                    database: database,
+                    reference: reference,
+                    field: 'rating',
+                    value: rating
+                })
+                const isPromotion = $el.closest('.main-results-list').hasClass('promotions');
+                const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
+                const model = collection.findWhere({reference: reference});
+                model && model.set('rating', rating);
+                return false;
             }
         },
 

@@ -20,10 +20,11 @@ define([
     './template-helpers/has-field-value-helper',
     './template-helpers/get-field-value-helper',
     './template-helpers/with-field-helper',
-    './template-helpers/i18n-helper'
+    './template-helpers/i18n-helper',
+    './template-helpers/stars-helper'
 ], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator, defaultResultTemplate,
             defaultPreviewTemplate, defaultPromotionTemplate, equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper,
-            withFieldHelper, i18nHelper) {
+            withFieldHelper, i18nHelper, starsHelper) {
 
     function templatePredicate(triggers) {
         return function(model) {
@@ -69,6 +70,7 @@ define([
             date: date && date.format('LLLL'),
             database: model.get('index'),
             promotionName: model.get('promotionName'),
+            rating: model.get('rating'),
             similarDocumentsUrl: vent.suggestUrlForDocument(model),
             summary: addLinksToSummary(model.get('summary')),
             url: url ? urlManipulator.addSpecialUrlPrefix(model.get('contentType'), url) : null,
@@ -98,7 +100,8 @@ define([
             hasField: hasFieldHelper,
             hasFieldValue: hasFieldValueHelper,
             getFieldValue: getFieldValueHelper,
-            withField: withFieldHelper
+            withField: withFieldHelper,
+            stars: starsHelper
         });
 
         this.loadPromise = $.get('customization/result-templates')

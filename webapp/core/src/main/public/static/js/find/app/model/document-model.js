@@ -93,6 +93,7 @@ define([
             response.mmapUrl = getFieldValue(response.fieldMap.mmapUrl);
             response.sourceType = getFieldValue(response.fieldMap.sourceType);
             response.transcript = getFieldValue(response.fieldMap.transcript);
+            response.rating = getFieldValue(response.fieldMap.rating);
 
             response.url = getFieldValue(response.fieldMap.url) || (isURL(response.reference) ? response.reference : '');
             
