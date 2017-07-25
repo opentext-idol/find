@@ -11,6 +11,8 @@ public enum FindRole {
     BI,
     CONFIG;
 
+    public static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
+
     @Override
     public String toString() {
         return "ROLE_" + name();

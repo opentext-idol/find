@@ -11,6 +11,7 @@ import com.autonomy.aci.client.transport.impl.HttpClientFactory;
 import com.autonomy.nonaci.ServerDetails;
 import com.autonomy.nonaci.indexing.impl.DreReplaceCommand;
 import com.autonomy.nonaci.indexing.impl.IndexingServiceImpl;
+import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
 import com.hp.autonomy.searchcomponents.core.search.GetContentRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
@@ -32,6 +33,7 @@ import java.util.Set;
 import org.apache.http.client.HttpClient;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -68,6 +70,7 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
     }
 
     @RequestMapping(value = "edit-document", method = RequestMethod.POST)
+    @PreAuthorize(FindRole.HAS_ROLE_ADMIN)
     @ResponseBody
     public Boolean editDocument(
             @RequestParam("reference") final String reference,

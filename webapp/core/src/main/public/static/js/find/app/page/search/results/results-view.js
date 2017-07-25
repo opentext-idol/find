@@ -87,22 +87,28 @@ define([
                 vent.navigateToDetailRoute(model);
             },
             'click .star-rating': function(e){
-                const $el = $(e.currentTarget);
-                const rating = e.ctrlKey ? undefined : +$el.data('rating');
-                const reference = $el.data('reference');
-                const database = $el.data('database');
-                $el.siblings('.star-rating').remove();
-                $el.replaceWith(starsHelper(rating, reference, database) + '');
-                $.post('api/public/search/edit-document', {
-                    database: database,
-                    reference: reference,
-                    field: 'rating',
-                    value: rating
-                })
-                const isPromotion = $el.closest('.main-results-list').hasClass('promotions');
-                const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
-                const model = collection.findWhere({reference: reference});
-                model && model.set('rating', rating);
+                const config = configuration();
+
+                if (_.contains(config.roles, 'ROLE_ADMIN')) {
+                    // Only admins are allowed to set the stars, normal users don't have those permissions.
+                    const $el = $(e.currentTarget);
+                    const rating = e.ctrlKey ? undefined : +$el.data('rating');
+                    const reference = $el.data('reference');
+                    const database = $el.data('database');
+                    $el.siblings('.star-rating').remove();
+                    $el.replaceWith(starsHelper(rating, reference, database) + '');
+                    $.post('api/public/search/edit-document', {
+                        database: database,
+                        reference: reference,
+                        field: 'rating',
+                        value: rating
+                    })
+                    const isPromotion = $el.closest('.main-results-list').hasClass('promotions');
+                    const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
+                    const model = collection.findWhere({reference: reference});
+                    model && model.set('rating', rating);
+                }
+
                 return false;
             }
         },
