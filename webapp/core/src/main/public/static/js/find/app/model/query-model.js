@@ -6,8 +6,9 @@
 define([
     'underscore',
     'backbone',
-    'find/app/util/search-data-util'
-], function(_, Backbone, searchDataUtil) {
+    'find/app/util/search-data-util',
+    'find/app/util/append-rating-fieldtext'
+], function(_, Backbone, searchDataUtil, appendRatingFieldText) {
     'use strict';
 
     /**
@@ -100,7 +101,7 @@ define([
         getMergedFieldText: function() {
             const fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
             const geographyModel = this.queryState.geographyModel;
-            return (geographyModel ? geographyModel.appendFieldText(fieldTextNode) : fieldTextNode) || null;
+            return appendRatingFieldText((geographyModel ? geographyModel.appendFieldText(fieldTextNode) : fieldTextNode) || null);
         },
 
         getIsoDate: function(type) {

@@ -6,8 +6,9 @@
 define([
     'underscore',
     'parametric-refinement/to-field-text-node',
-    'find/app/model/geography-model'
-], function(_, toFieldTextNode, GeographyModel) {
+    'find/app/model/geography-model',
+    'find/app/util/append-rating-fieldtext'
+], function(_, toFieldTextNode, GeographyModel, appendRatingFieldText) {
     'use strict';
 
     function wrapInBrackets(concept) {
@@ -57,7 +58,7 @@ define([
 
     function buildMergedFieldText(parametricValues, geographyModel) {
         const fieldTextNode = toFieldTextNode(parametricValues);
-        const mergedFieldText = geographyModel.appendFieldText(fieldTextNode);
+        const mergedFieldText = appendRatingFieldText(geographyModel.appendFieldText(fieldTextNode));
         return mergedFieldText && mergedFieldText.toString();
     }
 
