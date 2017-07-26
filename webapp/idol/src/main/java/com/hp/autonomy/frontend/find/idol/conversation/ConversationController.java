@@ -57,6 +57,9 @@ class ConversationController {
     @Value("${conversation.server.url}")
     private String url;
 
+    @Autowired
+    private ConversationContexts contexts;
+
     public ConversationController(
         @Value("${conversation.server.allowSelfSigned}") final boolean allowSelfSigned
     ) {
@@ -84,8 +87,7 @@ class ConversationController {
     public Response converse(
             @RequestParam(value = "query", defaultValue = "") final String query,
             @RequestParam(value = "contextId", required = false) final String contextId,
-            @AuthenticationPrincipal User activeUser,
-            @Autowired final ConversationContexts contexts
+            @AuthenticationPrincipal User activeUser
     ) throws IOException, AciHttpException {
         final boolean illegalContextId = contextId != null && !contexts.contains(contextId);
         if (illegalContextId) {

@@ -7,10 +7,11 @@ package com.hp.autonomy.frontend.find.idol.conversation;
 
 import java.util.LinkedHashSet;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 @Component
-@Scope("session")
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ConversationContexts extends LinkedHashSet<String> {
 
 }
