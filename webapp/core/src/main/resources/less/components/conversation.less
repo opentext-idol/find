@@ -1,0 +1,55 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+.conversation-button {
+  position: fixed;
+  bottom: 4px;
+  right: 20px;
+  z-index: 5000;
+  opacity: 0.5;
+}
+
+.conversation-button:hover {
+  opacity: 1;
+}
+
+.conversation-dialog {
+  position: fixed;
+  bottom: 32px;
+  right: 20px;
+  z-index: 5000;
+  transition: transform linear 0.25s;
+  transform-origin: bottom right;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: inset 0 -6px 0 0 white, inset 0 6 0 0 white;
+  background-color: rgba(220,220,220,0.95)
+}
+
+.conversation-dialog-dismissed {
+  transform: rotateY(90deg) scale(0.01)
+}
+
+.conversation-dialog-title {
+  border-bottom: 1px solid darkgray;
+}
+
+.conversation-dialog-messages {
+  max-height: 80vh;
+  max-width: 33vw;
+  overflow-y: auto;
+}
+
+.conversation-dialog-controls {
+  min-height: 30px;
+}
+
+.conversation-dialog-server {
+  text-align: right;
+}
+
+.conversation-dialog-user {
+  text-align: left;
+}

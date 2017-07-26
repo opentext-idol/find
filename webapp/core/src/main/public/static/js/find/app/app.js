@@ -21,10 +21,11 @@ define([
     'find/app/util/logout',
     'find/app/vent',
     'find/app/router',
+    'find/app/util/conversation',
     'js-whatever/js/escape-regex',
     'text!find/templates/app/app.html'
 ], function(_, $, Backbone, Dropzone, testBrowser, WindowScrollModel, SavedQueryCollection, SharedSavedQueryCollection, parseUrl, ModelRegistry,
-            Navigation, configuration, metrics, Pages, logout, vent, router, escapeRegex, template) {
+            Navigation, configuration, metrics, Pages, logout, vent, router, conversation, escapeRegex, template) {
     'use strict';
 
     function removeTrailingSlash(string) {
@@ -136,6 +137,8 @@ define([
             this.navigation.render();
 
             this.$('.header').prepend(this.navigation.el);
+
+            conversation(document.body);
         },
 
         // Can be overridden
