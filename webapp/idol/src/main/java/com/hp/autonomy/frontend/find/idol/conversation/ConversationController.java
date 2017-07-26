@@ -1,0 +1,149 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+package com.hp.autonomy.frontend.find.idol.conversation;
+
+import com.autonomy.aci.client.transport.AciHttpException;
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContexts;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import static com.hp.autonomy.frontend.find.idol.conversation.ConversationController.CONVERSATION_PATH;
+
+@Slf4j
+@Controller
+@RequestMapping(CONVERSATION_PATH)
+class ConversationController {
+    static final String CONVERSATION_PATH = "/api/public/conversation";
+
+    private static final String USER_AGENT = "Find";
+    // Special response from conversation server if a session doesn't exist.
+    private static final String NO_SUCH_INSTANCE = "Error: no such instance";
+    private static final String errorResponse = "Sorry, there's a problem with the conversation server at the moment, please try again later.";
+
+    private final CloseableHttpClient httpClient;
+
+    @Value("${conversation.server.url}")
+    private String url;
+
+    public ConversationController(
+        @Value("${conversation.server.allowSelfSigned}") final boolean allowSelfSigned
+    ) {
+        try {
+            final SSLConnectionSocketFactory sslSocketFactory = allowSelfSigned
+                    ? new SSLConnectionSocketFactory(SSLContexts.custom().loadTrustMaterial(new TrustSelfSignedStrategy()).build(), NoopHostnameVerifier.INSTANCE)
+                    : SSLConnectionSocketFactory.getSocketFactory();
+
+            final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+                    .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                    .register("https", sslSocketFactory).build();
+
+            httpClient = HttpClientBuilder.create()
+                    .setConnectionManager(new PoolingHttpClientConnectionManager(registry))
+                    .disableRedirectHandling()
+                    .build();
+        }
+        catch(NoSuchAlgorithmException|KeyManagementException|KeyStoreException e) {
+            throw new Error("Unable to initialize conversation controller", e);
+        }
+    }
+
+    @RequestMapping(value = "chat", method = RequestMethod.POST)
+    @ResponseBody
+    public Response converse(
+            @RequestParam(value = "query", defaultValue = "") final String query,
+            @RequestParam(value = "contextId", required = false) final String contextId,
+            @AuthenticationPrincipal User activeUser,
+            @Autowired final ConversationContexts contexts
+    ) throws IOException, AciHttpException {
+        final boolean illegalContextId = contextId != null && !contexts.contains(contextId);
+        if (illegalContextId) {
+            // The user is trying to use a dialog ID which doesn't belong to their session.
+            log.warn("User {} tried to access a context ID {} which doesn't belong to them.", activeUser, contextId);
+        }
+
+        if (contextId == null || illegalContextId) {
+            final HttpPost post = new HttpPost(this.url + "nadia/engine/dialog");
+            post.setHeader("User-Agent", USER_AGENT);
+            final HttpResponse resp = httpClient.execute(post);
+            final String greeting = IOUtils.toString(resp.getEntity().getContent(), "UTF-8");
+
+            final int code = resp.getStatusLine().getStatusCode();
+            if(code == 429) {
+                // license limit for concurrent sessions has expired
+                return new Response("There are too many concurrent sessions; please try again later.");
+            }
+            else if (code != 201) {
+                return new Response(errorResponse);
+            }
+
+            final String newContextId = resp.getFirstHeader("Location").getValue().replaceFirst(".*/", "");
+            contexts.add(newContextId);
+
+            return new Response(greeting, newContextId);
+        }
+
+        final HttpPost post = new HttpPost(this.url + "nadia/engine/dialog/" + contextId);
+        post.setHeader("User-Agent", USER_AGENT);
+        post.setEntity(new UrlEncodedFormEntity(Collections.singletonList(new BasicNameValuePair("userUtterance", query)), "UTF-8"));
+        final HttpResponse resp = httpClient.execute(post);
+        final String answer = IOUtils.toString(resp.getEntity().getContent(), "utf-8");
+
+        if (resp.getStatusLine().getStatusCode() != 200) {
+            if(NO_SUCH_INSTANCE.equals(answer)) {
+                // the session has expired or the server was restarted; clear the context
+                contexts.remove(contextId);
+                return new Response(errorResponse, null);
+            }
+            return new Response(errorResponse, contextId);
+        }
+
+        return new Response(answer, contextId);
+    }
+
+    @Data
+    public static class Response {
+        private final String contextId;
+        private final String response;
+
+        public Response(final String response, final String contextId) {
+            this.contextId = contextId;
+            this.response = response;
+        }
+
+        public Response(final String response) {
+            this(response, null);
+        }
+    }
+}
