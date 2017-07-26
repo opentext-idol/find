@@ -9,6 +9,10 @@ define([
 ], function(Handlebars, _) {
 
     return function(rating, reference, database) {
+        if (rating === false) {
+            return new Handlebars.SafeString('');
+        }
+
         // The rating is undefined if unrated, or 1-5 stars if rated.
         let str = '';
         for (let ii = 1; ii <= 5; ++ii) {

@@ -83,6 +83,8 @@ define([
                 response.date = moment(response.date);
             }
 
+            const config = configuration();
+
             response.thumbnail = getFieldValue(response.fieldMap.thumbnail);
             response.thumbnailUrl = getFieldValue(response.fieldMap.thumbnailUrl);
             response.contentType = getFieldValue(response.fieldMap.contentType);            
@@ -93,12 +95,12 @@ define([
             response.mmapUrl = getFieldValue(response.fieldMap.mmapUrl);
             response.sourceType = getFieldValue(response.fieldMap.sourceType);
             response.transcript = getFieldValue(response.fieldMap.transcript);
-            response.rating = getFieldValue(response.fieldMap.rating);
+            response.rating = _.contains(config.roles, 'ROLE_ADMIN') && getFieldValue(response.fieldMap.rating);
 
             response.url = getFieldValue(response.fieldMap.url) || (isURL(response.reference) ? response.reference : '');
-            
-            if (configuration().map.enabled) {
-                response.locations = _.chain(configuration().map.locationFields)
+
+            if (config.map.enabled) {
+                response.locations = _.chain(config.map.locationFields)
                     .map(function (field) {
                         const latitudes = getFieldValues(response.fieldMap[field.latitudeField]);
                         const longitudes = getFieldValues(response.fieldMap[field.longitudeField]);
