@@ -33,6 +33,7 @@ import java.util.Set;
 import org.apache.http.client.HttpClient;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -76,7 +77,9 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
             @RequestParam("reference") final String reference,
             @RequestParam("database") final String database,
             @RequestParam("field") final String field,
-            @RequestParam(value = "value", defaultValue = "") final String value
+            @RequestParam(value = "value", defaultValue = "") final String value,
+            @Value("${content.index.host}") final String indexHost,
+            @Value("${content.index.port}") final int indexPort
     ) throws IOException, AciHttpException {
         // Check that the field is editable
         final Set<String> idolFields = documentFieldsService.getEditableIdolFields(field);
@@ -90,9 +93,6 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
         }
 
         // We need to DREREPLACE into the target engine
-        final String tgtHost = System.getProperty("content.index.host", "localhost");
-        final int tgtPort = Integer.valueOf(System.getProperty("content.index.port", "9001"));
-
         final StringBuilder idx = new StringBuilder("#DREDOCREF " + reference + '\n');
         final boolean isBlank = value.isEmpty();
 
@@ -114,7 +114,7 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
         command.setPostData(idx.toString());
         command.setDatabaseMatch(database);
         final HttpClient client = new HttpClientFactory().createInstance();
-        new IndexingServiceImpl(new ServerDetails(tgtHost, tgtPort), client).executeCommand(command);
+        new IndexingServiceImpl(new ServerDetails(indexHost, indexPort), client).executeCommand(command);
 
 
         return true;
