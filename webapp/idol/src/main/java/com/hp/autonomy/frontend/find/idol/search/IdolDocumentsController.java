@@ -79,7 +79,6 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
             @RequestParam(value = "value", defaultValue = "") final String value
     ) throws IOException, AciHttpException {
         // Check that the field is editable
-        // TODO: permissions check on user roles
         final Set<String> idolFields = documentFieldsService.getEditableIdolFields(field);
 
         if (idolFields.isEmpty()) {
