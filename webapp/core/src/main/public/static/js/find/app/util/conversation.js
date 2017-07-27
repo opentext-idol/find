@@ -27,13 +27,17 @@ define([
 
         let escaped = '';
 
-        const regex = /(<(img|chart|suggest|cite) )([^>]+>)/g;
+        const regex = /(<(img|chart|suggest|cite) )([^>]+>)|(<table[^>]*>.*?<\/table>)/g;
 
         let lastIndex = 0, match;
         while (match = regex.exec(value)) {
             escaped += _.escape(value.slice(lastIndex, match.index));
 
-            if (match[2] === 'suggest') {
+            if (match[4]) {
+                // Tables are placed verbatim, without any escaping.
+                escaped += match[4];
+            }
+            else if (match[2] === 'suggest') {
                 const $tmp = $(match[0]);
                 const opts = $tmp.attr('options').trim();
                 if (opts) {
