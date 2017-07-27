@@ -10,6 +10,7 @@ import com.autonomy.aci.client.transport.impl.HttpClientFactory;
 import com.autonomy.nonaci.ServerDetails;
 import com.autonomy.nonaci.indexing.impl.DreAddDataCommand;
 import com.autonomy.nonaci.indexing.impl.IndexingServiceImpl;
+import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -20,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -65,12 +67,18 @@ class ConversationController {
     @Value("${conversation.server.url}")
     private String url;
 
-    @Autowired
-    private ConversationContexts contexts;
+    private final ConversationContexts contexts;
+    private final DocumentFieldsService documentFieldsService;
 
+    @Autowired
     public ConversationController(
-        @Value("${conversation.server.allowSelfSigned}") final boolean allowSelfSigned
+            final ConversationContexts contexts,
+            final DocumentFieldsService documentFieldsService,
+            @Value("${conversation.server.allowSelfSigned}") final boolean allowSelfSigned
     ) {
+        this.contexts = contexts;
+        this.documentFieldsService = documentFieldsService;
+
         try {
             final SSLConnectionSocketFactory sslSocketFactory = allowSelfSigned
                     ? new SSLConnectionSocketFactory(SSLContexts.custom().loadTrustMaterial(new TrustSelfSignedStrategy()).build(), NoopHostnameVerifier.INSTANCE)
@@ -168,7 +176,8 @@ class ConversationController {
             @RequestParam(value = "rating", defaultValue = "-1") final int rating,
             Principal activeUser,
             @Value("${content.index.host}") final String indexHost,
-            @Value("${content.index.conversation.database}") final String database,
+            @Value("${conversation.index.database}") final String database,
+            @Value("${conversation.rating.field}") final String ratingField,
             @Value("${content.index.port}") final int indexPort
     ) {
         final List<Utterance> utterances = contexts.get(contextId);
@@ -183,6 +192,17 @@ class ConversationController {
         final StringBuilder idx = new StringBuilder("#DREREFERENCE " + ref + '\n');
 
         idx.append("#DRETITLE ").append("Conversation with ").append(activeUser.getName()).append('\n');
+
+        if (rating >= 0) {
+            // Check that the field is editable
+            final Set<String> idolFields = documentFieldsService.getEditableIdolFields(ratingField);
+
+            if (idolFields != null) {
+                for(final String field : idolFields) {
+                    idx.append("#DREFIELD ").append(field).append("=\"").append(rating).append("\"\n");
+                }
+            }
+        }
 
         idx.append("#DRECONTENT\n");
 

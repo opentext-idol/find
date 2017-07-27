@@ -298,6 +298,14 @@
       ],
       "type": "NUMBER",
       "advanced": true
+    },
+    "conversationRating": {
+      "editable": ["*"],
+      "names": [
+        "CONVERSATION_RATING"
+      ],
+      "type": "NUMBER",
+      "advanced": true
     }
   }
 }
