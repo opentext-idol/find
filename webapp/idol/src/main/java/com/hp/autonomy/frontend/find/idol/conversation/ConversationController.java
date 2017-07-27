@@ -25,6 +25,7 @@ import java.util.Set;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -108,7 +109,7 @@ class ConversationController {
         final boolean illegalContextId = contextId != null && !contexts.containsKey(contextId);
         if (illegalContextId) {
             // The user is trying to use a dialog ID which doesn't belong to their session.
-            log.warn("User {} tried to access a context ID {} which doesn't belong to them.", activeUser, contextId);
+            log.warn("User {} tried to access a context ID {} which doesn't belong to them.", activeUser.getName(), contextId);
         }
 
         if (contextId == null || illegalContextId) {
@@ -162,7 +163,7 @@ class ConversationController {
         final List<Utterance> utterances = contexts.get(contextId);
         if (utterances == null) {
             // The user is trying to use a dialog ID which doesn't belong to their session.
-            log.warn("User {} tried to access a context ID {} which doesn't belong to them.", activeUser, contextId);
+            log.warn("User {} tried to access a context ID {} which doesn't belong to them.", activeUser.getName(), contextId);
             throw new IllegalArgumentException("Invalid context supplied");
         }
 
@@ -178,6 +179,7 @@ class ConversationController {
             @Value("${content.index.host}") final String indexHost,
             @Value("${conversation.index.database}") final String database,
             @Value("${conversation.rating.field}") final String ratingField,
+            @Value("${conversation.user.contentField}") final String userField,
             @Value("${content.index.port}") final int indexPort
     ) {
         final List<Utterance> utterances = contexts.get(contextId);
@@ -192,6 +194,10 @@ class ConversationController {
         final StringBuilder idx = new StringBuilder("#DREREFERENCE " + ref + '\n');
 
         idx.append("#DRETITLE ").append("Conversation with ").append(activeUser.getName()).append('\n');
+
+        if (StringUtils.isNotBlank(userField)) {
+            idx.append("#DREFIELD ").append(userField).append("=\"").append(activeUser.getName()).append("\"\n");
+        }
 
         if (rating >= 0) {
             // Check that the field is editable

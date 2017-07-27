@@ -7,16 +7,22 @@ define([
     'jquery',
     'underscore',
     'find/app/util/chart',
+    'find/app/page/search/template-helpers/stars-helper',
     'text!find/templates/app/util/conversation-button.html',
     'text!find/templates/app/util/conversation-dialog.html'
-], function($, _, chart, buttonTemplate, dialogTemplate) {
+], function($, _, chart, starsHelper, buttonTemplate, dialogTemplate) {
 
-    const url = 'api/public/conversation/chat';
+    const prefix = 'api/public/conversation';
+    const chatUrl = prefix + '/chat';
+    const saveUrl = prefix + '/save';
 
     // Test for a key phrase to prompt the user if they want a phone call.
     const unrecognized = /I did not understand that/i;
     let unrecognizedCount = 0;
     const CALL_THRESHOLD = 2;
+
+    // Test for a terminal phrase to determine if the conversation has ended.
+    const terminalPhrase = /Thank you for using HPE Virtual Assistant. I look forward to talking again soon!/i;
 
     let contextId, lastQuery;
 
@@ -71,7 +77,7 @@ define([
                 lastQuery = query;
             }
 
-            $.post(url, {
+            $.post(chatUrl, {
                 query: query,
                 contextId: contextId
             }).done(function (resp) {
@@ -90,6 +96,11 @@ define([
                 }
                 else {
                     unrecognizedCount = 0;
+                }
+
+                if (terminalPhrase.exec(response)) {
+                    saveConversation(undefined);
+                    $newEl.append('<div class="btn btn-secondary btn-sm question-answer-save">Rate this conversation: ' + starsHelper(0, '', '') + '</div>');
                 }
 
                 scrollDown();
@@ -141,6 +152,21 @@ define([
             const $el = $(evt.currentTarget);
             $form[0].query.value = $el.data('query') || $el.text();
             $form.submit();
+        })
+
+        function saveConversation(rating) {
+            return $.post(saveUrl, {
+                contextId: contextId,
+                rating: rating
+            })
+        }
+
+        $dialog.on('click', '.question-answer-save .star-rating', function(evt){
+            const $el = $(evt.currentTarget);
+            const rating = $el.data('rating');
+            saveConversation(rating);
+            $el.siblings('.star-rating').remove();
+            $el.replaceWith(starsHelper(rating, '', '') + '');
         })
     };
 });
