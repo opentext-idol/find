@@ -31,7 +31,15 @@ define([
                 contextId = resp.contextId;
 
                 $messages.append('<div class="conversation-dialog-server">' + _.escape(response) + '</div>');
+                scrollDown();
             })
+        }
+
+        function scrollDown(){
+            const dom = $messages[0];
+            if (dom.scrollHeight) {
+                dom.scrollTop = dom.scrollHeight;
+            }
         }
 
         $button.on('click', function(){
@@ -49,6 +57,7 @@ define([
         $dialog.find('form').on('submit', function(){
             const query = this.query.value;
             $messages.append('<div class="conversation-dialog-user">'+_.escape(query)+'</div>');
+            scrollDown();
             sendQuery(query);
             this.query.value = '';
             this.query.focus();
