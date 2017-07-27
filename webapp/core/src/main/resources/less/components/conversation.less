@@ -22,10 +22,10 @@
   z-index: 5000;
   transition: transform ease-out 0.25s;
   transform-origin: bottom right;
-  border-radius: 5px;
-  padding: 10px;
+  border-radius: 8px;
   box-shadow: inset 0 -6px 0 0 white, inset 0 6 0 0 white;
-  background-color: rgba(220,220,220,0.95)
+  background-color: rgba(255,255,255,0.95);
+  min-width: 33vw;
 }
 
 .conversation-dialog-dismissed {
@@ -34,22 +34,59 @@
 
 .conversation-dialog-title {
   border-bottom: 1px solid darkgray;
+  padding: 8px;
+  background: #018F6E;
+  border-radius: 8px 8px 0 0;
+  color: white;
+  font-weight: bold;
 }
 
 .conversation-dialog-messages {
   max-height: 80vh;
   max-width: 33vw;
   overflow-y: auto;
+  padding: 5px 10px;
 }
 
 .conversation-dialog-controls {
   min-height: 30px;
+  box-shadow: 0 -1px 3px rgba(0,0,0,.1);
+  border-radius: 0 0 8px 8px;
+  padding: 8px;
 }
 
 .conversation-dialog-server {
-  text-align: right;
+  border-radius: 8px 8px 8px 2px;
+  padding: 8px 16px;
+  background: darkgray;
+  float: left;
+  clear: both;
+  margin: 2px 0;
+  color: white;
+  text-shadow: rgba(0, 0, 0, 0.4) 0 1px 1px;
 }
 
 .conversation-dialog-user {
-  text-align: left;
+  float: right;
+  border-radius: 8px 8px 2px 8px;
+  padding: 8px 16px;
+  clear: both;
+  background: #01A982;
+  margin: 2px 0;
+  color: white;
+  text-shadow: rgba(0, 0, 0, 0.4) 0 1px 1px;
+}
+
+.conversation-dialog-input {
+  width: ~"calc(100% - 80px)";
+  border: none;
+  background: transparent;
+  margin-left: 8px;
+  outline: none !important;
+
+  /* This is to disable the 'X' button that only appears in IE11 */
+  /*noinspection CssInvalidPseudoSelector*/
+  &::-ms-clear {
+    display: none;
+  }
 }
