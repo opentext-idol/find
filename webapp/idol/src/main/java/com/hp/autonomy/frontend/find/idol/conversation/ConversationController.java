@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -89,7 +91,7 @@ class ConversationController {
             @RequestParam(value = "contextId", required = false) final String contextId,
             @AuthenticationPrincipal User activeUser
     ) throws IOException, AciHttpException {
-        final boolean illegalContextId = contextId != null && !contexts.contains(contextId);
+        final boolean illegalContextId = contextId != null && !contexts.containsKey(contextId);
         if (illegalContextId) {
             // The user is trying to use a dialog ID which doesn't belong to their session.
             log.warn("User {} tried to access a context ID {} which doesn't belong to them.", activeUser, contextId);
@@ -111,10 +113,13 @@ class ConversationController {
             }
 
             final String newContextId = resp.getFirstHeader("Location").getValue().replaceFirst(".*/", "");
-            contexts.add(newContextId);
+            contexts.put(newContextId, new ArrayList<>(Collections.singletonList(new Utterance(false, greeting))));
 
             return new Response(greeting, newContextId);
         }
+
+        final List<Utterance> history = contexts.get(contextId);
+        history.add(new Utterance(true, query));
 
         final HttpPost post = new HttpPost(this.url + "nadia/engine/dialog/" + contextId);
         post.setHeader("User-Agent", USER_AGENT);
@@ -126,12 +131,33 @@ class ConversationController {
             if(NO_SUCH_INSTANCE.equals(answer)) {
                 // the session has expired or the server was restarted; clear the context
                 contexts.remove(contextId);
-                return new Response(errorResponse, null);
+                return respond(history, errorResponse, null);
             }
-            return new Response(errorResponse, contextId);
+            return respond(history, errorResponse, contextId);
         }
 
-        return new Response(answer, contextId);
+        return respond(history, answer, contextId);
+    }
+
+    @RequestMapping(value = "history", method = RequestMethod.POST)
+    @ResponseBody
+    public List<Utterance> history(
+            @RequestParam("contextId") final String contextId,
+            @AuthenticationPrincipal User activeUser
+    ) {
+        final List<Utterance> utterances = contexts.get(contextId);
+        if (utterances == null) {
+            // The user is trying to use a dialog ID which doesn't belong to their session.
+            log.warn("User {} tried to access a context ID {} which doesn't belong to them.", activeUser, contextId);
+            throw new IllegalArgumentException("Invalid context supplied");
+        }
+
+        return utterances;
+    }
+
+    private Response respond(final List<Utterance> history, final String message, final String contextId) {
+        history.add(new Utterance(false, message));
+        return new Response(message, contextId);
     }
 
     @Data

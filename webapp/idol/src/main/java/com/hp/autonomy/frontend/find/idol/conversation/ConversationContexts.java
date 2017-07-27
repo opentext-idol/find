@@ -5,13 +5,14 @@
 
 package com.hp.autonomy.frontend.find.idol.conversation;
 
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class ConversationContexts extends LinkedHashSet<String> {
+public class ConversationContexts extends LinkedHashMap<String, List<Utterance>> {
 
 }
