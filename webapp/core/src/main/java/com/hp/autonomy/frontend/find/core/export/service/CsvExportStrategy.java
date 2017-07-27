@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -100,7 +101,7 @@ public class CsvExportStrategy implements PlatformDataExportStrategy {
 
     @Override
     public void exportRecord(final OutputStream outputStream, final Iterable<String> values) throws IOException {
-        try (final CSVPrinter csvPrinter = new CSVPrinter(new OutputStreamWriter(outputStream), CSVFormat.EXCEL)) {
+        try (final CSVPrinter csvPrinter = new CSVPrinter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8), CSVFormat.EXCEL)) {
             csvPrinter.printRecord(values);
         }
     }
