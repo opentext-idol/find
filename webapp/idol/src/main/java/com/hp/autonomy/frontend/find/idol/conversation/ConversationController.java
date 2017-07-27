@@ -6,6 +6,10 @@
 package com.hp.autonomy.frontend.find.idol.conversation;
 
 import com.autonomy.aci.client.transport.AciHttpException;
+import com.autonomy.aci.client.transport.impl.HttpClientFactory;
+import com.autonomy.nonaci.ServerDetails;
+import com.autonomy.nonaci.indexing.impl.DreAddDataCommand;
+import com.autonomy.nonaci.indexing.impl.IndexingServiceImpl;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -13,11 +17,14 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.config.Registry;
@@ -34,8 +41,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -140,7 +145,7 @@ class ConversationController {
         return respond(history, answer, contextId);
     }
 
-    @RequestMapping(value = "history", method = RequestMethod.POST)
+    @RequestMapping(value = "history", method = RequestMethod.GET)
     @ResponseBody
     public List<Utterance> history(
             @RequestParam("contextId") final String contextId,
@@ -154,6 +159,52 @@ class ConversationController {
         }
 
         return utterances;
+    }
+
+    @RequestMapping(value = "save", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, ?> save(
+            @RequestParam("contextId") final String contextId,
+            @RequestParam(value = "rating", defaultValue = "-1") final int rating,
+            Principal activeUser,
+            @Value("${content.index.host}") final String indexHost,
+            @Value("${content.index.conversation.database}") final String database,
+            @Value("${content.index.port}") final int indexPort
+    ) {
+        final List<Utterance> utterances = contexts.get(contextId);
+        if (utterances == null) {
+            // The user is trying to use a dialog ID which doesn't belong to their session.
+            log.warn("User {} tried to access a context ID {} which doesn't belong to them.", activeUser, contextId);
+            throw new IllegalArgumentException("Invalid context supplied");
+        }
+
+        final String ref = contextId + "_" + activeUser.getName();
+
+        final StringBuilder idx = new StringBuilder("#DREREFERENCE " + ref + '\n');
+
+        idx.append("#DRETITLE ").append("Conversation with ").append(activeUser.getName()).append('\n');
+
+        idx.append("#DRECONTENT\n");
+
+        for(final Utterance utterance : utterances) {
+            idx.append(utterance.isUser() ? "U" : "S").append(": ").append(utterance.getText()).append("\n");
+        }
+
+        idx.append("\n#DREENDDOC\n");
+        idx.append("#DREENDDATANOOP\n\n");
+
+        final DreAddDataCommand command = new DreAddDataCommand();
+        command.setDreDbName(database);
+        command.setKillDuplicates("reference");
+        command.put("CreateDatabase", "true");
+        command.setPostData(idx.toString());
+        final HttpClient client = new HttpClientFactory().createInstance();
+        final int indexId = new IndexingServiceImpl(new ServerDetails(indexHost, indexPort), client).executeCommand(command);
+
+        final HashMap<String, Object> map = new HashMap<>();
+        map.put("reference", ref);
+        map.put("indexId", indexId);
+        return map;
     }
 
     private Response respond(final List<Utterance> history, final String message, final String contextId) {
