@@ -13,6 +13,11 @@ define([
 
     const url = 'api/public/conversation/chat';
 
+    // Test for a key phrase to prompt the user if they want a phone call.
+    const unrecognized = /I did not understand that/i;
+    let unrecognizedCount = 0;
+    const CALL_THRESHOLD = 2;
+
     let contextId, lastQuery;
 
     function escapeNonImages(value) {
@@ -32,7 +37,7 @@ define([
                 const $tmp = $(match[0]);
                 const opts = $tmp.attr('options').trim();
                 if (opts) {
-                    escaped += _.map(opts.split('|'), function(str){
+                    escaped += '<br>' + _.map(opts.split('|'), function(str){
                         return '<span class="btn btn-primary btn-sm question-answer-suggestion">'+ _.escape(str)+'</span>';
                     }).join(' ')
                 }
@@ -72,6 +77,16 @@ define([
                 const $newEl = $('<div class="conversation-dialog-server">' + escapeNonImages(response) + '</div>');
                 $newEl.appendTo($messages);
                 chart($newEl);
+
+                if (unrecognized.exec(response)) {
+                    unrecognizedCount++;
+                    if (unrecognizedCount >= CALL_THRESHOLD) {
+                        $newEl.append('<br><span class="btn btn-secondary btn-sm question-answer-suggestion" data-query="I would like a call from a relationship manager">Need to talk?</span>');
+                    }
+                }
+                else {
+                    unrecognizedCount = 0;
+                }
 
                 scrollDown();
             })
@@ -119,7 +134,8 @@ define([
         })
 
         $dialog.on('click', '.question-answer-suggestion', function(evt){
-            $form[0].query.value = $(evt.currentTarget).text();
+            const $el = $(evt.currentTarget);
+            $form[0].query.value = $el.data('query') || $el.text();
             $form.submit();
         })
     };
