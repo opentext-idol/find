@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -89,7 +90,7 @@ class ConversationController {
     public Response converse(
             @RequestParam(value = "query", defaultValue = "") final String query,
             @RequestParam(value = "contextId", required = false) final String contextId,
-            @AuthenticationPrincipal User activeUser
+            Principal activeUser
     ) throws IOException, AciHttpException {
         final boolean illegalContextId = contextId != null && !contexts.containsKey(contextId);
         if (illegalContextId) {
@@ -143,7 +144,7 @@ class ConversationController {
     @ResponseBody
     public List<Utterance> history(
             @RequestParam("contextId") final String contextId,
-            @AuthenticationPrincipal User activeUser
+            Principal activeUser
     ) {
         final List<Utterance> utterances = contexts.get(contextId);
         if (utterances == null) {
