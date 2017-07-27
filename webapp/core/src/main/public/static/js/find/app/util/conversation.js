@@ -6,9 +6,10 @@
 define([
     'jquery',
     'underscore',
+    'find/app/util/chart',
     'text!find/templates/app/util/conversation-button.html',
     'text!find/templates/app/util/conversation-dialog.html'
-], function($, _, buttonTemplate, dialogTemplate) {
+], function($, _, chart, buttonTemplate, dialogTemplate) {
 
     const url = 'api/public/conversation/chat';
 
@@ -68,7 +69,10 @@ define([
                 const response = resp.response;
                 contextId = resp.contextId;
 
-                $messages.append('<div class="conversation-dialog-server">' + escapeNonImages(response) + '</div>');
+                const $newEl = $('<div class="conversation-dialog-server">' + escapeNonImages(response) + '</div>');
+                $newEl.appendTo($messages);
+                chart($newEl);
+
                 scrollDown();
             })
         }

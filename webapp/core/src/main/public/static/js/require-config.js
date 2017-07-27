@@ -21,6 +21,10 @@ require.config({
         handlebars: '../bower_components/handlebars/handlebars',
         'html2canvas': '../bower_components/html2canvas/build/html2canvas',
         i18n: '../bower_components/requirejs-i18n/i18n',
+        'flot': '../bower_components/Flot/jquery.flot',
+        'flot.time': '../bower_components/Flot/jquery.flot.time',
+        'flot.stack': '../bower_components/Flot/jquery.flot.stack',
+        'flot.categories': '../bower_components/Flot/jquery.flot.categories',
         'fieldtext': '../bower_components/hp-autonomy-fieldtext-js/src',
         'parametric-refinement': '../bower_components/hp-autonomy-js-parametric-refinement/src',
         iCheck: '../bower_components/iCheck/icheck',
@@ -59,6 +63,12 @@ require.config({
         d3: {
             exports: 'd3'
         },
+        flot: ['jquery'],
+        'flot.time': ['flot'],
+        // You have to load the stack plugin after the categories plugin
+        // https://github.com/flot/flot/issues/1042
+        'flot.stack': ['flot', 'flot.categories'],
+        'flot.categories': ['flot'],
         html2canvas: {
             exports: 'html2canvas'
         },
