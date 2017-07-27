@@ -12,12 +12,13 @@ define([
     'find/app/util/confirm-view',
     'find/app/util/csv-field-selection-view',
     'find/app/util/sharing-options',
+    'js-whatever/js/modal',
     'text!find/templates/app/page/search/saved-searches/saved-search-control-view.html',
     'i18n!find/nls/bundle',
     'find/app/util/popover',
     'underscore'
 ], function(Backbone, $, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, CsvFieldSelectView, SharingOptions,
-            template, i18n, popover, _) {
+            Modal, template, i18n, popover, _) {
     'use strict';
 
     var SavedState = {
