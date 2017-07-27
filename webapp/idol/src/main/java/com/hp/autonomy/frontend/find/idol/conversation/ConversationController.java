@@ -207,7 +207,7 @@ class ConversationController {
         idx.append("#DRECONTENT\n");
 
         for(final Utterance utterance : utterances) {
-            idx.append(utterance.isUser() ? "U" : "S").append(": ").append(utterance.getText()).append("\n");
+            idx.append(utterance.isUser() ? "U" : "S").append(": ").append(utterance.getText().replaceAll("#DREENDDOC", "DREENDDOC")).append("\n");
         }
 
         idx.append("\n#DREENDDOC\n");
