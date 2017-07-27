@@ -12,7 +12,41 @@ define([
 
     const url = 'api/public/conversation/chat';
 
-    let contextId;
+    let contextId, lastQuery;
+
+    function escapeNonImages(value) {
+        if (!value) {
+            return value;
+        }
+
+        let escaped = '';
+
+        const regex = /(<(img|chart|suggest|cite) )([^>]+>)/g;
+
+        let lastIndex = 0, match;
+        while (match = regex.exec(value)) {
+            escaped += _.escape(value.slice(lastIndex, match.index));
+
+            if (match[2] === 'suggest') {
+                const $tmp = $(match[0]);
+                const opts = $tmp.attr('options').trim();
+                if (opts) {
+                    escaped += _.map(opts.split('|'), function(str){
+                        return '<span class="btn btn-primary btn-sm question-answer-suggestion">'+ _.escape(str)+'</span>';
+                    }).join(' ')
+                }
+            }
+            else if (match[2] !== 'cite') {
+                escaped += match[1] + ' class="safe-image" ' + match[3];
+            }
+
+            lastIndex = match.index + match[0].length
+        }
+
+        escaped += _.escape(value.slice(lastIndex));
+
+        return escaped.replace(/\n/g, '<br>').trim()
+    }
 
     return function(target) {
         const $button = $(buttonTemplate);
@@ -23,6 +57,10 @@ define([
         $button.appendTo(target)
 
         function sendQuery(query) {
+            if(contextId) {
+                lastQuery = query;
+            }
+
             $.post(url, {
                 query: query,
                 contextId: contextId
@@ -30,7 +68,7 @@ define([
                 const response = resp.response;
                 contextId = resp.contextId;
 
-                $messages.append('<div class="conversation-dialog-server">' + _.escape(response) + '</div>');
+                $messages.append('<div class="conversation-dialog-server">' + escapeNonImages(response) + '</div>');
                 scrollDown();
             })
         }
@@ -47,6 +85,7 @@ define([
 
             if (!$dialog.hasClass('conversation-dialog-dismissed') && !$messages.find('div').length) {
                 sendQuery('');
+                $input.focus();
             }
         })
 
@@ -54,14 +93,30 @@ define([
             $dialog.addClass('conversation-dialog-dismissed')
         })
 
-        $dialog.find('form').on('submit', function(){
+        const $form = $dialog.find('form');
+        const $input = $($form[0].query).on('keyup', function(evt){
+            if (evt.keyCode === 38) {
+                this.value = lastQuery;
+            }
+        })
+
+        $form.on('submit', function(){
             const query = this.query.value;
-            $messages.append('<div class="conversation-dialog-user">'+_.escape(query)+'</div>');
-            scrollDown();
-            sendQuery(query);
-            this.query.value = '';
-            this.query.focus();
+
+            if (query) {
+                $messages.append('<div class="conversation-dialog-user">'+_.escape(query)+'</div>');
+                scrollDown();
+                sendQuery(query);
+                this.query.value = '';
+                this.query.focus();
+            }
+
             return false;
+        })
+
+        $dialog.on('click', '.question-answer-suggestion', function(evt){
+            $form[0].query.value = $(evt.currentTarget).text();
+            $form.submit();
         })
     };
 });
