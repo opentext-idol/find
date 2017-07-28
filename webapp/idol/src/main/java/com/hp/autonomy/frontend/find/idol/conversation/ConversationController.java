@@ -22,6 +22,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -49,6 +57,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationController.CONVERSATION_PATH;
 
@@ -64,12 +75,18 @@ class ConversationController {
     private static final String errorResponse = "Sorry, there's a problem with the conversation server at the moment, please try again later.";
 
     private final CloseableHttpClient httpClient;
+    private final XPathExpression xAnswerText;
 
     @Value("${conversation.server.url}")
     private String url;
 
+    @Value("${questionanswer.server.url}")
+    private String qaURL;
+
     private final ConversationContexts contexts;
     private final DocumentFieldsService documentFieldsService;
+    private final DocumentBuilder documentBuilder;
+    private final XPathExpression xAnswer;
 
     @Autowired
     public ConversationController(
@@ -96,6 +113,18 @@ class ConversationController {
         }
         catch(NoSuchAlgorithmException|KeyManagementException|KeyStoreException e) {
             throw new Error("Unable to initialize conversation controller", e);
+        }
+
+        try {
+            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            documentBuilder = factory.newDocumentBuilder();
+            final XPathFactory xPathFactory = XPathFactory.newInstance();
+            final XPath xPath = xPathFactory.newXPath();
+            xAnswer = xPath.compile("/autnresponse/responsedata/answers/answer");
+            xAnswerText = xPath.compile("text");
+        }
+        catch(ParserConfigurationException|XPathExpressionException e) {
+            throw new Error("Unable to initialize conversation controller XML parser", e);
         }
     }
 
@@ -136,6 +165,11 @@ class ConversationController {
         final List<Utterance> history = contexts.get(contextId);
         history.add(new Utterance(true, query));
 
+        final Response qaResponse = askQAServer(history, contextId, qaURL, query);
+        if (qaResponse != null) {
+            return qaResponse;
+        }
+
         final HttpPost post = new HttpPost(this.url + "nadia/engine/dialog/" + contextId);
         post.setHeader("User-Agent", USER_AGENT);
         post.setEntity(new UrlEncodedFormEntity(Collections.singletonList(new BasicNameValuePair("userUtterance", query)), "UTF-8"));
@@ -152,6 +186,33 @@ class ConversationController {
         }
 
         return respond(history, answer, contextId);
+    }
+
+
+    private Response askQAServer(final List<Utterance> history, final String contextId, final String qaURL, final String query) throws IOException {
+        final HttpPost post = new HttpPost(this.qaURL + "a=ask");
+        post.setEntity(new UrlEncodedFormEntity(Collections.singletonList(new BasicNameValuePair("text", query)), "UTF-8"));
+        final HttpResponse resp = httpClient.execute(post);
+
+        if (resp.getStatusLine().getStatusCode() != 200) {
+            return respond(history, errorResponse, contextId);
+        }
+
+        try {
+            final Document parse = documentBuilder.parse(resp.getEntity().getContent());
+            // Only using the first answer for now.
+            final Node answer = (Node) xAnswer.evaluate(parse, XPathConstants.NODE);
+
+            if (answer != null) {
+                final String answerText = (String) xAnswerText.evaluate(answer, XPathConstants.STRING);
+                return respond(history, answerText, contextId);
+            }
+        }
+        catch(SAXException|XPathExpressionException e) {
+            log.warn("Exception while parsing question answer response", e);
+        }
+
+        return null;
     }
 
     @RequestMapping(value = "history", method = RequestMethod.GET)
