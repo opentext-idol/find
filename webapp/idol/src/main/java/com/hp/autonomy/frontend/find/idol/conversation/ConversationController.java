@@ -165,7 +165,7 @@ class ConversationController {
         final List<Utterance> history = contexts.get(contextId);
         history.add(new Utterance(true, query));
 
-        final Response qaResponse = askQAServer(history, contextId, qaURL, query);
+        final Response qaResponse = askQAServer(history, contextId, query);
         if (qaResponse != null) {
             return qaResponse;
         }
@@ -189,7 +189,11 @@ class ConversationController {
     }
 
 
-    private Response askQAServer(final List<Utterance> history, final String contextId, final String qaURL, final String query) throws IOException {
+    private Response askQAServer(final List<Utterance> history, final String contextId, final String query) throws IOException {
+        if (StringUtils.isEmpty(this.qaURL)) {
+            return null;
+        }
+
         final HttpPost post = new HttpPost(this.qaURL + "a=ask");
         post.setEntity(new UrlEncodedFormEntity(Collections.singletonList(new BasicNameValuePair("text", query)), "UTF-8"));
         final HttpResponse resp = httpClient.execute(post);
