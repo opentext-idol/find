@@ -150,6 +150,7 @@ class ConversationController {
             final int code = resp.getStatusLine().getStatusCode();
             if(code == 429) {
                 // license limit for concurrent sessions has expired
+                log.warn("Too many concurrent sessions for the conversation server license; new conversation blocked");
                 return new Response("There are too many concurrent sessions; please try again later.");
             }
             else if (code != 201) {
