@@ -12,6 +12,7 @@ import com.autonomy.nonaci.indexing.impl.DreAddDataCommand;
 import com.autonomy.nonaci.indexing.impl.IndexingServiceImpl;
 import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -32,6 +33,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
@@ -62,6 +64,9 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationController.CONVERSATION_PATH;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Slf4j
 @Controller
@@ -246,6 +251,11 @@ class ConversationController {
             @Value("${content.index.host}") final String indexHost,
             @Value("${conversation.index.database}") final String database,
             @Value("${conversation.index.database.create}") final boolean createDatabase,
+            @Value("${conversation.index.security.field}") final String securityField,
+            @Value("${conversation.index.security.type}") final String securityType,
+            @Value("${conversation.index.security.aclField}") final String aclField,
+            @Value("${conversation.index.security.userPrefix}") final String userPrefix,
+            @Value("${conversation.index.security.adminGroup}") final String adminGroup,
             @Value("${conversation.rating.field}") final String ratingField,
             @Value("${conversation.user.contentField}") final String userField,
             @Value("${content.index.port}") final int indexPort
@@ -263,7 +273,7 @@ class ConversationController {
 
         idx.append("#DRETITLE ").append("Conversation with ").append(activeUser.getName()).append('\n');
 
-        if (StringUtils.isNotBlank(userField)) {
+        if (isNotBlank(userField)) {
             idx.append("#DREFIELD ").append(userField).append("=\"").append(activeUser.getName()).append("\"\n");
         }
 
@@ -276,6 +286,17 @@ class ConversationController {
                     idx.append("#DREFIELD ").append(field).append("=\"").append(rating).append("\"\n");
                 }
             }
+        }
+
+        if(isNotBlank(securityField) && isNotBlank(securityType) && isNotBlank(aclField)) {
+            idx.append("#DREFIELD ").append(securityField).append("=\"").append(securityType).append("\"\n");
+            idx.append("#DREFIELD ").append(aclField).append("=\"")
+                .append("0:") // disable world read
+                .append("U:").append(obfuscate(defaultString(userPrefix) + activeUser.getName())).append(":")
+                .append("NU::")
+                .append("G:").append(obfuscate(defaultString(adminGroup))).append(":")
+                .append("NG:")
+                .append("\"\n");
         }
 
         idx.append("#DRECONTENT\n");
@@ -299,6 +320,23 @@ class ConversationController {
         map.put("reference", ref);
         map.put("indexId", indexId);
         return map;
+    }
+
+    private static String obfuscate(final String str) {
+        if(isBlank(str)) {
+            return str;
+        }
+        try {
+            final byte[] bytes = ("[" + str + "]").getBytes("UTF-8");
+
+            for (int ii = 0; ii < bytes.length; ++ii) {
+                bytes[ii] ^= 173;
+            }
+
+            return org.apache.commons.codec.binary.StringUtils.newStringUtf8(Base64.encodeBase64(bytes)).replaceFirst("=*$", "");
+        } catch (final UnsupportedEncodingException uee) {
+            throw new Error("should never happen", uee);
+        }
     }
 
     private Response respond(final List<Utterance> history, final String message, final String contextId) {
