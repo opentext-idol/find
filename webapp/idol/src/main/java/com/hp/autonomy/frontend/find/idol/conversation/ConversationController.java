@@ -199,6 +199,7 @@ class ConversationController {
         final HttpResponse resp = httpClient.execute(post);
 
         if (resp.getStatusLine().getStatusCode() != 200) {
+            log.warn("Answer server returned error code {}", resp.getStatusLine());
             return respond(history, errorResponse, contextId);
         }
 
