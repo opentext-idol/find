@@ -245,6 +245,7 @@ class ConversationController {
             Principal activeUser,
             @Value("${content.index.host}") final String indexHost,
             @Value("${conversation.index.database}") final String database,
+            @Value("${conversation.index.database.create}") final boolean createDatabase,
             @Value("${conversation.rating.field}") final String ratingField,
             @Value("${conversation.user.contentField}") final String userField,
             @Value("${content.index.port}") final int indexPort
@@ -289,7 +290,7 @@ class ConversationController {
         final DreAddDataCommand command = new DreAddDataCommand();
         command.setDreDbName(database);
         command.setKillDuplicates("reference");
-        command.put("CreateDatabase", "true");
+        command.put("CreateDatabase", Boolean.toString(createDatabase));
         command.setPostData(idx.toString());
         final HttpClient client = new HttpClientFactory().createInstance();
         final int indexId = new IndexingServiceImpl(new ServerDetails(indexHost, indexPort), client).executeCommand(command);
