@@ -159,7 +159,8 @@ define([
 
             this.$el.html(this.template({
                 i18n: i18n,
-                loadingHtml: _.template(loadingSpinnerHtml)
+                loadingHtml: _.template(loadingSpinnerHtml),
+                errorHtml: this.errorHtml
             }));
 
             this.$errorMessage = this.$('.trending-error');
@@ -167,7 +168,7 @@ define([
             this.$chart = this.$('.trending-chart');
             this.$trendingSlider = this.$('.trending-slider');
 
-            this.viewStateModel.set('dataState', dataState.LOADING);
+            this.onDataStateChange();
 
             this.trendingChart = new Trending({
                 el: this.$chart.get(0),
@@ -488,6 +489,11 @@ define([
         },
 
         onDataStateChange: function() {
+            if (!this.$errorMessage) {
+                // if we've not been rendered, there's no point doing any of the rendering code
+                return;
+            }
+
             const state = this.viewStateModel.get('dataState');
 
             this.$errorMessage.toggleClass('hide', state !== dataState.ERROR);
@@ -498,7 +504,7 @@ define([
             this.$trendingSlider.toggleClass('hide', state !== dataState.OK);
             this.$('.trending-range-selector').toggleClass('hide', state !== dataState.OK);
 
-            if(state !== dataState.ERROR && this.$errorMessage) {
+            if(state !== dataState.ERROR) {
                 this.$errorMessage.empty();
             }
         },
@@ -511,7 +517,8 @@ define([
                     errorUUID: xhr.responseJSON.uuid,
                     isUserError: xhr.responseJSON.isUserError
                 }, ERROR_MESSAGE_ARGUMENTS);
-                this.$errorMessage.html(generateErrorHtml(messageArguments));
+                this.errorHtml = generateErrorHtml(messageArguments);
+                this.$errorMessage && this.$errorMessage.html(this.errorHtml);
             }
         }
     });
