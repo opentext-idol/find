@@ -2,6 +2,11 @@
     <span class="pull-left m-t-xs text-muted m-r-sm content-type"><i class="{{icon}}"></i></span>
     <div class="results-contents">
         <h4 class="pull-left m-b-nil m-t-xs result-header">{{title}}</h4>
+        {{#if conversationRating}}
+            <span class="results-small-rating">
+                {{stars conversationRating reference database 'conversation-star-rating'}}
+            </span>
+        {{/if}}
         <span class="document-date pull-left m-t-xs m-l-xs">{{age}}</span>
         <span class="document-reference shorten">{{reference}}</span>
         {{#if thumbnailSrc}}
@@ -16,7 +21,7 @@
             </a>
         </span>
         <span class="results-small-rating">
-            {{stars rating reference database}}
+            {{stars rating reference database 'star-rating'}}
         </span>
     </div>
 </div>

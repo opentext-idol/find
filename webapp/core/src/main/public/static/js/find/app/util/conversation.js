@@ -15,6 +15,8 @@ define([
     const prefix = 'api/public/conversation';
     const chatUrl = prefix + '/chat';
     const saveUrl = prefix + '/save';
+    const starRatingClass = 'conversation-star-rating';
+    const starRatingSelector = '.' + starRatingClass;
 
     // Test for a key phrase to prompt the user if they want a phone call.
     const unrecognized = /I did not understand that/i;
@@ -100,7 +102,7 @@ define([
 
                 if (terminalPhrase.exec(response)) {
                     saveConversation(undefined);
-                    $newEl.append('<div class="btn btn-secondary btn-sm question-answer-save">Rate this conversation: ' + starsHelper(0, '', '') + '</div>');
+                    $newEl.append('<div class="btn btn-secondary btn-sm question-answer-save">Rate this conversation: ' + starsHelper(0, '', '', starRatingClass) + '</div>');
                 }
 
                 scrollDown();
@@ -161,12 +163,12 @@ define([
             })
         }
 
-        $dialog.on('click', '.question-answer-save .star-rating', function(evt){
+        $dialog.on('click', '.question-answer-save ' + starRatingSelector, function(evt){
             const $el = $(evt.currentTarget);
             const rating = $el.data('rating');
             saveConversation(rating);
-            $el.siblings('.star-rating').remove();
-            $el.replaceWith(starsHelper(rating, '', '') + '');
+            $el.siblings(starRatingSelector).remove();
+            $el.replaceWith(starsHelper(rating, '', '', starRatingClass) + '');
         })
     };
 });

@@ -71,6 +71,7 @@ define([
             database: model.get('index'),
             promotionName: model.get('promotionName'),
             rating: model.get('rating'),
+            conversationRating: model.get('conversationRating'),
             similarDocumentsUrl: vent.suggestUrlForDocument(model),
             summary: addLinksToSummary(model.get('summary')),
             url: url ? urlManipulator.addSpecialUrlPrefix(model.get('contentType'), url) : null,

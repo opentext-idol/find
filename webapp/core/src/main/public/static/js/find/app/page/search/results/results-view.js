@@ -96,7 +96,7 @@ define([
                     const reference = $el.data('reference');
                     const database = $el.data('database');
                     $el.siblings('.star-rating').remove();
-                    $el.replaceWith(starsHelper(rating, reference, database) + '');
+                    $el.replaceWith(starsHelper(rating, reference, database, 'star-rating') + '');
                     $.post('api/public/search/edit-document', {
                         database: database,
                         reference: reference,

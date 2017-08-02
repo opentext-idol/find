@@ -8,7 +8,7 @@ define([
     'underscore'
 ], function(Handlebars, _) {
 
-    return function(rating, reference, database) {
+    return function(rating, reference, database, cssClasses) {
         if (rating === false) {
             return new Handlebars.SafeString('');
         }
@@ -17,7 +17,7 @@ define([
         let str = '';
         for (let ii = 1; ii <= 5; ++ii) {
             // use filled stars for the rating, and empty stars as placeholders
-            str += '<span class="star-rating" data-rating="'+ii+'" data-reference="'+_.escape(reference)+'" data-database="'+_.escape(database)+'">' + (rating >= ii ? '★' : '☆') + '</span>';
+            str += '<span class="'+cssClasses+'" data-rating="'+ii+'" data-reference="'+_.escape(reference)+'" data-database="'+_.escape(database)+'">' + (rating >= ii ? '★' : '☆') + '</span>';
         }
         return new Handlebars.SafeString(str);
     };
