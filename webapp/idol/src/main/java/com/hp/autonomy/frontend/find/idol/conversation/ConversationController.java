@@ -10,7 +10,10 @@ import com.autonomy.aci.client.transport.impl.HttpClientFactory;
 import com.autonomy.nonaci.ServerDetails;
 import com.autonomy.nonaci.indexing.impl.DreAddDataCommand;
 import com.autonomy.nonaci.indexing.impl.IndexingServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
@@ -81,6 +84,7 @@ class ConversationController {
 
     private final CloseableHttpClient httpClient;
     private final XPathExpression xAnswerText;
+    private final String passageExtractorSystem;
 
     @Value("${conversation.server.url}")
     private String url;
@@ -88,19 +92,28 @@ class ConversationController {
     @Value("${questionanswer.server.url}")
     private String qaURL;
 
+    @Autowired
+    private ObjectMapper jacksonObjectMapper;
+
     private final ConversationContexts contexts;
     private final DocumentFieldsService documentFieldsService;
     private final DocumentBuilder documentBuilder;
     private final XPathExpression xAnswer;
 
+    private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
+
     @Autowired
     public ConversationController(
             final ConversationContexts contexts,
             final DocumentFieldsService documentFieldsService,
-            @Value("${conversation.server.allowSelfSigned}") final boolean allowSelfSigned
+            final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
+            @Value("${conversation.server.allowSelfSigned}") final boolean allowSelfSigned,
+            @Value("${questionanswer.system.name.passageExtractor}") final String passageExtractorSystem
     ) {
         this.contexts = contexts;
         this.documentFieldsService = documentFieldsService;
+        this.authenticationInformationRetriever = authenticationInformationRetriever;
+        this.passageExtractorSystem = passageExtractorSystem;
 
         try {
             final SSLConnectionSocketFactory sslSocketFactory = allowSelfSigned
@@ -201,7 +214,23 @@ class ConversationController {
         }
 
         final HttpPost post = new HttpPost(this.qaURL + "a=ask");
-        post.setEntity(new UrlEncodedFormEntity(Collections.singletonList(new BasicNameValuePair("text", query)), "UTF-8"));
+
+        final ArrayList<BasicNameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair("text", query));
+
+        if (isNotBlank(passageExtractorSystem)) {
+            final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
+            final String securityInfo = principal.getSecurityInfo();
+
+            if (isNotBlank(securityInfo)) {
+                final HashMap<String, String> props = new HashMap<>();
+                props.put("system_name", passageExtractorSystem);
+                props.put("security_info", securityInfo);
+                params.add(new BasicNameValuePair("customizationData", jacksonObjectMapper.writeValueAsString(Collections.singletonList(props))));
+            }
+        }
+
+        post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
         final HttpResponse resp = httpClient.execute(post);
 
         if (resp.getStatusLine().getStatusCode() != 200) {
