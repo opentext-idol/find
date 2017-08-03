@@ -32,7 +32,9 @@ define([
             const parametricCollection = new (backboneMockFactory.getCollection())();
             this.view = new FilterView({
                 IndexesView: MockIndexesView,
-                queryState: {},
+                queryState: {
+                    geographyModel: new Backbone.Model({})
+                },
                 parametricFieldsCollection: parametricFieldsCollection,
                 parametricCollection: parametricCollection
             });

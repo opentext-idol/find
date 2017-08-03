@@ -32,6 +32,9 @@ require.config({
         'login-page': '../bower_components/hp-autonomy-login-page/src',
         leaflet: '../bower_components/leaflet/dist/leaflet-src',
         'Leaflet.awesome-markers': '../bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers',
+        'leaflet.draw': '../bower_components/leaflet-draw/dist/leaflet.draw-src',
+        'leaflet.draw.i18n': 'leaflet.draw.i18n/leaflet.draw.i18n',
+        'leaflet.draw.negate': 'leaflet.draw.negate/leaflet.draw.negate',
         'leaflet.markercluster': '../bower_components/leaflet.markercluster/dist/leaflet.markercluster-src',
         'leaflet.markercluster.layersupport': '../bower_components/leaflet.markercluster.layersupport/src/layersupport',
         'leaflet.notransform': 'leaflet.notransform/leaflet.notransform',
@@ -64,6 +67,7 @@ require.config({
             exports: '_'
         },
         'Leaflet.awesome-markers': ['leaflet'],
+        'leaflet.draw': ['leaflet'],
         'leaflet.markercluster': ['leaflet'],
         'leaflet.markercluster.layersupport': ['leaflet.markercluster'],
         'leaflet': ['leaflet.notransform']

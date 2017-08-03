@@ -9,12 +9,13 @@ define([
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/dates-filter-model',
+    'find/app/model/geography-model',
     'find/app/model/min-score-model',
     'find/app/util/confirm-view',
     'find/app/util/database-name-resolver',
     'moment',
     'i18n!find/nls/bundle'
-], function($, Backbone, SavedSearchControlView, SavedSearchModel, DatesFilterModel, MinScoreModel,
+], function($, Backbone, SavedSearchControlView, SavedSearchModel, DatesFilterModel, GeographyModel, MinScoreModel,
             MockConfirmView, databaseNameResolver, moment, i18n) {
     'use strict';
 
@@ -172,9 +173,12 @@ define([
                 minScore: 20
             });
 
+            const geographyModel = new GeographyModel({});
+
             this.queryState = {
                 conceptGroups: conceptGroups,
                 datesFilterModel: datesFilterModel,
+                geographyModel: geographyModel,
                 selectedIndexes: selectedIndexes,
                 selectedParametricValues: selectedParametricValues,
                 minScoreModel: minScoreModel

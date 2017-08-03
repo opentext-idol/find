@@ -6,12 +6,72 @@
 define([
     'backbone',
     'underscore',
+    'find/app/configuration',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/dates-filter-model',
+    'find/app/model/geography-model',
     'find/app/model/min-score-model',
     'find/app/util/database-name-resolver',
     'moment'
-], function(Backbone, _, SavedSearchModel, DatesFilterModel, MinScoreModel, databaseNameResolver, moment) {
+], function(Backbone, _, configuration, SavedSearchModel, DatesFilterModel, GeographyModel, MinScoreModel, databaseNameResolver, moment) {
+
+    const configWithTwoFields = {
+        map: {
+            "enabled" : true,
+            "locationFields" : [
+                {
+                    "id": "DefaultLocation",
+                    "displayName": "Default Location",
+                    "latitudeField": "latitude",
+                    "longitudeField": "longitude",
+                    "iconName": null,
+                    "iconColor": null,
+                    "markerColor": null
+                },
+                {
+                    "id": "OGLocation",
+                    "displayName": "OG Location",
+                    "latitudeField": "oglatitude",
+                    "longitudeField": "oglongitude",
+                    "iconName": "hp-pin",
+                    "iconColor": "blue",
+                    "markerColor": "orange"
+                }
+            ]
+        },
+        fieldsInfo: {
+            "latitude": {
+                "names": [
+                    "NODE_PLACE/LAT",
+                    "LAT"
+                ],
+                "type": "NUMBER",
+                "advanced": true
+            },
+            "longitude": {
+                "names": [
+                    "NODE_PLACE/LON",
+                    "LON"
+                ],
+                "type": "NUMBER",
+                "advanced": true
+            },
+            "oglatitude": {
+                "names": [
+                    "OG_LATITUDE"
+                ],
+                "type": "NUMBER",
+                "advanced": true
+            },
+            "oglongitude": {
+                "names": [
+                    "OG_LONGITUDE"
+                ],
+                "type": "NUMBER",
+                "advanced": true
+            }
+        }
+    };
 
     const RELATED_CONCEPTS = [['johnny'], ['depp']];
     const MAX_DATE = 555555555;
@@ -20,6 +80,12 @@ define([
 
     const BASE_INDEXES = [
         {domain: 'DOMAIN', name: 'DOCUMENTS'}
+    ];
+
+    const GEOGRAPHY_FILTERS = [
+        { field: 'DefaultLocation', json: '{"type":"circle","center":[-7.013,-193.007],"radius":3511716.726}' },
+        { field: 'OGLocation', json: '{"type":"circle","center":[40.123,60.321],"radius":123456.1}' },
+        { field: 'OGLocation', json: '{"type":"polygon","points":[[-12.76,-206.71],[-5.09,-170.51],[-27.21,-168.75],[-29.07,-200.12]]}' }
     ];
 
     const PARAMETRIC_VALUES = [
@@ -38,13 +104,20 @@ define([
     ];
 
     describe('SavedSearchModel', function() {
+        afterEach(function(){
+            GeographyModel.parseConfiguration(configuration());
+        })
+
         beforeEach(function() {
+            GeographyModel.parseConfiguration(configWithTwoFields)
+
             this.model = new SavedSearchModel({
                 title: 'Johnny Depp',
                 maxDate: moment(MAX_DATE),
                 minDate: moment(MIN_DATE),
                 minScore: MIN_SCORE,
                 dateRange: DatesFilterModel.DateRange.CUSTOM,
+                geographyFilters: GEOGRAPHY_FILTERS,
                 relatedConcepts: RELATED_CONCEPTS,
                 indexes: BASE_INDEXES,
                 parametricValues: PARAMETRIC_VALUES,
@@ -59,6 +132,16 @@ define([
                 dateRange: DatesFilterModel.DateRange.CUSTOM,
                 customMaxDate: moment(MAX_DATE),
                 customMinDate: moment(MIN_DATE)
+            });
+
+            this.geographyModel = new GeographyModel({
+                'DefaultLocation': [
+                    {"type":"circle","center":[-7.013,-193.007],"radius":3511716.726},
+                ],
+                'OGLocation': [
+                    {"type":"circle","center":[40.123,60.321],"radius":123456.1},
+                    {"type":"polygon","points":[[-12.76,-206.71],[-5.09,-170.51],[-27.21,-168.75],[-29.07,-200.12]]}
+                ]
             });
 
             this.minScoreModel = new MinScoreModel({
@@ -76,6 +159,7 @@ define([
             this.queryState = {
                 conceptGroups: this.conceptGroups,
                 datesFilterModel: this.datesFilterModel,
+                geographyModel: this.geographyModel,
                 selectedIndexes: this.selectedIndexes,
                 selectedParametricValues: this.selectedParametricValues,
                 minScoreModel: this.minScoreModel
@@ -89,6 +173,12 @@ define([
 
             it('returns false when the related concepts are different', function() {
                 this.conceptGroups.unshift({concepts: ['pirate']});
+
+                expect(this.model.equalsQueryState(this.queryState)).toBe(false);
+            });
+
+            it('returns false when the geography model is different', function() {
+                this.geographyModel.set('OGLocation', [])
 
                 expect(this.model.equalsQueryState(this.queryState)).toBe(false);
             });
@@ -147,6 +237,10 @@ define([
 
             it('returns the related concepts from the concept groups collection', function() {
                 expect(this.attributes.relatedConcepts).toEqual(RELATED_CONCEPTS);
+            });
+
+            it('returns the geographic filters from the geographic model', function() {
+                expect(this.attributes.geographyFilters).toEqual(GEOGRAPHY_FILTERS);
             });
 
             it('returns the min and max dates from the dates filter model model', function() {

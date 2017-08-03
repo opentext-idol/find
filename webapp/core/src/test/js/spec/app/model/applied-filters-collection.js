@@ -7,13 +7,14 @@ define([
     'backbone',
     'js-testing/backbone-mock-factory',
     'find/app/model/dates-filter-model',
+    'find/app/model/geography-model',
     'find/app/model/applied-filters-collection',
     'parametric-refinement/selected-values-collection',
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
     'find/app/util/database-name-resolver',
     'moment'
-], function(Backbone, mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues,
+], function(Backbone, mockFactory, DatesFilterModel, GeographyModel, FiltersCollection, SelectedParametricValues,
             i18n, fieldTextParser, databaseNameResolver, moment) {
     'use strict';
 
@@ -49,6 +50,8 @@ define([
                 customMinDate: INITIAL_MIN_DATE
             });
 
+            this.geographyModel = new GeographyModel({})
+
             this.selectedParametricValues = new SelectedParametricValues([
                 {field: 'AGE', displayName: 'Age', value: '4', displayValue: '4', type: 'Parametric'}
             ]);
@@ -58,6 +61,7 @@ define([
                 indexesCollection: this.indexesCollection,
                 queryState: {
                     datesFilterModel: this.datesFilterModel,
+                    geographyModel: this.geographyModel,
                     selectedIndexes: this.selectedIndexesCollection,
                     selectedParametricValues: this.selectedParametricValues
                 }

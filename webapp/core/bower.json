@@ -36,12 +36,13 @@
     "hp-autonomy-js-whatever": "2.12.1",
     "hp-autonomy-login-page": "1.2.0",
     "hp-autonomy-settings-page": "0.12.0",
-    "hp-autonomy-fieldtext-js": "1.5.0",
+    "hp-autonomy-fieldtext-js": "1.6.0",
     "hp-autonomy-topic-map": "1.5.2",
     "hp-autonomy-sunburst": "2.1.0",
     "hp-autonomy-js-parametric-refinement": "1.0.0",
     "html2canvas": "0.4.1",
     "leaflet": "1.0.3",
+    "leaflet-draw": "0.4.9",
     "Leaflet.awesome-markers": "2.0.2",
     "leaflet.markercluster": "1.0.4",
     "leaflet.markercluster.layersupport": "1.0.3",
@@ -74,6 +75,6 @@
     "requirejs-text": "2.0.15",
     "underscore": "1.8.3",
     "bootstrap": "3.3.7",
-    "hp-autonomy-fieldtext-js": "1.5.0"
+    "hp-autonomy-fieldtext-js": "1.6.0"
   }
 }

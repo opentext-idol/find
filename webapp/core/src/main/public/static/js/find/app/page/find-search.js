@@ -10,6 +10,7 @@ define([
     'js-whatever/js/base-page',
     'find/app/configuration',
     'find/app/model/dates-filter-model',
+    'find/app/model/geography-model',
     './search/document-renderer',
     'parametric-refinement/selected-values-collection',
     'find/app/model/documents-collection',
@@ -33,7 +34,7 @@ define([
     'find/app/vent',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/find-search.html'
-], function(_, $, Backbone, BasePage, config, DatesFilterModel, DocumentRenderer, SelectedParametricValuesCollection,
+], function(_, $, Backbone, BasePage, config, DatesFilterModel, GeographyModel, DocumentRenderer, SelectedParametricValuesCollection,
             DocumentsCollection, InputView, queryTextStrategy, TabbedSearchView, MergeCollection,
             SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel, QueryTextModel, DocumentModel,
             DocumentContentView, DocumentDetailContentView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver,
@@ -500,6 +501,7 @@ define([
                         conceptGroups: new Backbone.Collection(savedSearchModel.toConceptGroups()),
                         minScoreModel: new MinScoreModel({minScore: 0}),
                         datesFilterModel: new DatesFilterModel(savedSearchModel.toDatesFilterModelAttributes()),
+                        geographyModel: new GeographyModel(savedSearchModel.toGeographyModelAttributes()),
                         selectedIndexes: new this.IndexesCollection(
                             savedSelectedIndexes.length === 0
                                 ? (this.indexesCollection.isEmpty()

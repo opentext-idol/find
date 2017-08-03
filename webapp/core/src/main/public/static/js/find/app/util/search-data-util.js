@@ -5,8 +5,9 @@
 
 define([
     'underscore',
-    'parametric-refinement/to-field-text-node'
-], function(_, toFieldTextNode) {
+    'parametric-refinement/to-field-text-node',
+    'find/app/model/geography-model'
+], function(_, toFieldTextNode, GeographyModel) {
     'use strict';
 
     function wrapInBrackets(concept) {
@@ -54,6 +55,12 @@ define([
         return fieldTextNode && fieldTextNode.toString();
     }
 
+    function buildMergedFieldText(parametricValues, geographyModel) {
+        const fieldTextNode = toFieldTextNode(parametricValues);
+        const mergedFieldText = geographyModel.appendFieldText(fieldTextNode);
+        return mergedFieldText && mergedFieldText.toString();
+    }
+
     /**
      * Creates query parameters from a saved search model.
      * @param {Backbone.Model} model A model with attributes of type {@link SavedSearchModelAttributes}
@@ -65,7 +72,7 @@ define([
             maxDate: model.get('maxDate'),
             queryText: makeQueryText(model.get('relatedConcepts')),
             databases: buildIndexes(model.get('indexes')),
-            fieldText: buildFieldText(model.get('parametricValues')),
+            fieldText: buildMergedFieldText(model.get('parametricValues'), new GeographyModel(model.toGeographyModelAttributes())),
             anyLanguage: true
         };
     }
