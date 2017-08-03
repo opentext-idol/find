@@ -85,6 +85,7 @@ class ConversationController {
     private final CloseableHttpClient httpClient;
     private final XPathExpression xAnswerText;
     private final String passageExtractorSystem;
+    private final String systemNames;
 
     @Value("${conversation.server.url}")
     private String url;
@@ -108,12 +109,14 @@ class ConversationController {
             final DocumentFieldsService documentFieldsService,
             final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
             @Value("${conversation.server.allowSelfSigned}") final boolean allowSelfSigned,
-            @Value("${questionanswer.system.name.passageExtractor}") final String passageExtractorSystem
+            @Value("${questionanswer.system.name.passageExtractor}") final String passageExtractorSystem,
+            @Value("${questionanswer.conversation.system.names}") final String systemNames
     ) {
         this.contexts = contexts;
         this.documentFieldsService = documentFieldsService;
         this.authenticationInformationRetriever = authenticationInformationRetriever;
         this.passageExtractorSystem = passageExtractorSystem;
+        this.systemNames = systemNames;
 
         try {
             final SSLConnectionSocketFactory sslSocketFactory = allowSelfSigned
@@ -217,6 +220,10 @@ class ConversationController {
 
         final ArrayList<BasicNameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("text", query));
+
+        if(isNotBlank(systemNames)) {
+            params.add(new BasicNameValuePair("systemNames", systemNames));
+        }
 
         if (isNotBlank(passageExtractorSystem)) {
             final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();

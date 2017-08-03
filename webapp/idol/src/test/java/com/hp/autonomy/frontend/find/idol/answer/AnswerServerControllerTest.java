@@ -5,17 +5,23 @@
 
 package com.hp.autonomy.frontend.find.idol.answer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerService;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.security.core.Authentication;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -27,6 +33,10 @@ public class AnswerServerControllerTest {
     private ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory;
     @Mock
     private AskAnswerServerRequestBuilder requestBuilder;
+    @Mock
+    private ObjectMapper objectMapper;
+    @Mock
+    private AuthenticationInformationRetriever<Authentication, CommunityPrincipal> authenticationInformationRetriever;
 
     private AnswerServerController controller;
 
@@ -35,12 +45,13 @@ public class AnswerServerControllerTest {
         when(requestBuilderFactory.getObject()).thenReturn(requestBuilder);
         when(requestBuilder.text(any())).thenReturn(requestBuilder);
         when(requestBuilder.maxResults(anyInt())).thenReturn(requestBuilder);
+        when(requestBuilder.customizationData(anyString())).thenReturn(requestBuilder);
 
-        controller = new AnswerServerController(askAnswerServerService, requestBuilderFactory);
+        controller = new AnswerServerController(askAnswerServerService, requestBuilderFactory, objectMapper, authenticationInformationRetriever, null);
     }
 
     @Test
-    public void ask() {
+    public void ask() throws JsonProcessingException {
         controller.ask("GPU", 5);
         verify(askAnswerServerService).ask(any());
     }
