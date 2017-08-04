@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -83,6 +85,7 @@ class ConversationController {
     private final AskAnswerServerService askAnswerServerService;
     private final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory;
     private final ConfigService<IdolFindConfig> configService;
+    private final Pattern interpretationPattern = Pattern.compile("What is the '(.*?)' of '(.*?)'\\?");
 
     @Value("${conversation.server.url}")
     private String url;
@@ -220,7 +223,18 @@ class ConversationController {
 
             final List<AskAnswer> list = askAnswerServerService.ask(request.build());
             if (!list.isEmpty()) {
-                return respond(history, list.get(0).getText(), contextId);
+                final AskAnswer first = list.get(0);
+                final String answer = first.getText();
+
+                if (first.getInterpretation() != null) {
+                    final Matcher matcher = interpretationPattern.matcher(first.getInterpretation());
+                    if (matcher.find()) {
+                        final String formattedAnswer = "The " + matcher.group(1) + " of " + matcher.group(2) + " is " + answer + ". ";
+                        return respond(history, formattedAnswer, contextId);
+                    }
+                }
+
+                return respond(history, answer, contextId);
             }
         }
 
