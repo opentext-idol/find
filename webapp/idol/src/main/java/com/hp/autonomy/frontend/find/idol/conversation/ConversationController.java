@@ -11,8 +11,13 @@ import com.autonomy.nonaci.ServerDetails;
 import com.autonomy.nonaci.indexing.impl.DreAddDataCommand;
 import com.autonomy.nonaci.indexing.impl.IndexingServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
+import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerService;
+import com.hp.autonomy.types.idol.responses.answer.AskAnswer;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -21,24 +26,16 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -55,6 +52,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -62,9 +60,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationController.CONVERSATION_PATH;
 import static org.apache.commons.lang3.StringUtils.defaultString;
@@ -83,9 +78,11 @@ class ConversationController {
     private static final String errorResponse = "Sorry, there's a problem with the conversation server at the moment, please try again later.";
 
     private final CloseableHttpClient httpClient;
-    private final XPathExpression xAnswerText;
     private final String passageExtractorSystem;
     private final String systemNames;
+    private final AskAnswerServerService askAnswerServerService;
+    private final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory;
+    private final ConfigService<IdolFindConfig> configService;
 
     @Value("${conversation.server.url}")
     private String url;
@@ -98,8 +95,6 @@ class ConversationController {
 
     private final ConversationContexts contexts;
     private final DocumentFieldsService documentFieldsService;
-    private final DocumentBuilder documentBuilder;
-    private final XPathExpression xAnswer;
 
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
 
@@ -108,12 +103,18 @@ class ConversationController {
             final ConversationContexts contexts,
             final DocumentFieldsService documentFieldsService,
             final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
+            final ConfigService<IdolFindConfig> configService,
+            final AskAnswerServerService askAnswerServerService,
+            final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory,
             @Value("${conversation.server.allowSelfSigned}") final boolean allowSelfSigned,
             @Value("${questionanswer.system.name.passageExtractor}") final String passageExtractorSystem,
             @Value("${questionanswer.conversation.system.names}") final String systemNames
     ) {
         this.contexts = contexts;
         this.documentFieldsService = documentFieldsService;
+        this.configService = configService;
+        this.askAnswerServerService = askAnswerServerService;
+        this.requestBuilderFactory = requestBuilderFactory;
         this.authenticationInformationRetriever = authenticationInformationRetriever;
         this.passageExtractorSystem = passageExtractorSystem;
         this.systemNames = systemNames;
@@ -134,18 +135,6 @@ class ConversationController {
         }
         catch(NoSuchAlgorithmException|KeyManagementException|KeyStoreException e) {
             throw new Error("Unable to initialize conversation controller", e);
-        }
-
-        try {
-            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            documentBuilder = factory.newDocumentBuilder();
-            final XPathFactory xPathFactory = XPathFactory.newInstance();
-            final XPath xPath = xPathFactory.newXPath();
-            xAnswer = xPath.compile("/autnresponse/responsedata/answers/answer");
-            xAnswerText = xPath.compile("text");
-        }
-        catch(ParserConfigurationException|XPathExpressionException e) {
-            throw new Error("Unable to initialize conversation controller XML parser", e);
         }
     }
 
@@ -212,51 +201,30 @@ class ConversationController {
 
 
     private Response askQAServer(final List<Utterance> history, final String contextId, final String query) throws IOException {
-        if (StringUtils.isEmpty(this.qaURL)) {
-            return null;
-        }
+        if (configService.getConfig().getAnswerServer().getEnabled()) {
+            final AskAnswerServerRequestBuilder request = requestBuilderFactory.getObject()
+                    .text(query);
 
-        final HttpPost post = new HttpPost(this.qaURL + "a=ask");
-
-        final ArrayList<BasicNameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("text", query));
-
-        if(isNotBlank(systemNames)) {
-            params.add(new BasicNameValuePair("systemNames", systemNames));
-        }
-
-        if (isNotBlank(passageExtractorSystem)) {
-            final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
-            final String securityInfo = principal.getSecurityInfo();
-
-            if (isNotBlank(securityInfo)) {
-                final HashMap<String, String> props = new HashMap<>();
-                props.put("system_name", passageExtractorSystem);
-                props.put("security_info", securityInfo);
-                params.add(new BasicNameValuePair("customizationData", jacksonObjectMapper.writeValueAsString(Collections.singletonList(props))));
+            if (isNotBlank(systemNames)) {
+                request.systemNames(Arrays.asList(systemNames.split(",")));
             }
-        }
 
-        post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-        final HttpResponse resp = httpClient.execute(post);
+            if (isNotBlank(passageExtractorSystem)) {
+                final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
+                final String securityInfo = principal.getSecurityInfo();
 
-        if (resp.getStatusLine().getStatusCode() != 200) {
-            log.warn("Answer server returned error code {}", resp.getStatusLine());
-            return respond(history, errorResponse, contextId);
-        }
-
-        try {
-            final Document parse = documentBuilder.parse(resp.getEntity().getContent());
-            // Only using the first answer for now.
-            final Node answer = (Node) xAnswer.evaluate(parse, XPathConstants.NODE);
-
-            if (answer != null) {
-                final String answerText = (String) xAnswerText.evaluate(answer, XPathConstants.STRING);
-                return respond(history, answerText, contextId);
+                if (isNotBlank(securityInfo)) {
+                    final HashMap<String, String> props = new HashMap<>();
+                    props.put("system_name", passageExtractorSystem);
+                    props.put("security_info", securityInfo);
+                    request.customizationData(jacksonObjectMapper.writeValueAsString(Collections.singletonList(props)));
+                }
             }
-        }
-        catch(SAXException|XPathExpressionException e) {
-            log.warn("Exception while parsing question answer response", e);
+
+            final List<AskAnswer> list = askAnswerServerService.ask(request.build());
+            if (!list.isEmpty()) {
+                return respond(history, list.get(0).getText(), contextId);
+            }
         }
 
         return null;
