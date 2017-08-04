@@ -87,9 +87,6 @@ class ConversationController {
     @Value("${conversation.server.url}")
     private String url;
 
-    @Value("${questionanswer.server.url}")
-    private String qaURL;
-
     @Autowired
     private ObjectMapper jacksonObjectMapper;
 
