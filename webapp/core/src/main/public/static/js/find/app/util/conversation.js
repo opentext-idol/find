@@ -131,7 +131,7 @@ define([
 
         const $form = $dialog.find('form');
         const $input = $($form[0].query).on('keyup', function(evt){
-            if (evt.keyCode === 38) {
+            if (evt.keyCode === 38 && lastQuery) {
                 this.value = lastQuery;
             }
         })
