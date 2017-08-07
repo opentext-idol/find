@@ -26,7 +26,10 @@ define([
     // Test for a terminal phrase to determine if the conversation has ended.
     const terminalPhrase = /Thank you for using HPE Virtual Assistant. I look forward to talking again soon!/i;
 
-    let contextId, lastQuery;
+    // How long to wait before indexing the document, five minutes.
+    const idleIndexDelay = 5 * 60e3;
+
+    let contextId, lastQuery, isIndexed, idleIndexTimeout, lastRating;
 
     function escapeNonImages(value) {
         if (!value) {
@@ -145,6 +148,17 @@ define([
                 sendQuery(query);
                 this.query.value = '';
                 this.query.focus();
+                isIndexed = false;
+
+                if (idleIndexTimeout) {
+                    clearTimeout(idleIndexTimeout);
+                }
+
+                idleIndexTimeout = setTimeout(function(){
+                    if (!isIndexed) {
+                        saveConversation(undefined);
+                    }
+                }, idleIndexDelay);
             }
 
             return false;
@@ -157,9 +171,15 @@ define([
         })
 
         function saveConversation(rating) {
+            isIndexed = true;
+
+            if (rating) {
+                lastRating = rating;
+            }
+
             return $.post(saveUrl, {
                 contextId: contextId,
-                rating: rating
+                rating: lastRating
             })
         }
 
