@@ -29,7 +29,7 @@ define([
     // How long to wait before indexing the document, five minutes.
     const idleIndexDelay = 5 * 60e3;
 
-    let contextId, lastQuery, isIndexed, idleIndexTimeout, lastRating;
+    let contextId, lastQuery, needsIndex, idleIndexTimeout, lastRating;
 
     function escapeNonImages(value) {
         if (!value) {
@@ -148,17 +148,13 @@ define([
                 sendQuery(query);
                 this.query.value = '';
                 this.query.focus();
-                isIndexed = false;
+                needsIndex = true;
 
                 if (idleIndexTimeout) {
                     clearTimeout(idleIndexTimeout);
                 }
 
-                idleIndexTimeout = setTimeout(function(){
-                    if (!isIndexed) {
-                        saveConversation(undefined);
-                    }
-                }, idleIndexDelay);
+                idleIndexTimeout = setTimeout(saveConversationIfRequired, idleIndexDelay);
             }
 
             return false;
@@ -170,8 +166,14 @@ define([
             $form.submit();
         })
 
+        function saveConversationIfRequired() {
+            if (needsIndex) {
+                saveConversation(undefined);
+            }
+        }
+
         function saveConversation(rating) {
-            isIndexed = true;
+            needsIndex = false;
 
             if (rating) {
                 lastRating = rating;
@@ -190,5 +192,7 @@ define([
             $el.siblings(starRatingSelector).remove();
             $el.replaceWith(starsHelper(rating, '', '', starRatingClass) + '');
         })
+
+        $(window).on('beforeunload', saveConversationIfRequired);
     };
 });
