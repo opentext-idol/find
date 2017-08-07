@@ -300,9 +300,18 @@
       "advanced": true
     },
     "conversationRating": {
+      "displayName": "Conversation Rating",
       "editable": ["*"],
       "names": [
         "CONVERSATION_RATING"
+      ],
+      "type": "NUMBER",
+      "advanced": true
+    },
+    "documentSize": {
+      "displayName": "Document Size",
+      "names": [
+        "DOCUMENTSIZE"
       ],
       "type": "NUMBER",
       "advanced": true
