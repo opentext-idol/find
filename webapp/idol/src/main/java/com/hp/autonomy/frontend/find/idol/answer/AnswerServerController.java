@@ -5,15 +5,12 @@
 
 package com.hp.autonomy.frontend.find.idol.answer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequest;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerService;
 import com.hp.autonomy.types.idol.responses.answer.AskAnswer;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import org.springframework.beans.factory.ObjectFactory;
@@ -36,20 +33,17 @@ class AnswerServerController {
 
     private final AskAnswerServerService askAnswerServerService;
     private final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory;
-    private final ObjectMapper jacksonObjectMapper;
-    private final String passageExtractorSystem;
+    private final String questionAnswerDatabaseMatch;
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
 
     @Autowired
     AnswerServerController(final AskAnswerServerService askAnswerServerService,
                            final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory,
-                           final ObjectMapper jacksonObjectMapper,
                            final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
-                           @Value("${questionanswer.system.name.passageExtractor}") final String passageExtractorSystem) {
+                           @Value("${questionanswer.databaseMatch}") final String questionAnswerDatabaseMatch) {
         this.askAnswerServerService = askAnswerServerService;
         this.requestBuilderFactory = requestBuilderFactory;
-        this.jacksonObjectMapper = jacksonObjectMapper;
-        this.passageExtractorSystem = passageExtractorSystem;
+        this.questionAnswerDatabaseMatch = questionAnswerDatabaseMatch;
         this.authenticationInformationRetriever = authenticationInformationRetriever;
     }
 
@@ -57,25 +51,24 @@ class AnswerServerController {
     public List<AskAnswer> ask(@RequestParam(TEXT_PARAM)
                                final String text,
                                @RequestParam(value = MAX_RESULTS_PARAM, required = false)
-                               final Integer maxResults) throws JsonProcessingException {
-        String customizationData = null;
+                               final Integer maxResults) {
+        final HashMap<String, String> extraParams = new HashMap<>();
 
-        if (isNotBlank(passageExtractorSystem)) {
-            final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
-            final String securityInfo = principal.getSecurityInfo();
+        final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
+        final String securityInfo = principal.getSecurityInfo();
 
-            if (isNotBlank(securityInfo)) {
-                final HashMap<String, String> props = new HashMap<>();
-                props.put("system_name", passageExtractorSystem);
-                props.put("security_info", securityInfo);
-                customizationData = jacksonObjectMapper.writeValueAsString(Collections.singletonList(props));
-            }
+        if (isNotBlank(securityInfo)) {
+            extraParams.put("securityInfo", securityInfo);
+        }
+
+        if (isNotBlank(questionAnswerDatabaseMatch)) {
+            extraParams.put("databaseMatch", questionAnswerDatabaseMatch);
         }
 
         final AskAnswerServerRequest request = requestBuilderFactory.getObject()
                 .text(text)
                 .maxResults(maxResults)
-                .customizationData(customizationData)
+                .proxiedParams(extraParams)
                 .build();
 
         return askAnswerServerService.ask(request);

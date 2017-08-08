@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,8 +35,6 @@ public class AnswerServerControllerTest {
     @Mock
     private AskAnswerServerRequestBuilder requestBuilder;
     @Mock
-    private ObjectMapper objectMapper;
-    @Mock
     private AuthenticationInformationRetriever<Authentication, CommunityPrincipal> authenticationInformationRetriever;
 
     private AnswerServerController controller;
@@ -46,8 +45,9 @@ public class AnswerServerControllerTest {
         when(requestBuilder.text(any())).thenReturn(requestBuilder);
         when(requestBuilder.maxResults(anyInt())).thenReturn(requestBuilder);
         when(requestBuilder.customizationData(anyString())).thenReturn(requestBuilder);
+        when(requestBuilder.proxiedParams(anyMap())).thenReturn(requestBuilder);
 
-        controller = new AnswerServerController(askAnswerServerService, requestBuilderFactory, objectMapper, authenticationInformationRetriever, null);
+        controller = new AnswerServerController(askAnswerServerService, requestBuilderFactory, authenticationInformationRetriever, null);
     }
 
     @Test

@@ -11,7 +11,6 @@ import com.autonomy.nonaci.ServerDetails;
 import com.autonomy.nonaci.indexing.impl.DreAddDataCommand;
 import com.autonomy.nonaci.indexing.impl.DreSyncCommand;
 import com.autonomy.nonaci.indexing.impl.IndexingServiceImpl;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
@@ -88,15 +87,12 @@ class ConversationController {
 
     private final CloseableHttpClient httpClient;
     private final XPathExpression xAnswerText;
-    private final String passageExtractorSystem;
+    private final String questionAnswerDatabaseMatch;
     private final String systemNames;
     private final ConfigService<IdolFindConfig> configService;
 
     @Value("${conversation.server.url}")
     private String url;
-
-    @Autowired
-    private ObjectMapper jacksonObjectMapper;
 
     private final ConversationContexts contexts;
     private final DocumentFieldsService documentFieldsService;
@@ -114,14 +110,14 @@ class ConversationController {
             final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
             final ConfigService<IdolFindConfig> configService,
             @Value("${conversation.server.allowSelfSigned}") final boolean allowSelfSigned,
-            @Value("${questionanswer.system.name.passageExtractor}") final String passageExtractorSystem,
+            @Value("${questionanswer.databaseMatch}") final String questionAnswerDatabaseMatch,
             @Value("${questionanswer.conversation.system.names}") final String systemNames
     ) {
         this.contexts = contexts;
         this.documentFieldsService = documentFieldsService;
         this.configService = configService;
         this.authenticationInformationRetriever = authenticationInformationRetriever;
-        this.passageExtractorSystem = passageExtractorSystem;
+        this.questionAnswerDatabaseMatch = questionAnswerDatabaseMatch;
         this.systemNames = systemNames;
 
         try {
@@ -237,16 +233,15 @@ class ConversationController {
             params.add(new BasicNameValuePair("systemNames", systemNames));
         }
 
-        if (isNotBlank(passageExtractorSystem)) {
-            final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
-            final String securityInfo = principal.getSecurityInfo();
+        final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
+        final String securityInfo = principal.getSecurityInfo();
 
-            if (isNotBlank(securityInfo)) {
-                final HashMap<String, String> props = new HashMap<>();
-                props.put("system_name", passageExtractorSystem);
-                props.put("security_info", securityInfo);
-                params.add(new BasicNameValuePair("customizationData", jacksonObjectMapper.writeValueAsString(Collections.singletonList(props))));
-            }
+        if (isNotBlank(securityInfo)) {
+            params.add(new BasicNameValuePair("securityInfo", securityInfo));
+        }
+
+        if (isNotBlank(questionAnswerDatabaseMatch)) {
+            params.add(new BasicNameValuePair("databaseMatch", questionAnswerDatabaseMatch));
         }
 
         post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
