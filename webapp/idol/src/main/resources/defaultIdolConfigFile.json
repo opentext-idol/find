@@ -292,6 +292,7 @@
       "advanced": true
     },
     "rating": {
+      "displayName": "Document Rating",
       "editable": ["*"],
       "names": [
         "RATING"
