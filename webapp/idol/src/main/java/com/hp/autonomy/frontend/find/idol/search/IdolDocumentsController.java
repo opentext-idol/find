@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.idol.search;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.transport.AciHttpException;
 import com.autonomy.aci.client.transport.impl.HttpClientFactory;
+import com.autonomy.aci.client.util.AciURLCodec;
 import com.autonomy.nonaci.ServerDetails;
 import com.autonomy.nonaci.indexing.impl.DreReplaceCommand;
 import com.autonomy.nonaci.indexing.impl.IndexingServiceImpl;
@@ -93,7 +94,7 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
         }
 
         // We need to DREREPLACE into the target engine
-        final StringBuilder idx = new StringBuilder("#DREDOCREF " + reference + '\n');
+        final StringBuilder idx = new StringBuilder("#DREDOCREF " + AciURLCodec.getInstance().encode(reference) + '\n');
         final boolean isBlank = value.isEmpty();
 
         for(final String idolField : idolFields) {
