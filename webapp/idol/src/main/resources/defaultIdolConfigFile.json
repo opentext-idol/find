@@ -316,6 +316,20 @@
       ],
       "type": "NUMBER",
       "advanced": true
+    },
+    "documentType": {
+      "displayName": "Topic",
+      "names": [
+        "DOCUMENT_TYPE"
+      ],
+      "advanced": true
+    },
+    "fileType": {
+      "displayName": "File Type",
+      "names": [
+        "IMPORTMAGICEXTENSION"
+      ],
+      "advanced": true
     }
   }
 }
