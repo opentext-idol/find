@@ -15,6 +15,7 @@ define([
     const prefix = 'api/public/conversation';
     const chatUrl = prefix + '/chat';
     const saveUrl = prefix + '/save';
+    const helpUrl = prefix + '/help';
     const starRatingClass = 'conversation-star-rating';
     const starRatingSelector = '.' + starRatingClass;
 
@@ -96,7 +97,7 @@ define([
                 if (unrecognized.exec(response)) {
                     unrecognizedCount++;
                     if (unrecognizedCount >= CALL_THRESHOLD) {
-                        $newEl.append('<br><span class="btn btn-secondary btn-sm question-answer-suggestion" data-query="I would like a call from a relationship manager">Need to talk?</span>');
+                        $newEl.append('<br><span class="btn btn-secondary btn-sm question-answer-help" data-query="I would like a call from a relationship manager">Need to talk?</span>');
                     }
                 }
                 else {
@@ -164,6 +165,18 @@ define([
             const $el = $(evt.currentTarget);
             $form[0].query.value = $el.data('query') || $el.text();
             $form.submit();
+        })
+
+        $dialog.on('click', '.question-answer-help', function(evt){
+            $.post(helpUrl, {
+                contextId: contextId
+            }).done(function(experts){
+                const $newEl = $('<div class="conversation-dialog-server">' + experts.map(function(expert){
+                    return '<a class="btn btn-secondary btn-sm" href="sip:'+_.escape(expert.email)+'">Chat - '+_.escape(expert.name)+' (' + _.escape(expert.area) + ')</a>';
+                }) + '</div>');
+                $newEl.appendTo($messages);
+                scrollDown();
+            })
         })
 
         function saveConversationIfRequired() {

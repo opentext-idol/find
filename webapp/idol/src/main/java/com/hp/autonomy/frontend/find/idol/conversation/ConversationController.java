@@ -5,8 +5,13 @@
 
 package com.hp.autonomy.frontend.find.idol.conversation;
 
+import com.autonomy.aci.client.services.Processor;
+import com.autonomy.aci.client.services.impl.AciServiceImpl;
 import com.autonomy.aci.client.transport.AciHttpException;
+import com.autonomy.aci.client.transport.AciServerDetails;
+import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
 import com.autonomy.aci.client.transport.impl.HttpClientFactory;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.autonomy.nonaci.ServerDetails;
 import com.autonomy.nonaci.indexing.impl.DreAddDataCommand;
 import com.autonomy.nonaci.indexing.impl.DreSyncCommand;
@@ -17,6 +22,9 @@ import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
+import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
+import com.hp.autonomy.types.idol.responses.Hit;
+import com.hp.autonomy.types.idol.responses.SuggestOnTextResponseData;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -25,6 +33,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -90,6 +99,7 @@ class ConversationController {
     private final String questionAnswerDatabaseMatch;
     private final String systemNames;
     private final ConfigService<IdolFindConfig> configService;
+    private final Processor<SuggestOnTextResponseData> suggestProcessor;
 
     @Value("${conversation.server.url}")
     private String url;
@@ -103,12 +113,24 @@ class ConversationController {
 
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
 
+    // TODO: fix the categories once category server has been updated to use sensible values.
+    private static final List<Expert> experts = Arrays.asList(
+        new Expert("Eric Champod", "eric.champod@credit-suisse.com", "Payment Methods"),
+        new Expert("Martin Keller", "martin.keller@credit-suisse.com", "Transactions / Conversions"),
+        new Expert("Vikash Kumar", "vikash.kumar@credit-suisse.com", "FX Specific"),
+        new Expert("Choki Lirgyatsang", "choki.lirgyatsang.2@credit-suisse.com", "Payment Methods"),
+        new Expert("René Nussbaum", "rene.nussbaum@credit-suisse.com", "Payment Methods"),
+        new Expert("Anton Schnider", "anton.schnider@credit-suisse.com", "Payment Methods"),
+        new Expert("Jeannette Zimmermann", "jeannette.zimmermann@credit-suisse.com", "Payment Methods")
+    );
+
     @Autowired
     public ConversationController(
             final ConversationContexts contexts,
             final DocumentFieldsService documentFieldsService,
             final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
             final ConfigService<IdolFindConfig> configService,
+            final ProcessorFactory processorFactory,
             @Value("${conversation.server.allowSelfSigned}") final boolean allowSelfSigned,
             @Value("${questionanswer.databaseMatch}") final String questionAnswerDatabaseMatch,
             @Value("${questionanswer.conversation.system.names}") final String systemNames
@@ -119,6 +141,7 @@ class ConversationController {
         this.authenticationInformationRetriever = authenticationInformationRetriever;
         this.questionAnswerDatabaseMatch = questionAnswerDatabaseMatch;
         this.systemNames = systemNames;
+        this.suggestProcessor = processorFactory.getResponseDataProcessor(SuggestOnTextResponseData.class);
 
         try {
             final SSLConnectionSocketFactory sslSocketFactory = allowSelfSigned
@@ -290,6 +313,71 @@ class ConversationController {
         }
 
         return utterances;
+    }
+
+    @RequestMapping(value = "help", method = RequestMethod.POST)
+    @ResponseBody
+    public List<Expert> help(
+            @RequestParam("contextId") final String contextId,
+            Principal activeUser,
+            @Value("${category.server.host}") final String categoryHost,
+            @Value("${category.server.port}") final int categoryPort
+    ) {
+        final List<Utterance> utterances = contexts.get(contextId);
+        if (utterances == null) {
+            // The user is trying to use a dialog ID which doesn't belong to their session.
+            log.warn("User {} tried to access a context ID {} which doesn't belong to them.", activeUser.getName(), contextId);
+            throw new IllegalArgumentException("Invalid context supplied");
+        }
+
+        final StringBuilder queryText = new StringBuilder();
+
+        // Classify based on the last 3 things they said
+        for (int ii = utterances.size() - 1, max = Math.max(0, ii - 3); ii >= max; --ii) {
+            final Utterance utterance = utterances.get(ii);
+            if (utterance.isUser()) {
+                queryText.append(utterance.getText()).append("\n");
+            }
+        }
+
+
+        // Contact category server.
+        final AciHttpClientImpl client = new AciHttpClientImpl(new HttpClientFactory().createInstance());
+        final AciServiceImpl service = new AciServiceImpl(client, new AciServerDetails(categoryHost, categoryPort));
+
+        final ActionParameters params = new ActionParameters("categorysuggestfromtext");
+        params.add("querytext", queryText);
+
+        final SuggestOnTextResponseData suggested = service.executeAction(params, suggestProcessor);
+
+        final List<Expert> toReturn = new ArrayList<>();
+
+        for(Hit hit : suggested.getHits()) {
+            final String title = hit.getTitle();
+
+            for(Expert expert : experts) {
+                if (expert.getArea().equalsIgnoreCase(title)) {
+                    toReturn.add(expert);
+                }
+            }
+
+            if (!toReturn.isEmpty()) {
+                break;
+            }
+        }
+
+        if (toReturn.isEmpty()) {
+            toReturn.addAll(experts);
+        }
+
+        return toReturn;
+    }
+
+    @Data
+    public static class Expert {
+        private final String name;
+        private final String email;
+        private final String area;
     }
 
     @RequestMapping(value = "save", method = RequestMethod.POST)
