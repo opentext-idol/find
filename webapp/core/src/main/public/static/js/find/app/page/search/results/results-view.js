@@ -89,7 +89,7 @@ define([
             'click .star-rating': function(e){
                 const config = configuration();
 
-                if (_.contains(config.roles, 'ROLE_ADMIN')) {
+                if (_.contains(config.roles, 'ROLE_RATING')) {
                     // Only admins are allowed to set the stars, normal users don't have those permissions.
                     const $el = $(e.currentTarget);
                     const rating = e.ctrlKey ? undefined : +$el.data('rating');

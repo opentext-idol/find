@@ -71,7 +71,7 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
     }
 
     @RequestMapping(value = "edit-document", method = RequestMethod.POST)
-    @PreAuthorize(FindRole.HAS_ROLE_ADMIN)
+    @PreAuthorize(FindRole.HAS_RATING_ROLE)
     @ResponseBody
     public Boolean editDocument(
             @RequestParam("reference") final String reference,

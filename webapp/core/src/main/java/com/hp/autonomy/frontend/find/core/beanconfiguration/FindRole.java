@@ -9,9 +9,10 @@ public enum FindRole {
     USER,
     ADMIN,
     BI,
+    RATING,
     CONFIG;
 
-    public static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
+    public static final String HAS_RATING_ROLE = "hasRole('ROLE_RATING')";
 
     @Override
     public String toString() {
