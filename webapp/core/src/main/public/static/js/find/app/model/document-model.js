@@ -95,7 +95,7 @@ define([
             response.mmapUrl = getFieldValue(response.fieldMap.mmapUrl);
             response.sourceType = getFieldValue(response.fieldMap.sourceType);
             response.transcript = getFieldValue(response.fieldMap.transcript);
-            response.rating = _.contains(config.roles, 'ROLE_ADMIN') && getFieldValue(response.fieldMap.rating);
+            response.rating = _.contains(config.roles, 'ROLE_RATING') && getFieldValue(response.fieldMap.rating);
             response.conversationRating = getFieldValue(response.fieldMap.conversationRating);
 
             response.url = getFieldValue(response.fieldMap.url) || (isURL(response.reference) ? response.reference : '');

@@ -29,6 +29,7 @@ public class UserConfiguration {
 
         rolesMap.put(FindCommunityRole.USER.value(), FindRole.USER.toString());
         rolesMap.put(FindCommunityRole.ADMIN.value(), FindRole.ADMIN.toString());
+        rolesMap.put(FindCommunityRole.RATING.value(), FindRole.RATING.toString());
 
         if (enableBi) {
             rolesMap.put(FindCommunityRole.BI.value(), FindRole.BI.toString());

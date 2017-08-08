@@ -6,6 +6,7 @@ package com.hp.autonomy.frontend.find.idol.authentication;
 public enum FindCommunityRole {
     USER("FindUser"),
     ADMIN("FindAdmin"),
+    RATING("FindRating"),
     BI("FindBI");
 
     private final String value;
