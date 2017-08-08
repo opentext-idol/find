@@ -9,6 +9,7 @@ import com.autonomy.aci.client.transport.AciHttpException;
 import com.autonomy.aci.client.transport.impl.HttpClientFactory;
 import com.autonomy.nonaci.ServerDetails;
 import com.autonomy.nonaci.indexing.impl.DreAddDataCommand;
+import com.autonomy.nonaci.indexing.impl.DreSyncCommand;
 import com.autonomy.nonaci.indexing.impl.IndexingServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.ConfigService;
@@ -312,7 +313,8 @@ class ConversationController {
             @Value("${conversation.index.security.adminGroup}") final String adminGroup,
             @Value("${conversation.rating.field}") final String ratingField,
             @Value("${conversation.user.contentField}") final String userField,
-            @Value("${content.index.port}") final int indexPort
+            @Value("${content.index.port}") final int indexPort,
+            @Value("${conversation.index.DRESYNC}") final boolean DRESYNC
     ) {
         final List<Utterance> utterances = contexts.get(contextId);
         if (utterances == null) {
@@ -368,7 +370,12 @@ class ConversationController {
         command.put("CreateDatabase", Boolean.toString(createDatabase));
         command.setPostData(idx.toString());
         final HttpClient client = new HttpClientFactory().createInstance();
-        final int indexId = new IndexingServiceImpl(new ServerDetails(indexHost, indexPort), client).executeCommand(command);
+        final IndexingServiceImpl indexingService = new IndexingServiceImpl(new ServerDetails(indexHost, indexPort), client);
+        final int indexId = indexingService.executeCommand(command);
+
+        if (DRESYNC) {
+            indexingService.executeCommand(new DreSyncCommand());
+        }
 
         final HashMap<String, Object> map = new HashMap<>();
         map.put("reference", ref);

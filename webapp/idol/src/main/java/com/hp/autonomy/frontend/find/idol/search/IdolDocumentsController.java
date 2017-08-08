@@ -11,6 +11,7 @@ import com.autonomy.aci.client.transport.impl.HttpClientFactory;
 import com.autonomy.aci.client.util.AciURLCodec;
 import com.autonomy.nonaci.ServerDetails;
 import com.autonomy.nonaci.indexing.impl.DreReplaceCommand;
+import com.autonomy.nonaci.indexing.impl.DreSyncCommand;
 import com.autonomy.nonaci.indexing.impl.IndexingServiceImpl;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
@@ -80,7 +81,8 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
             @RequestParam("field") final String field,
             @RequestParam(value = "value", defaultValue = "") final String value,
             @Value("${content.index.host}") final String indexHost,
-            @Value("${content.index.port}") final int indexPort
+            @Value("${content.index.port}") final int indexPort,
+            @Value("${conversation.index.DRESYNC}") final boolean DRESYNC
     ) throws IOException, AciHttpException {
         // Check that the field is editable
         final Set<String> idolFields = documentFieldsService.getEditableIdolFields(field);
@@ -115,8 +117,12 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
         command.setPostData(idx.toString());
         command.setDatabaseMatch(database);
         final HttpClient client = new HttpClientFactory().createInstance();
-        new IndexingServiceImpl(new ServerDetails(indexHost, indexPort), client).executeCommand(command);
+        final IndexingServiceImpl indexingService = new IndexingServiceImpl(new ServerDetails(indexHost, indexPort), client);
+        indexingService.executeCommand(command);
 
+        if (DRESYNC) {
+            indexingService.executeCommand(new DreSyncCommand());
+        }
 
         return true;
     }
