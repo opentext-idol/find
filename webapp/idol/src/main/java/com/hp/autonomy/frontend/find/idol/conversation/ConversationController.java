@@ -51,6 +51,8 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -76,6 +78,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationController.CONVERSATION_PATH;
@@ -280,15 +283,37 @@ class ConversationController {
 
         try {
             final Document parse = documentBuilder.parse(resp.getEntity().getContent());
-            // Only using the first answer for now.
-            final Node answer = (Node) xAnswer.evaluate(parse, XPathConstants.NODE);
 
-            if (answer != null) {
-                final String answerText = (String) xAnswerText.evaluate(answer, XPathConstants.STRING);
-                final String entityName = (String) xEntityName.evaluate(answer , XPathConstants.STRING);
-                final String propertyName = (String) xPropertyName.evaluate(answer , XPathConstants.STRING);
-                final String qualifierName = (String) xQualifierName.evaluate(answer , XPathConstants.STRING);
-                final String qualifierValue = (String) xQualifierValue.evaluate(answer , XPathConstants.STRING);
+            final List<Answer> answers = new ArrayList<>();
+
+            final NodeList nodes = (NodeList) xAnswer.evaluate(parse, XPathConstants.NODESET);
+
+            for (int ii = 0; ii < nodes.getLength(); ++ii) {
+                final Node answer = nodes.item(ii);
+                final Answer current = new Answer(
+                    (String) xAnswerText.evaluate(answer, XPathConstants.STRING),
+                    (String) xEntityName.evaluate(answer, XPathConstants.STRING),
+                    (String) xPropertyName.evaluate(answer, XPathConstants.STRING),
+                    (String) xQualifierName.evaluate(answer, XPathConstants.STRING),
+                    (String) xQualifierValue.evaluate(answer, XPathConstants.STRING)
+                );
+
+                answers.add(current);
+
+                if (ii > 0) {
+                    if (!answers.get(0).isSameEntityPropertyAndQualifier(current)) {
+                        break;
+                    }
+                }
+            }
+
+            if (!answers.isEmpty()) {
+                final Answer answer = answers.get(0);
+                final String answerText = answer.getAnswerText();
+                final String entityName = answer.getEntityName();
+                final String propertyName = answer.getPropertyName();
+                final String qualifierName = answer.getQualifierName();
+                final String qualifierValue = answer.getQualifierValue();
 
                 if (isNotBlank(entityName) && isNotBlank(propertyName)) {
                     final StringBuilder response = new StringBuilder("The " + propertyName + " of " + entityName);
@@ -298,6 +323,23 @@ class ConversationController {
                     }
 
                     response.append(" is ").append(answerText).append(".");
+
+                    if (answers.size() > 1) {
+                        // There are multiple answers, we need to format it
+                        response.append("\nWe also have data for");
+
+                        for (int ii = 1; ii < answers.size(); ++ii) {
+                            final Answer suggest = answers.get(ii);
+                            final String suggestedValue = suggest.getQualifierValue();
+                            response.append(" <suggest query=\"")
+                                .append(StringEscapeUtils.escapeHtml4("what is the " + propertyName + " of " + entityName + " in " + suggestedValue))
+                                .append("\" label=\"")
+                                .append(StringEscapeUtils.escapeHtml4(suggestedValue))
+                                .append("\"/>");
+                        }
+
+                        response.append(".");
+                    }
 
                     return respond(history, response.toString(), contextId);
                 }
@@ -310,6 +352,18 @@ class ConversationController {
         }
 
         return null;
+    }
+
+    @Data
+    public static class Answer {
+        private final String answerText, entityName, propertyName, qualifierName, qualifierValue;
+
+        public boolean isSameEntityPropertyAndQualifier(final Answer other){
+            return StringUtils.equals(entityName, other.getEntityName())
+                && StringUtils.equals(propertyName, other.getPropertyName())
+                && StringUtils.equals(qualifierName, other.getQualifierName());
+
+        }
     }
 
     @RequestMapping(value = "history", method = RequestMethod.GET)
