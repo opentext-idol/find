@@ -23,8 +23,6 @@ import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
-import com.hp.autonomy.types.idol.responses.Hit;
-import com.hp.autonomy.types.idol.responses.SuggestOnTextResponseData;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -99,7 +97,7 @@ class ConversationController {
     private final String questionAnswerDatabaseMatch;
     private final String systemNames;
     private final ConfigService<IdolFindConfig> configService;
-    private final Processor<SuggestOnTextResponseData> suggestProcessor;
+    private final Processor<SuggestOnTextWithPathResponseData> suggestProcessor;
 
     @Value("${conversation.server.url}")
     private String url;
@@ -113,15 +111,14 @@ class ConversationController {
 
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
 
-    // TODO: fix the categories once category server has been updated to use sensible values.
     private static final List<Expert> experts = Arrays.asList(
-        new Expert("Eric Champod", "eric.champod@credit-suisse.com", "Payment Methods"),
-        new Expert("Martin Keller", "martin.keller@credit-suisse.com", "Transactions / Conversions"),
-        new Expert("Vikash Kumar", "vikash.kumar@credit-suisse.com", "FX Specific"),
-        new Expert("Choki Lirgyatsang", "choki.lirgyatsang.2@credit-suisse.com", "Payment Methods"),
-        new Expert("René Nussbaum", "rene.nussbaum@credit-suisse.com", "Payment Methods"),
-        new Expert("Anton Schnider", "anton.schnider@credit-suisse.com", "Payment Methods"),
-        new Expert("Jeannette Zimmermann", "jeannette.zimmermann@credit-suisse.com", "Payment Methods")
+        new Expert("Eric Champod", "eric.champod@credit-suisse.com", "Payments"),
+        new Expert("Martin Keller", "martin.keller@credit-suisse.com", "Precious Metals"),
+        new Expert("Vikash Kumar", "vikash.kumar@credit-suisse.com", "Securities"),
+        new Expert("Choki Lirgyatsang", "choki.lirgyatsang.2@credit-suisse.com", "Payments"),
+        new Expert("René Nussbaum", "rene.nussbaum@credit-suisse.com", "Payments"),
+        new Expert("Anton Schnider", "anton.schnider@credit-suisse.com", "Payments"),
+        new Expert("Jeannette Zimmermann", "jeannette.zimmermann@credit-suisse.com", "Payments")
     );
 
     @Autowired
@@ -141,7 +138,7 @@ class ConversationController {
         this.authenticationInformationRetriever = authenticationInformationRetriever;
         this.questionAnswerDatabaseMatch = questionAnswerDatabaseMatch;
         this.systemNames = systemNames;
-        this.suggestProcessor = processorFactory.getResponseDataProcessor(SuggestOnTextResponseData.class);
+        this.suggestProcessor = processorFactory.getResponseDataProcessor(SuggestOnTextWithPathResponseData.class);
 
         try {
             final SSLConnectionSocketFactory sslSocketFactory = allowSelfSigned
@@ -347,22 +344,28 @@ class ConversationController {
 
         final ActionParameters params = new ActionParameters("categorysuggestfromtext");
         params.add("querytext", queryText);
+        params.add("showcategorypath", true);
 
-        final SuggestOnTextResponseData suggested = service.executeAction(params, suggestProcessor);
+        final SuggestOnTextWithPathResponseData suggested = service.executeAction(params, suggestProcessor);
 
         final List<Expert> toReturn = new ArrayList<>();
 
-        for(Hit hit : suggested.getHits()) {
-            final String title = hit.getTitle();
+        out: for(SuggestOnTextWithPathResponseData.CategoryHit hit : suggested.getHits()) {
+            // we want to search in reverse order, from title, then reverse up the tree to the root.
+            final ArrayList<String> toSearch = new ArrayList<>(hit.getPath());
+            toSearch.add(hit.getTitle());
+            Collections.reverse(toSearch);
 
-            for(Expert expert : experts) {
-                if (expert.getArea().equalsIgnoreCase(title)) {
-                    toReturn.add(expert);
+            for(String area : toSearch) {
+                for(Expert expert : experts) {
+                    if (expert.getArea().equalsIgnoreCase(area)) {
+                        toReturn.add(expert);
+                    }
                 }
-            }
 
-            if (!toReturn.isEmpty()) {
-                break;
+                if (!toReturn.isEmpty()) {
+                    break out;
+                }
             }
         }
 
