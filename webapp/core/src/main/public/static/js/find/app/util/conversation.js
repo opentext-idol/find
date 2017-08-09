@@ -173,7 +173,7 @@ define([
             }).done(function(experts){
                 const $newEl = $('<div class="conversation-dialog-server">' + experts.map(function(expert){
                     return '<a class="btn btn-secondary btn-sm" href="sip:'+_.escape(expert.email)+'">Chat - '+_.escape(expert.name)+' (' + _.escape(expert.area) + ')</a>';
-                }) + '</div>');
+                }).join(' ') + '</div>');
                 $newEl.appendTo($messages);
                 scrollDown();
             })
