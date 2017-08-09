@@ -358,7 +358,7 @@ class ConversationController {
 
         final List<Expert> toReturn = new ArrayList<>();
 
-        out: for(CategoryHit hit : suggested.getHits()) {
+        for(CategoryHit hit : suggested.getHits()) {
             // The server response looks like this:
             //  <autn:title>FX Specific</autn:title>
             //  <autn:path>Payments</autn:path>
@@ -387,7 +387,7 @@ class ConversationController {
                 }
 
                 if (!toReturn.isEmpty()) {
-                    break out;
+                    return toReturn;
                 }
             }
         }
