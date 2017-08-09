@@ -103,6 +103,7 @@ class ConversationController {
     private final String systemNames;
     private final ConfigService<IdolFindConfig> configService;
     private final Processor<SuggestOnTextWithPathResponseData> suggestProcessor;
+    private final int maxDisambiguationQualifierValues;
 
     @Value("${conversation.server.url}")
     private String url;
@@ -137,7 +138,8 @@ class ConversationController {
             final ProcessorFactory processorFactory,
             @Value("${conversation.server.allowSelfSigned}") final boolean allowSelfSigned,
             @Value("${questionanswer.databaseMatch}") final String questionAnswerDatabaseMatch,
-            @Value("${questionanswer.conversation.system.names}") final String systemNames
+            @Value("${questionanswer.conversation.system.names}") final String systemNames,
+            @Value("${questionanswer.disambiguation.maxQualifierValues}") final int maxDisambiguationQualifierValues
     ) {
         this.contexts = contexts;
         this.documentFieldsService = documentFieldsService;
@@ -146,6 +148,7 @@ class ConversationController {
         this.questionAnswerDatabaseMatch = questionAnswerDatabaseMatch;
         this.systemNames = systemNames;
         this.suggestProcessor = processorFactory.getResponseDataProcessor(SuggestOnTextWithPathResponseData.class);
+        this.maxDisambiguationQualifierValues = maxDisambiguationQualifierValues;
 
         try {
             final SSLConnectionSocketFactory sslSocketFactory = allowSelfSigned
@@ -328,7 +331,7 @@ class ConversationController {
                         // There are multiple answers, we need to format it
                         response.append("\nWe also have data for");
 
-                        for (int ii = 1; ii < answers.size(); ++ii) {
+                        for (int ii = 1, max = Math.min(1 + maxDisambiguationQualifierValues, answers.size()); ii < max; ++ii) {
                             final Answer suggest = answers.get(ii);
                             final String suggestedValue = suggest.getQualifierValue();
                             response.append(" <suggest query=\"")
@@ -336,6 +339,10 @@ class ConversationController {
                                 .append("\" label=\"")
                                 .append(StringEscapeUtils.escapeHtml4(suggestedValue))
                                 .append("\"/>");
+                        }
+
+                        if (answers.size() > maxDisambiguationQualifierValues + 1) {
+                            response.append("…");
                         }
 
                         response.append(".");
