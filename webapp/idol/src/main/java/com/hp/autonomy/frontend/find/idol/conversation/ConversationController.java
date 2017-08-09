@@ -110,6 +110,8 @@ class ConversationController {
     private final XPathExpression xAnswer;
     private final XPathExpression xEntityName;
     private final XPathExpression xPropertyName;
+    private final XPathExpression xQualifierName;
+    private final XPathExpression xQualifierValue;
 
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
 
@@ -169,6 +171,8 @@ class ConversationController {
             xAnswerText = xPath.compile("text");
             xEntityName = xPath.compile("metadata/fact/@entity_name");
             xPropertyName = xPath.compile("metadata/fact/property/@name");
+            xQualifierName = xPath.compile("metadata/fact/property/qualifier/@name");
+            xQualifierValue = xPath.compile("metadata/fact/property/qualifier/@value");
         }
         catch(ParserConfigurationException|XPathExpressionException e) {
             throw new Error("Unable to initialize conversation controller XML parser", e);
@@ -283,9 +287,19 @@ class ConversationController {
                 final String answerText = (String) xAnswerText.evaluate(answer, XPathConstants.STRING);
                 final String entityName = (String) xEntityName.evaluate(answer , XPathConstants.STRING);
                 final String propertyName = (String) xPropertyName.evaluate(answer , XPathConstants.STRING);
+                final String qualifierName = (String) xQualifierName.evaluate(answer , XPathConstants.STRING);
+                final String qualifierValue = (String) xQualifierValue.evaluate(answer , XPathConstants.STRING);
 
                 if (isNotBlank(entityName) && isNotBlank(propertyName)) {
-                    return respond(history, "The " + propertyName + " of " + entityName + " is " + answerText + ".", contextId);
+                    final StringBuilder response = new StringBuilder("The " + propertyName + " of " + entityName);
+
+                    if (isNotBlank(qualifierName) && isNotBlank(qualifierValue)) {
+                        response.append(" in ").append(qualifierValue);
+                    }
+
+                    response.append(" is ").append(answerText).append(".");
+
+                    return respond(history, response.toString(), contextId);
                 }
 
                 return respond(history, answerText, contextId);
