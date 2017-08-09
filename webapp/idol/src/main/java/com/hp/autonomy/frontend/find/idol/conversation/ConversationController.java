@@ -23,6 +23,8 @@ import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
+import com.hp.autonomy.types.idol.responses.CategoryHit;
+import com.hp.autonomy.types.idol.responses.SuggestOnTextWithPathResponseData;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -350,7 +352,7 @@ class ConversationController {
 
         final List<Expert> toReturn = new ArrayList<>();
 
-        out: for(SuggestOnTextWithPathResponseData.CategoryHit hit : suggested.getHits()) {
+        out: for(CategoryHit hit : suggested.getHits()) {
             // we want to search in reverse order, from title, then reverse up the tree to the root.
             final ArrayList<String> toSearch = new ArrayList<>(hit.getPath());
             toSearch.add(hit.getTitle());
