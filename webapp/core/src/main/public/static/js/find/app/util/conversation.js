@@ -51,11 +51,18 @@ define([
             }
             else if (match[2] === 'suggest') {
                 const $tmp = $(match[0]);
-                const opts = $tmp.attr('options').trim();
+                const opts = ($tmp.attr('options') || '').trim();
                 if (opts) {
                     escaped += '<br>' + _.map(opts.split('|'), function(str){
                         return '<span class="btn btn-primary btn-sm question-answer-suggestion">'+ _.escape(str)+'</span>';
                     }).join(' ')
+                }
+                else {
+                    const query = ($tmp.attr('query') || '').trim();
+                    const label = ($tmp.attr('label') || '').trim();
+                    if (query && label) {
+                        escaped += '<span class="btn btn-primary btn-sm question-answer-suggestion" data-query="'+_.escape(query)+'">'+ _.escape(label)+'</span>'
+                    }
                 }
             }
             else if (match[2] !== 'cite') {
