@@ -320,7 +320,8 @@ class ConversationController {
             @RequestParam("contextId") final String contextId,
             Principal activeUser,
             @Value("${category.server.host}") final String categoryHost,
-            @Value("${category.server.port}") final int categoryPort
+            @Value("${category.server.port}") final int categoryPort,
+            @Value("${conversation.help.context.count}") final int helpContext
     ) {
         final List<Utterance> utterances = contexts.get(contextId);
         if (utterances == null) {
@@ -332,10 +333,15 @@ class ConversationController {
         final StringBuilder queryText = new StringBuilder();
 
         // Classify based on the last 3 things they said
-        for (int ii = utterances.size() - 1, max = Math.max(0, ii - 3); ii >= max; --ii) {
+        for (int ii = utterances.size() - 1, count = 0; ii >= 0; --ii) {
             final Utterance utterance = utterances.get(ii);
             if (utterance.isUser()) {
                 queryText.append(utterance.getText()).append("\n");
+                count++;
+
+                if (count >= helpContext) {
+                    break;
+                }
             }
         }
 
