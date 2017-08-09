@@ -353,9 +353,24 @@ class ConversationController {
         final List<Expert> toReturn = new ArrayList<>();
 
         out: for(CategoryHit hit : suggested.getHits()) {
-            // we want to search in reverse order, from title, then reverse up the tree to the root.
-            final ArrayList<String> toSearch = new ArrayList<>(hit.getPath());
-            toSearch.add(hit.getTitle());
+            // The server response looks like this:
+            //  <autn:title>FX Specific</autn:title>
+            //  <autn:path>Payments</autn:path>
+            //  <autn:path>Payments/Payment Methods</autn:path>
+            //  <autn:path>Payments/Payment Methods/FX Specific</autn:path>
+            // so we can ignore the title, since it's included in the path.
+            // We want to search going up the tree, from leaf ('FX Specific') to root ('Payments').
+            final ArrayList<String> toSearch = new ArrayList<>();
+            String previousPath = null;
+            for(final String path : hit.getPath()) {
+                if (previousPath == null) {
+                    toSearch.add(path);
+                }
+                else {
+                    toSearch.add(path.substring(previousPath.length() + 1));
+                }
+                previousPath = path;
+            }
             Collections.reverse(toSearch);
 
             for(String area : toSearch) {
