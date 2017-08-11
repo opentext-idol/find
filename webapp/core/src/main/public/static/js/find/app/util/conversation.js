@@ -59,8 +59,8 @@ define([
                 }
                 else {
                     const query = ($tmp.attr('query') || '').trim();
-                    const label = ($tmp.attr('label') || '').trim();
-                    if (query && label) {
+                    if (query) {
+                        const label = ($tmp.attr('label') || '').trim() || query;
                         escaped += '<span class="btn btn-primary btn-sm question-answer-suggestion" data-query="'+_.escape(query)+'">'+ _.escape(label)+'</span>'
                     }
                 }
