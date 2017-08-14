@@ -98,7 +98,6 @@ class ConversationController {
     private static final String errorResponse = "Sorry, there's a problem with the conversation server at the moment, please try again later.";
 
     private final CloseableHttpClient httpClient;
-    private final XPathExpression xAnswerText;
     private final String questionAnswerDatabaseMatch;
     private final String systemNames;
     private final ConfigService<IdolFindConfig> configService;
@@ -112,6 +111,9 @@ class ConversationController {
     private final DocumentFieldsService documentFieldsService;
     private final DocumentBuilder documentBuilder;
     private final XPathExpression xAnswer;
+    private final XPathExpression xAnswerText;
+    private final XPathExpression xSource;
+    private final XPathExpression xSystemName;
     private final XPathExpression xEntityName;
     private final XPathExpression xPropertyName;
     private final XPathExpression xQualifierName;
@@ -175,6 +177,8 @@ class ConversationController {
             final XPath xPath = xPathFactory.newXPath();
             xAnswer = xPath.compile("/autnresponse/responsedata/answers/answer");
             xAnswerText = xPath.compile("text");
+            xSource = xPath.compile("source");
+            xSystemName = xPath.compile("@system_name");
             xEntityName = xPath.compile("metadata/fact/@entity_name");
             xPropertyName = xPath.compile("metadata/fact/property/@name");
             xQualifierName = xPath.compile("metadata/fact/property/qualifier/@name");
@@ -294,6 +298,8 @@ class ConversationController {
             for (int ii = 0; ii < nodes.getLength(); ++ii) {
                 final Node answer = nodes.item(ii);
                 final Answer current = new Answer(
+                    (String) xSystemName.evaluate(answer, XPathConstants.STRING),
+                    (String) xSource.evaluate(answer, XPathConstants.STRING),
                     (String) xAnswerText.evaluate(answer, XPathConstants.STRING),
                     (String) xEntityName.evaluate(answer, XPathConstants.STRING),
                     (String) xPropertyName.evaluate(answer, XPathConstants.STRING),
@@ -363,10 +369,11 @@ class ConversationController {
 
     @Data
     public static class Answer {
-        private final String answerText, entityName, propertyName, qualifierName, qualifierValue;
+        private final String systemName, source, answerText, entityName, propertyName, qualifierName, qualifierValue;
 
         public boolean isSameEntityPropertyAndQualifier(final Answer other){
-            return StringUtils.equals(entityName, other.getEntityName())
+            return StringUtils.equals(systemName, other.getSystemName())
+                && StringUtils.equals(entityName, other.getEntityName())
                 && StringUtils.equals(propertyName, other.getPropertyName())
                 && StringUtils.equals(qualifierName, other.getQualifierName());
 
