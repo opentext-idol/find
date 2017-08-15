@@ -102,9 +102,13 @@ define([
                 contextId = resp.contextId;
 
                 helpRequired = false;
-                const $newEl = $('<div class="conversation-dialog-server">' + escapeNonImages(response) + '</div>');
-                $newEl.appendTo($messages);
-                chart($newEl);
+                const parsedResponse = escapeNonImages(response);
+                const $newEl = $('<div class="conversation-dialog-server">' + parsedResponse + '</div>');
+
+                if (parsedResponse && $.trim(parsedResponse)) {
+                    $newEl.appendTo($messages);
+                    chart($newEl);
+                }
 
                 if (helpRequired) {
                     askHelp(helpRequired === true ? undefined : helpRequired)
