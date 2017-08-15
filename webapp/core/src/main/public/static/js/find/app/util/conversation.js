@@ -104,7 +104,7 @@ define([
                 if (unrecognized.exec(response)) {
                     unrecognizedCount++;
                     if (unrecognizedCount >= CALL_THRESHOLD) {
-                        $newEl.append('<br><span class="btn btn-secondary btn-sm question-answer-help" data-query="I would like a call from a relationship manager">Need to talk?</span>');
+                        $newEl.append('<br><span class="btn btn-secondary btn-sm question-answer-help">Need to talk?</span>');
                     }
                 }
                 else {
