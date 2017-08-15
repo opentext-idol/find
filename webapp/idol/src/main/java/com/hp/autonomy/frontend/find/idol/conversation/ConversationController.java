@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -400,11 +401,20 @@ class ConversationController {
     @ResponseBody
     public List<Expert> help(
             @RequestParam("contextId") final String contextId,
+            @RequestParam(value = "topic", required = false) final String topic,
             Principal activeUser,
             @Value("${category.server.host}") final String categoryHost,
             @Value("${category.server.port}") final int categoryPort,
             @Value("${conversation.help.context.count}") final int helpContext
     ) {
+        if (isNotBlank(topic)) {
+            final List<Expert> relevant = experts.stream().filter(expert -> expert.getArea().equalsIgnoreCase(topic)).collect(Collectors.toList());
+
+            if (!relevant.isEmpty()) {
+                return relevant;
+            }
+        }
+
         final List<Utterance> utterances = contexts.get(contextId);
         if (utterances == null) {
             // The user is trying to use a dialog ID which doesn't belong to their session.

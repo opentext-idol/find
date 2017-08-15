@@ -30,7 +30,7 @@ define([
     // How long to wait before indexing the document, five minutes.
     const idleIndexDelay = 5 * 60e3;
 
-    let contextId, lastQuery, needsIndex, idleIndexTimeout, lastRating;
+    let contextId, lastQuery, needsIndex, idleIndexTimeout, lastRating, helpRequired;
 
     function escapeNonImages(value) {
         if (!value) {
@@ -39,7 +39,7 @@ define([
 
         let escaped = '';
 
-        const regex = /(<(img|chart|suggest|cite) )([^<>]+>)|(<(table|a)[^<>]*>.*?<\/\5>)/g;
+        const regex = /(<(img|chart|suggest|cite|help) )([^<>]+>)|(<(table|a)[^<>]*>.*?<\/\5>)/g;
 
         let lastIndex = 0, match;
         while (match = regex.exec(value)) {
@@ -64,6 +64,10 @@ define([
                         escaped += '<span class="btn btn-primary btn-sm question-answer-suggestion" data-query="'+_.escape(query)+'">'+ _.escape(label)+'</span>'
                     }
                 }
+            }
+            else if (match[2] === 'help') {
+                const $tmp = $(match[0]);
+                helpRequired =  $tmp.attr('topic') || true;
             }
             else if (match[2] !== 'cite') {
                 escaped += match[1] + ' class="safe-image" ' + match[3];
@@ -97,9 +101,14 @@ define([
                 const response = resp.response;
                 contextId = resp.contextId;
 
+                helpRequired = false;
                 const $newEl = $('<div class="conversation-dialog-server">' + escapeNonImages(response) + '</div>');
                 $newEl.appendTo($messages);
                 chart($newEl);
+
+                if (helpRequired) {
+                    askHelp(helpRequired === true ? undefined : helpRequired)
+                }
 
                 if (unrecognized.exec(response)) {
                     unrecognizedCount++;
@@ -175,16 +184,21 @@ define([
             $form.submit();
         })
 
-        $dialog.on('click', '.question-answer-help', function(evt){
+        function askHelp(topic) {
             $.post(helpUrl, {
-                contextId: contextId
-            }).done(function(experts){
-                const $newEl = $('<div class="conversation-dialog-server">' + experts.map(function(expert){
-                    return '<a class="btn btn-secondary btn-sm" href="sip:'+_.escape(expert.email)+'">Chat - '+_.escape(expert.name)+' (' + _.escape(expert.area) + ')</a>';
+                contextId: contextId,
+                topic: topic
+            }).done(function (experts) {
+                const $newEl = $('<div class="conversation-dialog-server">' + experts.map(function (expert) {
+                    return '<a class="btn btn-secondary btn-sm" href="sip:' + _.escape(expert.email) + '">Chat - ' + _.escape(expert.name) + ' (' + _.escape(expert.area) + ')</a>';
                 }).join(' ') + '</div>');
                 $newEl.appendTo($messages);
                 scrollDown();
             })
+        }
+
+        $dialog.on('click', '.question-answer-help', function(evt){
+            askHelp(undefined);
         })
 
         function saveConversationIfRequired() {
