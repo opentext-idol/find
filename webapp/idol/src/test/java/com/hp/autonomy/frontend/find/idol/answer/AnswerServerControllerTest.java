@@ -47,7 +47,7 @@ public class AnswerServerControllerTest {
         when(requestBuilder.customizationData(anyString())).thenReturn(requestBuilder);
         when(requestBuilder.proxiedParams(anyMap())).thenReturn(requestBuilder);
 
-        controller = new AnswerServerController(askAnswerServerService, requestBuilderFactory, authenticationInformationRetriever, null);
+        controller = new AnswerServerController(askAnswerServerService, requestBuilderFactory, authenticationInformationRetriever, null, null, false);
     }
 
     @Test

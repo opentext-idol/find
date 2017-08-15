@@ -17,7 +17,8 @@ define([
                 return _.extend({
                     question: response.interpretation,
                     answer: response.text,
-                    systemName: response.systemName
+                    systemName: response.systemName,
+                    source: response.source
                 }, response);
             });
         }

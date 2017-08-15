@@ -11,8 +11,11 @@ import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequestBu
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerService;
 import com.hp.autonomy.types.idol.responses.answer.AskAnswer;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,16 +38,23 @@ class AnswerServerController {
     private final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory;
     private final String questionAnswerDatabaseMatch;
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
+    private final AnswerFilter answerFilter;
+    private final boolean filterByDocumentSecurity;
 
     @Autowired
     AnswerServerController(final AskAnswerServerService askAnswerServerService,
                            final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory,
                            final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
-                           @Value("${questionanswer.databaseMatch}") final String questionAnswerDatabaseMatch) {
+                           final AnswerFilter answerFilter,
+                           @Value("${questionanswer.databaseMatch}") final String questionAnswerDatabaseMatch,
+                           @Value("${questionanswer.documentSecurity.filter}") final boolean filterByDocumentSecurity
+    ) {
         this.askAnswerServerService = askAnswerServerService;
         this.requestBuilderFactory = requestBuilderFactory;
         this.questionAnswerDatabaseMatch = questionAnswerDatabaseMatch;
         this.authenticationInformationRetriever = authenticationInformationRetriever;
+        this.answerFilter = answerFilter;
+        this.filterByDocumentSecurity = filterByDocumentSecurity;
     }
 
     @RequestMapping(value = ASK_PATH, method = RequestMethod.GET)
@@ -71,6 +81,38 @@ class AnswerServerController {
                 .proxiedParams(extraParams)
                 .build();
 
-        return askAnswerServerService.ask(request);
+        final List<AskAnswer> unfiltered = askAnswerServerService.ask(request);
+
+        final List<String> refsToCheck = unfiltered.stream().map(AskAnswer::getSource).filter(source ->
+                StringUtils.isNotBlank(source) && !source.equalsIgnoreCase("SQLDB")).collect(Collectors.toList());
+
+        if (!refsToCheck.isEmpty()) {
+            final HashMap<String, String> urls = answerFilter.resolveUrls(refsToCheck);
+
+            final ArrayList<AskAnswer> toReturn = new ArrayList<>();
+
+            for(final AskAnswer answer : unfiltered) {
+                final String source = answer.getSource();
+
+                if (!refsToCheck.contains(source)) {
+                    answer.setSource(null);
+                    toReturn.add(answer);
+                }
+                else {
+                    // Empty string / actual URL is a URL, null means document not found and should be filtered out
+                    final String url = urls.get(answer.getSource());
+
+                    if (url != null || !filterByDocumentSecurity) {
+                        toReturn.add(answer);
+                    }
+
+                    answer.setSource(url);
+                }
+            }
+
+            return toReturn;
+        }
+
+        return unfiltered;
     }
 }
