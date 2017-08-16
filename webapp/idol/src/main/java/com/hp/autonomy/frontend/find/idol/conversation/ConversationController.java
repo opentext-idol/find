@@ -22,6 +22,7 @@ import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.idol.answer.AnswerFilter;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.ConversationContext;
+import com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState;
 import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
@@ -41,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -55,6 +57,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -83,6 +86,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.DISABLED;
+import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.POSTQUERY;
+import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.PREQUERY;
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationController.CONVERSATION_PATH;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 import static org.apache.commons.lang3.StringUtils.defaultString;
@@ -100,9 +106,14 @@ class ConversationController {
     private static final String NO_SUCH_INSTANCE = "Error: no such instance";
     private static final String errorResponse = "Sorry, there's a problem with the conversation server at the moment, please try again later.";
 
+    private static final Pattern YES_PATTERN = Pattern.compile("\\b(yes)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern UNRECOGNIZED_PATTERN = Pattern.compile("I did not understand that|I didn't understand what you meant", Pattern.CASE_INSENSITIVE);
+    private static final String ENABLE_PASSAGE_EXTRACTION = "<enablePassageExtraction>";
+
     private final CloseableHttpClient httpClient;
     private final String questionAnswerDatabaseMatch;
     private final String systemNames;
+    private final String passageExtractor;
     private final ConfigService<IdolFindConfig> configService;
     private final Processor<SuggestOnTextWithPathResponseData> suggestProcessor;
     private final int maxDisambiguationQualifierValues;
@@ -147,6 +158,7 @@ class ConversationController {
             @Value("${conversation.server.allowSelfSigned}") final boolean allowSelfSigned,
             @Value("${questionanswer.databaseMatch}") final String questionAnswerDatabaseMatch,
             @Value("${questionanswer.conversation.system.names}") final String systemNames,
+            @Value("${questionanswer.system.name.passageExtractor}") final String passageExtractor,
             @Value("${questionanswer.disambiguation.maxQualifierValues}") final int maxDisambiguationQualifierValues,
             @Value("${questionanswer.documentSecurity.filter}") final boolean filterByDocumentSecurity
     ) {
@@ -156,6 +168,7 @@ class ConversationController {
         this.authenticationInformationRetriever = authenticationInformationRetriever;
         this.questionAnswerDatabaseMatch = questionAnswerDatabaseMatch;
         this.systemNames = systemNames;
+        this.passageExtractor = passageExtractor;
         this.suggestProcessor = processorFactory.getResponseDataProcessor(SuggestOnTextWithPathResponseData.class);
         this.maxDisambiguationQualifierValues = maxDisambiguationQualifierValues;
         this.answerFilter = answerFilter;
@@ -232,22 +245,54 @@ class ConversationController {
             context.getHistory().add(new Utterance(false, greeting));
             contexts.put(newContextId, context);
 
-            return new Response(greeting, newContextId);
+            if (greeting.contains(ENABLE_PASSAGE_EXTRACTION)) {
+                context.setPassageExtractionMode(PREQUERY);
+            }
+
+            return new Response(greeting.replace(ENABLE_PASSAGE_EXTRACTION, ""), newContextId);
         }
 
         final ConversationContext context = contexts.get(contextId);
         final List<Utterance> history = context.getHistory();
         history.add(new Utterance(true, query));
 
-        final Response qaResponse = askQAServer(history, contextId, query);
+        final String conversationServerQuery;
+        final PassageExtractionState initialMode = context.getPassageExtractionMode();
+        if (initialMode.equals(POSTQUERY)) {
+            // Validate whether the user said yes or no.
+            final boolean answered = YES_PATTERN.matcher(query).find();
+
+            if (answered) {
+                conversationServerQuery = "bye";
+            }
+            else {
+                // find the second-last thing they said
+                String lastQuery = query;
+                for (int ii = history.size() - 2; ii >= 0; --ii) {
+                    final Utterance utterance = history.get(ii);
+                    if (utterance.isUser()) {
+                        lastQuery = utterance.getText();
+                        break;
+                    }
+                }
+                conversationServerQuery = lastQuery;
+            }
+        }
+        else {
+            conversationServerQuery = query;
+        }
+
+        // If we're in passage extraction mode, we have to get the answer out and format it.
+        // If there's no answer, we go straight to intent detection as usual.
+        final boolean usePassageExtraction = initialMode.equals(PREQUERY);
+
+        final Response qaResponse = initialMode.equals(POSTQUERY) ? null : askQAServer(history, contextId, query, usePassageExtraction);
         if (qaResponse != null) {
             return qaResponse;
         }
 
-        final HttpPost post = new HttpPost(this.url + "nadia/engine/dialog/" + contextId);
-        post.setHeader("User-Agent", USER_AGENT);
-        post.setEntity(new UrlEncodedFormEntity(Collections.singletonList(new BasicNameValuePair("userUtterance", query)), "UTF-8"));
-        final HttpResponse resp = httpClient.execute(post);
+        final HttpResponse resp = queryConversationServer(contextId, conversationServerQuery);
+        final Header messageMeta = resp.getFirstHeader("X-Message-Meta");
         final String answer = IOUtils.toString(resp.getEntity().getContent(), "utf-8");
 
         if (resp.getStatusLine().getStatusCode() != 200) {
@@ -259,11 +304,54 @@ class ConversationController {
             return respond(history, errorResponse, contextId);
         }
 
-        return respond(history, answer, contextId);
+        if (!initialMode.equals(DISABLED)) {
+            // Either intent detection found the task (putting us in disambiguation), or it found nothing (giving the error string)
+            // If we're in disambiguation, we want to stay in POSTQUERY mode.
+            if (messageMeta == null || !Arrays.asList("DISAMBIGUATION", "UNCHANGED", "REPEATEDQUESTION").contains(messageMeta.getValue())) {
+                // We're not in disambiguation. Either the user accepted the task which was presented, or the server said it didn't know which task to use.
+
+                context.setPassageExtractionMode(DISABLED);
+
+                final boolean shouldRedirectToTopic = UNRECOGNIZED_PATTERN.matcher(answer).find();
+
+                if (shouldRedirectToTopic) {
+                    // Fire a special trigger keyword to start taxonomy navigation.
+                    final HttpResponse taxonomyResp = queryConversationServer(contextId, "navigate by taxonomy");
+
+                    final String taxonomyAnswer = IOUtils.toString(taxonomyResp.getEntity().getContent(), "utf-8");
+
+                    if (taxonomyResp.getStatusLine().getStatusCode() != 200) {
+                        if(NO_SUCH_INSTANCE.equals(taxonomyAnswer)) {
+                            // the session has expired or the server was restarted; clear the context
+                            contexts.remove(contextId);
+                            return respond(history, errorResponse, null);
+                        }
+                        return respond(history, errorResponse, contextId);
+                    }
+
+                    return respond(history, taxonomyAnswer, contextId);
+                }
+            }
+        }
+
+        final String replaced = answer.replace(ENABLE_PASSAGE_EXTRACTION, "");
+        if (!replaced.equals(answer)) {
+            // This is an incredibly horrible hack that we use to enable passage extraction mode.
+            context.setPassageExtractionMode(PREQUERY);
+        }
+
+        return respond(history, replaced, contextId);
+    }
+
+    private HttpResponse queryConversationServer(final String contextId, final String query) throws IOException {
+        final HttpPost post = new HttpPost(this.url + "nadia/engine/dialog/" + contextId);
+        post.setHeader("User-Agent", USER_AGENT);
+        post.setEntity(new UrlEncodedFormEntity(Collections.singletonList(new BasicNameValuePair("userUtterance", query)), "UTF-8"));
+        return httpClient.execute(post);
     }
 
 
-    private Response askQAServer(final List<Utterance> history, final String contextId, final String query) throws IOException {
+    private Response askQAServer(final List<Utterance> history, final String contextId, final String query, final boolean isPassageExtraction) throws IOException {
         final AnswerServerConfig answerServer = configService.getConfig().getAnswerServer();
         if (!answerServer.getEnabled()) {
             return null;
@@ -277,7 +365,10 @@ class ConversationController {
         final ArrayList<BasicNameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("text", query));
 
-        if(isNotBlank(systemNames)) {
+        if (isPassageExtraction) {
+            params.add(new BasicNameValuePair("systemNames", passageExtractor));
+        }
+        else if(isNotBlank(systemNames)) {
             params.add(new BasicNameValuePair("systemNames", systemNames));
         }
 
@@ -374,7 +465,10 @@ class ConversationController {
                 final String answerLink = isBlank(url) ? answerText
                     : "<a href='"+ escapeHtml4(url)+"' target='_blank'>"+ escapeHtml4(answerText)+"</a>";
 
-                if (isNotBlank(entityName) && isNotBlank(propertyName)) {
+                if (isPassageExtraction) {
+                    return respond(history, "I have found this in my documents: “" + answerLink + "”. Does that answer your question? <suggest options='Yes|No'>", contextId);
+                }
+                else if (isNotBlank(entityName) && isNotBlank(propertyName)) {
                     final StringBuilder response = new StringBuilder("The " + propertyName + " of " + entityName);
 
                     if (isNotBlank(qualifierName) && isNotBlank(qualifierValue)) {
