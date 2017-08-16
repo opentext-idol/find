@@ -19,6 +19,7 @@ import com.autonomy.nonaci.indexing.impl.IndexingServiceImpl;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
+import com.hp.autonomy.frontend.find.idol.answer.AnswerFilter;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
@@ -104,6 +105,8 @@ class ConversationController {
     private final ConfigService<IdolFindConfig> configService;
     private final Processor<SuggestOnTextWithPathResponseData> suggestProcessor;
     private final int maxDisambiguationQualifierValues;
+    private final AnswerFilter answerFilter;
+    private final boolean filterByDocumentSecurity;
 
     @Value("${conversation.server.url}")
     private String url;
@@ -139,10 +142,12 @@ class ConversationController {
             final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
             final ConfigService<IdolFindConfig> configService,
             final ProcessorFactory processorFactory,
+            final AnswerFilter answerFilter,
             @Value("${conversation.server.allowSelfSigned}") final boolean allowSelfSigned,
             @Value("${questionanswer.databaseMatch}") final String questionAnswerDatabaseMatch,
             @Value("${questionanswer.conversation.system.names}") final String systemNames,
-            @Value("${questionanswer.disambiguation.maxQualifierValues}") final int maxDisambiguationQualifierValues
+            @Value("${questionanswer.disambiguation.maxQualifierValues}") final int maxDisambiguationQualifierValues,
+            @Value("${questionanswer.documentSecurity.filter}") final boolean filterByDocumentSecurity
     ) {
         this.contexts = contexts;
         this.documentFieldsService = documentFieldsService;
@@ -152,6 +157,8 @@ class ConversationController {
         this.systemNames = systemNames;
         this.suggestProcessor = processorFactory.getResponseDataProcessor(SuggestOnTextWithPathResponseData.class);
         this.maxDisambiguationQualifierValues = maxDisambiguationQualifierValues;
+        this.answerFilter = answerFilter;
+        this.filterByDocumentSecurity = filterByDocumentSecurity;
 
         try {
             final SSLConnectionSocketFactory sslSocketFactory = allowSelfSigned
@@ -292,7 +299,7 @@ class ConversationController {
         try {
             final Document parse = documentBuilder.parse(resp.getEntity().getContent());
 
-            final List<Answer> answers = new ArrayList<>();
+            final List<Answer> unfiltered = new ArrayList<>();
 
             final NodeList nodes = (NodeList) xAnswer.evaluate(parse, XPathConstants.NODESET);
 
@@ -308,11 +315,41 @@ class ConversationController {
                     (String) xQualifierValue.evaluate(answer, XPathConstants.STRING)
                 );
 
-                answers.add(current);
+                unfiltered.add(current);
+            }
 
-                if (ii > 0) {
-                    if (!answers.get(0).isSameEntityPropertyAndQualifier(current)) {
-                        break;
+            final List<String> refsToCheck = unfiltered.stream().map(Answer::getSource).filter(source ->
+                    isNotBlank(source) && !source.equalsIgnoreCase("SQLDB")).collect(Collectors.toList());
+
+            final ArrayList<Answer> answers = new ArrayList<>();
+
+            if (!refsToCheck.isEmpty()) {
+                final HashMap<String, String> urls = answerFilter.resolveUrls(refsToCheck);
+
+                for(final Answer answer : unfiltered) {
+                    final String source = answer.getSource();
+
+                    if (!refsToCheck.contains(source)) {
+                        answers.add(answer);
+                    }
+                    else {
+                        // Empty string / actual URL is a URL, null means document not found and should be filtered out
+                        final String url = urls.get(answer.getSource());
+
+                        if (url != null || !filterByDocumentSecurity) {
+                            answers.add(answer);
+                        }
+
+                        answer.setUrl(url);
+                    }
+                }
+            }
+
+            if (answers.size() > 1) {
+                final Answer first = answers.get(0);
+                for (int ii = answers.size() - 1; ii >= 1; --ii) {
+                    if (!answers.get(ii).isSameEntityPropertyAndQualifier(first)) {
+                        answers.remove(ii);
                     }
                 }
             }
@@ -371,6 +408,7 @@ class ConversationController {
     @Data
     public static class Answer {
         private final String systemName, source, answerText, entityName, propertyName, qualifierName, qualifierValue;
+        private String url;
 
         public boolean isSameEntityPropertyAndQualifier(final Answer other){
             return StringUtils.equals(systemName, other.getSystemName())
