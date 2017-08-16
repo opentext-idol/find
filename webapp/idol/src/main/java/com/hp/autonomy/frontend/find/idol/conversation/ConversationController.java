@@ -365,11 +365,9 @@ class ConversationController {
         final ArrayList<BasicNameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("text", query));
 
-        if (isPassageExtraction) {
-            params.add(new BasicNameValuePair("systemNames", passageExtractor));
-        }
-        else if(isNotBlank(systemNames)) {
-            params.add(new BasicNameValuePair("systemNames", systemNames));
+        if(isNotBlank(systemNames)) {
+            params.add(new BasicNameValuePair("systemNames",
+                isPassageExtraction ? systemNames + "," + passageExtractor : systemNames));
         }
 
         final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
@@ -465,7 +463,7 @@ class ConversationController {
                 final String answerLink = isBlank(url) ? answerText
                     : "<a href='"+ escapeHtml4(url)+"' target='_blank'>"+ escapeHtml4(answerText)+"</a>";
 
-                if (isPassageExtraction) {
+                if (answer.getSystemName().equalsIgnoreCase(passageExtractor)) {
                     return respond(history, "I have found this in my documents: “" + answerLink + "”. Does that answer your question? <suggest options='Yes|No'>", contextId);
                 }
                 else if (isNotBlank(entityName) && isNotBlank(propertyName)) {
