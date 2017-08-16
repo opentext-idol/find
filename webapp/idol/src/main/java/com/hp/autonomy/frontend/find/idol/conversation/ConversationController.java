@@ -53,7 +53,6 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -84,6 +83,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationController.CONVERSATION_PATH;
+import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -340,9 +340,14 @@ class ConversationController {
                             answers.add(answer);
                         }
 
-                        answer.setUrl(url);
+                        if (isNotBlank(url)) {
+                            answer.setUrl(url);
+                        }
                     }
                 }
+            }
+            else {
+                answers.addAll(unfiltered);
             }
 
             if (answers.size() > 1) {
@@ -361,6 +366,9 @@ class ConversationController {
                 final String propertyName = answer.getPropertyName();
                 final String qualifierName = answer.getQualifierName();
                 final String qualifierValue = answer.getQualifierValue();
+                final String url = answer.getUrl();
+                final String answerLink = isBlank(url) ? answerText
+                    : "<a href='"+ escapeHtml4(url)+"' target='_blank'>"+ escapeHtml4(answerText)+"</a>";
 
                 if (isNotBlank(entityName) && isNotBlank(propertyName)) {
                     final StringBuilder response = new StringBuilder("The " + propertyName + " of " + entityName);
@@ -369,7 +377,7 @@ class ConversationController {
                         response.append(" in ").append(qualifierValue);
                     }
 
-                    response.append(" is ").append(answerText).append(".");
+                    response.append(" is ").append(answerLink).append(".");
 
                     if (answers.size() > 1) {
                         // There are multiple answers, we need to format it
@@ -379,9 +387,9 @@ class ConversationController {
                             final Answer suggest = answers.get(ii);
                             final String suggestedValue = suggest.getQualifierValue();
                             response.append(" <suggest query=\"")
-                                .append(StringEscapeUtils.escapeHtml4("what is the " + propertyName + " of " + entityName + " in " + suggestedValue))
+                                .append(escapeHtml4("what is the " + propertyName + " of " + entityName + " in " + suggestedValue))
                                 .append("\" label=\"")
-                                .append(StringEscapeUtils.escapeHtml4(suggestedValue))
+                                .append(escapeHtml4(suggestedValue))
                                 .append("\"/>");
                         }
 
@@ -395,7 +403,7 @@ class ConversationController {
                     return respond(history, response.toString(), contextId);
                 }
 
-                return respond(history, answerText, contextId);
+                return respond(history, answerLink, contextId);
             }
         }
         catch(SAXException|XPathExpressionException e) {
