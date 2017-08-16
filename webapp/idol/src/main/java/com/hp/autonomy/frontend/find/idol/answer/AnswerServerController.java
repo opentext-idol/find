@@ -112,6 +112,12 @@ class AnswerServerController {
 
             return toReturn;
         }
+        else {
+            // We need to blank the sources which say SQLDB on them so they don't become links.
+            for(AskAnswer answer : unfiltered) {
+                answer.setSource(null);
+            }
+        }
 
         return unfiltered;
     }
