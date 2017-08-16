@@ -21,6 +21,7 @@ import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.idol.answer.AnswerFilter;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.ConversationContext;
 import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
@@ -227,12 +228,15 @@ class ConversationController {
             }
 
             final String newContextId = resp.getFirstHeader("Location").getValue().replaceFirst(".*/", "");
-            contexts.put(newContextId, new ArrayList<>(Collections.singletonList(new Utterance(false, greeting))));
+            final ConversationContext context = new ConversationContext();
+            context.getHistory().add(new Utterance(false, greeting));
+            contexts.put(newContextId, context);
 
             return new Response(greeting, newContextId);
         }
 
-        final List<Utterance> history = contexts.get(contextId);
+        final ConversationContext context = contexts.get(contextId);
+        final List<Utterance> history = context.getHistory();
         history.add(new Utterance(true, query));
 
         final Response qaResponse = askQAServer(history, contextId, query);
@@ -433,7 +437,7 @@ class ConversationController {
             @RequestParam("contextId") final String contextId,
             Principal activeUser
     ) {
-        final List<Utterance> utterances = contexts.get(contextId);
+        final List<Utterance> utterances = contexts.get(contextId).getHistory();
         if (utterances == null) {
             // The user is trying to use a dialog ID which doesn't belong to their session.
             log.warn("User {} tried to access a context ID {} which doesn't belong to them.", activeUser.getName(), contextId);
@@ -461,7 +465,7 @@ class ConversationController {
             }
         }
 
-        final List<Utterance> utterances = contexts.get(contextId);
+        final List<Utterance> utterances = contexts.get(contextId).getHistory();
         if (utterances == null) {
             // The user is trying to use a dialog ID which doesn't belong to their session.
             log.warn("User {} tried to access a context ID {} which doesn't belong to them.", activeUser.getName(), contextId);
@@ -563,7 +567,7 @@ class ConversationController {
             @Value("${content.index.port}") final int indexPort,
             @Value("${conversation.index.DRESYNC}") final boolean DRESYNC
     ) {
-        final List<Utterance> utterances = contexts.get(contextId);
+        final List<Utterance> utterances = contexts.get(contextId).getHistory();
         if (utterances == null) {
             // The user is trying to use a dialog ID which doesn't belong to their session.
             log.warn("User {} tried to access a context ID {} which doesn't belong to them.", activeUser, contextId);
