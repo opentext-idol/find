@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilder;
@@ -91,6 +92,7 @@ import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContex
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.PREQUERY;
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationController.CONVERSATION_PATH;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
+import static org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -109,6 +111,7 @@ class ConversationController {
     private static final Pattern YES_PATTERN = Pattern.compile("\\b(yes)\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern UNRECOGNIZED_PATTERN = Pattern.compile("I did not understand that|I didn't understand what you meant", Pattern.CASE_INSENSITIVE);
     private static final String ENABLE_PASSAGE_EXTRACTION = "<enablePassageExtraction>";
+    private static final Pattern ANSWERSERVER_PLACEHOLDER = Pattern.compile("<answerserver query=\"([^>]+)\">", Pattern.CASE_INSENSITIVE);
 
     private final CloseableHttpClient httpClient;
     private final String questionAnswerDatabaseMatch;
@@ -340,7 +343,38 @@ class ConversationController {
             context.setPassageExtractionMode(PREQUERY);
         }
 
-        return respond(history, replaced, contextId);
+        // Replace all <answerserver query="..."> tokens with actual answer server responses.
+        final Matcher matcher = ANSWERSERVER_PLACEHOLDER.matcher(replaced);
+        final StringBuilder sb = new StringBuilder();
+        int idx = 0;
+
+        while(matcher.find()) {
+            final int start = matcher.start();
+
+            if (idx < start) {
+                final String prefix = replaced.substring(0, start);
+                sb.append(prefix);
+            }
+
+            final String proxyQuery = unescapeHtml4(matcher.group(1));
+
+            final Response inlinedResponse = askQAServer(null, contextId, proxyQuery, false);
+            if (inlinedResponse != null) {
+                sb.append(inlinedResponse.getResponse());
+            }
+            else {
+                sb.append("Sorry, answerserver doesn't have any results for the query '").append(proxyQuery).append("'");
+            }
+
+            idx = matcher.end();
+        }
+
+        if (idx < replaced.length()) {
+            final String suffix = replaced.substring(idx);
+            sb.append(suffix);
+        }
+
+        return respond(history, sb.toString(), contextId);
     }
 
     private HttpResponse queryConversationServer(final String contextId, final String query) throws IOException {
@@ -762,7 +796,9 @@ class ConversationController {
     }
 
     private Response respond(final List<Utterance> history, final String message, final String contextId) {
-        history.add(new Utterance(false, message));
+        if (history != null) {
+            history.add(new Utterance(false, message));
+        }
         return new Response(message, contextId);
     }
 
