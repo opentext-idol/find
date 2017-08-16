@@ -444,6 +444,24 @@ class ConversationController {
             }
 
             if (answers.size() > 1) {
+                if (isNotBlank(systemNames)) {
+                    // Sort the answers so that they come in the order defined in systemnames, in practice we
+                    //   use this to sort factbank answers before answer server answers since we prefer factbank
+                    //   answers for e.g. 'what is the currency holiday for yen'.
+                    final List<String> sortOrder = new ArrayList<String>(Arrays.asList(systemNames.split("[, ]+")));
+                    sortOrder.add(passageExtractor);
+
+                    answers.sort((o1, o2) -> {
+                        final String s1 = o1.getSystemName();
+                        final String s2 = o2.getSystemName();
+                        if(s1.equals(s2)) {
+                            return 0;
+                        }
+
+                        return sortOrder.indexOf(s2) - sortOrder.indexOf(s1);
+                    });
+                }
+
                 final Answer first = answers.get(0);
                 for (int ii = answers.size() - 1; ii >= 1; --ii) {
                     if (!answers.get(ii).isSameEntityPropertyAndQualifier(first)) {
