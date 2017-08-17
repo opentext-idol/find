@@ -492,7 +492,7 @@ class ConversationController {
                             return 0;
                         }
 
-                        return sortOrder.indexOf(s2) - sortOrder.indexOf(s1);
+                        return sortOrder.indexOf(s1) - sortOrder.indexOf(s2);
                     });
                 }
 
