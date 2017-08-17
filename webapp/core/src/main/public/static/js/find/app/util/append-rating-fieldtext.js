@@ -12,7 +12,13 @@ define([
         const fieldNames = config.fieldsInfo.rating.names;
 
         if (fieldNames && fieldNames.length) {
-            extraFieldText = new parser.ExpressionNode('BIAS', fieldNames, [3, 2, 100]);
+            // BIAS takes the form (optimum, range, percentage)
+            // We want to BIAS 1 or 2 to be less than usual, and 4 and 5 to be more than usual,
+            //   so we're forced to do two BIAS operators.
+            extraFieldText =
+                new parser.ExpressionNode('BIAS', fieldNames, [5, 2, 100]).AND
+                    (new parser.ExpressionNode('BIAS', fieldNames, [1, 2, -100])
+                );
         }
     }
 
