@@ -12,7 +12,7 @@ define([
         const fieldNames = config.fieldsInfo.rating.names;
 
         if (fieldNames && fieldNames.length) {
-            extraFieldText = new parser.ExpressionNode('BIAS', fieldNames, [5, 5, 100]);
+            extraFieldText = new parser.ExpressionNode('BIAS', fieldNames, [3, 2, 100]);
         }
     }
 
