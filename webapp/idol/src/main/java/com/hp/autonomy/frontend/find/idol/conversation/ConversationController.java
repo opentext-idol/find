@@ -261,12 +261,15 @@ class ConversationController {
 
         final String conversationServerQuery;
         final PassageExtractionState initialMode = context.getPassageExtractionMode();
+        boolean isSuccessfulPassageExtraction = false;
+
         if (initialMode.equals(POSTQUERY)) {
             // Validate whether the user said yes or no.
             final boolean answered = YES_PATTERN.matcher(query).find();
 
             if (answered) {
-                conversationServerQuery = "bye";
+                conversationServerQuery = "okay that solves my problem, thank you";
+                isSuccessfulPassageExtraction = true;
             }
             else {
                 // find the second-last thing they said
@@ -289,7 +292,7 @@ class ConversationController {
         // If there's no answer, we go straight to intent detection as usual.
         final boolean usePassageExtraction = initialMode.equals(PREQUERY);
 
-        final Response qaResponse = initialMode.equals(POSTQUERY) ? null : askQAServer(history, contextId, query, usePassageExtraction);
+        final Response qaResponse = initialMode.equals(POSTQUERY) ? null : askQAServer(context, contextId, query, usePassageExtraction);
         if (qaResponse != null) {
             return qaResponse;
         }
@@ -307,7 +310,10 @@ class ConversationController {
             return respond(history, errorResponse, contextId);
         }
 
-        if (!initialMode.equals(DISABLED)) {
+        if (isSuccessfulPassageExtraction) {
+            context.setPassageExtractionMode(DISABLED);
+        }
+        else if (!initialMode.equals(DISABLED)) {
             // Either intent detection found the task (putting us in disambiguation), or it found nothing (giving the error string)
             // If we're in disambiguation, we want to stay in POSTQUERY mode.
             if (messageMeta == null || !Arrays.asList("DISAMBIGUATION", "UNCHANGED", "REPEATEDQUESTION").contains(messageMeta.getValue())) {
@@ -385,7 +391,7 @@ class ConversationController {
     }
 
 
-    private Response askQAServer(final List<Utterance> history, final String contextId, final String query, final boolean isPassageExtraction) throws IOException {
+    private Response askQAServer(final ConversationContext context, final String contextId, final String query, final boolean isPassageExtraction) throws IOException {
         final AnswerServerConfig answerServer = configService.getConfig().getAnswerServer();
         if (!answerServer.getEnabled()) {
             return null;
@@ -420,7 +426,7 @@ class ConversationController {
 
         if (resp.getStatusLine().getStatusCode() != 200) {
             log.warn("Answer server returned error code {}", resp.getStatusLine());
-            return respond(history, errorResponse, contextId);
+            return respond(context, errorResponse, contextId);
         }
 
         try {
@@ -516,7 +522,10 @@ class ConversationController {
                     : "<a href='"+ escapeHtml4(url)+"' target='_blank'>"+ escapeHtml4(answerText)+"</a>";
 
                 if (answer.getSystemName().equalsIgnoreCase(passageExtractor)) {
-                    return respond(history, "I have found this in my documents: “" + answerLink + "”. Does that answer your question? <suggest options='Yes|No'>", contextId);
+                    if (context != null) {
+                        context.setPassageExtractionMode(POSTQUERY);
+                    }
+                    return respond(context, "I have found this in my documents: “" + answerLink + "”. Does that answer your question? <suggest options='Yes|No'>", contextId);
                 }
                 else if (isNotBlank(entityName) && isNotBlank(propertyName)) {
                     final StringBuilder response = new StringBuilder("The " + propertyName + " of " + entityName);
@@ -548,10 +557,10 @@ class ConversationController {
                         response.append(".");
                     }
 
-                    return respond(history, response.toString(), contextId);
+                    return respond(context, response.toString(), contextId);
                 }
 
-                return respond(history, answerLink, contextId);
+                return respond(context, answerLink, contextId);
             }
         }
         catch(SAXException|XPathExpressionException e) {
@@ -793,6 +802,10 @@ class ConversationController {
         } catch (final UnsupportedEncodingException uee) {
             throw new Error("should never happen", uee);
         }
+    }
+
+    private Response respond(final ConversationContext context, final String message, final String contextId) {
+        return respond(context == null ? null : context.getHistory(), message, contextId);
     }
 
     private Response respond(final List<Utterance> history, final String message, final String contextId) {
