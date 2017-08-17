@@ -127,7 +127,7 @@ define([
                 if (terminalPhrase.exec(response)) {
                     saveConversation(undefined);
                     $newEl.find('.question-answer-suggestion').remove();
-                    $newEl.append('<div class="btn btn-secondary btn-sm question-answer-save">Rate this conversation: ' + starsHelper(0, '', '', starRatingClass) + '</div>');
+                    $newEl.append(' <br><div class="btn btn-secondary btn-sm question-answer-save">Rate this conversation: ' + starsHelper(0, '', '', starRatingClass) + '</div>');
                 }
 
                 scrollDown();
