@@ -202,7 +202,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
                     .map(clusterList -> clusterList.stream()
                             .sorted()
                             .map(ConceptClusterPhrase::getPhrase).collect(toList()))
-                    .map(clusterPhrases -> wrapInBrackets(StringUtils.join(clusterPhrases, ' ')))
+                    .map(clusterPhrases -> wrapInBrackets(StringUtils.join(clusterPhrases, ' ').replaceFirst("\\?\\s*$", "")))
                     .collect(joining(" AND "));
         }
     }

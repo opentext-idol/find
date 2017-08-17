@@ -29,7 +29,7 @@ define([
         }
 
         return concepts.map(function(concept) {
-            return wrapInBrackets(concept.join(' '));
+            return wrapInBrackets(concept.join(' ').replace(/\?\s*$/, ''));
         }).join(' AND ');
     }
 
