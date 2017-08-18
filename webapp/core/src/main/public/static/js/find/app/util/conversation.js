@@ -145,13 +145,28 @@ define([
             $dialog.toggleClass('conversation-dialog-dismissed');
 
             if (!$dialog.hasClass('conversation-dialog-dismissed') && !$messages.find('div').length) {
-                sendQuery('');
-                $input.focus();
+                startNewConversation();
             }
         })
 
-        $dialog.find('.conversation-dialog-title').on('click', function(){
+        function startNewConversation() {
+            contextId = lastQuery = lastRating = helpRequired = undefined;
+            unrecognizedCount = 0;
+            needsIndex = false;
+
+            sendQuery('');
+            $input.focus();
+        }
+
+        $dialog.find('.conversation-hide').on('click', function(){
             $dialog.addClass('conversation-dialog-dismissed')
+        })
+
+        $dialog.find('.conversation-reset').on('click', function(){
+            saveConversationIfRequired();
+
+            $messages.find('div').remove();
+            startNewConversation();
         })
 
         const $form = $dialog.find('form');
