@@ -369,7 +369,7 @@ class ConversationController {
                 sb.append(inlinedResponse.getResponse());
             }
             else {
-                sb.append("Sorry, answerserver doesn't have any results for the query '").append(proxyQuery).append("'");
+                sb.append("Sorry, answerserver doesn't have any results for the query '").append(proxyQuery).append("'.");
             }
 
             idx = matcher.end();
