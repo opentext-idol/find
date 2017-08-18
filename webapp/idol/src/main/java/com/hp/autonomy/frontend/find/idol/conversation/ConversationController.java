@@ -592,6 +592,12 @@ class ConversationController {
 
                             toApply.add(suggestedValue);
 
+                            if(toApply.equals(answer.getQualifiers().stream().map(Qualifier::getValue).collect(Collectors.toSet()))) {
+                                // If there's an exact match between what would be suggested and the first answer,
+                                //   we don't show it since we're already showing the first answer.
+                                continue;
+                            }
+
                             final String suggestQuery = "what is the " + propertyName + " of " + entityName +
                                 toApply.stream().map(str -> ", in " + str).collect(Collectors.joining("")) + "?";
 
