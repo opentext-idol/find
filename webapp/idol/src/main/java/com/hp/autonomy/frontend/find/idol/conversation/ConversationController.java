@@ -349,8 +349,12 @@ class ConversationController {
             context.setPassageExtractionMode(PREQUERY);
         }
 
+        return respond(history, replaceAnswerServerTokens(replaced), contextId);
+    }
+
+    private String replaceAnswerServerTokens(final String str) throws IOException {
         // Replace all <answerserver query="..."> tokens with actual answer server responses.
-        final Matcher matcher = ANSWERSERVER_PLACEHOLDER.matcher(replaced);
+        final Matcher matcher = ANSWERSERVER_PLACEHOLDER.matcher(str);
         final StringBuilder sb = new StringBuilder();
         int idx = 0;
 
@@ -358,13 +362,13 @@ class ConversationController {
             final int start = matcher.start();
 
             if (idx < start) {
-                final String prefix = replaced.substring(0, start);
+                final String prefix = str.substring(0, start);
                 sb.append(prefix);
             }
 
             final String proxyQuery = unescapeHtml4(matcher.group(1));
 
-            final Response inlinedResponse = askQAServer(null, contextId, proxyQuery, false);
+            final Response inlinedResponse = askQAServer(null, null, proxyQuery, false);
             if (inlinedResponse != null) {
                 sb.append(inlinedResponse.getResponse());
             }
@@ -375,12 +379,12 @@ class ConversationController {
             idx = matcher.end();
         }
 
-        if (idx < replaced.length()) {
-            final String suffix = replaced.substring(idx);
+        if (idx < str.length()) {
+            final String suffix = str.substring(idx);
             sb.append(suffix);
         }
 
-        return respond(history, sb.toString(), contextId);
+        return sb.toString();
     }
 
     private HttpResponse queryConversationServer(final String contextId, final String query) throws IOException {
