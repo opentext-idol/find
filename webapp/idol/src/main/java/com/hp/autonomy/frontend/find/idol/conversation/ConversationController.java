@@ -39,7 +39,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -135,6 +137,8 @@ class ConversationController {
     private final XPathExpression xSystemName;
     private final XPathExpression xEntityName;
     private final XPathExpression xPropertyName;
+    private final XPathExpression xComponentQualifier;
+    private final XPathExpression xFactQualifier;
     private final XPathExpression xQualifierName;
     private final XPathExpression xQualifierValue;
 
@@ -206,8 +210,10 @@ class ConversationController {
             xSystemName = xPath.compile("@system_name");
             xEntityName = xPath.compile("metadata/fact/@entity_name");
             xPropertyName = xPath.compile("metadata/fact/property/@name");
-            xQualifierName = xPath.compile("metadata/fact/property/qualifier/@name");
-            xQualifierValue = xPath.compile("metadata/fact/property/qualifier/@value");
+            xComponentQualifier = xPath.compile("metadata/component/property/qualifier");
+            xFactQualifier = xPath.compile("metadata/fact/property/qualifier");
+            xQualifierName = xPath.compile("@name");
+            xQualifierValue = xPath.compile("@value");
         }
         catch(ParserConfigurationException|XPathExpressionException e) {
             throw new Error("Unable to initialize conversation controller XML parser", e);
@@ -447,10 +453,11 @@ class ConversationController {
                     (String) xSource.evaluate(answer, XPathConstants.STRING),
                     (String) xAnswerText.evaluate(answer, XPathConstants.STRING),
                     (String) xEntityName.evaluate(answer, XPathConstants.STRING),
-                    (String) xPropertyName.evaluate(answer, XPathConstants.STRING),
-                    (String) xQualifierName.evaluate(answer, XPathConstants.STRING),
-                    (String) xQualifierValue.evaluate(answer, XPathConstants.STRING)
+                    (String) xPropertyName.evaluate(answer, XPathConstants.STRING)
                 );
+
+                parseQualifiers(answer, xFactQualifier, current.getQualifiers());
+                parseQualifiers(answer, xComponentQualifier, current.getAppliedQualifiers());
 
                 unfiltered.add(current);
             }
@@ -508,7 +515,7 @@ class ConversationController {
 
                 final Answer first = answers.get(0);
                 for (int ii = answers.size() - 1; ii >= 1; --ii) {
-                    if (!answers.get(ii).isSameEntityPropertyAndQualifier(first)) {
+                    if (!answers.get(ii).isSameProperty(first)) {
                         answers.remove(ii);
                     }
                 }
@@ -519,8 +526,6 @@ class ConversationController {
                 final String answerText = answer.getAnswerText();
                 final String entityName = answer.getEntityName();
                 final String propertyName = answer.getPropertyName();
-                final String qualifierName = answer.getQualifierName();
-                final String qualifierValue = answer.getQualifierValue();
                 final String url = answer.getUrl();
                 final String answerLink = isBlank(url) ? answerText
                     : "<a href='"+ escapeHtml4(url)+"' target='_blank'>"+ escapeHtml4(answerText)+"</a>";
@@ -534,8 +539,8 @@ class ConversationController {
                 else if (isNotBlank(entityName) && isNotBlank(propertyName)) {
                     final StringBuilder response = new StringBuilder("The " + propertyName + " of " + entityName);
 
-                    if (isNotBlank(qualifierName) && isNotBlank(qualifierValue)) {
-                        response.append(" in ").append(qualifierValue);
+                    if (!answer.getQualifiers().isEmpty()){
+                        response.append(answer.getQualifiers().stream().map(str -> " in " + str.getValue()).collect(Collectors.joining(",")));
                     }
 
                     response.append(" is ").append(answerLink).append(".");
@@ -544,18 +549,49 @@ class ConversationController {
                         // There are multiple answers, we need to format it
                         response.append("\nWe also have data for");
 
-                        for (int ii = 1, max = Math.min(1 + maxDisambiguationQualifierValues, answers.size()); ii < max; ++ii) {
-                            final Answer suggest = answers.get(ii);
-                            final String suggestedValue = suggest.getQualifierValue();
-                            response.append(" <suggest query=\"")
-                                .append(escapeHtml4("what is the " + propertyName + " of " + entityName + " in " + suggestedValue))
-                                .append("\" label=\"")
-                                .append(escapeHtml4(suggestedValue))
-                                .append("\"/>");
+                        final Set<String> currentQualifiers = answer.getAppliedQualifiers().stream()
+                                .map(a -> a.getValue().toLowerCase(Locale.US))
+                                .collect(Collectors.toSet());
+
+                        final LinkedHashSet<Qualifier> candidates = new LinkedHashSet<>();
+                        final Set<String> uniquePropertyNames = new LinkedHashSet<>();
+
+                        for(Answer temp : answers) {
+                            for(Qualifier candidate : temp.getQualifiers()) {
+                                if (!currentQualifiers.contains(candidate.getValue().toLowerCase(Locale.US))) {
+                                    candidates.add(candidate);
+                                    uniquePropertyNames.add(candidate.getName());
+                                }
+                            }
                         }
 
-                        if (answers.size() > maxDisambiguationQualifierValues + 1) {
-                            response.append("…");
+                        int shown = 0;
+                        final boolean multipleProperties = uniquePropertyNames.size() > 1;
+
+                        for(Qualifier candidate : candidates) {
+                            if (shown >= maxDisambiguationQualifierValues) {
+                                if (candidates.size() > shown) {
+                                    response.append("…");
+                                }
+                                break;
+                            }
+
+                            final String suggestedValue = candidate.getValue();
+                            final String suggestedLabel = (multipleProperties ? candidate.getName() + "\u2192 " : "") + suggestedValue;
+                            final LinkedHashSet<String> toApply = new LinkedHashSet<>(
+                                answer.getAppliedQualifiers().stream().map(Qualifier::getValue).collect(Collectors.toSet()));
+                            toApply.add(suggestedValue);
+
+                            final String suggestQuery = "what is the " + propertyName + " of " + entityName +
+                                toApply.stream().map(str -> ", in " + str).collect(Collectors.joining(""));
+
+                            response.append(" <suggest query=\"")
+                                    .append(escapeHtml4(suggestQuery))
+                                    .append("\" label=\"")
+                                    .append(escapeHtml4(suggestedLabel))
+                                    .append("\"/>");
+
+                            ++shown;
                         }
 
                         response.append(".");
@@ -574,18 +610,34 @@ class ConversationController {
         return null;
     }
 
+    private void parseQualifiers(final Node answer, final XPathExpression expr, final List<Qualifier> qualifiers) throws XPathExpressionException {
+        final NodeList qualifierNodes = (NodeList) expr.evaluate(answer, XPathConstants.NODESET);
+        for (int ii = 0; ii < qualifierNodes.getLength(); ++ii) {
+            final Node qn = qualifierNodes.item(ii);
+            qualifiers.add(new Qualifier(
+                (String) xQualifierName.evaluate(qn, XPathConstants.STRING),
+                (String) xQualifierValue.evaluate(qn, XPathConstants.STRING)
+            ));
+        }
+    }
+
     @Data
     public static class Answer {
-        private final String systemName, source, answerText, entityName, propertyName, qualifierName, qualifierValue;
+        private final String systemName, source, answerText, entityName, propertyName;
+        private final List<Qualifier> qualifiers = new ArrayList<>();
+        private final List<Qualifier> appliedQualifiers = new ArrayList<>();
         private String url;
 
-        public boolean isSameEntityPropertyAndQualifier(final Answer other){
+        public boolean isSameProperty(final Answer other){
             return StringUtils.equals(systemName, other.getSystemName())
                 && StringUtils.equals(entityName, other.getEntityName())
-                && StringUtils.equals(propertyName, other.getPropertyName())
-                && StringUtils.equals(qualifierName, other.getQualifierName());
-
+                && StringUtils.equals(propertyName, other.getPropertyName());
         }
+    }
+
+    @Data
+    public static class Qualifier {
+        private final String name, value;
     }
 
     @RequestMapping(value = "history", method = RequestMethod.GET)
