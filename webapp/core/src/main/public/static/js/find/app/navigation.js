@@ -17,13 +17,9 @@ define([
 
     return Backbone.View.extend({
         events: {
-            'click .find-logo-small': function(event) {
-                // If we're a normal user, clicking the logo should send us to the splash page.
-                //   (which basically reloads the page and clears all the filters, since there's no route for it).
-                if (!configuration().hasBiRole) {
-                    event.preventDefault();
-                    window.open('public/search/splash', '_self');
-                }
+            'click .find-logo-small.clickable': function(event) {
+                event.preventDefault();
+                window.open('public/search/splash', '_self');
             },
             'click .nav-menu-toggle-btn': function(event) {
                 event.preventDefault();
@@ -75,7 +71,10 @@ define([
                 menuItems: this.menuItems,
                 pages: pages,
                 applications: configuration().applications,
-                username: configuration().username
+                username: configuration().username,
+                // If we're a normal user, clicking the logo should send us to the splash page.
+                //   (which basically reloads the page and clears all the filters, since there's no route for it).
+                splashLink: !configuration().hasBiRole
             }));
 
             this.$('.side-menu').metisMenu({
