@@ -578,12 +578,22 @@ class ConversationController {
 
                             final String suggestedValue = candidate.getValue();
                             final String suggestedLabel = (multipleProperties ? candidate.getName() + "\u2192 " : "") + suggestedValue;
-                            final LinkedHashSet<String> toApply = new LinkedHashSet<>(
-                                answer.getAppliedQualifiers().stream().map(Qualifier::getValue).collect(Collectors.toSet()));
+                            final LinkedHashSet<String> toApply = new LinkedHashSet<>();
+
+                            for(Qualifier qualifier : answer.getAppliedQualifiers()) {
+                                final String appliedValue = qualifier.getValue();
+                                // use the canonical case of the qualifier if possible
+                                toApply.add(
+                                    answer.getQualifiers().stream().map(Qualifier::getValue)
+                                        .filter(qual -> qual.equalsIgnoreCase(appliedValue))
+                                        .findFirst().orElse(appliedValue)
+                                );
+                            }
+
                             toApply.add(suggestedValue);
 
                             final String suggestQuery = "what is the " + propertyName + " of " + entityName +
-                                toApply.stream().map(str -> ", in " + str).collect(Collectors.joining(""));
+                                toApply.stream().map(str -> ", in " + str).collect(Collectors.joining("")) + "?";
 
                             response.append(" <suggest query=\"")
                                     .append(escapeHtml4(suggestQuery))
@@ -594,7 +604,7 @@ class ConversationController {
                             ++shown;
                         }
 
-                        response.append(".");
+                        response.append(" .");
                     }
 
                     return respond(context, response.toString(), contextId);
