@@ -25,6 +25,8 @@ public class ConversationContexts extends LinkedHashMap<String, ConversationCont
         private final List<Utterance> history = new ArrayList<>();
 
         private AnswerServerState inlineAnswerServerMode = DISABLED;
+
+        private String lastActualQuery;
     }
 
     enum AnswerServerState {

@@ -278,19 +278,11 @@ class ConversationController {
                 isSuccessfulPassageExtraction = true;
             }
             else {
-                // find the second-last thing they said
-                String lastQuery = query;
-                for (int ii = history.size() - 2; ii >= 0; --ii) {
-                    final Utterance utterance = history.get(ii);
-                    if (utterance.isUser()) {
-                        lastQuery = utterance.getText();
-                        break;
-                    }
-                }
-                conversationServerQuery = lastQuery;
+                conversationServerQuery = context.getLastActualQuery();
             }
         }
         else {
+            context.setLastActualQuery(query);
             conversationServerQuery = query;
         }
 
