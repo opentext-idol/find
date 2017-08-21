@@ -111,7 +111,7 @@ define([
                 }
 
                 if (helpRequired) {
-                    askHelp(helpRequired === true ? undefined : helpRequired)
+                    askHelp(helpRequired === true ? undefined : helpRequired, $newEl)
                 }
 
                 if (unrecognized.exec(response)) {
@@ -203,7 +203,7 @@ define([
             $form.submit();
         })
 
-        function askHelp(topic) {
+        function askHelp(topic, $before) {
             $.post(helpUrl, {
                 contextId: contextId,
                 topic: topic
@@ -211,7 +211,14 @@ define([
                 const $newEl = $('<div class="conversation-dialog-server">' + experts.map(function (expert) {
                     return '<a class="btn btn-secondary btn-sm" href="sip:' + _.escape(expert.email) + '">Chat - ' + _.escape(expert.name) + ' (' + _.escape(expert.area) + ')</a>';
                 }).join(' ') + '</div>');
-                $newEl.appendTo($messages);
+
+                if ($before) {
+                    $newEl.insertBefore($before);
+                }
+                else {
+                    $newEl.appendTo($messages);
+                }
+
                 scrollDown();
             })
         }
