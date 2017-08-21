@@ -22,7 +22,7 @@ import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.idol.answer.AnswerFilter;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.ConversationContext;
-import com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState;
+import com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.AnswerServerState;
 import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
@@ -89,9 +89,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.DISABLED;
-import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.POSTQUERY;
-import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.PREQUERY;
+import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.AnswerServerState.DISABLED;
+import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.AnswerServerState.POSTQUERY;
+import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.AnswerServerState.PREPASSAGEEXTRACTION;
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationController.CONVERSATION_PATH;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 import static org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4;
@@ -255,7 +255,7 @@ class ConversationController {
             contexts.put(newContextId, context);
 
             if (greeting.contains(ENABLE_PASSAGE_EXTRACTION)) {
-                context.setPassageExtractionMode(PREQUERY);
+                context.setInlineAnswerServerMode(PREPASSAGEEXTRACTION);
             }
 
             return new Response(greeting.replace(ENABLE_PASSAGE_EXTRACTION, ""), newContextId);
@@ -266,7 +266,7 @@ class ConversationController {
         history.add(new Utterance(true, query));
 
         final String conversationServerQuery;
-        final PassageExtractionState initialMode = context.getPassageExtractionMode();
+        final AnswerServerState initialMode = context.getInlineAnswerServerMode();
         boolean isSuccessfulPassageExtraction = false;
 
         if (initialMode.equals(POSTQUERY)) {
@@ -296,7 +296,7 @@ class ConversationController {
 
         // If we're in passage extraction mode, we have to get the answer out and format it.
         // If there's no answer, we go straight to intent detection as usual.
-        final boolean usePassageExtraction = initialMode.equals(PREQUERY);
+        final boolean usePassageExtraction = initialMode.equals(PREPASSAGEEXTRACTION);
 
         final Response qaResponse = initialMode.equals(POSTQUERY) ? null : askQAServer(context, contextId, query, usePassageExtraction);
         if (qaResponse != null) {
@@ -317,7 +317,7 @@ class ConversationController {
         }
 
         if (isSuccessfulPassageExtraction) {
-            context.setPassageExtractionMode(DISABLED);
+            context.setInlineAnswerServerMode(DISABLED);
         }
         else if (!initialMode.equals(DISABLED)) {
             // Either intent detection found the task (putting us in disambiguation), or it found nothing (giving the error string)
@@ -325,7 +325,7 @@ class ConversationController {
             if (messageMeta == null || !Arrays.asList("DISAMBIGUATION", "UNCHANGED", "REPEATEDQUESTION").contains(messageMeta.getValue())) {
                 // We're not in disambiguation. Either the user accepted the task which was presented, or the server said it didn't know which task to use.
 
-                context.setPassageExtractionMode(DISABLED);
+                context.setInlineAnswerServerMode(DISABLED);
 
                 final boolean shouldRedirectToTopic = UNRECOGNIZED_PATTERN.matcher(answer).find();
 
@@ -352,7 +352,7 @@ class ConversationController {
         final String replaced = answer.replace(ENABLE_PASSAGE_EXTRACTION, "");
         if (!replaced.equals(answer)) {
             // This is an incredibly horrible hack that we use to enable passage extraction mode.
-            context.setPassageExtractionMode(PREQUERY);
+            context.setInlineAnswerServerMode(PREPASSAGEEXTRACTION);
         }
 
         return respond(history, replaceAnswerServerTokens(replaced), contextId);
@@ -532,7 +532,7 @@ class ConversationController {
 
                 if (answer.getSystemName().equalsIgnoreCase(passageExtractor)) {
                     if (context != null) {
-                        context.setPassageExtractionMode(POSTQUERY);
+                        context.setInlineAnswerServerMode(POSTQUERY);
                     }
                     return respond(context, "I have found this in my documents: “" + answerLink + "”. Does that answer your question? <suggest options='Yes|No'>", contextId);
                 }
