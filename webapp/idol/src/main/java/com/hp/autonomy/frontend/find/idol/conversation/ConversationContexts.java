@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
-import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.AnswerServerState.DISABLED;
+import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.DISABLED;
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -24,13 +24,13 @@ public class ConversationContexts extends LinkedHashMap<String, ConversationCont
 
         private final List<Utterance> history = new ArrayList<>();
 
-        private AnswerServerState inlineAnswerServerMode = DISABLED;
+        private PassageExtractionState passageExtractionMode = DISABLED;
 
         private String lastActualQuery;
     }
 
-    enum AnswerServerState {
-        USE_ANSWER_SERVER_ANYTHING,
+    enum PassageExtractionState {
+        PRE_PASSAGE_EXTRACTION,
         POST_PASSAGE_EXTRACTION,
         DISABLED
     }
