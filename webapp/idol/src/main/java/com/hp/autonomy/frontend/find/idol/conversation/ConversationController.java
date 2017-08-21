@@ -267,22 +267,29 @@ class ConversationController {
 
         final String conversationServerQuery;
         final PassageExtractionState initialMode = context.getPassageExtractionMode();
-        boolean isSuccessfulPassageExtraction = false;
+        boolean isSuccessfulAnswer = false;
 
-        if (initialMode.equals(POST_PASSAGE_EXTRACTION)) {
+        final boolean lastQueryWasFactOrAnswerBank = context.isLastQueryWasFactOrAnswerBank();
+
+        if (lastQueryWasFactOrAnswerBank || initialMode.equals(POST_PASSAGE_EXTRACTION)) {
             // Validate whether the user said yes or no.
             final boolean answered = YES_PATTERN.matcher(query).find();
 
             if (answered) {
                 conversationServerQuery = "okay that solves my problem, thank you";
-                isSuccessfulPassageExtraction = true;
+                isSuccessfulAnswer = true;
             }
             else {
                 conversationServerQuery = context.getLastActualQuery();
+
+                if (lastQueryWasFactOrAnswerBank) {
+                    context.setFactAndAnswerBankDisabled(true);
+                }
             }
         }
         else {
             context.setLastActualQuery(query);
+            context.setFactAndAnswerBankDisabled(false);
             conversationServerQuery = query;
         }
 
@@ -290,10 +297,15 @@ class ConversationController {
         // If there's no answer, we go straight to intent detection as usual.
         final boolean usePassageExtraction = initialMode.equals(PRE_PASSAGE_EXTRACTION);
 
-        final Response qaResponse = initialMode.equals(POST_PASSAGE_EXTRACTION) ? null : askQAServer(context, contextId, query, usePassageExtraction);
+        // We should disable factbank if the last query was for factbank
+        final boolean disableFactAndAnswerBank = context.isFactAndAnswerBankDisabled();
+
+        final Response qaResponse = initialMode.equals(POST_PASSAGE_EXTRACTION) ? null : askQAServer(context, contextId, conversationServerQuery, usePassageExtraction, disableFactAndAnswerBank);
         if (qaResponse != null) {
             return qaResponse;
         }
+
+        context.setLastQueryWasFactOrAnswerBank(false);
 
         final HttpResponse resp = queryConversationServer(contextId, conversationServerQuery);
         final Header messageMeta = resp.getFirstHeader("X-Message-Meta");
@@ -308,7 +320,7 @@ class ConversationController {
             return respond(history, errorResponse, contextId);
         }
 
-        if (isSuccessfulPassageExtraction) {
+        if (isSuccessfulAnswer) {
             context.setPassageExtractionMode(DISABLED);
         }
         else if (!initialMode.equals(DISABLED)) {
@@ -366,7 +378,7 @@ class ConversationController {
 
             final String proxyQuery = unescapeHtml4(matcher.group(1));
 
-            final Response inlinedResponse = askQAServer(null, null, proxyQuery, false);
+            final Response inlinedResponse = askQAServer(null, null, proxyQuery, false, false);
             if (inlinedResponse != null) {
                 sb.append(inlinedResponse.getResponse());
             }
@@ -393,7 +405,7 @@ class ConversationController {
     }
 
 
-    private Response askQAServer(final ConversationContext context, final String contextId, final String query, final boolean isPassageExtraction) throws IOException {
+    private Response askQAServer(final ConversationContext context, final String contextId, final String query, final boolean isPassageExtraction, final boolean disableFactAndAnswerBank) throws IOException {
         final AnswerServerConfig answerServer = configService.getConfig().getAnswerServer();
         if (!answerServer.getEnabled()) {
             return null;
@@ -407,10 +419,18 @@ class ConversationController {
         final ArrayList<BasicNameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("text", query));
 
-        if(isNotBlank(systemNames)) {
-            params.add(new BasicNameValuePair("systemNames",
-                isPassageExtraction ? systemNames + "," + passageExtractor : systemNames));
+        final List<String> systems = new ArrayList<>();
+        if (isNotBlank(systemNames) && !disableFactAndAnswerBank) {
+            systems.add(systemNames);
         }
+        if (isPassageExtraction) {
+            systems.add(passageExtractor);
+        }
+        if (systems.isEmpty()) {
+            return null;
+        }
+
+        params.add(new BasicNameValuePair("systemNames", StringUtils.join(systems, ",")));
 
         final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
         final String securityInfo = principal.getSecurityInfo();
@@ -522,11 +542,20 @@ class ConversationController {
                 final String answerLink = isBlank(url) ? answerText
                     : "<a href='"+ escapeHtml4(url)+"' target='_blank'>"+ escapeHtml4(answerText)+"</a>";
 
-                if (answer.getSystemName().equalsIgnoreCase(passageExtractor)) {
+
+                final boolean doConfirm = context != null;
+                final String questionPostfix = doConfirm ? " Does that answer your question? <suggest options='Yes|No'>" : "";
+                final boolean isPassageExtractor = answer.getSystemName().equalsIgnoreCase(passageExtractor);
+
+                if (doConfirm) {
+                    context.setLastQueryWasFactOrAnswerBank(!isPassageExtraction);
+                }
+
+                if (isPassageExtractor) {
                     if (context != null) {
                         context.setPassageExtractionMode(POST_PASSAGE_EXTRACTION);
                     }
-                    return respond(context, "I have found this in my documents: “" + answerLink + "”. Does that answer your question? <suggest options='Yes|No'>", contextId);
+                    return respond(context, "I have found this in my documents: “" + answerLink + "”." + questionPostfix, contextId);
                 }
                 else if (isNotBlank(entityName) && isNotBlank(propertyName)) {
                     final StringBuilder response = new StringBuilder("The " + propertyName + " of " + entityName);
@@ -605,10 +634,12 @@ class ConversationController {
                         response.append(" .");
                     }
 
+                    response.append(questionPostfix);
+
                     return respond(context, response.toString(), contextId);
                 }
 
-                return respond(context, answerLink, contextId);
+                return respond(context, answerLink + questionPostfix, contextId);
             }
         }
         catch(SAXException|XPathExpressionException e) {

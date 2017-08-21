@@ -26,6 +26,10 @@ public class ConversationContexts extends LinkedHashMap<String, ConversationCont
 
         private PassageExtractionState passageExtractionMode = DISABLED;
 
+        private boolean lastQueryWasFactOrAnswerBank;
+
+        private boolean factAndAnswerBankDisabled;
+
         private String lastActualQuery;
     }
 
