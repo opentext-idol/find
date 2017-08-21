@@ -90,8 +90,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.AnswerServerState.DISABLED;
-import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.AnswerServerState.POSTQUERY;
-import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.AnswerServerState.PREPASSAGEEXTRACTION;
+import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.AnswerServerState.POST_PASSAGE_EXTRACTION;
+import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.AnswerServerState.USE_ANSWER_SERVER_ANYTHING;
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationController.CONVERSATION_PATH;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 import static org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4;
@@ -255,7 +255,7 @@ class ConversationController {
             contexts.put(newContextId, context);
 
             if (greeting.contains(ENABLE_PASSAGE_EXTRACTION)) {
-                context.setInlineAnswerServerMode(PREPASSAGEEXTRACTION);
+                context.setInlineAnswerServerMode(USE_ANSWER_SERVER_ANYTHING);
             }
 
             return new Response(greeting.replace(ENABLE_PASSAGE_EXTRACTION, ""), newContextId);
@@ -269,7 +269,7 @@ class ConversationController {
         final AnswerServerState initialMode = context.getInlineAnswerServerMode();
         boolean isSuccessfulPassageExtraction = false;
 
-        if (initialMode.equals(POSTQUERY)) {
+        if (initialMode.equals(POST_PASSAGE_EXTRACTION)) {
             // Validate whether the user said yes or no.
             final boolean answered = YES_PATTERN.matcher(query).find();
 
@@ -296,9 +296,9 @@ class ConversationController {
 
         // If we're in passage extraction mode, we have to get the answer out and format it.
         // If there's no answer, we go straight to intent detection as usual.
-        final boolean usePassageExtraction = initialMode.equals(PREPASSAGEEXTRACTION);
+        final boolean usePassageExtraction = initialMode.equals(USE_ANSWER_SERVER_ANYTHING);
 
-        final Response qaResponse = initialMode.equals(POSTQUERY) ? null : askQAServer(context, contextId, query, usePassageExtraction);
+        final Response qaResponse = initialMode.equals(POST_PASSAGE_EXTRACTION) ? null : askQAServer(context, contextId, query, usePassageExtraction);
         if (qaResponse != null) {
             return qaResponse;
         }
@@ -321,7 +321,7 @@ class ConversationController {
         }
         else if (!initialMode.equals(DISABLED)) {
             // Either intent detection found the task (putting us in disambiguation), or it found nothing (giving the error string)
-            // If we're in disambiguation, we want to stay in POSTQUERY mode.
+            // If we're in disambiguation, we want to stay in POST_PASSAGE_EXTRACTION mode.
             if (messageMeta == null || !Arrays.asList("DISAMBIGUATION", "UNCHANGED", "REPEATEDQUESTION").contains(messageMeta.getValue())) {
                 // We're not in disambiguation. Either the user accepted the task which was presented, or the server said it didn't know which task to use.
 
@@ -352,7 +352,7 @@ class ConversationController {
         final String replaced = answer.replace(ENABLE_PASSAGE_EXTRACTION, "");
         if (!replaced.equals(answer)) {
             // This is an incredibly horrible hack that we use to enable passage extraction mode.
-            context.setInlineAnswerServerMode(PREPASSAGEEXTRACTION);
+            context.setInlineAnswerServerMode(USE_ANSWER_SERVER_ANYTHING);
         }
 
         return respond(history, replaceAnswerServerTokens(replaced), contextId);
@@ -532,7 +532,7 @@ class ConversationController {
 
                 if (answer.getSystemName().equalsIgnoreCase(passageExtractor)) {
                     if (context != null) {
-                        context.setInlineAnswerServerMode(POSTQUERY);
+                        context.setInlineAnswerServerMode(POST_PASSAGE_EXTRACTION);
                     }
                     return respond(context, "I have found this in my documents: “" + answerLink + "”. Does that answer your question? <suggest options='Yes|No'>", contextId);
                 }

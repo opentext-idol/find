@@ -28,8 +28,8 @@ public class ConversationContexts extends LinkedHashMap<String, ConversationCont
     }
 
     enum AnswerServerState {
-        PREPASSAGEEXTRACTION,
-        POSTQUERY,
+        USE_ANSWER_SERVER_ANYTHING,
+        POST_PASSAGE_EXTRACTION,
         DISABLED
     }
 }
