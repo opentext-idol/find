@@ -300,7 +300,7 @@ class ConversationController {
         // We should disable factbank if the last query was for factbank
         final boolean disableFactAndAnswerBank = context.isFactAndAnswerBankDisabled();
 
-        final Response qaResponse = initialMode.equals(POST_PASSAGE_EXTRACTION) ? null : askQAServer(context, contextId, conversationServerQuery, usePassageExtraction, disableFactAndAnswerBank);
+        final Response qaResponse = isSuccessfulAnswer || initialMode.equals(POST_PASSAGE_EXTRACTION) ? null : askQAServer(context, contextId, conversationServerQuery, usePassageExtraction, disableFactAndAnswerBank);
         if (qaResponse != null) {
             return qaResponse;
         }
@@ -405,7 +405,7 @@ class ConversationController {
     }
 
 
-    private Response askQAServer(final ConversationContext context, final String contextId, final String query, final boolean isPassageExtraction, final boolean disableFactAndAnswerBank) throws IOException {
+    private Response askQAServer(final ConversationContext context, final String contextId, final String query, final boolean usePassageExtraction, final boolean disableFactAndAnswerBank) throws IOException {
         final AnswerServerConfig answerServer = configService.getConfig().getAnswerServer();
         if (!answerServer.getEnabled()) {
             return null;
@@ -423,7 +423,7 @@ class ConversationController {
         if (isNotBlank(systemNames) && !disableFactAndAnswerBank) {
             systems.add(systemNames);
         }
-        if (isPassageExtraction) {
+        if (usePassageExtraction) {
             systems.add(passageExtractor);
         }
         if (systems.isEmpty()) {
@@ -548,7 +548,7 @@ class ConversationController {
                 final boolean isPassageExtractor = answer.getSystemName().equalsIgnoreCase(passageExtractor);
 
                 if (doConfirm) {
-                    context.setLastQueryWasFactOrAnswerBank(!isPassageExtraction);
+                    context.setLastQueryWasFactOrAnswerBank(!isPassageExtractor);
                 }
 
                 if (isPassageExtractor) {
