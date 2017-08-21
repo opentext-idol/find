@@ -47,7 +47,15 @@ define([
 
             if (match[4]) {
                 // <table> and <a> are placed verbatim, without any escaping.
-                escaped += match[4];
+                let toAdd = match[4];
+
+                if (match[5] === 'a') {
+                    // we want to add a target=blank to the href if it doesn't already have an
+                    if (!/\btarget=/.exec(toAdd)) {
+                        toAdd = toAdd.slice(0, 2) + ' target="_blank" ' + toAdd.slice(2);
+                    }
+                }
+                escaped += toAdd;
             }
             else if (match[2] === 'suggest') {
                 const $tmp = $(match[0]);
