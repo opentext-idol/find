@@ -17,6 +17,27 @@ define([
     const MAX_SIZE = 1;
     const CROPPED_SUMMARY_CHAR_LENGTH = 300;
 
+    function autoLink(value) {
+        // Automatically convert plain HTTP/HTTPS links to <a> tags.
+        // We use lookahead to ignore the trailing 'dot' if present, since that's placed as punctuation in an
+        //  answer server response.
+        const regex = /(https?:\/\/\S+?(?=.?(\s|$)))/gi;
+
+        let lastIndex = 0, match, escaped = '';
+        while (match = regex.exec(value)) {
+            escaped += _.escape(value.slice(lastIndex, match.index));
+
+            const url = match[1];
+            escaped += '<a href="' + _.escape(url) + '" target="_blank">' + _.escape(url) + '</a>'
+
+            lastIndex = match.index + match[0].length
+        }
+
+        escaped += _.escape(value.slice(lastIndex));
+
+        return escaped;
+    }
+
     function allowLinks(value) {
         if (!value) {
             return value;
@@ -28,14 +49,14 @@ define([
 
         let lastIndex = 0, match;
         while (match = regex.exec(value)) {
-            escaped += _.escape(value.slice(lastIndex, match.index));
+            escaped += autoLink(value.slice(lastIndex, match.index));
 
             escaped += '<a href=' + match[1] + ' target="_blank">' + match[2] + '</a>';
 
             lastIndex = match.index + match[0].length
         }
 
-        escaped += _.escape(value.slice(lastIndex));
+        escaped += autoLink(value.slice(lastIndex));
 
         return escaped;
     }
