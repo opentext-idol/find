@@ -118,6 +118,8 @@ class ConversationController {
     private static final String ENABLE_PASSAGE_EXTRACTION = "<enablePassageExtraction>";
     private static final Pattern ANSWERSERVER_PLACEHOLDER = Pattern.compile("<answerserver \\s*query=\"([^>]*)\" \\s*context=\"([^>]*)\"\\s*>", Pattern.CASE_INSENSITIVE);
 
+    private static final Pattern SKIP_ANSWERSERVER = Pattern.compile("^\\s*(yes|no|bye|goodbye|farewell|sayonara)([ ,.!]*(thanks|thank\\s+you))?[ ,.!]*$", Pattern.CASE_INSENSITIVE);
+
     private final CloseableHttpClient httpClient;
     private final String questionAnswerDatabaseMatch;
     private final String systemNames;
@@ -435,6 +437,10 @@ class ConversationController {
     private Response askQAServer(final ConversationContext context, final String contextId, final String query, final boolean usePassageExtraction, final boolean disableFactAndAnswerBank) throws IOException {
         final AnswerServerConfig answerServer = configService.getConfig().getAnswerServer();
         if (!answerServer.getEnabled()) {
+            return null;
+        }
+
+        if (SKIP_ANSWERSERVER.matcher(query).matches()) {
             return null;
         }
 
