@@ -252,14 +252,13 @@ class ConversationController {
 
             final String newContextId = resp.getFirstHeader("Location").getValue().replaceFirst(".*/", "");
             final ConversationContext context = new ConversationContext();
-            context.getHistory().add(new Utterance(false, greeting));
             contexts.put(newContextId, context);
 
             if (greeting.contains(ENABLE_PASSAGE_EXTRACTION)) {
                 context.setPassageExtractionMode(PRE_PASSAGE_EXTRACTION);
             }
 
-            return new Response(greeting.replace(ENABLE_PASSAGE_EXTRACTION, ""), newContextId);
+            return respond(context, greeting.replace(ENABLE_PASSAGE_EXTRACTION, ""), newContextId);
         }
 
         final ConversationContext context = contexts.get(contextId);
