@@ -548,7 +548,8 @@ class ConversationController {
                 final String propertyName = answer.getPropertyName();
                 final String url = answer.getUrl();
                 final String answerLink = isBlank(url) ? answerText
-                    : "<a href='"+ escapeHtml4(url)+"' target='_blank'>"+ escapeHtml4(answerText)+"</a>";
+                    // using the dagger \u2020 symbol to provide fact attribution links
+                    : answerText + "<a href='"+ escapeHtml4(url)+"' target='_blank'>\u2020</a>";
 
 
                 final boolean doConfirm = context != null;
