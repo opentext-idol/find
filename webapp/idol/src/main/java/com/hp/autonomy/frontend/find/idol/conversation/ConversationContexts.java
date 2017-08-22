@@ -36,6 +36,7 @@ public class ConversationContexts extends LinkedHashMap<String, ConversationCont
     enum PassageExtractionState {
         PRE_PASSAGE_EXTRACTION,
         POST_PASSAGE_EXTRACTION,
+        SHOW_TAXONOMY_ON_FAILURE,
         DISABLED
     }
 }

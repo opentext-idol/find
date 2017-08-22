@@ -92,6 +92,7 @@ import org.xml.sax.SAXException;
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.DISABLED;
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.POST_PASSAGE_EXTRACTION;
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.PRE_PASSAGE_EXTRACTION;
+import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.SHOW_TAXONOMY_ON_FAILURE;
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationController.CONVERSATION_PATH;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 import static org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4;
@@ -285,6 +286,9 @@ class ConversationController {
                 if (lastQueryWasFactOrAnswerBank) {
                     context.setFactAndAnswerBankDisabled(true);
                 }
+                if (initialMode.equals(POST_PASSAGE_EXTRACTION)) {
+                    context.setPassageExtractionMode(SHOW_TAXONOMY_ON_FAILURE);
+                }
             }
         }
         else {
@@ -300,11 +304,13 @@ class ConversationController {
         // We should disable factbank if the last query was for factbank
         final boolean disableFactAndAnswerBank = context.isFactAndAnswerBankDisabled();
 
-        final Response qaResponse = isSuccessfulAnswer || initialMode.equals(POST_PASSAGE_EXTRACTION) ? null : askQAServer(context, contextId, conversationServerQuery, usePassageExtraction, disableFactAndAnswerBank);
+        final Response qaResponse = isSuccessfulAnswer || initialMode.equals(POST_PASSAGE_EXTRACTION)
+                || initialMode.equals(SHOW_TAXONOMY_ON_FAILURE) ? null : askQAServer(context, contextId, conversationServerQuery, usePassageExtraction, disableFactAndAnswerBank);
         if (qaResponse != null) {
             return qaResponse;
         }
 
+        // There wasn't an answer from fact bank or passage extraction
         context.setLastQueryWasFactOrAnswerBank(false);
 
         final HttpResponse resp = queryConversationServer(contextId, conversationServerQuery);
@@ -324,6 +330,7 @@ class ConversationController {
             context.setPassageExtractionMode(DISABLED);
         }
         else if (!initialMode.equals(DISABLED)) {
+            context.setPassageExtractionMode(SHOW_TAXONOMY_ON_FAILURE);
             // Either intent detection found the task (putting us in disambiguation), or it found nothing (giving the error string)
             // If we're in disambiguation, we want to stay in POST_PASSAGE_EXTRACTION mode.
             if (messageMeta == null || !Arrays.asList("DISAMBIGUATION", "UNCHANGED", "REPEATEDQUESTION").contains(messageMeta.getValue())) {
