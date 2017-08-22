@@ -32,6 +32,16 @@ define([
 
     let contextId, lastQuery, needsIndex, idleIndexTimeout, lastRating, helpRequired;
 
+    function hackUrl(url) {
+        // TODO: remove this before any proper deployment
+        // We have to map sites like
+        //   http://demosharepoint/sites/InfoCenter/CS/Manuals_EN/...
+        // to
+        //   https://sharepoint.rowini.net/dvsz-sites/PBSupport-Wiki/Manuals%20(EN)/...
+
+        return url && $.trim(url).replace(/http:\/\/demosharepoint\/sites\/InfoCenter\/CS\/([^/]+)_EN/i, 'https://sharepoint.rowini.net/dvsz-sites/PBSupport-Wiki/$1%20(EN)');
+    }
+
     function autoLink(value) {
         // Automatically convert plain HTTP/HTTPS links to <a> tags.
         // We use lookahead to ignore the trailing 'dot' if present, since that's placed as punctuation in an
@@ -42,7 +52,7 @@ define([
         while (match = regex.exec(value)) {
             escaped += _.escape(value.slice(lastIndex, match.index));
 
-            const url = match[1];
+            const url = hackUrl(match[1]);
             escaped += '<a href="' + _.escape(url) + '" target="_blank">' + _.escape(url) + '</a>'
 
             lastIndex = match.index + match[0].length
@@ -76,7 +86,7 @@ define([
                         toAdd = toAdd.slice(0, 2) + ' target="_blank" ' + toAdd.slice(2);
                     }
                 }
-                escaped += toAdd;
+                escaped += hackUrl(toAdd);
             }
             else if (match[2] === 'suggest') {
                 const $tmp = $(match[0]);
