@@ -116,7 +116,7 @@ class ConversationController {
     private static final Pattern YES_PATTERN = Pattern.compile("\\b(yes)\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern UNRECOGNIZED_PATTERN = Pattern.compile("I did not understand that|I didn't understand what you meant", Pattern.CASE_INSENSITIVE);
     private static final String ENABLE_PASSAGE_EXTRACTION = "<enablePassageExtraction>";
-    private static final Pattern ANSWERSERVER_PLACEHOLDER = Pattern.compile("<answerserver query=\"([^>]+)\">", Pattern.CASE_INSENSITIVE);
+    private static final Pattern ANSWERSERVER_PLACEHOLDER = Pattern.compile("<answerserver \\s*query=\"([^>]*)\" \\s*context=\"([^>]*)\"\\s*>", Pattern.CASE_INSENSITIVE);
 
     private final CloseableHttpClient httpClient;
     private final String questionAnswerDatabaseMatch;
@@ -296,6 +296,10 @@ class ConversationController {
             context.setLastActualQuery(query);
             context.setFactAndAnswerBankDisabled(false);
             conversationServerQuery = query;
+
+            if (initialMode.equals(PRE_PASSAGE_EXTRACTION) || isBlank(context.getInitialQuery())) {
+                context.setInitialQuery(query);
+            }
         }
 
         // If we're in passage extraction mode, we have to get the answer out and format it.
@@ -367,10 +371,10 @@ class ConversationController {
             context.setPassageExtractionMode(PRE_PASSAGE_EXTRACTION);
         }
 
-        return respond(history, replaceAnswerServerTokens(replaced), contextId);
+        return respond(history, replaceAnswerServerTokens(replaced, context.getInitialQuery()), contextId);
     }
 
-    private String replaceAnswerServerTokens(final String str) throws IOException {
+    private String replaceAnswerServerTokens(final String str, final String initialQuery) throws IOException {
         // Replace all <answerserver query="..."> tokens with actual answer server responses.
         final Matcher matcher = ANSWERSERVER_PLACEHOLDER.matcher(str);
         final StringBuilder sb = new StringBuilder();
@@ -385,13 +389,28 @@ class ConversationController {
             }
 
             final String proxyQuery = unescapeHtml4(matcher.group(1));
+            final String proxyContext = unescapeHtml4(matcher.group(2));
 
-            final Response inlinedResponse = askQAServer(null, null, proxyQuery, false, false);
-            if (inlinedResponse != null) {
-                sb.append(inlinedResponse.getResponse());
+            boolean found = false;
+            final boolean tryQuery = isNotBlank(proxyQuery);
+            if(tryQuery) {
+                final Response inlinedResponse = askQAServer(null, null, proxyQuery, false, false);
+                if (inlinedResponse != null) {
+                    sb.append(inlinedResponse.getResponse());
+                    found = true;
+                }
             }
-            else {
-                sb.append("Sorry, answerserver doesn't have any results for the query '").append(proxyQuery).append("'.");
+
+            if (!found && isNotBlank(proxyContext)) {
+               final Response inlinedResponse = askQAServer(null, null, initialQuery + " " + proxyContext, true, true);
+               if (inlinedResponse != null) {
+                   sb.append(inlinedResponse.getResponse());
+                   found = true;
+               }
+            }
+
+            if (!found) {
+                sb.append("Sorry, we couldn't find any results for your query '").append(proxyQuery).append("'.");
             }
 
             idx = matcher.end();
@@ -561,10 +580,16 @@ class ConversationController {
                 }
 
                 if (isPassageExtractor) {
+                    final String passagePrefix;
                     if (context != null) {
                         context.setPassageExtractionMode(POST_PASSAGE_EXTRACTION);
+                        passagePrefix = "I have found this in my documents: ";
                     }
-                    return respond(context, "I have found this in my documents: “" + answerLink + "”." + questionPostfix, contextId);
+                    else {
+                        passagePrefix = "I can't find any facts on that, but I did find this in our documents: ";
+                    }
+
+                    return respond(context, passagePrefix + "“" + answerLink + "”." + questionPostfix, contextId);
                 }
                 else if (isNotBlank(entityName) && isNotBlank(propertyName)) {
                     final StringBuilder response = new StringBuilder("The " + propertyName + " of " + entityName);

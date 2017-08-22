@@ -31,6 +31,8 @@ public class ConversationContexts extends LinkedHashMap<String, ConversationCont
         private boolean factAndAnswerBankDisabled;
 
         private String lastActualQuery;
+
+        private String initialQuery;
     }
 
     enum PassageExtractionState {
