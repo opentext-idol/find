@@ -25,6 +25,8 @@ import com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.Conv
 import com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState;
 import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
+import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestIndexBuilder;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.types.idol.responses.CategoryHit;
 import com.hp.autonomy.types.idol.responses.SuggestOnTextWithPathResponseData;
@@ -123,7 +125,7 @@ class ConversationController {
     private final ConfigService<IdolFindConfig> configService;
     private final Processor<SuggestOnTextWithPathResponseData> suggestProcessor;
     private final int maxDisambiguationQualifierValues;
-    private final AnswerFilter answerFilter;
+    private final AnswerFilter<IdolGetContentRequestBuilder, IdolGetContentRequestIndexBuilder> answerFilter;
     private final boolean filterByDocumentSecurity;
 
     @Value("${conversation.server.url}")
@@ -162,7 +164,7 @@ class ConversationController {
             final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
             final ConfigService<IdolFindConfig> configService,
             final ProcessorFactory processorFactory,
-            final AnswerFilter answerFilter,
+            final AnswerFilter<IdolGetContentRequestBuilder, IdolGetContentRequestIndexBuilder> answerFilter,
             @Value("${conversation.server.allowSelfSigned}") final boolean allowSelfSigned,
             @Value("${questionanswer.databaseMatch}") final String questionAnswerDatabaseMatch,
             @Value("${questionanswer.conversation.system.names}") final String systemNames,

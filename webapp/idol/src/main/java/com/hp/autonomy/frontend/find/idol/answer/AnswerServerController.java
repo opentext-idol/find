@@ -9,6 +9,8 @@ import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequest;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerService;
+import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestIndexBuilder;
 import com.hp.autonomy.types.idol.responses.answer.AskAnswer;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import java.util.ArrayList;
@@ -38,14 +40,14 @@ class AnswerServerController {
     private final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory;
     private final String questionAnswerDatabaseMatch;
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
-    private final AnswerFilter answerFilter;
+    private final AnswerFilter<IdolGetContentRequestBuilder, IdolGetContentRequestIndexBuilder> answerFilter;
     private final boolean filterByDocumentSecurity;
 
     @Autowired
     AnswerServerController(final AskAnswerServerService askAnswerServerService,
                            final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory,
                            final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
-                           final AnswerFilter answerFilter,
+                           final AnswerFilter<IdolGetContentRequestBuilder, IdolGetContentRequestIndexBuilder> answerFilter,
                            @Value("${questionanswer.databaseMatch}") final String questionAnswerDatabaseMatch,
                            @Value("${questionanswer.documentSecurity.filter}") final boolean filterByDocumentSecurity
     ) {
