@@ -113,7 +113,8 @@ class ConversationController {
     private static final String NO_SUCH_INSTANCE = "Error: no such instance";
     private static final String errorResponse = "Sorry, there's a problem with the conversation server at the moment, please try again later.";
 
-    private static final Pattern YES_PATTERN = Pattern.compile("\\b(yes)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern YES_PATTERN = Pattern.compile("^\\s*(yes)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern NO_PATTERN = Pattern.compile("^\\s*(no)\\b", Pattern.CASE_INSENSITIVE);
     private static final Pattern UNRECOGNIZED_PATTERN = Pattern.compile("I did not understand that|I didn't understand what you meant", Pattern.CASE_INSENSITIVE);
     private static final String ENABLE_PASSAGE_EXTRACTION = "<enablePassageExtraction>";
     private static final Pattern ANSWERSERVER_PLACEHOLDER = Pattern.compile("<answerserver \\s*query=\"([^>]*)\" \\s*context=\"([^>]*)\"\\s*>", Pattern.CASE_INSENSITIVE);
@@ -269,21 +270,26 @@ class ConversationController {
         final List<Utterance> history = context.getHistory();
         history.add(new Utterance(true, query));
 
-        final String conversationServerQuery;
+        String conversationServerQuery = query;
         final PassageExtractionState initialMode = context.getPassageExtractionMode();
         boolean isSuccessfulAnswer = false;
 
         final boolean lastQueryWasFactOrAnswerBank = context.isLastQueryWasFactOrAnswerBank();
 
-        if (lastQueryWasFactOrAnswerBank || initialMode.equals(POST_PASSAGE_EXTRACTION)) {
-            // Validate whether the user said yes or no.
-            final boolean answered = YES_PATTERN.matcher(query).find();
+        boolean isReplyToFollowUp = false;
 
-            if (answered) {
+        if (lastQueryWasFactOrAnswerBank || initialMode.equals(POST_PASSAGE_EXTRACTION)) {
+            // Validate whether the user said yes or no. If they said something else, assume it's a new query.
+            final boolean isYes = YES_PATTERN.matcher(query).find();
+            final boolean isNo = NO_PATTERN.matcher(query).find();
+
+            isReplyToFollowUp = isYes || isNo;
+
+            if (isYes) {
                 conversationServerQuery = "okay that solves my problem, thank you";
                 isSuccessfulAnswer = true;
             }
-            else {
+            else if (isNo) {
                 conversationServerQuery = context.getLastActualQuery();
 
                 if (lastQueryWasFactOrAnswerBank) {
@@ -294,10 +300,10 @@ class ConversationController {
                 }
             }
         }
-        else {
+
+        if(!isReplyToFollowUp) {
             context.setLastActualQuery(query);
             context.setFactAndAnswerBankDisabled(false);
-            conversationServerQuery = query;
 
             if (initialMode.equals(PRE_PASSAGE_EXTRACTION) || isBlank(context.getInitialQuery())) {
                 context.setInitialQuery(query);
