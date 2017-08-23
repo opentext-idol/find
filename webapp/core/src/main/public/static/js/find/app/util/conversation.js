@@ -46,7 +46,7 @@ define([
         // Automatically convert plain HTTP/HTTPS links to <a> tags.
         // We use lookahead to ignore the trailing 'dot' if present, since that's placed as punctuation in an
         //  answer server response.
-        const regex = /(https?:\/\/\S+?(?=.?(\s|$)))/gi;
+        const regex = /(https?:\/\/\S+(?=\.?(\s|$)))/gi;
 
         let lastIndex = 0, match, escaped = '';
         while (match = regex.exec(value)) {
