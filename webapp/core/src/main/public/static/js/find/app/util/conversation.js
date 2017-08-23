@@ -20,7 +20,7 @@ define([
     const starRatingSelector = '.' + starRatingClass;
 
     // Test for a key phrase to prompt the user if they want a phone call.
-    const unrecognized = /I did not understand that|I didn't understand what you meant/i;
+    const unrecognized = /I did not understand that|I didn't understand what you meant|I can guide you through the topics I know about/i;
     let unrecognizedCount = 0;
     const CALL_THRESHOLD = 2;
 
