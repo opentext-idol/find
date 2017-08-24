@@ -121,7 +121,8 @@ class ConversationController {
     private static final String ENABLE_PASSAGE_EXTRACTION = "<enablePassageExtraction>";
     private static final Pattern ANSWERSERVER_PLACEHOLDER = Pattern.compile("<answerserver \\s*query=\"([^>]*)\" \\s*context=\"([^>]*)\"\\s*>", Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern SKIP_ANSWERSERVER = Pattern.compile("^\\s*(yes|no|bye|goodbye|farewell|sayonara)([ ,.!]*(thanks|thank\\s+you))?[ ,.!]*$", Pattern.CASE_INSENSITIVE);
+    // List of patterns which we don't want to use answerserver on, mainly yes/no, bye patterns, and 'expert' (to ask for an expert at the end)
+    private static final Pattern SKIP_ANSWERSERVER = Pattern.compile("^\\s*(yes|no|bye|goodbye|farewell|sayonara|expert)([ ,.!]*(thanks|thank\\s+you))?[ ,.!]*$", Pattern.CASE_INSENSITIVE);
 
     private final CloseableHttpClient httpClient;
     private final String questionAnswerDatabaseMatch;
