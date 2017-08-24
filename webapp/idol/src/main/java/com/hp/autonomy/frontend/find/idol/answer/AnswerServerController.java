@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.answer;
 
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
+import com.hp.autonomy.frontend.find.idol.answer.AnswerFilter.AnswerDetails;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequest;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerService;
@@ -89,7 +90,7 @@ class AnswerServerController {
                 StringUtils.isNotBlank(source) && !source.equalsIgnoreCase("SQLDB")).collect(Collectors.toList());
 
         if (!refsToCheck.isEmpty()) {
-            final HashMap<String, String> urls = answerFilter.resolveUrls(refsToCheck);
+            final HashMap<String, AnswerDetails> urls = answerFilter.resolveUrls(refsToCheck);
 
             final ArrayList<AskAnswer> toReturn = new ArrayList<>();
 
@@ -102,13 +103,13 @@ class AnswerServerController {
                 }
                 else {
                     // Empty string / actual URL is a URL, null means document not found and should be filtered out
-                    final String url = urls.get(answer.getSource());
+                    final AnswerDetails details = urls.get(answer.getSource());
 
-                    if (url != null || !filterByDocumentSecurity) {
+                    if (details != null || !filterByDocumentSecurity) {
                         toReturn.add(answer);
                     }
 
-                    answer.setSource(url);
+                    answer.setSource(details == null ? null : details.getUrl());
                 }
             }
 

@@ -19,6 +19,7 @@ import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import lombok.Data;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -46,7 +47,7 @@ public class AnswerFilter <
         this.getContentRequestIndexBuilderFactory = getContentRequestIndexBuilderFactory;
     }
 
-    public HashMap<String, String> resolveUrls(final List<String> references) {
+    public HashMap<String, AnswerDetails> resolveUrls(final List<String> references) {
         final IdolGetContentRequestIndex getContentRequestIndex = getContentRequestIndexBuilderFactory.getObject()
                 .index("*")
                 .references(references)
@@ -64,7 +65,7 @@ public class AnswerFilter <
 
         final List<IdolSearchResult> results = this.documentsService.getDocumentContent(getContentRequest);
 
-        final HashMap<String, String> toReturn = new HashMap<>();
+        final HashMap<String, AnswerDetails> toReturn = new HashMap<>();
 
         for(IdolSearchResult result : results) {
             String resolvedUrl = "";
@@ -78,9 +79,15 @@ public class AnswerFilter <
                 }
             }
 
-            toReturn.put(result.getReference(), resolvedUrl);
+            toReturn.put(result.getReference(), new AnswerDetails(resolvedUrl, result.getTitle()));
         }
 
         return toReturn;
+    }
+
+    @Data
+    public static class AnswerDetails {
+        private final String url;
+        private final String title;
     }
 }

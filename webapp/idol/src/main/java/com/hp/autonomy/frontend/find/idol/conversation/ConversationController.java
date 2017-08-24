@@ -20,6 +20,7 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.idol.answer.AnswerFilter;
+import com.hp.autonomy.frontend.find.idol.answer.AnswerFilter.AnswerDetails;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.ConversationContext;
 import com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState;
@@ -519,7 +520,7 @@ class ConversationController {
             final ArrayList<Answer> answers = new ArrayList<>();
 
             if (!refsToCheck.isEmpty()) {
-                final HashMap<String, String> urls = answerFilter.resolveUrls(refsToCheck);
+                final HashMap<String, AnswerDetails> urls = answerFilter.resolveUrls(refsToCheck);
 
                 for(final Answer answer : unfiltered) {
                     final String source = answer.getSource();
@@ -529,14 +530,15 @@ class ConversationController {
                     }
                     else {
                         // Empty string / actual URL is a URL, null means document not found and should be filtered out
-                        final String url = urls.get(answer.getSource());
+                        final AnswerDetails details = urls.get(answer.getSource());
 
-                        if (url != null || !filterByDocumentSecurity) {
+                        if (details != null || !filterByDocumentSecurity) {
                             answers.add(answer);
                         }
 
-                        if (isNotBlank(url)) {
-                            answer.setUrl(url);
+                        if (details != null && isNotBlank(details.getUrl())) {
+                            answer.setUrl(details.getUrl());
+                            answer.setUrlTitle(details.getTitle());
                         }
                     }
                 }
@@ -579,8 +581,8 @@ class ConversationController {
                 final String propertyName = answer.getPropertyName();
                 final String url = answer.getUrl();
                 final String answerLink = isBlank(url) ? answerText
-                    // using the dagger \u2020 symbol to provide fact attribution links
-                    : answerText + "<a href='"+ escapeHtml4(url)+"' target='_blank'>\u2020</a>";
+                    // using a subscript link to the title if available, otherwise using a dagger \u2020 symbol to provide fact attribution links
+                    : answerText + "<a href='"+ escapeHtml4(url)+"' target='_blank'><sup>[" + escapeHtml4(StringUtils.defaultString(answer.getUrlTitle(), "\u2020"))+ "]</sup></a>";
 
 
                 final boolean doConfirm = context != null;
@@ -712,6 +714,7 @@ class ConversationController {
         private final List<Qualifier> qualifiers = new ArrayList<>();
         private final List<Qualifier> appliedQualifiers = new ArrayList<>();
         private String url;
+        private String urlTitle;
 
         public boolean isSameProperty(final Answer other){
             return StringUtils.equals(systemName, other.getSystemName())
