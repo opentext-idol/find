@@ -99,6 +99,7 @@ import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContex
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationController.CONVERSATION_PATH;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
 import static org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4;
+import static org.apache.commons.lang3.StringUtils.abbreviateMiddle;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -536,9 +537,9 @@ class ConversationController {
                             answers.add(answer);
                         }
 
-                        if (details != null && isNotBlank(details.getUrl())) {
-                            answer.setUrl(details.getUrl());
+                        if (details != null) {
                             answer.setUrlTitle(details.getTitle());
+                            answer.setUrl(details.getUrl());
                         }
                     }
                 }
@@ -580,9 +581,11 @@ class ConversationController {
                 final String entityName = answer.getEntityName();
                 final String propertyName = answer.getPropertyName();
                 final String url = answer.getUrl();
-                final String answerLink = isBlank(url) ? answerText
+                final String urlTitle = answer.getUrlTitle();
+                final String cite = isBlank(urlTitle) ? "" : "<sup>["+escapeHtml4(abbreviateMiddle(urlTitle.trim().replace("\n", " "), "…", 160))+"]</sup>";
+                final String answerLink = isBlank(url) ? answerText + cite
                     // using a subscript link to the title if available, otherwise using a dagger \u2020 symbol to provide fact attribution links
-                    : answerText + "<a href='"+ escapeHtml4(url)+"' target='_blank'><sup>[" + escapeHtml4(StringUtils.defaultString(answer.getUrlTitle(), "\u2020"))+ "]</sup></a>";
+                    : answerText + "<a href='"+ escapeHtml4(url)+"' target='_blank'>"+(StringUtils.defaultString(cite, "<sup>\u2020</sup>"))+"</a>";
 
 
                 final boolean doConfirm = context != null;
