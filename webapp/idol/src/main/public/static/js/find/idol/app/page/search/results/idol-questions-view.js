@@ -7,25 +7,17 @@ define([
     'underscore',
     'jquery',
     'backbone',
+    'find/app/util/url-manipulator',
     'find/idol/app/model/answer-bank/idol-answered-questions-collection',
     'js-whatever/js/list-view',
     'text!find/templates/app/page/search/results/questions-container.html',
     'i18n!find/nls/bundle'
-], function(_, $, Backbone, AnsweredQuestionsCollection, ListView, questionsTemplate, i18n) {
+], function(_, $, Backbone, urlManipulator, AnsweredQuestionsCollection, ListView, questionsTemplate, i18n) {
     'use strict';
 
     const MAX_SIZE = 1;
     const CROPPED_SUMMARY_CHAR_LENGTH = 300;
-
-    function hackUrl(url) {
-        // TODO: remove this before any proper deployment
-        // We have to map sites like
-        //   http://demosharepoint/sites/InfoCenter/CS/Manuals_EN/...
-        // to
-        //   https://sharepoint.rowini.net/dvsz-sites/PBSupport-Wiki/Manuals%20(EN)/...
-
-        return url && $.trim(url).replace(/http:\/\/demosharepoint\/sites\/InfoCenter\/CS\/([^/]+)_EN/i, 'https://sharepoint.rowini.net/dvsz-sites/PBSupport-Wiki/$1%20(EN)');
-    }
+    const hackUrl = urlManipulator.hackUrl;
 
     function autoLink(value) {
         // Automatically convert plain HTTP/HTTPS links to <a> tags.
@@ -110,7 +102,8 @@ define([
                     croppedAnswer: croppedAnswer,
                     extendedAnswer: extendedAnswer,
                     showMoreButton: answeredQuestion.get('answer').length > CROPPED_SUMMARY_CHAR_LENGTH,
-                    allowLinks: allowLinks
+                    allowLinks: allowLinks,
+                    hackUrl: hackUrl
                 });
             }, this).join('');
 

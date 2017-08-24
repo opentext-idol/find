@@ -7,10 +7,11 @@ define([
     'jquery',
     'underscore',
     'find/app/util/chart',
+    'find/app/util/url-manipulator',
     'find/app/page/search/template-helpers/stars-helper',
     'text!find/templates/app/util/conversation-button.html',
     'text!find/templates/app/util/conversation-dialog.html'
-], function($, _, chart, starsHelper, buttonTemplate, dialogTemplate) {
+], function($, _, chart, urlManipulator, starsHelper, buttonTemplate, dialogTemplate) {
 
     const prefix = 'api/public/conversation';
     const chatUrl = prefix + '/chat';
@@ -32,15 +33,7 @@ define([
 
     let contextId, lastQuery, needsIndex, idleIndexTimeout, lastRating, helpRequired;
 
-    function hackUrl(url) {
-        // TODO: remove this before any proper deployment
-        // We have to map sites like
-        //   http://demosharepoint/sites/InfoCenter/CS/Manuals_EN/...
-        // to
-        //   https://sharepoint.rowini.net/dvsz-sites/PBSupport-Wiki/Manuals%20(EN)/...
-
-        return url && $.trim(url).replace(/http:\/\/demosharepoint\/sites\/InfoCenter\/CS\/([^/]+)_EN/i, 'https://sharepoint.rowini.net/dvsz-sites/PBSupport-Wiki/$1%20(EN)');
-    }
+    const hackUrl = urlManipulator.hackUrl;
 
     function autoLink(value) {
         // Automatically convert plain HTTP/HTTPS links to <a> tags.

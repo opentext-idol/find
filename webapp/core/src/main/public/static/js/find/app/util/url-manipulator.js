@@ -4,9 +4,20 @@
  */
 
 define([
-    'find/app/configuration'
-], function(configuration) {
+    'find/app/configuration',
+    'jquery'
+], function(configuration, $) {
     'use strict';
+
+    function hackUrl(url) {
+        // TODO: remove this before any proper deployment
+        // We have to map sites like
+        //   http://demosharepoint/sites/InfoCenter/CS/Manuals_EN/...
+        // to
+        //   https://sharepoint.rowini.net/dvsz-sites/PBSupport-Wiki/Manuals%20(EN)/...
+
+        return url && $.trim(url).replace(/http:\/\/demosharepoint\/sites\/InfoCenter\/CS\/([^/]+)_EN/i, 'https://sharepoint.rowini.net/dvsz-sites/PBSupport-Wiki/$1%20(EN)');
+    }
 
     return {
         addSpecialUrlPrefix: function(contentType, url) {
@@ -20,8 +31,10 @@ define([
                 prefix = uiCustomization.specialUrlPrefixes[contentType];
             }
 
-            return prefix + url;
+            return hackUrl(prefix + url);
         },
+
+        hackUrl: hackUrl,
 
         appendHashFragment: function(model, url) {
             const hashFragmentIndex = model.get('reference').indexOf('#');
