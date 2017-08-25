@@ -47,7 +47,7 @@ define([
 
         let escaped = '';
 
-        const regex = /<a\s+href=(['"]?[^'"<>]+['"]?)\s*(target="_blank"\s*)?>([^<>]*)<\/a>/g;
+        const regex = /<a\s+href=(['"]?[^'"<>]+['"]?)\s*(?:target="_blank"\s*)?>([^<>]*)<\/a>/g;
 
         let lastIndex = 0, match;
         while (match = regex.exec(value)) {
