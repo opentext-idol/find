@@ -415,8 +415,17 @@ class ConversationController {
         final String TOKEN = "<findUser>";
         final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
         final String userName = principal.getName();
-        final String firstName = StringUtils.defaultString(USERNAME_MAP.get(userName), userName);
-        return str.replace(TOKEN, firstName);
+        final String firstName = USERNAME_MAP.get(userName);
+
+        if (isNotBlank(firstName)) {
+            // If we have a first name, replace the username with the name
+            return str.replace(TOKEN, firstName);
+        }
+        else {
+            // If no first name, the username may be something silly like A568612, so we should just discard it.
+            // May be more sensible to use the name generally; but we know it's safe to remove for this demo's dialogue.
+            return str.replaceAll(" ?" + Pattern.quote(TOKEN), "");
+        }
     }
 
     private String replaceAnswerServerTokens(final String str, final String initialQuery) throws IOException {
