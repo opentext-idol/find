@@ -469,7 +469,9 @@ class ConversationController {
         final HttpPost post = new HttpPost(qaURL + "a=ask");
 
         final ArrayList<BasicNameValuePair> params = new ArrayList<>();
-        params.add(new BasicNameValuePair("text", query));
+        // We remove brackets to workaround the answerserver not handling brackets in the request,
+        //   see https://jira.autonomy.com/browse/CORE-4181
+        params.add(new BasicNameValuePair("text", query.replaceAll("[()]", " ")));
 
         final List<String> systems = new ArrayList<>();
         if (isNotBlank(systemNames) && !disableFactAndAnswerBank) {
