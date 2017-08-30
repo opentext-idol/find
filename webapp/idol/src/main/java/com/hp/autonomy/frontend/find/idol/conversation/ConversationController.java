@@ -11,6 +11,7 @@ import com.autonomy.aci.client.transport.AciHttpException;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
 import com.autonomy.aci.client.transport.impl.HttpClientFactory;
+import com.autonomy.aci.client.util.AciURLCodec;
 import com.autonomy.aci.client.util.ActionParameters;
 import com.autonomy.nonaci.ServerDetails;
 import com.autonomy.nonaci.indexing.impl.DreAddDataCommand;
@@ -19,6 +20,7 @@ import com.autonomy.nonaci.indexing.impl.IndexingServiceImpl;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
+import com.hp.autonomy.frontend.find.core.view.ViewController;
 import com.hp.autonomy.frontend.find.idol.answer.AnswerFilter;
 import com.hp.autonomy.frontend.find.idol.answer.AnswerFilter.AnswerDetails;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
@@ -92,6 +94,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import static com.hp.autonomy.frontend.find.core.view.ViewController.VIEW_DOCUMENT_PATH;
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.DISABLED;
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.POST_PASSAGE_EXTRACTION;
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.PRE_PASSAGE_EXTRACTION;
@@ -126,6 +129,10 @@ class ConversationController {
     // and 'rephrase question' (to go to the rephrase question task)
     // and 'go back to ...' (for navigation up the taxonomy tree)
     private static final Pattern SKIP_ANSWERSERVER = Pattern.compile("^\\s*(yes|no|bye|goodbye|farewell|sayonara|expert|rephrase question|go back to .*)([ ,.!]*(thanks|thank\\s+you))?[ ,.!]*$", Pattern.CASE_INSENSITIVE);
+
+    // Path to the view URL
+    private static final String VIEW_RELATIVE_PATH =
+        ViewController.VIEW_PATH.replaceFirst("$/", "") + VIEW_DOCUMENT_PATH;
 
     private final CloseableHttpClient httpClient;
     private final String questionAnswerDatabaseMatch;
@@ -543,7 +550,10 @@ class ConversationController {
 
                         if (details != null) {
                             answer.setUrlTitle(details.getTitle());
-                            answer.setUrl(details.getUrl());
+                            answer.setUrl(StringUtils.defaultIfBlank(details.getUrl(),
+                                    VIEW_RELATIVE_PATH
+                                            + "?index=*&reference=" + AciURLCodec.getInstance().encode(answer.getSource())
+                            ));
                         }
                     }
                 }
