@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -163,6 +164,21 @@ class ConversationController {
 
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
 
+    private static final Map<String, String> USERNAME_MAP = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
+    static {
+        USERNAME_MAP.put("A192060", "René");
+        USERNAME_MAP.put("A314573", "Martin");
+        USERNAME_MAP.put("A344331", "Peter");
+        USERNAME_MAP.put("A351342", "Anton");
+        USERNAME_MAP.put("A811513", "Jeannette");
+        USERNAME_MAP.put("A890545", "Choki");
+        USERNAME_MAP.put("A948071", "Eric");
+        USERNAME_MAP.put("F247233", "Paulo");
+        USERNAME_MAP.put("F466937", "Vikash");
+        USERNAME_MAP.put("M169890", "Oliver");
+    }
+
     private static final List<Expert> experts = Arrays.asList(
         new Expert("Eric Champod", "eric.champod@credit-suisse.com", "Payments"),
         new Expert("Martin Keller", "martin.keller@credit-suisse.com", "Precious Metals"),
@@ -276,7 +292,7 @@ class ConversationController {
                 context.setPassageExtractionMode(PRE_PASSAGE_EXTRACTION);
             }
 
-            return respond(context, greeting.replace(ENABLE_PASSAGE_EXTRACTION, ""), newContextId);
+            return respond(context, replaceUsername(greeting.replace(ENABLE_PASSAGE_EXTRACTION, "")), newContextId);
         }
 
         final ConversationContext context = contexts.get(contextId);
@@ -392,7 +408,15 @@ class ConversationController {
             context.setPassageExtractionMode(PRE_PASSAGE_EXTRACTION);
         }
 
-        return respond(history, replaceAnswerServerTokens(replaced, context.getInitialQuery()), contextId);
+        return respond(history, replaceUsername(replaceAnswerServerTokens(replaced, context.getInitialQuery())), contextId);
+    }
+
+    private String replaceUsername(final String str){
+        final String TOKEN = "<findUser>";
+        final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
+        final String userName = principal.getName();
+        final String firstName = StringUtils.defaultString(USERNAME_MAP.get(userName), userName);
+        return str.replace(TOKEN, firstName);
     }
 
     private String replaceAnswerServerTokens(final String str, final String initialQuery) throws IOException {
