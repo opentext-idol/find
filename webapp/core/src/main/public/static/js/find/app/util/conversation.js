@@ -63,7 +63,7 @@ define([
 
         let escaped = '';
 
-        const regex = /(<(img|chart|suggest|cite|help) )([^<>]+>)|(<(table|a|sup)[^<>]*>[\s\S]*?<\/\5>)/g;
+        const regex = /(<(img|chart|suggest|cite|help) )([^<>]+>)|(<(table|a|sup|span)[^<>]*>[\s\S]*?<\/\5>)/g;
 
         let lastIndex = 0, match;
         while (match = regex.exec(value)) {

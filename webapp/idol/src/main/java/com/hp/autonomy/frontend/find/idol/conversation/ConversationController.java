@@ -586,7 +586,7 @@ class ConversationController {
                 final String propertyName = answer.getPropertyName();
                 final String url = answer.getUrl();
                 final String urlTitle = answer.getUrlTitle();
-                final String cite = isBlank(urlTitle) ? "" : "<sup>["+escapeHtml4(abbreviateMiddle(urlTitle.trim().replace("\n", " "), "…", 160))+"]</sup>";
+                final String cite = isBlank(urlTitle) ? "" : "\n<span class='conversation-cite'>["+escapeHtml4(abbreviateMiddle(urlTitle.trim().replace("\n", " "), "…", 160))+"]</span>";
                 final String answerLink = isBlank(url) ? answerText + cite
                     // using a subscript link to the title if available, otherwise using a dagger \u2020 symbol to provide fact attribution links
                     : answerText + "<a href='"+ escapeHtml4(url)+"' target='_blank'>"+(StringUtils.defaultString(cite, "<sup>\u2020</sup>"))+"</a>";
