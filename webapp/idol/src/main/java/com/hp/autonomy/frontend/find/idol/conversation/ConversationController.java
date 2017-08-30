@@ -470,8 +470,12 @@ class ConversationController {
 
         final ArrayList<BasicNameValuePair> params = new ArrayList<>();
         // We remove brackets to workaround the answerserver not handling brackets in the request,
-        //   see https://jira.autonomy.com/browse/CORE-4181
-        params.add(new BasicNameValuePair("text", query.replaceAll("[()]", " ")));
+        //   see https://jira.autonomy.com/browse/CORE-4181.
+        // We convert to spaces instead of "" so e.g. 'Red(Blue)' remains two words 'Red Blue' instead of 'RedBlue'.
+        // We remove spaces before commas to workaround the qualifier not being detected if there's a comma, e.g.
+        //  'what is the Order of Conversions Metal Account to Physical , in Client' doesn't work
+        //   but '... Physical, in Client' does; see https://jira.autonomy.com/browse/CORE-4182.
+        params.add(new BasicNameValuePair("text", query.replaceAll("[()]", " ").replaceAll(" +,", ",")));
 
         final List<String> systems = new ArrayList<>();
         if (isNotBlank(systemNames) && !disableFactAndAnswerBank) {
