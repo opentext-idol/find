@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -423,7 +424,17 @@ class ConversationController {
         final String TOKEN = "<findUser>";
         final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
         final String userName = principal.getName();
-        final String firstName = USERNAME_MAP.get(userName);
+
+        final LinkedHashMap<String, String> fields = principal.getFields();
+
+        String firstName = null;
+
+        if (fields != null) {
+            firstName = fields.get("givenname");
+        }
+        if (firstName == null) {
+            firstName = USERNAME_MAP.get(userName);
+        }
 
         if (isNotBlank(firstName)) {
             // If we have a first name, replace the username with the name
