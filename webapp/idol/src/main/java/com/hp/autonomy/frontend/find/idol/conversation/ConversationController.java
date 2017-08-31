@@ -175,6 +175,7 @@ class ConversationController {
         USERNAME_MAP.put("A561204", "Jörgen");
         USERNAME_MAP.put("A568612", "Peter");
         USERNAME_MAP.put("A618938", "Tania");
+        USERNAME_MAP.put("A666864", "Oliver");
         USERNAME_MAP.put("A811513", "Jeannette");
         USERNAME_MAP.put("A890545", "Choki");
         USERNAME_MAP.put("A920207", "Sandra");
