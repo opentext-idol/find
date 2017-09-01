@@ -44,13 +44,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -164,29 +162,6 @@ class ConversationController {
     private final XPathExpression xQualifierValue;
 
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
-
-    private static final Map<String, String> USERNAME_MAP = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-
-    static {
-        USERNAME_MAP.put("A192060", "René");
-        USERNAME_MAP.put("A251915", "Melanie");
-        USERNAME_MAP.put("A314573", "Martin");
-        USERNAME_MAP.put("A344331", "Peter");
-        USERNAME_MAP.put("A351342", "Anton");
-        USERNAME_MAP.put("A561204", "Jörgen");
-        USERNAME_MAP.put("A568612", "Peter");
-        USERNAME_MAP.put("A618938", "Tania");
-        USERNAME_MAP.put("A666864", "Oliver");
-        USERNAME_MAP.put("A811513", "Jeannette");
-        USERNAME_MAP.put("A890545", "Choki");
-        USERNAME_MAP.put("A920207", "Sandra");
-        USERNAME_MAP.put("A948071", "Eric");
-        USERNAME_MAP.put("A992451", "Melissa");
-        USERNAME_MAP.put("F108377", "Sinan");
-        USERNAME_MAP.put("F247233", "Paulo");
-        USERNAME_MAP.put("F466937", "Vikash");
-        USERNAME_MAP.put("M169890", "Oliver");
-    }
 
     private static final List<Expert> experts = Arrays.asList(
         new Expert("Eric Champod", "eric.champod@credit-suisse.com", "Payments"),
@@ -432,10 +407,6 @@ class ConversationController {
         if (fields != null) {
             firstName = fields.get("givenname");
         }
-        if (firstName == null) {
-            firstName = USERNAME_MAP.get(userName);
-        }
-
         if (isNotBlank(firstName)) {
             // If we have a first name, replace the username with the name
             return str.replace(TOKEN, firstName);
