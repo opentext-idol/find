@@ -425,7 +425,7 @@ class ConversationController {
         final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
         final String userName = principal.getName();
 
-        final LinkedHashMap<String, String> fields = principal.getFields();
+        final Map<String, String> fields = principal.getFields();
 
         String firstName = null;
 
