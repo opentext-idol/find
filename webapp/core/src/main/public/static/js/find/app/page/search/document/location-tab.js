@@ -33,7 +33,7 @@ define([
         },
 
         render: function() {
-            var locationsMap = this.model.get('locations');
+            const locationsMap = this.model.get('locations');
 
             this.$el.html(this.template({
                 i18n: i18n
@@ -41,12 +41,12 @@ define([
 
             this.mapResultsView.setElement(this.$('.location-tab-map').get(0)).render();
 
-            var markers = _.flatten(_.map(locationsMap, function(locations){
+            const markers = _.flatten(_.map(locationsMap, function(locations) {
                 return _.map(locations, function(location){
-                    var longitude = location.longitude;
-                    var latitude = location.latitude;
+                    const longitude = location.longitude;
+                    const latitude = location.latitude;
 
-                    var popover = this.popoverTemplate({
+                    const popover = this.popoverTemplate({
                         i18n: i18n,
                         title: location.displayName,
                         summary: addLinksToSummary(this.model.get('summary')),
@@ -62,7 +62,7 @@ define([
         },
 
         getIcon: function(displayName) {
-            var locationField = _.findWhere(this.locationFields, {displayName: displayName});
+            const locationField = _.findWhere(this.locationFields, {displayName: displayName});
             return this.mapResultsView.getIcon(locationField.iconName, locationField.iconColor, locationField.markerColor);
         }
     });
