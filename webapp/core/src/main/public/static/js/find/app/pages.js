@@ -40,7 +40,7 @@ define([
                     }
 
                     const view = this.pages[pageName].view;
-
+                    view.setLastNavigationOpts && view.setLastNavigationOpts.apply(view, _.toArray(arguments).slice(1));
                     view.show();
 
                     this.currentPage = pageName;

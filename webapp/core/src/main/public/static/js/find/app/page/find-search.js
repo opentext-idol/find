@@ -391,7 +391,7 @@ define([
             }, this);
 
             if (config().hasBiRole && this.selectedTabModel.get('selectedSearchCid') === null) {
-                this.createNewTab();
+                this.createNewTab(this.lastNavigatedQueryText);
             } else {
                 this.selectContentView();
             }
@@ -656,6 +656,10 @@ define([
 
         getSelectedRoute: function () {
             return this.currentRoute;
+        },
+
+        setLastNavigationOpts: function(queryText) {
+            this.lastNavigatedQueryText = queryText || false;
         }
     });
 });
