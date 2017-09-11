@@ -119,8 +119,13 @@ public class CustomApplicationsConfigTest extends ConfigurationComponentTest<Cus
 
     @Test
     public void testBasicValidateRejectsInvalidUrl() {
-        config = constructConfig(APP_NAME, "abc");
+        config = constructConfig(APP_NAME, "http://nonsuch:12312312312314a///");
         validateWithException("The URL provided for \"" + APP_NAME + "\" is malformed.");
+    }
+
+    @Test
+    public void testBasicValidateAllowsRelativeUrl() {
+        config = constructConfig(APP_NAME, "static-HEAD/html/idol-saved-search-status.html");
     }
 
     @Test

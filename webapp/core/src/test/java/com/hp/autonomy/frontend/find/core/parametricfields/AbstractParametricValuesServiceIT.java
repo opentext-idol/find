@@ -56,6 +56,7 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
 
     @Test
     public void getDateParametricValuesInBuckets() throws Exception {
+        // Note: this requires content 11.4 GA or above due to changes in parametric range support.
         final String url = ParametricValuesController.PARAMETRIC_PATH + ParametricValuesController.DATE_PATH + ParametricValuesController.BUCKET_PARAMETRIC_PATH + '/' + ParametricValuesService.AUTN_DATE_FIELD;
 
         final MockHttpServletRequestBuilder requestBuilder = get(url)

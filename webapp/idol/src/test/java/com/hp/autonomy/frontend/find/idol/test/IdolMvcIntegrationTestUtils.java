@@ -54,7 +54,7 @@ public class IdolMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
 
     @Override
     protected Authentication createAuthentication(final Collection<GrantedAuthority> authorities) {
-        final CommunityPrincipal communityPrincipal = new CommunityPrincipal(1L, "user", null, Collections.emptySet());
+        final CommunityPrincipal communityPrincipal = new CommunityPrincipal(1L, "user", null, Collections.emptySet(), null);
 
         final UsernamePasswordAuthenticationToken authentication = mock(UsernamePasswordAuthenticationToken.class);
         when(authentication.isAuthenticated()).thenReturn(true);

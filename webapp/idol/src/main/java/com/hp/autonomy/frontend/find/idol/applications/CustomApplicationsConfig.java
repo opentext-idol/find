@@ -58,7 +58,7 @@ public class CustomApplicationsConfig extends AbstractConfig<CustomApplicationsC
                 throw new ConfigException(section, "The application name must be a non-empty string, e.g. \"IDOL Admin\".");
             } else if(StringUtils.isEmpty(app.getUrl())) {
                 throw new ConfigException(section, "The \"url\" property for \"" + app.getApplicationName() + "\" must not be empty.");
-            } else {
+            } else if (app.getUrl().matches("^\\w+:.*")){
                 try {
                     new URL(app.getUrl());
                 } catch(final MalformedURLException e) {
