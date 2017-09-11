@@ -26,7 +26,7 @@ define([
     const CALL_THRESHOLD = 2;
 
     // Test for a terminal phrase to determine if the conversation has ended.
-    const terminalPhrase = /Thank you for using HPE Virtual Assistant. I look forward to talking again soon!/i;
+    const terminalPhrase = /Thank you for using .*Virtual Assistant. I look forward to talking again soon!/i;
 
     // How long to wait before indexing the document, five minutes.
     const idleIndexDelay = 5 * 60e3;
