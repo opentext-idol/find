@@ -73,7 +73,7 @@
                             <ul class="nav nav-second-level collapse">
                                 <% _.each(data.applications, function(app) { %>
                                     <li>
-                                        <a href="<%= app.url %>" <%- app.openInNewTab ? 'target="_blank"' : '' %>>
+                                        <a href="<%= app.url %>" <%- app.openInNewTab ? 'target=_blank' : '' %>>
                                             <% if (app.icon) { %>
                                                 <i class="<%- 'hp-icon ' + app.icon %>"></i>
                                             <% } %>

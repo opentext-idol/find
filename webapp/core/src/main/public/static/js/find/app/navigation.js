@@ -23,6 +23,10 @@ define([
             },
             'click a[data-pagename]': function() {
                 this.sidebarModel.set('collapsed', true);
+            },
+            'click li[data-pagename="custom-applications"] ul li a[target=_blank]': function(event) {
+                event.preventDefault();
+                window.open(event.currentTarget.href, '_blank');
             }
         },
 
