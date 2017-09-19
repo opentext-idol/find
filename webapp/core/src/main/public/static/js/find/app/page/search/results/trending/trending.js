@@ -351,26 +351,26 @@ define([
     function getTimeFormat(max, min) {
         const range = max.getTime() / MILLISECONDS_TO_SECONDS - min.getTime() / MILLISECONDS_TO_SECONDS;
         if(range > SECONDS_IN_ONE_YEAR) {
-            return d3.time.format("%B %Y");
+            return d3.time.format("%b %Y");
         } else if(range < SECONDS_IN_ONE_DAY) {
-            return d3.time.format("%H:%M:%S %d&nbsp;%B %Y");
+            return d3.time.format("%H:%M:%S %d&nbsp;%b %Y");
         } else if(range < SECONDS_IN_ONE_WEEK) {
-            return d3.time.format("%H:%M %d&nbsp;%B %Y");
+            return d3.time.format("%H:%M %d&nbsp;%b %Y");
         } else {
-            return d3.time.format("%d&nbsp;%B %Y");
+            return d3.time.format("%d&nbsp;%b %Y");
         }
     }
 
     function getIESafeTimeFormat(max, min) {
         const range = max.getTime() / MILLISECONDS_TO_SECONDS - min.getTime() / MILLISECONDS_TO_SECONDS;
         if(range > SECONDS_IN_ONE_YEAR) {
-            return d3.time.format("%B %Y");
+            return d3.time.format("%b %Y");
         } else if(range < SECONDS_IN_ONE_DAY) {
-            return d3.time.format("%H:%M:%S %d %B %Y");
+            return d3.time.format("%H:%M:%S %d %b %Y");
         } else if(range < SECONDS_IN_ONE_WEEK) {
-            return d3.time.format("%H:%M %d %B %Y");
+            return d3.time.format("%H:%M %d %b %Y");
         } else {
-            return d3.time.format("%d %B %Y");
+            return d3.time.format("%d %b %Y");
         }
     }
 
