@@ -278,7 +278,8 @@
     "latitude": {
       "names": [
         "NODE_PLACE/LAT",
-        "LAT"
+        "LAT",
+        "NODE_PLACE_LAT"
       ],
       "type": "NUMBER",
       "advanced": true
@@ -286,7 +287,8 @@
     "longitude": {
       "names": [
         "NODE_PLACE/LON",
-        "LON"
+        "LON",
+        "NODE_PLACE_LON",
       ],
       "type": "NUMBER",
       "advanced": true
