@@ -1,23 +1,26 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
     'jquery',
+    'backbone',
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/dates-filter-model',
+    'find/app/model/geography-model',
     'find/app/model/min-score-model',
     'find/app/util/confirm-view',
     'find/app/util/database-name-resolver',
     'moment',
     'i18n!find/nls/bundle'
-], function(Backbone, $, SavedSearchControlView, SavedSearchModel, DatesFilterModel, MinScoreModel, MockConfirmView, databaseNameResolver, moment, i18n) {
+], function($, Backbone, SavedSearchControlView, SavedSearchModel, DatesFilterModel, GeographyModel, MinScoreModel,
+            MockConfirmView, databaseNameResolver, moment, i18n) {
+    'use strict';
 
-    var CREATE_TEXT = 'Make a new one!';
-    var EDIT_TEXT = 'Change an old one!';
+    const CREATE_TEXT = 'Make a new one!';
+    const EDIT_TEXT = 'Change an old one!';
 
     function checkPopoverExists(view) {
         return Boolean(view.$('.popover').length);
@@ -53,10 +56,10 @@ define([
     function testEnablesOptionButton(className, name) {
         describe('enables option button', function() {
             beforeEach(function(done) {
-                var view = this.view;
+                const view = this.view;
 
-                var intervalId = setInterval(function() {
-                    if (checkButtonEnabled(view)) {
+                const intervalId = setInterval(function() {
+                    if(checkButtonEnabled(view)) {
                         clearTimeout(intervalId);
                         done();
                     }
@@ -78,10 +81,10 @@ define([
     function testRemovesTheSetTitleInput() {
         describe('shows the popover with set title input form', function() {
             beforeEach(function(done) {
-                var view = this.view;
+                const view = this.view;
 
-                var intervalId = setInterval(function() {
-                    if (!checkPopoverExists(view)) {
+                const intervalId = setInterval(function() {
+                    if(!checkPopoverExists(view)) {
                         clearTimeout(intervalId);
                         done();
                     }
@@ -152,7 +155,7 @@ define([
                 {name: 'Wikipedia', domain: 'PUBLIC'}
             ]);
 
-            databaseNameResolver.getDatabaseInfoFromCollection.and.callFake(function () {
+            databaseNameResolver.getDatabaseInfoFromCollection.and.callFake(function() {
                 return [{name: 'Wikipedia', domain: 'PUBLIC'}];
             });
 
@@ -170,9 +173,12 @@ define([
                 minScore: 20
             });
 
+            const geographyModel = new GeographyModel({});
+
             this.queryState = {
                 conceptGroups: conceptGroups,
                 datesFilterModel: datesFilterModel,
+                geographyModel: geographyModel,
                 selectedIndexes: selectedIndexes,
                 selectedParametricValues: selectedParametricValues,
                 minScoreModel: minScoreModel
@@ -324,12 +330,12 @@ define([
                 testShowsTheSetTitleInput();
 
                 it('activates the "Save Query" button', function() {
-                   expect(this.view.$('.show-save-as[data-search-type="QUERY"]')).toHaveClass('active');
+                    expect(this.view.$('.show-save-as[data-search-type="QUERY"]')).toHaveClass('active');
                 });
 
                 describe('then the user enters and saves a title', function() {
-                    var TITLE = 'Star Wars';
-                    var TYPE = SavedSearchModel.Type.QUERY;
+                    const TITLE = 'Star Wars';
+                    const TYPE = SavedSearchModel.Type.QUERY;
 
                     beforeEach(function() {
                         this.view.$('.popover-content .search-title-input-container .search-title-input').val(TITLE).trigger('input');
@@ -404,7 +410,7 @@ define([
                 });
 
                 it('copies the query restriction parameters to the new model', function() {
-                    var model = this.savedQueryCollection.at(0);
+                    const model = this.savedQueryCollection.at(0);
                     expect(model.get('relatedConcepts')[0][0]).toBe('cat');
                     expect(model.get('indexes').length).toBe(1);
                     expect(model.get('minScore')).toBe(20);
@@ -416,7 +422,7 @@ define([
             });
 
             describe('when the snapshot is renamed', function() {
-                var NEW_TITLE = 'The new title for my snapshot';
+                const NEW_TITLE = 'The new title for my snapshot';
 
                 beforeEach(function() {
                     clickShowRename.call(this);
@@ -505,13 +511,13 @@ define([
                 });
 
                 describe('then the user enters a title and clicks "Save"', function() {
-                    var NEW_TITLE = 'Star Wars';
+                    const NEW_TITLE = 'Star Wars';
 
                     beforeEach(function() {
-                        var createdQueries = this.createdQueries = [];
+                        const createdQueries = this.createdQueries = [];
 
                         spyOn(this.savedQueryCollection, 'create').and.callFake(function(attributes) {
-                            var model = new Backbone.Model(attributes);
+                            const model = new Backbone.Model(attributes);
                             createdQueries.push(model);
                             return model;
                         });
@@ -583,13 +589,13 @@ define([
                 });
 
                 describe('then the user presses "Save snapshot" and clicks "Save"', function() {
-                    var NEW_TITLE = 'Star Wars';
+                    const NEW_TITLE = 'Star Wars';
 
                     beforeEach(function() {
-                        var createdSnapshots = this.createdSnapshots = [];
+                        const createdSnapshots = this.createdSnapshots = [];
 
                         spyOn(this.savedSnapshotCollection, 'create').and.callFake(function(attributes) {
-                            var model = new Backbone.Model(attributes);
+                            const model = new Backbone.Model(attributes);
                             createdSnapshots.push(model);
                             return model;
                         });
@@ -668,7 +674,7 @@ define([
                 });
 
                 describe('then the user enters and saves a new title', function() {
-                    var NEW_TITLE = 'Star Wars';
+                    const NEW_TITLE = 'Star Wars';
 
                     beforeEach(function() {
                         this.view.$('.popover-content .search-title-input-container .search-title-input').val(NEW_TITLE).trigger('input');
@@ -763,7 +769,7 @@ define([
                     it('saves the new query on the saved search model', function() {
                         expect(this.savedSearchModel.save).toHaveBeenCalled();
 
-                        var savedAttributes = this.savedSearchModel.save.calls.argsFor(0)[0];
+                        const savedAttributes = this.savedSearchModel.save.calls.argsFor(0)[0];
                         expect(savedAttributes.relatedConcepts[0][0]).toBe('archipelago');
                     });
 
@@ -833,8 +839,10 @@ define([
                         beforeEach(function() {
                             spyOn(this.savedSnapshotCollection, 'create');
 
-                            this.view.$('.popover-content .search-title-input-container .search-title-input').val("My New Search").trigger('input');
-                            this.view.$('.popover-content .search-title-input-container .save-title-confirm-button').click();
+                            this.view.$('.popover-content .search-title-input-container .search-title-input')
+                                .val("My New Search").trigger('input');
+                            this.view.$('.popover-content .search-title-input-container .save-title-confirm-button')
+                                .click();
                         });
 
                         it('does not revert the search', function() {
@@ -846,8 +854,10 @@ define([
                         beforeEach(function() {
                             spyOn(this.savedQueryCollection, 'create');
 
-                            this.view.$('.popover-content .search-title-input-container .search-title-input').val("My New Search").trigger('input');
-                            this.view.$('.popover-content .search-title-input-container .save-title-confirm-button').click();
+                            this.view.$('.popover-content .search-title-input-container .search-title-input')
+                                .val("My New Search").trigger('input');
+                            this.view.$('.popover-content .search-title-input-container .save-title-confirm-button')
+                                .click();
                         });
 
                         it('reverts the search', function() {
@@ -859,7 +869,7 @@ define([
 
             describe('then the selected indexes are changed', function() {
                 beforeEach(function() {
-                    databaseNameResolver.getDatabaseInfoFromCollection.and.callFake(function () {
+                    databaseNameResolver.getDatabaseInfoFromCollection.and.callFake(function() {
                         return [{name: 'Wikipedia', domain: 'PUBLIC'}, {name: 'NEW_DATABASE', domain: 'PUBLIC'}];
                     });
                     this.queryState.selectedIndexes.add({
@@ -877,5 +887,4 @@ define([
             });
         });
     });
-
 });

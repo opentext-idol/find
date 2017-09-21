@@ -1,13 +1,13 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
     'backbone',
-    'find/app/util/search-data-util',
-    'underscore'
-], function(Backbone, searchDataUtil, _) {
+    'find/app/util/search-data-util'
+], function(_, Backbone, searchDataUtil) {
     'use strict';
 
     /**
@@ -21,8 +21,8 @@ define([
 
     const DEBOUNCE_WAIT_MILLISECONDS = 500;
 
-    const collectionBuildIndexes = function (collection) {
-        return searchDataUtil.buildIndexes(collection.map(function (model) {
+    const collectionBuildIndexes = function(collection) {
+        return searchDataUtil.buildIndexes(collection.map(function(model) {
             return model.pick('domain', 'name');
         }));
     };
@@ -58,7 +58,7 @@ define([
                 if(queryText) {
                     const newAttributes = {correctedQuery: '', queryText: queryText};
 
-                    if (options.enableAutoCorrect) {
+                    if(options.enableAutoCorrect) {
                         // Reset auto-correct whenever the search text changes
                         newAttributes.autoCorrect = true;
                     }
@@ -71,6 +71,10 @@ define([
                 this.set(this.queryState.datesFilterModel.toQueryModelAttributes());
             });
 
+            this.listenTo(this.queryState.geographyModel, 'change', function() {
+                this.set('fieldText', this.getMergedFieldText());
+            });
+
             this.listenTo(this.queryState.minScoreModel, 'change', function() {
                 this.set('minScore', this.queryState.minScoreModel.get('minScore'));
             });
@@ -79,29 +83,32 @@ define([
                 this.set('indexes', collectionBuildIndexes(this.queryState.selectedIndexes));
             }, this));
 
-            this.listenTo(this.queryState.selectedParametricValues, 'add remove reset change', _.debounce(_.bind(function() {
-                const fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
-                this.set('fieldText', fieldTextNode ? fieldTextNode : null);
-            }, this), DEBOUNCE_WAIT_MILLISECONDS));
-
-            const fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
+            this.listenTo(this.queryState.selectedParametricValues,
+                'add remove reset change',
+                _.debounce(_.bind(function() {
+                    this.set('fieldText', this.getMergedFieldText());
+                }, this), DEBOUNCE_WAIT_MILLISECONDS));
 
             this.set(_.extend({
                 queryText: makeQueryText(this.queryState),
                 minScore: this.queryState.minScoreModel.get('minScore'),
                 indexes: collectionBuildIndexes(this.queryState.selectedIndexes),
-                fieldText: fieldTextNode ? fieldTextNode : null
+                fieldText: this.getMergedFieldText()
             }, this.queryState.datesFilterModel.toQueryModelAttributes()));
+        },
+
+        getMergedFieldText: function() {
+            const fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
+            const geographyModel = this.queryState.geographyModel;
+            return (geographyModel ? geographyModel.appendFieldText(fieldTextNode) : fieldTextNode) || null;
         },
 
         getIsoDate: function(type) {
             const date = this.get(type);
 
-            if(date) {
-                return date.toISOString();
-            } else {
-                return null;
-            }
+            return date
+                ? date.toISOString()
+                : null;
         }
     }, {
         Sort: Sort

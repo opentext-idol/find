@@ -5,23 +5,19 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Single entity that defines multiple types of user for our various implementations.
@@ -36,34 +32,24 @@ import java.util.UUID;
 @Entity
 @Table(name = UserEntity.Table.NAME)
 @Data
-@EqualsAndHashCode(exclude = {"searches", "userId"})
+@Builder(toBuilder = true)
+@EqualsAndHashCode(exclude = "username")
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserEntity {
     @Id
     @Column(name = Table.Column.USER_ID)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(name = Table.Column.USER_STORE)
-    private String userStore;
-
-    private String domain;
-    private Long uid;
-
-    // Need to specify char-style UUID for Maria DB, otherwise hibernate tries to send binary
-    @Type(type = "uuid-char")
-    private UUID uuid;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<SavedSearch<?, ?>> searches;
+    private String username;
 
     public interface Table {
         String NAME = "users";
 
+        @SuppressWarnings("InnerClassTooDeeplyNested")
         interface Column {
             String USER_ID = "user_id";
-            String USER_STORE = "user_store";
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -31,8 +31,17 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CLASSES_PROPERTY;
+import static junit.framework.TestCase.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyListOf;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
@@ -50,17 +59,16 @@ public class ExportQueryResponseProcessorTest {
     public void setUp() {
         outputStream = new ByteArrayOutputStream();
         final List<FieldInfo<?>> fieldNames = Stream.of("Reference", "Database", "Summary", "Date", "categories")
-                .map(s -> FieldInfo.builder().id(s).displayName(s).build())
-                .collect(Collectors.toList());
+            .map(s -> FieldInfo.builder().id(s).displayName(s).build())
+            .collect(Collectors.toList());
         processor = new ExportQueryResponseProcessor(exportStrategy, outputStream, fieldNames, Collections.emptyList());
         when(exportStrategy.getFieldInfoForMetadataNode(anyString(), any(), any())).thenReturn(Optional.empty());
         when(exportStrategy.getFieldInfoForNode(anyString(), any())).thenReturn(Optional.empty());
         final Optional<FieldInfo<?>> optional = Optional.of(FieldInfo.<String>builder()
-                .id("categories")
-                .name(fieldPathNormaliser.normaliseFieldPath("CATEGORY"))
-                .build());
+                                                                .id("categories")
+                                                                .name(fieldPathNormaliser.normaliseFieldPath("CATEGORY"))
+                                                                .build());
         when(exportStrategy.getFieldInfoForNode(eq("CATEGORY"), any())).thenReturn(optional);
-
     }
 
     @Test
@@ -75,14 +83,28 @@ public class ExportQueryResponseProcessorTest {
         verify(exportStrategy, never()).exportRecord(eq(outputStream), anyListOf(String.class));
     }
 
-    @Test(expected = AciErrorException.class)
+    @Test
     public void errorResponse() {
-        processor.process(new MockAciResponseInputStream(IdolPlatformDataExportServiceTest.class.getResourceAsStream("/com/hp/autonomy/frontend/find/idol/export/error-response.xml")));
+        try {
+            processor.process(new MockAciResponseInputStream(IdolPlatformDataExportServiceTest.class.getResourceAsStream("/com/hp/autonomy/frontend/find/idol/export/error-response.xml")));
+            fail("Exception should have been thrown");
+        } catch(final AciErrorException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       containsString("No query text supplied"));
+        }
     }
 
-    @Test(expected = ProcessorException.class)
+    @Test
     public void unexpectedError() {
-        processor.process(new MockAciResponseInputStream(IOUtils.toInputStream("")));
+        try {
+            processor.process(new MockAciResponseInputStream(IOUtils.toInputStream("")));
+            fail("Exception should have been thrown");
+        } catch(final ProcessorException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       containsString("Error parsing data"));
+        }
     }
 
     private static class MockAciResponseInputStream extends AciResponseInputStream {

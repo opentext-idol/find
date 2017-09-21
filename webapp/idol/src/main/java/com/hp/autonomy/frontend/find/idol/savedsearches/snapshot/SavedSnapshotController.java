@@ -14,7 +14,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot.Builder;
-import com.hp.autonomy.frontend.find.idol.dashboards.IdolDashboardConfig;
+import com.hp.autonomy.frontend.find.idol.dashboards.DashboardConfig;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.DatasourceDependentWidget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchDatasource;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
@@ -25,19 +25,9 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -45,6 +35,7 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
 class SavedSnapshotController {
     static final String PATH = "/api/bi/saved-snapshot";
+    private static final String GET_SHARED = "/shared";
 
     private static final Integer STATE_TOKEN_MAX_RESULTS = Integer.MAX_VALUE;
 
@@ -52,7 +43,7 @@ class SavedSnapshotController {
     private final SavedSearchService<SavedSnapshot, Builder> service;
     private final FieldTextParser fieldTextParser;
     private final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
-    private final ConfigService<IdolDashboardConfig> dashboardConfigService;
+    private final ConfigService<DashboardConfig> dashboardConfigService;
 
     @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
@@ -60,7 +51,7 @@ class SavedSnapshotController {
                                    final SavedSearchService<SavedSnapshot, Builder> service,
                                    final FieldTextParser fieldTextParser,
                                    final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
-                                   final ConfigService<IdolDashboardConfig> dashboardConfigService) {
+                                   final ConfigService<DashboardConfig> dashboardConfigService) {
         this.documentsService = documentsService;
         this.service = service;
         this.fieldTextParser = fieldTextParser;
@@ -83,6 +74,11 @@ class SavedSnapshotController {
     @RequestMapping(method = RequestMethod.GET)
     public Set<SavedSnapshot> getAll() {
         return service.getAll();
+    }
+
+    @RequestMapping(value = GET_SHARED, method = RequestMethod.GET)
+    public Set<SavedSnapshot> getShared() {
+        return service.getShared();
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -114,6 +110,20 @@ class SavedSnapshotController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public SavedSnapshot update(
+            @PathVariable("id") final long id,
+            @RequestBody final SavedSnapshot snapshot
+    ) throws AciErrorException {
+        // It is only possible to update a snapshot's title
+        return service.update(
+                new Builder()
+                        .setId(id)
+                        .setTitle(snapshot.getTitle())
+                        .build()
+        );
+    }
+
+    @RequestMapping(value = "shared/{id}", method = RequestMethod.PUT)
+    public SavedSnapshot updateShared(
             @PathVariable("id") final long id,
             @RequestBody final SavedSnapshot snapshot
     ) throws AciErrorException {

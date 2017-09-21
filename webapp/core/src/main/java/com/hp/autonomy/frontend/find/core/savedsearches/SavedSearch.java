@@ -11,11 +11,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
-import org.jadira.usertype.dateandtime.joda.PersistentDateTime;
-import org.joda.time.DateTime;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -39,9 +34,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -56,11 +53,8 @@ import static java.util.stream.Collectors.toList;
 @Data
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@TypeDefs(@TypeDef(name = SavedSearch.JADIRA_TYPE_NAME, typeClass = PersistentDateTime.class))
 @Access(AccessType.FIELD)
 public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSearch.Builder<T, B>> {
-    public static final String JADIRA_TYPE_NAME = "jadira";
-
     @Id
     @Column(name = Table.Column.ID)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,7 +64,6 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     @CreatedBy
     @ManyToOne
     @JoinColumn(name = Table.Column.USER_ID)
-    @JsonIgnore
     private UserEntity user;
 
     private String title;
@@ -84,30 +77,34 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     private Set<FieldAndValue> parametricValues;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = ParametricRangesTable.NAME, joinColumns = @JoinColumn(name = ParametricRangesTable.Column.SEARCH_ID))
-    private Set<ParametricRange> parametricRanges;
+    @CollectionTable(name = NumericRangeRestrictionsTable.NAME, joinColumns = @JoinColumn(name = NumericRangeRestrictionsTable.Column.SEARCH_ID))
+    private Set<NumericRangeRestriction> numericRangeRestrictions;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = DateRangeRestrictionsTable.NAME, joinColumns = @JoinColumn(name = DateRangeRestrictionsTable.Column.SEARCH_ID))
+    private Set<DateRangeRestriction> dateRangeRestrictions;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = ConceptClusterPhraseTable.NAME, joinColumns = @JoinColumn(name = ConceptClusterPhraseTable.Column.SEARCH_ID))
     private Set<ConceptClusterPhrase> conceptClusterPhrases;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = GeographyFilterTable.NAME, joinColumns = @JoinColumn(name = GeographyFilterTable.Column.SEARCH_ID))
+    private Set<GeographyFilter> geographyFilters;
+
     @Column(name = Table.Column.START_DATE)
-    @Type(type = JADIRA_TYPE_NAME)
-    private DateTime minDate;
+    private ZonedDateTime minDate;
 
     @Column(name = Table.Column.END_DATE)
-    @Type(type = JADIRA_TYPE_NAME)
-    private DateTime maxDate;
+    private ZonedDateTime maxDate;
 
     @CreatedDate
     @Column(name = Table.Column.CREATED_DATE)
-    @Type(type = JADIRA_TYPE_NAME)
-    private DateTime dateCreated;
+    private ZonedDateTime dateCreated;
 
     @LastModifiedDate
     @Column(name = Table.Column.MODIFIED_DATE)
-    @Type(type = JADIRA_TYPE_NAME)
-    private DateTime dateModified;
+    private ZonedDateTime dateModified;
 
     @Transient
     private DateRange dateRange;
@@ -119,13 +116,18 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     @Column(name = Table.Column.MIN_SCORE, nullable = false)
     private Integer minScore = 0;
 
+    @Transient
+    private boolean canEdit = true;
+
     protected SavedSearch(final Builder<?, ?> builder) {
         id = builder.id;
         title = builder.title;
         indexes = builder.indexes;
         parametricValues = builder.parametricValues;
-        parametricRanges = builder.parametricRanges;
+        numericRangeRestrictions = builder.numericRangeRestrictions;
+        dateRangeRestrictions = builder.dateRangeRestrictions;
         conceptClusterPhrases = builder.conceptClusterPhrases;
+        geographyFilters = builder.geographyFilters;
         minDate = builder.minDate;
         maxDate = builder.maxDate;
         dateCreated = builder.dateCreated;
@@ -133,6 +135,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         dateRange = builder.dateRange;
         active = builder.active;
         minScore = builder.minScore;
+        canEdit = builder.canEdit;
     }
 
     /**
@@ -147,7 +150,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
      */
     @SuppressWarnings("OverlyComplexMethod")
     public void merge(final T other) {
-        if(other != null) {
+        if (other != null) {
             mergeInternal(other);
 
             title = other.getTitle() == null ? title : other.getTitle();
@@ -158,11 +161,17 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
 
             indexes = other.getIndexes() == null ? indexes : other.getIndexes();
             parametricValues = other.getParametricValues() == null ? parametricValues : other.getParametricValues();
-            parametricRanges = other.getParametricRanges() == null ? parametricRanges : other.getParametricRanges();
+            numericRangeRestrictions = Optional.ofNullable(other.getNumericRangeRestrictions()).orElse(numericRangeRestrictions);
+            dateRangeRestrictions = Optional.ofNullable(other.getDateRangeRestrictions()).orElse(dateRangeRestrictions);
 
-            if(other.getConceptClusterPhrases() != null) {
+            if (other.getConceptClusterPhrases() != null) {
                 conceptClusterPhrases.clear();
                 conceptClusterPhrases.addAll(other.getConceptClusterPhrases());
+            }
+
+            if (other.getGeographyFilters() != null) {
+                geographyFilters.clear();
+                geographyFilters.addAll(other.getGeographyFilters());
             }
         }
     }
@@ -183,7 +192,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     // WARNING: This logic is duplicated in the client-side search-data-util
     // Caution: Method has multiple exit points.
     public String toQueryText() {
-        if(conceptClusterPhrases.isEmpty()) {
+        if (conceptClusterPhrases.isEmpty()) {
             return "*";
         } else {
             final Collection<List<ConceptClusterPhrase>> groupedClusters = conceptClusterPhrases.stream()
@@ -238,8 +247,17 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         }
     }
 
-    private interface ParametricRangesTable {
-        String NAME = "search_parametric_ranges";
+    private interface NumericRangeRestrictionsTable {
+        String NAME = "search_numeric_ranges";
+
+        @SuppressWarnings("InnerClassTooDeeplyNested")
+        interface Column {
+            String SEARCH_ID = "search_id";
+        }
+    }
+
+    private interface DateRangeRestrictionsTable {
+        String NAME = "search_date_ranges";
 
         @SuppressWarnings("InnerClassTooDeeplyNested")
         interface Column {
@@ -269,6 +287,19 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         }
     }
 
+    interface GeographyFilterTable {
+        String NAME = "search_geography_filters";
+
+        @SuppressWarnings("InnerClassTooDeeplyNested")
+        interface Column {
+            String ID = "search_geography_filter_id";
+            String SEARCH_ID = "search_id";
+            String FIELD = "field";
+            String JSON = "json";
+        }
+    }
+
+    @SuppressWarnings("WeakerAccess")
     @NoArgsConstructor
     @Getter
     public abstract static class Builder<T extends SavedSearch<T, B>, B extends Builder<T, B>> {
@@ -276,23 +307,28 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         private String title;
         private Set<EmbeddableIndex> indexes;
         private Set<FieldAndValue> parametricValues;
-        private Set<ParametricRange> parametricRanges;
+        private Set<NumericRangeRestriction> numericRangeRestrictions;
+        private Set<DateRangeRestriction> dateRangeRestrictions;
         private Set<ConceptClusterPhrase> conceptClusterPhrases;
-        private DateTime minDate;
-        private DateTime maxDate;
-        private DateTime dateCreated;
-        private DateTime dateModified;
+        private Set<GeographyFilter> geographyFilters;
+        private ZonedDateTime minDate;
+        private ZonedDateTime maxDate;
+        private ZonedDateTime dateCreated;
+        private ZonedDateTime dateModified;
         private DateRange dateRange;
         private Boolean active = true;
         private Integer minScore;
+        private boolean canEdit = true;
 
         protected Builder(final SavedSearch<T, B> search) {
             id = search.id;
             title = search.title;
             indexes = search.indexes;
             parametricValues = search.parametricValues;
-            parametricRanges = search.parametricRanges;
+            numericRangeRestrictions = search.numericRangeRestrictions;
+            dateRangeRestrictions = search.dateRangeRestrictions;
             conceptClusterPhrases = search.conceptClusterPhrases;
+            geographyFilters = search.geographyFilters;
             minDate = search.minDate;
             maxDate = search.maxDate;
             dateCreated = search.dateCreated;
@@ -300,6 +336,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             dateRange = search.dateRange;
             active = search.active;
             minScore = search.minScore;
+            canEdit = search.canEdit;
         }
 
         public abstract T build();
@@ -324,8 +361,13 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             return this;
         }
 
-        public Builder<T, B> setParametricRanges(final Set<ParametricRange> parametricRanges) {
-            this.parametricRanges = new LinkedHashSet<>(parametricRanges);
+        public Builder<T, B> setNumericRangeRestrictions(final Set<NumericRangeRestriction> numericRangeRestrictions) {
+            this.numericRangeRestrictions = new LinkedHashSet<>(numericRangeRestrictions);
+            return this;
+        }
+
+        public Builder<T, B> setDateRangeRestrictions(final Set<DateRangeRestriction> dateRangeRestrictions) {
+            this.dateRangeRestrictions = new LinkedHashSet<>(dateRangeRestrictions);
             return this;
         }
 
@@ -334,24 +376,29 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             return this;
         }
 
-        public Builder<T, B> setMinDate(final DateTime minDate) {
+        public Builder<T, B> setGeographyFilters(final Set<GeographyFilter> geographyFilters) {
+            this.geographyFilters = new LinkedHashSet<>(geographyFilters);
+            return this;
+        }
+
+        public Builder<T, B> setMinDate(final ZonedDateTime minDate) {
             this.minDate = minDate;
             return this;
         }
 
-        public Builder<T, B> setMaxDate(final DateTime maxDate) {
+        public Builder<T, B> setMaxDate(final ZonedDateTime maxDate) {
             this.maxDate = maxDate;
             return this;
         }
 
         @SuppressWarnings("unused")
-        public Builder<T, B> setDateCreated(final DateTime dateCreated) {
+        public Builder<T, B> setDateCreated(final ZonedDateTime dateCreated) {
             this.dateCreated = dateCreated;
             return this;
         }
 
         @SuppressWarnings("unused")
-        public Builder<T, B> setDateModified(final DateTime dateModified) {
+        public Builder<T, B> setDateModified(final ZonedDateTime dateModified) {
             this.dateModified = dateModified;
             return this;
         }
@@ -368,6 +415,11 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
 
         public Builder<T, B> setMinScore(final Integer minScore) {
             this.minScore = minScore;
+            return this;
+        }
+
+        public Builder<T, B> setCanEdit(final boolean canEdit) {
+            this.canEdit = canEdit;
             return this;
         }
     }

@@ -16,7 +16,6 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.apache.commons.collections4.CollectionUtils;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
@@ -31,7 +31,8 @@ import java.util.Set;
 @RequestMapping(SavedQueryController.PATH)
 public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends Serializable, Q extends QueryRestrictions<S>, D extends SearchResult, E extends Exception> {
     static final String PATH = "/api/bi/saved-query";
-    static final String NEW_RESULTS_PATH = "/new-results/";
+    static final String NEW_RESULTS_PATH = "/new-results";
+    private static final String GET_SHARED = "/shared";
 
     protected final SavedSearchService<SavedQuery, SavedQuery.Builder> service;
     private final DocumentsService<RQ, ?, ?, Q, D, E> documentsService;
@@ -39,11 +40,13 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
     private final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory;
     private final ObjectFactory<? extends QueryRequestBuilder<RQ, Q, ?>> queryRequestBuilderFactory;
 
-    protected SavedQueryController(final SavedSearchService<SavedQuery, SavedQuery.Builder> service,
-                                   final DocumentsService<RQ, ?, ?, Q, D, E> documentsService,
-                                   final FieldTextParser fieldTextParser,
-                                   final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory,
-                                   final ObjectFactory<? extends QueryRequestBuilder<RQ, Q, ?>> queryRequestBuilderFactory) {
+    protected SavedQueryController(
+        final SavedSearchService<SavedQuery, SavedQuery.Builder> service,
+        final DocumentsService<RQ, ?, ?, Q, D, E> documentsService,
+        final FieldTextParser fieldTextParser,
+        final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory,
+        final ObjectFactory<? extends QueryRequestBuilder<RQ, Q, ?>> queryRequestBuilderFactory
+    ) {
         this.service = service;
         this.documentsService = documentsService;
         this.fieldTextParser = fieldTextParser;
@@ -60,19 +63,34 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
         return service.getAll();
     }
 
+    @RequestMapping(value = GET_SHARED, method = RequestMethod.GET)
+    public Set<SavedQuery> getShared() {
+        return service.getShared();
+    }
+
     @RequestMapping(method = RequestMethod.POST)
     public SavedQuery create(
-            @RequestBody final SavedQuery query
+        @RequestBody final SavedQuery query
     ) {
         return service.create(query);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     public SavedQuery update(
+        @PathVariable("id") final long id,
+        @RequestBody final SavedQuery query
+    ) {
+        return service.update(
+            new SavedQuery.Builder(query).setId(id).build()
+        );
+    }
+
+    @RequestMapping(value = GET_SHARED + "/{id}", method = RequestMethod.PUT)
+    public SavedQuery updateShared(
             @PathVariable("id") final long id,
             @RequestBody final SavedQuery query
     ) {
-        return service.update(
+        return service.updateShared(
                 new SavedQuery.Builder(query).setId(id).build()
         );
     }
@@ -82,24 +100,25 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
         service.deleteById(id);
     }
 
-    @RequestMapping(value = NEW_RESULTS_PATH + "{id}", method = RequestMethod.GET)
+    @RequestMapping(value = NEW_RESULTS_PATH + "/{id}", method = RequestMethod.GET)
     public int checkForNewQueryResults(@SuppressWarnings("MVCPathVariableInspection") @PathVariable("id") final long id) throws E {
         int newResults = 0;
 
         final SavedQuery savedQuery = service.get(id);
-        final DateTime dateDocsLastFetched = savedQuery.getDateDocsLastFetched();
+        final ZonedDateTime dateDocsLastFetched = savedQuery.getDateDocsLastFetched();
         if(savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
             final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
-                    .queryText(savedQuery.toQueryText())
-                    .fieldText(fieldTextParser.toFieldText(savedQuery))
-                    .databases(convertEmbeddableIndexes(savedQuery.getIndexes()))
-                    .minDate(dateDocsLastFetched)
-                    .minScore(savedQuery.getMinScore())
-                    .build();
+                .queryText(savedQuery.toQueryText())
+                .fieldText(fieldTextParser.toFieldText(savedQuery))
+                .databases(convertEmbeddableIndexes(savedQuery.getIndexes()))
+                .minDate(dateDocsLastFetched)
+                .minScore(savedQuery.getMinScore())
+                .build();
+
             final QueryRequestBuilder<RQ, Q, ?> queryRequestBuilder = queryRequestBuilderFactory.getObject()
-                    .queryRestrictions(queryRestrictions)
-                    .maxResults(1001)
-                    .queryType(QueryRequest.QueryType.MODIFIED);
+                .queryRestrictions(queryRestrictions)
+                .maxResults(1001)
+                .queryType(QueryRequest.QueryType.MODIFIED);
 
             addParams(queryRequestBuilder);
             final RQ queryRequest = queryRequestBuilder.build();

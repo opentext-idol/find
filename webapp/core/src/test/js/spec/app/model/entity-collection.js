@@ -27,7 +27,7 @@ define([
         describe('getClusterEntities function', function() {
             it('returns entity text for a cluster', function() {
                 const clusterEntities = this.collection.getClusterEntities(1);
-                expect(clusterEntities.length).toBe(2);
+                expect(clusterEntities).toHaveLength(2);
                 expect(clusterEntities).toContain('garden');
                 expect(clusterEntities).toContain('gnome');
             });

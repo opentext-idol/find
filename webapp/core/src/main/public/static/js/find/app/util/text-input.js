@@ -26,7 +26,7 @@ define([
                 value: this.model.get(this.modelAttribute)
             }, this.templateOptions)));
 
-            this.$input = this.$('.text-input');
+            this.$input = this.$('.js-text-input');
         }
     });
 });

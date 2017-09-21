@@ -16,6 +16,7 @@ define(['underscore'], function(_) {
 
     return {
         waitForIndexes: _.constant(false),
+        answers: _.constant(false),
 
         queryModelAttributes: [
             'stateMatchIds',

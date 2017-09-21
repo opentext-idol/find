@@ -13,7 +13,8 @@ define([
     'find/app/page/search/filters/parametric/calibrate-buckets',
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/page/search/filters/parametric/numeric-widget',
-    'find/app/model/bucketed-parametric-collection',
+    'find/app/model/bucketed-numeric-collection',
+    'find/app/model/bucketed-date-collection',
     'parametric-refinement/to-field-text-node',
     'find/app/util/date-picker',
     'js-whatever/js/model-any-changed-attribute-listener',
@@ -23,8 +24,9 @@ define([
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/nls/bundle'
 ], function(_, $, Backbone, moment, vent, FindBaseCollection, calibrateBuckets, rounder, numericWidget,
-            BucketedParametricCollection, toFieldTextNode, datePicker, addChangeListener,
-            template, numericInputTemplate, dateInputTemplate, loadingTemplate, i18n) {
+            BucketedNumericParametricCollection, BucketedDateParametricCollection, toFieldTextNode,
+            datePicker, addChangeListener, template, numericInputTemplate, dateInputTemplate,
+            loadingTemplate, i18n) {
     'use strict';
 
     function sum(a, b) {
@@ -88,14 +90,14 @@ define([
             'dp.change .results-filter-date[data-date-attribute="min-date"]': function(event) {
                 // The first time a user clicks the calendar a change event will be fired even though there is no change
                 const minInput = event.date.unix();
-                if (minInput !== this.minInput) {
+                if(minInput !== this.minInput) {
                     this.updateRestrictions([minInput, null]);
                 }
             },
             'dp.change .results-filter-date[data-date-attribute="max-date"]': function(event) {
                 // The first time a user clicks the calendar a change event will be fired even though there is no change
                 const maxInput = event.date.unix();
-                if (maxInput !== this.maxInput) {
+                if(maxInput !== this.maxInput) {
                     this.updateRestrictions([null, maxInput]);
                 }
             },
@@ -124,7 +126,7 @@ define([
             this.type = this.model.get('type');
 
             const formatting = this.type === 'NumericDate'
-                ? options.formatting
+                ? NumericParametricFieldView.dateFormatting
                 : NumericParametricFieldView.defaultFormatting;
             this.formatValue = function(value) {
                 return formatting.format(value, this.model.get('currentMin'), this.model.get('currentMax'));
@@ -137,7 +139,9 @@ define([
 
             // The view's this.model contains the current and
             // absolute ranges, the bucketModel contains the values
-            this.bucketModel = new BucketedParametricCollection.Model({id: this.fieldName});
+            this.bucketModel = this.type === 'NumericDate'
+                ? new BucketedDateParametricCollection.Model({id: this.fieldName})
+                : new BucketedNumericParametricCollection.Model({id: this.fieldName});
 
             // Bind the selection rectangle to the selected parametric range
             this.listenTo(this.selectedParametricValues, 'add remove change', function(model) {
@@ -212,7 +216,14 @@ define([
             const noError = !this.bucketModel.error;
             const fetching = this.bucketModel.fetching;
             const hasValues = this.model.get('totalValues') !== 0;
-            const modelBuckets = this.bucketModel.get('values');
+            const modelBuckets = this.type === 'NumericDate'
+                ? _.map(this.bucketModel.get('values'), function(bucket) {
+                    return _.extend(bucket, {
+                        min: moment(bucket.min),
+                        max: moment(bucket.max)
+                    });
+                })
+                : this.bucketModel.get('values');
 
             this.$('.numeric-parametric-error-text').toggleClass('hide', noError);
             this.$('.numeric-parametric-empty-text').toggleClass('hide', !noError || hasValues);
@@ -229,9 +240,9 @@ define([
                 $chartRow.append($chart);
 
                 const buckets = calibrateBuckets(
-                    modelBuckets,
-                    [this.model.get('currentMin'), this.model.get('currentMax')]
-                );
+                        modelBuckets,
+                        [this.model.get('currentMin'), this.model.get('currentMax')]
+                    );
 
                 this.graph = this.widget.drawGraph({
                     chart: $chart.get(0),
@@ -347,8 +358,12 @@ define([
                             minScore: this.queryModel.get('minScore'),
                             databases: this.queryModel.get('indexes'),
                             targetNumberOfBuckets: Math.floor(width / this.pixelsPerBucket),
-                            bucketMin: this.model.get('currentMin'),
-                            bucketMax: this.model.get('currentMax')
+                            bucketMin: this.type === 'NumericDate'
+                                ? moment(this.model.get('currentMin')).utc().milliseconds(0).format()
+                                : this.model.get('currentMin'),
+                            bucketMax: this.type === 'NumericDate'
+                                ? moment(this.model.get('currentMax')).utc().milliseconds(0).format()
+                                : this.model.get('currentMax')
                         }
                     });
                 }
@@ -398,14 +413,16 @@ define([
         },
         dateFormatting: {
             format: function(unformattedString) {
-                return moment(Math.round(unformattedString * 1000)).format(datePicker.DATE_WIDGET_FORMAT);
+                const epochMoment = moment(Math.round(unformattedString));
+                return epochMoment.isValid()
+                    ? epochMoment.format(datePicker.DATE_WIDGET_FORMAT)
+                    : moment(unformattedString).format(datePicker.DATE_WIDGET_FORMAT);
             },
             parse: function(formattedString) {
                 return moment(formattedString, datePicker.DATE_WIDGET_FORMAT).unix();
             },
             parseBoundarySelection: function(input) {
-                // Epoch seconds are not decimal
-                return Math.round(input);
+                return input;
             },
             render: function($el) {
                 datePicker.render($el.find('.results-filter-date[data-date-attribute="min-date"]'),

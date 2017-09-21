@@ -10,6 +10,7 @@ require.config({
         'jasmine-jquery': '../bower_components/jasmine-jquery/lib/jasmine-jquery',
         'js-testing': '../bower_components/hp-autonomy-js-testing-utils/src/js',
         'mock': '../../../../test/js/mock',
+        'test-util': '../../../../test/js/util',
         'resources': '../../../../test/js/resources',
         'fieldtext/js/parser': '../../../../../target/classes/static/js/pegjs/fieldtext/parser'
     },
@@ -25,10 +26,11 @@ require.config({
             'find/app/util/confirm-view': 'mock/util/confirm-view',
             'find/app/page/search/document/location-tab': 'mock/page/search/document/location-tab',
             'find/app/util/topic-map-view': 'mock/util/topic-map-view',
-            'find/app/model/bucketed-parametric-collection': 'mock/model/bucketed-parametric-collection',
+            'find/app/model/bucketed-numeric-collection': 'mock/model/bucketed-numeric-collection',
+            'find/app/model/bucketed-date-collection': 'mock/model/bucketed-date-collection',
             'css/result-highlighting.css': 'mock/css/result-highlighting.css',
             'find/app/model/parametric-collection': 'mock/model/parametric-collection',
-            'find/app/model/parametric-field-details-model': 'mock/model/parametric-details-model'
+            'find/app/model/date-field-details-model': 'mock/model/parametric-details-model'
         },
         'find/app/page/search/related-concepts/related-concepts-view': {
             'find/app/model/documents-collection': 'mock/model/documents-collection'
@@ -57,6 +59,9 @@ require.config({
             'find/app/page/search/results/trending/trending-strategy': 'mock/page/results/trending-strategy',
             'find/app/page/search/results/trending/trending': 'mock/page/results/trending',
             'find/app/util/range-input': 'mock/util/range-input'
+        },
+        'find/app/page/search/document-content-view': {
+            'find/app/model/document-model': 'mock/model/document-model'
         }
     }
 });

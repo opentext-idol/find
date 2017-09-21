@@ -16,12 +16,12 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.hp.autonomy.searchcomponents.core.search.QueryRestrictions.QUERY_RESTRICTIONS_BUILDER_BEAN_NAME;
@@ -82,9 +82,9 @@ class IdolRequestMapper extends AbstractRequestMapper<IdolQueryRequest> {
         @JsonProperty("indexes")
         private List<String> databases;
         @JsonProperty("min_date")
-        private DateTime minDate;
+        private ZonedDateTime minDate;
         @JsonProperty("max_date")
-        private DateTime maxDate;
+        private ZonedDateTime maxDate;
         @JsonProperty("min_score")
         private Integer minScore;
     }

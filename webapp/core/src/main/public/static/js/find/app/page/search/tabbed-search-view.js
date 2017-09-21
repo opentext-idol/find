@@ -11,21 +11,27 @@ define([
     'find/app/vent',
     'js-whatever/js/list-view',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/search/tabbed-search-view.html'
-], function(_, $, Backbone, TabItemView, vent, ListView, i18n, template) {
+    'text!find/templates/app/page/search/tabbed-search-view.html',
+    'text!find/templates/app/page/search/saved-search-dropdown.html'
+], function(_, $, Backbone, TabItemView, vent, ListView, i18n, template, savedSearchDropdownTemplate) {
     'use strict';
 
     const html = _.template(template)({i18n: i18n});
     const startNewSearchHtml = _.template('<li class="start-new-search m-t-xs m-l-sm m-r-sm" data-toggle="tooltip" data-placement="bottom" title="<%-i18n[\'search.newTab.tooltip\']%>"><a><i class="hp-icon hp-add"></i></a></li>')({i18n: i18n});
     const shownTabsSelector = '.nav-tabs > li';
-    const menuTabsSelector = '.dropdown-menu > li';
+    const menuTabsSelector = '.js-saved-searches-tabs-dropdown .dropdown-menu > li';
+    const savedSearchDropdown = _.template(savedSearchDropdownTemplate)({i18n:i18n});
+    const emptySharedSearchDropdown = _.template('<li class="js-no-shared-searches"><a class="no-shared-searches-message"><%-i18n["search.savedSearchControl.sharedByOthers.empty"]%></a></li>')({i18n:i18n});
 
     return Backbone.View.extend({
         events: {
             'click .search-tab': function(event) {
                 const $currentTarget = $(event.currentTarget);
                 const currentModelCid = $currentTarget.find('[data-search-cid]').attr('data-search-cid');
-                const currentQueryModel = this.savedSearchCollection.get(currentModelCid);
+                const currentQueryModel = $currentTarget.parent().hasClass('js-shared-by-others-dropdown-list')
+                    ? this.sharedSavedSearchCollection.get(currentModelCid)
+                    : this.savedSearchCollection.get(currentModelCid);
+
                 this.model.set('selectedSearchCid', currentModelCid);
 
                 if(currentQueryModel.get('newDocuments') !== 0) {
@@ -42,11 +48,13 @@ define([
 
         initialize: function(options) {
             this.savedSearchCollection = options.savedSearchCollection;
+            this.sharedSavedSearchCollection = options.sharedSavedSearchCollection;
 
             this.tabListView = new ListView({
                 collection: this.savedSearchCollection,
                 ItemView: TabItemView,
                 headerHtml: startNewSearchHtml,
+                footerHtml: savedSearchDropdown,
                 itemOptions: {
                     queryStates: options.queryStates,
                     searchTypes: options.searchTypes
@@ -62,24 +70,38 @@ define([
                 }
             });
 
+            this.sharedSearchesListView = new ListView({
+                collection: this.sharedSavedSearchCollection,
+                ItemView: TabItemView,
+                footerHtml: emptySharedSearchDropdown,
+                itemOptions: {
+                    queryStates: options.queryStates,
+                    searchTypes: options.searchTypes
+                }
+            });
+
             // Update the displayed tabs after the current event loop, but only once
             this.checkTabSize = _.debounce(_.bind(function() {
                 this.showHideTabs();
 
                 const $activeTab = this.$(shownTabsSelector + '.active');
+
                 if($activeTab.length > 0) {
                     this.showSelectedTab($activeTab);
-
-                    //Affect drop-down button
-                    this.$('.tab-drop').toggleClass('invisible', this.$(menuTabsSelector + ':not(.hide)').length === 0); // use invisible rather than hide to keep size for width calculations
                 }
+
+                //Affect drop-down button
+                this.$('.js-saved-searches-tabs-dropdown').toggleClass('invisible', this.$(menuTabsSelector + ':not(.hide)').length === 0); // use invisible rather than hide to keep size for width calculations
             }, this), 0);
 
             this.listenTo(this.model, 'change:selectedSearchCid', this.updateSelectedTab);
             this.listenTo(this.savedSearchCollection, 'update', this.checkTabSize);
+            this.listenTo(this.sharedSavedSearchCollection, 'add remove', function(changedModel, collection) {
+                this.$('.js-no-shared-searches').toggleClass('hide', collection.length > 0);
+            });
 
             this.listenTo(this.savedSearchCollection, 'change:newDocuments', function() {
-                const dropdownCids = this.$('.tab-dropdown .dropdown-menu li:not(.hide)').map(function(arg, el) {
+                const dropdownCids = this.$('.js-saved-searches-tabs-dropdown .dropdown-menu li:not(.hide)').map(function(arg, el) {
                     return $(el).find('a').attr('data-search-cid');
                 });
 
@@ -142,7 +164,9 @@ define([
             this.$el.html(html);
 
             this.tabListView.setElement(this.$('.search-tabs-list')).render();
-            this.hiddenTabListView.setElement(this.$('.dropdown-menu')).render();
+            this.hiddenTabListView.setElement(this.$('.js-saved-searches-tabs-dropdown .dropdown-menu')).render();
+            this.sharedSearchesListView.setElement(this.$('.js-shared-by-others-dropdown .dropdown-menu')).render();
+
             this.updateSelectedTab();
             this.listenTo(vent, 'vent:resize', this.checkTabSize);
             this.$('.start-new-search').tooltip({delay: 100});
@@ -155,10 +179,16 @@ define([
 
         updateSelectedTab: function() {
             const cid = this.model.get('selectedSearchCid');
+            let $currentSearchTab = this.$('[data-search-cid="' + cid + '"]').closest('.search-tab');
             this.$('.search-tab').removeClass('active');
+            this.$('.js-shared-by-others-dropdown').removeClass('active');
 
             if(cid) {
-                this.$('[data-search-cid="' + cid + '"]').closest('.search-tab').addClass('active');
+                if($currentSearchTab.parent().hasClass('js-shared-by-others-dropdown-list')) {
+                    $currentSearchTab.parent().parent().addClass('active');
+                }
+
+                $currentSearchTab.addClass('active');
                 this.checkTabSize();
             }
         }

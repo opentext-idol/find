@@ -10,6 +10,8 @@ import com.autonomy.abc.selenium.find.results.ListView;
 import com.hp.autonomy.frontend.selenium.application.LoginService;
 import com.hp.autonomy.frontend.selenium.config.TestConfig;
 import com.hp.autonomy.frontend.selenium.control.Frame;
+import com.hp.autonomy.frontend.selenium.framework.Session.SessionReuse;
+import com.hp.autonomy.frontend.selenium.framework.Session.SessionReuseParam;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,12 +22,13 @@ import org.openqa.selenium.TimeoutException;
 
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.assumeThat;
 import static com.hp.autonomy.frontend.selenium.framework.state.TestStateAssert.verifyThat;
-import static com.hp.autonomy.frontend.selenium.matchers.ControlMatchers.urlContains;
 import static com.hp.autonomy.frontend.selenium.matchers.ElementMatchers.containsText;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+@SessionReuse(SessionReuseParam.CLEAN)
 public class FindSessionITCase extends FindTestBase {
     private FindService findService;
 
@@ -47,7 +50,7 @@ public class FindSessionITCase extends FindTestBase {
         } catch (final NoSuchElementException | StaleElementReferenceException | TimeoutException ignored) {
             /* Probably refreshed page quicker than .search could complete */
         }
-        verifyThat(getWindow(), urlContains("login"));
+        verifyThat(getDriver().getCurrentUrl(), containsString("login"));
     }
 
     @Test
@@ -60,7 +63,7 @@ public class FindSessionITCase extends FindTestBase {
         deleteCookies();
 
         final DocumentViewer docViewer = searchResult.openDocumentPreview();
-        final Frame frame = new Frame(getWindow(), docViewer.frame());
+        final Frame frame = new Frame(getDriver(), docViewer.frame());
         frame.operateOnContent(content -> {
             verifyThat("Authentication Fail frame displayed correctly", content, allOf(
                     containsText("403"),
@@ -85,7 +88,7 @@ public class FindSessionITCase extends FindTestBase {
         getElementFactory().getRelatedConceptsPanel().concept(0).click();
 
         Waits.loadOrFadeWait();
-        verifyThat(getWindow(), urlContains("login"));
+        verifyThat(getDriver().getCurrentUrl(), containsString("login"));
     }
 
     @Test

@@ -7,11 +7,14 @@ package com.autonomy.abc.selenium.find;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class OnPremNavBarSettings extends NavBarSettings {
     private static final Pattern COMPILE = Pattern.compile(" ", Pattern.LITERAL);
@@ -25,6 +28,14 @@ public class OnPremNavBarSettings extends NavBarSettings {
     public void goToSettings() {
         openSettings();
         header().findElement(By.cssSelector("li[data-pagename='settings'] a")).click();
+    }
+
+    public List<String> getAvailableDashboards() {
+        openSideBar();
+        final WebElement dashboardsHeader = header().findElement(By.cssSelector("ul.side-menu li[data-pagename='dashboards']"));
+        dashboardsHeader.click();
+        return dashboardsHeader.findElements(By.cssSelector(".nav-second-level > li > a")).stream()
+                .map(WebElement::getText).collect(Collectors.toList());
     }
 
     public void goToDashboard(final String dashboardName) {

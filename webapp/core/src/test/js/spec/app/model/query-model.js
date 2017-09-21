@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -8,11 +8,12 @@ define([
     'find/app/model/query-model',
     'parametric-refinement/selected-values-collection',
     'find/app/model/dates-filter-model'
-], function (Backbone, QueryModel, SelectedValuesCollection, DatesFilterModel) {
+], function(Backbone, QueryModel, SelectedValuesCollection, DatesFilterModel) {
+    'use strict';
 
-    describe('QueryModel', function () {
-        describe('with auto-correct enabled', function () {
-            beforeEach(function () {
+    describe('QueryModel', function() {
+        describe('with auto-correct enabled', function() {
+            beforeEach(function() {
                 this.queryState = {
                     datesFilterModel: new DatesFilterModel(),
                     minScoreModel: new Backbone.Model({minScore: 0}),
@@ -31,7 +32,7 @@ define([
                 });
             });
 
-            it('resets the auto-correct flag when the selected concepts are changed', function () {
+            it('resets the auto-correct flag when the selected concepts are changed', function() {
                 this.queryModel.set('autoCorrect', false);
                 this.queryState.conceptGroups.reset();
 
@@ -39,8 +40,8 @@ define([
             });
         });
 
-        describe('with auto-correct disabled', function () {
-            beforeEach(function () {
+        describe('with auto-correct disabled', function() {
+            beforeEach(function() {
                 this.queryState = {
                     datesFilterModel: new DatesFilterModel(),
                     minScoreModel: new Backbone.Model({minScore: 0}),
@@ -59,12 +60,11 @@ define([
                 });
             });
 
-            it('does not change the auto-correct flag when the selected concepts are changed', function () {
+            it('does not change the auto-correct flag when the selected concepts are changed', function() {
                 this.queryState.conceptGroups.reset();
 
                 expect(this.queryModel.get('autoCorrect')).toBe(false);
             });
         });
     });
-
 });

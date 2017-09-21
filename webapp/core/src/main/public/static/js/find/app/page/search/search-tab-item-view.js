@@ -73,7 +73,9 @@ define([
             if(newDocuments > 0) {
                 this.$('.new-document-label')
                     .removeClass('hide')
-                    .text(newDocuments > NEW_DOCS_LIMIT ? NEW_DOCS_LIMIT + '+' : newDocuments);
+                    .text(newDocuments > NEW_DOCS_LIMIT
+                        ? NEW_DOCS_LIMIT + '+'
+                        : newDocuments);
             } else {
                 this.$('.new-document-label')
                     .addClass('hide');
@@ -97,6 +99,7 @@ define([
                 this.stopListening(this.queryState.conceptGroups);
                 this.stopListening(this.queryState.selectedParametricValues);
                 this.stopListening(this.queryState.datesFilterModel);
+                this.stopListening(this.queryState.geographyModel);
             }
 
             this.queryState = newQueryState;
@@ -106,6 +109,7 @@ define([
                 this.listenTo(this.queryState.conceptGroups, 'update change', this.updateSavedness);
                 this.listenTo(this.queryState.selectedParametricValues, 'add remove', this.updateSavedness);
                 this.listenTo(this.queryState.datesFilterModel, 'change', this.updateSavedness);
+                this.listenTo(this.queryState.geographyModel, 'change', this.updateSavedness);
             }
         }
     });

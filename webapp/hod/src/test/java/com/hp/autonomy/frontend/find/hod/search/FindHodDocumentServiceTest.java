@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -17,7 +17,14 @@ import com.hp.autonomy.searchcomponents.hod.databases.Database;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequest;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesRequestBuilder;
 import com.hp.autonomy.searchcomponents.hod.databases.HodDatabasesService;
-import com.hp.autonomy.searchcomponents.hod.search.*;
+import com.hp.autonomy.searchcomponents.hod.search.HodDocumentsService;
+import com.hp.autonomy.searchcomponents.hod.search.HodGetContentRequest;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequest;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRequestBuilder;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictions;
+import com.hp.autonomy.searchcomponents.hod.search.HodQueryRestrictionsBuilder;
+import com.hp.autonomy.searchcomponents.hod.search.HodSearchResult;
+import com.hp.autonomy.searchcomponents.hod.search.HodSuggestRequest;
 import com.hp.autonomy.types.requests.Documents;
 import org.junit.Before;
 import org.junit.Test;
@@ -92,9 +99,9 @@ public class FindHodDocumentServiceTest {
         findDocumentsService = new FindHodDocumentService(databasesService, documentsService, databasesRequestBuilderFactory, findConfigService);
 
         final QueryManipulationConfig config = QueryManipulationConfig.builder()
-                .profile("SomeProfile")
-                .index("SomeIndex")
-                .build();
+            .profile("SomeProfile")
+            .index("SomeIndex")
+            .build();
 
         when(findConfig.getQueryManipulation()).thenReturn(config);
         when(findConfig.getHod()).thenReturn(HodConfig.builder().publicIndexesEnabled(true).build());
@@ -108,8 +115,8 @@ public class FindHodDocumentServiceTest {
 
         final HodError invalidIndexError = new HodError.Builder().setErrorCode(HodErrorCode.INDEX_NAME_INVALID).build();
         final HodSearchResult result = HodSearchResult.builder()
-                .index(goodIndex.getName())
-                .build();
+            .index(goodIndex.getName())
+            .build();
         final Documents<HodSearchResult> mockedResults = new Documents<>(Collections.singletonList(result), 1, null, null, null, null);
         when(documentsService.queryTextIndex(any())).thenThrow(new HodErrorException(invalidIndexError, HttpStatus.INTERNAL_SERVER_ERROR.value())).thenReturn(mockedResults);
 

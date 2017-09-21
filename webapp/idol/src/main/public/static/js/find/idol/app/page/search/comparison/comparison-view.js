@@ -7,7 +7,6 @@ define([
     'underscore',
     'backbone',
     'find/idol/app/model/comparison/comparison-documents-collection',
-    'find/idol/app/page/search/results/idol-results-view',
     'find/idol/app/page/search/results/comparison-lists',
     'find/idol/app/page/search/results/comparison-map',
     'find/idol/app/page/search/results/comparison-topic-map',
@@ -17,7 +16,7 @@ define([
     'find/app/configuration',
     'text!find/idol/templates/comparison/comparison-view.html',
     'i18n!find/nls/bundle'
-], function(_, Backbone, ComparisonDocumentsCollection, ResultsView, ResultsLists, ComparisonMap,
+], function(_, Backbone, ComparisonDocumentsCollection, ResultsLists, ComparisonMap,
             ComparisonTopicMap, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
             configuration, template, i18n) {
     'use strict';
@@ -59,6 +58,7 @@ define([
                     uniqueId: _.uniqueId('results-view-item-'),
                     shown: true,
                     constructorArguments: {
+                        documentRenderer: options.documentRenderer,
                         searchModels: options.searchModels,
                         escapeCallback: options.escapeCallback,
                         model: this.model,

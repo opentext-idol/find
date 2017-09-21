@@ -50,8 +50,8 @@ public class MetricsConfiguration {
                                              @Value(GRAPHITE_SCHEDULE_INTERVAL_PROPERTY) final int graphiteScheduleInterval) {
         final Graphite graphite = new Graphite(new InetSocketAddress(graphiteHost, graphitePort));
         final GraphiteReporter reporter = GraphiteReporter.forRegistry(registry)
-                .prefixedWith(GRAPHITE_PREFIX)
-                .build(graphite);
+            .prefixedWith(GRAPHITE_PREFIX)
+            .build(graphite);
         reporter.start(graphiteScheduleInterval, TimeUnit.MILLISECONDS);
         return reporter;
     }

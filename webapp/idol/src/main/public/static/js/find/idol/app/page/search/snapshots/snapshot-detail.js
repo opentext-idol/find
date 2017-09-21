@@ -5,8 +5,9 @@
 
 define([
     'i18n!find/nls/bundle',
-    'i18n!find/idol/nls/snapshots'
-], function(i18n, snapshotsI18n) {
+    'i18n!find/idol/nls/snapshots',
+    'moment'
+], function(i18n, snapshotsI18n, moment) {
 
     var DATE_FORMAT = 'YYYY/MM/DD HH:mm';
 
@@ -23,17 +24,24 @@ define([
          * @type {DataPanelAttributesProcessor}
          */
         processAttributes: function(attributes) {
+            var resultCount = attributes.resultCount;
+
             // Cannot use falsy check here since result count could be 0
             //noinspection EqualityComparisonWithCoercionJS
-            var resultCountContent = attributes.resultCount != null ? attributes.resultCount : i18n['app.unknown'];
-
-            return [{
-                title: snapshotsI18n['detail.dateCreated'],
-                content: attributes.dateCreated.format(DATE_FORMAT)
-            }, {
+            var resultCountContent = resultCount != null ? {
                 title: snapshotsI18n['detail.resultCount'],
-                content: resultCountContent
-            }];
+                content: resultCount
+            } : null;
+
+            var dateCreated = moment(attributes.dateCreated);
+
+            return [
+                {
+                    title: snapshotsI18n['detail.dateCreated'],
+                    content: dateCreated.format(DATE_FORMAT)
+                },
+                resultCountContent
+            ];
         }
     };
 

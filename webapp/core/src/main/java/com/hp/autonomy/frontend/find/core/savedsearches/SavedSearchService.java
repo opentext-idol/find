@@ -11,14 +11,17 @@ public interface SavedSearchService<T extends SavedSearch<T, B>, B extends Saved
 
     Set<T> getAll();
 
+    Set<T> getShared();
+
     T get(long id);
 
     T create(T search);
 
     T update(T search);
 
+    T updateShared(T search);
+
     T getDashboardSearch(long id);
 
     void deleteById(long id);
-
 }

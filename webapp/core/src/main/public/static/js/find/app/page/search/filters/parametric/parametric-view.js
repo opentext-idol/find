@@ -1,12 +1,12 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
-    'jquery',
     'underscore',
+    'jquery',
+    'backbone',
     'js-whatever/js/list-view',
     'find/app/metrics',
     'find/app/page/search/filters/parametric/parametric-field-view',
@@ -14,7 +14,8 @@ define([
     'find/app/page/search/filters/parametric/numeric-parametric-field-collapsible-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/parametric-view.html'
-], function(Backbone, $, _, ListView, metrics, FieldView, ProxyView, CollapsibleNumericFieldView, i18n, template) {
+], function(_, $, Backbone, ListView, metrics, FieldView, ProxyView, CollapsibleNumericFieldView,
+            i18n, template) {
     'use strict';
 
     const TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
@@ -29,7 +30,7 @@ define([
         template: _.template(template)({i18n: i18n}),
 
         events: {
-            'click [data-field] [data-value]': function (e) {
+            'click [data-field] [data-value]': function(e) {
                 const $target = $(e.currentTarget);
                 const $field = $target.closest('[data-field]');
 
@@ -41,7 +42,7 @@ define([
                     type: 'Parametric'
                 };
 
-                if (this.selectedParametricValues.get(attributes)) {
+                if(this.selectedParametricValues.get(attributes)) {
                     this.selectedParametricValues.remove(attributes);
                 } else {
                     this.selectedParametricValues.add(attributes);
@@ -49,7 +50,7 @@ define([
             }
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parametricFieldsCollection = options.parametricFieldsCollection;
             this.filteredParametricCollection = options.filteredParametricCollection;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
@@ -59,8 +60,8 @@ define([
 
             const collapsed = {};
 
-            const isCollapsed = function (model) {
-                if (this.filterModel && this.filterModel.get('text')) {
+            const isCollapsed = function(model) {
+                if(this.filterModel && this.filterModel.get('text')) {
                     return false;
                 } else {
                     return _.isUndefined(collapsed[model.id]) || collapsed[model.id];
@@ -116,7 +117,7 @@ define([
             });
 
             // Would ideally use model.cid but on refresh the display Collection creates new models with different cids
-            this.listenTo(this.fieldNamesListView, 'item:toggle', function (model, newState) {
+            this.listenTo(this.fieldNamesListView, 'item:toggle', function(model, newState) {
                 collapsed[model.id] = newState;
             });
         },
@@ -134,12 +135,12 @@ define([
             return this;
         },
 
-        remove: function () {
+        remove: function() {
             this.fieldNamesListView.remove();
             Backbone.View.prototype.remove.call(this);
         },
 
-        initializeProcessingBehaviour: function () {
+        initializeProcessingBehaviour: function() {
             this.model = new Backbone.Model({
                 state: this.collection.isProcessing() ? STATES.PROCESSING : STATES.SYNCED,
                 empty: this.parametricFieldsCollection.isEmpty()
@@ -148,44 +149,46 @@ define([
             this.listenTo(this.model, 'change:state', this.onStateChange);
             this.listenTo(this.model, 'change', this.updateEmpty);
 
-            this.listenTo(this.collection, 'request', function () {
+            this.listenTo(this.collection, 'request', function() {
                 this.model.set('state', STATES.PROCESSING);
             });
 
-            this.listenTo(this.collection, 'error', function (collection, xhr) {
-                if (xhr.status !== 0) {
+            this.listenTo(this.collection, 'error', function(collection, xhr) {
+                if(xhr.status !== 0) {
                     // The request was not aborted, so there isn't another request in flight
                     this.model.set('state', STATES.ERROR);
                 }
             });
 
-            this.listenTo(this.collection, 'sync', function () {
+            this.listenTo(this.collection, 'sync', function() {
                 this.model.set('state', STATES.SYNCED);
             });
 
-            this.listenTo(this.parametricFieldsCollection, 'update reset', function () {
+            this.listenTo(this.parametricFieldsCollection, 'update reset', function() {
                 this.model.set('empty', this.parametricFieldsCollection.isEmpty());
             });
         },
 
-        updateEmpty: function () {
-            if (this.$emptyMessage) {
-                const showEmptyMessage = this.model.get('empty') && this.parametricFieldsCollection.isEmpty() && this.model.get('state') === STATES.SYNCED;
+        updateEmpty: function() {
+            if(this.$emptyMessage) {
+                const showEmptyMessage = this.model.get('empty') &&
+                    this.parametricFieldsCollection.isEmpty() &&
+                    this.model.get('state') === STATES.SYNCED;
                 this.$emptyMessage.toggleClass('hide', !showEmptyMessage);
             }
         },
 
-        onStateChange: function () {
+        onStateChange: function() {
             const state = this.model.get('state');
-            if (this.$processing) {
+            if(this.$processing) {
                 this.$processing.toggleClass('hide', state !== STATES.PROCESSING);
             }
 
-            if (this.$errorMessage) {
+            if(this.$errorMessage) {
                 this.$errorMessage.toggleClass('hide', state !== STATES.ERROR);
             }
 
-            if (this.$list) {
+            if(this.$list) {
                 this.$list.toggleClass('hide', state !== STATES.SYNCED);
             }
         },

@@ -8,11 +8,13 @@ define([
     'backbone',
     'moment',
     'find/app/model/dates-filter-model',
+    'find/app/model/geography-model',
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/util/database-name-resolver',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
-], function(_, Backbone, moment, DatesFilterModel, rounder, databaseNameResolver, i18n, i18nIndexes) {
+], function(_, Backbone, moment, DatesFilterModel, GeographyModel, rounder, databaseNameResolver,
+            i18n, i18nIndexes) {
     'use strict';
 
     const DATE_FORMAT = 'YYYY-MM-DD HH:mm';
@@ -24,7 +26,8 @@ define([
         MAX_DATE: 'MAX_DATE',
         MIN_DATE: 'MIN_DATE',
         DATE_RANGE: 'DATE_RANGE',
-        PARAMETRIC: 'PARAMETRIC'
+        PARAMETRIC: 'PARAMETRIC',
+        GEOGRAPHY: 'GEOGRAPHY'
     };
 
     const customDatesFilters = [
@@ -33,13 +36,20 @@ define([
     ];
 
     function getDateFilterText(filterType, dateString) {
-        const textPrefixKey = filterType === FilterType.MAX_DATE ? 'app.until' : 'app.from';
+        const textPrefixKey = filterType === FilterType.MAX_DATE
+            ? 'app.until'
+            : 'app.from';
         return i18n[textPrefixKey] + ': ' + dateString;
     }
 
     // Get the filter model id for a given parametric field name
     function parametricFilterId(fieldName) {
-        return fieldName;
+        return 'param-' + fieldName;
+    }
+
+    // Get the filter model id for a given location field name
+    function locationFilterId(locationId) {
+        return 'loc-' + locationId;
     }
 
     function formatDate(autnDate, format) {
@@ -60,11 +70,9 @@ define([
         } else if(type === 'NumericDate') {
             values = ranges.map(function(range) {
                 //Discard time of day if range greater than 1 week
-                if(range[1] - range[0] <= DATE_SHORTEN_CUTOFF) {
-                    return formatDate(range[0], DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], DATE_FORMAT);
-                } else {
-                    return formatDate(range[0], SHORT_DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], SHORT_DATE_FORMAT);
-                }
+                return range[1] - range[0] > DATE_SHORTEN_CUTOFF
+                    ? formatDate(range[0], SHORT_DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], SHORT_DATE_FORMAT)
+                    : formatDate(range[0], DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], DATE_FORMAT);
             });
         }
 
@@ -78,7 +86,12 @@ define([
                 id: parametricFilterId(field),
                 field: field,
                 heading: data.displayName,
-                text: parametricFilterText(data.displayValues, data.range ? [data.range] : [], data.type),
+                text: parametricFilterText(
+                    data.displayValues,
+                    data.range
+                        ? [data.range]
+                        : [],
+                    data.type),
                 type: FilterType.PARAMETRIC
             };
         });
@@ -93,6 +106,7 @@ define([
             this.indexesCollection = options.indexesCollection;
 
             this.datesFilterModel = options.queryState.datesFilterModel;
+            this.geographyModel = options.queryState.geographyModel;
             this.selectedIndexesCollection = options.queryState.selectedIndexes;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
 
@@ -100,6 +114,7 @@ define([
             this.listenTo(this.selectedParametricValues, 'reset', this.resetParametricSelection);
             this.listenTo(this.selectedIndexesCollection, 'reset update', this.updateDatabases);
             this.listenTo(this.datesFilterModel, 'change', this.updateDateFilters);
+            this.listenTo(this.geographyModel, 'change', this.updateGeographyFilters);
 
             this.on('remove', function(model) {
                 const type = model.get('type');
@@ -117,6 +132,8 @@ define([
                     this.datesFilterModel.set('customMaxDate', null);
                 } else if(type === FilterType.MIN_DATE) {
                     this.datesFilterModel.set('customMinDate', null);
+                } else if(type === FilterType.GEOGRAPHY) {
+                    this.geographyModel.set(model.get('locationId'), null);
                 }
             });
 
@@ -151,6 +168,19 @@ define([
                     text: this.getDatabasesFilterText()
                 });
             }
+
+            _.each(this.geographyModel.attributes, function(shapes, id){
+                if (shapes && shapes.length) {
+                    const locationField = GeographyModel.LocationFieldsById[id];
+                    models.push({
+                        id: locationFilterId(id),
+                        locationId: id,
+                        type: FilterType.GEOGRAPHY,
+                        text: locationField.displayName,
+                        heading: i18n['search.geography']
+                    });
+                }
+            }, this);
 
             Array.prototype.push.apply(models, extractParametricFilters(this.selectedParametricValues));
         },
@@ -272,6 +302,35 @@ define([
                     return _.contains([FilterType.DATE_RANGE, FilterType.MAX_DATE, FilterType.MIN_DATE], model.id);
                 }));
             }
+        },
+
+        updateGeographyFilters: function() {
+            _.each(GeographyModel.LocationFields, function(locationField){
+                const id = locationField.id;
+
+                const existing = this.findWhere({ type: FilterType.GEOGRAPHY, locationId: id });
+                const shapes = this.geographyModel.get(id);
+                const shouldShow = shapes && shapes.length;
+
+                if (shouldShow) {
+                    const text = locationField.displayName;
+                    if (existing) {
+                        existing.set('text', text);
+                    }
+                    else {
+                        this.add({
+                            id: locationFilterId(id),
+                            locationId: id,
+                            type: FilterType.GEOGRAPHY,
+                            text: text,
+                            heading: i18n['search.geography']
+                        });
+                    }
+                }
+                else if(existing) {
+                    this.remove(existing);
+                }
+            }, this);
         },
 
         resetParametricSelection: function() {

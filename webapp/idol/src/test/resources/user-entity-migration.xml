@@ -1,0 +1,6 @@
+<dataset>
+    <users user_id="1" uid="1"/>
+    <users user_id="2" uid="2"/>
+    <users user_id="3" uid="null" username="Bob Fonda"/>
+    <users user_id="4" uid="null" username="Charlie Chaplin"/>
+</dataset>

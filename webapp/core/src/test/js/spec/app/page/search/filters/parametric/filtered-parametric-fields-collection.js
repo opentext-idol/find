@@ -13,9 +13,12 @@ define([
     const Animal = {CAT: 'CAT', DOG: 'DOG', TIGER: 'TIGER', UNICORN: 'UNICORN'};
 
     const MockCollection = Backbone.Collection.extend({
-        spy1: _.noop,
-        spy2: _.noop,
-        spy3: _.noop
+        spy1: function() {
+        },
+        spy2: function() {
+        },
+        spy3: function() {
+        }
     });
 
     describe('Filtered parametric fields collection', function() {

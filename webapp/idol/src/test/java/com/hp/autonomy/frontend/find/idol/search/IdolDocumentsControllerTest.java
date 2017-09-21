@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -24,7 +24,13 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.ObjectFactory;
 
-import static org.mockito.Matchers.*;
+import static junit.framework.TestCase.fail;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest<IdolQueryRequest, IdolSuggestRequest, IdolGetContentRequest, String, IdolQueryRestrictions, IdolGetContentRequestIndex, IdolSearchResult, AciErrorException> {
@@ -108,8 +114,16 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
         return "DocumentCount";
     }
 
-    @Test(expected = AciErrorException.class)
+    @Test
     public void getDocumentContentNotFound() throws AciErrorException {
-        documentsController.getDocumentContent("Some Reference", null);
+        final String reference = "Some Reference";
+        try {
+            documentsController.getDocumentContent(reference, null);
+            fail("Exception should have been thrown");
+        } catch(final AciErrorException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       containsString("No content found for document with reference " + reference));
+        }
     }
 }

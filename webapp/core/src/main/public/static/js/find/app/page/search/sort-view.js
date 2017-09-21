@@ -1,16 +1,16 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
     'jquery',
     'backbone',
     'find/app/model/query-model',
     'text!find/templates/app/page/search/sort-view.html',
-    'i18n!find/nls/bundle',
-    'underscore'
-], function($, Backbone, QueryModel, template, i18n, _) {
+    'i18n!find/nls/bundle'
+], function(_, $, Backbone, QueryModel, template, i18n) {
     'use strict';
 
     return Backbone.View.extend({
@@ -18,7 +18,7 @@ define([
 
         events: {
             'click [data-sort]': function(e) {
-                var sortType = $(e.currentTarget).attr('data-sort');
+                const sortType = $(e.currentTarget).attr('data-sort');
                 this.queryModel.set('sort', sortType);
             }
         },

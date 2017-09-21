@@ -16,9 +16,10 @@ import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
+import com.hp.autonomy.types.requests.idol.actions.tags.DateValueDetails;
 import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
+import com.hp.autonomy.types.requests.idol.actions.tags.NumericValueDetails;
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
-import com.hp.autonomy.types.requests.idol.actions.tags.ValueDetails;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -35,6 +36,9 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
@@ -63,6 +67,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
     @MockBean
     protected FieldComparatorFactory fieldComparatorFactory;
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     protected TagNameFactory tagNameFactory;
 
@@ -77,7 +82,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
 
     protected abstract ParametricValuesService<P, Q, E> constructParametricValuesService();
 
-    protected abstract List<FieldAndValueDetails> getParametricFields(final FieldTypeParam... fieldTypes) throws E;
+    protected abstract List<FieldAndValueDetails<?>> getParametricFields(final FieldTypeParam... fieldTypes) throws E;
 
     protected abstract F mockConfig();
 
@@ -102,14 +107,14 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         response.put(FieldTypeParam.Parametric, ImmutableSet.of(tagNameFactory.buildTagName("parametric_field"), tagNameFactory.buildTagName("parametric_numeric_field"), tagNameFactory.buildTagName("parametric_date_field")));
         when(service.getFields(any())).thenReturn(response);
 
-        final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric, FieldTypeParam.Numeric, FieldTypeParam.NumericDate);
+        final List<FieldAndValueDetails<?>> fields = getParametricFields(FieldTypeParam.Parametric, FieldTypeParam.Numeric, FieldTypeParam.NumericDate);
         assertThat(fields, hasSize(6));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath("parametric_field").getNormalisedPath(), "Parametric Field", 0d, 0d, 0L, FieldTypeParam.Parametric))));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath("numeric_field").getNormalisedPath(), "Numeric Field", 0d, 0d, 0L, FieldTypeParam.Numeric))));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath("parametric_numeric_field").getNormalisedPath(), "Parametric Numeric Field", 0d, 0d, 0L, FieldTypeParam.Numeric))));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath("date_field").getNormalisedPath(), "Date Field", 0d, 0d, 0L, FieldTypeParam.NumericDate))));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath("parametric_date_field").getNormalisedPath(), "Parametric Date Field", 0d, 0d, 0L, FieldTypeParam.NumericDate))));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATE_FIELD).getNormalisedPath(), "Autn Date", 0d, 0d, 0L, FieldTypeParam.NumericDate))));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("parametric_field").getNormalisedPath()))));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("numeric_field").getNormalisedPath()))));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("parametric_numeric_field").getNormalisedPath()))));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("date_field").getNormalisedPath()))));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("parametric_date_field").getNormalisedPath()))));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATE_FIELD).getNormalisedPath()))));
     }
 
     @Test
@@ -123,7 +128,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
                 .parametricNeverShowItem(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
                 .build());
 
-        final List<FieldAndValueDetails> output = getParametricFields(FieldTypeParam.NumericDate);
+        final List<FieldAndValueDetails<?>> output = getParametricFields(FieldTypeParam.NumericDate);
         assertThat(output, is(empty()));
     }
 
@@ -135,23 +140,30 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         response.put(FieldTypeParam.Numeric, ImmutableSet.of(tagNameFactory.buildTagName(fieldName)));
         when(service.getFields(any())).thenReturn(response);
 
-        final ValueDetails valueDetails = new ValueDetails.Builder()
-                .setMin(1.4)
-                .setMax(2.5)
-                .setAverage(1.9)
-                .setSum(10.8)
-                .setTotalValues(25)
+        final NumericValueDetails valueDetails = NumericValueDetails.builder()
+                .min(1.4)
+                .max(2.5)
+                .average(1.9)
+                .sum(10.8)
+                .totalValues(25)
                 .build();
 
-        final Map<FieldPath, ValueDetails> valueDetailsOutput = ImmutableMap.<FieldPath, ValueDetails>builder()
+        final Map<FieldPath, NumericValueDetails> valueDetailsOutput = ImmutableMap.<FieldPath, NumericValueDetails>builder()
                 .put(tagNameFactory.getFieldPath(fieldName), valueDetails)
                 .build();
 
-        when(parametricValuesService.getValueDetails(any())).thenReturn(valueDetailsOutput);
+        when(parametricValuesService.getNumericValueDetails(any())).thenReturn(valueDetailsOutput);
 
-        final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Numeric);
+        final List<FieldAndValueDetails<?>> fields = getParametricFields(FieldTypeParam.Numeric);
         assertThat(fields, hasSize(1));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath("parametric_numeric_field").getNormalisedPath(), "Parametric Numeric Field", 1.4, 2.5, 25, FieldTypeParam.Numeric))));
+        assertThat(fields, hasItem(is(FieldAndValueDetails.<Double>builder()
+                .id(tagNameFactory.getFieldPath("parametric_numeric_field").getNormalisedPath())
+                .displayName("Parametric Numeric Field")
+                .min(1.4)
+                .max(2.5)
+                .totalValues(25)
+                .type(FieldTypeParam.Numeric)
+                .build())));
     }
 
     @Test
@@ -160,33 +172,51 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         response.put(FieldTypeParam.NumericDate, ImmutableSet.of(tagNameFactory.buildTagName("parametric_date_field")));
         when(service.getFields(any())).thenReturn(response);
 
-        final ValueDetails valueDetails = new ValueDetails.Builder()
-                .setMin(146840000d)
-                .setMax(146860000d)
-                .setAverage(146850000d)
-                .setSum(1046850000d)
-                .setTotalValues(1000)
+        final DateValueDetails valueDetails = DateValueDetails.builder()
+                .min(epochToDate(146840000))
+                .max(epochToDate(146860000))
+                .average(epochToDate(146850000))
+                .sum(1046850000)
+                .totalValues(1000)
                 .build();
 
-        final ValueDetails autnDateValueDetails = new ValueDetails.Builder()
-                .setMin(100000000d)
-                .setMax(150000000d)
-                .setAverage(130000000d)
-                .setSum(1050000000d)
-                .setTotalValues(15000)
+        final DateValueDetails autnDateValueDetails = DateValueDetails.builder()
+                .min(epochToDate(100000000))
+                .max(epochToDate(150000000))
+                .average(epochToDate(130000000))
+                .sum(1050000000d)
+                .totalValues(15000)
                 .build();
 
-        final Map<FieldPath, ValueDetails> valueDetailsOutput = ImmutableMap.<FieldPath, ValueDetails>builder()
+        final Map<FieldPath, DateValueDetails> valueDetailsOutput = ImmutableMap.<FieldPath, DateValueDetails>builder()
                 .put(tagNameFactory.getFieldPath("parametric_date_field"), valueDetails)
                 .put(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATE_FIELD), autnDateValueDetails)
                 .build();
 
-        when(parametricValuesService.getValueDetails(any())).thenReturn(valueDetailsOutput);
+        when(parametricValuesService.getDateValueDetails(any())).thenReturn(valueDetailsOutput);
 
-        final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.NumericDate);
+        final List<FieldAndValueDetails<?>> fields = getParametricFields(FieldTypeParam.NumericDate);
         assertThat(fields, hasSize(2));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath("parametric_date_field").getNormalisedPath(), "Parametric Date Field", 146840000d, 146860000d, 1000, FieldTypeParam.NumericDate))));
-        assertThat(fields, hasItem(is(new FieldAndValueDetails(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATE_FIELD).getNormalisedPath(), "Autn Date", 100000000d, 150000000d, 15000, FieldTypeParam.NumericDate))));
+        assertThat(fields, hasItem(is(FieldAndValueDetails.<ZonedDateTime>builder()
+                .id(tagNameFactory.getFieldPath("parametric_date_field").getNormalisedPath())
+                .displayName("Parametric Date Field")
+                .min(epochToDate(146840000))
+                .max(epochToDate(146860000))
+                .totalValues(1000)
+                .type(FieldTypeParam.NumericDate)
+                .build())));
+        assertThat(fields, hasItem(is(FieldAndValueDetails.<ZonedDateTime>builder()
+                .id(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATE_FIELD).getNormalisedPath())
+                .displayName("Autn Date")
+                .min(epochToDate(100000000))
+                .max(epochToDate(150000000))
+                .totalValues(15000)
+                .type(FieldTypeParam.NumericDate)
+                .build())));
+    }
+
+    private ZonedDateTime epochToDate(final int epoch) {
+        return ZonedDateTime.ofInstant(Instant.ofEpochSecond(epoch), ZoneOffset.UTC);
     }
 
     @Test
@@ -198,7 +228,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
                 .parametricAlwaysShowItem(tagNameFactory.getFieldPath("ParametricField2"))
                 .build());
 
-        final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
+        final List<FieldAndValueDetails<?>> fields = getParametricFields(FieldTypeParam.Parametric);
         assertThat(fields, hasSize(2));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField1").getNormalisedPath()))));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField2").getNormalisedPath()))));
@@ -213,7 +243,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
                 .parametricNeverShowItem(tagNameFactory.getFieldPath("ParametricField2"))
                 .build());
 
-        final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
+        final List<FieldAndValueDetails<?>> fields = getParametricFields(FieldTypeParam.Parametric);
         assertThat(fields, hasSize(1));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField3").getNormalisedPath()))));
     }
@@ -228,7 +258,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
                 .parametricNeverShowItem(tagNameFactory.getFieldPath("ParametricField1"))
                 .build());
 
-        final List<FieldAndValueDetails> fields = getParametricFields(FieldTypeParam.Parametric);
+        final List<FieldAndValueDetails<?>> fields = getParametricFields(FieldTypeParam.Parametric);
         assertThat(fields, hasSize(1));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField2").getNormalisedPath()))));
     }

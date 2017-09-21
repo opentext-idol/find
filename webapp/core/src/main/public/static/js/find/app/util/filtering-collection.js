@@ -1,13 +1,12 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
-    'underscore'
-], function(Backbone, _) {
-
+    'underscore',
+    'backbone'
+], function(_, Backbone) {
     'use strict';
 
     return Backbone.Collection.extend({
@@ -15,7 +14,6 @@ define([
             this.filterModel = options.filterModel;
             this.collection = options.collection;
 
-            // _ allows us to pass the model as the first argument
             this.predicate = _.partial(options.predicate, _, this.filterModel);
             this.resetOnFilter = options.resetOnFilter || false;
 
@@ -25,7 +23,7 @@ define([
                 }
             }, this);
 
-            if (this.filterModel) {
+            if(this.filterModel) {
                 this.listenTo(this.filterModel, 'change', this.filterModels);
             }
 
@@ -38,14 +36,14 @@ define([
             this.listenTo(this.collection, 'sync', this.onSync);
 
             this.collection.each(function(model) {
-                if (this.predicate(model)) {
+                if(this.predicate(model)) {
                     models.push(model);
                 }
             }, this);
         },
 
         onAdd: function(model) {
-            if (this.predicate(model)){
+            if(this.predicate(model)) {
                 this.add(model);
             }
         },
@@ -55,7 +53,7 @@ define([
         },
 
         onChange: function(model) {
-            if (!this.predicate(model)) {
+            if(!this.predicate(model)) {
                 this.remove(model);
             }
         },
@@ -64,31 +62,30 @@ define([
             this.reset(collection.filter(this.predicate))
         },
 
-        onRequest: function () {
+        onRequest: function() {
             this.trigger('request');
         },
 
-        onError: function (collection, xhr) {
+        onError: function(collection, xhr) {
             this.trigger('error', collection, xhr);
         },
 
-        onSync: function () {
+        onSync: function() {
             this.trigger('sync');
         },
 
         filterModels: function() {
             const models = this.collection.filter(this.predicate);
 
-            if (this.resetOnFilter) {
+            if(this.resetOnFilter) {
                 this.reset(models);
             } else {
                 this.set(models);
-            }           
+            }
         },
 
-        isProcessing: function () {
+        isProcessing: function() {
             return Boolean(this.collection.currentRequest);
         }
     })
 });
-

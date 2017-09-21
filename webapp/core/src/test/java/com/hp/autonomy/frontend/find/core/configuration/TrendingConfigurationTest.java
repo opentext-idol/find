@@ -29,6 +29,7 @@ import java.io.IOException;
 import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CLASSES_PROPERTY;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
@@ -46,9 +47,10 @@ public class TrendingConfigurationTest extends ConfigurationComponentTest<Trendi
         json = new JacksonTester<>(getClass(), ResolvableType.forClass(getType()), objectMapper);
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void badDateField() throws ConfigException {
-        TrendingConfiguration.builder()
+        try {
+            TrendingConfiguration.builder()
                 .dateField(fieldPathNormaliser.normaliseFieldPath(""))
                 .numberOfValues(10)
                 .defaultNumberOfBuckets(15)
@@ -56,11 +58,18 @@ public class TrendingConfigurationTest extends ConfigurationComponentTest<Trendi
                 .minNumberOfBuckets(10)
                 .build()
                 .basicValidate(null);
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       containsString("dateField must be provided"));
+        }
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void badNumberOfValues() throws ConfigException {
-        TrendingConfiguration.builder()
+        try {
+            TrendingConfiguration.builder()
                 .dateField(fieldPathNormaliser.normaliseFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
                 .numberOfValues(0)
                 .defaultNumberOfBuckets(15)
@@ -68,11 +77,18 @@ public class TrendingConfigurationTest extends ConfigurationComponentTest<Trendi
                 .minNumberOfBuckets(10)
                 .build()
                 .basicValidate(null);
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       containsString("Number of values must be provided and must be greater than 0"));
+        }
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void badNumberOfBuckets() throws ConfigException {
-        TrendingConfiguration.builder()
+        try {
+            TrendingConfiguration.builder()
                 .dateField(fieldPathNormaliser.normaliseFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
                 .numberOfValues(10)
                 .defaultNumberOfBuckets(15)
@@ -80,11 +96,18 @@ public class TrendingConfigurationTest extends ConfigurationComponentTest<Trendi
                 .minNumberOfBuckets(0)
                 .build()
                 .basicValidate(null);
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       containsString("Minimum number of buckets must be provided and must be greater than 0"));
+        }
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void nonsensicalBucketingConfiguration() throws ConfigException {
-        TrendingConfiguration.builder()
+        try {
+            TrendingConfiguration.builder()
                 .dateField(fieldPathNormaliser.normaliseFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
                 .numberOfValues(10)
                 .defaultNumberOfBuckets(20)
@@ -92,6 +115,12 @@ public class TrendingConfigurationTest extends ConfigurationComponentTest<Trendi
                 .minNumberOfBuckets(15)
                 .build()
                 .basicValidate(null);
+            fail("Exception should have been thrown");
+        } catch(final ConfigException e) {
+            assertThat("Exception has the correct message",
+                       e.getMessage(),
+                       containsString("Default number of buckets must lie between max and min"));
+        }
     }
 
     @Override
@@ -102,12 +131,12 @@ public class TrendingConfigurationTest extends ConfigurationComponentTest<Trendi
     @Override
     protected TrendingConfiguration constructComponent() {
         return TrendingConfiguration.builder()
-                .dateField(fieldPathNormaliser.normaliseFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
-                .numberOfValues(10)
-                .defaultNumberOfBuckets(15)
-                .maxNumberOfBuckets(20)
-                .minNumberOfBuckets(10)
-                .build();
+            .dateField(fieldPathNormaliser.normaliseFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
+            .numberOfValues(10)
+            .defaultNumberOfBuckets(15)
+            .maxNumberOfBuckets(20)
+            .minNumberOfBuckets(10)
+            .build();
     }
 
     @Override
@@ -118,31 +147,31 @@ public class TrendingConfigurationTest extends ConfigurationComponentTest<Trendi
     @Override
     protected void validateJson(final JsonContent<TrendingConfiguration> jsonContent) {
         jsonContent.assertThat()
-                .hasJsonPathStringValue("$.dateField", ParametricValuesService.AUTN_DATE_FIELD)
-                .hasJsonPathNumberValue("$.numberOfValues", 10)
-                .hasJsonPathNumberValue("$.maxNumberOfBuckets", 20)
-                .hasJsonPathNumberValue("$.minNumberOfBuckets", 10)
-                .hasJsonPathNumberValue("$.defaultNumberOfBuckets", 15);
+            .hasJsonPathStringValue("$.dateField", ParametricValuesService.AUTN_DATE_FIELD)
+            .hasJsonPathNumberValue("$.numberOfValues", 10)
+            .hasJsonPathNumberValue("$.maxNumberOfBuckets", 20)
+            .hasJsonPathNumberValue("$.minNumberOfBuckets", 10)
+            .hasJsonPathNumberValue("$.defaultNumberOfBuckets", 15);
     }
 
     @Override
     protected void validateParsedComponent(final ObjectContent<TrendingConfiguration> objectContent) {
         objectContent.assertThat()
-                .hasFieldOrPropertyWithValue("dateField", fieldPathNormaliser.normaliseFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
-                .hasFieldOrPropertyWithValue("numberOfValues", 10)
-                .hasFieldOrPropertyWithValue("maxNumberOfBuckets", 20)
-                .hasFieldOrPropertyWithValue("minNumberOfBuckets", 10)
-                .hasFieldOrPropertyWithValue("defaultNumberOfBuckets", 20);
+            .hasFieldOrPropertyWithValue("dateField", fieldPathNormaliser.normaliseFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
+            .hasFieldOrPropertyWithValue("numberOfValues", 10)
+            .hasFieldOrPropertyWithValue("maxNumberOfBuckets", 20)
+            .hasFieldOrPropertyWithValue("minNumberOfBuckets", 10)
+            .hasFieldOrPropertyWithValue("defaultNumberOfBuckets", 20);
     }
 
     @Override
     protected void validateMergedComponent(final ObjectContent<TrendingConfiguration> objectContent) {
         objectContent.assertThat()
-                .hasFieldOrPropertyWithValue("dateField", fieldPathNormaliser.normaliseFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
-                .hasFieldOrPropertyWithValue("numberOfValues", 10)
-                .hasFieldOrPropertyWithValue("maxNumberOfBuckets", 20)
-                .hasFieldOrPropertyWithValue("minNumberOfBuckets", 10)
-                .hasFieldOrPropertyWithValue("defaultNumberOfBuckets", 15);
+            .hasFieldOrPropertyWithValue("dateField", fieldPathNormaliser.normaliseFieldPath(ParametricValuesService.AUTN_DATE_FIELD))
+            .hasFieldOrPropertyWithValue("numberOfValues", 10)
+            .hasFieldOrPropertyWithValue("maxNumberOfBuckets", 20)
+            .hasFieldOrPropertyWithValue("minNumberOfBuckets", 10)
+            .hasFieldOrPropertyWithValue("defaultNumberOfBuckets", 15);
     }
 
     @Override

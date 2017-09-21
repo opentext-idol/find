@@ -7,12 +7,11 @@ define([
     'underscore',
     'find/app/page/search/results/parametric-results-view',
     'find/app/page/search/results/table/table-collection',
-    'find/app/util/generate-error-support-message',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/results/table/table-view.html',
     'datatables.net-bs',
     'datatables.net-fixedColumns'
-], function(_, ParametricResultsView, TableCollection, generateErrorHtml, i18n, tableTemplate) {
+], function(_, ParametricResultsView, TableCollection, i18n, tableTemplate) {
     'use strict';
 
     const strings = {
@@ -33,8 +32,8 @@ define([
         initialize: function(options) {
             ParametricResultsView.prototype.initialize.call(this, _.defaults({
                 dependentParametricCollection: new TableCollection(),
-                emptyDependentMessage: i18n['search.resultsView.table.error.noDependentParametricValues'],
-                emptyMessage: generateErrorHtml({errorLookup: 'emptyTableView'}),
+                emptyDependentMessage: i18n['search.resultsView.table.noDependentParametricValues'],
+                emptyMessage: i18n['search.resultsView.table.noParametricValues'],
                 errorMessageArguments: {messageToUser: i18n['search.resultsView.table.error.query']}
             }, options))
         },
@@ -66,7 +65,8 @@ define([
                             {
                                 data: 'text',
                                 title: this.fieldsCollection.at(0).get('displayValue')
-                            }, {
+                            },
+                            {
                                 data: 'count',
                                 title: i18n['search.resultsView.table.count']
                             }

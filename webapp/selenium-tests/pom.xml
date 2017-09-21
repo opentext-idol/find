@@ -8,15 +8,16 @@
         <groupId>com.hp.autonomy</groupId>
         <artifactId>foss-master-pom</artifactId>
         <version>2.0.0</version>
+        <relativePath></relativePath>
     </parent>
 
     <groupId>com.hp.autonomy.frontend.find</groupId>
     <artifactId>selenium-tests</artifactId>
     <packaging>pom</packaging>
-    <version>11.3.1</version>
+    <version>11.5.0</version>
 
     <properties>
-        <qa.infrastructure.version>2.10.1</qa.infrastructure.version>
+        <qa.infrastructure.version>4.1.0</qa.infrastructure.version>
     </properties>
 
     <modules>

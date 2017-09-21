@@ -1,21 +1,19 @@
 package com.autonomy.abc.selenium.find.application;
 
 import com.autonomy.abc.selenium.find.save.SavedSearchService;
-import com.hp.autonomy.frontend.selenium.application.Application;
-import com.hp.autonomy.frontend.selenium.control.Window;
+import org.openqa.selenium.WebDriver;
 
 public class FindIdolFind extends IdolFind<FindIdolFindElementFactory>{
 
-    protected FindIdolFind(){}
-
-    @Override
-    public Application<FindIdolFindElementFactory> inWindow(final Window window) {
-        setElementFactory(new FindIdolFindElementFactory(window.getSession().getDriver()));
-        return this;
-    }
+    FindIdolFind(){}
 
     public SavedSearchService savedSearchService() {
         throw new UnsupportedOperationException("Users with only the findUser role do not have a Saved Search Service");
+    }
+
+    @Override
+    public void withDriver(final WebDriver webDriver) {
+        setElementFactory(new FindIdolFindElementFactory(webDriver));
     }
 }
 

@@ -91,10 +91,10 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
         final String username = authenticationInformationRetriever.getAuthentication().getName();
 
         final Collection<String> roles = authenticationInformationRetriever.getAuthentication()
-                .getAuthorities()
-                .stream()
-                .map((Function<GrantedAuthority, String>)GrantedAuthority::getAuthority)
-                .collect(Collectors.toCollection(LinkedList::new));
+            .getAuthorities()
+            .stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.toCollection(LinkedList::new));
 
         final FindConfig<C, B> findConfig = configService.getConfig();
 
@@ -138,24 +138,24 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
 
     private Map<String, FieldInfo<?>> getMetadataNodeInfo() {
         return getMetadataNodes().stream()
-                .collect(toLinkedMap(MetadataNode::getName, node -> FieldInfo.builder()
-                        .id(node.getName())
-                        .displayName(node.getDisplayName())
-                        .type(node.getFieldType())
-                        .build()));
+            .collect(toLinkedMap(MetadataNode::getName, node -> FieldInfo.builder()
+                .id(node.getName())
+                .displayName(node.getDisplayName())
+                .type(node.getFieldType())
+                .build()));
     }
 
     private Map<String, FieldInfo<?>> getFieldConfigWithDisplayNames(final FindConfig<C, B> findConfig) {
         return findConfig.getFieldsInfo().getFieldConfig().entrySet().stream()
-                .collect(toLinkedMap(Map.Entry::getKey, entry -> entry.getValue().toBuilder()
-                        .displayName(Optional.ofNullable(entry.getValue().getDisplayName())
-                                             .orElseGet(() -> fieldDisplayNameGenerator.prettifyFieldName(entry.getValue().getId())))
-                        .build()));
+            .collect(toLinkedMap(Map.Entry::getKey, entry -> entry.getValue().toBuilder()
+                .displayName(Optional.ofNullable(entry.getValue().getDisplayName())
+                                 .orElseGet(() -> fieldDisplayNameGenerator.prettifyFieldName(entry.getValue().getId())))
+                .build()));
     }
 
     private <T, K, U> Collector<T, ?, Map<K, U>> toLinkedMap(
-            final Function<? super T, ? extends K> keyMapper,
-            final Function<? super T, ? extends U> valueMapper) {
+        final Function<? super T, ? extends K> keyMapper,
+        final Function<? super T, ? extends U> valueMapper) {
         return Collectors.toMap(keyMapper, valueMapper,
                                 (u, v) -> {
                                     throw new IllegalStateException(String.format("Duplicate key %s", u));

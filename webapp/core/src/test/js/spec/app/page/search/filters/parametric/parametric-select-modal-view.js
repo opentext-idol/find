@@ -1,7 +1,13 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
-    'find/app/page/search/filters/parametric/parametric-select-modal-view',
-    'backbone'
-], function(ParametricSelectModalView, Backbone) {
+    'backbone',
+    'find/app/page/search/filters/parametric/parametric-select-modal-view'
+], function(Backbone, ParametricSelectModalView) {
+    'use strict';
 
     describe('Parametric Select Modal View', function() {
         beforeEach(function() {
@@ -74,5 +80,4 @@ define([
             });
         });
     });
-
 });

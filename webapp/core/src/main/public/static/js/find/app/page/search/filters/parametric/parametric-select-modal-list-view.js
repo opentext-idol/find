@@ -107,7 +107,8 @@ define([
                     this.$error.html(generateErrorHtml({
                         errorDetails: error.message,
                         errorUUID: error.uuid,
-                        errorLookup: error.backendErrorCode
+                        errorLookup: error.backendErrorCode,
+                        isUserError: error.isUserError
                     }));
                 }
             }

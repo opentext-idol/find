@@ -1,0 +1,110 @@
+/*
+ * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+audio.preview-media-player {
+  flex: 1;
+  max-height: 30px;
+}
+
+.audio-container {
+  background-color: @grey0;
+
+  .preview-mode-document {
+    flex-direction: column;
+  }
+}
+
+.image-container {
+  .preview-mode-document {
+    .block;
+  }
+}
+
+.preview-mode {
+  .main-results-container:not(.answered-question) {
+    .clickable;
+  }
+
+  .popover {
+    cursor: default;
+  }
+}
+
+.preview-mode-document-container {
+  flex: 1;
+}
+
+.preview-media-player-audio {
+  .flex;
+
+  flex: 1;
+  justify-content: center;
+
+  i.hp-sound {
+    color: @white;
+    font-size: 7em;
+    margin: auto;
+  }
+}
+
+.preview-mode-metadata-container {
+  overflow: auto;
+  flex: 0 1 auto;
+  max-height: 40%;
+}
+
+.preview-mode-loading.loading-spinner {
+  left: 225px;
+  top: 165px;
+}
+
+.preview-document-frame {
+  .p-t-sm;
+  .m-nil;
+
+  border: @nil;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: @white;
+}
+
+.preview-media-player {
+  .full-width;
+}
+
+.preview-mode-document-title {
+  .break-all;
+
+  flex: 2;
+  max-height: (@fontSizeLarge*2);
+  color: @text-color !important;
+  white-space: normal !important;
+}
+
+.preview-mode-document-database {
+  flex: 1;
+  font-family: Metric;
+  color: @text-color !important;
+}
+
+.preview-mode-document-url {
+  font-size: ~'calc(@{font-size-base} - 1px)';
+  color: @grey6;
+}
+
+.preview-mode-document {
+  .flex;
+
+  flex-grow: 1;
+}
+
+//Media queries
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /* IE10+ CSS styles go here */
+  .preview-mode-document-title {
+    .p-b-sm;
+  }
+}

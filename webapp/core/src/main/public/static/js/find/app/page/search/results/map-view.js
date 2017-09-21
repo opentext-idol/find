@@ -98,10 +98,16 @@ define([
                     .addTo(map);
             }
 
-            const initialLatitude = this.centerCoordinates ? this.centerCoordinates.latitude : configuration().map.initialLocation.latitude;
-            const initialLongitude = this.centerCoordinates ? this.centerCoordinates.longitude : configuration().map.initialLocation.longitude;
+            const initialLatitude = this.centerCoordinates
+                ? this.centerCoordinates.latitude
+                : configuration().map.initialLocation.latitude;
+            const initialLongitude = this.centerCoordinates
+                ? this.centerCoordinates.longitude
+                : configuration().map.initialLocation.longitude;
 
-            map.setView([initialLatitude, initialLongitude], this.initialZoom ? this.initialZoom : INITIAL_ZOOM);
+            map.setView([initialLatitude, initialLongitude], this.initialZoom
+                ? this.initialZoom
+                : INITIAL_ZOOM);
         },
 
         mapRendered: function() {
@@ -191,7 +197,9 @@ define([
         clearMarkers: function() {
             this.layers.forEach(function(layer) {
                 layer.clearLayers();
-            });
+                this.control && this.control.removeLayer(layer);
+                this.map.removeLayer(layer);
+            }, this);
             this.layers = [];
         },
 

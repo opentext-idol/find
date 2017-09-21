@@ -79,15 +79,6 @@ module.exports = (grunt) ->
           template: jasmineRequireTemplate
           templateOptions:
             requireConfigFile: browserTestRequireConfig
-    less:
-      build:
-        files:
-          'target/classes/static/css/bootstrap.css': '../core/src/main/less/bootstrap.less',
-          'target/classes/static/css/compiled.css': '../core/src/main/less/app.less',
-          'target/classes/static/css/login.css': '../core/src/main/less/login.less',
-          'target/classes/static/css/result-highlighting.css': '../core/src/main/less/result-highlighting.less'
-        options:
-          strictMath: true
     watch:
       options:
         interval: 5000
@@ -100,11 +91,11 @@ module.exports = (grunt) ->
       copyResources:
         files: [
           '../core/src/main/public/static/**/*'
-          '../core/src/main/less/**/*.less'
+          '../core/src/main/resources/less/**/*.less'
           'src/main/public/static/**/*'
         ]
         spawn: false
-        tasks: ['sync:devResources', 'less:build']
+        tasks: ['sync:devResources']
       fieldtext:
         files: [
           '../core/src/main/public/static/bower_components/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
@@ -113,6 +104,11 @@ module.exports = (grunt) ->
     sync:
       devResources:
         files: [
+          {
+            cwd: '../core/src/main/resources/less'
+            src: '**/*'
+            dest: '../core/target/classes/less'
+          }
           {
             cwd: '../core/src/main/public/static'
             src: '**/*'
@@ -132,12 +128,54 @@ module.exports = (grunt) ->
         options:
           format: 'amd'
           trackLineAndColumn: true
+    requirejs:
+      options:
+        appDir: 'target/webapp'
+        baseUrl: 'static/js'
+        dir: 'target/classes'
+        keepBuildDir: true
+        mainConfigFile: 'target/webapp/static/js/require-config.js'
+        optimize: 'none'
+      public:
+        options:
+          name: 'public',
+          include: [
+            'require-config'
+            'find/idol/app/idol-app'
+          ]
+      config:
+        options:
+          name: 'config',
+          include: [
+            'require-config',
+            'find/config/config-app'
+          ]
+      login:
+        options:
+          name: 'login',
+          include: [
+            'require-config',
+            'login-page/js/login',
+            'i18n!find/nls/bundle'
+          ]
+    uglify:
+      options:
+        compress: true
+        mangle: true
+      js:
+        files: [{
+          expand: true
+          cwd: 'target/classes/static/js'
+          src: '**/*.js'
+          dest: 'target/classes/static/js'
+        }]
 
   grunt.loadNpmTasks 'grunt-babel'
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-connect'
-  grunt.loadNpmTasks 'grunt-contrib-less'
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
+  grunt.loadNpmTasks 'grunt-contrib-requirejs'
+  grunt.loadNpmTasks 'grunt-contrib-uglify'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-sync'
   grunt.loadNpmTasks 'grunt-peg'
@@ -146,4 +184,7 @@ module.exports = (grunt) ->
   grunt.registerTask 'test', ['babel:transform', 'jasmine:test']
   grunt.registerTask 'browser-test', ['jasmine:browser-test:build', 'connect:server', 'watch:buildBrowserTest']
   grunt.registerTask 'watch-test', ['babel:transform', 'jasmine:test', 'watch:test']
-  grunt.registerTask 'copy-resources', ['sync:devResources', 'less:build', 'watch:copyResources']
+  grunt.registerTask 'copy-resources', ['sync:devResources', 'watch:copyResources']
+  grunt.registerTask 'concatenate', ['requirejs']
+  grunt.registerTask 'minify', ['uglify:js']
+  grunt.registerTask 'compile', ['concatenate', 'minify']

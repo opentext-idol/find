@@ -1,14 +1,19 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 define([
     'underscore',
-    'parametric-refinement/to-field-text-node'
-], function(_, toFieldTextNode) {
+    'parametric-refinement/to-field-text-node',
+    'find/app/model/geography-model'
+], function(_, toFieldTextNode, GeographyModel) {
+    'use strict';
 
     function wrapInBrackets(concept) {
-        return concept ? '(' + concept + ')' : concept;
+        return concept
+            ? '(' + concept + ')'
+            : concept;
     }
 
     // WARNING: This logic is duplicated in the server-side SavedSearch class
@@ -46,8 +51,14 @@ define([
      * @return {string} A field text string or null
      */
     function buildFieldText(parametricValues) {
-        var fieldTextNode = toFieldTextNode(parametricValues);
+        const fieldTextNode = toFieldTextNode(parametricValues);
         return fieldTextNode && fieldTextNode.toString();
+    }
+
+    function buildMergedFieldText(parametricValues, geographyModel) {
+        const fieldTextNode = toFieldTextNode(parametricValues);
+        const mergedFieldText = geographyModel.appendFieldText(fieldTextNode);
+        return mergedFieldText && mergedFieldText.toString();
     }
 
     /**
@@ -61,7 +72,7 @@ define([
             maxDate: model.get('maxDate'),
             queryText: makeQueryText(model.get('relatedConcepts')),
             databases: buildIndexes(model.get('indexes')),
-            fieldText: buildFieldText(model.get('parametricValues')),
+            fieldText: buildMergedFieldText(model.get('parametricValues'), new GeographyModel(model.toGeographyModelAttributes())),
             anyLanguage: true
         };
     }

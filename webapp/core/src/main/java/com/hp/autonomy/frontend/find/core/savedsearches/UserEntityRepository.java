@@ -8,7 +8,6 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.UUID;
 
 public interface UserEntityRepository extends CrudRepository<UserEntity, Long> {
 
@@ -17,5 +16,5 @@ public interface UserEntityRepository extends CrudRepository<UserEntity, Long> {
 
     // See: http://forum.spring.io/forum/spring-projects/data/106312-spring-data-jpa-infinite-loop-when-updating-but-not-saving-an-auditable-object
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
-    UserEntity findByDomainAndUserStoreAndUuidAndUid(String domain, String userStore, UUID uuid, Long uid);
+    UserEntity findByUsername(String username);
 }

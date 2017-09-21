@@ -7,7 +7,7 @@
     <parent>
         <artifactId>find</artifactId>
         <groupId>com.hp.autonomy.frontend.find</groupId>
-        <version>11.3.1</version>
+        <version>11.5.0</version>
     </parent>
 
     <artifactId>core</artifactId>
@@ -81,20 +81,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>less</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>${project.basedir}/node_modules/.bin/grunt${npm.binExtension}</executable>
-                            <workingDirectory>${basedir}</workingDirectory>
-                            <arguments>
-                                <argument>less</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>pegjs</id>
                         <phase>generate-resources</phase>
                         <goals>
@@ -152,13 +138,6 @@
             <groupId>com.hp.autonomy.frontend.reports.powerpoint</groupId>
             <artifactId>powerpoint-report</artifactId>
             <version>${powerpoint.report.version}</version>
-        </dependency>
-
-        <!--TODO move to Haven Search Components-->
-        <dependency>
-            <groupId>com.hp.autonomy.frontend.configuration</groupId>
-            <artifactId>configuration-authentication</artifactId>
-            <version>0.7.1</version>
         </dependency>
 
         <dependency>
@@ -219,6 +198,10 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-java8</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.googlecode.ehcache-spring-annotations</groupId>
@@ -257,6 +240,12 @@
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.sommeri</groupId>
+            <artifactId>less4j</artifactId>
+            <version>1.17.2</version>
         </dependency>
 
         <dependency>

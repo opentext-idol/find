@@ -14,7 +14,8 @@ define([
         return generateErrorHtml({
             errorDetails: xhr.responseJSON.message,
             errorUUID: xhr.responseJSON.uuid,
-            errorLookup: xhr.responseJSON.backendErrorCode
+            errorLookup: xhr.responseJSON.backendErrorCode,
+            isUserError: xhr.responseJSON.isUserError
         });
     }
 
@@ -36,7 +37,8 @@ define([
                 this.xhr = {
                     responseJSON: {
                         backendErrorCode: KNOWN_USER_ERROR_CODE,
-                        uuid: DUMMY_UUID
+                        uuid: DUMMY_UUID,
+                        isUserError: true
                     }
                 };
                 this.testErrorMessage = generateDummyError(this.xhr);
@@ -58,7 +60,8 @@ define([
                     responseJSON: {
                         backendErrorCode: 'SOME.ERROR.NOT.IN.errors.js',
                         message: DUMMY_MESSAGE_FOR_USER,
-                        uuid: DUMMY_UUID
+                        uuid: DUMMY_UUID,
+                        isUserError: false
                     }
                 };
                 this.testErrorMessage = generateDummyError(this.xhr);

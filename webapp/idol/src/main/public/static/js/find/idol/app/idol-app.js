@@ -11,14 +11,18 @@ define([
     'find/app/configuration',
     'find/idol/app/model/idol-indexes-collection',
     'find/idol/app/model/saved-searches/saved-snapshot-collection',
+    'find/idol/app/model/saved-searches/shared-saved-snapshot-collection',
+    'find/app/model/asset-collection',
     'find/idol/app/idol-navigation',
     'find/idol/app/page/idol-find-search',
     'find/idol/app/page/find-about-page',
     'find/idol/app/page/dashboard-page',
     'find/app/page/find-settings-page',
+    'find/app/page/customizations-page',
     'i18n!find/nls/bundle'
 ], function(_, Backbone, BaseApp, logout, configuration, IndexesCollection, SavedSnapshotCollection,
-            Navigation, FindSearch, AboutPage, DashboardPage, SettingsPage, i18n) {
+            SharedSavedSnapshotCollection, AssetCollection, Navigation, FindSearch, AboutPage, DashboardPage,
+            SettingsPage, CustomizationsPage, i18n) {
     'use strict';
 
     return BaseApp.extend({
@@ -38,9 +42,28 @@ define([
                         Constructor: Backbone.Collection,
                         fetchOptions: {},
                         fetch: false
+                    },
+                    sharedSavedSnapshotCollection: {
+                        Constructor: SharedSavedSnapshotCollection,
+                        fetchOptions: {remove: false, reset: false}
                     }
                 }, modelData);
             }
+
+            modelData = _.extend({
+                bigLogoCollection: {
+                    Constructor: AssetCollection,
+                    options: {
+                        type: CustomizationsPage.AssetTypes.bigLogo.type
+                    }
+                },
+                smallLogoCollection: {
+                    Constructor: AssetCollection,
+                    options: {
+                        type: CustomizationsPage.AssetTypes.smallLogo.type
+                    }
+                }
+            }, modelData);
 
             return modelData;
         },
@@ -67,7 +90,9 @@ define([
                 }, {}));
             }
 
-            const dashboardCount = dashboards ? dashboards.length : 0;
+            const dashboardCount = dashboards
+                ? dashboards.length
+                : 0;
 
             _.extend(pageData, {
                 search: {
@@ -79,12 +104,19 @@ define([
                         'windowScrollModel'
                     ].concat(
                         config.hasBiRole
-                            ? ['savedSnapshotCollection', 'readOnlySearchCollection']
+                            ? [
+                                'savedSnapshotCollection',
+                                'sharedSavedQueryCollection',
+                                'sharedSavedSnapshotCollection',
+                                'readOnlySearchCollection'
+                            ]
                             : []
                     ),
                     title: i18n['app.search'],
                     order: dashboardCount,
-                    navigation: config.enableSideBar ? 'sidebar' : 'dropdown'
+                    navigation: config.enableSideBar
+                        ? 'sidebar'
+                        : 'dropdown'
                 },
                 about: {
                     Constructor: AboutPage,
@@ -96,13 +128,23 @@ define([
             });
 
             if(_.contains(config.roles, 'ROLE_ADMIN')) {
-                pageData.settings = {
-                    Constructor: SettingsPage,
-                    icon: 'hp-icon hp-fw hp-settings',
-                    title: i18n['app.settings'],
-                    order: dashboardCount + 2,
-                    navigation: 'dropdown'
-                };
+                _.extend(pageData, {
+                    settings: {
+                        Constructor: SettingsPage,
+                        icon: 'hp-icon hp-fw hp-settings',
+                        navigation: 'dropdown',
+                        title: i18n['app.settings'],
+                        order: dashboardCount + 2
+                    },
+                    customizations: {
+                        Constructor: CustomizationsPage,
+                        icon: 'hp-icon hp-fw hp-view',
+                        models: ['bigLogoCollection', 'smallLogoCollection'],
+                        navigation: 'dropdown',
+                        title: i18n['app.customizations'],
+                        order: dashboardCount + 3
+                    }
+                });
             }
 
             return pageData;

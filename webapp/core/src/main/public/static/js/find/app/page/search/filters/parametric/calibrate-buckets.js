@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -27,21 +27,21 @@ define([
      * @return {Buckets[]} Ordered, complete buckets filling the given range exactly
      */
     function calibrateBuckets(buckets, range) {
-        var filteredBuckets = _.filter(buckets, function(value) {
-            return value.min >= range[0] && value.max <= range[1];
+        const filteredBuckets = _.filter(buckets, function(value) {
+            return !(value.min < range[0] || value.max > range[1]);
         });
 
         if(filteredBuckets.length === 0) {
             // None of the given buckets with in the range
             return [emptyBucket(range)];
         } else {
-            var filteredMin = _.first(filteredBuckets).min;
-            var preBuckets = filteredMin > range[0]
+            const filteredMin = _.first(filteredBuckets).min;
+            const preBuckets = filteredMin > range[0]
                 ? [emptyBucket([range[0], filteredMin])]
                 : [];
 
-            var filteredMax = _.last(filteredBuckets).max;
-            var postBuckets = filteredMax < range[1]
+            const filteredMax = _.last(filteredBuckets).max;
+            const postBuckets = filteredMax < range[1]
                 ? [emptyBucket([filteredMax, range[1]])]
                 : [];
 

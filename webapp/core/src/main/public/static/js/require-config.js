@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -15,8 +15,10 @@ require.config({
         'datatables.net': '../bower_components/datatables.net/js/jquery.dataTables',
         'datatables.net-bs': '../bower_components/datatables.net-bs/js/dataTables.bootstrap',
         'datatables.net-fixedColumns': '../bower_components/datatables.net-fixedcolumns/js/dataTables.fixedColumns',
+        'dropzone': '../bower_components/dropzone/dist/dropzone-amd-module',
         'd3': '../bower_components/d3/d3',
         'fieldtext/js/parser': 'pegjs/fieldtext/parser',
+        handlebars: '../bower_components/handlebars/handlebars',
         'html2canvas': '../bower_components/html2canvas/build/html2canvas',
         i18n: '../bower_components/requirejs-i18n/i18n',
         'fieldtext': '../bower_components/hp-autonomy-fieldtext-js/src',
@@ -30,6 +32,9 @@ require.config({
         'login-page': '../bower_components/hp-autonomy-login-page/src',
         leaflet: '../bower_components/leaflet/dist/leaflet-src',
         'Leaflet.awesome-markers': '../bower_components/Leaflet.awesome-markers/dist/leaflet.awesome-markers',
+        'leaflet.draw': '../bower_components/leaflet-draw/dist/leaflet.draw-src',
+        'leaflet.draw.i18n': 'leaflet.draw.i18n/leaflet.draw.i18n',
+        'leaflet.draw.negate': 'leaflet.draw.negate/leaflet.draw.negate',
         'leaflet.markercluster': '../bower_components/leaflet.markercluster/dist/leaflet.markercluster-src',
         'leaflet.markercluster.layersupport': '../bower_components/leaflet.markercluster.layersupport/src/layersupport',
         'leaflet.notransform': 'leaflet.notransform/leaflet.notransform',
@@ -62,6 +67,7 @@ require.config({
             exports: '_'
         },
         'Leaflet.awesome-markers': ['leaflet'],
+        'leaflet.draw': ['leaflet'],
         'leaflet.markercluster': ['leaflet'],
         'leaflet.markercluster.layersupport': ['leaflet.markercluster'],
         'leaflet': ['leaflet.notransform']

@@ -57,7 +57,7 @@ public abstract class FindConfigFileServiceTest<C extends FindConfig<C, B>, B ex
     @Mock
     protected TextEncryptor textEncryptor;
     protected FilterProvider filterProvider;
-    private FindConfigFileService<C, B> findConfigFileService;
+    protected FindConfigFileService<C, B> findConfigFileService;
 
     @BeforeClass
     public static void init() {

@@ -8,16 +8,19 @@ package com.autonomy.abc.selenium.find.save;
 import com.autonomy.abc.selenium.find.application.BIIdolFind;
 import com.autonomy.abc.selenium.find.application.BIIdolFindElementFactory;
 import com.autonomy.abc.selenium.find.comparison.ComparisonModal;
+import com.hp.autonomy.frontend.selenium.element.FormInput;
 import com.hp.autonomy.frontend.selenium.util.Waits;
 import org.openqa.selenium.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SavedSearchService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SavedSearchService.class);
     private final BIIdolFindElementFactory elementFactory;
+    private final Set<String> createdSearches = new HashSet<>();
 
     public SavedSearchService(final BIIdolFind find) {
         elementFactory = find.elementFactory();
@@ -26,15 +29,18 @@ public class SavedSearchService {
     public void saveCurrentAs(final String searchName, final SearchType type) {
         Waits.loadOrFadeWait();
         nameSavedSearch(searchName, type).confirmSave();
+        createdSearches.add(searchName);
     }
 
     public void renameCurrentAs(final String newSearchName) {
         final SearchOptionsBar optionsBar = elementFactory.getSearchOptionsBar();
         Waits.loadOrFadeWait();
-
         optionsBar.renameButton().click();
-        optionsBar.searchTitleInput().setValue(newSearchName);
+        final FormInput formInput = optionsBar.searchTitleInput();
+        createdSearches.remove(formInput.getValue());
+        formInput.setValue(newSearchName);
         optionsBar.confirmSave();
+        createdSearches.add(newSearchName);
     }
 
     public SearchOptionsBar nameSavedSearch(final String searchName, final SearchType type) {
@@ -63,22 +69,18 @@ public class SavedSearchService {
     //TODO: Still not deleting the tabs but really a problem with the app's slow deletion
     public void deleteAll() {
         final SearchTabBar tabBar = elementFactory.getSearchTabBar();
-
-        final List<String> savedTitles = tabBar.savedTabTitles();
-        LOGGER.info("Saved titles: " + savedTitles);
-
-        for(final String title : savedTitles) {
+        tabBar.savedTabTitles().stream().filter(createdSearches::contains).forEach(title -> {
             elementFactory.getSearchTabBar().tab(title).activate();
             elementFactory.getFindPage().waitForLoad();
             deleteCurrentSearch();
             tabBar.waitUntilTabGone(title);
-        }
+            createdSearches.remove(title);
+        });
     }
 
     public void deleteCurrentSearch() {
         final SearchOptionsBar options = elementFactory.getSearchOptionsBar();
         options.delete();
-        Waits.loadOrFadeWait();
     }
 
     public void compareCurrentWith(final String savedSearchName) {

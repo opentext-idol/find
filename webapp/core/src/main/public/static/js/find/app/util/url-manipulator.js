@@ -21,6 +21,15 @@ define([
             }
 
             return prefix + url;
+        },
+
+        appendHashFragment: function(model, url) {
+            const hashFragmentIndex = model.get('reference').indexOf('#');
+            if (hashFragmentIndex === -1) {
+                return url;
+            } else {
+                return url + model.get('reference').substring(hashFragmentIndex);
+            }
         }
     };
 });

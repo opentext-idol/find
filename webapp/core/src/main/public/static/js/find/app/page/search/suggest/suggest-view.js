@@ -1,22 +1,20 @@
 /*
- * Copyright 2016-2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
     'underscore',
+    'backbone',
     'find/app/vent',
     'find/app/page/search/results/suggest-strategy',
     'find/app/model/similar-documents-collection',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/suggest/suggest-view.html'
-], function(Backbone, _, vent, suggestStrategy, SimilarDocumentsCollection, i18n, template) {
-
+], function(_, Backbone, vent, suggestStrategy, SimilarDocumentsCollection, i18n, template) {
     'use strict';
 
     return Backbone.View.extend({
-        className: 'service-view-flex-container',
         template: _.template(template),
 
         // Abstract
@@ -34,7 +32,6 @@ define([
         },
 
         initialize: function(options) {
-            this.backUrl = options.backUrl;
             this.documentModel = options.documentModel;
             this.scrollModel = options.scrollModel;
             this.configuration = options.configuration;
@@ -49,6 +46,7 @@ define([
             this.resultsView = new this.ResultsView({
                 fetchStrategy: suggestStrategy,
                 documentsCollection: new SimilarDocumentsCollection(),
+                documentRenderer: options.documentRenderer,
                 queryModel: this.queryModel,
                 scrollModel: this.scrollModel,
                 previewModeModel: previewModeModel
@@ -83,5 +81,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-
 });

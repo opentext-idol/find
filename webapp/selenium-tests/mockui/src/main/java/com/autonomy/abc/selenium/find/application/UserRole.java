@@ -7,6 +7,7 @@ package com.autonomy.abc.selenium.find.application;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public enum UserRole {
     BIFHI("bifhi"), FIND("find");
@@ -32,8 +33,7 @@ public enum UserRole {
         final String maybeProperty = System.getProperty("userRole");
 
         return Optional.ofNullable(maybeProperty)
-                .map(property -> fromString(property)
-                        .orElseThrow(() -> new IllegalStateException("Unrecognised role \"" + property + "\" read from userRole system property")))
+                .map(property -> fromString(property).get())
                 .orElse(BIFHI);
     }
 

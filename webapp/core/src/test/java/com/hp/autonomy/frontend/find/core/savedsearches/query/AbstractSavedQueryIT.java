@@ -7,14 +7,14 @@ package com.hp.autonomy.frontend.find.core.savedsearches.query;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
 import org.apache.commons.io.IOUtils;
-import org.joda.time.DateTime;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +28,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.time.ZonedDateTime;
+import java.time.chrono.ChronoZonedDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -45,32 +47,29 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@SuppressWarnings("SpringJavaAutowiringInspection")
 public abstract class AbstractSavedQueryIT extends AbstractFindIT {
-    private static final TypeReference<Set<SavedQuery>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedQuery>>() {};
+    private static final TypeReference<Set<SavedQuery>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedQuery>>() {
+    };
 
     private static final String TITLE = "Any old saved search";
     private static final String PRIMARY_PHRASE = "manhattan";
     private static final String OTHER_PHRASE = "mid-town";
     private static final Integer MIN_SCORE = 88;
 
-    private final ObjectMapper mapper = new ObjectMapper();
-
-    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired
-    protected DataSource dataSource;
+    private ObjectMapper objectMapper;
 
-    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired
-    protected MvcIntegrationTestUtils integrationTestUtils;
+    private DataSource dataSource;
+
+    @Autowired
+    private MvcIntegrationTestUtils integrationTestUtils;
 
     @Value("classpath:save-query-request.json")
     private Resource saveQueryRequestResource;
 
     private JdbcTemplate jdbcTemplate;
-
-    protected AbstractSavedQueryIT() {
-        mapper.registerModule(new JodaModule());
-    }
 
     @PostConstruct
     public void initialise() {
@@ -109,7 +108,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
 
         final MockHttpServletRequestBuilder requestBuilder = put(SavedQueryController.PATH + '/' + createdEntity.getId())
                 .with(authentication(biAuth()))
-                .content(mapper.writeValueAsString(updatedQuery))
+                .content(objectMapper.writeValueAsString(updatedQuery))
                 .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)
@@ -135,7 +134,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         final MvcResult createResult = mockMvc.perform(requestBuilder)
                 .andReturn();
 
-        final JsonNode responseTree = mapper.readTree(createResult.getResponse().getContentAsString());
+        final JsonNode responseTree = objectMapper.readTree(createResult.getResponse().getContentAsString());
         final int id = responseTree.get("id").asInt();
 
         listSavedQueries()
@@ -143,8 +142,8 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$[0].id", is(id)))
                 .andExpect(jsonPath("$[0].title", is("\u30e2\u30f3\u30ad\u30fc")))
-                .andExpect(jsonPath("$[0].minDate", is(1400000000)))
-                .andExpect(jsonPath("$[0].maxDate", is(1500000000)))
+                .andExpect(jsonPath("$[0].minDate", new ZonedDateTimeMatcher("2017-05-17T15:51:20Z")))
+                .andExpect(jsonPath("$[0].maxDate", new ZonedDateTimeMatcher("2017-05-17T15:51:40Z")))
                 .andExpect(jsonPath("$[0].conceptClusterPhrases", hasSize(3)))
                 .andExpect(jsonPath("$[0].conceptClusterPhrases[*].phrase", containsInAnyOrder("characters", "faces", "animals")))
                 .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='characters')].primary", contains(true)))
@@ -156,11 +155,14 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .andExpect(jsonPath("$[0].parametricValues", hasSize(1)))
                 .andExpect(jsonPath("$[0].parametricValues[0].field", is("CATEGORY")))
                 .andExpect(jsonPath("$[0].parametricValues[0].value", is("COMPUTING")))
-                .andExpect(jsonPath("$[0].parametricRanges", hasSize(1)))
-                .andExpect(jsonPath("$[0].parametricRanges[0].field", is("SOME_DATE")))
-                .andExpect(jsonPath("$[0].parametricRanges[0].min", is(123456789d)))
-                .andExpect(jsonPath("$[0].parametricRanges[0].max", is(123456791d)))
-                .andExpect(jsonPath("$[0].parametricRanges[0].type", is("Date")))
+                .andExpect(jsonPath("$[0].numericRangeRestrictions", hasSize(1)))
+                .andExpect(jsonPath("$[0].numericRangeRestrictions[0].field", is("SOME_NUMBER")))
+                .andExpect(jsonPath("$[0].numericRangeRestrictions[0].min", is(123.5)))
+                .andExpect(jsonPath("$[0].numericRangeRestrictions[0].max", is(124.5)))
+                .andExpect(jsonPath("$[0].dateRangeRestrictions", hasSize(1)))
+                .andExpect(jsonPath("$[0].dateRangeRestrictions[0].field", is("SOME_DATE")))
+                .andExpect(jsonPath("$[0].dateRangeRestrictions[0].min", new ZonedDateTimeMatcher("2017-05-17T15:51:20Z")))
+                .andExpect(jsonPath("$[0].dateRangeRestrictions[0].max", new ZonedDateTimeMatcher("2017-05-17T15:51:40Z")))
                 .andExpect(jsonPath("$[0].indexes", hasSize(2)))
                 .andExpect(jsonPath("$[0].indexes[*].name", containsInAnyOrder("English Wikipedia", "\u65e5\u672c\u8a9e Wikipedia")))
                 .andExpect(jsonPath("$[0].indexes[?(@.name=='English Wikipedia')].domain", contains("MY_DOMAIN")))
@@ -202,13 +204,13 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         final SavedQuery savedQuery = createAndParseSavedQuery(inputSavedQuery);
 
         assertNotNull(savedQuery.getId());
-        assertThat(savedQuery.getDateCreated(), isA(DateTime.class));
-        assertThat(savedQuery.getDateModified(), isA(DateTime.class));
-        assertTrue(savedQuery.getDateCreated().isEqual(savedQuery.getDateModified().toInstant()));
+        assertThat(savedQuery.getDateCreated(), isA(ZonedDateTime.class));
+        assertThat(savedQuery.getDateModified(), isA(ZonedDateTime.class));
+        assertTrue(savedQuery.getDateCreated().isEqual(savedQuery.getDateModified()));
 
         // Safe to assume completed in an hour
         // TODO: mock out the datetime service used by spring auditing to check this properly
-        assertTrue(savedQuery.getDateCreated().plusHours(1).isAfterNow());
+        assertTrue(savedQuery.getDateCreated().plusHours(1).isAfter(ZonedDateTime.now()));
 
         savedQuery.setConceptClusterPhrases(Collections.singleton(new ConceptClusterPhrase("*", true, -1)));
 
@@ -220,9 +222,9 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
 
         final SavedQuery updatedSavedQuery = updateAndParseSavedQuery(savedQueryUpdate);
 
-        assertThat(updatedSavedQuery.getDateCreated(), isA(DateTime.class));
-        assertThat(updatedSavedQuery.getDateModified(), isA(DateTime.class));
-        assertTrue(updatedSavedQuery.getDateModified().isAfter(savedQuery.getDateCreated().toInstant()));
+        assertThat(updatedSavedQuery.getDateCreated(), isA(ZonedDateTime.class));
+        assertThat(updatedSavedQuery.getDateModified(), isA(ZonedDateTime.class));
+        assertTrue(updatedSavedQuery.getDateModified().isAfter(savedQuery.getDateCreated()));
     }
 
     @Test
@@ -256,7 +258,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .build();
 
         final SavedQuery saveRequest2 = new SavedQuery.Builder()
-                .setDateDocsLastFetched(DateTime.now())
+                .setDateDocsLastFetched(ZonedDateTime.now())
                 .setTitle("title2")
                 .setMinScore(0)
                 .setIndexes(indexes)
@@ -269,20 +271,20 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         final SavedQuery savedQuery2 = createAndParseSavedQuery(saveRequest2);
         final long id2 = savedQuery2.getId();
 
-        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + id1).with(authentication(biAuth())))
+        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + '/' + id1).with(authentication(biAuth())))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", greaterThan(0)));
 
-        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + id2).with(authentication(biAuth())))
+        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + '/' + id2).with(authentication(biAuth())))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", is(0))); // likely to work though not full-proof
+                .andExpect(jsonPath("$", is(0))); // likely to work though not foolproof
     }
 
     private ResultActions createSavedQuery(final SavedQuery savedQuery) throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = post(SavedQueryController.PATH + '/')
-                .content(mapper.writeValueAsString(savedQuery))
+                .content(objectMapper.writeValueAsString(savedQuery))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
 
@@ -292,18 +294,18 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     private SavedQuery createAndParseSavedQuery(final SavedQuery savedQuery) throws Exception {
         final MvcResult mvcResult = createSavedQuery(savedQuery).andReturn();
         final String response = mvcResult.getResponse().getContentAsString();
-        return mapper.readValue(response, SavedQuery.class);
+        return objectMapper.readValue(response, SavedQuery.class);
     }
 
     private SavedQuery updateAndParseSavedQuery(final SavedQuery update) throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = put(SavedQueryController.PATH + '/' + update.getId())
-                .content(mapper.writeValueAsString(update))
+                .content(objectMapper.writeValueAsString(update))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
 
         final MvcResult mvcResult = mockMvc.perform(requestBuilder).andReturn();
         final String response = mvcResult.getResponse().getContentAsString();
-        return mapper.readValue(response, SavedQuery.class);
+        return objectMapper.readValue(response, SavedQuery.class);
     }
 
     private ResultActions listSavedQueries() throws Exception {
@@ -315,7 +317,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        return mapper.readValue(listResult.getResponse().getContentAsString(), LIST_TYPE_REFERENCE);
+        return objectMapper.readValue(listResult.getResponse().getContentAsString(), LIST_TYPE_REFERENCE);
     }
 
     private Set<ConceptClusterPhrase> getBaseConceptClusterPhrases() {
@@ -334,5 +336,23 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .setMinScore(MIN_SCORE)
                 .setConceptClusterPhrases(getBaseConceptClusterPhrases())
                 .build();
+    }
+
+    private static class ZonedDateTimeMatcher extends BaseMatcher<ChronoZonedDateTime<?>> {
+        private final ChronoZonedDateTime<?> expectation;
+
+        private ZonedDateTimeMatcher(final CharSequence expectation) {
+            this.expectation = ZonedDateTime.parse(expectation);
+        }
+
+        @Override
+        public boolean matches(final Object o) {
+            return o instanceof CharSequence && ZonedDateTime.parse((CharSequence) o).isEqual(expectation);
+        }
+
+        @Override
+        public void describeTo(final Description description) {
+            description.appendText(expectation.toString());
+        }
     }
 }

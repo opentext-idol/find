@@ -1,7 +1,8 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
+
 package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
@@ -18,7 +19,6 @@ import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
 import com.hp.autonomy.searchcomponents.core.search.SuggestRequestBuilder;
 import com.hp.autonomy.types.requests.Documents;
 import org.apache.commons.collections4.ListUtils;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Controller
@@ -84,40 +85,40 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
     @RequestMapping(value = QUERY_PATH, method = RequestMethod.GET)
     @ResponseBody
     public Documents<R> query(
-            @RequestParam(TEXT_PARAM) final String queryText,
-            @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
-            @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
-            @RequestParam(SUMMARY_PARAM) final String summary,
-            @RequestParam(value = INDEXES_PARAM, required = false) final List<S> databases,
-            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-            @RequestParam(value = SORT_PARAM, required = false) final String sort,
-            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
-            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
-            @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
-            @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore,
-            @RequestParam(value = AUTO_CORRECT_PARAM, defaultValue = "true") final boolean autoCorrect,
-            @RequestParam(value = QUERY_TYPE_PARAM, defaultValue = "MODIFIED") final String queryType
+        @RequestParam(TEXT_PARAM) final String queryText,
+        @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
+        @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
+        @RequestParam(SUMMARY_PARAM) final String summary,
+        @RequestParam(value = INDEXES_PARAM, required = false) final List<S> databases,
+        @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+        @RequestParam(value = SORT_PARAM, required = false) final String sort,
+        @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
+        @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime maxDate,
+        @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
+        @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore,
+        @RequestParam(value = AUTO_CORRECT_PARAM, defaultValue = "true") final boolean autoCorrect,
+        @RequestParam(value = QUERY_TYPE_PARAM, defaultValue = "MODIFIED") final String queryType
     ) throws E {
         final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
-                .queryText(queryText)
-                .fieldText(fieldText)
-                .databases(ListUtils.emptyIfNull(databases))
-                .minDate(minDate)
-                .maxDate(maxDate)
-                .minScore(minScore)
-                .build();
+            .queryText(queryText)
+            .fieldText(fieldText)
+            .databases(ListUtils.emptyIfNull(databases))
+            .minDate(minDate)
+            .maxDate(maxDate)
+            .minScore(minScore)
+            .build();
 
         final RQ queryRequest = queryRequestBuilderFactory.getObject()
-                .queryRestrictions(queryRestrictions)
-                .start(resultsStart)
-                .maxResults(maxResults)
-                .summaryCharacters(MAX_SUMMARY_CHARACTERS)
-                .highlight(highlight)
-                .autoCorrect(autoCorrect)
-                .summary(summary)
-                .sort(sort)
-                .queryType(QueryRequest.QueryType.valueOf(queryType))
-                .build();
+            .queryRestrictions(queryRestrictions)
+            .start(resultsStart)
+            .maxResults(maxResults)
+            .summaryCharacters(MAX_SUMMARY_CHARACTERS)
+            .highlight(highlight)
+            .autoCorrect(autoCorrect)
+            .summary(summary)
+            .sort(sort)
+            .queryType(QueryRequest.QueryType.valueOf(queryType))
+            .build();
 
         return documentsService.queryTextIndex(queryRequest);
     }
@@ -126,36 +127,36 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
     @RequestMapping(value = SIMILAR_DOCUMENTS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public Documents<R> findSimilar(
-            @RequestParam(REFERENCE_PARAM) final String reference,
-            @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
-            @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
-            @RequestParam(SUMMARY_PARAM) final String summary,
-            @RequestParam(value = INDEXES_PARAM, required = false) final List<S> databases,
-            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-            @RequestParam(value = SORT_PARAM, required = false) final String sort,
-            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime minDate,
-            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final DateTime maxDate,
-            @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
-            @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore
+        @RequestParam(REFERENCE_PARAM) final String reference,
+        @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
+        @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
+        @RequestParam(SUMMARY_PARAM) final String summary,
+        @RequestParam(value = INDEXES_PARAM, required = false) final List<S> databases,
+        @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+        @RequestParam(value = SORT_PARAM, required = false) final String sort,
+        @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
+        @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime maxDate,
+        @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
+        @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore
     ) throws E {
         final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
-                .fieldText(fieldText)
-                .databases(ListUtils.emptyIfNull(databases))
-                .minDate(minDate)
-                .maxDate(maxDate)
-                .minScore(minScore)
-                .build();
+            .fieldText(fieldText)
+            .databases(ListUtils.emptyIfNull(databases))
+            .minDate(minDate)
+            .maxDate(maxDate)
+            .minScore(minScore)
+            .build();
 
         final RS suggestRequest = suggestRequestBuilderFactory.getObject()
-                .reference(reference)
-                .queryRestrictions(queryRestrictions)
-                .start(resultsStart)
-                .maxResults(maxResults)
-                .summaryCharacters(MAX_SUMMARY_CHARACTERS)
-                .highlight(highlight)
-                .summary(summary)
-                .sort(sort)
-                .build();
+            .reference(reference)
+            .queryRestrictions(queryRestrictions)
+            .start(resultsStart)
+            .maxResults(maxResults)
+            .summaryCharacters(MAX_SUMMARY_CHARACTERS)
+            .highlight(highlight)
+            .summary(summary)
+            .sort(sort)
+            .build();
 
         return documentsService.findSimilar(suggestRequest);
     }
@@ -163,19 +164,21 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
     @RequestMapping(value = GET_DOCUMENT_CONTENT_PATH, method = RequestMethod.GET)
     @ResponseBody
     public R getDocumentContent(
-            @RequestParam(REFERENCE_PARAM) final String reference,
-            @RequestParam(DATABASE_PARAM) final S database
+        @RequestParam(REFERENCE_PARAM) final String reference,
+        @RequestParam(DATABASE_PARAM) final S database
     ) throws E {
         final T getContentRequestIndex = getContentRequestIndexBuilderFactory.getObject()
-                .index(database)
-                .reference(reference)
-                .build();
+            .index(database)
+            .reference(reference)
+            .build();
         final GetContentRequestBuilder<RC, T, ?> requestBuilder = getContentRequestBuilderFactory.getObject()
-                .indexAndReferences(getContentRequestIndex);
+            .indexAndReferences(getContentRequestIndex);
         addParams(requestBuilder);
         final RC getContentRequest = requestBuilder.build();
 
         final List<R> results = documentsService.getDocumentContent(getContentRequest);
-        return results.isEmpty() ? throwException("No content found for document with reference " + reference + " in database " + database) : results.get(0);
+        return results.isEmpty()
+            ? throwException("No content found for document with reference " + reference + " in database " + database)
+            : results.get(0);
     }
 }

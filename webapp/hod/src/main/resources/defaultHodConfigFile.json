@@ -63,8 +63,9 @@
     },
     "uiCustomization": {
         "options": {
-            "directAccessLink": {
-                "user": true
+            "enableDashboards": {
+                "user": false,
+                "bi": true
             },
             "enableMetaFilter": {
                 "user": false,
@@ -75,6 +76,10 @@
                 "bi": false
             },
             "enableSavedSearch": {
+                "user": false,
+                "bi": true
+            },
+            "enableSideBar": {
                 "user": false,
                 "bi": true
             },

@@ -7,10 +7,8 @@
 </button>
 <%}%>
 <% if (showSaveAs) { %>
-    <% _.each(searchTypes, function(type, typeName){%>
-        <% if (typeName !== 'READ_ONLY') { %>
-            <button type="button" class="btn button-primary popover-control show-save-as save-button" data-search-type="<%-typeName%>" aria-pressed="false"></button>
-        <% } %>
+    <% _.each(searchTypes, function(typeName){%>
+        <button type="button" class="btn button-primary popover-control show-save-as save-button" data-search-type="<%-typeName%>" aria-pressed="false"></button>
     <% }) %>
 <% } %>
 <% if (showCompare) { %>
@@ -44,3 +42,6 @@
     </ul>
 </div>
 <span class="search-controls-error-message"></span>
+<button type="button" class="btn button-primary pull-right js-open-sharing-options-modal" aria-pressed="false">
+    <%- i18n['search.savedSearchControl.sharingOptions'] %>
+</button>

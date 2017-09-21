@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett-Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -12,26 +12,45 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B extends SavedSearch.Builder<T, B>> implements SavedSearchService<T, B> {
     private final SavedSearchRepository<T, B> crudRepository;
+    private final SharedToUserRepository sharedToUserRepository;
     private final AuditorAware<UserEntity> userEntityAuditorAware;
     private final TagNameFactory tagNameFactory;
+    private final Class<T> type;
 
     protected AbstractSavedSearchService(final SavedSearchRepository<T, B> crudRepository,
+                                         final SharedToUserRepository sharedToUserRepository,
                                          final AuditorAware<UserEntity> userEntityAuditorAware,
-                                         final TagNameFactory tagNameFactory) {
+                                         final TagNameFactory tagNameFactory,
+                                         final Class<T> type) {
         this.crudRepository = crudRepository;
+        this.sharedToUserRepository = sharedToUserRepository;
         this.userEntityAuditorAware = userEntityAuditorAware;
         this.tagNameFactory = tagNameFactory;
+        this.type = type;
     }
 
     @Override
     public Set<T> getAll() {
         final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
-        final Set<T> results = crudRepository.findByActiveTrueAndUser_UserId(userId);
-        return augmentOutputWithDisplayNames(results);
+
+        return augmentOutputWithDisplayNames(crudRepository.findByActiveTrueAndUser_UserId(userId));
+    }
+
+    @Override
+    public Set<T> getShared() {
+        final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
+        final Set<SharedToUser> permissions = sharedToUserRepository.findByUserId(userId, type);
+
+        return augmentOutputWithDisplayNames(permissions.stream()
+                .map(sharedToUser -> type.cast(sharedToUser.getSavedSearch().toBuilder()
+                        .setCanEdit(sharedToUser.getCanEdit())
+                        .build()))
+                .collect(toSet()));
     }
 
     @Override
@@ -55,6 +74,19 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
     }
 
     @Override
+    public T updateShared(final T search) {
+        final T savedQuery = getSearch(search.getId());
+
+        if(savedQuery.isCanEdit()) {
+            savedQuery.merge(search);
+            final T result = crudRepository.save(savedQuery);
+            return augmentOutputWithDisplayNames(result);
+        } else {
+            throw new IllegalArgumentException("User does not have permission to edit the search");
+        }
+    }
+
+    @Override
     public void deleteById(final long id) {
         final T savedQuery = getSearch(id);
         savedQuery.setActive(false);
@@ -68,11 +100,15 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
     }
 
     private T getSearch(final long id) throws IllegalArgumentException {
-        final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
-        final T byIdAndUser_userId = crudRepository.findByActiveTrueAndIdAndUser_UserId(id, userId);
+        final Long currentUserId = userEntityAuditorAware.getCurrentAuditor().getUserId();
+        final T savedSearch = crudRepository.findByActiveTrueAndId(id);
 
-        if (null != byIdAndUser_userId) {
-            return byIdAndUser_userId;
+        if(null != savedSearch) {
+            if (savedSearch.getUser().getUserId().equals(currentUserId) || sharedToUserRepository.findOne(new SharedToUserPK(id, currentUserId)) != null) {
+                return savedSearch;
+            } else {
+                throw new IllegalArgumentException("User has no permissions to edit this saved search");
+            }
         } else {
             throw new IllegalArgumentException("Saved search not found");
         }
@@ -81,7 +117,7 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
     private Set<T> augmentOutputWithDisplayNames(final Collection<T> results) {
         return results.stream()
                 .map(this::augmentOutputWithDisplayNames)
-                .collect(Collectors.toSet());
+                .collect(toSet());
     }
 
     private T augmentOutputWithDisplayNames(final T result) {
@@ -93,14 +129,21 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
                                         .displayName(tagNameFactory.buildTagName(parametricValue.getField()).getDisplayName())
                                         .displayValue(tagNameFactory.getTagDisplayValue(parametricValue.getField(), parametricValue.getValue()))
                                         .build())
-                                .collect(Collectors.toSet()))
+                                .collect(toSet()))
                         .orElse(Collections.emptySet()))
-                .setParametricRanges(Optional.ofNullable(result.getParametricRanges())
-                        .map(parametricRanges -> parametricRanges.stream()
-                                .map(parametricRange -> parametricRange.toBuilder()
-                                        .displayName(tagNameFactory.buildTagName(parametricRange.getField()).getDisplayName())
+                .setNumericRangeRestrictions(Optional.ofNullable(result.getNumericRangeRestrictions())
+                        .map(numericRanges -> numericRanges.stream()
+                                .map(numericRange -> numericRange.toBuilder()
+                                        .displayName(tagNameFactory.buildTagName(numericRange.getField()).getDisplayName())
                                         .build())
-                                .collect(Collectors.toSet()))
+                                .collect(toSet()))
+                        .orElse(Collections.emptySet()))
+                .setDateRangeRestrictions(Optional.ofNullable(result.getDateRangeRestrictions())
+                        .map(dateRanges -> dateRanges.stream()
+                                .map(dateRange -> dateRange.toBuilder()
+                                        .displayName(tagNameFactory.buildTagName(dateRange.getField()).getDisplayName())
+                                        .build())
+                                .collect(toSet()))
                         .orElse(Collections.emptySet()))
                 .build();
     }

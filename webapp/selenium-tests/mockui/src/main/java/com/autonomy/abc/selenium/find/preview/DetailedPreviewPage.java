@@ -1,29 +1,22 @@
 package com.autonomy.abc.selenium.find.preview;
 
-import com.hp.autonomy.frontend.selenium.util.AppElement;
-import com.hp.autonomy.frontend.selenium.util.AppPage;
-import com.hp.autonomy.frontend.selenium.util.ParametrizedFactory;
-import com.hp.autonomy.frontend.selenium.util.Waits;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import com.google.common.base.Predicate;
+import com.hp.autonomy.frontend.selenium.util.*;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class DetailedPreviewPage extends AppElement implements AppPage {
 
-    private DetailedPreviewPage(final WebDriver driver){
-        super(new WebDriverWait(driver,30).until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container"))),driver);
+    private DetailedPreviewPage(final WebDriver driver) {
+        super(new WebDriverWait(driver, 30).until(DetailedPreviewPage::loadWaitPredicate), driver);
     }
 
     @Override
     public void waitForLoad() {
-        new WebDriverWait(getDriver(),30).until(ExpectedConditions.visibilityOfElementLocated(By.className("find-pages-container")));
+        new WebDriverWait(getDriver(), 30).until(DetailedPreviewPage::loadWaitPredicate);
     }
 
-    //navigation
-    public void openOriginalDoc(){
+    public void openOriginalDoc() {
         findElement(By.cssSelector(".document-detail-service-view-container .document-detail-open-original-link")).click();
         Waits.loadOrFadeWait();
     }
@@ -32,57 +25,94 @@ public class DetailedPreviewPage extends AppElement implements AppPage {
         return findElement(By.className("document-detail-open-original-link")).getAttribute("href");
     }
 
-    public void goBackToSearch(){findElement(By.className("detail-view-back-button")).click();}
-
-    //elements
-    public WebElement loadingIndicator(){
-        return findElement(By.className("loading-spinner"));
+    public void goBackToSearch() {
+        findElement(By.className("detail-view-back-button")).click();
     }
 
-    public WebElement frame(){ return findElement(By.tagName("iframe")); }
+    public WebElement tabLoadingIndicator() {
+        return findElement(By.cssSelector(".tab-content-view-container.active .loading-spinner"));
+    }
 
-    public boolean frameExists() { return !findElements(By.tagName("iframe")).isEmpty(); }
+    public void waitForTabToLoad() {
+        new WebDriverWait(getDriver(), 5)
+                .until(driver -> !tabLoadingIndicator().isDisplayed());
+    }
 
-    public WebElement similarDatesTab(){
+    public WebElement frame() {
+        return findElement(By.tagName("iframe"));
+    }
+
+    public boolean frameExists() {
+        return !findElements(By.tagName("iframe")).isEmpty();
+    }
+
+    public WebElement similarDatesTab() {
         return findElement(By.xpath("//span[contains(text(),'Similar dates')]"));
     }
 
-    public WebElement similarDocsTab(){
+    public WebElement similarDocsTab() {
         return findElement(By.xpath("//span[contains(text(),'Similar documents')]"));
     }
 
-    public boolean locationTabExists() { return findElements(
-            By.xpath("//ul[contains(@class,'document-detail-tabs')]//span[contains(text(),'Location')]")).size()>0; }
-
-    public WebElement ithTick(final int i){
-        final String tickPercent = String.valueOf((i-1)*10);
-        return findElement(By.xpath("//div[contains(@class,'slider-tick') and contains(@style,'left: "+tickPercent+"%')]"));
+    public boolean locationTabExists() {
+        final By locator = By.xpath("//ul[contains(@class,'document-detail-tabs')]//span[contains(text(),'Location')]");
+        return !findElements(locator).isEmpty();
     }
 
-    public String getSimilarDatesSummary(){
+    public WebElement ithTick(final int i) {
+        final String tickPercent = String.valueOf((i - 1) * 10);
+        return findElement(By.xpath("//div[contains(@class,'slider-tick') and contains(@style,'left: " + tickPercent + "%')]"));
+    }
+
+    public String getSimilarDatesSummary() {
         return findElement(By.className("similar-dates-summary")).getText();
     }
 
-    public int numberOfHeadersWithDocTitle(){
+    public int numberOfHeadersWithDocTitle() {
         final String title = getTitle();
         return findElements(By.xpath("//h1[contains(text(),'" + title + "')]")).size();
     }
 
-    //metadata
-    public String getTitle(){ return getField("Title");}
-    public String getReference(){ return getField("Reference");}
-    public String getIndex() { return getField("Index");}
-    public String getDatabase(){return getField("Database");}
-    public String getSummary(){ return getField("Summary");}
-    public String getDate(){ return getField("Date");}
-    public String getAuthor() { return getField("Authors");}
+    public String getTitle() {
+        return getField("Title");
+    }
+
+    public String getReference() {
+        return getField("Reference");
+    }
+
+    public String getIndex() {
+        return getField("Index");
+    }
+
+    public String getDatabase() {
+        return getField("Database");
+    }
+
+    public String getSummary() {
+        return getField("Summary");
+    }
+
+    public String getDate() {
+        return getField("Date");
+    }
+
+    public String getAuthor() {
+        return getField("Authors");
+    }
 
     private String getField(final String name) {
         try {
             return findElement(By.xpath(".//th[contains(text(), '" + name + "')]/following::td")).getText();
-        } catch (final NoSuchElementException e) {
+        } catch (final NoSuchElementException ignored) {
             return null;
         }
+    }
+
+    private static WebElement loadWaitPredicate(final SearchContext driver) {
+        final WebElement serviceViewContainer = driver.findElement(By.cssSelector(".document-detail-service-view-container"));
+        final WebElement loadingElement = serviceViewContainer.findElement(By.cssSelector(".document-content-loading"));
+        return ElementUtil.hasClass("hide", loadingElement) ? serviceViewContainer : null;
     }
 
     public static class Factory implements ParametrizedFactory<WebDriver, DetailedPreviewPage> {

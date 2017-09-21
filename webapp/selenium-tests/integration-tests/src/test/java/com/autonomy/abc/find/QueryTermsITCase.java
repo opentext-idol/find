@@ -258,9 +258,9 @@ public class QueryTermsITCase extends FindTestBase {
 
         findService.search("something");
         findService.search("");
-        Thread.sleep(5000);
+        Thread.sleep(5000); //TODO this should wait for something sensible
 
-        getWindow().refresh();
+        getDriver().navigate().refresh();
         findPage = getElementFactory().getFindPage();
 
         verifyThat(getElementFactory().getSearchBox().getValue(), is(""));

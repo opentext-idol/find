@@ -7,8 +7,10 @@ define([
     'underscore',
     'jquery',
     'backbone',
+    'find/app/model/geography-model',
     'find/app/page/search/abstract-section-view',
     'find/app/page/search/filters/date/dates-filter-view',
+    'find/app/page/search/filters/geography/geography-view',
     'find/app/page/search/filters/parametric/filtered-parametric-fields-collection',
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
@@ -17,17 +19,20 @@ define([
     'find/app/util/filtering-collection',
     'find/app/configuration',
     'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes',
-], function(_, $, Backbone, AbstractSectionView, DateView, FilteredParametricFieldsCollection,
+    'i18n!find/nls/indexes'
+], function(_, $, Backbone, GeographyModel, AbstractSectionView, DateView, GeographyView, FilteredParametricFieldsCollection,
             ParametricView, NumericParametricFieldView, TextInput, Collapsible, FilteringCollection,
             configuration, i18n, i18nIndexes) {
     'use strict';
 
     const datesTitle = i18n['search.dates'];
+    const geographyTitle = i18n['search.geography'];
 
     function searchMatches(text, search) {
         return text.toLowerCase().indexOf(search.toLowerCase()) > -1;
     }
+
+    const showGeographyFilter = GeographyModel.LocationFields.length > 0;
 
     return AbstractSectionView.extend({
         initialize: function(options) {
@@ -54,6 +59,7 @@ define([
 
                     this.listenTo(this.filterModel, 'change', function() {
                         this.updateDatesVisibility();
+                        this.updateGeographyVisibility();
                         this.updateParametricVisibility();
                         this.updateEmptyMessage();
                     });
@@ -67,6 +73,7 @@ define([
                 postRender: function() {
                     this.updateParametricVisibility();
                     this.updateDatesVisibility();
+                    this.updateGeographyVisibility();
                     this.updateIndexesVisibility();
                     this.updateEmptyMessage();
                 }.bind(this),
@@ -132,16 +139,38 @@ define([
                     this.listenTo(this.dateViewWrapper, 'toggle', function(newState) {
                         this.collapsed.dates = newState;
                     });
+
+                    const geographyModel = options.queryState.geographyModel;
+                    this.collapsed.geography = !_.find(_.map(geographyModel.attributes, function(v){ return v && v.length }));
+
+                    const geographyView = new GeographyView({
+                        geographyModel: geographyModel,
+                        savedSearchModel: options.savedSearchModel
+                    })
+
+                    this.geographyViewWrapper = new Collapsible({
+                        view: geographyView,
+                        collapseModel: new Backbone.Model({collapsed: this.collapsed.geography}),
+                        title: geographyTitle
+                    })
+
+                    this.listenTo(this.geographyViewWrapper, 'toggle', function(newState) {
+                        this.collapsed.geography = newState;
+                    });
                 }.bind(this),
                 get$els: function() {
-                    return [this.dateViewWrapper.$el];
+                    const els = [this.dateViewWrapper.$el];
+                    showGeographyFilter && els.push(this.geographyViewWrapper.$el)
+                    return els;
                 }.bind(this),
                 render: function() {
                     this.dateViewWrapper.render();
+                    this.geographyViewWrapper.render();
                 }.bind(this),
                 postRender: _.noop,
                 remove: function() {
                     this.dateViewWrapper.remove();
+                    this.geographyViewWrapper.remove();
                 }.bind(this)
             }, {
                 shown: true,
@@ -238,6 +267,14 @@ define([
 
             this.dateViewWrapper.$el.toggleClass('hide', this.hideDates);
             this.dateViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.dates);
+        },
+
+        updateGeographyVisibility: function() {
+            const search = this.filterModel.get('text');
+            this.hideGeography = !(!search || searchMatches(geographyTitle, search));
+
+            this.geographyViewWrapper.$el.toggleClass('hide', this.hideGeography);
+            this.geographyViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.geography);
         },
 
         updateIndexesVisibility: function() {

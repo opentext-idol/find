@@ -7,9 +7,11 @@ define([
     'underscore',
     'jquery',
     'backbone',
+    'dropzone',
     'find/app/util/test-browser',
     'find/app/model/window-scroll-model',
     'find/app/model/saved-searches/saved-query-collection',
+    'find/app/model/saved-searches/shared-saved-query-collection',
     'find/app/util/parse-url',
     './model-registry',
     'find/app/navigation',
@@ -21,7 +23,7 @@ define([
     'find/app/router',
     'js-whatever/js/escape-regex',
     'text!find/templates/app/app.html'
-], function(_, $, Backbone, testBrowser, WindowScrollModel, SavedQueryCollection, parseUrl, ModelRegistry,
+], function(_, $, Backbone, Dropzone, testBrowser, WindowScrollModel, SavedQueryCollection, SharedSavedQueryCollection, parseUrl, ModelRegistry,
             Navigation, configuration, metrics, Pages, logout, vent, router, escapeRegex, template) {
     'use strict';
 
@@ -74,6 +76,9 @@ define([
         initialize: function() {
             $.ajaxSetup({cache: false});
             $(document).ajaxError(this.ajaxErrorHandler.bind(this));
+
+            // disable auto-discover for dropzones
+            Dropzone.autoDiscover = false;
 
             // disable Datatables alerting behaviour
             if($.fn.dataTableExt) {
@@ -153,6 +158,15 @@ define([
                 savedQueryCollection: configuration().hasBiRole
                     ? {
                         Constructor: SavedQueryCollection,
+                        fetchOptions: {remove: false, reset: false}
+                    }
+                    : {
+                        Constructor: Backbone.Collection,
+                        fetch: false
+                    },
+                sharedSavedQueryCollection: configuration().hasBiRole
+                    ? {
+                        Constructor: SharedSavedQueryCollection,
                         fetchOptions: {remove: false, reset: false}
                     }
                     : {

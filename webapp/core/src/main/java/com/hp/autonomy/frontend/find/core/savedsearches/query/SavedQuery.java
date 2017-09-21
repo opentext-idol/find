@@ -14,15 +14,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
-import org.jadira.usertype.dateandtime.joda.PersistentDateTime;
-import org.joda.time.DateTime;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import java.time.ZonedDateTime;
 
 @Entity
 @DiscriminatorValue(SavedSearchType.Values.QUERY)
@@ -31,15 +27,12 @@ import javax.persistence.Entity;
 @EqualsAndHashCode(callSuper = true)
 @JsonDeserialize(builder = SavedQuery.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@TypeDefs(@TypeDef(name = SavedSearch.JADIRA_TYPE_NAME, typeClass = PersistentDateTime.class))
 public class SavedQuery extends SavedSearch<SavedQuery, SavedQuery.Builder> {
     @Column(name = "last_fetched_new_date")
-    @Type(type = JADIRA_TYPE_NAME)
-    private DateTime dateNewDocsLastFetched;
+    private ZonedDateTime dateNewDocsLastFetched;
 
     @Column(name = "last_fetched_date")
-    @Type(type = JADIRA_TYPE_NAME)
-    private DateTime dateDocsLastFetched;
+    private ZonedDateTime dateDocsLastFetched;
 
     private SavedQuery(final Builder builder) {
         super(builder);
@@ -63,8 +56,8 @@ public class SavedQuery extends SavedSearch<SavedQuery, SavedQuery.Builder> {
     @Accessors(chain = true)
     @JsonPOJOBuilder(withPrefix = "set")
     public static class Builder extends SavedSearch.Builder<SavedQuery, Builder> {
-        private DateTime dateNewDocsLastFetched;
-        private DateTime dateDocsLastFetched;
+        private ZonedDateTime dateNewDocsLastFetched;
+        private ZonedDateTime dateDocsLastFetched;
 
         public Builder(final SavedQuery query) {
             super(query);

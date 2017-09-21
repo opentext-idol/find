@@ -1,15 +1,15 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
-    'backbone',
     'underscore',
+    'backbone',
     'i18n!find/nls/bundle',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'text!find/templates/app/page/search/time-bar-view.html'
-], function(Backbone, _, i18n, NumericParametricFieldView, timeBarTemplate) {
+], function(_, Backbone, i18n, NumericParametricFieldView, timeBarTemplate) {
     'use strict';
 
     const PIXELS_PER_BUCKET = 20;
@@ -57,9 +57,7 @@ define([
                 selectionEnabled: true,
                 selectedParametricValues: this.selectedParametricValues,
                 zoomEnabled: true,
-                dataType: this.dataType,
                 model: fieldModel,
-                formatting: currentGraphConfig.formatting,
                 inputTemplate: currentGraphConfig.template
             });
 

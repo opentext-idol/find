@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
+import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.ConfigFileConfiguration;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.InMemoryConfiguration;
 import com.hp.autonomy.frontend.find.core.test.TestConfiguration;
@@ -29,8 +30,18 @@ import static org.junit.Assert.assertNotNull;
 @JsonTest
 @AutoConfigureJsonTesters(enabled = false)
 @SpringBootTest(classes = {
-        ConfigFileConfiguration.class, InMemoryConfiguration.class, IdolConfiguration.class, TestConfiguration.class, HavenSearchIdolConfiguration.class, IdolFindConfigFileService.class
-}, value = "hp.find.persistentState = INMEMORY", webEnvironment = SpringBootTest.WebEnvironment.NONE)
+        ConfigFileConfiguration.class,
+        InMemoryConfiguration.class,
+        IdolConfiguration.class,
+        TestConfiguration.class,
+        HavenSearchIdolConfiguration.class,
+        IdolFindConfigFileService.class,
+        IdolConfigUpdateHandlerImpl.class
+}, value = {
+        "hp.find.persistentState = INMEMORY",
+        "mock.configuration=false",
+        BiConfiguration.BI_PROPERTY + "=false"
+}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class IdolConfigurationTest {
     private static final String TEST_DIR = "./target/test";
 

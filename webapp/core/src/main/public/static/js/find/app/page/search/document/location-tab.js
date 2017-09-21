@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2017 Hewlett-Packard Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -33,7 +33,7 @@ define([
         },
 
         render: function() {
-            var locations = this.model.get('locations');
+            const locationsMap = this.model.get('locations');
 
             this.$el.html(this.template({
                 i18n: i18n
@@ -41,27 +41,28 @@ define([
 
             this.mapResultsView.setElement(this.$('.location-tab-map').get(0)).render();
 
-            var markers = _.map(locations, function(location) {
-                var longitude = location.longitude;
-                var latitude = location.latitude;
-                var title = this.model.get('title');
+            const markers = _.flatten(_.map(locationsMap, function(locations) {
+                return _.map(locations, function(location){
+                    const longitude = location.longitude;
+                    const latitude = location.latitude;
 
-                var popover = this.popoverTemplate({
-                    i18n: i18n,
-                    title: location.displayName,
-                    summary: addLinksToSummary(this.model.get('summary')),
-                    cidForClickRouting: null
-                });
+                    const popover = this.popoverTemplate({
+                        i18n: i18n,
+                        title: location.displayName,
+                        summary: addLinksToSummary(this.model.get('summary')),
+                        cidForClickRouting: null
+                    });
 
-                return this.mapResultsView.getMarker(latitude, longitude, this.getIcon(location.displayName), location.displayName, popover);
-            }, this);
+                    return this.mapResultsView.getMarker(latitude, longitude, this.getIcon(location.displayName), location.displayName, popover);
+                }, this)
+            }, this))
 
             this.mapResultsView.addMarkers(markers, false);
-            this.mapResultsView.loaded();
+            this.mapResultsView.fitMapToMarkerBounds();
         },
 
         getIcon: function(displayName) {
-            var locationField = _.findWhere(this.locationFields, {displayName: displayName});
+            const locationField = _.findWhere(this.locationFields, {displayName: displayName});
             return this.mapResultsView.getIcon(locationField.iconName, locationField.iconColor, locationField.markerColor);
         }
     });

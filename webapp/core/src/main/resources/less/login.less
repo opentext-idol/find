@@ -1,0 +1,45 @@
+/*
+ * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+//
+@import (less) '@{compilationResourcesPath}/bower_components/bootstrap/less/variables.less';
+@import (less) '@{compilationResourcesPath}/bower_components/bootstrap/less/mixins.less';
+@import (less) '@{compilationResourcesPath}/bower_components/bootstrap/less/normalize.less';
+@import (less) '@{compilationResourcesPath}/bower_components/bootstrap/less/print.less';
+@import (less) '@{compilationResourcesPath}/bower_components/bootstrap/less/scaffolding.less';
+@import (less) '@{compilationResourcesPath}/bower_components/bootstrap/less/type.less';
+@import (less) '@{compilationResourcesPath}/bower_components/bootstrap/less/grid.less';
+@import (less) '@{compilationResourcesPath}/bower_components/bootstrap/less/forms.less';
+@import (less) '@{compilationResourcesPath}/bower_components/bootstrap/less/buttons.less';
+@import (less) '@{compilationResourcesPath}/bower_components/bootstrap/less/alerts.less';
+//
+@import (less) './hpe-elements/variables.less';
+@import (less) './hpe-elements/mixins.less';
+@import (less) './hpe-elements/main.less';
+@import (less) './hpe-elements/utilities.less';
+@import (less) './hpe-elements/controls.less';
+@import (less) './hpe-elements/typography.less';
+@import (less) './hpe-elements/buttons.less';
+@import (less) './hpe-elements/pages.less';
+
+body {
+  background: url('@{staticResourcesPath}/img/login.png');
+  background-size: cover;
+}
+
+.login-title-align {
+  color: #fff;
+}
+
+.login-banner {
+  height: 55px;
+  width: 229px;
+  background: url('@{staticResourcesPath}/img/MF_Dark.png');
+}
+
+.login-form-control {
+  color: #e5e6e7;
+}
+
+@import (less) './overrides.less';

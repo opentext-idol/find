@@ -6,15 +6,15 @@
 define([
     'underscore',
     'jquery',
+    'moment',
     'backbone',
     'i18n!find/nls/bundle',
     './saved-search-widget',
     'find/app/page/search/results/trending/trending-strategy',
     'find/app/page/search/results/trending/trending'
-], function(_, $, Backbone, i18n, SavedSearchWidget, trendingStrategy, Trending) {
+], function(_, $, moment, Backbone, i18n, SavedSearchWidget, trendingStrategy, Trending) {
     'use strict';
 
-    const SECONDS_IN_ONE_DAY = 86400;
     const DEFAULT_NUMBER_OF_VALUES = 10;
     const DEFAULT_NUMBER_OF_BUCKETS = 20;
 
@@ -58,22 +58,22 @@ define([
 
                         if(this.widgetSettings.minDate && this.widgetSettings.maxDate) {
                             rangePromise = $.when({
-                                currentMax: this.widgetSettings.maxDate,
-                                currentMin: this.widgetSettings.minDate
+                                currentMax: this.widgetSettings.maxDate ? moment(this.widgetSettings.maxDate) : undefined,
+                                currentMin: this.widgetSettings.minDate ? moment(this.widgetSettings.minDate) : undefined
                             });
                         } else {
                             rangePromise = trendingStrategy.fetchRange(selectedFieldValues, fetchOptions)
                                 .then(function(range) {
-                                    let currentMax = this.widgetSettings.maxDate
+                                    let currentMax = moment(this.widgetSettings.maxDate
                                         ? this.widgetSettings.maxDate
-                                        : range.max;
-                                    let currentMin = this.widgetSettings.minDate
+                                        : range.max);
+                                    let currentMin = moment(this.widgetSettings.minDate
                                         ? this.widgetSettings.minDate
-                                        : range.min;
+                                        : range.min);
 
                                     if(currentMin === currentMax) {
-                                        currentMax += SECONDS_IN_ONE_DAY;
-                                        currentMin -= SECONDS_IN_ONE_DAY;
+                                        currentMax.add(1, 'day');
+                                        currentMin.subtract(1, 'day');
                                     }
 
                                     return {
@@ -137,7 +137,7 @@ define([
                 return null;
             } else {
                 const timestamps = this.bucketedValues[0].values.map(function(value) {
-                    return (value.min + value.max) / 2;
+                    return value.min.clone().add(Math.floor(value.bucketSize / 2)).unix();
                 });
                 const rows = this.bucketedValues.map(function(bucketInfo, index) {
                     const color = bucketInfo.color

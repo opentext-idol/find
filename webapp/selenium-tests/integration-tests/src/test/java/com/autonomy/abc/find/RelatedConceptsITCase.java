@@ -188,7 +188,7 @@ public class RelatedConceptsITCase extends FindTestBase {
         clickFirstNewConcept(concepts, relatedConceptsPanel().relatedConcepts());
         getElementFactory().getListView().waitForResultsToLoad();
         clickFirstNewConcept(concepts, relatedConceptsPanel().relatedConcepts());
-        getWindow().refresh();
+        getDriver().navigate().refresh();
         navBar = getElementFactory().getTopNavBar();
 
         verifyThat(getElementFactory().getSearchBox().getValue(), is("fresh"));

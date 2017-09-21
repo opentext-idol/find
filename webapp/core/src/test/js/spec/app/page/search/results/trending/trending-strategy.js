@@ -1,17 +1,23 @@
+/*
+ *  Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ *  Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'underscore',
     'jquery',
+    'moment',
     'backbone',
     'i18n!find/nls/bundle',
     'js-testing/backbone-mock-factory',
     'find/app/configuration',
     'find/app/model/parametric-collection',
-    'find/app/model/parametric-field-details-model',
-    'find/app/model/bucketed-parametric-collection',
+    'find/app/model/date-field-details-model',
+    'find/app/model/bucketed-date-collection',
     'find/app/page/search/results/trending/trending-strategy',
     'mock/page/results/trending'
-], function (_, $, Backbone, i18n, backboneMockFactory, configuration, ParametricCollection, ParametricDetailsModel,
-             BucketedParametricCollection, trendingStrategy, Trending) {
+], function(_, $, moment, Backbone, i18n, backboneMockFactory, configuration, ParametricCollection,
+            ParametricDetailsModel, BucketedParametricCollection, trendingStrategy, Trending) {
     'use strict';
 
     describe('Trending Strategy', function() {
@@ -53,32 +59,36 @@ define([
             this.bucketData = {
                 count: 2,
                 displayName: 'Display Name',
-                max: 20,
-                min: 0,
+                max: '2017-05-17T15:51:20Z',
+                min: '2017-05-17T15:51:00Z',
                 values: [
                     {
                         count: 1,
-                        max: 20,
-                        min: 15
+                        max: '2017-05-17T15:51:20Z',
+                        min: '2017-05-17T15:51:15Z',
+                        bucketSize: 5
                     }, {
                         count: 1,
-                        max: 15,
-                        min: 10
+                        max: '2017-05-17T15:51:15Z',
+                        min: '2017-05-17T15:51:10Z',
+                        bucketSize: 5
                     }, {
                         count: 0,
-                        max: 10,
-                        min: 5
+                        max: '2017-05-17T15:51:10Z',
+                        min: '2017-05-17T15:51:05Z',
+                        bucketSize: 5
                     }, {
                         count: 0,
-                        max: 5,
-                        min: 0
+                        max: '2017-05-17T15:51:05Z',
+                        min: '2017-05-17T15:51:00Z',
+                        bucketSize: 5
                     }
                 ]
             };
 
             this.rangeFetchData = {
-                min: 0,
-                max: 20
+                min: '2017-05-17T15:51:00Z',
+                max: '2017-05-17T15:51:20Z'
             };
 
             this.numberOfValuesToDisplay = 5;
@@ -90,8 +100,8 @@ define([
                 field: 'cheeses',
                 dateField: 'AUTN_DATE',
                 numberOfValuesToDisplay: this.numberOfValuesToDisplay,
-                currentMax: 1,
-                currentMin: 10,
+                currentMax: moment('2017-05-17T15:51:20Z'),
+                currentMin: moment('2017-05-17T15:51:01Z'),
                 targetNumberOfBuckets: this.numberOfBuckets
             };
         });
@@ -116,8 +126,8 @@ define([
                 expect(ParametricCollection.instances[0].fetch.calls.argsFor(0)[0].data.queryText).toBe(this.queryModel.get('queryText'));
             });
 
-            describe('when the fetch fails then the method returns a rejected promise', function () {
-                beforeEach(function () {
+            describe('when the fetch fails then the method returns a rejected promise', function() {
+                beforeEach(function() {
                     ParametricCollection.fetchPromises[0].reject();
                 });
 
@@ -127,7 +137,7 @@ define([
             });
 
             describe('when the fetch returns empty', function() {
-                beforeEach(function () {
+                beforeEach(function() {
                     ParametricCollection.fetchPromises[0].resolve([]);
                 });
 
@@ -141,7 +151,7 @@ define([
             });
 
             describe('when the fetch returns an array', function() {
-                beforeEach(function () {
+                beforeEach(function() {
                     ParametricCollection.fetchPromises[0].resolve(this.fetchData);
                 });
 
@@ -169,8 +179,8 @@ define([
                 expect(ParametricDetailsModel.instances[0].fetch.calls.argsFor(0)[0].data.queryText).toBe(this.queryModel.get('queryText'));
             });
 
-            describe('when the fetch fails then the method returns a rejected promise', function () {
-                beforeEach(function () {
+            describe('when the fetch fails then the method returns a rejected promise', function() {
+                beforeEach(function() {
                     ParametricDetailsModel.fetchPromises[0].reject();
                 });
 
@@ -180,7 +190,7 @@ define([
             });
 
             describe('when the fetch returns an array', function() {
-                beforeEach(function () {
+                beforeEach(function() {
                     ParametricDetailsModel.fetchPromises[0].resolve(this.rangeFetchData);
                 });
 
@@ -203,7 +213,7 @@ define([
                 this.bucketedResult = trendingStrategy.fetchBucketedData(bucketedFetchOptions);
             });
 
-            it('should trigger a fetch for each of the selected values', function () {
+            it('should trigger a fetch for each of the selected values', function() {
                 expect(BucketedParametricCollection.Model.fetchPromises).toHaveLength(4);
             });
 
@@ -219,7 +229,7 @@ define([
 
             describe('the fetches all succeed', function() {
                 beforeEach(function() {
-                    _.each(BucketedParametricCollection.Model.fetchPromises, function (promise) {
+                    _.each(BucketedParametricCollection.Model.fetchPromises, function(promise) {
                         promise.resolve(this.bucketData);
                     }, this);
                 });
@@ -248,60 +258,68 @@ define([
         });
 
         describe('when converting bucketed values to chart data', function() {
-            beforeEach(function(){
+            beforeEach(function() {
                 this.bucketedValues = [{
-                    "valueName": "CHEDDAR",
-                    "count": 2,
-                    "displayName": "Display Name",
-                    "max": 20,
-                    "min": 0,
-                    "values": [
-                        {"count": 1, "max": 20, "min": 15},
-                        {"count": 1, "max": 15, "min": 10},
-                        {"count": 0, "max": 10, "min": 5},
-                        {"count": 0, "max": 5, "min": 0}]
+                    valueName: "CHEDDAR",
+                    count: 2,
+                    displayName: "Display Name",
+                    max: '2017-05-17T15:51:20Z',
+                    min: '2017-05-17T15:51:00Z',
+                    values: [
+                        {count: 1, max: '2017-05-17T15:51:20Z', min: '2017-05-17T15:51:15Z', bucketSize: 5},
+                        {count: 1, max: '2017-05-17T15:51:15Z', min: '2017-05-17T15:51:10Z', bucketSize: 5},
+                        {count: 0, max: '2017-05-17T15:51:10Z', min: '2017-05-17T15:51:05Z', bucketSize: 5},
+                        {count: 0, max: '2017-05-17T15:51:05Z', min: '2017-05-17T15:51:00Z', bucketSize: 5}]
                 }, {
-                    "valueName": "STILTON",
-                    "count": 2,
-                    "displayName": "Display Name",
-                    "max": 20,
-                    "min": 0,
-                    "values": [
-                        {"count": 1, "max": 20, "min": 15},
-                        {"count": 1, "max": 15, "min": 10},
-                        {"count": 0, "max": 10, "min": 5},
-                        {"count": 0, "max": 5, "min": 0}
+                    valueName: "STILTON",
+                    count: 2,
+                    displayName: "Display Name",
+                    max: '2017-05-17T15:51:20Z',
+                    min: '2017-05-17T15:51:00Z',
+                    values: [
+                        {count: 1, max: '2017-05-17T15:51:20Z', min: '2017-05-17T15:51:15Z', bucketSize: 5},
+                        {count: 1, max: '2017-05-17T15:51:15Z', min: '2017-05-17T15:51:10Z', bucketSize: 5},
+                        {count: 0, max: '2017-05-17T15:51:10Z', min: '2017-05-17T15:51:05Z', bucketSize: 5},
+                        {count: 0, max: '2017-05-17T15:51:05Z', min: '2017-05-17T15:51:00Z', bucketSize: 5}
                     ]
                 }, {
-                    "valueName": "BRIE",
-                    "count": 2,
-                    "displayName": "Display Name",
-                    "max": 20,
-                    "min": 0,
-                    "values": [
-                        {"count": 1, "max": 20, "min": 15},
-                        {"count": 1, "max": 15, "min": 10},
-                        {"count": 0, "max": 10, "min": 5},
-                        {"count": 0, "max": 5, "min": 0}
+                    valueName: "BRIE",
+                    count: 2,
+                    displayName: "Display Name",
+                    max: '2017-05-17T15:51:20Z',
+                    min: '2017-05-17T15:51:00Z',
+                    values: [
+                        {count: 1, max: '2017-05-17T15:51:20Z', min: '2017-05-17T15:51:15Z', bucketSize: 5},
+                        {count: 1, max: '2017-05-17T15:51:15Z', min: '2017-05-17T15:51:10Z', bucketSize: 5},
+                        {count: 0, max: '2017-05-17T15:51:10Z', min: '2017-05-17T15:51:05Z', bucketSize: 5},
+                        {count: 0, max: '2017-05-17T15:51:05Z', min: '2017-05-17T15:51:00Z', bucketSize: 5}
                     ]
                 }, {
-                    "valueName": "RED LEICESTER",
-                    "count": 2,
-                    "displayName": "Display Name",
-                    "max": 20,
-                    "min": 0,
-                    "values": [
-                        {"count": 1, "max": 20, "min": 15},
-                        {"count": 1, "max": 15, "min": 10},
-                        {"count": 0, "max": 10, "min": 5},
-                        {"count": 0, "max": 5, "min": 0}
+                    valueName: "RED LEICESTER",
+                    count: 2,
+                    displayName: "Display Name",
+                    max: '2017-05-17T15:51:20Z',
+                    min: '2017-05-17T15:51:00Z',
+                    values: [
+                        {count: 1, max: '2017-05-17T15:51:20Z', min: '2017-05-17T15:51:15Z', bucketSize: 5},
+                        {count: 1, max: '2017-05-17T15:51:15Z', min: '2017-05-17T15:51:10Z', bucketSize: 5},
+                        {count: 0, max: '2017-05-17T15:51:10Z', min: '2017-05-17T15:51:05Z', bucketSize: 5},
+                        {count: 0, max: '2017-05-17T15:51:05Z', min: '2017-05-17T15:51:00Z', bucketSize: 5}
                     ]
                 }];
 
                 this.chartData = trendingStrategy.createChartData({
-                    bucketedValues: this.bucketedValues,
-                    currentMax: 20,
-                    currentMin: 1
+                    bucketedValues: this.bucketedValues.map(function(data) {
+                        return _.extend(data, {
+                            min: moment(data.min),
+                            max: moment(data.max),
+                            values: data.values.map(function(value) {
+                                return _.extend(value, {min: moment(value.min), max: moment(value.max)});
+                            })
+                        });
+                    }),
+                    currentMax: moment('2017-05-17T15:51:20Z'),
+                    currentMin: moment('2017-05-17T15:51:01Z')
                 });
             });
 

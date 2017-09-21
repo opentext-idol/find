@@ -104,11 +104,13 @@ public class MainNumericWidget extends AppElement {
 
     //Waits
     public void waitUntilWidgetLoaded() {
-        new WebDriverWait(driver, 10).until(ExpectedConditions.invisibilityOfElementLocated(By.className("numeric-parametric-loading-indicator")));
+        new WebDriverWait(driver, 10)
+            .until(ExpectedConditions.invisibilityOfElementLocated(By.className("numeric-parametric-loading-indicator")));
     }
 
     public void waitUntilRectangleBack() {
-        new WebDriverWait(driver, 20).until(ExpectedConditions.visibilityOf(graphAsWidget().selectionRec()));
+        new WebDriverWait(driver, 20)
+            .until(ExpectedConditions.visibilityOf(graphAsWidget().selectionRec()));
     }
 
     public void waitUntilDatePickerGone() {
@@ -121,7 +123,9 @@ public class MainNumericWidget extends AppElement {
 
     public void rectangleHoverRight() {
         final Dimension dimensions = graphAsWidget().selectionRec().getSize();
-        DriverUtil.hoveringOffSide(graphAsWidget().selectionRec(), new Point(dimensions.getWidth(), dimensions.getHeight() / 100), driver);
+        DriverUtil.hoveringOffSide(graphAsWidget().selectionRec(),
+                                   new Point(dimensions.getWidth(), dimensions.getHeight() / 100),
+                                   driver);
     }
 
     public void rectangleHoverLeft() {
@@ -191,12 +195,8 @@ public class MainNumericWidget extends AppElement {
 
     public DatePicker openCalendar(final WebElement dateInput) {
         dateInput.findElement(By.className("hp-calendar")).click();
-        new WebDriverWait(getDriver(), 3).until(new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(final WebDriver driver) {
-                return calendarHasOpened();
-            }
-        });
+        new WebDriverWait(getDriver(), 3)
+            .until((ExpectedCondition<Boolean>)driver -> calendarHasOpened());
         return new DatePicker(dateInput, driver);
     }
 

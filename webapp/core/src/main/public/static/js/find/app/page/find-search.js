@@ -10,6 +10,8 @@ define([
     'js-whatever/js/base-page',
     'find/app/configuration',
     'find/app/model/dates-filter-model',
+    'find/app/model/geography-model',
+    './search/document-renderer',
     'parametric-refinement/selected-values-collection',
     'find/app/model/documents-collection',
     'find/app/page/search/input-view',
@@ -21,7 +23,8 @@ define([
     'find/app/model/min-score-model',
     'find/app/model/query-text-model',
     'find/app/model/document-model',
-    'find/app/page/search/document/document-detail-view',
+    'find/app/page/search/document-content-view',
+    'find/app/page/search/document/document-detail-content-view',
     'find/app/page/search/results/query-strategy',
     'find/app/page/search/related-concepts/related-concepts-click-handlers',
     'find/app/util/database-name-resolver',
@@ -31,10 +34,10 @@ define([
     'find/app/vent',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/find-search.html'
-], function(_, $, Backbone, BasePage, config, DatesFilterModel, SelectedParametricValuesCollection,
+], function(_, $, Backbone, BasePage, config, DatesFilterModel, GeographyModel, DocumentRenderer, SelectedParametricValuesCollection,
             DocumentsCollection, InputView, queryTextStrategy, TabbedSearchView, MergeCollection,
             SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel, QueryTextModel, DocumentModel,
-            DocumentDetailView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver,
+            DocumentContentView, DocumentDetailContentView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver,
             SavedQueryResultPoller, events, router, vent, i18n, template) {
     'use strict';
 
@@ -54,21 +57,6 @@ define([
         return _.map(selectedIndexes, function(indexModel) {
             return indexModel.pick('domain', 'name');
         });
-    }
-
-    function fetchDocument(options, callback) {
-        const documentModel = new DocumentModel();
-
-        documentModel
-            .fetch({
-                data: {
-                    reference: options.reference,
-                    database: options.database
-                }
-            })
-            .done(function() {
-                callback(documentModel);
-            });
     }
 
     return BasePage.extend({
@@ -131,6 +119,7 @@ define([
             this.optionalViews = _.where(optionalViews, {enabled: true});
 
             this.savedQueryCollection = options.savedQueryCollection;
+            this.sharedSavedQueryCollection = options.sharedSavedQueryCollection;
             this.indexesCollection = options.indexesCollection;
             this.windowScrollModel = options.windowScrollModel;
 
@@ -140,13 +129,34 @@ define([
                 return options[data.collection];
             });
 
+            // determine wich collections are shared and which are unshared
+            // searchCollections[0] is the shared collections, and [1] is unshared
+            const searchCollections = _.chain(this.searchTypes)
+                .pairs()
+                .partition(function(pair) {
+                    return pair[1].isShared;
+                })
+                .map(function(pairs) {
+                    return _.map(pairs, function(pair) {
+                        return this.searchCollections[pair[0]];
+                    }, this)
+                }, this)
+                .value();
+
+
             this.savedSearchCollection = new MergeCollection([], {
-                collections: _.values(this.searchCollections)
+                collections: searchCollections[1]
+            });
+
+            this.sharedSavedSearchCollection = new MergeCollection([], {
+                collections: searchCollections[0]
             });
 
             this.selectedTabModel = new Backbone.Model({
                 selectedSearchCid: null
             });
+
+            this.documentRenderer = new DocumentRenderer(this.configuration.templatesConfig);
 
             // Model mapping saved search cids to query state
             this.queryStates = new Backbone.Model();
@@ -185,6 +195,7 @@ define([
             if(config().hasBiRole) {
                 this.tabView = new TabbedSearchView({
                     savedSearchCollection: this.savedSearchCollection,
+                    sharedSavedSearchCollection: this.sharedSavedSearchCollection,
                     model: this.selectedTabModel,
                     queryStates: this.queryStates,
                     searchTypes: this.searchTypes
@@ -243,14 +254,29 @@ define([
 
                 let collection;
                 switch(type) {
-                    case 'QUERY':
+                    case SavedSearchModel.Type.QUERY:
                         collection = options.savedQueryCollection;
                         break;
-                    case 'SNAPSHOT':
+                    case SavedSearchModel.Type.SNAPSHOT:
                         collection = options.savedSnapshotCollection;
                         break;
-                    case 'READ_ONLY':
+                    case SavedSearchModel.Type.READ_ONLY_QUERY:
                         collection = options.readOnlySearchCollection;
+                        break;
+                    case SavedSearchModel.Type.READ_ONLY_SNAPSHOT:
+                        collection = options.readOnlySearchCollection;
+                        break;
+                    case SavedSearchModel.Type.SHARED_QUERY:
+                        collection = options.sharedSavedQueryCollection;
+                        break;
+                    case SavedSearchModel.Type.SHARED_SNAPSHOT:
+                        collection = options.sharedSavedSnapshotCollection;
+                        break;
+                    case SavedSearchModel.Type.SHARED_READ_ONLY_QUERY:
+                        collection = options.sharedSavedQueryCollection;
+                        break;
+                    case SavedSearchModel.Type.SHARED_READ_ONLY_SNAPSHOT:
+                        collection = options.sharedSavedSnapshotCollection;
                         break;
                 }
 
@@ -272,7 +298,7 @@ define([
                         newModel.fetch().done(function () {
                             collection = options.readOnlySearchCollection;
                             newModel.set('searchType', newModel.get('type'));
-                            newModel.set('type', 'READ_ONLY');
+                            newModel.set('type', 'READ_ONLY_' + newModel.get('type'));
                             newModel.set('validForSave', false);
                             collection.add(newModel);
                             this.selectedTabModel.set({
@@ -297,25 +323,25 @@ define([
                 const backURL = this.suggestView
                     ? this.generateSuggestURL(this.suggestView.documentModel)
                     : this.generateURL();
+
                 this.toggleExpandedState(true);
                 this.$('.service-view-container').addClass('hide');
                 this.$('.document-detail-service-view-container').removeClass('hide');
 
                 this.removeDocumentDetailView();
 
-                const options = this.documentDetailOptions.apply(this, arguments);
-
-                fetchDocument(options, function(documentModel) {
-                    this.documentDetailView = new DocumentDetailView({
-                        backUrl: backURL,
-                        model: documentModel,
+                this.documentDetailView = new DocumentContentView(_.extend({
+                    backUrl: backURL,
+                    ContentView: DocumentDetailContentView,
+                    contentViewOptions: {
                         indexesCollection: this.indexesCollection,
+                        documentRenderer: this.documentRenderer,
                         mmapTab: this.mmapTab
-                    });
+                    }
+                }, this.documentDetailOptions.apply(this, arguments)));
 
-                    this.$('.document-detail-service-view-container').append(this.documentDetailView.$el);
-                    this.documentDetailView.render();
-                }.bind(this));
+                this.$('.document-detail-service-view-container').append(this.documentDetailView.$el);
+                this.documentDetailView.render();
             }, this);
 
             this.listenTo(router, 'route:suggest', function() {
@@ -323,21 +349,20 @@ define([
                 this.$('.service-view-container').addClass('hide');
                 this.$('.suggest-service-view-container').removeClass('hide');
 
-                const options = this.suggestOptions.apply(this, arguments);
-
-                fetchDocument(options, function(documentModel) {
-                    this.suggestView = new this.SuggestView({
-                        backUrl: this.generateURL(),
-                        documentModel: documentModel,
-                        indexesCollection: this.indexesCollection,
-                        scrollModel: this.windowScrollModel,
+                this.suggestView = new DocumentContentView(_.extend({
+                    backUrl: this.generateURL(),
+                    ContentView: this.SuggestView,
+                    contentViewOptions: {
                         configuration: config(),
-                        mmapTab: this.mmapTab
-                    });
+                        documentRenderer: this.documentRenderer,
+                        indexesCollection: this.indexesCollection,
+                        mmapTab: this.mmapTab,
+                        scrollModel: this.windowScrollModel,
+                    }
+                }, this.suggestOptions.apply(this, arguments)));
 
-                    this.$('.suggest-service-view-container').append(this.suggestView.$el);
-                    this.suggestView.render();
-                }.bind(this));
+                this.$('.suggest-service-view-container').append(this.suggestView.$el);
+                this.suggestView.render();
             }, this);
 
             this.listenTo(this.savedSearchCollection, 'sync', function() {
@@ -347,43 +372,43 @@ define([
             }.bind(this));
         },
 
-        render: function() {
+        render: function () {
             this.$el.html(html);
 
-            this.optionalViews.forEach(function(view) {
+            this.optionalViews.forEach(function (view) {
                 view.instance.setElement(this.$(view.selector)).render();
             }, this);
 
-            if(this.tabView) {
+            if (this.tabView) {
                 this.tabView.setElement(this.$('.search-tabs-container')).render();
             }
 
             this.toggleExpandedState(this.selectedTabModel.get('selectedSearchCid') !== null || config().hasBiRole);
 
-            _.each(this.serviceViews, function(data) {
+            _.each(this.serviceViews, function (data) {
                 this.$('.query-service-view-container').append(data.view.$el);
                 data.view.render();
             }, this);
 
-            if(config().hasBiRole && this.selectedTabModel.get('selectedSearchCid') === null) {
-                this.createNewTab();
+            if (config().hasBiRole && this.selectedTabModel.get('selectedSearchCid') === null) {
+                this.createNewTab(this.lastNavigatedQueryText);
             } else {
                 this.selectContentView();
             }
         },
 
         // Overrides method in BasePage
-        update: function() {
+        update: function () {
             const viewData = this.serviceViews[this.selectedTabModel.get('selectedSearchCid')];
 
-            if(viewData && viewData.view.update) {
+            if (viewData && viewData.view.update) {
                 // Inform the service view that it is visible again so (e.g.) the topic map can be re-drawn
                 viewData.view.update();
             }
         },
 
         // Can be overridden
-        getSearchTypes: function() {
+        getSearchTypes: function () {
             return {
                 QUERY: {
                     cssClass: 'query',
@@ -401,17 +426,17 @@ define([
                         create: i18n['search.savedSearchControl.openEdit.create'],
                         edit: i18n['search.savedSearchControl.openEdit.edit']
                     },
-                    createSearchModelAttributes: function(conceptGroups) {
+                    createSearchModelAttributes: function (conceptGroups) {
                         return {
                             inputString: conceptGroups.length > 0
                                 ? conceptGroups.first().get('concepts')[0]
                                 : '*'
                         };
                     },
-                    searchModelChange: function(options) {
-                        return function() {
+                    searchModelChange: function (options) {
+                        return function () {
                             const inputText = options.searchModel.get('inputText');
-                            if(inputText && inputText !== '*') {
+                            if (inputText && inputText !== '*') {
                                 options.queryState.conceptGroups.set([{concepts: [inputText], hidden: true}]);
                             } else {
                                 options.queryState.conceptGroups.reset();
@@ -422,7 +447,7 @@ define([
             };
         },
 
-        createNewTab: function(queryText) {
+        createNewTab: function (queryText) {
             const newSearch = new SavedSearchModel({
                 relatedConcepts: queryText ? [[queryText]] : [],
                 title: i18n['search.newSearch'],
@@ -434,28 +459,34 @@ define([
             this.selectedTabModel.set('selectedSearchCid', newSearch.cid);
         },
 
-        selectContentView: function() {
+        selectContentView: function () {
             const cid = this.selectedTabModel.get('selectedSearchCid');
 
-            _.each(this.serviceViews, function(data) {
+            _.each(this.serviceViews, function (data) {
                 data.view.$el.addClass('hide');
             }, this);
 
-            if(this.searchModel && this.searchChangeCallback !== null) {
+            if (this.searchModel && this.searchChangeCallback !== null) {
                 this.stopListening(this.searchModel, 'change', this.searchChangeCallback);
                 this.searchChangeCallback = null;
             }
 
-            if(cid) {
+            if (cid) {
                 let viewData;
-                const savedSearchModel = this.savedSearchCollection.get(cid);
+                let savedSearchModel = this.savedSearchCollection.get(cid);
+
+                // if not found, it must be a shared search
+                if (!savedSearchModel) {
+                    savedSearchModel = this.sharedSavedSearchCollection.get(cid);
+                }
+
                 const searchType = savedSearchModel.get('type');
 
                 events(cid);
 
                 let creating;
 
-                if(this.serviceViews[cid]) {
+                if (this.serviceViews[cid]) {
                     viewData = this.serviceViews[cid];
 
                     creating = false;
@@ -470,6 +501,7 @@ define([
                         conceptGroups: new Backbone.Collection(savedSearchModel.toConceptGroups()),
                         minScoreModel: new MinScoreModel({minScore: 0}),
                         datesFilterModel: new DatesFilterModel(savedSearchModel.toDatesFilterModelAttributes()),
+                        geographyModel: new GeographyModel(savedSearchModel.toGeographyModelAttributes()),
                         selectedIndexes: new this.IndexesCollection(
                             savedSelectedIndexes.length === 0
                                 ? (this.indexesCollection.isEmpty()
@@ -488,6 +520,7 @@ define([
                         view: new this.ServiceView(_.extend({
                             delayedIndexesSelection: selectInitialIndexes,
                             documentsCollection: documentsCollection,
+                            documentRenderer: this.documentRenderer,
                             indexesCollection: this.indexesCollection,
                             queryState: queryState,
                             savedSearchCollection: this.savedSearchCollection,
@@ -508,7 +541,7 @@ define([
                     creating = true;
                 }
 
-                if(this.searchModel) {
+                if (this.searchModel) {
                     this.searchModel.set(this.searchTypes[searchType]
                         .createSearchModelAttributes(viewData.queryState.conceptGroups));
 
@@ -524,11 +557,11 @@ define([
 
                 viewData.view.$el.removeClass('hide');
 
-                if(!creating && viewData.view.update) {
+                if (!creating && viewData.view.update) {
                     viewData.view.update();
                 }
 
-                if(this.selectedTabModel.get('selectedResultsView')) {
+                if (this.selectedTabModel.get('selectedResultsView')) {
                     viewData.view.changeTab(this.selectedTabModel.get('selectedResultsView'));
                     this.selectedTabModel.set('selectedResultsView', '');
                 }
@@ -537,7 +570,7 @@ define([
             }
         },
 
-        generateURL: function() {
+        generateURL: function () {
             const inputText = this.searchModel
                 ? this.searchModel.get('inputText')
                 : null;
@@ -549,17 +582,17 @@ define([
                     : 'search/splash');
         },
 
-        generateSuggestURL: function(model) {
+        generateSuggestURL: function (model) {
             return 'search/suggest/' + vent.addSuffixForDocument(model);
         },
 
         // bool == true. expanded state. Run fancy animation from large central search bar to main search page
         // bool == false: reduced state. Set view to initial state (large central search bar)
-        toggleExpandedState: function(bool) {
+        toggleExpandedState: function (bool) {
             this.$('.find').toggleClass(expandedClasses, bool).toggleClass(reducedClasses, !bool);
             this.$('.service-view-container').addClass('hide');
 
-            if(bool) {
+            if (bool) {
                 this.$('.query-service-view-container').removeClass('hide');
             }
 
@@ -568,7 +601,7 @@ define([
             this.removeDocumentDetailView();
             this.removeSuggestView();
 
-            this.optionalViews.forEach(function(view) {
+            this.optionalViews.forEach(function (view) {
                 view[bool ? 'onExpand' : 'onReduce'](view.instance);
             });
 
@@ -576,27 +609,27 @@ define([
             $('.container-fluid, .find-logo-small').toggleClass('reduced', !bool);
         },
 
-        isExpanded: function() {
+        isExpanded: function () {
             return this.$('.find').hasClass(expandedClasses);
         },
 
-        removeDocumentDetailView: function() {
-            if(this.documentDetailView) {
+        removeDocumentDetailView: function () {
+            if (this.documentDetailView) {
                 this.documentDetailView.remove();
                 this.stopListening(this.documentDetailView);
                 this.documentDetailView = null;
             }
         },
 
-        removeSuggestView: function() {
-            if(this.suggestView) {
+        removeSuggestView: function () {
+            if (this.suggestView) {
                 this.suggestView.remove();
                 this.stopListening(this.suggestView);
                 this.suggestView = null;
             }
         },
 
-        remove: function() {
+        remove: function () {
             _.chain(this.optionalViews).pluck('instance').invoke('remove');
 
             this.savedQueryResultPoller.destroy();
@@ -604,8 +637,12 @@ define([
             Backbone.View.prototype.remove.call(this);
         },
 
-        updateRouting: function(savedSearchModel, selectedTab) {
-            const type = savedSearchModel.get('type') === 'READ_ONLY' ? savedSearchModel.get('searchType') : savedSearchModel.get('type');
+        updateRouting: function (savedSearchModel, selectedTab) {
+            let type = savedSearchModel.get('type');
+
+            if (type === SavedSearchModel.Type.READ_ONLY_QUERY) { type = SavedSearchModel.Type.QUERY; }
+            else if (type === SavedSearchModel.Type.READ_ONLY_SNAPSHOT) { type = SavedSearchModel.Type.SNAPSHOT; }
+
             const id = savedSearchModel.get('id');
             const modelId = type + ':' + id;
 
@@ -617,8 +654,12 @@ define([
             this.currentRoute = Backbone.history.getFragment();
         },
 
-        getSelectedRoute: function() {
+        getSelectedRoute: function () {
             return this.currentRoute;
+        },
+
+        setLastNavigationOpts: function(queryText) {
+            this.lastNavigatedQueryText = queryText || false;
         }
     });
 });

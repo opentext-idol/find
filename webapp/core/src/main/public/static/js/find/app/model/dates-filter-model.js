@@ -1,13 +1,19 @@
+/*
+ * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 define([
     'backbone',
     'moment'
 ], function(Backbone, moment) {
+    'use strict';
 
     /**
      * @enum {String}
      * @readonly
      */
-    var DateRange = {
+    const DateRange = {
         CUSTOM: 'CUSTOM',
         YEAR: 'YEAR',
         MONTH: 'MONTH',
@@ -38,7 +44,7 @@ define([
          * @return {{minDate: ?Moment, maxDate: ?Moment}}
          */
         toQueryModelAttributes: function() {
-            var dateRange = this.get('dateRange');
+            const dateRange = this.get('dateRange');
 
             if (dateRange === DateRange.CUSTOM) {
                 return {
@@ -59,7 +65,7 @@ define([
                     minDate: null
                 };
             } else {
-                var period;
+                let period;
 
                 if (dateRange === DateRange.MONTH) {
                     period = 'month';
@@ -86,5 +92,4 @@ define([
     }, {
         DateRange: DateRange
     });
-
 });

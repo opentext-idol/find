@@ -23,7 +23,9 @@ public enum MvcConstants {
     TOPIC_MAP_MAX_RESULTS("topicMapMaxResults"),
     METADATA_FIELD_INFO("metadataFieldInfo"),
     ANSWER_SERVER_ENABLED("answerServerEnabled"),
-    PUBLIC_INDEXES_ENABLED("publicIndexesEnabled");
+    PUBLIC_INDEXES_ENABLED("publicIndexesEnabled"),
+    TEMPLATES_CONFIG("templatesConfig"),
+    ASSETS_CONFIG("assetsConfig");
 
     private final String value;
 

@@ -4,18 +4,19 @@
  */
 
 define([
+    'backbone',
+    'moment',
     'js-testing/backbone-mock-factory',
     'find/app/model/dates-filter-model',
+    'find/app/model/geography-model',
     'find/app/model/applied-filters-collection',
     'parametric-refinement/selected-values-collection',
     'databases-view/js/hod-databases-collection',
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
-    'find/app/configuration',
-    'backbone',
-    'moment'
-], function(mockFactory, DatesFilterModel, FiltersCollection, SelectedParametricValues,
-            DatabasesCollection, i18n, fieldTextParser, configuration, Backbone, moment) {
+    'find/app/configuration'
+], function(Backbone, moment, mockFactory, DatesFilterModel, GeographyModel, FiltersCollection,
+            SelectedParametricValues, DatabasesCollection, i18n, fieldTextParser, configuration) {
     'use strict';
 
     const WOOKIEPEDIA = {
@@ -48,6 +49,8 @@ define([
                 customMinDate: INITIAL_MIN_DATE
             });
 
+            this.geographyModel = new GeographyModel({})
+
             this.selectedParametricValues = new SelectedParametricValues([
                 {field: 'AGE', displayName: 'Age', value: '4', displayValue: '4', type: 'Parametric'}
             ]);
@@ -57,6 +60,7 @@ define([
                 indexesCollection: this.indexesCollection,
                 queryState: {
                     datesFilterModel: this.datesFilterModel,
+                    geographyModel: this.geographyModel,
                     selectedIndexes: this.selectedIndexesCollection,
                     selectedParametricValues: this.selectedParametricValues
                 }

@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.hp.autonomy.frontend.find</groupId>
         <artifactId>selenium-tests</artifactId>
-        <version>11.3.1</version>
+        <version>11.5.0</version>
     </parent>
 
     <artifactId>integration-tests</artifactId>
@@ -147,7 +147,25 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <groups>com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature</groups>
+                            <groups>
+                                com.hp.autonomy.frontend.selenium.framework.categories.CoreFeature
+                            </groups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>parallel</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.18.1</version>
+                        <configuration>
+                            <parallel>classesAndMethods</parallel>
+                            <threadCount>5</threadCount>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -161,7 +179,8 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <excludedGroups>com.hp.autonomy.frontend.selenium.framework.categories.SlowTest
+                            <excludedGroups>
+                                com.hp.autonomy.frontend.selenium.framework.categories.SlowTest
                             </excludedGroups>
                         </configuration>
                     </plugin>
@@ -183,7 +202,9 @@
         <profile>
             <id>allBrowsers</id>
             <properties>
-                <config.selenium.browsers>["chrome", "firefox", "internet explorer"]</config.selenium.browsers>
+                <config.selenium.browsers>
+                    ["chrome", "firefox", "internet explorer"]
+                </config.selenium.browsers>
             </properties>
         </profile>
     </profiles>

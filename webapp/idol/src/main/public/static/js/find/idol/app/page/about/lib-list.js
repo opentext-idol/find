@@ -1,9 +1,10 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define(function() {
+    'use strict';
 
     return [
         {
@@ -15,7 +16,7 @@ define(function() {
         }, {
             name: 'Bootstrap',
             url: 'http://twitter.github.com/bootstrap/',
-            version: '3.3.5',
+            version: '3.3.7',
             license: 'Apache License v2.0',
             edited: true
         }, {
@@ -24,7 +25,7 @@ define(function() {
             version: '4.14.30',
             license: 'MIT',
             edited: false
-        },  {
+        }, {
             name: 'Bootstrap Slider',
             url: 'https://github.com/seiyria/bootstrap-slider',
             version: '6.0.8',
@@ -33,7 +34,7 @@ define(function() {
         }, {
             name: 'Chosen',
             url: 'https://harvesthq.github.io/chosen/',
-            version: '1.4.2',
+            version: '1.5.1',
             license: 'MIT',
             edited: false
         }, {
@@ -55,6 +56,12 @@ define(function() {
             license: 'MIT/SIL OFL 1.1', // icons are SIL OFL 1.1, css is MIT
             edited: false // remove parameter from css url
         }, {
+            name: 'html2canvas',
+            url: 'http://html2canvas.hertzen.com/',
+            version: '0.4.1',
+            license: 'MIT',
+            edited: false
+        }, {
             name: 'iCheck',
             url: 'http://icheck.fronteed.com/',
             version: '1.0.1',
@@ -69,13 +76,13 @@ define(function() {
         }, {
             name: 'json2.js',
             url: 'https://github.com/douglascrockford/JSON-js',
-            version: '2012-10-08',
+            version: '2015-05-03',
             license: 'Public Domain',
             edited: false
         }, {
             name: 'Leaflet',
             url: 'http://leafletjs.com',
-            version: '0.7.7',
+            version: '1.0.3',
             license: 'BSD',
             edited: false
         }, {
@@ -87,7 +94,19 @@ define(function() {
         }, {
             name: 'Leaflet.markercluster',
             url: 'https://github.com/Leaflet/Leaflet.markercluster/',
-            version: 'leaflet-0.7',
+            version: '1.0.4',
+            license: 'MIT',
+            edited: false
+        }, {
+            name: 'Leaflet.markercluster.layersupport',
+            url: 'https://github.com/ghybs/Leaflet.MarkerCluster.LayerSupport/',
+            version: '1.0.3',
+            license: 'MIT',
+            edited: false
+        }, {
+            name: 'metisMenu',
+            url: 'https://github.com/onokumus/metismenu/',
+            version: '2.5.2',
             license: 'MIT',
             edited: false
         }, {
@@ -111,7 +130,7 @@ define(function() {
         }, {
             name: 'typeahead.js',
             url: 'https://typeahead.js.org/',
-            version: '#3d2a7eb',
+            version: '#d60aed0',
             license: 'MIT',
             edited: false
         }, {
@@ -122,5 +141,4 @@ define(function() {
             edited: false
         }
     ];
-
 });

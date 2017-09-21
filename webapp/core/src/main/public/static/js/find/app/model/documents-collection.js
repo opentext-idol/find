@@ -1,13 +1,14 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 define([
+    'underscore',
     'find/app/model/find-base-collection',
-    'find/app/model/document-model',
-    'underscore'
-], function(FindBaseCollection, DocumentModel, _) {
+    'find/app/model/document-model'
+], function(_, FindBaseCollection, DocumentModel) {
+    'use strict';
 
     return FindBaseCollection.extend({
         model: DocumentModel,
@@ -22,10 +23,10 @@ define([
             this.totalResults = null;
             this.warnings = null;
 
-            var originalErrorHandler = options.error || _.noop;
+            const originalErrorHandler = options.error || _.noop;
 
-            var errorHandler = function(collection, errorResponse) {
-                if (errorResponse.responseJSON) {
+            const errorHandler = function(collection, errorResponse) {
+                if(errorResponse.responseJSON) {
                     this.autoCorrection = errorResponse.responseJSON.autoCorrection;
                 }
 
@@ -47,5 +48,4 @@ define([
             return this.autoCorrection;
         }
     });
-
 });

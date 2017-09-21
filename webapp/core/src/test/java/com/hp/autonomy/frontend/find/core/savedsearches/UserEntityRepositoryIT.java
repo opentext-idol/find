@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
@@ -19,40 +18,28 @@ import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 
 public abstract class UserEntityRepositoryIT extends AbstractFindIT {
-    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
+    @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "SpringJavaAutowiringInspection"})
     @Autowired
-    protected UserEntityRepository userEntityRepository;
+    private UserEntityRepository userEntityRepository;
 
     @Test
-    public void fetchNone() {
-        final List<UserEntity> users = listUsers();
-        assertThat(users, hasSize(0));
-    }
-
-    @Test
-    public void createWithUidAndFetch() {
-        final UserEntity userEntity = new UserEntity();
-        userEntity.setUid(1L);
-
-        final UserEntity savedEntity = userEntityRepository.save(userEntity);
-        assertThat(savedEntity.getUserId(), not(nullValue()));
-
+    public void fetchAll() {
         final List<UserEntity> users = listUsers();
         assertThat(users, hasSize(1));
     }
 
     @Test
-    public void createWithUuidAndUserStore() {
+    public void saveNew() {
         final UserEntity userEntity = new UserEntity();
-        userEntity.setDomain("DOMAIN");
-        userEntity.setUserStore("DEFAULT_USERSTORE");
-        userEntity.setUuid(UUID.randomUUID());
+        userEntity.setUsername("username@hpe.com");
+
+        final int startingNumberOfUsers = listUsers().size();
 
         final UserEntity savedEntity = userEntityRepository.save(userEntity);
         assertThat(savedEntity.getUserId(), not(nullValue()));
 
         final List<UserEntity> users = listUsers();
-        assertThat(users, hasSize(1));
+        assertThat(users, hasSize(startingNumberOfUsers + 1));
     }
 
     private List<UserEntity> listUsers() {

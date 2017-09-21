@@ -37,43 +37,135 @@ define([
             return _.extend(FindSearch.prototype.getSearchTypes.call(this),
                 configuration().hasBiRole
                     ? {
-                    SNAPSHOT: {
-                        cssClass: 'snapshot',
-                        autoCorrect: false,
-                        queryTextModelChange: _.constant(_.noop),
-                        collection: 'savedSnapshotCollection',
-                        icon: 'hp-camera',
-                        isMutable: false,
-                        fetchStrategy: stateTokenStrategy,
-                        showTimeBar: false,
-                        DocumentsCollection: ComparisonDocumentsCollection,
-                        LeftSideFooterView: SnapshotDataView,
-                        MiddleColumnHeaderView: null,
-                        relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
-                        openEditText: {
-                            create: snapshotsI18n['openEdit.create'],
-                            edit: snapshotsI18n['openEdit.edit']
-                        }
-                    },
-                    READ_ONLY: {
-                        cssClass: 'readonly',
-                        autoCorrect: false,
-                        queryTextModelChange: _.constant(_.noop),
-                        collection: 'readOnlySearchCollection',
-                        icon: 'hp-dashboard',
-                        isMutable: false,
-                        fetchStrategy: queryStrategy,
-                        showTimeBar: false,
-                        DocumentsCollection: DocumentsCollection,
-                        LeftSideFooterView: SnapshotDataView,
-                        MiddleColumnHeaderView: null,
-                        relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
-                        openEditText: {
-                            create: snapshotsI18n['openEdit.create'],
-                            edit: snapshotsI18n['openEdit.edit']
+                        SNAPSHOT: {
+                            cssClass: 'snapshot',
+                            autoCorrect: false,
+                            queryTextModelChange: _.constant(_.noop),
+                            collection: 'savedSnapshotCollection',
+                            icon: 'hp-camera',
+                            isMutable: false,
+                            fetchStrategy: stateTokenStrategy,
+                            showTimeBar: false,
+                            DocumentsCollection: ComparisonDocumentsCollection,
+                            LeftSideFooterView: SnapshotDataView,
+                            MiddleColumnHeaderView: null,
+                            relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
+                            openEditText: {
+                                create: snapshotsI18n['openEdit.create'],
+                                edit: snapshotsI18n['openEdit.edit']
+                            }
+                        },
+                        READ_ONLY_QUERY: {
+                            cssClass: 'readonly',
+                            autoCorrect: false,
+                            queryTextModelChange: _.constant(_.noop),
+                            collection: 'readOnlySearchCollection',
+                            icon: 'hp-dashboard',
+                            isMutable: false,
+                            fetchStrategy: queryStrategy,
+                            showTimeBar: false,
+                            DocumentsCollection: DocumentsCollection,
+                            LeftSideFooterView: SnapshotDataView,
+                            MiddleColumnHeaderView: null,
+                            relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
+                            openEditText: {
+                                create: snapshotsI18n['openEdit.create'],
+                                edit: snapshotsI18n['openEdit.edit']
+                            }
+                        },
+                        READ_ONLY_SNAPSHOT: {
+                            cssClass: 'readonly',
+                            autoCorrect: false,
+                            queryTextModelChange: _.constant(_.noop),
+                            collection: 'readOnlySearchCollection',
+                            icon: 'hp-dashboard',
+                            isMutable: false,
+                            fetchStrategy: stateTokenStrategy,
+                            showTimeBar: false,
+                            DocumentsCollection: DocumentsCollection,
+                            LeftSideFooterView: SnapshotDataView,
+                            MiddleColumnHeaderView: null,
+                            relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
+                            openEditText: {
+                                create: snapshotsI18n['openEdit.create'],
+                                edit: snapshotsI18n['openEdit.edit']
+                            }
+                        },
+                        SHARED_QUERY: {
+                            cssClass: 'query',
+                            autoCorrect: false,
+                            collection: 'sharedSavedQueryCollection',
+                            icon: 'hp-search',
+                            isMutable: true,
+                            fetchStrategy: queryStrategy,
+                            showTimeBar: false,
+                            DocumentsCollection: DocumentsCollection,
+                            LeftSideFooterView: this.QueryLeftSideView,
+                            MiddleColumnHeaderView: null,
+                            relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
+                            isShared: true,
+                            openEditText: {
+                                create: snapshotsI18n['openEdit.create'],
+                                edit: snapshotsI18n['openEdit.edit']
+                            }
+                        },
+                        SHARED_READ_ONLY_QUERY: {
+                            cssClass: 'query',
+                            autoCorrect: false,
+                            collection: 'sharedSavedQueryCollection',
+                            icon: 'hp-search',
+                            isMutable: false,
+                            fetchStrategy: queryStrategy,
+                            showTimeBar: false,
+                            DocumentsCollection: DocumentsCollection,
+                            LeftSideFooterView: SnapshotDataView,
+                            MiddleColumnHeaderView: null,
+                            relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
+                            isShared: true,
+                            openEditText: {
+                                create: snapshotsI18n['openEdit.create'],
+                                edit: snapshotsI18n['openEdit.edit']
+                            }
+                        },
+                        SHARED_SNAPSHOT: {
+                            cssClass: 'snapshot',
+                            autoCorrect: false,
+                            queryTextModelChange: _.constant(_.noop),
+                            collection: 'sharedSavedSnapshotCollection',
+                            icon: 'hp-camera',
+                            isMutable: false,
+                            fetchStrategy: stateTokenStrategy,
+                            showTimeBar: true,
+                            DocumentsCollection: ComparisonDocumentsCollection,
+                            LeftSideFooterView: SnapshotDataView,
+                            MiddleColumnHeaderView: null,
+                            relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
+                            isShared: true,
+                            openEditText: {
+                                create: snapshotsI18n['openEdit.create'],
+                                edit: snapshotsI18n['openEdit.edit']
+                            }
+                        },
+                        SHARED_READ_ONLY_SNAPSHOT: {
+                            cssClass: 'snapshot',
+                            autoCorrect: false,
+                            queryTextModelChange: _.constant(_.noop),
+                            collection: 'sharedSavedSnapshotCollection',
+                            icon: 'hp-camera',
+                            isMutable: false,
+                            fetchStrategy: stateTokenStrategy,
+                            showTimeBar: false,
+                            DocumentsCollection: ComparisonDocumentsCollection,
+                            LeftSideFooterView: SnapshotDataView,
+                            MiddleColumnHeaderView: null,
+                            relatedConceptsClickHandler: relatedConceptsClickHandlers.newQuery,
+                            isShared: true,
+                            openEditText: {
+                                create: snapshotsI18n['openEdit.create'],
+                                edit: snapshotsI18n['openEdit.edit']
+                            }
                         }
                     }
-                }
                     : {});
         },
 
@@ -92,6 +184,7 @@ define([
 
                             this.comparisonView = new ComparisonView({
                                 model: model,
+                                documentRenderer: this.documentRenderer,
                                 searchModels: searchModels,
                                 scrollModel: this.windowScrollModel,
                                 escapeCallback: function() {
