@@ -1,5 +1,5 @@
 repository: hpe-idol/find
-theme: jekyll-theme-midnight
+theme: jekyll-theme-tactile
 collections: 
   customisation:
     output: true
