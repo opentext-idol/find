@@ -22,8 +22,8 @@ import lombok.ToString;
 public class SunburstWidget extends DatasourceDependentWidgetBase<SunburstWidget, SunburstWidgetSettings> {
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public SunburstWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final WidgetDatasource<?> datasource, final SunburstWidgetSettings widgetSettings) {
-        super(name, type, x, y, width, height, displayWidgetName, datasource, widgetSettings);
+    public SunburstWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final WidgetDatasource<?> datasource, final SunburstWidgetSettings widgetSettings, final String cssClass) {
+        super(name, type, x, y, width, height, displayWidgetName, datasource, widgetSettings, cssClass);
     }
 
     @JsonPOJOBuilder(withPrefix = "")

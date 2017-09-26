@@ -17,8 +17,8 @@ import lombok.ToString;
 public class MapWidget extends DatasourceDependentWidgetBase<MapWidget, MapWidgetSettings> {
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public MapWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final WidgetDatasource<?> datasource, final MapWidgetSettings widgetSettings) {
-        super(name, type, x, y, width, height, displayWidgetName, datasource, widgetSettings);
+    public MapWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final WidgetDatasource<?> datasource, final MapWidgetSettings widgetSettings, final String cssClass) {
+        super(name, type, x, y, width, height, displayWidgetName, datasource, widgetSettings, cssClass);
     }
 
     @JsonPOJOBuilder(withPrefix = "")

@@ -30,8 +30,9 @@ public class TrendingWidget extends DatasourceDependentWidgetBase<TrendingWidget
                           final Integer height,
                           final WidgetNameSetting displayWidgetName,
                           final WidgetDatasource<?> datasource,
-                          final TrendingWidgetSettings widgetSettings) {
-        super(name, type, x, y, width, height, displayWidgetName, datasource, widgetSettings);
+                          final TrendingWidgetSettings widgetSettings,
+                          final String cssClass) {
+        super(name, type, x, y, width, height, displayWidgetName, datasource, widgetSettings, cssClass);
     }
 
     @JsonPOJOBuilder(withPrefix = "")

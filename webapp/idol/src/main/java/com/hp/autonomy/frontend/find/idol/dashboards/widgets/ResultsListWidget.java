@@ -17,8 +17,8 @@ import lombok.ToString;
 public class ResultsListWidget extends DatasourceDependentWidgetBase<ResultsListWidget, ResultsListWidgetSettings> {
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public ResultsListWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final WidgetDatasource<?> datasource, final ResultsListWidgetSettings widgetSettings) {
-        super(name, type, x, y, width, height, displayWidgetName, datasource, widgetSettings);
+    public ResultsListWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final WidgetDatasource<?> datasource, final ResultsListWidgetSettings widgetSettings, final String cssClass) {
+        super(name, type, x, y, width, height, displayWidgetName, datasource, widgetSettings, cssClass);
     }
 
     @JsonPOJOBuilder(withPrefix = "")

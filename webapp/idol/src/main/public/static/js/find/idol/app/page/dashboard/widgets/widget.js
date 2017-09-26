@@ -23,6 +23,7 @@ define([
         initialize: function(options) {
             this.name = options.name;
             this.widgetSettings = options.widgetSettings || {};
+            this.cssClass = options.cssClass;
         },
 
         render: function() {
@@ -30,6 +31,10 @@ define([
                 name: this.name,
                 i18n: i18n
             }));
+
+            if (this.cssClass) {
+                this.$el.addClass(this.cssClass);
+            }
 
             if(this.clickable) {
                 this.$el.click(this.onClick.bind(this));

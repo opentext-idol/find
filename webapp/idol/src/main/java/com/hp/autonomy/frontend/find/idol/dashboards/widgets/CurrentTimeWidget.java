@@ -16,8 +16,8 @@ import lombok.ToString;
 public class CurrentTimeWidget extends Widget<CurrentTimeWidget, CurrentTimeWidgetSettings> {
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public CurrentTimeWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final CurrentTimeWidgetSettings widgetSettings) {
-        super(name, type, x, y, width, height, displayWidgetName, widgetSettings);
+    public CurrentTimeWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final CurrentTimeWidgetSettings widgetSettings, final String cssClass) {
+        super(name, type, x, y, width, height, displayWidgetName, widgetSettings, cssClass);
     }
 
     @JsonPOJOBuilder(withPrefix = "")
