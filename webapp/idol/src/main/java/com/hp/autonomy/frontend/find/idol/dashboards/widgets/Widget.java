@@ -22,6 +22,7 @@ public abstract class Widget<W extends Widget<W, WS>, WS extends WidgetSettings<
     protected final Integer height;
     protected final WidgetNameSetting displayWidgetName;
     protected final WS widgetSettings;
+    protected final String cssClass;
 
     @Override
     public void basicValidate(final String section) throws ConfigException {
