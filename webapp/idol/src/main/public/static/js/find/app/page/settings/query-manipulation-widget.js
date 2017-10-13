@@ -49,6 +49,7 @@ define([
 
             this.$blacklist = this.$('.blacklist-input');
             this.$expandQuery = this.$('.expand-query-input');
+            this.$synonymDatabaseMatch = this.$('.synonym-database-match-input');
 
             this.listenTo(this.enableView, 'change', function() {
                 this.$('.settings-required-flag').toggleClass('hide', !this.enableView.getConfig());
@@ -59,6 +60,7 @@ define([
             return _.extend({
                 blacklist: this.$blacklist.val(),
                 expandQuery: this.$expandQuery.prop('checked'),
+                synonymDatabaseMatch: this.$synonymDatabaseMatch.prop('checked'),
                 enabled: this.enableView.getConfig()
             }, QueryManipulationWidget.prototype.getConfig.call(this))
         },
@@ -70,6 +72,7 @@ define([
 
             this.$blacklist.val(config.blacklist);
             this.$expandQuery.prop('checked', config.expandQuery);
+            this.$synonymDatabaseMatch.prop('checked', config.synonymDatabaseMatch !== false);
         },
 
         shouldValidate: function() {
