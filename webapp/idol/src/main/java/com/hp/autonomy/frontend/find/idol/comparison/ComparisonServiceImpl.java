@@ -18,6 +18,7 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -30,15 +31,20 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
     private final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
     private final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory;
 
+    private final int stateTokenMaxResults;
+
     @Autowired
     public ComparisonServiceImpl(
             final IdolDocumentsService documentsService,
             final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
-            final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory
+            final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory,
+            @Value("${find.comparison.storestate.maxresults}")
+            final int stateTokenMaxResults
     ) {
         this.documentsService = documentsService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
         this.queryRequestBuilderFactory = queryRequestBuilderFactory;
+        this.stateTokenMaxResults = stateTokenMaxResults;
     }
 
     private Documents<IdolSearchResult> getEmptyResults() {
@@ -54,7 +60,12 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
                 .stateDontMatchId(secondQueryStateToken)
                 .build();
 
-        return documentsService.getStateToken(queryRestrictions, ComparisonController.STATE_TOKEN_MAX_RESULTS, false);
+        return documentsService.getStateToken(queryRestrictions, stateTokenMaxResults, false);
+    }
+
+    @Override
+    public int getStateTokenMaxResults() {
+        return stateTokenMaxResults;
     }
 
     @Override

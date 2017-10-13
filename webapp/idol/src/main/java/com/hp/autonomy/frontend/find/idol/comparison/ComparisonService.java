@@ -14,6 +14,8 @@ public interface ComparisonService<R extends SearchResult, E extends Exception> 
 
     ComparisonStateTokens getCompareStateTokens(String firstStateToken, String secondStateToken) throws E;
 
+    int getStateTokenMaxResults();
+
     Documents<R> getResults(
             List<String> stateMatchIds,
             List<String> stateDontMatchIds,
