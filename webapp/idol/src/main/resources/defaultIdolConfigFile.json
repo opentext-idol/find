@@ -163,6 +163,7 @@
         ]
       }
     },
+    "defaultDeselectedDatabases": [],
     "parametricNeverShow": [],
     "parametricAlwaysShow": [],
     "parametricOrder": [],

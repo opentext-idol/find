@@ -48,6 +48,15 @@ define([
 
     const html = _.template(template)({i18n: i18n});
 
+    const configuration = config();
+    const defaultDeselectedDatabases = _.map(configuration && configuration.uiCustomization &&
+        configuration.uiCustomization.defaultDeselectedDatabases || []);
+
+    const dbSelectMap = _.reduce(defaultDeselectedDatabases, function(acc, val){
+        acc[val.toLowerCase()] = false;
+        return acc;
+    }, {})
+
     function selectInitialIndexes(indexesCollection) {
         const privateIndexes = indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
         const selectedIndexes = privateIndexes.length > 0
@@ -57,6 +66,14 @@ define([
         return _.map(selectedIndexes, function(indexModel) {
             return indexModel.pick('domain', 'name');
         });
+    }
+
+    function selectFilteredInitialIndexes(indexesCollection) {
+        const active = selectInitialIndexes(indexesCollection);
+
+        return defaultDeselectedDatabases.length ? _.filter(active, function(index){
+            return !_.has(dbSelectMap, index.name.toLowerCase());
+        }) : active;
     }
 
     return BasePage.extend({
@@ -80,7 +97,7 @@ define([
         QueryLeftSideView: null,
 
         initialize: function(options) {
-            this.configuration = config();
+            this.configuration = configuration;
             this.mmapTab = options.mmapTab;
             const optionalViews = [{
                 enabled: !this.configuration.hasBiRole,
@@ -493,6 +510,9 @@ define([
                 } else {
                     const documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
                     const savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
+                    const isExistingSavedSearch = savedSearchModel.id;
+
+                    const indexFilterFn = isExistingSavedSearch ? selectInitialIndexes : selectFilteredInitialIndexes;
 
                     /**
                      * @type {QueryState}
@@ -506,7 +526,7 @@ define([
                             savedSelectedIndexes.length === 0
                                 ? (this.indexesCollection.isEmpty()
                                     ? []
-                                    : selectInitialIndexes(this.indexesCollection))
+                                    : indexFilterFn(this.indexesCollection))
                                 : savedSelectedIndexes
                         ),
                         selectedParametricValues: new SelectedParametricValuesCollection(savedSearchModel.toSelectedParametricValues())
@@ -518,7 +538,7 @@ define([
                         queryState: queryState,
                         documentsCollection: documentsCollection,
                         view: new this.ServiceView(_.extend({
-                            delayedIndexesSelection: selectInitialIndexes,
+                            delayedIndexesSelection: indexFilterFn,
                             documentsCollection: documentsCollection,
                             documentRenderer: this.documentRenderer,
                             indexesCollection: this.indexesCollection,
