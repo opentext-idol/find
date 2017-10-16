@@ -97,7 +97,7 @@ define([
         QueryLeftSideView: null,
 
         initialize: function(options) {
-            this.configuration = configuration;
+            this.configuration = config();
             this.mmapTab = options.mmapTab;
             const optionalViews = [{
                 enabled: !this.configuration.hasBiRole,
