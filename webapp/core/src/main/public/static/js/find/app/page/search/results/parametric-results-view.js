@@ -247,7 +247,7 @@ define([
         },
 
         resolveFieldSelections: function() {
-            const fields = _.difference(this.parametricCollection.pluck('name'),
+            const fields = _.difference(this.parametricCollection.pluck('id'),
                 this.selectedParametricValues.pluck('field'));
 
             const primaryModel = this.fieldsCollection.at(0);
