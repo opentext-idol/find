@@ -264,10 +264,11 @@ define([
                 }
             }, this);
 
-            this.listenTo(router, 'route:savedSearch', function(tab, resultsView) {
+            this.listenTo(router, 'route:savedSearch', function(tab, resultsView, others) {
                 const split = tab.split(':');
                 const type = split[0];
                 const id = split[1];
+                const extraRouteParams = others ? _.map(others.slice(1).split('/'), decodeURIComponent) : [];
 
                 let collection;
                 switch(type) {
@@ -308,7 +309,8 @@ define([
                     if (collection.get(id)) {
                         this.selectedTabModel.set({
                             selectedSearchCid: collection.get(id).cid,
-                            selectedResultsView: resultsView || ''
+                            selectedResultsView: resultsView || '',
+                            selectedResultsViewRouteParams: extraRouteParams
                         });
                     } else {
                         const newModel = getModel();
@@ -320,7 +322,8 @@ define([
                             collection.add(newModel);
                             this.selectedTabModel.set({
                                 selectedSearchCid: collection.get(id).cid,
-                                selectedResultsView: resultsView || ''
+                                selectedResultsView: resultsView || '',
+                                selectedResultsViewRouteParams: extraRouteParams
                             });
                         }.bind(this));
                     }
@@ -582,8 +585,9 @@ define([
                 }
 
                 if (this.selectedTabModel.get('selectedResultsView')) {
-                    viewData.view.changeTab(this.selectedTabModel.get('selectedResultsView'));
+                    viewData.view.changeTab(this.selectedTabModel.get('selectedResultsView'), this.selectedTabModel.get('selectedResultsViewRouteParams'));
                     this.selectedTabModel.set('selectedResultsView', '');
+                    this.selectedTabModel.set('selectedResultsViewRouteParams', []);
                 }
 
                 this.updateRouting(savedSearchModel, viewData.view.getSelectedTab());

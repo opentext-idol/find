@@ -130,6 +130,12 @@ define([
             this.updateVisualizer();
         },
 
+        getSavedSearchRouterParameters: function() {
+            const parametricField = this.widgetSettings && this.widgetSettings.parametricField;
+            const fieldId = parametricField && parametricField.id;
+            return fieldId ? '/' + encodeURIComponent(fieldId) : '';
+        },
+
         exportData: function() {
             const colors = this.trendingChart.colors;
 

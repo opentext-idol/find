@@ -502,8 +502,8 @@ define([
             this.$('.right-side-container').toggle(toggle);
         },
 
-        changeTab: function(tab) {
-            this.resultsViewSelection.switchTab(tab);
+        changeTab: function(tab, routeParams) {
+            this.resultsViewSelection.switchTab(tab, routeParams);
         },
 
         getSelectedTab: function() {

@@ -520,6 +520,13 @@ define([
                 this.errorHtml = generateErrorHtml(messageArguments);
                 this.$errorMessage && this.$errorMessage.html(this.errorHtml);
             }
+        },
+
+        setRouteParams: function(routeParams) {
+            const fieldId = routeParams[0];
+            if (fieldId) {
+                this.model.set('field', fieldId);
+            }
         }
     });
 });
