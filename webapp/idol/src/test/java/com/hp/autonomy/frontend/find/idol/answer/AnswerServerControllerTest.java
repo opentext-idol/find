@@ -6,11 +6,13 @@
 package com.hp.autonomy.frontend.find.idol.answer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerService;
+import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestIndexBuilder;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
+import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +38,10 @@ public class AnswerServerControllerTest {
     private AskAnswerServerRequestBuilder requestBuilder;
     @Mock
     private AuthenticationInformationRetriever<Authentication, CommunityPrincipal> authenticationInformationRetriever;
+    @Mock
+    private AnswerFilter<IdolGetContentRequestBuilder, IdolGetContentRequestIndexBuilder> answerFilter;
+    @Mock
+    private CommunityPrincipal principal;
 
     private AnswerServerController controller;
 
@@ -46,8 +52,10 @@ public class AnswerServerControllerTest {
         when(requestBuilder.maxResults(anyInt())).thenReturn(requestBuilder);
         when(requestBuilder.customizationData(anyString())).thenReturn(requestBuilder);
         when(requestBuilder.proxiedParams(anyMap())).thenReturn(requestBuilder);
+        when(authenticationInformationRetriever.getPrincipal()).thenReturn(principal);
+        when(answerFilter.resolveUrls(any())).thenReturn(new HashMap<>());
 
-        controller = new AnswerServerController(askAnswerServerService, requestBuilderFactory, authenticationInformationRetriever, null, null, false);
+        controller = new AnswerServerController(askAnswerServerService, requestBuilderFactory, authenticationInformationRetriever, answerFilter, null, false);
     }
 
     @Test
