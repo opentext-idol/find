@@ -92,6 +92,7 @@
                 "user": ["list"]
             }
         },
+        "defaultDeselectedDatabases": [],
         "parametricNeverShow": [],
         "parametricAlwaysShow": [],
         "parametricOrder": [],

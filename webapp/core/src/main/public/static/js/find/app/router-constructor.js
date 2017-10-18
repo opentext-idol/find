@@ -22,8 +22,18 @@ define([
             return Backbone.Router.prototype.navigate.apply(this, arguments);
         },
 
-        search: function() {
-            this.trigger('route:page', 'search');
+        search: function(optionalEncodedQuery) {
+            let query = optionalEncodedQuery;
+            if (query) {
+                try {
+                    query = decodeURIComponent(optionalEncodedQuery);
+                }
+                catch(e) {
+                    // we'll proceed without a query
+                }
+            }
+
+            this.trigger('route:page', 'search', query);
         },
 
         documentDetail: function() {

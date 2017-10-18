@@ -22,7 +22,7 @@ import java.util.function.BiFunction;
 
 @Primary
 @Component
-class FindQueryExecutor implements QueryExecutor {
+public class FindQueryExecutor implements QueryExecutor {
     static final String MISSING_RULE_ERROR = "missing rule";
     private static final String INVALID_RULE_ERROR = "invalid rule";
 
@@ -65,7 +65,7 @@ class FindQueryExecutor implements QueryExecutor {
         return executeQueryDiscardingBlacklist(aciParameters, queryType, queryExecutor::executeGetQueryTagValues);
     }
 
-    private <R> R executeQueryDiscardingBlacklist(
+    public static <R> R executeQueryDiscardingBlacklist(
             final AciParameters aciParameters,
             final QueryType queryType,
             final BiFunction<AciParameters, QueryType, R> function

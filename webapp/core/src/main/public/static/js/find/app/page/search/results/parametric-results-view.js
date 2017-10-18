@@ -247,7 +247,7 @@ define([
         },
 
         resolveFieldSelections: function() {
-            const fields = _.difference(this.parametricCollection.pluck('name'),
+            const fields = _.difference(this.parametricCollection.pluck('id'),
                 this.selectedParametricValues.pluck('field'));
 
             const primaryModel = this.fieldsCollection.at(0);
@@ -316,6 +316,25 @@ define([
             }
 
             Backbone.View.prototype.remove.call(this);
+        },
+
+        setRouteParams: function(routeParams) {
+            const first = this.fieldsCollection.at(0);
+            const second = this.fieldsCollection.at(1);
+
+            let changed = false;
+
+            _.each([first, second], function(model, index){
+                const fieldId = routeParams[index];
+                if (fieldId) {
+                    model.set('field', fieldId);
+                    changed = true;
+                }
+            });
+
+            if (changed) {
+                this.updateSelections();
+            }
         }
     });
 });

@@ -14,8 +14,8 @@ public abstract class DatasourceDependentWidgetBase<W extends DatasourceDependen
     protected final WidgetDatasource<?> datasource;
 
     @SuppressWarnings("ConstructorWithTooManyParameters")
-    DatasourceDependentWidgetBase(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final WidgetDatasource<?> datasource, final WS widgetSettings) {
-        super(name, type, x, y, width, height, displayWidgetName, widgetSettings);
+    DatasourceDependentWidgetBase(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final WidgetDatasource<?> datasource, final WS widgetSettings, final String cssClass) {
+        super(name, type, x, y, width, height, displayWidgetName, widgetSettings, cssClass);
         this.datasource = datasource;
     }
 

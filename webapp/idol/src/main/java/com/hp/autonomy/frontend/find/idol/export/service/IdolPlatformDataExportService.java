@@ -11,12 +11,14 @@ import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.find.core.export.service.ExportFormat;
 import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportService;
 import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportStrategy;
+import com.hp.autonomy.frontend.find.idol.search.FindQueryExecutor;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import com.hp.autonomy.types.requests.idol.actions.query.QueryActions;
+import java.util.function.BiFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +27,8 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
+
+import static com.hp.autonomy.frontend.find.idol.search.FindQueryExecutor.executeQueryDiscardingBlacklist;
 
 @Component
 class IdolPlatformDataExportService implements PlatformDataExportService<IdolQueryRequest, AciErrorException> {
@@ -59,7 +63,12 @@ class IdolPlatformDataExportService implements PlatformDataExportService<IdolQue
                     .maxResults(i + PAGINATION_SIZE)
                     .build();
             final AciParameters aciParameters = getAciParameters(paginatedQueryRequest);
-            aciServiceRetriever.getAciService(paginatedQueryRequest.getQueryType()).executeAction(aciParameters, processor);
+
+            executeQueryDiscardingBlacklist(
+                aciParameters,
+                paginatedQueryRequest.getQueryType(),
+                (params, queryType) -> aciServiceRetriever.getAciService(queryType).executeAction(params, processor)
+            );
         }
     }
 

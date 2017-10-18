@@ -19,12 +19,13 @@ define([
     './template-helpers/has-field-helper',
     './template-helpers/has-field-value-helper',
     './template-helpers/get-field-value-helper',
+    './template-helpers/get-field-values-helper',
     './template-helpers/with-field-helper',
     './template-helpers/i18n-helper',
     './template-helpers/stars-helper'
 ], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator, defaultResultTemplate,
             defaultPreviewTemplate, defaultPromotionTemplate, equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper,
-            withFieldHelper, i18nHelper, starsHelper) {
+            getFieldValuesHelper, withFieldHelper, i18nHelper, starsHelper) {
 
     function templatePredicate(triggers) {
         return function(model) {
@@ -101,6 +102,7 @@ define([
             hasField: hasFieldHelper,
             hasFieldValue: hasFieldValueHelper,
             getFieldValue: getFieldValueHelper,
+            getFieldValues: getFieldValuesHelper,
             withField: withFieldHelper,
             stars: starsHelper
         });

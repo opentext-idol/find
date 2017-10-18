@@ -17,8 +17,8 @@ import lombok.ToString;
 public class StaticContentWidget extends Widget<StaticContentWidget, StaticContentWidgetSettings> {
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public StaticContentWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final StaticContentWidgetSettings widgetSettings) {
-        super(name, type, x, y, width, height, displayWidgetName, widgetSettings);
+    public StaticContentWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final StaticContentWidgetSettings widgetSettings, final String cssClass) {
+        super(name, type, x, y, width, height, displayWidgetName, widgetSettings, cssClass);
     }
 
     @Override

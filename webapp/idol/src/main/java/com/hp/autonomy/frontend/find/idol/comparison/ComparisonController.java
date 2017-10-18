@@ -26,8 +26,6 @@ class ComparisonController<Q extends QueryRestrictions<?>, R extends SearchResul
     static final String COMPARE_PATH = "compare";
     static final String RESULTS_PATH = "results";
 
-    static final int STATE_TOKEN_MAX_RESULTS = Integer.MAX_VALUE;
-
     private static final String TEXT_PARAM = "text";
     private static final String FIELD_TEXT_PARAM = "field_text";
     static final String STATE_MATCH_PARAM = "state_match_ids";
@@ -50,6 +48,7 @@ class ComparisonController<Q extends QueryRestrictions<?>, R extends SearchResul
 
     @RequestMapping(value = COMPARE_PATH, method = RequestMethod.POST)
     public ComparisonStateTokens getCompareStateTokens(@RequestBody final ComparisonRequest<Q> body) throws E {
+        final int STATE_TOKEN_MAX_RESULTS = comparisonService.getStateTokenMaxResults();
         // If either query state token is null then try and fetch one using the query restrictions
         final String firstStateToken = body.getFirstQueryStateToken() != null ? body.getFirstQueryStateToken() : documentsService.getStateToken(body.getFirstRestrictions(), STATE_TOKEN_MAX_RESULTS, false);
         final String secondStateToken = body.getSecondQueryStateToken() != null ? body.getSecondQueryStateToken() : documentsService.getStateToken(body.getSecondRestrictions(), STATE_TOKEN_MAX_RESULTS, false);

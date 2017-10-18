@@ -132,7 +132,11 @@ define([
         },
 
         onClick: function() {
-            vent.navigate(this.savedSearchRoute);
+            vent.navigate(this.savedSearchRoute + this.getSavedSearchRouterParameters());
+        },
+
+        getSavedSearchRouterParameters: function() {
+            return '';
         },
 
         onCancelled: function() {

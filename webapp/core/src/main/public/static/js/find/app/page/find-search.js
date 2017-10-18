@@ -48,6 +48,15 @@ define([
 
     const html = _.template(template)({i18n: i18n});
 
+    const configuration = config();
+    const defaultDeselectedDatabases = _.map(configuration && configuration.uiCustomization &&
+        configuration.uiCustomization.defaultDeselectedDatabases || []);
+
+    const dbSelectMap = _.reduce(defaultDeselectedDatabases, function(acc, val){
+        acc[val.toLowerCase()] = false;
+        return acc;
+    }, {})
+
     function selectInitialIndexes(indexesCollection) {
         const privateIndexes = indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
         const selectedIndexes = privateIndexes.length > 0
@@ -57,6 +66,14 @@ define([
         return _.map(selectedIndexes, function(indexModel) {
             return indexModel.pick('domain', 'name');
         });
+    }
+
+    function selectFilteredInitialIndexes(indexesCollection) {
+        const active = selectInitialIndexes(indexesCollection);
+
+        return defaultDeselectedDatabases.length ? _.filter(active, function(index){
+            return !_.has(dbSelectMap, index.name.toLowerCase());
+        }) : active;
     }
 
     return BasePage.extend({
@@ -247,10 +264,11 @@ define([
                 }
             }, this);
 
-            this.listenTo(router, 'route:savedSearch', function(tab, resultsView) {
+            this.listenTo(router, 'route:savedSearch', function(tab, resultsView, others) {
                 const split = tab.split(':');
                 const type = split[0];
                 const id = split[1];
+                const extraRouteParams = others ? _.map(others.slice(1).split('/'), decodeURIComponent) : [];
 
                 let collection;
                 switch(type) {
@@ -291,7 +309,8 @@ define([
                     if (collection.get(id)) {
                         this.selectedTabModel.set({
                             selectedSearchCid: collection.get(id).cid,
-                            selectedResultsView: resultsView || ''
+                            selectedResultsView: resultsView || '',
+                            selectedResultsViewRouteParams: extraRouteParams
                         });
                     } else {
                         const newModel = getModel();
@@ -303,7 +322,8 @@ define([
                             collection.add(newModel);
                             this.selectedTabModel.set({
                                 selectedSearchCid: collection.get(id).cid,
-                                selectedResultsView: resultsView || ''
+                                selectedResultsView: resultsView || '',
+                                selectedResultsViewRouteParams: extraRouteParams
                             });
                         }.bind(this));
                     }
@@ -391,7 +411,7 @@ define([
             }, this);
 
             if (config().hasBiRole && this.selectedTabModel.get('selectedSearchCid') === null) {
-                this.createNewTab();
+                this.createNewTab(this.lastNavigatedQueryText);
             } else {
                 this.selectContentView();
             }
@@ -493,6 +513,9 @@ define([
                 } else {
                     const documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
                     const savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
+                    const isExistingSavedSearch = savedSearchModel.id;
+
+                    const indexFilterFn = isExistingSavedSearch ? selectInitialIndexes : selectFilteredInitialIndexes;
 
                     /**
                      * @type {QueryState}
@@ -506,7 +529,7 @@ define([
                             savedSelectedIndexes.length === 0
                                 ? (this.indexesCollection.isEmpty()
                                     ? []
-                                    : selectInitialIndexes(this.indexesCollection))
+                                    : indexFilterFn(this.indexesCollection))
                                 : savedSelectedIndexes
                         ),
                         selectedParametricValues: new SelectedParametricValuesCollection(savedSearchModel.toSelectedParametricValues())
@@ -518,7 +541,7 @@ define([
                         queryState: queryState,
                         documentsCollection: documentsCollection,
                         view: new this.ServiceView(_.extend({
-                            delayedIndexesSelection: selectInitialIndexes,
+                            delayedIndexesSelection: indexFilterFn,
                             documentsCollection: documentsCollection,
                             documentRenderer: this.documentRenderer,
                             indexesCollection: this.indexesCollection,
@@ -562,8 +585,9 @@ define([
                 }
 
                 if (this.selectedTabModel.get('selectedResultsView')) {
-                    viewData.view.changeTab(this.selectedTabModel.get('selectedResultsView'));
+                    viewData.view.changeTab(this.selectedTabModel.get('selectedResultsView'), this.selectedTabModel.get('selectedResultsViewRouteParams'));
                     this.selectedTabModel.set('selectedResultsView', '');
+                    this.selectedTabModel.set('selectedResultsViewRouteParams', []);
                 }
 
                 this.updateRouting(savedSearchModel, viewData.view.getSelectedTab());
@@ -656,6 +680,10 @@ define([
 
         getSelectedRoute: function () {
             return this.currentRoute;
+        },
+
+        setLastNavigationOpts: function(queryText) {
+            this.lastNavigatedQueryText = queryText || false;
         }
     });
 });

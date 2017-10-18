@@ -19,8 +19,8 @@ public class SimpleWidget extends Widget<SimpleWidget, SimpleWidgetSettings> imp
 
     @SuppressWarnings("ConstructorWithTooManyParameters")
     @Builder(toBuilder = true)
-    public SimpleWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final WidgetDatasource<?> datasource, final SimpleWidgetSettings widgetSettings) {
-        super(name, type, x, y, width, height, displayWidgetName, widgetSettings);
+    public SimpleWidget(final String name, final String type, final Integer x, final Integer y, final Integer width, final Integer height, final WidgetNameSetting displayWidgetName, final WidgetDatasource<?> datasource, final SimpleWidgetSettings widgetSettings, final String cssClass) {
+        super(name, type, x, y, width, height, displayWidgetName, widgetSettings, cssClass);
         this.datasource = datasource;
     }
 

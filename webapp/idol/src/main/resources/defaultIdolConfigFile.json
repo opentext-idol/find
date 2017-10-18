@@ -36,6 +36,7 @@
     },
     "typeAheadMode": "Index",
     "expandQuery": true,
+    "synonymDatabaseMatch": true,
     "blacklist": "ISO_BLACKLIST",
     "enabled": false
   },
@@ -162,6 +163,7 @@
         ]
       }
     },
+    "defaultDeselectedDatabases": [],
     "parametricNeverShow": [],
     "parametricAlwaysShow": [],
     "parametricOrder": [],
