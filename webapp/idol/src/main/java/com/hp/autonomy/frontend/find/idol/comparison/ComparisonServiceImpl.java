@@ -6,7 +6,9 @@
 package com.hp.autonomy.frontend.find.idol.comparison;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.annotations.IdolService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
@@ -18,7 +20,6 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.Documents;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -38,13 +39,13 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
             final IdolDocumentsService documentsService,
             final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
             final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory,
-            @Value("${find.comparison.storestate.maxresults}")
-            final int stateTokenMaxResults
+            final ConfigFileService<IdolFindConfig> configService
     ) {
         this.documentsService = documentsService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
         this.queryRequestBuilderFactory = queryRequestBuilderFactory;
-        this.stateTokenMaxResults = stateTokenMaxResults;
+        final Integer comparisonStoreStateMaxResults = configService.getConfigResponse().getConfig().getComparisonStoreStateMaxResults();
+        this.stateTokenMaxResults = comparisonStoreStateMaxResults == null ? Integer.MAX_VALUE : comparisonStoreStateMaxResults;
     }
 
     private Documents<IdolSearchResult> getEmptyResults() {
