@@ -196,6 +196,10 @@ define([
             if(!this.parametricCollection.isEmpty()) {
                 this.setFieldSelector();
             }
+            else {
+                // If there's no parametric fields, tell the user that there are no parametric values.
+                this.viewStateModel.set('dataState', dataState.EMPTY);
+            }
             this.setRangeSelector();
         },
 
@@ -301,6 +305,13 @@ define([
         },
 
         fetchFieldAndRangeData: function() {
+            if (!this.model.get('field')) {
+                // If we don't have a selected field (e.g. there aren't any fields in the entire engine),
+                //   then we should show that there's no parametric values.
+                this.viewStateModel.set('dataState', dataState.EMPTY);
+                return;
+            }
+
             this.viewStateModel.set('dataState', dataState.LOADING);
 
             if(this.bucketedDataReqest) {
