@@ -51,6 +51,9 @@ define([
     };
 
     function zoomCallback(min, max) {
+        if (isNaN(min) || isNaN(max) || min === max) {
+            return;
+        }
         this.setMinMax(moment.unix(min), moment.unix(max));
         this.viewStateModel.set('currentState', renderState.ZOOMING);
         this.updateChart();
