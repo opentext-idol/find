@@ -337,6 +337,12 @@ define([
                         return $.when(trendingStrategy.fetchRange(this.selectedFieldValues, fetchOptions))
                             .then(function(data) {
                                 this.setMinMax(moment(data.min), moment(data.max));
+                                // We need to explicitly update the chart and fetch the data.
+                                // The code previously assumed setMinMax would do it via the change event listeners,
+                                //   but those won't fire if there isn't a change e.g. when viewing two different
+                                //   fields with the same min/max values.
+                                this.updateChart();
+                                this.debouncedFetchBucketedData();
                             }.bind(this));
                     }
                 }.bind(this))
