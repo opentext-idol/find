@@ -132,7 +132,7 @@ class ConversationController {
 
     // Path to the view URL
     private static final String VIEW_RELATIVE_PATH =
-        ViewController.VIEW_PATH.replaceFirst("$/", "") + VIEW_DOCUMENT_PATH;
+        ViewController.VIEW_PATH.replaceFirst("$/", "").replaceFirst("^/", "") + VIEW_DOCUMENT_PATH;
 
     private final CloseableHttpClient httpClient;
     private final String questionAnswerDatabaseMatch;
