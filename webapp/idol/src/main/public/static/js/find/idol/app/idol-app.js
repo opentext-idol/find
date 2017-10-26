@@ -152,7 +152,7 @@ define([
 
         ajaxErrorHandler: function(event, xhr) {
             if(xhr.status === 401) {
-                logout('../logout');
+                logout('logout');
             } else if(xhr.status === 403) {
                 // refresh the page - the filters should then redirect to the login screen
                 window.location.reload();
