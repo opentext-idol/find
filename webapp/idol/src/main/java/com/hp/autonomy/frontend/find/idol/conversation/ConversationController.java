@@ -164,11 +164,11 @@ class ConversationController {
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
 
     private static final List<Expert> experts = Arrays.asList(
-        new Expert("John Smith", "john.smith@example.com", "Payments"),
-        new Expert("Jane Doe", "jane.doe@example.com", "Precious Metals"),
-        new Expert("Richard Roe", "richard.roe@example.com", "Securities"),
-        new Expert("Signor Rossi", "signor.rossi@example.com", "Payments"),
-        new Expert("Ashok Kumar", "ashok.kumar@example.com", "Payments")
+        new Expert("John Smith", "john.smith@example.com", "Interbank Conventions"),
+        new Expert("Jane Doe", "jane.doe@example.com", "Online Payment"),
+        new Expert("Richard Roe", "richard.roe@example.com", "Payment processes"),
+        new Expert("Signor Rossi", "signor.rossi@example.com", "Securities"),
+        new Expert("Ashok Kumar", "ashok.kumar@example.com", "International Payments")
     );
 
     @Autowired
