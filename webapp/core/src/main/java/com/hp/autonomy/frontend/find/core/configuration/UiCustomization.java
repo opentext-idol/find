@@ -29,6 +29,7 @@ import java.util.Optional;
 @JsonDeserialize(builder = UiCustomization.UiCustomizationBuilder.class)
 public class UiCustomization implements ConfigurationComponent<UiCustomization> {
     private final UiCustomizationOptions options;
+    private final Collection<String> filterOrder;
     @Singular("defaultDeselectedDatabase")
     private final Collection<String> defaultDeselectedDatabases;
     @Singular("parametricNeverShowItem")
@@ -64,6 +65,9 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
                 .defaultDeselectedDatabases(CollectionUtils.isNotEmpty(defaultDeselectedDatabases)
                                             ? defaultDeselectedDatabases
                                             : uiCustomization.defaultDeselectedDatabases)
+                .filterOrder(CollectionUtils.isNotEmpty(filterOrder)
+                                            ? filterOrder
+                                            : uiCustomization.filterOrder)
                 .build();
         }
     }
