@@ -238,7 +238,7 @@ define([
                 }.bind(this)
             }];
 
-            if (config.uiCustomization && config.uiCustomization.filterOrder) {
+            if (config && config.uiCustomization && config.uiCustomization.filterOrder) {
                 const unused = views.splice(0);
 
                 _.each(config.uiCustomization.filterOrder, function(id){
@@ -318,6 +318,10 @@ define([
         },
 
         updateGeographyVisibility: function() {
+            if (!this.geographyViewWrapper) {
+                return;
+            }
+
             const search = this.filterModel.get('text');
             this.hideGeography = !(!search || searchMatches(geographyTitle, search));
 
