@@ -140,6 +140,20 @@ define([
                         this.collapsed.dates = newState;
                     });
 
+                }.bind(this),
+                get$els: function() {
+                    return [this.dateViewWrapper.$el];
+                }.bind(this),
+                render: function() {
+                    this.dateViewWrapper.render();
+                }.bind(this),
+                postRender: _.noop,
+                remove: function() {
+                    this.dateViewWrapper.remove();
+                }.bind(this)
+            }, {
+                shown: showGeographyFilter,
+                initialize: function() {
                     const geographyModel = options.queryState.geographyModel;
                     this.collapsed.geography = !_.find(_.map(geographyModel.attributes, function(v){ return v && v.length }));
 
@@ -159,17 +173,13 @@ define([
                     });
                 }.bind(this),
                 get$els: function() {
-                    const els = [this.dateViewWrapper.$el];
-                    showGeographyFilter && els.push(this.geographyViewWrapper.$el)
-                    return els;
+                    return [this.geographyViewWrapper.$el];
                 }.bind(this),
                 render: function() {
-                    this.dateViewWrapper.render();
                     this.geographyViewWrapper.render();
                 }.bind(this),
                 postRender: _.noop,
                 remove: function() {
-                    this.dateViewWrapper.remove();
                     this.geographyViewWrapper.remove();
                 }.bind(this)
             }, {
