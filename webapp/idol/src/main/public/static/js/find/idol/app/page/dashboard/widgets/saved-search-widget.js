@@ -8,11 +8,12 @@ define([
     'jquery',
     './updating-widget',
     'find/idol/app/model/idol-indexes-collection',
+    'find/app/configuration',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/vent',
     'text!find/idol/templates/page/dashboards/saved-search-widget-error.html',
     'i18n!find/nls/bundle'
-], function(_, $, UpdatingWidget, IdolIndexesCollection, SavedSearchModel, vent, errorTemplate, i18n) {
+], function(_, $, UpdatingWidget, IdolIndexesCollection, configuration, SavedSearchModel, vent, errorTemplate, i18n) {
     'use strict';
 
     const DashboardSearchModel = SavedSearchModel.extend({
@@ -86,6 +87,8 @@ define([
                 id: options.datasource.config.id,
                 type: options.datasource.config.type
             });
+
+            this.savedQueryCollection = options.savedQueryCollection;
         },
 
         // Called by the widget's update() method, which in turn is called by the dashboard-page's update().
@@ -132,7 +135,26 @@ define([
         },
 
         onClick: function() {
-            vent.navigate(this.savedSearchRoute + this.getSavedSearchRouterParameters());
+            const config = configuration();
+
+            const attribs = this.savedSearchModel.attributes;
+
+            if (config && config.uiCustomization && config.uiCustomization.openSharedDashboardQueryAsNewSearch
+                && config.username !== attribs.user.username && attribs.type === SavedSearchModel.Type.QUERY) {
+                // Create a new search
+                const newSearch = new SavedSearchModel(_.defaults({
+                    id: null,
+                    title: i18n['search.newSearch'],
+                    type: SavedSearchModel.Type.QUERY
+                }, attribs));
+
+                this.savedQueryCollection.add(newSearch);
+                const route = '/search/tab/QUERY:' + newSearch.cid + (this.viewType ? '/view/' + this.viewType : '');
+                vent.navigate(route + this.getSavedSearchRouterParameters());
+            }
+            else {
+                vent.navigate(this.savedSearchRoute + this.getSavedSearchRouterParameters());
+            }
         },
 
         getSavedSearchRouterParameters: function() {

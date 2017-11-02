@@ -165,6 +165,7 @@
     },
     "defaultDeselectedDatabases": [],
     "filterOrder": ["metaFilter", "indexesFilter", "datesFilter", "geographyFilter", "-", "parametricFilter"],
+    "openSharedDashboardQueryAsNewSearch": false,
     "parametricNeverShow": [],
     "parametricAlwaysShow": [],
     "parametricOrder": [],

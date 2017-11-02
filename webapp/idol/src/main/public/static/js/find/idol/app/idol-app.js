@@ -79,7 +79,7 @@ define([
                     acc['dashboards/' + encodeURIComponent(dash.dashboardName)] = {
                         Constructor: DashboardPage,
                         icon: 'hp-icon hp-fw hp-dashboard',
-                        models: ['sidebarModel'],
+                        models: ['sidebarModel', 'savedQueryCollection'],
                         title: i18n[dash.dashboardName] || dash.dashboardName,
                         order: index,
                         constructorArguments: dash,
