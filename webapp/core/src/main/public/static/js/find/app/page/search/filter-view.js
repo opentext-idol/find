@@ -19,10 +19,11 @@ define([
     'find/app/util/filtering-collection',
     'find/app/configuration',
     'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes'
+    'i18n!find/nls/indexes',
+    'text!find/templates/app/page/search/filters/filter-separator.html'
 ], function(_, $, Backbone, GeographyModel, AbstractSectionView, DateView, GeographyView, FilteredParametricFieldsCollection,
             ParametricView, NumericParametricFieldView, TextInput, Collapsible, FilteringCollection,
-            configuration, i18n, i18nIndexes) {
+            configuration, i18n, i18nIndexes, filterSeparator) {
     'use strict';
 
     const datesTitle = i18n['search.dates'];
@@ -41,8 +42,11 @@ define([
             const IndexesView = options.IndexesView;
             this.collapsed = {};
 
+            const config = configuration();
+
             const views = [{
-                shown: configuration().enableMetaFilter,
+                id: 'metaFilter',
+                shown: config.enableMetaFilter,
                 initialize: function() {
                     //Initializing the text with empty string to stop IE11 issue with triggering input event on render
                     this.filterModel = new Backbone.Model({text: ''});
@@ -81,6 +85,7 @@ define([
                     this.filterInput.remove();
                 }.bind(this)
             }, {
+                id: 'indexesFilter',
                 shown: true,
                 initialize: function() {
                     this.indexesEmpty = false;
@@ -121,6 +126,7 @@ define([
                     this.indexesViewWrapper.remove();
                 }.bind(this)
             }, {
+                id: 'datesFilter',
                 shown: true,
                 initialize: function() {
                     this.collapsed.dates = true;
@@ -140,6 +146,21 @@ define([
                         this.collapsed.dates = newState;
                     });
 
+                }.bind(this),
+                get$els: function() {
+                    return [this.dateViewWrapper.$el];
+                }.bind(this),
+                render: function() {
+                    this.dateViewWrapper.render();
+                }.bind(this),
+                postRender: _.noop,
+                remove: function() {
+                    this.dateViewWrapper.remove();
+                }.bind(this)
+            }, {
+                id: 'geographyFilter',
+                shown: showGeographyFilter,
+                initialize: function() {
                     const geographyModel = options.queryState.geographyModel;
                     this.collapsed.geography = !_.find(_.map(geographyModel.attributes, function(v){ return v && v.length }));
 
@@ -159,20 +180,17 @@ define([
                     });
                 }.bind(this),
                 get$els: function() {
-                    const els = [this.dateViewWrapper.$el];
-                    showGeographyFilter && els.push(this.geographyViewWrapper.$el)
-                    return els;
+                    return [this.geographyViewWrapper.$el];
                 }.bind(this),
                 render: function() {
-                    this.dateViewWrapper.render();
                     this.geographyViewWrapper.render();
                 }.bind(this),
                 postRender: _.noop,
                 remove: function() {
-                    this.dateViewWrapper.remove();
                     this.geographyViewWrapper.remove();
                 }.bind(this)
             }, {
+                id: 'parametricFilter',
                 shown: true,
                 initialize: function() {
                     this.parametricFieldsCollection = options.parametricFieldsCollection;
@@ -219,6 +237,36 @@ define([
                     this.parametricView.remove();
                 }.bind(this)
             }];
+
+            if (config && config.uiCustomization && config.uiCustomization.filterOrder) {
+                const unused = views.splice(0);
+
+                _.each(config.uiCustomization.filterOrder, function(id){
+                    if (id === '-') {
+                        const $el = $(filterSeparator);
+                        views.push({
+                            shown: true,
+                            initialize: _.noop,
+                            get$els: function() {
+                                return [$el];
+                            }.bind(this),
+                            render: _.noop,
+                            postRender: _.noop,
+                            remove: function() {
+                                $el.remove();
+                            }.bind(this)
+                        })
+                    }
+                    else {
+                        const viewIdx = _.findIndex(unused, function(view){ return view.id === id });
+                        if (viewIdx >= 0) {
+                            views.push(unused.splice(viewIdx, 1)[0]);
+                        }
+                    }
+                });
+
+                views.push.apply(views, unused);
+            }
 
             this.views = _.where(views, {shown: true});
             _.invoke(this.views, 'initialize');
@@ -270,6 +318,10 @@ define([
         },
 
         updateGeographyVisibility: function() {
+            if (!this.geographyViewWrapper) {
+                return;
+            }
+
             const search = this.filterModel.get('text');
             this.hideGeography = !(!search || searchMatches(geographyTitle, search));
 

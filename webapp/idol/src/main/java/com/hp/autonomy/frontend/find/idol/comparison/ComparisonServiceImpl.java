@@ -6,7 +6,10 @@
 package com.hp.autonomy.frontend.find.idol.comparison;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.configuration.ConfigFileService;
+import com.hp.autonomy.frontend.configuration.ConfigResponse;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.annotations.IdolService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
@@ -16,9 +19,9 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.Documents;
+import java.util.Optional;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -38,13 +41,15 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
             final IdolDocumentsService documentsService,
             final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
             final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory,
-            @Value("${find.comparison.storestate.maxresults}")
-            final int stateTokenMaxResults
+            final ConfigFileService<IdolFindConfig> configService
     ) {
         this.documentsService = documentsService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
         this.queryRequestBuilderFactory = queryRequestBuilderFactory;
-        this.stateTokenMaxResults = stateTokenMaxResults;
+        this.stateTokenMaxResults = Optional.ofNullable(configService.getConfigResponse())
+                .map(ConfigResponse::getConfig)
+                .map(IdolFindConfig::getComparisonStoreStateMaxResults)
+                .orElse(Integer.MAX_VALUE);
     }
 
     private Documents<IdolSearchResult> getEmptyResults() {

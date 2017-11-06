@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.idol.configuration;
 
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -65,6 +66,8 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final Integer minScore;
     private final StatsServerConfig statsServer;
     private final Integer topicMapMaxResults;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private final Integer comparisonStoreStateMaxResults;
     private final ExportConfig export;
 
     @JsonIgnore
@@ -88,6 +91,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .minScore(minScore == null ? other.minScore : minScore)
                 .statsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
                 .topicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
+                .comparisonStoreStateMaxResults(comparisonStoreStateMaxResults == null ? other.comparisonStoreStateMaxResults : comparisonStoreStateMaxResults)
                 .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(maybeOther.export)).orElse(maybeOther.export))
                 .build())
             .orElse(this);

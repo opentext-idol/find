@@ -151,6 +151,8 @@ define([
             this.documentsCollection = new Backbone.Collection();
             this.documentsCollection.totalResults = 50;
 
+            this.resultsViewSelectionModel = new Backbone.Collection();
+
             const selectedIndexes = new Backbone.Collection([
                 {name: 'Wikipedia', domain: 'PUBLIC'}
             ]);
@@ -208,6 +210,7 @@ define([
                 savedSearchCollection: this.savedSearchCollection,
                 queryState: this.queryState,
                 selectedTabModel: this.selectedTabModel,
+                resultsViewSelectionModel: this.resultsViewSelectionModel,
                 searchCollections: {
                     QUERY: this.savedQueryCollection,
                     SNAPSHOT: this.savedSnapshotCollection

@@ -89,7 +89,8 @@ define([
                 const displayWidgetName = widget.displayWidgetName || options.displayWidgetNames || 'never';
                 const widgetOptions = _.extend({
                     updateInterval: this.updateInterval,
-                    displayWidgetName: displayWidgetName
+                    displayWidgetName: displayWidgetName,
+                    savedQueryCollection: options.savedQueryCollection
                 }, widget);
 
                 return {
