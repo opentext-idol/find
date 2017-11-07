@@ -73,6 +73,7 @@ define([
                         title: i18n['settings.view'],
                         strings: _.extend(this.serverStrings(), {
                             connector: i18n['settings.view.connector'],
+                            universal: i18n['settings.view.universal'],
                             referenceFieldLabel: i18n['settings.view.referenceFieldLabel'],
                             referenceFieldBlank: i18n['settings.view.referenceFieldBlank'],
                             referenceFieldPlaceholder: i18n['settings.view.referenceFieldPlaceholder'],

@@ -478,6 +478,7 @@ define([
         'settings.view.referenceFieldBlank': 'Reference Field must not be blank',
         'settings.view.referenceFieldLabel': 'Reference Field',
         'settings.view.referenceFieldPlaceholder': 'Enter Reference Field',
+        'settings.view.universal': 'Universal',
         'settings.view.viewingMode': 'Viewing Mode',
         'settings.CONNECTION_ERROR': 'An error occurred while contacting the ACI server',
         'settings.DEFAULT_LOGIN': 'Default login specified. Test Community connection and select a server type.',
