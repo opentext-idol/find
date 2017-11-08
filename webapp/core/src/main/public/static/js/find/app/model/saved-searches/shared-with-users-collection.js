@@ -12,7 +12,7 @@ define([
 
     return FindBaseCollection.extend({
         url: function() {
-            return '/api/public/search/shared-searches/permissions/' + this.searchId
+            return 'api/public/search/shared-searches/permissions/' + this.searchId
         },
 
         initialize: function(models, options) {
