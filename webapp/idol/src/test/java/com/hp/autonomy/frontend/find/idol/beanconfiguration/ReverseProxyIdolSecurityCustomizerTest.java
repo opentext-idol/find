@@ -72,6 +72,7 @@ public class ReverseProxyIdolSecurityCustomizerTest {
         when(userService.getUser(anyString(), anyBoolean())).thenReturn(userRoles);
     }
 
+    // We don't need to filter the roles anymore, so we just test the mapping.
     @Test
     public void testRoleFiltering() {
         final Collection<AuthenticationProvider> authenticationProviders = reverseProxyIdolSecurityCustomizer.getAuthenticationProviders();
@@ -83,7 +84,7 @@ public class ReverseProxyIdolSecurityCustomizerTest {
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("AuthenticationProvider did not authenticate"));
 
-        assertThat(authentication.getAuthorities(), contains(authority("FindUser"), authority("FindBI")));
+        assertThat(authentication.getAuthorities(), contains(authority("FindAdmin"), authority("FindUser"), authority("FindBI")));
     }
 
 

@@ -62,7 +62,6 @@ public class ReverseProxyIdolSecurityCustomizer implements IdolSecurityCustomize
                 grantedAuthoritiesMapper,
                 Arrays.stream(preAuthenticatedRoles.split(","))
                         .map(FindCommunityRole::fromValue)
-                        .filter(role -> FindCommunityRole.ADMIN != role)
                         .map(FindCommunityRole::value)
                         .collect(Collectors.toSet())
         ));
