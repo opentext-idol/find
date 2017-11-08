@@ -52,7 +52,7 @@ define([
 
                 body.assets[this.type] = file;
 
-                $.ajax('../api/admin/customization/config', {
+                $.ajax('api/admin/customization/config', {
                     contentType: "application/json",
                     data: JSON.stringify(body),
                     dataType: 'json',

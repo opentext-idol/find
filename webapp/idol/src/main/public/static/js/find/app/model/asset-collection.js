@@ -13,7 +13,7 @@ define([
         comparator: 'id',
 
         url: function() {
-            return '../api/admin/customization/assets/' + this.type
+            return 'api/admin/customization/assets/' + this.type
         },
 
         initialize: function(models, options) {
