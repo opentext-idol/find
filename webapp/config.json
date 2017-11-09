@@ -1,0 +1,325 @@
+{
+  "login" : {
+    "name" : "CommunityAuthentication",
+    "defaultLogin" : {
+      "username" : null,
+      "password" : null
+    },
+    "community" : {
+      "protocol" : "HTTP",
+      "host" : "find-conversation-id",
+      "port" : 9030
+    },
+    "method" : "autonomy"
+  },
+  "content" : {
+    "protocol" : "HTTP",
+    "host" : "find-conversation-id",
+    "port" : 9000
+  },
+  "queryManipulation" : {
+    "server" : {
+      "protocol" : "HTTP",
+      "host" : "localhost",
+      "port" : 16000
+    },
+    "expandQuery" : true,
+    "synonymDatabaseMatch" : true,
+    "blacklist" : "ISO_BLACKLIST",
+    "typeAheadMode" : "Index",
+    "enabled" : false
+  },
+  "view" : {
+    "connector" : {
+      "protocol" : "HTTP",
+      "host" : "find-conversation-id",
+      "port" : 7200
+    },
+    "referenceField" : "IMPORT_URL",
+    "viewingMode" : "CONNECTOR",
+    "highlighting" : true,
+    "protocol" : "HTTP",
+    "host" : "find-conversation-id",
+    "port" : 9080
+  },
+  "answerServer" : {
+    "server" : {
+      "protocol" : "HTTP",
+      "host" : "find-conversation-as",
+      "port" : 12000
+    },
+    "systemNames" : [ null ],
+    "enabled" : true
+  },
+  "mmap" : {
+    "enabled" : false,
+    "baseUrl" : ""
+  },
+  "uiCustomization" : {
+    "options" : {
+      "enableTypeAhead" : {
+        "bi" : true,
+        "user" : true
+      },
+      "enableDashboards" : {
+        "bi" : true,
+        "user" : false
+      },
+      "enableSideBar" : {
+        "bi" : true,
+        "user" : false
+      },
+      "enableMetaFilter" : {
+        "bi" : true,
+        "user" : false
+      },
+      "enableRelatedConcepts" : {
+        "bi" : false,
+        "user" : true
+      },
+      "resultViewOrder" : {
+        "bi" : [ "topic-map", "list", "sunburst", "trending", "table", "map" ],
+        "user" : [ "list" ]
+      },
+      "enableSavedSearch" : {
+        "bi" : true,
+        "user" : false
+      }
+    },
+    "defaultDeselectedDatabases" : [ "conversations", "Investopedia" ],
+    "parametricNeverShow" : [ "DOCUMENTSIZE", "COUNTRIES_VALUE", "DOCUMENT_TYPE", "DOCUMENTATION", "RATING", "CONVERSATION_RATING", "AUTN_DATE" ],
+    "parametricAlwaysShow" : [ ],
+    "parametricOrder" : [ ],
+    "specialUrlPrefixes" : {
+      "application/msaccess" : "ms-access:ofv|u|",
+      "application/msword" : "ms-word:ofv|u|",
+      "application/msproject" : "ms-project:ofv|u|",
+      "application/vnd.visio" : "ms-visio:ofv|u|",
+      "application/msexcel" : "ms-excel:ofv|u|",
+      "application/vnd.ms-project" : "ms-project:ofv|u|",
+      "application/vnd.ms-excel" : "ms-excel:ofv|u|",
+      "application/x-mspublisher" : "ms-publisher:ofv|u|",
+      "application/vnd.ms-powerpoint" : "ms-powerpoint:ofv|u|",
+      "application/mspowerpoint" : "ms-powerpoint:ofv|u|",
+      "application/x-msaccess" : "ms-access:ofv|u|"
+    },
+    "errorCallSupportString" : null
+  },
+  "fieldsInfo" : {
+    "contentType" : {
+      "names" : [ "AU_REPOSITORY_METADATA_TYPE_STRING", "REPOSITORY_METADATA_TYPE_STRING" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "url" : {
+      "names" : [ "REPOSITORY_METADATA_URL_FILE_STRING", "AU_REPOSITORY_METADATA_URL_FILE_STRING", "IMPORT_URL" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "offset" : {
+      "advanced" : true,
+      "names" : [ "OFFSET" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "authors" : {
+      "names" : [ "AU_DOCUMENT_METADATA_AUTHOR_STRING", "DOCUMENT_METADATA_AUTHOR_STRING" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "categories" : {
+      "names" : [ "AU_REPOSITORY_METADATA_CATEGORY_STRING", "REPOSITORY_METADATA_CATEGORY_STRING", "EXPERTISE" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "dateCreated" : {
+      "type" : "date",
+      "names" : [ "DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS", "AU_DOCUMENT_METADATA_DATE_CREATED_EPOCHSECONDS" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "dateModified" : {
+      "type" : "date",
+      "names" : [ "DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS", "AU_DOCUMENT_METADATA_DATE_MODIFIED_EPOCHSECONDS" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "mmapEventSourceType" : {
+      "advanced" : true,
+      "names" : [ "MMAP_EVENT_SOURCE_TYPE" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "mmapEventSourceName" : {
+      "advanced" : true,
+      "names" : [ "MMAP_EVENT_SOURCE_NAME" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "mmapEventTime" : {
+      "advanced" : true,
+      "names" : [ "MMAP_EVENT_TIME" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "mmapUrl" : {
+      "advanced" : true,
+      "names" : [ "MMAP_PROXY_URL" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "thumbnail" : {
+      "advanced" : true,
+      "names" : [ "PREVIEW_THUMBNAIL_BASE64" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "thumbnailUrl" : {
+      "advanced" : true,
+      "names" : [ "THUMBNAIL_URL" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "sourceType" : {
+      "advanced" : true,
+      "names" : [ "SOURCETYPE" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "transcript" : {
+      "advanced" : true,
+      "names" : [ "TRANSCRIPTION_CONTENT" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "latitude" : {
+      "type" : "number",
+      "advanced" : true,
+      "names" : [ "NODE_PLACE/LAT", "LAT" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "longitude" : {
+      "type" : "number",
+      "advanced" : true,
+      "names" : [ "NODE_PLACE/LON", "LON" ],
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "rating" : {
+      "type" : "number",
+      "advanced" : true,
+      "names" : [ "RATING" ],
+      "displayName" : "Document Rating",
+      "values" : [ ],
+      "editable" : [ "*" ]
+    },
+    "conversationRating" : {
+      "type" : "number",
+      "advanced" : true,
+      "names" : [ "CONVERSATION_RATING" ],
+      "displayName" : "Conversation Rating",
+      "values" : [ ],
+      "editable" : [ "*" ]
+    },
+    "documentSize" : {
+      "type" : "number",
+      "advanced" : true,
+      "names" : [ "DOCUMENTSIZE" ],
+      "displayName" : "Document Size",
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "documentType" : {
+      "advanced" : true,
+      "names" : [ "DOCUMENT_TYPE" ],
+      "displayName" : "Topic",
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "fileType" : {
+      "advanced" : true,
+      "names" : [ "IMPORTMAGICEXTENSION" ],
+      "displayName" : "File Type",
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "autnDate" : {
+      "type" : "date",
+      "advanced" : true,
+      "names" : [ "AUTN_DATE" ],
+      "displayName" : "Date",
+      "values" : [ ],
+      "editable" : [ "*" ]
+    },
+    "country" : {
+      "names" : [ "COUNTRIES_VALUE" ],
+      "displayName" : "COUNTRIES",
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "currency" : {
+      "names" : [ "CURRENCY_VALUE" ],
+      "displayName" : "CURRENCY",
+      "values" : [ ],
+      "editable" : [ ]
+    },
+    "language" : {
+      "advanced" : true,
+      "names" : [ "DETECTEDLANGUAGE" ],
+      "displayName" : "Language",
+      "values" : [ ],
+      "editable" : [ ]
+    }
+  },
+  "map" : {
+    "tileUrlTemplate" : "",
+    "enabled" : false,
+    "attribution" : "",
+    "locationFields" : [ {
+      "displayName" : "DefaultLocation",
+      "latitudeField" : "latitude",
+      "longitudeField" : "longitude",
+      "iconName" : "hp-record",
+      "iconColor" : "white",
+      "markerColor" : "blue"
+    } ],
+    "resultsStep" : 2500,
+    "initialLocation" : {
+      "latitude" : 51.5074,
+      "longitude" : 0.1278
+    }
+  },
+  "trending" : {
+    "dateField" : "AUTN_DATE",
+    "defaultNumberOfBuckets" : 20,
+    "minNumberOfBuckets" : 3,
+    "maxNumberOfBuckets" : 100,
+    "numberOfValues" : 10
+  },
+  "minScore" : 0,
+  "statsServer" : {
+    "server" : {
+      "protocol" : "HTTP",
+      "host" : "localhost",
+      "port" : 19870
+    },
+    "enabled" : false
+  },
+  "topicMapMaxResults" : 1000,
+  "export" : {
+    "powerpoint" : {
+      "templateFile" : "",
+      "marginTop" : null,
+      "marginLeft" : null,
+      "marginRight" : null,
+      "marginBottom" : null,
+      "enabled" : true
+    },
+    "enabled" : true
+  },
+  "savedSearches" : {
+    "pollForUpdates" : true,
+    "pollingInterval" : 5
+  }
+}
