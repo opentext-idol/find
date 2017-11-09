@@ -112,7 +112,7 @@
       "editable" : [ ]
     },
     "url" : {
-      "names" : [ "REPOSITORY_METADATA_URL_FILE_STRING", "AU_REPOSITORY_METADATA_URL_FILE_STRING", "IMPORT_URL" ],
+      "names" : [ "REPOSITORY_METADATA_URL_FILE_STRING", "AU_REPOSITORY_METADATA_URL_FILE_STRING", "IMPORT_URL", "URL" ],
       "values" : [ ],
       "editable" : [ ]
     },
