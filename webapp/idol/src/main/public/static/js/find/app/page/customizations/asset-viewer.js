@@ -124,7 +124,7 @@ define([
                 data: {
                     id: null,
                     deletable: false,
-                    url: '/static-' + configuration().commit + options.defaultImage
+                    url: 'static-' + configuration().commit + options.defaultImage
                 }
             }));
 
