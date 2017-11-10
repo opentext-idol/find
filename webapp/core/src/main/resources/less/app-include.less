@@ -29,6 +29,12 @@
   }
 }
 
+// The duplicate selector is to increase specificity to override the '.nav > li > a' which places incorrect padding.,
+//   while avoiding use of > since class selectors are faster.
+.navbar-text-link.navbar-text-link {
+  padding: 5px 7px 5px 13px;
+}
+
 .check-cell {
   width: 29px;
 }
