@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.idol.configuration;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigFileServiceTest;
 import com.hp.autonomy.frontend.find.idol.beanconfiguration.IdolConfigUpdateHandler;
+import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldPathNormaliserImpl;
 import org.junit.Before;
 import org.mockito.Mock;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,6 +24,9 @@ public class IdolFindConfigFileServiceTest extends FindConfigFileServiceTest<Ido
     @MockBean
     private IdolConfigUpdateHandler configUpdateHandler;
 
+    @MockBean
+    private IdolFieldPathNormaliserImpl idolFieldPathNormaliser;
+
     @Mock
     private IdolFindConfig config;
 
@@ -33,7 +37,8 @@ public class IdolFindConfigFileServiceTest extends FindConfigFileServiceTest<Ido
                 textEncryptor,
                 fieldPathSerializer,
                 fieldPathDeserializer,
-                configUpdateHandler);
+                configUpdateHandler,
+                idolFieldPathNormaliser);
     }
 
     @Override

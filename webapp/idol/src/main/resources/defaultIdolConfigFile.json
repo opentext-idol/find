@@ -186,6 +186,7 @@
   },
   "minScore": 0,
   "topicMapMaxResults": 1000,
+  "idolFieldPathNormalizerXMLPrefixes": ["DOCUMENTS"],
   "fieldsInfo": {
     "contentType": {
       "names": [

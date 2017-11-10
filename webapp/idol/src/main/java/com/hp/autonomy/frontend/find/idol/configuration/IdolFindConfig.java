@@ -32,9 +32,12 @@ import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import com.hp.autonomy.user.UserServiceConfig;
+import java.util.Collection;
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
 import java.util.Arrays;
@@ -60,6 +63,8 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final SavedSearchConfig savedSearchConfig;
     private final MMAP mmap;
     private final UiCustomization uiCustomization;
+    @JsonProperty("idolFieldPathNormalizerXMLPrefixes")
+    private final Collection<String> idolFieldPathNormalizerXMLPrefixes;
     private final FieldsInfo fieldsInfo;
     private final MapConfiguration map;
     private final TrendingConfiguration trending;
@@ -85,6 +90,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .savedSearchConfig(savedSearchConfig == null ? other.savedSearchConfig : savedSearchConfig.merge(other.savedSearchConfig))
                 .mmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
                 .uiCustomization(uiCustomization == null ? other.uiCustomization : uiCustomization.merge(other.uiCustomization))
+                .idolFieldPathNormalizerXMLPrefixes(CollectionUtils.isEmpty(idolFieldPathNormalizerXMLPrefixes) ? other.idolFieldPathNormalizerXMLPrefixes : idolFieldPathNormalizerXMLPrefixes)
                 .fieldsInfo(fieldsInfo == null ? other.fieldsInfo : fieldsInfo.merge(other.fieldsInfo))
                 .map(map == null ? other.map : map.merge(other.map))
                 .trending(trending == null ? other.trending : trending.merge(other.trending))
@@ -229,5 +235,9 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         @SuppressWarnings("unused")
         @JsonProperty("savedSearches")
         private SavedSearchConfig savedSearchConfig;
+
+        @SuppressWarnings("unused")
+        @JsonProperty("idolFieldPathNormalizerXMLPrefixes")
+        private Collection<String> idolFieldPathNormalizerXMLPrefixes;
     }
 }
