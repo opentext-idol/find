@@ -41,6 +41,7 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final Map<String, String> specialUrlPrefixes;
     private final String errorCallSupportString;
+    private final String messageOfTheDay;
     private final Boolean openSharedDashboardQueryAsNewSearch;
 
     @Override
@@ -63,6 +64,7 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
                                      : uiCustomization.parametricOrder)
                 .specialUrlPrefixes(specialUrlPrefixes)
                 .errorCallSupportString(errorCallSupportString != null ? errorCallSupportString : uiCustomization.errorCallSupportString)
+                .messageOfTheDay(messageOfTheDay != null ? messageOfTheDay : uiCustomization.messageOfTheDay)
                 .defaultDeselectedDatabases(CollectionUtils.isNotEmpty(defaultDeselectedDatabases)
                                             ? defaultDeselectedDatabases
                                             : uiCustomization.defaultDeselectedDatabases)

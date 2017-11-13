@@ -90,5 +90,8 @@
                 </ul>
             </nav>
         <% } %>
+        <% if (data.messageOfTheDay) { %>
+            <span class="find-navbar-motd"><%- data.messageOfTheDay %></span>
+        <% } %>
     </nav>
 </div>
