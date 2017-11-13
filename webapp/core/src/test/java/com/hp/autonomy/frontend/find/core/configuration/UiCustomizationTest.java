@@ -29,6 +29,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -68,7 +69,7 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
             .parametricOrderItem(tagNameFactory.getFieldPath("FIELD_Y"))
             .parametricOrderItem(tagNameFactory.getFieldPath("FIELD_X"))
             .specialUrlPrefixes(ImmutableMap.of("application/vnd.visio", "ms-visio:ofv|u|"))
-            .errorCallSupportString("Custom technical support message")
+            .errorCallSupportString("Other technical support message")
             .build();
     }
 
@@ -103,6 +104,7 @@ public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomizat
         assertThat(objectContent.getObject().getParametricAlwaysShow(), hasItem(tagNameFactory.getFieldPath("AUTN_DATE")));
         assertThat(objectContent.getObject().getSpecialUrlPrefixes(), hasKey("application/msword"));
         assertThat(objectContent.getObject().getSpecialUrlPrefixes(), hasKey("application/vnd.visio"));
+        assertEquals("Other technical support message", objectContent.getObject().getErrorCallSupportString());
     }
 
     @Override
