@@ -95,9 +95,9 @@ define([
                     const rating = e.ctrlKey ? undefined : +$el.data('rating');
                     const reference = $el.data('reference');
                     const database = $el.data('database');
-                    $el.siblings('.star-rating').remove();
+                    $el.siblings('.star-rating,.star-rating-text').remove();
                     $el.replaceWith(starsHelper(rating, reference, database, 'star-rating') + '');
-                    $.post('api/public/search/edit-document', {
+                    $.post('api/public/search/edit-document-rating', {
                         database: database,
                         reference: reference,
                         field: 'rating',

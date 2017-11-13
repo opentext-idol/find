@@ -19,6 +19,11 @@ define([
             // use filled stars for the rating, and empty stars as placeholders
             str += '<span class="'+cssClasses+'" data-rating="'+ii+'" data-reference="'+_.escape(reference)+'" data-database="'+_.escape(database)+'">' + (rating >= ii ? '★' : '☆') + '</span>';
         }
+        const rounded = Math.round(rating);
+        const round10 = Math.round(10 * rating) / 10;
+        if (isFinite(round10) && rounded !== round10) {
+            str += '<span class="'+cssClasses+'-text">' + round10 + '</span>';
+        }
         return new Handlebars.SafeString(str);
     };
 

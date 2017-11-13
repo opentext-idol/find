@@ -19,6 +19,7 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequestBuilder;
+import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -67,6 +68,9 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
     @Mock
     private IdolGetContentRequestIndexBuilder getContentRequestIndexBuilder;
 
+    @Mock
+    private ProcessorFactory processorFactory;
+
     @Before
     public void setUp() {
         when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
@@ -99,7 +103,7 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
         when(getContentRequestBuilder.indexAndReferences(any())).thenReturn(getContentRequestBuilder);
         when(getContentRequestBuilder.print(any())).thenReturn(getContentRequestBuilder);
 
-        documentsController = new IdolDocumentsController(idolDocumentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory);
+        documentsController = new IdolDocumentsController(idolDocumentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory, processorFactory);
         documentsService = idolDocumentsService;
         databaseType = String.class;
     }
