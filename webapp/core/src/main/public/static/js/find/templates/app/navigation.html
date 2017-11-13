@@ -25,6 +25,9 @@
             </ul>
         </li>
     </ul>
+    <% if (data.messageOfTheDay) { %>
+    <span class="find-navbar-motd"><%- data.messageOfTheDay %></span>
+    <% } %>
     <nav class="navbar-static-side-container nav-menu-btn-container-dark">
         <div class="nav-menu-btn-container nav-menu-btn-container-dark nav-menu-btn-container-top-light">
             <% if (data.pages.sidebar || data.pages.dashboards) { %>
@@ -89,9 +92,6 @@
                     <% } %>
                 </ul>
             </nav>
-        <% } %>
-        <% if (data.messageOfTheDay) { %>
-            <span class="find-navbar-motd"><%- data.messageOfTheDay %></span>
         <% } %>
     </nav>
 </div>
