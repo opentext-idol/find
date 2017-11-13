@@ -62,7 +62,7 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
                                      ? parametricOrder
                                      : uiCustomization.parametricOrder)
                 .specialUrlPrefixes(specialUrlPrefixes)
-                .errorCallSupportString(uiCustomization.errorCallSupportString)
+                .errorCallSupportString(errorCallSupportString != null ? errorCallSupportString : uiCustomization.errorCallSupportString)
                 .defaultDeselectedDatabases(CollectionUtils.isNotEmpty(defaultDeselectedDatabases)
                                             ? defaultDeselectedDatabases
                                             : uiCustomization.defaultDeselectedDatabases)
