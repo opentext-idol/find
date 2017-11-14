@@ -107,6 +107,10 @@
       }
     ]
   },
+  "messageOfTheDay": {
+    "message": null,
+    "status": "text-info"
+  },
   "trending" : {
     "dateField" : "AUTN_DATE",
     "numberOfValues": 10,

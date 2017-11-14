@@ -94,6 +94,7 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
         publicConfig.put(MvcConstants.ANSWER_SERVER_ENABLED.value(), config.getAnswerServer().getEnabled());
         publicConfig.put(MvcConstants.TEMPLATES_CONFIG.value(), templatesConfig.getConfig());
         publicConfig.put(MvcConstants.ASSETS_CONFIG.value(), assetsConfigService.getConfig());
+        publicConfig.put(MvcConstants.MESSAGE_OF_THE_DAY_CONFIG.value(), config.getMessageOfTheDay());
 
         return publicConfig;
     }

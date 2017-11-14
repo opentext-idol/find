@@ -21,6 +21,7 @@ import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationCo
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.MessageOfTheDayConfig;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.frontend.find.core.configuration.TrendingConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
@@ -33,7 +34,6 @@ import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import com.hp.autonomy.user.UserServiceConfig;
 import java.util.Collection;
-import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -62,6 +62,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
     private final MMAP mmap;
+    private final MessageOfTheDayConfig messageOfTheDay;
     private final UiCustomization uiCustomization;
     @JsonProperty("idolFieldPathNormalizerXMLPrefixes")
     private final Collection<String> idolFieldPathNormalizerXMLPrefixes;
@@ -89,6 +90,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .answerServer(answerServer == null ? other.answerServer : answerServer.merge(other.answerServer))
                 .savedSearchConfig(savedSearchConfig == null ? other.savedSearchConfig : savedSearchConfig.merge(other.savedSearchConfig))
                 .mmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
+                .messageOfTheDay(messageOfTheDay == null ? other.messageOfTheDay : messageOfTheDay.merge(other.messageOfTheDay))
                 .uiCustomization(uiCustomization == null ? other.uiCustomization : uiCustomization.merge(other.uiCustomization))
                 .idolFieldPathNormalizerXMLPrefixes(CollectionUtils.isEmpty(idolFieldPathNormalizerXMLPrefixes) ? other.idolFieldPathNormalizerXMLPrefixes : idolFieldPathNormalizerXMLPrefixes)
                 .fieldsInfo(fieldsInfo == null ? other.fieldsInfo : fieldsInfo.merge(other.fieldsInfo))

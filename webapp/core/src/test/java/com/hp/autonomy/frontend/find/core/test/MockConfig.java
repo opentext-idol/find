@@ -6,6 +6,7 @@ import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationCo
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.MessageOfTheDayConfig;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
@@ -25,6 +26,7 @@ public class MockConfig extends SimpleComponent<MockConfig> implements FindConfi
     UiCustomization uiCustomization;
     Integer topicMapMaxResults;
     ExportConfig export;
+    MessageOfTheDayConfig messageOfTheDay;
 
     @Override
     public Map<String, OptionalConfigurationComponent<?>> getEnabledValidationMap() {

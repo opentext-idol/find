@@ -74,7 +74,8 @@ define([
                 pages: pages,
                 applications: conf.applications,
                 username: conf.username,
-                messageOfTheDay: conf.uiCustomization && conf.uiCustomization.messageOfTheDay
+                messageOfTheDay: conf.messageOfTheDay && conf.messageOfTheDay.message,
+                messageOfTheDayCssClass: conf.messageOfTheDay && conf.messageOfTheDay.cssClass,
             }));
 
             this.$('.side-menu').metisMenu({

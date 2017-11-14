@@ -10,6 +10,7 @@ define([
     'find/app/page/settings/answer-server-widget',
     'find/app/page/settings/community-widget',
     'find/app/page/settings/map-widget',
+    'find/app/page/settings/motd-widget',
     'find/app/page/settings/mmap-widget',
     'find/app/page/settings/query-manipulation-widget',
     'find/app/page/settings/saved-search-widget',
@@ -17,7 +18,7 @@ define([
     'find/app/page/settings/view-widget',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/settings/community-widget.html'
-], function (_, SettingsPage, AciWidget, AnswerServerWidget, CommunityWidget, MapWidget, MmapWidget, QueryManipulationWidget,
+], function (_, SettingsPage, AciWidget, AnswerServerWidget, CommunityWidget, MapWidget, MotdWidget, MmapWidget, QueryManipulationWidget,
              SavedSearchWidget, StatsServerWidget, ViewWidget, i18n, dropdownTemplate) {
 
     return SettingsPage.extend({
@@ -44,6 +45,18 @@ define([
                             invalidSecurityType: i18n['settings.community.login.invalidType'],
                             loginTypeLabel: i18n['settings.community.login.type'],
                             validateFailed: i18n['settings.test.failed']
+                        })
+                    }),
+                    new MotdWidget({
+                        configItem: 'messageOfTheDay',
+                        isOpened: true,
+                        title: i18n['settings.messageOfTheDay'],
+                        strings: _.extend(this.serverStrings(), {
+                            message: i18n['settings.messageOfTheDay.message'],
+                            status: i18n['settings.messageOfTheDay.status'],
+                            statusSuccess: i18n['settings.messageOfTheDay.status.success'],
+                            statusInfo: i18n['settings.messageOfTheDay.status.info'],
+                            statusWarning: i18n['settings.messageOfTheDay.status.warning']
                         })
                     })
                 ], [

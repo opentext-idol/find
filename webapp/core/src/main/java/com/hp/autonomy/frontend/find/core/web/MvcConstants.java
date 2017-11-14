@@ -25,7 +25,8 @@ public enum MvcConstants {
     ANSWER_SERVER_ENABLED("answerServerEnabled"),
     PUBLIC_INDEXES_ENABLED("publicIndexesEnabled"),
     TEMPLATES_CONFIG("templatesConfig"),
-    ASSETS_CONFIG("assetsConfig");
+    ASSETS_CONFIG("assetsConfig"),
+    MESSAGE_OF_THE_DAY_CONFIG("messageOfTheDay");
 
     private final String value;
 
