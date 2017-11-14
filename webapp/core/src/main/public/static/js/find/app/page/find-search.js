@@ -631,6 +631,10 @@ define([
 
             // TODO: somebody else needs to own this
             $('.container-fluid, .find-logo-small').toggleClass('reduced', !bool);
+            if (!this.configuration.hasBiRole) {
+                // Hide the MOTD to make space for the search box
+                $('.find-navbar-motd').toggleClass('fade', bool);
+            }
         },
 
         isExpanded: function () {

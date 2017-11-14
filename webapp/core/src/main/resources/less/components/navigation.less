@@ -61,9 +61,21 @@
 
 .find-navbar-motd {
   position: absolute;
-  width: 100%;
+  height: 100%;
   text-align: center;
   color: white;
+  left: 240px;
+  right: 160px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  // Overrides the normal fade transition speed from the 'fade' class
+  -webkit-transition: @transitAll;
+  -o-transition: @transitAll;
+  transition: @transitAll;
+}
+
+.hide-navbar .find-navbar-motd {
+  left: 160px;
 }
 
 .find-navbar .dropdown-toggle:hover,

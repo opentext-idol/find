@@ -52,9 +52,9 @@ define([
                         isOpened: true,
                         title: i18n['settings.messageOfTheDay'],
                         strings: _.extend(this.serverStrings(), {
+                            description: i18n['settings.messageOfTheDay.description'],
                             message: i18n['settings.messageOfTheDay.message'],
                             status: i18n['settings.messageOfTheDay.status'],
-                            statusSuccess: i18n['settings.messageOfTheDay.status.success'],
                             statusInfo: i18n['settings.messageOfTheDay.status.info'],
                             statusWarning: i18n['settings.messageOfTheDay.status.warning']
                         })
