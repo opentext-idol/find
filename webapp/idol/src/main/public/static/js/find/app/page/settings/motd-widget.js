@@ -54,6 +54,8 @@ define([
         updateConfig: function(config) {
             this.$message.val(config.message);
             this.$status.val(config.cssClass);
+            this.onTextChange();
+            this.onStatusChange();
         }
     });
 });
