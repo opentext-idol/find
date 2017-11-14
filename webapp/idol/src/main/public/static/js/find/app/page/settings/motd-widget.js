@@ -15,6 +15,20 @@ define([
         widgetTemplate: _.template(widgetTemplate),
         template: _.template(template),
 
+        events: {
+            'change .message-input': 'onTextChange',
+            'keyup .message-input': 'onTextChange',
+            'change .status-input': 'onStatusChange'
+        },
+
+        onTextChange: function(){
+            $('.find-navbar-motd').text(this.$message.val());
+        },
+
+        onStatusChange: function(){
+            $('.find-navbar-motd').attr('class', 'find-navbar-motd ' + this.$status.val());
+        },
+
         initialize: function() {
             Widget.prototype.initialize.apply(this, arguments);
         },
