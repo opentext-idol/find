@@ -64,7 +64,7 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
 
     @RequestMapping(method = RequestMethod.GET)
     public Set<SavedQuery> getAll(
-        @RequestParam(defaultValue = "false") boolean shared
+        @RequestParam(name="shared", defaultValue = "false") boolean shared
     ) {
         if (shared) {
             final LinkedHashSet<SavedQuery> toReturn = new LinkedHashSet<>(service.getOwned());
