@@ -73,7 +73,7 @@ class SavedSnapshotController {
 
     @RequestMapping(method = RequestMethod.GET)
     public Set<SavedSnapshot> getAll() {
-        return service.getAll();
+        return service.getOwned();
     }
 
     @RequestMapping(value = GET_SHARED, method = RequestMethod.GET)

@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.savedsearches.AbstractSavedSearchService;
+import com.hp.autonomy.frontend.find.core.savedsearches.SharedToEveryoneRepository;
 import com.hp.autonomy.frontend.find.core.savedsearches.SharedToUserRepository;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
@@ -21,8 +22,9 @@ public class SavedQueryService extends AbstractSavedSearchService<SavedQuery, Sa
     @Autowired
     public SavedQueryService(@SuppressWarnings("TypeMayBeWeakened") final SavedQueryRepository savedQueryRepository,
                              final SharedToUserRepository sharedToUserRepository,
+                             final SharedToEveryoneRepository sharedToEveryoneRepository,
                              final AuditorAware<UserEntity> userEntityAuditorAware,
                              final TagNameFactory tagNameFactory) {
-        super(savedQueryRepository, sharedToUserRepository, userEntityAuditorAware, tagNameFactory, SavedQuery.class);
+        super(savedQueryRepository, sharedToUserRepository, sharedToEveryoneRepository, userEntityAuditorAware, tagNameFactory, SavedQuery.class);
     }
 }
