@@ -136,6 +136,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         active = builder.active;
         minScore = builder.minScore;
         canEdit = builder.canEdit;
+        user = builder.user;
     }
 
     /**
@@ -151,6 +152,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     @SuppressWarnings("OverlyComplexMethod")
     public void merge(final T other) {
         if (other != null) {
+            // note: we're deliberately not merging in the user field
             mergeInternal(other);
 
             title = other.getTitle() == null ? title : other.getTitle();
@@ -319,6 +321,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         private Boolean active = true;
         private Integer minScore;
         private boolean canEdit = true;
+        private UserEntity user;
 
         protected Builder(final SavedSearch<T, B> search) {
             id = search.id;
@@ -337,6 +340,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             active = search.active;
             minScore = search.minScore;
             canEdit = search.canEdit;
+            user = search.user;
         }
 
         public abstract T build();
