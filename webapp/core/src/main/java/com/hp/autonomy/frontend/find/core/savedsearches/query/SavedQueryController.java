@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
+import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearch;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
@@ -15,6 +16,8 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
+import java.util.LinkedHashSet;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +30,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RequestMapping(SavedQueryController.PATH)
 public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends Serializable, Q extends QueryRestrictions<S>, D extends SearchResult, E extends Exception> {
@@ -59,7 +63,22 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
     protected abstract void addParams(QueryRequestBuilder<RQ, Q, ?> queryRequestBuilder);
 
     @RequestMapping(method = RequestMethod.GET)
-    public Set<SavedQuery> getAll() {
+    public Set<SavedQuery> getAll(
+        @RequestParam(defaultValue = "false") boolean shared
+    ) {
+        if (shared) {
+            final LinkedHashSet<SavedQuery> toReturn = new LinkedHashSet<>(service.getOwned());
+            final Set<Long> ids = toReturn.stream().map(SavedSearch::getId).collect(Collectors.toSet());
+
+            for(SavedQuery sharedQuery : service.getShared()) {
+                if (!ids.contains(sharedQuery.getId())) {
+                    toReturn.add(sharedQuery);
+                }
+            }
+
+            return toReturn;
+        }
+
         return service.getOwned();
     }
 
