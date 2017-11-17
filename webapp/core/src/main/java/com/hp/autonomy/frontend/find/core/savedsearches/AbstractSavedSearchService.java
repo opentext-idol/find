@@ -65,8 +65,9 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
         final LinkedHashSet<T> shared = new LinkedHashSet<>(userShared);
 
         for(SharedToEveryone globalShare : sharedToEveryoneRepository.findActiveByType(type)) {
-            if (!uniqueSavedSearchIds.contains(globalShare.getSavedSearch().getId())) {
-                shared.add(type.cast(globalShare.getSavedSearch()));
+            final SavedSearch<?, ?> savedSearch = globalShare.getSavedSearch();
+            if (!userId.equals(savedSearch.getUser().getUserId()) && !uniqueSavedSearchIds.contains(savedSearch.getId())) {
+                shared.add(type.cast(savedSearch));
             }
         }
 
