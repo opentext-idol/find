@@ -34,6 +34,9 @@ public class SharedToUserControllerTest {
     private SharedToUserRepository sharedToUserRepository;
 
     @MockBean
+    private SharedToEveryoneRepository sharedToEveryoneRepository;
+
+    @MockBean
     private SharedToUserService sharedToUserService;
 
     @MockBean

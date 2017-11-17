@@ -1,6 +1,7 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,8 @@ public abstract class AbstractSavedSearchServiceTest<T extends SavedSearch<T, B>
     private final Supplier<B> builderConstructor;
     @MockBean
     private SharedToUserRepository sharedToUserRepository;
+    @MockBean
+    private SharedToEveryoneRepository sharedToEveryoneRepository;
     @SuppressWarnings("unused")
     @MockBean
     private AuditorAware<UserEntity> userEntityAuditorAware;
@@ -57,6 +60,7 @@ public abstract class AbstractSavedSearchServiceTest<T extends SavedSearch<T, B>
         permissions.add(mockSharedToUser(false, 1L, 4L));
         permissions.add(mockSharedToUser(true, 1L, 5L));
         when(sharedToUserRepository.findByUserId(anyLong(), any())).thenReturn(permissions);
+        when(sharedToEveryoneRepository.findActiveByType(any())).thenReturn(Collections.emptySet());
     }
 
     private T mockSavedSearchResult(final Long searchId, final Boolean active) {
