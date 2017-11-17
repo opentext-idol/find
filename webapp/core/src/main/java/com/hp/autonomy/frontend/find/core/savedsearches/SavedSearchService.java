@@ -9,7 +9,7 @@ import java.util.Set;
 
 public interface SavedSearchService<T extends SavedSearch<T, B>, B extends SavedSearch.Builder<T, B>> {
 
-    Set<T> getAll();
+    Set<T> getOwned();
 
     Set<T> getShared();
 

@@ -83,7 +83,7 @@ public abstract class AbstractSavedSearchServiceTest<T extends SavedSearch<T, B>
 
     @Test
     public void getAll() {
-        final Set<T> results = service.getAll();
+        final Set<T> results = service.getOwned();
         assertThat(results, hasSize(2));
 
         final Set<T> canEditTrueResults = results.stream()

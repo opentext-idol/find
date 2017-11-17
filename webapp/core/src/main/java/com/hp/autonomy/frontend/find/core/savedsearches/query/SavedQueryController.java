@@ -60,7 +60,7 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
 
     @RequestMapping(method = RequestMethod.GET)
     public Set<SavedQuery> getAll() {
-        return service.getAll();
+        return service.getOwned();
     }
 
     @RequestMapping(value = GET_SHARED, method = RequestMethod.GET)

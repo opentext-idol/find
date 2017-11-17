@@ -74,7 +74,7 @@ public abstract class SavedQueryControllerTest<RQ extends QueryRequest<Q>, S ext
     @Test
     public void getAll() {
         savedQueryController.getAll();
-        verify(savedQueryService).getAll();
+        verify(savedQueryService).getOwned();
     }
 
     @Test

@@ -40,7 +40,7 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
     }
 
     @Override
-    public Set<T> getAll() {
+    public Set<T> getOwned() {
         final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
 
         return augmentOutputWithDisplayNames(crudRepository.findByActiveTrueAndUser_UserId(userId));
