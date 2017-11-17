@@ -16,5 +16,5 @@ public interface SharedToEveryoneRepository extends CrudRepository<SharedToEvery
             "WHERE s.active = true AND TYPE(s) = :type")
     Set<SharedToEveryone> findActiveByType(@Param("type") Class<?> type);
 
-    Set<SharedToEveryone> findBySavedSearch_Id(Long searchId);
+    SharedToEveryone findOneBySavedSearch_Id(Long searchId);
 }

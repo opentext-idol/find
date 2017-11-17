@@ -25,7 +25,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import static com.hp.autonomy.frontend.find.core.savedsearches.SharedToUser.Table.NAME;
+import static com.hp.autonomy.frontend.find.core.savedsearches.SharedToEveryone.Table.NAME;
 
 @SuppressWarnings("InstanceVariableOfConcreteClass")
 @Entity
