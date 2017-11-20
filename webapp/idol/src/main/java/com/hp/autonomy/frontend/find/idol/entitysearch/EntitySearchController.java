@@ -13,8 +13,9 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.idol.configuration.EntitySearchConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
+import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
+import com.hp.autonomy.searchcomponents.idol.search.QueryResponseParser;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
-import com.hp.autonomy.types.idol.responses.Hit;
 import com.hp.autonomy.types.idol.responses.QueryResponseData;
 import com.hp.autonomy.types.requests.idol.actions.query.QueryActions;
 import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
@@ -37,24 +38,26 @@ class EntitySearchController {
 
     private final HavenSearchAciParameterHandler parameterHandler;
     private final Processor<QueryResponseData> queryResponseProcessor;
-
+    private final QueryResponseParser queryResponseParser;
     private final AciService entitySearchAciService;
-
     private final ConfigService<IdolFindConfig> configService;
 
     @Autowired
     EntitySearchController(final HavenSearchAciParameterHandler parameterHandler,
                            final ProcessorFactory processorFactory,
                            final AciService entitySearchAciService,
-                           final ConfigService<IdolFindConfig> configService) {
+                           final ConfigService<IdolFindConfig> configService,
+                           final QueryResponseParser queryResponseParser) {
         this.parameterHandler = parameterHandler;
         this.queryResponseProcessor = processorFactory.getResponseDataProcessor(QueryResponseData.class);
         this.entitySearchAciService = entitySearchAciService;
         this.configService = configService;
+
+        this.queryResponseParser = queryResponseParser;
     }
 
     @RequestMapping(value = SEARCH_PATH, method = RequestMethod.GET)
-    public List<Hit> search(@RequestParam(TEXT_PARAM)
+    public List<IdolSearchResult> search(@RequestParam(TEXT_PARAM)
                                final String text) {
         AciParameters aciParameters = new AciParameters(QueryActions.Query.name());
 
@@ -74,6 +77,7 @@ class EntitySearchController {
 
         this.parameterHandler.addSecurityInfo(aciParameters);
 
-        return this.entitySearchAciService.executeAction(aciParameters, this.queryResponseProcessor).getHits();
+        final QueryResponseData resp = this.entitySearchAciService.executeAction(aciParameters, this.queryResponseProcessor);
+        return this.queryResponseParser.parseQueryHits(resp.getHits());
     }
 }
