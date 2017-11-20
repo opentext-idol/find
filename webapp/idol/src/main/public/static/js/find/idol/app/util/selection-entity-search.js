@@ -6,15 +6,66 @@
 define([
     'underscore',
     'jquery',
-    'i18n!find/nls/bundle',
-    'find/app/configuration'
-], function(_, $, i18n, configuration) {
+    'find/idol/app/model/entitysearch/entity-search-collection',
+    'text!find/templates/app/page/loading-spinner.html',
+    'i18n!find/nls/bundle'
+], function(_, $, EntitySearchCollection, loadingSpinnerTemplate, i18n) {
     'use strict';
 
-    function SelectionEntitySearch() {
+    const loadingHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
+
+    function SelectionEntitySearch(options) {
+        const documentRenderer = options.documentRenderer;
+        let element = options.element || document.body;
+
         let $hover;
 
-        function onSelectionChange(evt) {
+        const entityModels = new EntitySearchCollection();
+        let lastQueryText, lastFetch;
+
+        function loadModel(text, $summary, bounds) {
+            if (lastFetch && lastQueryText !== text) {
+                lastFetch.abort();
+            }
+
+            lastQueryText = text;
+
+            updateIndicator(loadingHtml, bounds);
+
+            lastFetch = entityModels.fetch({
+                data: { text: text }
+            }).done(function(models){
+                if (text === lastQueryText && entityModels.length) {
+                    const result = entityModels.first();
+                    const html = documentRenderer.renderEntity(result);
+
+                    updateIndicator(html, bounds);
+                }
+                else {
+                    clearIndicator()
+                }
+            }).fail(function(){
+                clearIndicator();
+            })
+        }
+
+        function clearIndicator() {
+            if ($hover) {
+                $hover.remove();
+                $hover = null;
+            }
+        }
+
+        function updateIndicator(html, bounds){
+            clearIndicator();
+
+            $hover = $('<div class="selection-entity" style=" z-index:1; max-width: 500px; position: fixed; border: solid 1px darkgreen; background: rgba(0,255,0,0.1)">').css({
+                top: bounds.bottom + 10,
+                left: bounds.left
+            }).html(html).appendTo(element);
+        }
+
+        function onSelectionChange() {
             const sel = window.getSelection();
 
             if (sel.rangeCount !== 1) {
@@ -22,7 +73,7 @@ define([
             }
 
             const range = sel.getRangeAt(0);
-            const text = range.toString();
+            const text = range.toString().trim();
 
             const $selectEnd = $(sel.focusNode);
 
@@ -32,47 +83,28 @@ define([
                 return;
             }
 
-            if (text) {
+            if (text && text.length >= 2) {
                 const $summary = $selectEnd.closest('.result-summary');
 
                 if ($summary.length && $(sel.anchorNode).closest('.result-summary').is($summary)) {
                     // We're in a summary, try fetching stuff
-                    const mocktext = 'this is some mock text about ' + text;
-
-                    if ($hover) {
-                        $hover.remove();
-                    }
-
-
-                    const bounds = range.getBoundingClientRect();
-
-                    const html = _.escape(mocktext) + '<a href="www.google.com" style="pointer-events: all">google</a>';
-
-                    $hover = $('<div class="selection-entity" style=" z-index:9999; max-width: 500px; position: fixed; border: solid 1px darkgreen; background: rgba(0,255,0,0.1)">').css({
-                        top: bounds.bottom,
-                        left: bounds.left
-                    }).html(html)
-                        .appendTo($summary);
-
+                    loadModel(text, $summary, range.getBoundingClientRect());
                     return;
                 }
             }
 
-            if ($hover) {
-                $hover.remove();
-                $hover = null;
-            }
+            clearIndicator();
         }
 
         $(document).on('selectionchange', onSelectionChange)
 
         this.stopListening = function(){
             $(document).off('selectionchange', onSelectionChange);
+            clearIndicator();
+        }
 
-            if ($hover) {
-                $hover.remove();
-                $hover = null;
-            }
+        this.setElement = function(dom) {
+            element = dom;
         }
     }
 

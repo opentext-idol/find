@@ -13,6 +13,7 @@ define([
     'find/app/util/document-mime-types',
     'find/app/util/url-manipulator',
     'text!find/templates/app/page/search/default-custom-templates/search-result.handlebars',
+    'text!find/templates/app/page/search/default-custom-templates/entity-search.handlebars',
     'text!find/templates/app/page/search/default-custom-templates/preview-mode-metadata.handlebars',
     'text!find/templates/app/page/search/default-custom-templates/promotion.handlebars',
     './template-helpers/equal-helper',
@@ -22,7 +23,7 @@ define([
     './template-helpers/get-field-values-helper',
     './template-helpers/with-field-helper',
     './template-helpers/i18n-helper'
-], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator, defaultResultTemplate,
+], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator, defaultResultTemplate, defaultEntitySearchTemplate,
             defaultPreviewTemplate, defaultPromotionTemplate, equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper,
             getFieldValuesHelper, withFieldHelper, i18nHelper) {
 
@@ -108,6 +109,7 @@ define([
                 this.templates = _.chain([
                         {defaultTemplate: defaultResultTemplate, key: 'searchResult'},
                         {defaultTemplate: defaultPreviewTemplate, key: 'previewPanel'},
+                        {defaultTemplate: defaultEntitySearchTemplate, key: 'entitySearch'},
                         {defaultTemplate: defaultPromotionTemplate, key: 'promotion'}
                     ])
                     .map(function(type) {
@@ -134,7 +136,8 @@ define([
     _.extend(DocumentRenderer.prototype, {
         renderResult: renderTemplate('searchResult'),
         renderPromotion: renderTemplate('promotion'),
-        renderPreviewMetadata: renderTemplate('previewPanel')
+        renderPreviewMetadata: renderTemplate('previewPanel'),
+        renderEntity: renderTemplate('entitySearch')
     });
 
     return DocumentRenderer;

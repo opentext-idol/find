@@ -1,0 +1,14 @@
+<div class="default-result-container">
+    <span class="pull-left m-t-xs text-muted m-r-sm content-type"><i class="{{icon}}"></i></span>
+    <div class="results-contents">
+        <h4 class="pull-left m-b-nil m-t-xs result-header">{{title}}</h4>
+        <span class="document-date pull-left m-t-xs m-l-xs">{{age}}</span>
+        <span class="document-reference shorten">{{reference}}</span>
+        {{#if thumbnailSrc}}
+            <img class="document-thumbnail mr-sm pull-left" src="{{thumbnailSrc}}"/>
+        {{/if}}
+        <p class="result-summary">
+            {{{summary}}}
+        </p>
+    </div>
+</div>

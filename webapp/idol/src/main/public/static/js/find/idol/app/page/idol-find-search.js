@@ -36,7 +36,12 @@ define([
 
         initialize: function(options){
             FindSearch.prototype.initialize.apply(this, arguments);
-            this.selectionEntitySearch = new SelectionEntitySearch();
+
+            if (configuration().entitySearchEnabled) {
+                this.selectionEntitySearch = new SelectionEntitySearch({
+                    documentRenderer: this.documentRenderer
+                });
+            }
         },
 
         getSearchTypes: function() {
