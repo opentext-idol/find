@@ -83,6 +83,22 @@
     },
     "enabled": false
   },
+  "entitySearch": {
+    "server": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 9050,
+      "productType": [
+        "AXE",
+        "DAH",
+        "IDOLPROXY"
+      ]
+    },
+    "agentBooleanField": "AGENTBOOL",
+    "combine": "FieldCheck",
+    "enabled": false,
+    "printFields": [ "wikipedia_image", "person_date_of_birth", "person_date_of_death", "person_profession", "wikipedia_image", "lat", "lon", "place_country_code", "place_region1", "place_population", "place_timezone", "wikipedia_image", "url_homepage", "company_google" ]
+  },
   "savedSearches": {
     "pollForUpdates": true,
     "pollingInterval": 5
