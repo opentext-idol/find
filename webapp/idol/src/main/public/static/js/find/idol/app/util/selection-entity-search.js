@@ -105,10 +105,12 @@ define([
             clearIndicator();
         }
 
-        $(document).on('selectionchange', onSelectionChange)
+        const debounced = _.debounce(onSelectionChange, 300);
+
+        $(document).on('selectionchange', debounced)
 
         this.stopListening = function(){
-            $(document).off('selectionchange', onSelectionChange);
+            $(document).off('selectionchange', debounced);
             clearIndicator();
         }
 
