@@ -34,7 +34,7 @@ define([
 
             lastFetch = entityModels.fetch({
                 data: { text: text }
-            }).done(function(models){
+            }).done(function(){
                 if (text === lastQueryText && entityModels.length) {
                     const result = entityModels.first();
                     const html = documentRenderer.renderEntity(result);
@@ -59,10 +59,19 @@ define([
         function updateIndicator(html, bounds){
             clearIndicator();
 
-            $hover = $('<div class="selection-entity" style=" z-index:1; max-width: 500px; position: fixed; border: solid 1px darkgreen; background: rgba(0,255,0,0.1)">').css({
-                top: bounds.bottom + 10,
+            const top = bounds.bottom + 10;
+
+            $hover = $('<div class="selection-entity">').css({
+                top: top,
                 left: bounds.left
             }).html(html).appendTo(element);
+
+            if ($hover.height() + top > window.innerHeight) {
+                $hover.css({
+                    top: 'auto',
+                    bottom: window.innerHeight - bounds.top + 10
+                })
+            }
         }
 
         function onSelectionChange() {
