@@ -21,10 +21,11 @@ define([
     'find/app/page/search/related-concepts/related-concepts-click-handlers',
     'find/idol/app/page/search/idol-query-left-side-view',
     'find/idol/app/page/search/comparison/compare-modal',
+    'find/idol/app/util/selection-entity-search',
     'find/app/configuration'
 ], function(_, FindSearch, i18n, snapshotsI18n, SavedSearchModel, IndexesCollection, ServiceView, SuggestView,
             SnapshotDataView, ComparisonView, stateTokenStrategy, queryStrategy, ComparisonDocumentsCollection,
-            DocumentsCollection, relatedConceptsClickHandlers, IdolQueryLeftSideView, CompareModal, configuration) {
+            DocumentsCollection, relatedConceptsClickHandlers, IdolQueryLeftSideView, CompareModal, SelectionEntitySearch, configuration) {
     'use strict';
 
     return FindSearch.extend({
@@ -32,6 +33,11 @@ define([
         ServiceView: ServiceView,
         SuggestView: SuggestView,
         QueryLeftSideView: IdolQueryLeftSideView,
+
+        initialize: function(options){
+            FindSearch.prototype.initialize.apply(this, arguments);
+            this.selectionEntitySearch = new SelectionEntitySearch();
+        },
 
         getSearchTypes: function() {
             return _.extend(FindSearch.prototype.getSearchTypes.call(this),
@@ -227,8 +233,16 @@ define([
             }
         },
 
+        removeSelectionEntitySearch: function(){
+            if (this.selectionEntitySearch) {
+                this.selectionEntitySearch.stopListening();
+                this.selectionEntitySearch = null;
+            }
+        },
+
         remove: function() {
             this.removeComparisonView();
+            this.removeSelectionEntitySearch();
             FindSearch.prototype.remove.call(this);
         }
     });
