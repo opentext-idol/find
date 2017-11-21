@@ -27,12 +27,11 @@
                 <div class="m-l-xs">{{i18n 'entitySearch.template.place.region'}}: {{getFieldValue 'PLACE_REGION1'}}</div>
             {{/hasField}}
             {{#hasField 'PLACE_POPULATION'}}
-                <div class="m-l-xs">{{i18n 'entitySearch.template.place.population'}}: {{getFieldValue 'PLACE_POPULATION'}}</div>
+                <div class="m-l-xs">{{i18n 'entitySearch.template.place.population'}}: {{prettyPrintNumber (getFieldValue 'PLACE_POPULATION')}}</div>
             {{/hasField}}
             {{#hasField 'PLACE_TIMEZONE'}}
-                <div class="m-l-xs">{{i18n 'entitySearch.template.place.timeZone'}}: {{getFieldValue 'PLACE_TIMEZONE'}}</div>
+                <div class="m-l-xs">{{i18n 'entitySearch.template.place.timeZone'}}: {{prettyPrintNumber (getFieldValue 'PLACE_TIMEZONE') plusIfPositive=true }}</div>
             {{/hasField}}
-            <!-- TODO: lat, lon map -->
         </div>
     {{/equal}}
     {{#equal (toLowerCase database) 'people'}}
