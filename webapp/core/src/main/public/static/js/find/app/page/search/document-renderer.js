@@ -21,6 +21,7 @@ define([
     './template-helpers/has-field-value-helper',
     './template-helpers/get-field-value-helper',
     './template-helpers/get-field-values-helper',
+    './template-helpers/placeholder-template-helper',
     './template-helpers/to-external-url-helper',
     './template-helpers/to-lower-case-helper',
     './template-helpers/to-upper-case-helper',
@@ -29,7 +30,7 @@ define([
     './template-helpers/i18n-helper'
 ], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator, defaultResultTemplate, defaultEntitySearchTemplate,
             defaultPreviewTemplate, defaultPromotionTemplate, equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper,
-            getFieldValuesHelper, toExternalUrlHelper, toLowerCaseHelper, toUpperCaseHelper, wikiThumbnailHelper, withFieldHelper, i18nHelper) {
+            getFieldValuesHelper, placeholderTemplateHelper, toExternalUrlHelper, toLowerCaseHelper, toUpperCaseHelper, wikiThumbnailHelper, withFieldHelper, i18nHelper) {
 
     function templatePredicate(triggers) {
         return function(model) {
@@ -105,6 +106,7 @@ define([
             hasFieldValue: hasFieldValueHelper,
             getFieldValue: getFieldValueHelper,
             getFieldValues: getFieldValuesHelper,
+            placeholderTemplate: placeholderTemplateHelper,
             toExternalUrl: toExternalUrlHelper,
             toLowerCase: toLowerCaseHelper,
             toUpperCase: toUpperCaseHelper,
