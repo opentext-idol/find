@@ -17,7 +17,7 @@ define([
     function SelectionEntitySearch(options) {
         const documentRenderer = options.documentRenderer;
         // You can control which elements the popup will appear on by adjusting this selector.
-        const selector = options.selector || '.result-summary';
+        const selector = options.selector || '.result-summary,.parametric-value-element';
         const debounceMillis = options.debounceMillis || 250;
         let element = options.element || document.body;
 

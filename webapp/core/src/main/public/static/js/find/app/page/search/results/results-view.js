@@ -58,7 +58,7 @@ define([
                 if (String(window.getSelection()).length >= 2) {
                     // If the user is partway selecting text for selection-entity-search, we suppress the click,
                     //   otherwise the preview pane will toggle every time you try and select something.
-                    return false;
+                    return;
                 }
 
                 const $target = $(e.target);
