@@ -1,14 +1,57 @@
-<div class="default-result-container selection-entity-content">
-    <span class="pull-left m-t-xs text-muted m-r-sm content-type"><i class="{{icon}}"></i></span>
-    <div class="results-contents">
-        <h4 class="pull-left m-b-nil m-t-xs result-header">{{title}}</h4>
-        <span class="document-date pull-left m-t-xs m-l-xs">{{age}}</span>
-        <span class="document-reference shorten">{{reference}}</span>
-        {{#if thumbnailSrc}}
-            <img class="document-thumbnail mr-sm pull-left" src="{{thumbnailSrc}}"/>
-        {{/if}}
-        <p class="result-summary">
-            {{{summary}}}
-        </p>
-    </div>
+<div class="default-result-container selection-entity-content clearfix flex">
+    {{#hasField 'WIKIPEDIA_IMAGE'}}
+        <span class="pull-left m-t-xs m-b-xs m-r-sm">
+                <img src="{{ wikiThumbnailHelper (getFieldValue 'WIKIPEDIA_IMAGE') 200 }}">
+            </span>
+    {{/hasField}}
+
+    {{#equal database  'Places'}}
+        <div class="results-contents">
+            <h4 class="m-l-xs m-t-xs m-b-nil result-header">
+                {{#hasField 'PLACE_COUNTRY_CODE'}}
+                    <img style="max-height: 18px;" src="static-HEAD/img/flags.wp/{{toLowerCase (getFieldValue 'PLACE_COUNTRY_CODE')}}.svg">
+                {{/hasField}}
+                {{title}}
+            </h4>
+            {{#hasField 'PLACE_REGION1'}}
+                <div class="m-l-xs">{{i18n 'entitySearch.template.place.region'}}: {{getFieldValue 'PLACE_REGION1'}}</div>
+            {{/hasField}}
+            {{#hasField 'PLACE_POPULATION'}}
+                <div class="m-l-xs">{{i18n 'entitySearch.template.place.population'}}: {{getFieldValue 'PLACE_POPULATION'}}</div>
+            {{/hasField}}
+            {{#hasField 'PLACE_TIMEZONE'}}
+                <div class="m-l-xs">{{i18n 'entitySearch.template.place.timeZone'}}: {{getFieldValue 'PLACE_TIMEZONE'}}</div>
+            {{/hasField}}
+            <!-- TODO: lat, lon map -->
+        </div>
+    {{/equal}}
+    {{#equal database  'People'}}
+        <div class="results-contents">
+            <h4 class="m-l-xs m-t-xs m-b-nil result-header">
+                {{title}}
+            </h4>
+            {{#hasField 'PERSON_DATE_OF_BIRTH'}}
+                <div class="m-l-xs">{{i18n 'entitySearch.template.person.dateOfBirth'}}: {{getFieldValue 'PERSON_DATE_OF_BIRTH'}}</div>
+            {{/hasField}}
+            {{#hasField 'PERSON_DATE_OF_DEATH'}}
+                <div class="m-l-xs">{{i18n 'entitySearch.template.person.dateOfDeath'}}: {{getFieldValue 'PERSON_DATE_OF_DEATH'}}</div>
+            {{/hasField}}
+            {{#hasField 'PERSON_PROFESSION'}}
+                <div class="m-l-xs">{{i18n 'entitySearch.template.person.profession'}}: {{getFieldValues 'PERSON_PROFESSION' max=5}}</div>
+            {{/hasField}}
+        </div>
+    {{/equal}}
+    {{#equal database  'Companies'}}
+        <div class="results-contents">
+            <h4 class="m-l-xs m-t-xs m-b-nil result-header">
+                {{title}}
+            </h4>
+            {{#hasField 'URL_HOMEPAGE'}}
+                <div class="m-l-xs">{{i18n 'entitySearch.template.companies.url'}}: <a href="{{getFieldValue 'URL_HOMEPAGE'}}">{{getFieldValue 'URL_HOMEPAGE'}}</a></div>
+            {{/hasField}}
+            {{#hasField 'COMPANY_GOOGLE'}}
+                <div class="m-l-xs">{{i18n 'entitySearch.template.companies.stockTicker'}}: <a target="_blank" href="https://finance.google.co.uk/finance?q={{getFieldValue 'COMPANY_GOOGLE'}}">{{getFieldValue 'COMPANY_GOOGLE'}}</a></div>
+            {{/hasField}}
+        </div>
+    {{/equal}}
 </div>
