@@ -97,7 +97,7 @@
     "agentBooleanField": "AGENTBOOL",
     "combine": "FieldCheck",
     "enabled": false,
-    "printFields": [ "wikipedia_image", "person_date_of_birth", "person_date_of_death", "person_profession", "wikipedia_image", "lat", "lon", "place_country_code", "place_region1", "place_population", "place_timezone", "wikipedia_image", "url_homepage", "company_google" ]
+    "printFields": [ "WIKIPEDIA_IMAGE", "PERSON_DATE_OF_BIRTH", "PERSON_DATE_OF_DEATH", "PERSON_PROFESSION", "WIKIPEDIA_IMAGE", "LAT", "LON", "PLACE_COUNTRY_CODE", "PLACE_REGION1", "PLACE_POPULATION", "PLACE_TIMEZONE", "WIKIPEDIA_IMAGE", "URL_HOMEPAGE", "COMPANY_GOOGLE" ]
   },
   "savedSearches": {
     "pollForUpdates": true,
