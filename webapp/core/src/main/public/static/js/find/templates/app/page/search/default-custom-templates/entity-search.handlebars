@@ -63,6 +63,12 @@
                     <tr>
                         <th class="selection-entity-header">{{i18n 'entitySearch.template.person.dateOfDeath'}}</th><td>{{getFieldValue 'PERSON_DATE_OF_DEATH'}}</td>
                     </tr>
+                {{else}}
+                    {{#hasField 'PERSON_DATE_OF_BIRTH'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.person.age'}}</th><td>{{toRelativeTime (getFieldValue 'PERSON_DATE_OF_BIRTH') hideSuffix=true}}</td>
+                    </tr>
+                    {{/hasField}}
                 {{/hasField}}
                 {{#hasField 'PERSON_PROFESSION'}}
                     <tr>

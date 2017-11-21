@@ -26,6 +26,7 @@ define([
     './template-helpers/pretty-print-number-helper',
     './template-helpers/to-external-url-helper',
     './template-helpers/to-lower-case-helper',
+    './template-helpers/to-relative-time-helper',
     './template-helpers/to-upper-case-helper',
     './template-helpers/wiki-thumbnail-helper',
     './template-helpers/with-field-helper',
@@ -33,8 +34,8 @@ define([
 ], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator,
             defaultResultTemplate, defaultEntitySearchTemplate, defaultPreviewTemplate, defaultPromotionTemplate,
             equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper, getFieldValuesHelper,
-            percentageHelper, placeholderTemplateHelper, prettyPrintNumberHelper, toExternalUrlHelper, toLowerCaseHelper, toUpperCaseHelper,
-            wikiThumbnailHelper, withFieldHelper, i18nHelper) {
+            percentageHelper, placeholderTemplateHelper, prettyPrintNumberHelper, toExternalUrlHelper, toLowerCaseHelper,
+            toRelativeTimeHelper, toUpperCaseHelper, wikiThumbnailHelper, withFieldHelper, i18nHelper) {
 
     function templatePredicate(triggers) {
         return function(model) {
@@ -115,6 +116,7 @@ define([
             prettyPrintNumber: prettyPrintNumberHelper,
             toExternalUrl: toExternalUrlHelper,
             toLowerCase: toLowerCaseHelper,
+            toRelativeTime: toRelativeTimeHelper,
             toUpperCase: toUpperCaseHelper,
             wikiThumbnailHelper: wikiThumbnailHelper,
             withField: withFieldHelper

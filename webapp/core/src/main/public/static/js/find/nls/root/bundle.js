@@ -98,6 +98,7 @@ define([
         'entitySearch.template.place.region': 'Region',
         'entitySearch.template.place.population': 'Population',
         'entitySearch.template.place.timeZone': 'Time Zone',
+        'entitySearch.template.person.age': 'Age',
         'entitySearch.template.person.dateOfBirth': 'Date of Birth',
         'entitySearch.template.person.dateOfDeath': 'Date of Death',
         'entitySearch.template.person.profession': 'Profession',
