@@ -63,16 +63,26 @@ define([
             clearIndicator();
 
             const top = bounds.bottom + 10;
+            const left = bounds.left;
 
             $hover = $('<div class="selection-entity">').css({
                 top: top,
-                left: bounds.left
+                left: left
             }).html(html).appendTo(element);
 
             if ($hover.height() + top > window.innerHeight) {
+                // If the popup goes below the page, show it above the selection instead of below.
                 $hover.css({
                     top: 'auto',
                     bottom: window.innerHeight - bounds.top + 10
+                })
+            }
+
+            if ($hover.width() + left > window.innerWidth) {
+                // If the selection is off the right edge of the screen, lock it to the right edge of the screen.
+                $hover.css({
+                    left: 'auto',
+                    right: 10
                 })
             }
         }

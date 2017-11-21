@@ -2,7 +2,7 @@
     {{#equal (toLowerCase database) 'places'}}
         {{#hasField 'WIKIPEDIA_IMAGE'}}
             <span class="pull-left m-t-xs m-b-xs m-r-sm">
-                <img src="{{ wikiThumbnailHelper (getFieldValue 'WIKIPEDIA_IMAGE') 200 }}">
+                <img class="max-half-screen-height" src="{{ wikiThumbnailHelper (getFieldValue 'WIKIPEDIA_IMAGE') 200 }}">
             </span>
         {{/hasField}}
 
@@ -45,7 +45,7 @@
     {{#equal (toLowerCase database) 'people'}}
         {{#hasField 'WIKIPEDIA_IMAGE'}}
             <span class="pull-left m-t-xs m-b-xs m-r-sm">
-                <img src="{{ wikiThumbnailHelper (getFieldValue 'WIKIPEDIA_IMAGE') 200 }}">
+                <img class="max-half-screen-height" src="{{ wikiThumbnailHelper (getFieldValue 'WIKIPEDIA_IMAGE') 200 }}">
             </span>
         {{/hasField}}
 
