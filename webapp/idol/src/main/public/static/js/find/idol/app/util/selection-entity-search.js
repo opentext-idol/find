@@ -17,7 +17,7 @@ define([
     function SelectionEntitySearch(options) {
         const documentRenderer = options.documentRenderer;
         // You can control which elements the popup will appear on by adjusting this selector.
-        const selector = options.selector || '.result-summary,.parametric-value-element';
+        const selector = options.selector || '.result-summary,.parametric-value-element,.dt-bootstrap,.trending-chart,.sunburst,.entity-topic-map,.leaflet-popup-content';
         const debounceMillis = options.debounceMillis || 250;
         let element = options.element || document.body;
 
@@ -120,10 +120,14 @@ define([
 
         const debounced = _.debounce(onSelectionChange, debounceMillis);
 
-        $(document).on('selectionchange', debounced)
+        $(document)
+            .on('selectionchange', debounced)
+            .on('click', '.selection-entity-close', clearIndicator)
 
         this.stopListening = function(){
-            $(document).off('selectionchange', debounced);
+            $(document)
+                .off('selectionchange', debounced)
+                .off('click', '.selection-entity-close', clearIndicator);
             clearIndicator();
         }
 
