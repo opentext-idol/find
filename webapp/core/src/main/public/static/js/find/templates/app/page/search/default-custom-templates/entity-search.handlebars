@@ -13,6 +13,16 @@
                 {{/hasField}}
                 {{title}}
             </h4>
+            {{#hasField 'latitude'}}
+                {{#hasField 'longitude'}}
+                    <div class="mercator-svg-map">
+                        <div class="mercator-svg-marker" style="width: 4px; height: 4px; border-radius: 2px;
+                            left: {{ percentage (getFieldValue 'longitude') max=180 min=-180}};
+                            bottom: {{ percentage (getFieldValue 'latitude') max=90 min=-90}};
+                        "></div>
+                    </div>
+                {{/hasField}}
+            {{/hasField}}
             {{#hasField 'PLACE_REGION1'}}
                 <div class="m-l-xs">{{i18n 'entitySearch.template.place.region'}}: {{getFieldValue 'PLACE_REGION1'}}</div>
             {{/hasField}}
