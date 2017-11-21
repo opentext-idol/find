@@ -22,10 +22,11 @@ define([
     './template-helpers/get-field-value-helper',
     './template-helpers/get-field-values-helper',
     './template-helpers/with-field-helper',
+    './template-helpers/wiki-thumbnail-helper',
     './template-helpers/i18n-helper'
 ], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator, defaultResultTemplate, defaultEntitySearchTemplate,
             defaultPreviewTemplate, defaultPromotionTemplate, equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper,
-            getFieldValuesHelper, withFieldHelper, i18nHelper) {
+            getFieldValuesHelper, wikiThumbnailHelper, withFieldHelper, i18nHelper) {
 
     function templatePredicate(triggers) {
         return function(model) {
@@ -101,6 +102,7 @@ define([
             hasFieldValue: hasFieldValueHelper,
             getFieldValue: getFieldValueHelper,
             getFieldValues: getFieldValuesHelper,
+            wikiThumbnailHelper: wikiThumbnailHelper,
             withField: withFieldHelper
         });
 
