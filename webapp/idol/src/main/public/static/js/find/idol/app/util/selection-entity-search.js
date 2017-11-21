@@ -16,6 +16,9 @@ define([
 
     function SelectionEntitySearch(options) {
         const documentRenderer = options.documentRenderer;
+        // You can control which elements the popup will appear on by adjusting this selector.
+        const selector = options.selector || '.result-summary';
+        const debounceMillis = options.debounceMillis || 250;
         let element = options.element || document.body;
 
         let $hover;
@@ -93,9 +96,9 @@ define([
             }
 
             if (text && text.length >= 2) {
-                const $summary = $selectEnd.closest('.result-summary');
+                const $summary = $selectEnd.closest(selector);
 
-                if ($summary.length && $(sel.anchorNode).closest('.result-summary').is($summary)) {
+                if ($summary.length && $(sel.anchorNode).closest(selector).is($summary)) {
                     // We're in a summary, try fetching stuff
                     loadModel(text, $summary, range.getBoundingClientRect());
                     return;
@@ -105,7 +108,7 @@ define([
             clearIndicator();
         }
 
-        const debounced = _.debounce(onSelectionChange, 300);
+        const debounced = _.debounce(onSelectionChange, debounceMillis);
 
         $(document).on('selectionchange', debounced)
 
