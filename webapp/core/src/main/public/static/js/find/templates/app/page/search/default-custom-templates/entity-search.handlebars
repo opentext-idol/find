@@ -5,7 +5,7 @@
             </span>
     {{/hasField}}
 
-    {{#equal database  'Places'}}
+    {{#equal (toLowerCase database) 'places'}}
         <div class="results-contents">
             <h4 class="m-l-xs m-t-xs m-b-nil result-header">
                 {{#hasField 'PLACE_COUNTRY_CODE'}}
@@ -25,7 +25,7 @@
             <!-- TODO: lat, lon map -->
         </div>
     {{/equal}}
-    {{#equal database  'People'}}
+    {{#equal (toLowerCase database) 'people'}}
         <div class="results-contents">
             <h4 class="m-l-xs m-t-xs m-b-nil result-header">
                 {{title}}
@@ -41,7 +41,7 @@
             {{/hasField}}
         </div>
     {{/equal}}
-    {{#equal database  'Companies'}}
+    {{#equal (toLowerCase database) 'companies'}}
         <div class="results-contents">
             <h4 class="m-l-xs m-t-xs m-b-nil result-header">
                 {{title}}
