@@ -8,8 +8,15 @@ define([
 ], function(_) {
 
     return function(value, size) {
-        return value && String(value).replace(/(\/wikipedia\/commons\/)([^/]+\/[^/]+\/([^/]+\.(?:jpg|jpeg|gif|png)))/, function(all, first, second, filename){
-            return first + 'thumb/' + second + '/' + (size||300) + 'px-' + filename;
+        return value && String(value).replace(/(\/wikipedia\/commons\/)([^/]+\/[^/]+\/([^/]+\.(jpg|jpeg|gif|png|svg)))/i, function(all, first, second, filename, extension){
+            const url = first + 'thumb/' + second + '/' + (size||300) + 'px-' + filename;
+
+            if (extension && extension.toLowerCase() === 'svg') {
+                // The thumbnailer only can raster bitmap outputs, so if we have a svg, we need to convert to e.g. png.
+                return url + '.png';
+            }
+
+            return url;
         });
     };
 
