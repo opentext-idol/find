@@ -23,6 +23,7 @@ define([
     './template-helpers/get-field-values-helper',
     './template-helpers/percentage-helper',
     './template-helpers/placeholder-template-helper',
+    './template-helpers/pretty-print-number-helper',
     './template-helpers/to-external-url-helper',
     './template-helpers/to-lower-case-helper',
     './template-helpers/to-upper-case-helper',
@@ -32,7 +33,7 @@ define([
 ], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator,
             defaultResultTemplate, defaultEntitySearchTemplate, defaultPreviewTemplate, defaultPromotionTemplate,
             equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper, getFieldValuesHelper,
-            percentageHelper, placeholderTemplateHelper, toExternalUrlHelper, toLowerCaseHelper, toUpperCaseHelper,
+            percentageHelper, placeholderTemplateHelper, prettyPrintNumberHelper, toExternalUrlHelper, toLowerCaseHelper, toUpperCaseHelper,
             wikiThumbnailHelper, withFieldHelper, i18nHelper) {
 
     function templatePredicate(triggers) {
@@ -111,6 +112,7 @@ define([
             getFieldValues: getFieldValuesHelper,
             percentage: percentageHelper,
             placeholderTemplate: placeholderTemplateHelper,
+            prettyPrintNumber: prettyPrintNumberHelper,
             toExternalUrl: toExternalUrlHelper,
             toLowerCase: toLowerCaseHelper,
             toUpperCase: toUpperCaseHelper,
