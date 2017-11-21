@@ -47,7 +47,7 @@
                 {{title}}
             </h4>
             {{#hasField 'URL_HOMEPAGE'}}
-                <div class="m-l-xs">{{i18n 'entitySearch.template.companies.url'}}: <a href="{{getFieldValue 'URL_HOMEPAGE'}}">{{getFieldValue 'URL_HOMEPAGE'}}</a></div>
+                <div class="m-l-xs">{{i18n 'entitySearch.template.companies.url'}}: <a target="_blank" href="{{toExternalUrl (getFieldValue 'URL_HOMEPAGE')}}">{{getFieldValue 'URL_HOMEPAGE'}}</a></div>
             {{/hasField}}
             {{#hasField 'COMPANY_GOOGLE'}}
                 <div class="m-l-xs">{{i18n 'entitySearch.template.companies.stockTicker'}}: <a target="_blank" href="https://finance.google.co.uk/finance?q={{getFieldValue 'COMPANY_GOOGLE'}}">{{getFieldValue 'COMPANY_GOOGLE'}}</a></div>
