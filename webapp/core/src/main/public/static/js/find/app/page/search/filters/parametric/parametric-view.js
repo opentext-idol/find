@@ -31,6 +31,12 @@ define([
 
         events: {
             'click [data-field] [data-value]': function(e) {
+                if (String(window.getSelection()).length >= 2) {
+                    // If the user is partway selecting text for selection-entity-search, we suppress the click,
+                    //   otherwise the preview pane will toggle every time you try and select something.
+                    return;
+                }
+
                 const $target = $(e.currentTarget);
                 const $field = $target.closest('[data-field]');
 

@@ -99,6 +99,16 @@ public class IdolConfiguration {
     }
 
     @Bean
+    public AciService entitySearchAciService(final AciService aciService, final ConfigService<IdolFindConfig> configService) {
+        return new AbstractConfigurableAciService(aciService) {
+            @Override
+            public AciServerDetails getServerDetails() {
+                return configService.getConfig().getEntitySearch().getServer().toAciServerDetails();
+            }
+        };
+    }
+
+    @Bean
     public CommunityAuthenticationValidator communityAuthenticationValidator(
             final AciService validatorAciService,
             final ProcessorFactory processorFactory

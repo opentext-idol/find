@@ -59,6 +59,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final QueryManipulation queryManipulation;
     private final ViewConfig view;
     private final AnswerServerConfig answerServer;
+    private final EntitySearchConfig entitySearch;
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
     private final MMAP mmap;
@@ -88,6 +89,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .queryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
                 .view(view == null ? other.view : view.merge(other.view))
                 .answerServer(answerServer == null ? other.answerServer : answerServer.merge(other.answerServer))
+                .entitySearch(entitySearch == null ? other.entitySearch : entitySearch.merge(other.entitySearch))
                 .savedSearchConfig(savedSearchConfig == null ? other.savedSearchConfig : savedSearchConfig.merge(other.savedSearchConfig))
                 .mmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
                 .messageOfTheDay(messageOfTheDay == null ? other.messageOfTheDay : messageOfTheDay.merge(other.messageOfTheDay))
@@ -169,6 +171,10 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         if(answerServer != null) {
             answerServer.basicValidate("AnswerServer");
         }
+
+        if(entitySearch != null) {
+            entitySearch.basicValidate(EntitySearchConfig.SECTION);
+        }
     }
 
     @JsonIgnore
@@ -200,6 +206,10 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
 
             if(isOptionalComponentEnabled(answerServer)) {
                 addEntriesToProductMap(tempProductMap, ProductType.ANSWERSERVER.getFriendlyName(), answerServer.getServer().getHost(), answerServer.getServer().getPort(), answerServer.getServer().getServicePort());
+            }
+
+            if(isOptionalComponentEnabled(entitySearch)) {
+                addEntriesToProductMap(tempProductMap, ProductType.AXE.getFriendlyName(), entitySearch.getServer().getHost(), entitySearch.getServer().getPort(), entitySearch.getServer().getServicePort());
             }
 
             if(isOptionalComponentEnabled(statsServer)) {

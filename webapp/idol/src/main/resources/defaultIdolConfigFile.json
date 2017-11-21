@@ -83,6 +83,22 @@
     },
     "enabled": false
   },
+  "entitySearch": {
+    "server": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 9050,
+      "productType": [
+        "AXE",
+        "DAH",
+        "IDOLPROXY"
+      ]
+    },
+    "agentBooleanField": "AGENTBOOL",
+    "combine": "FieldCheck",
+    "enabled": false,
+    "printFields": [ "WIKIPEDIA_IMAGE", "PERSON_DATE_OF_BIRTH", "PERSON_DATE_OF_DEATH", "PERSON_PROFESSION", "WIKIPEDIA_IMAGE", "LAT", "LON", "PLACE_COUNTRY_CODE", "PLACE_REGION1", "PLACE_POPULATION", "PLACE_TIMEZONE", "WIKIPEDIA_IMAGE", "URL_HOMEPAGE", "COMPANY_GOOGLE" ]
+  },
   "savedSearches": {
     "pollForUpdates": true,
     "pollingInterval": 5

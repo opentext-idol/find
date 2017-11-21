@@ -1,0 +1,109 @@
+<div class="default-result-container selection-entity-content clearfix flex">
+    {{#equal (toLowerCase database) 'places'}}
+        {{#hasField 'WIKIPEDIA_IMAGE'}}
+            <span class="pull-left m-t-xs m-b-xs m-r-sm">
+                <img class="max-half-screen-height" src="{{ wikiThumbnailHelper (getFieldValue 'WIKIPEDIA_IMAGE') 200 }}">
+            </span>
+        {{/hasField}}
+
+        <div class="results-contents">
+            <h4 class="m-l-xs m-t-xs m-b-nil result-header">
+                {{#hasField 'PLACE_COUNTRY_CODE'}}
+                    <img style="max-height: 18px; max-width: 36px;" src="static-HEAD/img/flags.wp/{{toLowerCase (getFieldValue 'PLACE_COUNTRY_CODE')}}.svg">
+                {{/hasField}}
+                {{title}}
+            </h4>
+            {{#hasField 'latitude'}}
+                {{#hasField 'longitude'}}
+                    <div class="mercator-svg-map">
+                        <div class="mercator-svg-marker" style="width: 4px; height: 4px; border-radius: 2px;
+                            left: {{ percentage (getFieldValue 'longitude') max=180 min=-180}};
+                            bottom: {{ percentage (getFieldValue 'latitude') max=90 min=-90}};
+                        "></div>
+                    </div>
+                {{/hasField}}
+            {{/hasField}}
+            <table class="m-l-xs">
+                {{#hasField 'PLACE_REGION1'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.place.region'}}</th><td>{{getFieldValue 'PLACE_REGION1'}}</td>
+                    </tr>
+                {{/hasField}}
+                {{#hasField 'PLACE_POPULATION'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.place.population'}}</th><td>{{prettyPrintNumber (getFieldValue 'PLACE_POPULATION')}}</td>
+                    </tr>
+                {{/hasField}}
+                {{#hasField 'PLACE_TIMEZONE'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.place.timeZone'}}</th><td>{{prettyPrintNumber (getFieldValue 'PLACE_TIMEZONE') plusIfPositive=true }}</td>
+                    </tr>
+                {{/hasField}}
+            </table>
+        </div>
+    {{/equal}}
+    {{#equal (toLowerCase database) 'people'}}
+        {{#hasField 'WIKIPEDIA_IMAGE'}}
+            <span class="pull-left m-t-xs m-b-xs m-r-sm">
+                <img class="max-half-screen-height" src="{{ wikiThumbnailHelper (getFieldValue 'WIKIPEDIA_IMAGE') 200 }}">
+            </span>
+        {{/hasField}}
+
+        <div class="results-contents">
+            <h4 class="m-l-xs m-t-xs m-b-nil result-header">
+                {{title}}
+            </h4>
+            <table class="m-l-xs">
+                {{#hasField 'PERSON_DATE_OF_BIRTH'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.person.dateOfBirth'}}</th><td>{{getFieldValue 'PERSON_DATE_OF_BIRTH'}}</td>
+                    </tr>
+                {{/hasField}}
+                {{#hasField 'PERSON_DATE_OF_DEATH'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.person.dateOfDeath'}}</th><td>{{getFieldValue 'PERSON_DATE_OF_DEATH'}}</td>
+                    </tr>
+                {{else}}
+                    {{#hasField 'PERSON_DATE_OF_BIRTH'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.person.age'}}</th><td>{{toRelativeTime (getFieldValue 'PERSON_DATE_OF_BIRTH') hideSuffix=true}}</td>
+                    </tr>
+                    {{/hasField}}
+                {{/hasField}}
+                {{#hasField 'PERSON_PROFESSION'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.person.profession'}}</th><td>{{getFieldValues 'PERSON_PROFESSION' max=5}}</td>
+                    </tr>
+                {{/hasField}}
+            </table>
+        </div>
+    {{/equal}}
+    {{#equal (toLowerCase database) 'companies'}}
+        {{#hasField 'COMPANY_GOOGLE'}}
+            <span class="pull-left m-t-xs m-b-xs m-r-sm">
+                <img src="{{ placeholderTemplate (getFieldValue 'COMPANY_GOOGLE') 'https://finance.google.co.uk/finance/getchart?q=$1$&x=$0$&p=7d&i=240' placeholder='$' delimiter=':' }}">
+            </span>
+        {{/hasField}}
+
+        <div class="results-contents">
+            <h4 class="m-l-xs m-t-xs m-b-nil result-header">
+                {{title}}
+            </h4>
+            <table class="m-l-xs">
+                {{#hasField 'URL_HOMEPAGE'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.companies.url'}}</th><td><a target="_blank" href="{{toExternalUrl (getFieldValue 'URL_HOMEPAGE')}}">{{getFieldValue 'URL_HOMEPAGE'}}</a></td>
+                    </tr>
+                {{/hasField}}
+                {{#hasField 'COMPANY_GOOGLE'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.companies.stockTicker'}}</th><td><a target="_blank" href="https://finance.google.co.uk/finance?q={{getFieldValue 'COMPANY_GOOGLE'}}">{{getFieldValue 'COMPANY_GOOGLE'}}</a></td>
+                    </tr>
+                {{/hasField}}
+            </table>
+        </div>
+    {{/equal}}
+    <button type="button" class="close selection-entity-close" data-dismiss="modal">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>

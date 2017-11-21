@@ -496,3 +496,44 @@ div > input[type="text"].numeric-parametric-max-input.form-control, // required 
   box-shadow: none;
   opacity: .65;
 }
+
+.selection-entity {
+  position: fixed;
+  z-index: (@zindex-navbar - 1);
+}
+
+.selection-entity-content {
+  align-items: center;
+  max-width: 800px;
+  border: 1px solid @hpegreen-active;
+  background: white;
+  padding: 10px 15px;
+}
+
+.mercator-svg-map {
+  width: 160px;
+  height: 80px;
+  position: relative;
+  background-image: url('@{staticResourcesPath}/img/map/Equirectangular.png');
+  background-size: contain;
+}
+
+.mercator-svg-marker {
+  position: absolute;
+  background-color: @hpegreen-active;
+}
+
+.selection-entity-header {
+  font-weight: bold;
+  padding-right: 10px;
+}
+
+.max-half-screen-height {
+  max-height: 50vh;
+}
+
+.selection-entity-close {
+  position: absolute;
+  right: 5px;
+  top: -3px;
+}
