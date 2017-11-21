@@ -21,12 +21,14 @@ define([
     './template-helpers/has-field-value-helper',
     './template-helpers/get-field-value-helper',
     './template-helpers/get-field-values-helper',
-    './template-helpers/with-field-helper',
+    './template-helpers/to-lower-case-helper',
+    './template-helpers/to-upper-case-helper',
     './template-helpers/wiki-thumbnail-helper',
+    './template-helpers/with-field-helper',
     './template-helpers/i18n-helper'
 ], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator, defaultResultTemplate, defaultEntitySearchTemplate,
             defaultPreviewTemplate, defaultPromotionTemplate, equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper,
-            getFieldValuesHelper, wikiThumbnailHelper, withFieldHelper, i18nHelper) {
+            getFieldValuesHelper, toLowerCaseHelper, toUpperCaseHelper, wikiThumbnailHelper, withFieldHelper, i18nHelper) {
 
     function templatePredicate(triggers) {
         return function(model) {
@@ -102,6 +104,8 @@ define([
             hasFieldValue: hasFieldValueHelper,
             getFieldValue: getFieldValueHelper,
             getFieldValues: getFieldValuesHelper,
+            toLowerCase: toLowerCaseHelper,
+            toUpperCase: toUpperCaseHelper,
             wikiThumbnailHelper: wikiThumbnailHelper,
             withField: withFieldHelper
         });
