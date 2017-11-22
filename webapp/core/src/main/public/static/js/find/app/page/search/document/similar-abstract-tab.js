@@ -19,6 +19,11 @@ define([
 
         events: {
             'click [data-cid]': function(e) {
+                if (String(window.getSelection()).length >= 2) {
+                    // If the user is partway selecting text for selection-entity-search, we suppress the click.
+                    return;
+                }
+
                 vent.navigateToDetailRoute(
                     this.collection.get(
                         $(e.currentTarget).data('cid')
