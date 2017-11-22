@@ -9,7 +9,7 @@ define([
     'jquery',
     'i18n!find/nls/bundle',
     'js-whatever/js/list-view',
-    'js-whatever/js/modal',
+    'find/app/util/modal',
     'find/app/model/saved-searches/shared-with-everyone-model',
     'find/app/model/saved-searches/shared-with-users-collection',
     'find/app/model/saved-searches/not-shared-with-users-collection',

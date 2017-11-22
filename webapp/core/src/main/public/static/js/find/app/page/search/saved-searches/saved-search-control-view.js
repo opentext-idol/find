@@ -12,7 +12,7 @@ define([
     'find/app/util/confirm-view',
     'find/app/util/csv-field-selection-view',
     'find/app/util/sharing-options',
-    'js-whatever/js/modal',
+    'find/app/util/modal',
     'text!find/templates/app/page/search/saved-searches/saved-search-control-view.html',
     'i18n!find/nls/bundle',
     'find/app/util/popover',

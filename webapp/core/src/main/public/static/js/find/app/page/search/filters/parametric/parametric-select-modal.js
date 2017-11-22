@@ -5,7 +5,7 @@
 
 define([
     'backbone',
-    'js-whatever/js/modal',
+    'find/app/util/modal',
     'find/app/page/search/filters/parametric/parametric-select-modal-view',
     'parametric-refinement/selected-values-collection',
     'text!find/templates/app/page/loading-spinner.html',

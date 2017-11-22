@@ -5,7 +5,7 @@
 
 define([
     'backbone',
-    'js-whatever/js/modal',
+    'find/app/util/modal',
     'find/app/page/search/filters/geography/geography-editor-view',
     'i18n!find/nls/bundle',
     'underscore'
