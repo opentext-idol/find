@@ -13,7 +13,8 @@ define([
     const dispatcher = _.clone(Backbone.Events);
 
     $(document).on('keydown', function(evt){
-        if (evt.key === 'Escape') {
+        if (evt.keyCode === 27) {
+            // evt.key is 'Escape' in Chrome but 'Esc' in IE11, easier to just work with keycodes.
             dispatcher.trigger('escape', evt);
         }
     })
