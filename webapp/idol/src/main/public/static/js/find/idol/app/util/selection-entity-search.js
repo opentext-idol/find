@@ -6,10 +6,11 @@
 define([
     'underscore',
     'jquery',
+    'find/app/util/global-key-listener',
     'find/idol/app/model/entitysearch/entity-search-collection',
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/nls/bundle'
-], function(_, $, EntitySearchCollection, loadingSpinnerTemplate, i18n) {
+], function(_, $, globalKeyListener, EntitySearchCollection, loadingSpinnerTemplate, i18n) {
     'use strict';
 
     const loadingHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
@@ -134,10 +135,13 @@ define([
             .on('selectionchange', debounced)
             .on('click', '.selection-entity-close', clearIndicator)
 
+        globalKeyListener.on('escape', clearIndicator);
+
         this.stopListening = function(){
             $(document)
                 .off('selectionchange', debounced)
                 .off('click', '.selection-entity-close', clearIndicator);
+            globalKeyListener.off('escape', clearIndicator);
             clearIndicator();
         }
 
