@@ -16,13 +16,30 @@ define([
         const format = options.hash.dateFormat || 'DD-MM-YYYY';
         const hideSuffix = options.hash.hideSuffix;
 
+        const roundSettings = options.hash.round;
+
+        const roundFn = roundSettings === false ? _.identity
+            : roundSettings in Math ? Math[roundSettings]
+            : roundSettings >= 0 ? function(v){ return Number(v).toFixed(roundSettings) }
+            : Math.round
+
         const time = moment(value, format);
 
-        if (options.hash.relativeTo != null) {
-            return time.from(moment(options.hash.relativeTo, format), hideSuffix);
-        }
+        const defaultRounding = moment.relativeTimeRounding();
 
-        return time.fromNow(hideSuffix);
+        try {
+            // Set the rounding
+            moment.relativeTimeRounding(roundFn);
+
+            if (options.hash.relativeTo != null) {
+                return time.from(moment(options.hash.relativeTo, format), hideSuffix);
+            }
+
+            return time.fromNow(hideSuffix);
+        } finally {
+            // Reset the rounding
+            moment.relativeTimeRounding(defaultRounding);
+        }
     };
 
 });
