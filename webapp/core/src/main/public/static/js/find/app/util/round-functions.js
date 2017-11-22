@@ -4,9 +4,8 @@
  */
 
 define([
-    'underscore',
-    'moment'
-], function(_, moment) {
+    'underscore'
+], function(_) {
 
     return function(roundSettings) {
         return roundSettings === false ? _.identity
