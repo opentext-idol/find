@@ -11,7 +11,7 @@
                 {{#hasField 'PLACE_COUNTRY_CODE'}}
                     <img style="max-height: 18px; max-width: 36px;" src="static-HEAD/img/flags.wp/{{toLowerCase (getFieldValue 'PLACE_COUNTRY_CODE')}}.svg">
                 {{/hasField}}
-                {{title}}
+                <a target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
             </h4>
             {{#hasField 'latitude'}}
                 {{#hasField 'longitude'}}
@@ -51,7 +51,7 @@
 
         <div class="results-contents">
             <h4 class="m-l-xs m-t-xs m-b-nil result-header">
-                {{title}}
+                <a target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
             </h4>
             <table class="m-l-xs">
                 {{#hasField 'PERSON_DATE_OF_BIRTH'}}
@@ -87,7 +87,7 @@
 
         <div class="results-contents">
             <h4 class="m-l-xs m-t-xs m-b-nil result-header">
-                {{title}}
+                <a target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
             </h4>
             <table class="m-l-xs">
                 {{#hasField 'URL_HOMEPAGE'}}
