@@ -70,21 +70,31 @@ define([
                 left: left
             }).html(html).appendTo(element);
 
-            if ($hover.height() + top > window.innerHeight) {
-                // If the popup goes below the page, show it above the selection instead of below.
-                $hover.css({
-                    top: 'auto',
-                    bottom: window.innerHeight - bounds.top + 10
-                })
+            function reposition(){
+                if (!$hover) {
+                    return;
+                }
+
+                if ($hover.height() + top > window.innerHeight) {
+                    // If the popup goes below the page, show it above the selection instead of below.
+                    $hover.css({
+                        top: 'auto',
+                        bottom: window.innerHeight - bounds.top + 10
+                    })
+                }
+
+                if ($hover.width() + left > window.innerWidth) {
+                    // If the selection is off the right edge of the screen, lock it to the right edge of the screen.
+                    $hover.css({
+                        left: 'auto',
+                        right: 10
+                    })
+                }
             }
 
-            if ($hover.width() + left > window.innerWidth) {
-                // If the selection is off the right edge of the screen, lock it to the right edge of the screen.
-                $hover.css({
-                    left: 'auto',
-                    right: 10
-                })
-            }
+            reposition();
+
+            $hover.find('img').on('load', reposition);
         }
 
         function onSelectionChange() {
