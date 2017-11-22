@@ -5,8 +5,9 @@
 
 define([
     'underscore',
-    'moment'
-], function(_, moment) {
+    'moment',
+    'find/app/util/round-functions'
+], function(_, moment, roundFunctions) {
 
     return function(value, options) {
         if (!value) {
@@ -16,12 +17,7 @@ define([
         const format = options.hash.dateFormat || 'DD-MM-YYYY';
         const hideSuffix = options.hash.hideSuffix;
 
-        const roundSettings = options.hash.round;
-
-        const roundFn = roundSettings === false ? _.identity
-            : roundSettings in Math ? Math[roundSettings]
-            : roundSettings >= 0 ? function(v){ return Number(v).toFixed(roundSettings) }
-            : Math.round
+        const roundFn = roundFunctions(options.hash.round);
 
         const time = moment(value, format);
 

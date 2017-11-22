@@ -4,8 +4,9 @@
  */
 
 define([
-    'underscore'
-], function(_) {
+    'underscore',
+    'find/app/util/round-functions'
+], function(_, roundFunctions) {
 
     return function(value, options) {
         if (!isFinite(value) || value === null || value === '') {
@@ -15,9 +16,9 @@ define([
         const min = options.hash.min || 0;
         const percentage = ((value - min) / (max - min)) * 100;
 
-        const precision = options.hash.precision;
-        if (precision || precision === 0) {
-            return Number(percentage).toFixed(precision) + '%';
+        const round = options.hash.round;
+        if (round !== undefined) {
+            return roundFunctions(round)(Number(value)) + '%';
         }
 
         return percentage + '%';
