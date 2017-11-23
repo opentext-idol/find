@@ -100,35 +100,50 @@ define([
             reposition();
 
             $hover.find('img').on('load', reposition);
-            $hover.find('.entity-search-question').on('keydown', function(evt){
-                if (evt.keyCode === 13) {
-                    // enter
-                    const $input = $(evt.currentTarget);
-                    const text = $input.val().trim();
+            $hover.find('input.entity-search-question').closest('form').on('submit', function(evt){
+                const $input = $(evt.currentTarget).find('input.entity-search-question');
+                const text = $input.val().trim();
 
-                    const $answerEl = $hover.find('.entity-search-answer');
+                const $answerEl = $hover.find('.entity-search-messages');
 
-                    if (text && $answerEl.length) {
-                        $answerEl.html(loadingHtml);
+                if (text && $answerEl.length) {
+                    $input.val('');
+                    $('<div class="entity-search-user">').text(text).appendTo($answerEl);
+                    scrollDown();
+                    reposition();
 
-                        const questionText = /^(what|who|how|where|why)/i.exec(text) ? text : 'what is the ' + text + ' of ' + $input.data('context')
+                    const questionText = /^(what|who|how|where|why)/i.exec(text) ? text : 'what is the ' + text + ' of ' + $input.data('context')
 
-                        answeredQuestionsCollection.fetch({
-                            data: {
-                                text: questionText,
-                                maxResults: 1
-                            },
-                            reset: true,
-                            success: _.bind(function() {
-                                $answerEl.text(answeredQuestionsCollection.map('answer').join(''));
-                            }, this),
-                            error: _.bind(function() {
-                                $answerEl.text('entitySearch.template.question.answerError');
-                            }, this)
-                        }, this);
-                    }
+                    answeredQuestionsCollection.fetch({
+                        data: {
+                            text: questionText,
+                            maxResults: 1
+                        },
+                        reset: true,
+                        success: _.bind(function() {
+                            const answer = answeredQuestionsCollection.map('answer').join('');
+                            $('<div class="entity-search-server">').text(answer || i18n['entitySearch.template.question.answerMissing']).appendTo($answerEl);
+                            scrollDown();
+                            reposition();
+                        }, this),
+                        error: _.bind(function() {
+                            $('<div class="entity-search-server">').text(i18n['entitySearch.template.question.answerError']).appendTo($answerEl);
+                            scrollDown();
+                            reposition();
+                        }, this)
+                    }, this);
+
 
                 }
+
+                function scrollDown() {
+                    const dom = $answerEl[0];
+                    if (dom.scrollHeight) {
+                        dom.scrollTop = dom.scrollHeight;
+                    }
+                }
+
+                return false;
             })
         }
 
