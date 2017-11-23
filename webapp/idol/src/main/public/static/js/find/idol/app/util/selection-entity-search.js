@@ -86,11 +86,22 @@ define([
                 }
 
                 if ($hover.height() + top > window.innerHeight) {
-                    // If the popup goes below the page, show it above the selection instead of below.
-                    $hover.css({
-                        top: 'auto',
-                        bottom: window.innerHeight - bounds.top + 10
-                    })
+                    // If the popup goes below the page, show it above the selection instead of below,
+                    // except if that would take it off the top edge of the screen, in which case just lock it to the bottom.
+                    const desiredBottom = window.innerHeight - bounds.top + 10;
+
+                    if (desiredBottom + $hover.height() < window.innerHeight) {
+                        $hover.css({
+                            top: 'auto',
+                            bottom: desiredBottom
+                        })
+                    }
+                    else {
+                        $hover.css({
+                            top: 'auto',
+                            bottom: 10
+                        })
+                    }
                 }
 
                 if ($hover.width() + left > window.innerWidth) {
