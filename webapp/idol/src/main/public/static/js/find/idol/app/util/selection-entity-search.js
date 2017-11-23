@@ -50,7 +50,10 @@ define([
                     const result = entityModels.first();
                     const html = documentRenderer.renderEntity(result);
 
-                    $hover.addClass('first-appearance');
+                    $hover.addClass('first-appearance').one('mouseover', function(){
+                        $hover.removeClass('first-appearance');
+                    })
+
                     updateIndicator($hover, html, bounds);
                 }
                 else {
