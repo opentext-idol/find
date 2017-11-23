@@ -83,13 +83,62 @@ define([
             const top = bounds.bottom + 10;
             const left = bounds.left;
 
+            let dragLastX, dragLastY, dragX, dragY, dragging = false;
+
+            function moveElement(evt) {
+                if (!dragging) {
+                    $hover.addClass('selection-entity-drag');
+
+                    const offset = $hover.offset();
+                    dragX = offset.left;
+                    dragY = offset.top;
+                    dragLastX = evt.pageX;
+                    dragLastY = evt.pageY;
+                    $hover.css({
+                        bottom: 'auto',
+                        right: 'auto'
+                    })
+                }
+
+                dragging = true;
+
+                dragX += evt.pageX - dragLastX;
+                dragY += evt.pageY - dragLastY;
+                dragLastX = evt.pageX;
+                dragLastY = evt.pageY;
+
+                $hover.addClass('selection-entity-drag')
+                    .css({
+                        left: dragX,
+                        top: dragY
+                    });
+            }
+
+            function onMouseUp() {
+                dragging = false;
+                $(document)
+                    .off('mousemove', moveElement)
+                    .off('mouseup', onMouseUp)
+            }
+
             $hover.css({
                 top: top,
                 left: left
-            }).html(html).appendTo(element);
+            }).html(html).appendTo(element).on('mousedown', function(evt){
+                if ($(evt.target).closest('.entity-search-controls,.entity-search-messages').length) {
+                    // Prevent drag start if they're trying to select text in the conversation history.
+                    return
+                }
+
+                dragLastX = evt.screenX;
+                dragLastY = evt.screenY;
+                $(document)
+                    .on('mousemove', moveElement)
+                    .on('mouseup', onMouseUp);
+            });
 
             function reposition(){
-                if (!$hover) {
+                if ($hover.hasClass('selection-entity-drag')) {
                     return;
                 }
 
@@ -123,7 +172,7 @@ define([
 
             reposition();
 
-            $hover.find('img').on('load', reposition);
+            $hover.find('img').on('load', reposition).attr('draggable', false);
             $hover.find('input.entity-search-question').closest('form').on('submit', function(evt){
                 const $input = $(evt.currentTarget).find('input.entity-search-question');
                 const text = $input.val().trim();
