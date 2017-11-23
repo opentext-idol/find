@@ -36,7 +36,11 @@ define([
 
             lastQueryText = text;
 
-            const $hover = $('<div class="selection-entity">');
+            const $hover = $('<div class="selection-entity first-appearance">');
+            $hover.one('mouseover', function(){
+                $hover.removeClass('first-appearance');
+            })
+
             updateIndicator($hover, loadingHtml, bounds);
 
             lastFetch = entityModels.fetch({
@@ -48,10 +52,6 @@ define([
 
                     $hover.addClass('first-appearance');
                     updateIndicator($hover, html, bounds);
-
-                    $hover.one('mouseover', function(){
-                        $hover.removeClass('first-appearance');
-                    })
                 }
                 else {
                     clearIndicator($hover)
