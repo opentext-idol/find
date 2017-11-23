@@ -50,6 +50,7 @@ class TempAnswerServerController {
     private final XPathExpression xScore;
     private final XPathExpression xSource;
     private final XPathExpression xSystemName;
+    private final XPathExpression xInterpretation;
 
     @Autowired
     TempAnswerServerController(final AskAnswerServerService askAnswerServerService,
@@ -67,6 +68,7 @@ class TempAnswerServerController {
             xScore = xPath.compile("score");
             xSource = xPath.compile("source");
             xSystemName = xPath.compile("@system_name");
+            xInterpretation = xPath.compile("interpretation");
         }
         catch(XPathExpressionException e) {
             throw new Error("Invalid XPaths", e);
@@ -108,6 +110,7 @@ class TempAnswerServerController {
             toAdd.setSource((String) xSource.evaluate(answer, XPathConstants.STRING));
             toAdd.setScore(NumberUtils.toDouble((String) xScore.evaluate(answer, XPathConstants.STRING)));
             toAdd.setSystemName((String) xSystemName.evaluate(answer, XPathConstants.STRING));
+            toAdd.setInterpretation((String) xInterpretation.evaluate(answer, XPathConstants.STRING));
             toReturn.add(toAdd);
         }
 
