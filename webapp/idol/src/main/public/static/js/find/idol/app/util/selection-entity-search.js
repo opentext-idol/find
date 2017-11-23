@@ -23,8 +23,6 @@ define([
         const debounceMillis = options.debounceMillis || 250;
         let element = options.element || document.body;
 
-        let $hover;
-
         const answeredQuestionsCollection = new AnsweredQuestionsCollection();
         answeredQuestionsCollection.url = 'api/public/answer/ask-demo';
 
@@ -38,7 +36,8 @@ define([
 
             lastQueryText = text;
 
-            isInSelection || updateIndicator(loadingHtml, bounds);
+            const $hover = $('<div class="selection-entity">');
+            updateIndicator($hover, loadingHtml, bounds);
 
             lastFetch = entityModels.fetch({
                 data: { text: text }
@@ -47,46 +46,36 @@ define([
                     const result = entityModels.first();
                     const html = documentRenderer.renderEntity(result);
 
-                    updateIndicator(html, bounds, isInSelection);
+                    updateIndicator($hover, html, bounds, isInSelection);
                 }
                 else {
-                    isInSelection || clearIndicator()
+                    clearIndicator($hover)
                 }
             }).fail(function(){
-                isInSelection || clearIndicator();
+                clearIndicator($hover);
             })
         }
 
-        function clearIndicator() {
-            if ($hover) {
-                $hover.remove();
-                $hover = null;
-            }
+        function clearIndicator($hover) {
+            $hover.remove();
         }
 
         function clearAllIndicators() {
             // We have to clear all selections which were triggered by other selections
             $('.selection-entity').remove();
-            $hover = null;
         }
 
         function clearClickedIndicator(e) {
             const $closest = $(e.currentTarget).closest('.selection-entity');
 
-            if ($closest.is($hover)) {
-                $hover = null;
-            }
-
             $closest.remove();
         }
 
-        function updateIndicator(html, bounds, isInSelection){
-            isInSelection || clearIndicator();
-
+        function updateIndicator($hover, html, bounds, isInSelection){
             const top = bounds.bottom + 10;
             const left = bounds.left;
 
-            $hover = $('<div class="selection-entity">').css({
+            $hover.css({
                 top: top,
                 left: left
             }).html(html).appendTo(element);
@@ -179,18 +168,17 @@ define([
             //  otherwise the selection popup will disappear.
             const isInSelection = $selectEnd.closest('.selection-entity').length;
 
+            if (!isInSelection) {
+                clearAllIndicators();
+            }
+
             if (text && text.length >= 2) {
                 const $summary = $selectEnd.closest(selector);
 
                 if ($summary.length && $(sel.anchorNode).closest(selector).is($summary)) {
                     // We're in a summary, try fetching stuff
                     loadModel(text, range.getBoundingClientRect(), isInSelection);
-                    return;
                 }
-            }
-
-            if (!isInSelection) {
-                clearAllIndicators();
             }
         }
 
