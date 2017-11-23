@@ -29,7 +29,7 @@ define([
         const entityModels = new EntitySearchCollection();
         let lastQueryText, lastFetch;
 
-        function loadModel(text, bounds, isInSelection) {
+        function loadModel(text, bounds) {
             if (lastFetch && lastQueryText !== text) {
                 lastFetch.abort();
             }
@@ -46,7 +46,12 @@ define([
                     const result = entityModels.first();
                     const html = documentRenderer.renderEntity(result);
 
-                    updateIndicator($hover, html, bounds, isInSelection);
+                    $hover.addClass('first-appearance');
+                    updateIndicator($hover, html, bounds);
+
+                    $hover.one('mouseover', function(){
+                        $hover.removeClass('first-appearance');
+                    })
                 }
                 else {
                     clearIndicator($hover)
@@ -71,7 +76,7 @@ define([
             $closest.remove();
         }
 
-        function updateIndicator($hover, html, bounds, isInSelection){
+        function updateIndicator($hover, html, bounds){
             const top = bounds.bottom + 10;
             const left = bounds.left;
 
@@ -188,7 +193,7 @@ define([
 
                 if ($summary.length && $(sel.anchorNode).closest(selector).is($summary)) {
                     // We're in a summary, try fetching stuff
-                    loadModel(text, range.getBoundingClientRect(), isInSelection);
+                    loadModel(text, range.getBoundingClientRect());
                 }
             }
         }
