@@ -19,7 +19,7 @@ define([
     function SelectionEntitySearch(options) {
         const documentRenderer = options.documentRenderer;
         // You can control which elements the popup will appear on by adjusting this selector.
-        const selector = options.selector || '.main-results-container,.parametric-value-element,.dt-bootstrap,.trending-chart,.sunburst,.entity-topic-map,.leaflet-popup-content,.document-detail-tabs-content';
+        const selector = options.selector || '.main-results-container,.parametric-value-element,.dt-bootstrap,.trending-chart,.sunburst,.entity-topic-map,.leaflet-popup-content,.document-detail-tabs-content,.entity-search-messages';
         const debounceMillis = options.debounceMillis || 250;
         let element = options.element || document.body;
 
@@ -31,14 +31,14 @@ define([
         const entityModels = new EntitySearchCollection();
         let lastQueryText, lastFetch;
 
-        function loadModel(text, $summary, bounds) {
+        function loadModel(text, bounds, isInSelection) {
             if (lastFetch && lastQueryText !== text) {
                 lastFetch.abort();
             }
 
             lastQueryText = text;
 
-            updateIndicator(loadingHtml, bounds);
+            isInSelection || updateIndicator(loadingHtml, bounds);
 
             lastFetch = entityModels.fetch({
                 data: { text: text }
@@ -47,13 +47,13 @@ define([
                     const result = entityModels.first();
                     const html = documentRenderer.renderEntity(result);
 
-                    updateIndicator(html, bounds);
+                    updateIndicator(html, bounds, isInSelection);
                 }
                 else {
-                    clearIndicator()
+                    isInSelection || clearIndicator()
                 }
             }).fail(function(){
-                clearIndicator();
+                isInSelection || clearIndicator();
             })
         }
 
@@ -64,8 +64,24 @@ define([
             }
         }
 
-        function updateIndicator(html, bounds){
-            clearIndicator();
+        function clearAllIndicators() {
+            // We have to clear all selections which were triggered by other selections
+            $('.selection-entity').remove();
+            $hover = null;
+        }
+
+        function clearClickedIndicator(e) {
+            const $closest = $(e.currentTarget).closest('.selection-entity');
+
+            if ($closest.is($hover)) {
+                $hover = null;
+            }
+
+            $closest.remove();
+        }
+
+        function updateIndicator(html, bounds, isInSelection){
+            isInSelection || clearIndicator();
 
             const top = bounds.bottom + 10;
             const left = bounds.left;
@@ -108,9 +124,7 @@ define([
 
                 if (text && $answerEl.length) {
                     $input.val('');
-                    $('<div class="entity-search-user">').text(text).appendTo($answerEl);
-                    scrollDown();
-                    reposition();
+                    addMessage('entity-search-user', text);
 
                     const questionText = /^(what|who|how|where|why)/i.exec(text) ? text : 'what is the ' + text + ' of ' + $input.data('context')
 
@@ -122,18 +136,20 @@ define([
                         reset: true,
                         success: _.bind(function() {
                             const answer = answeredQuestionsCollection.map('answer').join('');
-                            $('<div class="entity-search-server">').text(answer || i18n['entitySearch.template.question.answerMissing']).appendTo($answerEl);
-                            scrollDown();
-                            reposition();
+                            addMessage('entity-search-server', answer || i18n['entitySearch.template.question.answerMissing']);
                         }, this),
                         error: _.bind(function() {
-                            $('<div class="entity-search-server">').text(i18n['entitySearch.template.question.answerError']).appendTo($answerEl);
-                            scrollDown();
-                            reposition();
+                            addMessage('entity-search-server', i18n['entitySearch.template.question.answerError']);
                         }, this)
                     }, this);
 
 
+                }
+
+                function addMessage(cssClass, text) {
+                    $('<div class="'+cssClass+'">').text('\n' + text + '\n').appendTo($answerEl);
+                    scrollDown();
+                    reposition();
                 }
 
                 function scrollDown() {
@@ -159,39 +175,45 @@ define([
 
             const $selectEnd = $(sel.focusNode);
 
-            if ($selectEnd.closest('.selection-entity').length) {
-                // We're doing selection stuff on the selection popup, we don't want to trigger changes
-                //  otherwise the selection popup will disappear.
-                return;
-            }
+            // We're doing selection stuff on the selection popup, we don't want to trigger load indicator changes
+            //  otherwise the selection popup will disappear.
+            const isInSelection = $selectEnd.closest('.selection-entity').length;
 
             if (text && text.length >= 2) {
                 const $summary = $selectEnd.closest(selector);
 
                 if ($summary.length && $(sel.anchorNode).closest(selector).is($summary)) {
                     // We're in a summary, try fetching stuff
-                    loadModel(text, $summary, range.getBoundingClientRect());
+                    loadModel(text, range.getBoundingClientRect(), isInSelection);
                     return;
                 }
             }
 
-            clearIndicator();
+            if (!isInSelection) {
+                clearAllIndicators();
+            }
         }
 
         const debounced = _.debounce(onSelectionChange, debounceMillis);
 
+        function rearrangePopups(evt) {
+
+        }
+
         $(document)
             .on('selectionchange', debounced)
-            .on('click', '.selection-entity-close', clearIndicator)
+            .on('click', '.selection-entity-close', clearClickedIndicator)
+            .on('click', '.selection-entity', rearrangePopups)
 
-        globalKeyListener.on('escape', clearIndicator);
+        globalKeyListener.on('escape', clearAllIndicators);
 
         this.stopListening = function(){
             $(document)
                 .off('selectionchange', debounced)
-                .off('click', '.selection-entity-close', clearIndicator);
-            globalKeyListener.off('escape', clearIndicator);
-            clearIndicator();
+                .off('click', '.selection-entity-close', clearClickedIndicator)
+                .off('click', '.selection-entity', rearrangePopups);
+            globalKeyListener.off('escape', clearAllIndicators);
+            clearAllIndicators();
         }
 
         this.setElement = function(dom) {
