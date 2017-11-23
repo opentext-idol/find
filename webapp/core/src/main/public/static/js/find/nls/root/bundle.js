@@ -104,6 +104,8 @@ define([
         'entitySearch.template.person.profession': 'Profession',
         'entitySearch.template.companies.url': 'Website',
         'entitySearch.template.companies.stockTicker': 'Stock Ticker',
+        'entitySearch.template.question.placeholder': 'What would you like to know?',
+        'entitySearch.template.question.answerError': 'Sorry, there was an error contacting the answer server',
         'error.message.default': 'An error has occurred.',
         'error.default.contactSupport': 'Please contact support.',
         'error.details': 'Error details: {0}',

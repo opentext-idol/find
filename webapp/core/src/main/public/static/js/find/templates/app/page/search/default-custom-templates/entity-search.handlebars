@@ -1,4 +1,5 @@
-<div class="default-result-container selection-entity-content clearfix flex">
+<div class="default-result-container selection-entity-content clearfix">
+    <div class="flex flex-align-center">
     {{#equal (toLowerCase database) 'places'}}
         {{#hasField 'WIKIPEDIA_IMAGE'}}
             <span class="pull-left m-t-xs m-b-xs m-r-sm">
@@ -103,6 +104,15 @@
             </table>
         </div>
     {{/equal}}
+    </div>
+
+    {{#hasField 'WIKIPEDIA_ENG'}}
+        <div>
+            <input class="entity-search-question" style="width: 100%" data-context="{{ getFieldValue 'WIKIPEDIA_ENG' }}" placeholder="{{i18n 'entitySearch.template.question.placeholder'}}">
+            <div class="entity-search-answer"></div>
+        </div>
+    {{/hasField}}
+
     <button type="button" class="close selection-entity-close" data-dismiss="modal">
         <span aria-hidden="true">&times;</span>
     </button>

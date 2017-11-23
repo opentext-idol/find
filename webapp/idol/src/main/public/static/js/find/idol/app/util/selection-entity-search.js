@@ -7,10 +7,11 @@ define([
     'underscore',
     'jquery',
     'find/app/util/global-key-listener',
+    'find/idol/app/model/answer-bank/idol-answered-questions-collection',
     'find/idol/app/model/entitysearch/entity-search-collection',
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/nls/bundle'
-], function(_, $, globalKeyListener, EntitySearchCollection, loadingSpinnerTemplate, i18n) {
+], function(_, $, globalKeyListener, AnsweredQuestionsCollection, EntitySearchCollection, loadingSpinnerTemplate, i18n) {
     'use strict';
 
     const loadingHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
@@ -23,6 +24,9 @@ define([
         let element = options.element || document.body;
 
         let $hover;
+
+        const answeredQuestionsCollection = new AnsweredQuestionsCollection();
+        answeredQuestionsCollection.url = 'api/public/answer/ask-demo';
 
         const entityModels = new EntitySearchCollection();
         let lastQueryText, lastFetch;
@@ -96,6 +100,36 @@ define([
             reposition();
 
             $hover.find('img').on('load', reposition);
+            $hover.find('.entity-search-question').on('keydown', function(evt){
+                if (evt.keyCode === 13) {
+                    // enter
+                    const $input = $(evt.currentTarget);
+                    const text = $input.val().trim();
+
+                    const $answerEl = $hover.find('.entity-search-answer');
+
+                    if (text && $answerEl.length) {
+                        $answerEl.html(loadingHtml);
+
+                        const questionText = /^(what|who|how|where|why)/i.exec(text) ? text : 'what is the ' + text + ' of ' + $input.data('context')
+
+                        answeredQuestionsCollection.fetch({
+                            data: {
+                                text: questionText,
+                                maxResults: 1
+                            },
+                            reset: true,
+                            success: _.bind(function() {
+                                $answerEl.text(answeredQuestionsCollection.map('answer').join(''));
+                            }, this),
+                            error: _.bind(function() {
+                                $answerEl.text('entitySearch.template.question.answerError');
+                            }, this)
+                        }, this);
+                    }
+
+                }
+            })
         }
 
         function onSelectionChange() {
