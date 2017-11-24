@@ -197,11 +197,10 @@ define([
                                 const source = model.get('source');
                                 const systemName = model.get('systemName');
 
-                                const tag = /^https?:/i.test(source) ? 'a' : 'span';
-
                                 const title = _.compact([systemName, source]).join(': ');
+                                const link = /^https?:/i.test(source) ? '<a class="entity-search-cite" target="_blank" href="'+_.escape(source)+'">'+_.escape(source)+'</a>' : '';
 
-                                return '<'+tag+' class="entity-search-answer entity-search-answer-'+_.escape(systemName)+'" target="_blank" href="'+source+'" title="'+_.escape(title)+'">'+_.escape(text)+'</'+tag+'>';
+                                return '<span title="'+_.escape(title)+'">' + _.escape(text) + ' ' + link + '</span>';
                             }).join('');
                             addHtmlMessage('entity-search-server', answer || _.escape(i18n['entitySearch.template.question.answerMissing']));
                         }, this),
