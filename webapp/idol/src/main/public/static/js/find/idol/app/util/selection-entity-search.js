@@ -9,9 +9,10 @@ define([
     'find/app/util/global-key-listener',
     'find/idol/app/model/answer-bank/idol-answered-questions-collection',
     'find/idol/app/model/entitysearch/entity-search-collection',
+    'find/app/page/search/template-helpers/pretty-print-number-helper',
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/nls/bundle'
-], function(_, $, globalKeyListener, AnsweredQuestionsCollection, EntitySearchCollection, loadingSpinnerTemplate, i18n) {
+], function(_, $, globalKeyListener, AnsweredQuestionsCollection, EntitySearchCollection, prettyPrintNumberHelper, loadingSpinnerTemplate, i18n) {
     'use strict';
 
     const loadingHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
@@ -200,7 +201,9 @@ define([
                                 const title = _.compact([systemName, source]).join(': ');
                                 const link = /^https?:/i.test(source) ? '<a class="entity-search-cite" target="_blank" href="'+_.escape(source)+'">'+_.escape(source)+'</a>' : '';
 
-                                return '<span title="'+_.escape(title)+'">' + _.escape(text) + ' ' + link + '</span>';
+                                const formattedText = text && isFinite(text) ? prettyPrintNumberHelper(text, { hash: {}}) : text;
+
+                                return '<span title="'+_.escape(title)+'">' + _.escape(formattedText) + ' ' + link + '</span>';
                             }).join('');
                             addHtmlMessage('entity-search-server', answer || _.escape(i18n['entitySearch.template.question.answerMissing']));
                         }, this),
