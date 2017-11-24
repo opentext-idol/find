@@ -192,8 +192,18 @@ define([
                         },
                         reset: true,
                         success: _.bind(function() {
-                            const answer = answeredQuestionsCollection.map('answer').join('');
-                            addMessage('entity-search-server', answer || i18n['entitySearch.template.question.answerMissing']);
+                            const answer = answeredQuestionsCollection.map(function(model){
+                                const text = model.get('answer');
+                                const source = model.get('source');
+                                const systemName = model.get('systemName');
+
+                                const tag = /^https?:/i.test(source) ? 'a' : 'span';
+
+                                const title = _.compact([systemName, source]).join(': ');
+
+                                return '<'+tag+' class="entity-search-answer entity-search-answer-'+_.escape(systemName)+'" target="_blank" href="'+source+'" title="'+_.escape(title)+'">'+_.escape(text)+'</'+tag+'>';
+                            }).join('');
+                            addHtmlMessage('entity-search-server', answer || _.escape(i18n['entitySearch.template.question.answerMissing']));
                         }, this),
                         error: _.bind(function() {
                             addMessage('entity-search-server', i18n['entitySearch.template.question.answerError']);
@@ -205,6 +215,12 @@ define([
 
                 function addMessage(cssClass, text) {
                     $('<div class="'+cssClass+'">').text('\n' + text + '\n').appendTo($answerEl);
+                    scrollDown();
+                    reposition();
+                }
+
+                function addHtmlMessage(cssClass, html) {
+                    $('<div class="'+cssClass+'">').html('\n' + html + '\n').appendTo($answerEl);
                     scrollDown();
                     reposition();
                 }
