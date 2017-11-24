@@ -183,7 +183,7 @@ define([
                     $input.val('');
                     addMessage('entity-search-user', text);
 
-                    const questionText = /^(what|who|how|where|why)/i.exec(text) ? text : 'what is the ' + text + ' of ' + $input.data('context')
+                    const questionText = /^(what|who|how|when|where|why)/i.exec(text) ? text : 'what is the ' + text + ' of ' + $input.data('context')
 
                     answeredQuestionsCollection.fetch({
                         data: {
