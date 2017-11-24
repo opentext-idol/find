@@ -201,7 +201,7 @@ define([
                                 const title = _.compact([systemName, source]).join(': ');
                                 const link = /^https?:/i.test(source) ? '<a class="entity-search-cite" target="_blank" href="'+_.escape(source)+'">'+_.escape(source)+'</a>' : '';
 
-                                const formattedText = text && isFinite(text) ? prettyPrintNumberHelper(text, { hash: {}}) : text;
+                                const formattedText = text && isFinite(text) && (text >= 10000 || text < 0)? prettyPrintNumberHelper(text, { hash: {}}) : text;
 
                                 return '<span title="'+_.escape(title)+'">' + _.escape(formattedText) + ' ' + link + '</span>';
                             }).join('');
