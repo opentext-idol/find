@@ -9,6 +9,7 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.util.AciParameters;
+import com.hp.autonomy.aci.content.fieldtext.Specifier;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.idol.configuration.EntitySearchConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -64,7 +66,8 @@ class TempAnswerServerController {
     public List<AskAnswer> ask(
             @RequestParam(TEXT_PARAM) final String text,
             @RequestParam(value = MAX_RESULTS_PARAM, required = false)
-            final Integer maxResults
+            final Integer maxResults,
+            @RequestParam(value = "context", required = false) final String context
     ) throws XPathExpressionException {
         final ArrayList<AskAnswer> toReturn = new ArrayList<>();
 
@@ -90,7 +93,13 @@ class TempAnswerServerController {
             // These have been added to the answer server config as
             // [Server] AllowedQueryParameters=DatabaseMatch,SecurityInfo,PrintFields
             params.add(QueryParams.DatabaseMatch.name(), entitySearch.getAnswerServerDatabaseMatch());
-            params.add(QueryParams.PrintFields.name(), entitySearch.getAnswerServerPrintFields());
+            final String contentField = entitySearch.getAnswerServerContentField();
+            params.add(QueryParams.PrintFields.name(), contentField);
+
+            if (StringUtils.isNotBlank(context) && StringUtils.isNotBlank(contentField)) {
+                params.add(QueryParams.FieldText.name(), new Specifier("TERM", contentField, context));
+            }
+
             parameterHandler.addSecurityInfo(params);
 
             if (maxResults != null) {

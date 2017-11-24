@@ -42,7 +42,7 @@ define([
                 $hover.removeClass('first-appearance');
             })
 
-            updateIndicator($hover, loadingHtml, bounds);
+            updateIndicator($hover, loadingHtml, bounds, null);
 
             lastFetch = entityModels.fetch({
                 data: { text: text }
@@ -55,7 +55,7 @@ define([
                         $hover.removeClass('first-appearance');
                     })
 
-                    updateIndicator($hover, html, bounds);
+                    updateIndicator($hover, html, bounds, result.get('title'));
                 }
                 else {
                     clearIndicator($hover)
@@ -80,7 +80,7 @@ define([
             $closest.remove();
         }
 
-        function updateIndicator($hover, html, bounds){
+        function updateIndicator($hover, html, bounds, context){
             const top = bounds.bottom + 10;
             const left = bounds.left;
 
@@ -189,7 +189,8 @@ define([
                     answeredQuestionsCollection.fetch({
                         data: {
                             text: questionText,
-                            maxResults: 1
+                            maxResults: 1,
+                            context: context,
                         },
                         reset: true,
                         success: _.bind(function() {
