@@ -192,7 +192,7 @@ define([
                     const questionText = /^(what|who|how|when|where|why)/i.exec(text) ? text : 'what is the ' + text + ' of ' + $input.data('context')
 
                     const answeredQuestionsCollection = new AnsweredQuestionsCollection();
-                    answeredQuestionsCollection.url = 'api/public/answer/ask-demo';
+                    answeredQuestionsCollection.url = 'api/public/answer/entity-search-ask';
 
                     answeredQuestionsCollection.fetch({
                         data: {

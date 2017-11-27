@@ -39,11 +39,10 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.hp.autonomy.frontend.find.idol.answer.AnswerServerController.MAX_RESULTS_PARAM;
 import static com.hp.autonomy.frontend.find.idol.answer.AnswerServerController.TEXT_PARAM;
 
-// This is a temporary controller, long term we'd use AnswerServerController, but the demo network has an older build
-//   of answer server at the moment so we need custom parsing.
+// Answer server controller variant used by the entity-search question-answer UI.
 @RestController
 @RequestMapping(AnswerServerController.BASE_PATH)
-class TempAnswerServerController {
+class EntitySearchAnswerServerController {
 
     private final AciService aciService;
     private final HavenSearchAciParameterHandler parameterHandler;
@@ -52,17 +51,17 @@ class TempAnswerServerController {
     private final Processor<AskResponsedata> processor;
 
     @Autowired
-    TempAnswerServerController(final AciService aciService,
-                               final HavenSearchAciParameterHandler parameterHandler,
-                               final ConfigService<IdolFindConfig> configService,
-                               final ProcessorFactory processorFactory) {
+    EntitySearchAnswerServerController(final AciService aciService,
+                                       final HavenSearchAciParameterHandler parameterHandler,
+                                       final ConfigService<IdolFindConfig> configService,
+                                       final ProcessorFactory processorFactory) {
         this.aciService = aciService;
         this.parameterHandler = parameterHandler;
         this.configService = configService;
         processor = processorFactory.getResponseDataProcessor(AskResponsedata.class);
     }
 
-    @RequestMapping(value = "ask-demo", method = RequestMethod.GET)
+    @RequestMapping(value = "entity-search-ask", method = RequestMethod.GET)
     public List<AskAnswer> ask(
             @RequestParam(TEXT_PARAM) final String text,
             @RequestParam(value = MAX_RESULTS_PARAM, required = false)
