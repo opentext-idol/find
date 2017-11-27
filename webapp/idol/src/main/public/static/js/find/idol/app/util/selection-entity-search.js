@@ -181,6 +181,8 @@ define([
                     $input.val('');
                     addMessage('entity-search-user', text);
 
+                    const $loading = addHtmlMessage('entity-search-loading', loadingHtml);
+
                     const questionText = /^(what|who|how|when|where|why)/i.exec(text) ? text : 'what is the ' + text + ' of ' + $input.data('context')
 
                     const answeredQuestionsCollection = new AnsweredQuestionsCollection();
@@ -206,32 +208,43 @@ define([
 
                                 return '<span title="'+_.escape(title)+'">' + _.escape(formattedText) + ' ' + link + '</span>';
                             }).join('');
-                            addHtmlMessage('entity-search-server', answer || _.escape(i18n['entitySearch.template.question.answerMissing']));
+                            addHtmlMessage('entity-search-server', answer || _.escape(i18n['entitySearch.template.question.answerMissing']), $loading);
                         }, this),
                         error: _.bind(function() {
-                            addMessage('entity-search-server', i18n['entitySearch.template.question.answerError']);
+                            addMessage('entity-search-server', i18n['entitySearch.template.question.answerError'], $loading);
                         }, this)
                     }, this);
-
-
                 }
 
-                function addMessage(cssClass, text) {
-                    $('<div class="'+cssClass+'">').text('\n' + text + '\n').appendTo($answerEl);
-                    scrollDown();
+                function addMessage(cssClass, text, $targetEl) {
+                    const $el = $('<div class="'+cssClass+'">').text('\n' + text + '\n');
+                    insertMessage($el, $targetEl);
+                    return $el;
+                }
+
+                function addHtmlMessage(cssClass, html, $targetEl) {
+                    const $el = $('<div class="'+cssClass+'">').html('\n' + html + '\n');
+                    insertMessage($el, $targetEl)
+                    return $el;
+                }
+
+                function insertMessage($el, $targetEl) {
+                    if ($targetEl && $targetEl.length) {
+                        $targetEl.replaceWith($el);
+                    }
+                    else {
+                        $el.appendTo($answerEl);
+                    }
+                    scrollDown($el);
                     reposition();
+                    // On IE, we keep losing the focus after the user presses 'Enter', so we reclaim the focus.
+                    $input.focus();
                 }
 
-                function addHtmlMessage(cssClass, html) {
-                    $('<div class="'+cssClass+'">').html('\n' + html + '\n').appendTo($answerEl);
-                    scrollDown();
-                    reposition();
-                }
-
-                function scrollDown() {
+                function scrollDown($el) {
                     const dom = $answerEl[0];
                     if (dom.scrollHeight) {
-                        dom.scrollTop = dom.scrollHeight;
+                        dom.scrollTop = $el && $el.length ? ($el[0].offsetTop - $el[0].parentNode.offsetTop) || dom.scrollHeight: dom.scrollHeight;
                     }
                 }
 
