@@ -37,9 +37,11 @@ define([
         initialize: function(options){
             FindSearch.prototype.initialize.apply(this, arguments);
 
-            if (configuration().entitySearchEnabled) {
+            const config = configuration();
+            if (config.entitySearchEnabled) {
                 this.selectionEntitySearch = new SelectionEntitySearch({
-                    documentRenderer: this.documentRenderer
+                    documentRenderer: this.documentRenderer,
+                    answerServer: config.entitySearchAnswerServerEnabled
                 });
             }
         },

@@ -16,6 +16,7 @@ import com.hp.autonomy.frontend.find.core.web.MvcConstants;
 import com.hp.autonomy.frontend.find.idol.applications.CustomApplication;
 import com.hp.autonomy.frontend.find.idol.applications.CustomApplicationsConfig;
 import com.hp.autonomy.frontend.find.idol.authentication.FindCommunityRole;
+import com.hp.autonomy.frontend.find.idol.configuration.EntitySearchConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
@@ -92,7 +93,12 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
                 .collect(Collectors.toList()));
         publicConfig.put(IdolMvcConstants.APPLICATIONS.getName(), enabledApps);
         publicConfig.put(MvcConstants.ANSWER_SERVER_ENABLED.value(), config.getAnswerServer().getEnabled());
-        publicConfig.put(MvcConstants.ENTITY_SEARCH_ENABLED.value(), config.getEntitySearch().getEnabled());
+
+        final EntitySearchConfig entitySearch = config.getEntitySearch();
+        publicConfig.put(MvcConstants.ENTITY_SEARCH_ENABLED.value(), entitySearch.getEnabled());
+        publicConfig.put(MvcConstants.ENTITY_SEARCH_ANSWER_SERVER_ENABLED.value(),
+            BooleanUtils.isTrue(entitySearch.getEnabled()) && BooleanUtils.isTrue(entitySearch.getAnswerServer().getEnabled())
+        );
         publicConfig.put(MvcConstants.TEMPLATES_CONFIG.value(), templatesConfig.getConfig());
         publicConfig.put(MvcConstants.ASSETS_CONFIG.value(), assetsConfigService.getConfig());
         publicConfig.put(MvcConstants.MESSAGE_OF_THE_DAY_CONFIG.value(), config.getMessageOfTheDay());

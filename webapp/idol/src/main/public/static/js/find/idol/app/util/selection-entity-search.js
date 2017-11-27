@@ -19,6 +19,7 @@ define([
 
     function SelectionEntitySearch(options) {
         const documentRenderer = options.documentRenderer;
+        const answerServer = options.answerServer;
         // You can control which elements the popup will appear on by adjusting this selector.
         const selector = options.selector || '.main-results-container,.parametric-value-element,.dt-bootstrap,.trending-chart,.sunburst,.entity-topic-map,.leaflet-popup-content,.document-detail-tabs-content,.entity-search-messages';
         const debounceMillis = options.debounceMillis || 250;
@@ -171,6 +172,11 @@ define([
             reposition();
 
             $hover.find('img').on('load', reposition).attr('draggable', false);
+
+            if (!answerServer) {
+                $hover.find('.entity-search-messages,.entity-search-controls').remove();
+            }
+
             $hover.find('input.entity-search-question').closest('form').on('submit', function(evt){
                 const $input = $(evt.currentTarget).find('input.entity-search-question');
                 const text = $input.val().trim();
