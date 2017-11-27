@@ -106,7 +106,7 @@ define([
         'entitySearch.template.companies.stockTicker': 'Stock Ticker',
         'entitySearch.template.question.placeholder': 'What would you like to know?',
         'entitySearch.template.question.send': 'Send',
-        'entitySearch.template.question.answerError': 'Sorry, there was an error contacting the answer server.',
+        'entitySearch.template.question.answerError': 'Sorry, we don\'t have an answer for that question at present.',
         'entitySearch.template.question.answerMissing': 'Sorry, we don\'t have an answer for that question at present.',
         'error.message.default': 'An error has occurred.',
         'error.default.contactSupport': 'Please contact support.',

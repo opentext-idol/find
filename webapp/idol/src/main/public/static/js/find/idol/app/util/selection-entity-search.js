@@ -24,9 +24,6 @@ define([
         const debounceMillis = options.debounceMillis || 250;
         let element = options.element || document.body;
 
-        const answeredQuestionsCollection = new AnsweredQuestionsCollection();
-        answeredQuestionsCollection.url = 'api/public/answer/ask-demo';
-
         const entityModels = new EntitySearchCollection();
         let lastQueryText, lastFetch;
 
@@ -185,6 +182,9 @@ define([
                     addMessage('entity-search-user', text);
 
                     const questionText = /^(what|who|how|when|where|why)/i.exec(text) ? text : 'what is the ' + text + ' of ' + $input.data('context')
+
+                    const answeredQuestionsCollection = new AnsweredQuestionsCollection();
+                    answeredQuestionsCollection.url = 'api/public/answer/ask-demo';
 
                     answeredQuestionsCollection.fetch({
                         data: {
