@@ -37,6 +37,7 @@ public class EntitySearchConfig extends SimpleComponent<EntitySearchConfig> impl
     private final AnswerServerConfig answerServer;
     private final String answerServerDatabaseMatch;
     private final String answerServerContentField;
+    private final Double answerServerTimeoutSecs;
 
     @Override
     public void basicValidate(final String configSection) throws ConfigException {

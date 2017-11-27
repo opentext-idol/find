@@ -81,6 +81,7 @@ class TempAnswerServerController {
         final AnswerServerConfig answerServer = entitySearch.getAnswerServer();
         final AciServerDetails details = answerServer.toAciServerDetails();
         final Collection<String> systemNames = answerServer.getSystemNames();
+        final Double timeoutSecs = entitySearch.getAnswerServerTimeoutSecs();
 
         // We deliberately do each systemName in sequence since FactBank is faster than PassageExtraction.
         // If the systemNames aren't listed, we'll use null, which means we'll try all configured answer server systems.
@@ -98,6 +99,10 @@ class TempAnswerServerController {
 
             if (StringUtils.isNotBlank(context) && StringUtils.isNotBlank(contentField)) {
                 params.add(QueryParams.FieldText.name(), new Specifier("TERM", contentField, context));
+            }
+
+            if (timeoutSecs != null && timeoutSecs > 0) {
+                params.add("Timeout", timeoutSecs);
             }
 
             parameterHandler.addSecurityInfo(params);
