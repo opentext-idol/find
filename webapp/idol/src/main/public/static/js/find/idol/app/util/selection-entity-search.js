@@ -23,6 +23,8 @@ define([
         // You can control which elements the popup will appear on by adjusting this selector.
         const selector = options.selector || '.main-results-container,.parametric-value-element,.dt-bootstrap,.trending-chart,.sunburst,.entity-topic-map,.leaflet-popup-content,.document-detail-tabs-content,.entity-search-messages';
         const debounceMillis = options.debounceMillis || 250;
+        // The length of time you have to hover over the text in the topic map before we automatically entity-search it.
+        const hoverDelay = options.hoverDelay || 1000;
         let element = options.element || document.body;
 
         const entityModels = new EntitySearchCollection();
@@ -290,14 +292,47 @@ define([
 
         const debounced = _.debounce(onSelectionChange, debounceMillis);
 
-        function rearrangePopups(evt) {
+        let $hoveredEl, hoverTimeout;
 
+        function onMouseOver(evt) {
+            const target = evt.currentTarget;
+            const $textEl = $(target);
+            if (target.textContent && $textEl.closest(selector).length) {
+                if ($hoveredEl !== target) {
+                    $hoveredEl = target;
+
+                    if (hoverTimeout) {
+                        clearTimeout(hoverTimeout);
+                    }
+
+                    hoverTimeout = setTimeout(function(){
+                        // Load a model for the full text that you're hovering over, unless the user is
+                        //   already selecting text on it with the mouse.
+                        if (!window.getSelection().length) {
+                            clearAllIndicators();
+                            loadModel(target.textContent, target.getBoundingClientRect());
+                        }
+                    }, hoverDelay);
+                }
+            }
+        }
+
+        function onMouseOut(evt) {
+            if ($hoveredEl && evt.currentTarget === $hoveredEl) {
+                $hoveredEl = null;
+
+                if (hoverTimeout) {
+                    clearTimeout(hoverTimeout);
+                    hoverTimeout = null;
+                }
+            }
         }
 
         $(document)
             .on('selectionchange', debounced)
             .on('click', '.selection-entity-close', clearClickedIndicator)
-            .on('click', '.selection-entity', rearrangePopups)
+            .on('mouseover', 'text', onMouseOver)
+            .on('mouseout', 'text', onMouseOut)
 
         globalKeyListener.on('escape', clearAllIndicators);
 
@@ -305,7 +340,8 @@ define([
             $(document)
                 .off('selectionchange', debounced)
                 .off('click', '.selection-entity-close', clearClickedIndicator)
-                .off('click', '.selection-entity', rearrangePopups);
+                .off('mouseover', 'text', onMouseOver)
+                .off('mouseover', 'text', onMouseOut)
             globalKeyListener.off('escape', clearAllIndicators);
             clearAllIndicators();
         }
