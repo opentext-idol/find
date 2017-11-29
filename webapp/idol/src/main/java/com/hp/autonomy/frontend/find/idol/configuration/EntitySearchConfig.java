@@ -11,6 +11,7 @@ import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.SimpleComponent;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
+import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
 import java.util.Collection;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -33,6 +34,11 @@ public class EntitySearchConfig extends SimpleComponent<EntitySearchConfig> impl
     private final String combine;
     private Collection<String> printFields;
 
+    private final AnswerServerConfig answerServer;
+    private final String answerServerDatabaseMatch;
+    private final String answerServerContentField;
+    private final Double answerServerTimeoutSecs;
+
     @Override
     public void basicValidate(final String configSection) throws ConfigException {
         if (BooleanUtils.isTrue(enabled)) {
@@ -40,6 +46,15 @@ public class EntitySearchConfig extends SimpleComponent<EntitySearchConfig> impl
                 throw new ConfigException(SECTION, "Entity search is enabled but no corresponding server details have been provided");
             }
             server.basicValidate(SECTION);
+
+            if (BooleanUtils.isTrue(answerServer.getEnabled())) {
+                try {
+                    answerServer.basicValidate(configSection);
+                }
+                catch(ConfigException e) {
+                    throw new ConfigException(SECTION, e.getMessage());
+                }
+            }
         }
     }
 
