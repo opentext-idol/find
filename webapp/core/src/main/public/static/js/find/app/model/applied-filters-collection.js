@@ -19,7 +19,7 @@ define([
 
     const DATE_FORMAT = 'YYYY-MM-DD HH:mm';
     const SHORT_DATE_FORMAT = 'YYYY-MM-DD';
-    const DATE_SHORTEN_CUTOFF = 7 * 24 * 3600; // interval in seconds at which date format changes to short
+    const DATE_SHORTEN_CUTOFF = 7 * 24 * 3600 * 1000; // interval in millseconds at which date format changes to short
 
     const FilterType = {
         INDEXES: 'INDEXES',
@@ -53,7 +53,7 @@ define([
     }
 
     function formatDate(autnDate, format) {
-        return moment(autnDate * 1000).format(format);
+        return moment(autnDate).format(format);
     }
 
     // Get the display text for the given parametric field name and array of selected parametric values
