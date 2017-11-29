@@ -71,7 +71,7 @@ class EntitySearchController {
         aciParameters.add(QueryParams.Combine.name(), entitySearch.getCombine());
         aciParameters.add(QueryParams.IgnoreSpecials.name(), true);
         aciParameters.add(QueryParams.MaxResults.name(), 1);
-        final Collection<String> printFields = entitySearch.getPrintFields();
+        final Collection<String> printFields = entitySearch.getIdolPrintFields();
         aciParameters.add(QueryParams.PrintFields.name(), CollectionUtils.isEmpty(printFields) ? "*" : new PrintFields(printFields));
         aciParameters.add(QueryParams.Text.name(), text);
 

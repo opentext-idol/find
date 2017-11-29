@@ -32,7 +32,7 @@ public class EntitySearchConfig extends SimpleComponent<EntitySearchConfig> impl
     private final Boolean enabled;
     private final String agentBooleanField;
     private final String combine;
-    private Collection<String> printFields;
+    private Collection<String> idolPrintFields;
 
     private final AnswerServerConfig answerServer;
     private final String answerServerDatabaseMatch;
