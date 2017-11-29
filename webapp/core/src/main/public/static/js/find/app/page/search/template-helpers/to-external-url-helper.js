@@ -7,12 +7,12 @@ define([
     'underscore'
 ], function(_) {
 
-    return function(value, defaultProtocol) {
-        if (!value || /^\w+:\/\//.test(value)) {
+    return function(value, options) {
+        if (!value || /^(\w+:)?\/\//.test(value)) {
             return value;
         }
 
-        return (defaultProtocol || 'http://') + value;
+        return (options.hash.defaultProtocol || 'http://') + value;
     };
 
 });
