@@ -6,13 +6,14 @@
 define([
     'underscore',
     'jquery',
+    'd3',
     'find/app/util/global-key-listener',
     'find/idol/app/model/answer-bank/idol-answered-questions-collection',
     'find/idol/app/model/entitysearch/entity-search-collection',
     'find/app/page/search/template-helpers/pretty-print-number-helper',
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/nls/bundle'
-], function(_, $, globalKeyListener, AnsweredQuestionsCollection, EntitySearchCollection, prettyPrintNumberHelper, loadingSpinnerTemplate, i18n) {
+], function(_, $, d3, globalKeyListener, AnsweredQuestionsCollection, EntitySearchCollection, prettyPrintNumberHelper, loadingSpinnerTemplate, i18n) {
     'use strict';
 
     const loadingHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
@@ -297,7 +298,10 @@ define([
         function onMouseOver(evt) {
             const target = evt.currentTarget;
             const $textEl = $(target);
-            if (target.textContent && $textEl.closest(selector).length) {
+            // textContent is a standard property on SVG text elements,
+            //   while 'text' is a property on the sunburst data object.
+            const text = target.textContent || (d3.select(evt.currentTarget).datum() || {}).text
+            if (text && $textEl.closest(selector).length) {
                 if ($hoveredEl !== target) {
                     $hoveredEl = target;
 
@@ -310,7 +314,7 @@ define([
                         //   already selecting text on it with the mouse.
                         if (!window.getSelection().length) {
                             clearAllIndicators();
-                            loadModel(target.textContent, target.getBoundingClientRect());
+                            loadModel(text, target.getBoundingClientRect());
                         }
                     }, hoverDelay);
                 }
@@ -331,8 +335,8 @@ define([
         $(document)
             .on('selectionchange', debounced)
             .on('click', '.selection-entity-close', clearClickedIndicator)
-            .on('mouseover', 'text', onMouseOver)
-            .on('mouseout', 'text', onMouseOut)
+            .on('mouseover', 'text,path', onMouseOver)
+            .on('mouseout', 'text,path', onMouseOut)
 
         globalKeyListener.on('escape', clearAllIndicators);
 
@@ -340,8 +344,8 @@ define([
             $(document)
                 .off('selectionchange', debounced)
                 .off('click', '.selection-entity-close', clearClickedIndicator)
-                .off('mouseover', 'text', onMouseOver)
-                .off('mouseover', 'text', onMouseOut)
+                .off('mouseover', 'text,path', onMouseOver)
+                .off('mouseover', 'text,path', onMouseOut)
             globalKeyListener.off('escape', clearAllIndicators);
             clearAllIndicators();
         }
