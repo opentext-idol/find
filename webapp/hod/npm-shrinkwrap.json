@@ -691,7 +691,7 @@
     "grunt-contrib-uglify": {
       "version": "3.0.1",
       "from": "gruntjs/grunt-contrib-uglify#harmony",
-      "resolved": "git+https://github.com/gruntjs/grunt-contrib-uglify.git#c2ccee1b61a585c5f4fca00da8f79cc1db37048b"
+      "resolved": "git+https://github.com/gruntjs/grunt-contrib-uglify.git#harmony"
     },
     "grunt-contrib-watch": {
       "version": "0.6.1",
