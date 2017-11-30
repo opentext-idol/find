@@ -1,4 +1,15 @@
 <div class="default-result-container selection-entity-content clearfix selection-entity-content-db-{{toLowerCase database}}">
+
+    {{#equal (toLowerCase database) 'places'}}
+        <div class="selection-entity-icon hp-icon hp-globe"></div>
+    {{/equal}}
+    {{#equal (toLowerCase database) 'people'}}
+        <div class="selection-entity-icon hp-icon hp-user-m"></div>
+    {{/equal}}
+    {{#equal (toLowerCase database) 'companies'}}
+        <div class="selection-entity-icon hp-icon hp-resources"></div>
+    {{/equal}}
+
     <div class="flex flex-align-center m-b-xs">
     {{#equal (toLowerCase database) 'places'}}
         {{#hasField 'WIKIPEDIA_IMAGE'}}
