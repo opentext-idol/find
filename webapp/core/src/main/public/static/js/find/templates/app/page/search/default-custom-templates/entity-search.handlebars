@@ -1,13 +1,13 @@
-<div class="default-result-container selection-entity-content clearfix selection-entity-content-db-{{toLowerCase database}}">
+<div class="default-result-container selection-entity-content clearfix selection-entity-db-{{toLowerCase database}}-border">
 
     {{#equal (toLowerCase database) 'places'}}
-        <div class="selection-entity-icon hp-icon hp-globe"></div>
+        <div class="selection-entity-icon hp-icon hp-globe selection-entity-db-{{toLowerCase database}}-color"></div>
     {{/equal}}
     {{#equal (toLowerCase database) 'people'}}
-        <div class="selection-entity-icon hp-icon hp-user-m"></div>
+        <div class="selection-entity-icon hp-icon hp-user-m selection-entity-db-{{toLowerCase database}}-color"></div>
     {{/equal}}
     {{#equal (toLowerCase database) 'companies'}}
-        <div class="selection-entity-icon hp-icon hp-resources"></div>
+        <div class="selection-entity-icon hp-icon hp-resources selection-entity-db-{{toLowerCase database}}-color"></div>
     {{/equal}}
 
     <div class="flex flex-align-center m-b-xs">
@@ -23,7 +23,7 @@
                 {{#hasField 'PLACE_COUNTRY_CODE'}}
                     <img style="max-height: 18px; max-width: 36px;" src="static-HEAD/img/flags.wp/{{toLowerCase (getFieldValue 'PLACE_COUNTRY_CODE')}}.svg">
                 {{/hasField}}
-                <a target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
+                <a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
             </h4>
             {{#hasField 'latitude'}}
                 {{#hasField 'longitude'}}
@@ -63,7 +63,7 @@
 
         <div class="results-contents">
             <h4 class="m-l-xs m-t-xs m-b-nil result-header">
-                <a target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
+                <a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
             </h4>
             <table class="m-l-xs">
                 {{#hasField 'PERSON_DATE_OF_BIRTH'}}
@@ -99,17 +99,17 @@
 
         <div class="results-contents">
             <h4 class="m-l-xs m-t-xs m-b-nil result-header">
-                <a target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
+                <a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
             </h4>
             <table class="m-l-xs">
                 {{#hasField 'URL_HOMEPAGE'}}
                     <tr>
-                        <th class="selection-entity-header">{{i18n 'entitySearch.template.companies.url'}}</th><td><a target="_blank" href="{{toExternalUrl (getFieldValue 'URL_HOMEPAGE')}}">{{getFieldValue 'URL_HOMEPAGE'}}</a></td>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.companies.url'}}</th><td><a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="{{toExternalUrl (getFieldValue 'URL_HOMEPAGE')}}">{{getFieldValue 'URL_HOMEPAGE'}}</a></td>
                     </tr>
                 {{/hasField}}
                 {{#hasField 'COMPANY_GOOGLE'}}
                     <tr>
-                        <th class="selection-entity-header">{{i18n 'entitySearch.template.companies.stockTicker'}}</th><td><a target="_blank" href="https://finance.google.co.uk/finance?q={{getFieldValue 'COMPANY_GOOGLE'}}">{{getFieldValue 'COMPANY_GOOGLE'}}</a></td>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.companies.stockTicker'}}</th><td><a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="https://finance.google.co.uk/finance?q={{getFieldValue 'COMPANY_GOOGLE'}}">{{getFieldValue 'COMPANY_GOOGLE'}}</a></td>
                     </tr>
                 {{/hasField}}
             </table>

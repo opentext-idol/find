@@ -45,7 +45,7 @@
   left: 2px;
   top: 2px;
   font-size: 13px;
-  color: lightgray;
+  opacity: 0.5;
 }
 
 .entity-search-messages {
@@ -117,14 +117,25 @@
   font-size: smaller;
 }
 
-.selection-entity-content-db-places {
-  border: 1px solid #009c2a;
+.selection-entity-db(@color) {
+  &-border {
+    border: 1px solid @color;
+  }
+  &-color {
+    color: @color;
+  }
+  &-color:hover, &-color:focus {
+    color: lighten(@color, 10%);
+  }
+}
+.selection-entity-db-places {
+  .selection-entity-db(#009c2a)
 }
 
-.selection-entity-content-db-people {
-  border: 1px solid #c76700;
+.selection-entity-db-people {
+  .selection-entity-db(#c76700)
 }
 
-.selection-entity-content-db-companies {
-  border: 1px solid #0067c7;
+.selection-entity-db-companies {
+  .selection-entity-db(#0067c7)
 }
