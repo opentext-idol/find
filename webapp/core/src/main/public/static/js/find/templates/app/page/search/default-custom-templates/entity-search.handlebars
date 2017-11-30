@@ -28,7 +28,7 @@
             {{#hasField 'latitude'}}
                 {{#hasField 'longitude'}}
                     <div class="mercator-svg-map">
-                        <div class="mercator-svg-marker" style="width: 4px; height: 4px; border-radius: 2px;
+                        <div class="mercator-svg-marker selection-entity-db-{{toLowerCase database}}-background-color" style="width: 4px; height: 4px; border-radius: 2px;
                             left: {{ percentage (getFieldValue 'longitude') max=180 min=-180}};
                             bottom: {{ percentage (getFieldValue 'latitude') max=90 min=-90}};
                         "></div>
