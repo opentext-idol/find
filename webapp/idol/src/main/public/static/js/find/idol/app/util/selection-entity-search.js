@@ -175,6 +175,8 @@ define([
             reposition();
 
             $hover.find('img').on('load', reposition).attr('draggable', false);
+            // On IE11, the broken-image box is shown despite alt being blank, so we need to remove the image
+            $hover.find('img[alt=""]').on('error', function(evt){ $(evt.currentTarget).remove() })
 
             if (!answerServer) {
                 $hover.find('.entity-search-messages,.entity-search-controls').remove();
