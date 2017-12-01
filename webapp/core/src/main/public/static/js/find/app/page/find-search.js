@@ -469,7 +469,7 @@ define([
 
         createNewTab: function (queryText) {
             const newSearch = new SavedSearchModel({
-                relatedConcepts: queryText ? [[queryText]] : [],
+                relatedConcepts: queryText ? [queryText.split('\n')] : [],
                 title: i18n['search.newSearch'],
                 type: SavedSearchModel.Type.QUERY,
                 minScore: config().minScore
