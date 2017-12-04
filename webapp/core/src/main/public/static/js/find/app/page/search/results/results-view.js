@@ -15,6 +15,7 @@ define([
     'find/app/page/search/results/results-number-view',
     'find/app/util/view-server-client',
     'find/app/util/events',
+    'find/app/util/url-manipulator',
     'find/app/page/search/results/add-links-to-summary',
     'find/app/configuration',
     'find/app/util/generate-error-support-message',
@@ -25,7 +26,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(_, $, Backbone, addChangeListener, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
-            viewClient, events, addLinksToSummary, configuration, generateErrorHtml, resultTemplate, html,
+            viewClient, events, urlManipulator, addLinksToSummary, configuration, generateErrorHtml, resultTemplate, html,
             loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
     'use strict';
 
@@ -75,6 +76,19 @@ define([
                         const isPromotion = $result.closest('.main-results-list').hasClass('promotions');
                         const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
                         const model = collection.get(cid);
+
+                        const url = model.get('url');
+                        const documentHref = url
+                            ? urlManipulator.addSpecialUrlPrefix(
+                                model.get('contentType'),
+                                model.get('url'))
+                            : null;
+
+                        if (documentHref) {
+                            window.open(documentHref, '_blank')
+                            return;
+                        }
+
                         this.previewModeModel.set({document: model});
 
                         if (!isPromotion) {
