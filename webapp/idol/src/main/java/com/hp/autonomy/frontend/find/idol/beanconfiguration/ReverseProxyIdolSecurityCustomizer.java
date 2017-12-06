@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 import com.hp.autonomy.frontend.configuration.authentication.IdolPreAuthenticatedAuthenticationProvider;
 import com.hp.autonomy.frontend.find.idol.authentication.FindCommunityRole;
 import com.hp.autonomy.user.UserService;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -49,7 +50,12 @@ public class ReverseProxyIdolSecurityCustomizer implements IdolSecurityCustomize
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     public void customize(final HttpSecurity http, final AuthenticationManager authenticationManager) throws Exception {
-        final J2eePreAuthenticatedProcessingFilter filter = new J2eePreAuthenticatedProcessingFilter();
+        final J2eePreAuthenticatedProcessingFilter filter = new J2eePreAuthenticatedProcessingFilter() {
+            @Override
+            protected Object getPreAuthenticatedPrincipal(final HttpServletRequest httpRequest) {
+                return "fakeUser";
+            }
+        };
         filter.setAuthenticationManager(authenticationManager);
 
         http.addFilter(filter);
