@@ -8,6 +8,8 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 import com.hp.autonomy.frontend.configuration.authentication.IdolPreAuthenticatedAuthenticationProvider;
 import com.hp.autonomy.frontend.find.idol.authentication.FindCommunityRole;
 import com.hp.autonomy.user.UserService;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,28 +30,39 @@ import java.util.stream.Collectors;
 public class ReverseProxyIdolSecurityCustomizer implements IdolSecurityCustomizer {
 
     static final String REVERSE_PROXY_PROPERTY_KEY = "server.reverseProxy";
+    static final String PRE_AUTHENTICATED_USERNAME_PROPERTY_KEY = "find.reverse-proxy.pre-authenticated-username";
     static final String PRE_AUTHENTICATED_ROLES_PROPERTY_KEY = "find.reverse-proxy.pre-authenticated-roles";
 
     private final UserService userService;
     private final GrantedAuthoritiesMapper grantedAuthoritiesMapper;
     private final String preAuthenticatedRoles;
 
+    private final String preAuthenticatedUsername;
+
     @Autowired
     public ReverseProxyIdolSecurityCustomizer(
             final UserService userService,
             final GrantedAuthoritiesMapper grantedAuthoritiesMapper,
-            @Value("${find.reverse-proxy.pre-authenticated-roles}") final String preAuthenticatedRoles
+            @Value("${find.reverse-proxy.pre-authenticated-roles}") final String preAuthenticatedRoles,
+            @Value("${find.reverse-proxy.pre-authenticated-username}") final String preAuthenticatedUsername
     ) {
 
         this.userService = userService;
         this.grantedAuthoritiesMapper = grantedAuthoritiesMapper;
         this.preAuthenticatedRoles = preAuthenticatedRoles;
+        this.preAuthenticatedUsername = preAuthenticatedUsername;
     }
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Override
     public void customize(final HttpSecurity http, final AuthenticationManager authenticationManager) throws Exception {
-        final J2eePreAuthenticatedProcessingFilter filter = new J2eePreAuthenticatedProcessingFilter();
+        final J2eePreAuthenticatedProcessingFilter filter = new J2eePreAuthenticatedProcessingFilter() {
+            @Override
+            protected Object getPreAuthenticatedPrincipal(final HttpServletRequest httpRequest) {
+                return StringUtils.isNotBlank(preAuthenticatedUsername) ? preAuthenticatedUsername
+                    : super.getPreAuthenticatedPrincipal(httpRequest);
+            }
+        };
         filter.setAuthenticationManager(authenticationManager);
 
         http.addFilter(filter);
