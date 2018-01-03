@@ -11,7 +11,7 @@
     {{/equal}}
 
     <div class="flex flex-align-center m-b-xs">
-    {{#equal (toLowerCase database) 'places'}}
+    {{#equal (toLowerCase database) 'places' 'placesextended'}}
         {{#hasField 'WIKIPEDIA_IMAGE'}}
             <span class="pull-left m-t-xs m-b-xs m-r-sm">
                 <img alt="" class="max-half-screen-height" src="{{ wikiThumbnailHelper (getFieldValue 'WIKIPEDIA_IMAGE') 200 }}">
@@ -23,12 +23,12 @@
                 {{#hasField 'PLACE_COUNTRY_CODE'}}
                     <img alt="" style="max-height: 18px; max-width: 36px;" src="static-HEAD/img/flags.wp/{{toLowerCase (getFieldValue 'PLACE_COUNTRY_CODE')}}.svg">
                 {{/hasField}}
-                <a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
+                <a class="selection-entity-db-places-color" target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
             </h4>
             {{#hasField 'latitude'}}
                 {{#hasField 'longitude'}}
                     <div class="mercator-svg-map">
-                        <div class="mercator-svg-marker selection-entity-db-{{toLowerCase database}}-background-color" style="width: 4px; height: 4px; border-radius: 2px;
+                        <div class="mercator-svg-marker selection-entity-db-places-background-color" style="width: 4px; height: 4px; border-radius: 2px;
                             left: {{ percentage (getFieldValue 'longitude') max=180 min=-180}};
                             bottom: {{ percentage (getFieldValue 'latitude') max=90 min=-90}};
                         "></div>
