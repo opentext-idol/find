@@ -37,7 +37,15 @@ define([
                 return _.extend({selected: true}, info);
             });
 
-            const fieldModels = _.map(fieldsInfo, function(info) {
+            const whitelistedFieldsInfo = _.filter(fieldsInfo, { csvExport:true });
+
+            // If there's fields which explicitly have csvExport: true, then we'll only show them, otherwise we'll
+            //    hide any fields which explicitly have csvExport: false.
+            const fieldsInfoToShow = whitelistedFieldsInfo.length ? whitelistedFieldsInfo : _.filter(fieldsInfo, function(field){
+                return field.csvExport !== false;
+            })
+
+            const fieldModels = _.map(fieldsInfoToShow, function(info) {
                 return _.extend({selected: true}, info);
             });
 
