@@ -31,12 +31,12 @@ define([
             expect(output[1].content).toEqual(25);
         });
 
-        it('returns null when the result count is not present in the attributes', function() {
+        it('leaves out the result count when the result count is not present in the attributes', function() {
             const output = runProcessAttributes({
                 dateCreated: moment(1455026659454)
             });
 
-            expect(output[1]).toBe(null);
+            expect(output[1]).toBe(undefined);
         });
 
         it('returns 0 when the result count is 0', function() {

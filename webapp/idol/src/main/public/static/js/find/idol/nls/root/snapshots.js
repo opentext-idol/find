@@ -10,6 +10,7 @@ define([
         'snapshot': 'Snapshot',
         'detail.dateCreated': 'Date Created',
         'detail.resultCount': 'Result Count',
+        'detail.owner': 'Owner',
         'detailTitle.snapshot': 'Snapshot',
         'detailTitle.readonly': 'Read Only',
         'restrictions.maxDate': 'Until Date',
