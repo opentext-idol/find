@@ -136,6 +136,7 @@ module.exports = (grunt) ->
         keepBuildDir: true
         mainConfigFile: 'target/webapp/static/js/require-config.js'
         optimize: 'none'
+        generateSourceMaps: true
       public:
         options:
           name: 'public',
@@ -162,11 +163,14 @@ module.exports = (grunt) ->
       options:
         compress: true
         mangle: true
+        sourceMap: true
+        sourceMapName: (file) -> file + '.map'
+        sourceMapIn: (file) -> file + '.map'
       js:
         files: [{
           expand: true
           cwd: 'target/classes/static/js'
-          src: '**/*.js'
+          src: ['public.js', 'config.js', 'login.js']
           dest: 'target/classes/static/js'
         }]
 
