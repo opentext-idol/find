@@ -165,12 +165,20 @@ module.exports = (grunt) ->
         mangle: true
         sourceMap: true
         sourceMapName: (file) -> file + '.map'
-        sourceMapIn: (file) -> file + '.map'
       js:
+        options:
+          sourceMapIn: (file) -> file + '.map'
         files: [{
           expand: true
           cwd: 'target/classes/static/js'
           src: ['public.js', 'config.js', 'login.js']
+          dest: 'target/classes/static/js'
+        }]
+      languages:
+        files: [{
+          expand: true
+          cwd: 'target/classes/static/js'
+          src: ['find/**/nls/**/*.js']
           dest: 'target/classes/static/js'
         }]
 
@@ -190,5 +198,5 @@ module.exports = (grunt) ->
   grunt.registerTask 'watch-test', ['babel:transform', 'jasmine:test', 'watch:test']
   grunt.registerTask 'copy-resources', ['sync:devResources', 'watch:copyResources']
   grunt.registerTask 'concatenate', ['requirejs']
-  grunt.registerTask 'minify', ['uglify:js']
+  grunt.registerTask 'minify', ['uglify:js', 'uglify:languages']
   grunt.registerTask 'compile', ['concatenate', 'minify']
