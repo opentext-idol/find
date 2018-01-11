@@ -16,6 +16,7 @@
 
     <properties>
         <artifactName>${project.parent.artifactId}</artifactName>
+        <js.source.map>false</js.source.map>
     </properties>
 
     <build>
@@ -226,6 +227,7 @@
                                     <workingDirectory>${basedir}</workingDirectory>
                                     <arguments>
                                         <argument>compile</argument>
+                                        <argument>--jsSourceMap=${js.source.map}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

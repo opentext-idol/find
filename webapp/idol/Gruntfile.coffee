@@ -28,6 +28,8 @@ module.exports = (grunt) ->
     'src/test/**/*.js'
   ]
 
+  jsSourceMap = grunt.option('jsSourceMap') || false
+
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
     babel:
@@ -136,7 +138,7 @@ module.exports = (grunt) ->
         keepBuildDir: true
         mainConfigFile: 'target/webapp/static/js/require-config.js'
         optimize: 'none'
-        generateSourceMaps: true
+        generateSourceMaps: jsSourceMap
       public:
         options:
           name: 'public',
@@ -163,7 +165,7 @@ module.exports = (grunt) ->
       options:
         compress: true
         mangle: true
-        sourceMap: true
+        sourceMap: jsSourceMap
         sourceMapName: (file) -> file + '.map'
       js:
         options:
