@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2018 Hewlett Packard Enterprise Development Company, L.P.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -10,7 +10,7 @@ define([
 
     return substitution({
         'about.app.version': 'Version',
-        'about.copyright': "Find © Copyright 2014-2017 Micro Focus International plc.",
+        'about.copyright': "Find © Copyright 2014-2018 Micro Focus International plc.",
         'about.foss': 'FOSS Acknowledgements',
         'about.lib.name': 'Library Name',
         'about.lib.version': 'Version',
