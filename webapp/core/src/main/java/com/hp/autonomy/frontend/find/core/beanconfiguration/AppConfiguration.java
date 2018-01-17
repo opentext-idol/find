@@ -12,8 +12,11 @@ import com.hp.autonomy.frontend.configuration.validation.Validator;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.logging.ApplicationStartLogger;
 import com.hp.autonomy.frontend.logging.UserLoggingFilter;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
+import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.web.servlet.ErrorPage;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -50,7 +53,9 @@ public class AppConfiguration<C extends FindConfig<C, ?>> {
 
     @SuppressWarnings("ReturnOfInnerClass")
     @Bean
-    public EmbeddedServletContainerCustomizer containerCustomizer() {
+    public EmbeddedServletContainerCustomizer containerCustomizer(
+        @Value("${server.tomcat.access.log.pattern:combined}") final String pattern
+    ) {
 
         return container -> {
             final ErrorPage error401Page = new ErrorPage(HttpStatus.UNAUTHORIZED, DispatcherServletConfiguration.AUTHENTICATION_ERROR_PATH);
@@ -59,6 +64,12 @@ public class AppConfiguration<C extends FindConfig<C, ?>> {
             final ErrorPage error500Page = new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, DispatcherServletConfiguration.SERVER_ERROR_PATH);
 
             container.addErrorPages(error401Page, error403Page, error404Page, error500Page);
+
+            if (StringUtils.isNotEmpty(pattern) && container instanceof TomcatEmbeddedServletContainerFactory) {
+                final TomcatAccessLogValve accessLogValve = new TomcatAccessLogValve();
+                accessLogValve.setPattern(pattern);
+                ((TomcatEmbeddedServletContainerFactory) container).addEngineValves(accessLogValve);
+            }
         };
     }
 
