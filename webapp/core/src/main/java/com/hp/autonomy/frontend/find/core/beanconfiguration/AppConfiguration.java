@@ -10,6 +10,7 @@ import com.hp.autonomy.frontend.configuration.validation.ValidationService;
 import com.hp.autonomy.frontend.configuration.validation.ValidationServiceImpl;
 import com.hp.autonomy.frontend.configuration.validation.Validator;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.core.logging.TomcatAccessLogValve;
 import com.hp.autonomy.frontend.logging.ApplicationStartLogger;
 import com.hp.autonomy.frontend.logging.UserLoggingFilter;
 import org.apache.commons.lang.StringUtils;

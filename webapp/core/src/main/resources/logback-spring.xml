@@ -86,7 +86,7 @@
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FileAppender" />
     </logger>
-    <logger name="com.hp.autonomy.frontend.find.core.beanconfiguration.TomcatAccessLogValve" level="TRACE">
+    <logger name="com.hp.autonomy.frontend.find.core.logging.TomcatAccessLogValve" level="TRACE" additivity="false">
         <appender-ref ref="TomcatAccessFileAppender"/>
     </logger>
 </configuration>
