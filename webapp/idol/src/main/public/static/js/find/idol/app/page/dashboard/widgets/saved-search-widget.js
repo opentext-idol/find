@@ -75,14 +75,6 @@ define([
         initialize: function(options) {
             UpdatingWidget.prototype.initialize.apply(this, arguments);
 
-            this.savedSearchRoute = '/search/tab/' +
-                options.datasource.config.type +
-                ':' +
-                options.datasource.config.id +
-                (this.viewType
-                    ? '/view/' + this.viewType
-                    : '');
-
             this.savedSearchModel = new DashboardSearchModel({
                 id: options.datasource.config.id,
                 type: options.datasource.config.type
@@ -139,6 +131,16 @@ define([
 
             const attribs = this.savedSearchModel.attributes;
 
+            const viewRoute = this.viewType ? '/view/' + this.viewType : '';
+
+            const shared = attribs.canEdit && config.username !== attribs.user.username;
+
+            const savedSearchRoute = '/search/tab/' +
+                (shared ? SavedSearchModel.Type.SHARED_QUERY : attribs.type) +
+                ':' +
+                attribs.id +
+                viewRoute;
+
             if (config && config.uiCustomization && config.uiCustomization.openSharedDashboardQueryAsNewSearch
                 && config.username !== attribs.user.username && attribs.type === SavedSearchModel.Type.QUERY) {
                 // Create a new search
@@ -149,11 +151,11 @@ define([
                 }, attribs));
 
                 this.savedQueryCollection.add(newSearch);
-                const route = '/search/tab/QUERY:' + newSearch.cid + (this.viewType ? '/view/' + this.viewType : '');
+                const route = '/search/tab/QUERY:' + newSearch.cid + viewRoute;
                 vent.navigate(route + this.getSavedSearchRouterParameters());
             }
             else {
-                vent.navigate(this.savedSearchRoute + this.getSavedSearchRouterParameters());
+                vent.navigate(savedSearchRoute + this.getSavedSearchRouterParameters());
             }
         },
 

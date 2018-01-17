@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import org.springframework.data.domain.AuditorAware;
 
 import java.util.Collection;
@@ -117,7 +118,20 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
 
     @Override
     public T getDashboardSearch(final long id) {
-        return crudRepository.findByActiveTrueAndId(id);
+        final T search = crudRepository.findByActiveTrueAndId(id);
+
+        final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
+
+        if (!Objects.equals(search.getUser().getUserId(), userId)) {
+            search.setCanEdit(isUnownedSearchEditable(search, userId));
+        }
+
+        return search;
+    }
+
+    protected boolean isUnownedSearchEditable(final T search, final Long userId) {
+        final SharedToUser share = sharedToUserRepository.findOne(new SharedToUserPK(search.getId(), userId));
+        return share != null && Boolean.TRUE.equals(share.getCanEdit());
     }
 
     private T getSearch(final long id) throws IllegalArgumentException {
