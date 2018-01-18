@@ -38,13 +38,17 @@ public class CustomizationReloadControllerIT extends AbstractFindIT {
     public void setUp() {
         super.setUp();
         // Back up current config file
-        copyFileReplaceExisting(DASHBOARD_CONFIG, DASHBOARD_CONFIG_BACKUP);
+        if (Files.exists(Paths.get(DASHBOARD_CONFIG))) {
+            copyFileReplaceExisting(DASHBOARD_CONFIG, DASHBOARD_CONFIG_BACKUP);
+        }
     }
 
     @After
     public void tearDown() {
         // Restore original config file, delete backup
-        moveFileReplaceExisting(DASHBOARD_CONFIG_BACKUP, DASHBOARD_CONFIG);
+        if (Files.exists(Paths.get(DASHBOARD_CONFIG_BACKUP))) {
+            moveFileReplaceExisting(DASHBOARD_CONFIG_BACKUP, DASHBOARD_CONFIG);
+        }
     }
 
     @Test
