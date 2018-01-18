@@ -133,16 +133,15 @@ define([
 
             const viewRoute = this.viewType ? '/view/' + this.viewType : '';
 
-            const shared = attribs.canEdit && config.username !== attribs.user.username;
+            const isSharedQuery = config.username !== attribs.user.username && attribs.type === SavedSearchModel.Type.QUERY;
 
             const savedSearchRoute = '/search/tab/' +
-                (shared ? SavedSearchModel.Type.SHARED_QUERY : attribs.type) +
+                (attribs.canEdit && isSharedQuery ? SavedSearchModel.Type.SHARED_QUERY : attribs.type) +
                 ':' +
                 attribs.id +
                 viewRoute;
 
-            if (config && config.uiCustomization && config.uiCustomization.openSharedDashboardQueryAsNewSearch
-                && config.username !== attribs.user.username && attribs.type === SavedSearchModel.Type.QUERY) {
+            if (isSharedQuery && config && config.uiCustomization && config.uiCustomization.openSharedDashboardQueryAsNewSearch) {
                 // Create a new search
                 const newSearch = new SavedSearchModel(_.defaults({
                     id: null,

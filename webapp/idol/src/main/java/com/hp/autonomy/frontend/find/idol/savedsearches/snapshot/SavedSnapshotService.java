@@ -26,9 +26,4 @@ public class SavedSnapshotService extends AbstractSavedSearchService<SavedSnapsh
                                 final TagNameFactory tagNameFactory) {
         super(savedSnapshotRepository, sharedToUserRepository, sharedToEveryoneRepository, userEntityAuditorAware, tagNameFactory, SavedSnapshot.class);
     }
-
-    @Override
-    protected boolean isUnownedSearchEditable(final SavedSnapshot search, final Long userId) {
-        return false;
-    }
 }
