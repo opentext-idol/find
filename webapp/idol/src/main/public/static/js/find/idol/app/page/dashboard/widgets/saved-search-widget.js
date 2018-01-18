@@ -133,7 +133,7 @@ define([
 
             const viewRoute = this.viewType ? '/view/' + this.viewType : '';
 
-            const isSharedQuery = config.username !== attribs.user.username && attribs.type === SavedSearchModel.Type.QUERY;
+            const isSharedQuery = attribs.type === SavedSearchModel.Type.QUERY && config.username !== attribs.user.username;
 
             const savedSearchRoute = '/search/tab/' +
                 (attribs.canEdit && isSharedQuery ? SavedSearchModel.Type.SHARED_QUERY : attribs.type) +
