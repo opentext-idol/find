@@ -55,7 +55,7 @@ public class AppConfiguration<C extends FindConfig<C, ?>> {
     @SuppressWarnings("ReturnOfInnerClass")
     @Bean
     public EmbeddedServletContainerCustomizer containerCustomizer(
-        @Value("${server.tomcat.access.log.pattern:combined}") final String pattern
+        @Value("${server.tomcat.accesslog.pattern:combined}") final String pattern
     ) {
 
         return container -> {

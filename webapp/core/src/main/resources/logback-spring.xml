@@ -67,7 +67,7 @@
         <encoder>
             <!--
                 This prints the string from the Tomcat access log valve, and should not be changed here.
-                To change the pattern, you should modify the 'server.tomcat.access.log.pattern' property instead.
+                To change the pattern, you should modify the 'server.tomcat.accesslog.pattern' property instead.
             -->
             <pattern>%msg%n</pattern>
         </encoder>
