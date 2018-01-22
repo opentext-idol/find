@@ -125,7 +125,11 @@ define([
 
             $hover.css({
                 top: top,
-                left: left
+                left: left,
+                // we have to explicitly clear bottom and right in case we're updating a load spinner which now
+                //   contains new content, and it previously had bottom/right set to fit it in the screen.
+                bottom: 'auto',
+                right: 'auto'
             }).html(html).appendTo(element).on('mousedown', function(evt){
                 if ($(evt.target).closest('.entity-search-controls,.entity-search-messages').length) {
                     // Prevent drag start if they're trying to select text in the conversation history.
