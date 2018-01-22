@@ -169,7 +169,7 @@ define([
         render: function() {
             ParametricResultsView.prototype.render.apply(this);
 
-            this.$content.addClass('sunburst');
+            this.$content.addClass('sunburst fixed-height');
         }
     });
 });
