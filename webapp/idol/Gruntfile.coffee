@@ -163,7 +163,8 @@ module.exports = (grunt) ->
           ]
     uglify:
       options:
-        compress: true
+        compress:
+          inline: false
         mangle: true
         sourceMap: jsSourceMap
         sourceMapName: (file) -> file + '.map'

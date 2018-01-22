@@ -140,7 +140,7 @@ define([
 
         update: function() {
             if(!this.parametricCollection.isEmpty()) {
-                var data = generateDataRoot(this.dependentParametricCollection.toJSON());
+                const data = generateDataRoot(this.dependentParametricCollection.toJSON());
 
                 if(this.sunburst) {
                     this.sunburst.resize();
