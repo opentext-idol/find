@@ -408,8 +408,12 @@ div > input[type="text"].numeric-parametric-max-input.form-control, // required 
 }
 
 .sunburst {
-  height: @sunburstHeight;
+  height: 100%;
   width: 100%;
+}
+
+.sunburst.fixed-height {
+  height: ~'calc(100vh - 265px)';
 }
 
 .sunburst-sector-name {
