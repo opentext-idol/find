@@ -5,7 +5,6 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
-import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -28,7 +27,7 @@ import static org.mockito.Mockito.*;
 @JsonTest
 @AutoConfigureJsonTesters(enabled = false)
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = SharedToUserController.class, properties = BiConfiguration.BI_PROPERTY, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(classes = SharedToUserController.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class SharedToUserControllerTest {
     @MockBean
     private SharedToUserRepository sharedToUserRepository;
