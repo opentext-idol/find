@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -38,7 +38,7 @@ import java.util.Collection;
 public class HodSecurity extends WebSecurityConfigurerAdapter {
     private static final String HOD_BI_ROLE = "bi";
 
-    @Value("${" + BiConfiguration.BI_PROPERTY + '}')
+    @Value(BiConfiguration.BI_PROPERTY_SPEL)
     private boolean enableBi;
 
     @Autowired

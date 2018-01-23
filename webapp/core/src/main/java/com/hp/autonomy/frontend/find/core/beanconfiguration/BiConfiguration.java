@@ -1,11 +1,11 @@
 /*
- * Copyright 2014-2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2014-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
 package com.hp.autonomy.frontend.find.core.beanconfiguration;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +22,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaAuditing
 @EnableJpaRepositories(basePackages = "com.hp.autonomy.frontend.find")
 @EnableTransactionManagement
-@ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
+@ConditionalOnExpression(BiConfiguration.BI_PROPERTY_SPEL)
 public class BiConfiguration {
-    public final static String BI_PROPERTY = "hp.find.enableBi";
+    public final static String BI_PROPERTY = "idol.find.enableBi";
+    public final static String BI_PROPERTY_HP = "hp.find.enableBi";
+    public final static String BI_PROPERTY_SPEL = "${" + BI_PROPERTY + ":${" + BI_PROPERTY_HP + ":true}}";
 }

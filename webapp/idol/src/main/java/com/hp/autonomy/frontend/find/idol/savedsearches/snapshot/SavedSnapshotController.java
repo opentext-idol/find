@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -24,7 +24,7 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(SavedSnapshotController.PATH)
-@ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
+@ConditionalOnExpression(BiConfiguration.BI_PROPERTY_SPEL)
 class SavedSnapshotController {
     static final String PATH = "/api/bi/saved-snapshot";
     private static final String GET_SHARED = "/shared";

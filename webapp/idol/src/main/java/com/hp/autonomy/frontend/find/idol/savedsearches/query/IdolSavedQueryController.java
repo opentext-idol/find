@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -28,7 +28,7 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,7 +39,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
+@ConditionalOnExpression(BiConfiguration.BI_PROPERTY_SPEL)
 class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
     private final ConfigService<DashboardConfig> dashboardConfigService;
 

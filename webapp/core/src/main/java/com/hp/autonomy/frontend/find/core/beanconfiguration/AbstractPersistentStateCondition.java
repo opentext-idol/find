@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2015-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -9,6 +9,6 @@ public abstract class AbstractPersistentStateCondition extends AbstractEnumCondi
     private static final PersistentStateConfig DEFAULT_VALUE = PersistentStateConfig.INMEMORY;
 
     protected AbstractPersistentStateCondition(final PersistentStateConfig persistentStateConfig) {
-        super("hp.find.persistentState", persistentStateConfig, DEFAULT_VALUE, PersistentStateConfig.class);
+        super(new String[]{"idol.find.persistentState", "hp.find.persistentState"}, persistentStateConfig, DEFAULT_VALUE, PersistentStateConfig.class);
     }
 }

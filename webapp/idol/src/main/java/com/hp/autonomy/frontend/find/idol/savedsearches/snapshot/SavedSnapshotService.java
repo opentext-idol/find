@@ -10,13 +10,13 @@ import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
 import com.hp.autonomy.searchcomponents.idol.annotations.IdolService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Service;
 
 @Service
 @IdolService
-@ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
+@ConditionalOnExpression(BiConfiguration.BI_PROPERTY_SPEL)
 public class SavedSnapshotService extends AbstractSavedSearchService<SavedSnapshot, SavedSnapshot.Builder> {
     @Autowired
     public SavedSnapshotService(final SavedSearchRepository<SavedSnapshot, SavedSnapshot.Builder> savedSnapshotRepository,

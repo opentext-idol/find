@@ -1,9 +1,12 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
+import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Service;
 
 @Service
+@ConditionalOnExpression(BiConfiguration.BI_PROPERTY_SPEL)
 public class UserEntityServiceImpl implements UserEntityService {
 
     private final UserEntityRepository userEntityRepository;

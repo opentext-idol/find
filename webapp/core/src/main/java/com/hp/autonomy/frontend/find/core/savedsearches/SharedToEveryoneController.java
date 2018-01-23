@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import static com.hp.autonomy.frontend.find.core.savedsearches.SharedToUserController.SEARCH_ID_PARAM;
 
 @Controller
-@ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
+@ConditionalOnExpression(BiConfiguration.BI_PROPERTY_SPEL)
 @RequestMapping(SharedToUserController.SHARED_SEARCHES_PATH)
 class SharedToEveryoneController {
     static final String PERMISSIONS_PATH = "/everyone/permissions";

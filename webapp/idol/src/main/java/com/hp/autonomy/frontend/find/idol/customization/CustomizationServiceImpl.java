@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService.CONFIG_FILE_LOCATION_SPEL;
+
 @Slf4j
 @Service
 public class CustomizationServiceImpl implements CustomizationService {
@@ -26,7 +28,7 @@ public class CustomizationServiceImpl implements CustomizationService {
     private final String homeDirectory;
 
     @Autowired
-    public CustomizationServiceImpl(@Value("${hp.find.home}") final String homeDirectory) {
+    public CustomizationServiceImpl(@Value(CONFIG_FILE_LOCATION_SPEL) final String homeDirectory) {
         this.homeDirectory = homeDirectory;
     }
 

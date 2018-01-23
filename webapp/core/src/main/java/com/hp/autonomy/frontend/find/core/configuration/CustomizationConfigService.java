@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2015-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -9,10 +9,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.hp.autonomy.frontend.configuration.BaseConfigFileService;
 import com.hp.autonomy.frontend.configuration.Config;
+import java.util.Collections;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import static com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService.CONFIG_FILE_LOCATION_HP;
 
 public abstract class CustomizationConfigService<T extends Config<T>> extends BaseConfigFileService<T> {
     public static final String CONFIG_DIRECTORY = "customization";
@@ -37,6 +40,7 @@ public abstract class CustomizationConfigService<T extends Config<T>> extends Ba
 
         setMapper(objectMapper);
         setConfigFileLocation(FindConfigFileService.CONFIG_FILE_LOCATION);
+        setDeprecatedConfigFileLocations(Collections.singletonList(CONFIG_FILE_LOCATION_HP));
         setConfigFileName(Paths.get(CONFIG_DIRECTORY).resolve(configFileName).toString());
         setDefaultConfigFile('/' + defaultFileName);
     }

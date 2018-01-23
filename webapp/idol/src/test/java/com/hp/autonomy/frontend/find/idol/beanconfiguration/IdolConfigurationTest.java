@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -38,7 +38,7 @@ import static org.junit.Assert.assertNotNull;
         IdolFindConfigFileService.class,
         IdolConfigUpdateHandlerImpl.class
 }, value = {
-        "hp.find.persistentState = INMEMORY",
+        "idol.find.persistentState = INMEMORY",
         "mock.configuration=false",
         BiConfiguration.BI_PROPERTY + "=false"
 }, webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -47,7 +47,7 @@ public class IdolConfigurationTest {
 
     @BeforeClass
     public static void init() throws IOException {
-        System.setProperty("hp.find.home", TEST_DIR);
+        System.setProperty("idol.find.home", TEST_DIR);
         final File directory = new File(TEST_DIR);
         FileUtils.forceMkdir(directory);
     }
