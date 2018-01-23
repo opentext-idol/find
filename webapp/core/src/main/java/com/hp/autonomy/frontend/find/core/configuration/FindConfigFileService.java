@@ -25,7 +25,7 @@ import java.util.Map;
 public abstract class FindConfigFileService<C extends FindConfig<C, B>, B extends FindConfigBuilder<C, B>> extends AbstractAuthenticatingConfigFileService<C> {
     public static final String CONFIG_FILE_LOCATION = "idol.find.home";
     public static final String CONFIG_FILE_LOCATION_HP = "hp.find.home";
-    public static final String CONFIG_FILE_LOCATION_SPEL = "${"+CONFIG_FILE_LOCATION+":${"+CONFIG_FILE_LOCATION_HP+"}}";
+    public static final String CONFIG_FILE_LOCATION_SPEL = "${"+CONFIG_FILE_LOCATION+":${"+CONFIG_FILE_LOCATION_HP+":}}";
     private static final String CONFIG_FILE_NAME = "config.json";
 
     protected FindConfigFileService(final FilterProvider filterProvider,
