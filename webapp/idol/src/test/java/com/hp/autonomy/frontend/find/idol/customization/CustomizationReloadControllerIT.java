@@ -57,20 +57,6 @@ public class CustomizationReloadControllerIT extends AbstractFindIT {
         super.setUp();
         // Back up current config file
 
-        try {
-            for (int ii = 0; ii < 10; ++ii) {
-                if(Files.exists(Paths.get(DASHBOARD_CONFIG))) {
-                    log.info("Dashboard file exists ({})", ii);
-                    break;
-                }
-                log.info("Dashboard file does not exist yet, waiting ({})", ii);
-                Thread.sleep(2000);
-            }
-        }
-        catch(InterruptedException e) {
-
-        }
-
         copyFileReplaceExisting(DASHBOARD_CONFIG, DASHBOARD_CONFIG_BACKUP);
     }
 

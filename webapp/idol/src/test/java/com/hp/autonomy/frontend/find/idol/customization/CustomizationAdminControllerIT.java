@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.RequestBuilder;
 
 import java.io.File;
@@ -29,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@DirtiesContext
 @SuppressWarnings("ProhibitedExceptionDeclared")
 public class CustomizationAdminControllerIT extends AbstractFindIT {
     private static final AssetType ASSET_TYPE = AssetType.BIG_LOGO;
