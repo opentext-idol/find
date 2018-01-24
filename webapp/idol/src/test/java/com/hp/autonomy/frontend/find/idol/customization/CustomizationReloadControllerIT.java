@@ -7,9 +7,13 @@ package com.hp.autonomy.frontend.find.idol.customization;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import com.hp.autonomy.frontend.find.core.web.FindController;
+import java.io.File;
+import java.io.FileNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -35,6 +39,18 @@ public class CustomizationReloadControllerIT extends AbstractFindIT {
     private static final String DASHBOARD_CONFIG_BACKUP = TEST_DIR + "/customization/dashboards.json.bak";
     private static final String REPLACEMENT_CONFIG = "target/test-classes/DashboardControllerIT-Config-1.json";
 
+    @BeforeClass
+    public static void init() throws IOException {
+        try {
+            FileUtils.forceDelete(new File(TEST_DIR));
+        }
+        catch(FileNotFoundException e) {
+            // do nothing, this is expected
+        }
+
+        AbstractFindIT.init();
+    }
+
     @Override
     @Before
     public void setUp() {
@@ -42,7 +58,7 @@ public class CustomizationReloadControllerIT extends AbstractFindIT {
         // Back up current config file
 
         try {
-            for (int ii = 0; ii < 60; ++ii) {
+            for (int ii = 0; ii < 10; ++ii) {
                 if(Files.exists(Paths.get(DASHBOARD_CONFIG))) {
                     log.info("Dashboard file exists ({})", ii);
                     break;
