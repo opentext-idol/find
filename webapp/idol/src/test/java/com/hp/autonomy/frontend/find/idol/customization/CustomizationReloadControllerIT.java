@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.idol.customization;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import com.hp.autonomy.frontend.find.core.web.FindController;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Slf4j
 @DirtiesContext
 public class CustomizationReloadControllerIT extends AbstractFindIT {
     private static final String UUID = "b1c71fad-a52d-47bf-a121-f71500bd7ddb";
@@ -40,8 +42,13 @@ public class CustomizationReloadControllerIT extends AbstractFindIT {
         // Back up current config file
 
         try {
-            for (int ii = 0; ii < 30 && !Files.exists(Paths.get(DASHBOARD_CONFIG)); ++ii) {
-                Thread.sleep(1000);
+            for (int ii = 0; ii < 60; ++ii) {
+                if(Files.exists(Paths.get(DASHBOARD_CONFIG))) {
+                    log.info("Dashboard file exists ({})", ii);
+                    break;
+                }
+                log.info("Dashboard file does not exist yet, waiting ({})", ii);
+                Thread.sleep(2000);
             }
         }
         catch(InterruptedException e) {
