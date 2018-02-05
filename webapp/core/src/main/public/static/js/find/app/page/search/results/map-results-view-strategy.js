@@ -61,15 +61,13 @@ define([
                     locationValues.forEach(function(location) {
                         const longitude = location.longitude;
                         const latitude = location.latitude;
-
-                        const title = i18n['search.resultsView.map.field'] +
-                            ': ' + locationName + '\n' +
-                            i18n['search.resultsView.map.title'] + ': ' +
-                            model.get('title');
+                        const title = model.get('title');
+                        const titleHover = i18n['search.resultsView.map.field'] + ': ' + locationName;
 
                         const popover = popoverTemplate
                             ? popoverTemplate({
                                 title: title,
+                                titleHover: titleHover,
                                 i18n: i18n,
                                 summary: addLinksToSummary(model.get('summary')),
                                 cidForClickRouting: model.cid
