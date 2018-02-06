@@ -75,6 +75,8 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final Integer topicMapMaxResults;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final Integer comparisonStoreStateMaxResults;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private final Integer querySummaryMaxCharacters;
     private final ExportConfig export;
 
     @JsonIgnore
@@ -102,6 +104,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .statsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
                 .topicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
                 .comparisonStoreStateMaxResults(comparisonStoreStateMaxResults == null ? other.comparisonStoreStateMaxResults : comparisonStoreStateMaxResults)
+                .querySummaryMaxCharacters(querySummaryMaxCharacters == null ? other.querySummaryMaxCharacters : querySummaryMaxCharacters)
                 .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(maybeOther.export)).orElse(maybeOther.export))
                 .build())
             .orElse(this);
