@@ -11,25 +11,14 @@ import com.autonomy.aci.client.transport.AciHttpException;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
 import com.autonomy.aci.client.transport.impl.HttpClientFactory;
-import com.autonomy.aci.client.util.AciURLCodec;
 import com.autonomy.aci.client.util.ActionParameters;
 import com.autonomy.nonaci.ServerDetails;
 import com.autonomy.nonaci.indexing.impl.DreAddDataCommand;
 import com.autonomy.nonaci.indexing.impl.DreSyncCommand;
 import com.autonomy.nonaci.indexing.impl.IndexingServiceImpl;
-import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
-import com.hp.autonomy.frontend.configuration.server.ServerConfig;
-import com.hp.autonomy.frontend.find.core.view.ViewController;
-import com.hp.autonomy.frontend.find.idol.answer.AnswerFilter;
-import com.hp.autonomy.frontend.find.idol.answer.AnswerFilter.AnswerDetails;
-import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.ConversationContext;
-import com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState;
 import com.hp.autonomy.searchcomponents.core.search.fields.DocumentFieldsService;
-import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
-import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestIndexBuilder;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.types.idol.responses.CategoryHit;
 import com.hp.autonomy.types.idol.responses.SuggestOnTextWithPathResponseData;
@@ -44,12 +33,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilder;
@@ -63,9 +49,6 @@ import javax.xml.xpath.XPathFactory;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -77,6 +60,8 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -94,15 +79,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import static com.hp.autonomy.frontend.find.core.view.ViewController.VIEW_DOCUMENT_PATH;
-import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.DISABLED;
-import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.POST_PASSAGE_EXTRACTION;
-import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.PRE_PASSAGE_EXTRACTION;
-import static com.hp.autonomy.frontend.find.idol.conversation.ConversationContexts.PassageExtractionState.SHOW_TAXONOMY_ON_FAILURE;
 import static com.hp.autonomy.frontend.find.idol.conversation.ConversationController.CONVERSATION_PATH;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
-import static org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4;
-import static org.apache.commons.lang3.StringUtils.abbreviateMiddle;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -111,38 +89,16 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Controller
 @RequestMapping(CONVERSATION_PATH)
 class ConversationController {
+    private static final ContentType UTF8_TEXT = ContentType.create("text/plain", "UTF-8");
+
+    private final String conversationModuleName;
+
     static final String CONVERSATION_PATH = "/api/public/conversation";
 
-    private static final String USER_AGENT = "Find";
-    // Special response from conversation server if a session doesn't exist.
-    private static final String NO_SUCH_INSTANCE = "Error: no such instance";
     private static final String errorResponse = "Sorry, there's a problem with the conversation server at the moment, please try again later.";
 
-    private static final Pattern YES_PATTERN = Pattern.compile("^\\s*(yes)\\b", Pattern.CASE_INSENSITIVE);
-    private static final Pattern NO_PATTERN = Pattern.compile("^\\s*(no)\\b", Pattern.CASE_INSENSITIVE);
-    private static final Pattern UNRECOGNIZED_PATTERN = Pattern.compile("I did not understand that|I didn't understand what you meant", Pattern.CASE_INSENSITIVE);
-    private static final String ENABLE_PASSAGE_EXTRACTION = "<enablePassageExtraction>";
-    private static final Pattern ANSWERSERVER_PLACEHOLDER = Pattern.compile("<answerserver \\s*query=\"([^>]*)\" \\s*context=\"([^>]*)\"\\s*>", Pattern.CASE_INSENSITIVE);
-
-    // List of patterns which we don't want to use answerserver on, mainly yes/no, bye patterns,
-    // and 'expert' (to ask for an expert at the end),
-    // and 'rephrase question' (to go to the rephrase question task)
-    // and 'go back to ...' (for navigation up the taxonomy tree)
-    private static final Pattern SKIP_ANSWERSERVER = Pattern.compile("^\\s*(yes|no|bye|goodbye|farewell|sayonara|expert|rephrase question|go back to .*)([ ,.!]*(thanks|thank\\s+you))?[ ,.!]*$", Pattern.CASE_INSENSITIVE);
-
-    // Path to the view URL
-    private static final String VIEW_RELATIVE_PATH =
-        ViewController.VIEW_PATH.replaceFirst("$/", "").replaceFirst("^/", "") + VIEW_DOCUMENT_PATH;
-
     private final CloseableHttpClient httpClient;
-    private final String questionAnswerDatabaseMatch;
-    private final String systemNames;
-    private final String passageExtractor;
-    private final ConfigService<IdolFindConfig> configService;
     private final Processor<SuggestOnTextWithPathResponseData> suggestProcessor;
-    private final int maxDisambiguationQualifierValues;
-    private final AnswerFilter<IdolGetContentRequestBuilder, IdolGetContentRequestIndexBuilder> answerFilter;
-    private final boolean filterByDocumentSecurity;
 
     @Value("${conversation.server.url}")
     private String url;
@@ -150,16 +106,12 @@ class ConversationController {
     private final ConversationContexts contexts;
     private final DocumentFieldsService documentFieldsService;
     private final DocumentBuilder documentBuilder;
-    private final XPathExpression xAnswer;
-    private final XPathExpression xAnswerText;
-    private final XPathExpression xSource;
-    private final XPathExpression xSystemName;
-    private final XPathExpression xEntityName;
-    private final XPathExpression xPropertyName;
-    private final XPathExpression xComponentQualifier;
-    private final XPathExpression xFactQualifier;
-    private final XPathExpression xQualifierName;
-    private final XPathExpression xQualifierValue;
+
+    private final XPathExpression xPrompts;
+    private final XPathExpression xPrompt;
+    private final XPathExpression xChoices;
+    private final XPathExpression xSuggestions;
+    private final XPathExpression xSessionId;
 
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
 
@@ -176,27 +128,15 @@ class ConversationController {
             final ConversationContexts contexts,
             final DocumentFieldsService documentFieldsService,
             final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
-            final ConfigService<IdolFindConfig> configService,
             final ProcessorFactory processorFactory,
-            final AnswerFilter<IdolGetContentRequestBuilder, IdolGetContentRequestIndexBuilder> answerFilter,
             @Value("${conversation.server.allowSelfSigned}") final boolean allowSelfSigned,
-            @Value("${questionanswer.databaseMatch}") final String questionAnswerDatabaseMatch,
-            @Value("${questionanswer.conversation.system.names}") final String systemNames,
-            @Value("${questionanswer.system.name.passageExtractor}") final String passageExtractor,
-            @Value("${questionanswer.disambiguation.maxQualifierValues}") final int maxDisambiguationQualifierValues,
-            @Value("${questionanswer.documentSecurity.filter}") final boolean filterByDocumentSecurity
-    ) {
+            @Value("${questionanswer.conversation.module.name}") final String conversationModuleName
+            ) {
         this.contexts = contexts;
         this.documentFieldsService = documentFieldsService;
-        this.configService = configService;
         this.authenticationInformationRetriever = authenticationInformationRetriever;
-        this.questionAnswerDatabaseMatch = questionAnswerDatabaseMatch;
-        this.systemNames = systemNames;
-        this.passageExtractor = passageExtractor;
         this.suggestProcessor = processorFactory.getResponseDataProcessor(SuggestOnTextWithPathResponseData.class);
-        this.maxDisambiguationQualifierValues = maxDisambiguationQualifierValues;
-        this.answerFilter = answerFilter;
-        this.filterByDocumentSecurity = filterByDocumentSecurity;
+        this.conversationModuleName = conversationModuleName;
 
         try {
             final SSLConnectionSocketFactory sslSocketFactory = allowSelfSigned
@@ -221,16 +161,12 @@ class ConversationController {
             documentBuilder = factory.newDocumentBuilder();
             final XPathFactory xPathFactory = XPathFactory.newInstance();
             final XPath xPath = xPathFactory.newXPath();
-            xAnswer = xPath.compile("/autnresponse/responsedata/answers/answer");
-            xAnswerText = xPath.compile("text");
-            xSource = xPath.compile("source");
-            xSystemName = xPath.compile("@system_name");
-            xEntityName = xPath.compile("metadata/fact/@entity_name");
-            xPropertyName = xPath.compile("metadata/fact/property/@name");
-            xComponentQualifier = xPath.compile("metadata/component/property/qualifier");
-            xFactQualifier = xPath.compile("metadata/fact/property/qualifier");
-            xQualifierName = xPath.compile("@name");
-            xQualifierValue = xPath.compile("@value");
+
+            xPrompts = xPath.compile("/autnresponse/responsedata/prompts");
+            xPrompt = xPath.compile("prompt");
+            xChoices = xPath.compile("valid_choices/valid_choice");
+            xSuggestions = xPath.compile("suggestions/suggestion");
+            xSessionId = xPath.compile("/autnresponse/responsedata/result/managed_resources/id");
         }
         catch(ParserConfigurationException|XPathExpressionException e) {
             throw new Error("Unable to initialize conversation controller XML parser", e);
@@ -251,146 +187,138 @@ class ConversationController {
         }
 
         if (contextId == null || illegalContextId) {
-            final HttpPost post = new HttpPost(this.url + "nadia/engine/dialog");
-            post.setHeader("User-Agent", USER_AGENT);
-            final HttpResponse resp = httpClient.execute(post);
-            final String greeting = IOUtils.toString(resp.getEntity().getContent(), "UTF-8");
+            final String newContextId;
 
-            final int code = resp.getStatusLine().getStatusCode();
-            if(code == 429) {
-                // license limit for concurrent sessions has expired
-                log.warn("Too many concurrent sessions for the conversation server license; new conversation blocked");
-                return new Response("There are too many concurrent sessions; please try again later.");
+            try {
+                {
+                    final HttpPost post = new HttpPost(this.url);
+
+                    post.setEntity(MultipartEntityBuilder.create()
+                            .addTextBody("action", "manageresources", UTF8_TEXT)
+                            .addTextBody("systemname", conversationModuleName, UTF8_TEXT)
+                            .addTextBody("data", "{\"operation\":\"add\",\"type\":\"conversation_session\"}", ContentType.APPLICATION_JSON)
+                            .build());
+
+                    final HttpResponse resp = httpClient.execute(post);
+
+                    if(resp.getStatusLine().getStatusCode() != 200) {
+                        return new Response(errorResponse);
+                    }
+
+                    final Document doc = documentBuilder.parse(resp.getEntity().getContent());
+                    newContextId = (String) xSessionId.evaluate(doc, XPathConstants.STRING);
+                }
+
+                {
+                    // curl "localhost:12000/a=converse&systemName=Conversation&sessionId=123456789123456789”
+                    final HttpPost post = new HttpPost(this.url);
+                    post.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+                        new BasicNameValuePair("action", "converse"),
+                        new BasicNameValuePair("systemname", conversationModuleName),
+                        new BasicNameValuePair("sessionId", newContextId),
+                        new BasicNameValuePair("text", query)
+                    ), "UTF-8"));
+
+                    final HttpResponse resp = httpClient.execute(post);
+
+                    if (resp.getStatusLine().getStatusCode() != 200) {
+                        return new Response(errorResponse);
+                    }
+
+                    final Document doc = documentBuilder.parse(resp.getEntity().getContent());
+                    final String greeting = parseResponse(doc);
+
+                    final ConversationContext context = new ConversationContext();
+                    contexts.put(newContextId, context);
+
+                    return respond(context, replaceUsername(greeting), newContextId);
+                }
             }
-            else if (code != 201) {
+            catch(SAXException | IOException | XPathExpressionException e) {
                 return new Response(errorResponse);
             }
-
-            final String newContextId = resp.getFirstHeader("Location").getValue().replaceFirst(".*/", "");
-            final ConversationContext context = new ConversationContext();
-            contexts.put(newContextId, context);
-
-            if (greeting.contains(ENABLE_PASSAGE_EXTRACTION)) {
-                context.setPassageExtractionMode(PRE_PASSAGE_EXTRACTION);
-            }
-
-            return respond(context, replaceUsername(greeting.replace(ENABLE_PASSAGE_EXTRACTION, "")), newContextId);
         }
 
         final ConversationContext context = contexts.get(contextId);
         final List<Utterance> history = context.getHistory();
         history.add(new Utterance(true, query));
 
-        String conversationServerQuery = query;
-        final PassageExtractionState initialMode = context.getPassageExtractionMode();
-        boolean isSuccessfulAnswer = false;
+        try {
+            {
+                // curl "localhost:12000/a=converse&systemName=Conversation&sessionId=123456789123456789”
+                final HttpPost post = new HttpPost(this.url);
+                post.setEntity(new UrlEncodedFormEntity(Arrays.asList(
+                        new BasicNameValuePair("action", "converse"),
+                        new BasicNameValuePair("systemname", conversationModuleName),
+                        new BasicNameValuePair("sessionId", contextId),
+                        new BasicNameValuePair("text", query)
+                ), "UTF-8"));
 
-        final boolean lastQueryWasFactOrAnswerBank = context.isLastQueryWasFactOrAnswerBank();
+                final HttpResponse resp = httpClient.execute(post);
 
-        boolean isReplyToFollowUp = false;
-
-        if (lastQueryWasFactOrAnswerBank || initialMode.equals(POST_PASSAGE_EXTRACTION)) {
-            // Validate whether the user said yes or no. If they said something else, assume it's a new query.
-            final boolean isYes = YES_PATTERN.matcher(query).find();
-            final boolean isNo = NO_PATTERN.matcher(query).find();
-
-            isReplyToFollowUp = isYes || isNo;
-
-            if (isYes) {
-                conversationServerQuery = "okay that solves my problem, thank you";
-                isSuccessfulAnswer = true;
-            }
-            else if (isNo) {
-                conversationServerQuery = context.getLastActualQuery();
-
-                if (lastQueryWasFactOrAnswerBank) {
-                    context.setFactAndAnswerBankDisabled(true);
+                if (resp.getStatusLine().getStatusCode() != 200) {
+                    return new Response(errorResponse);
                 }
-                if (initialMode.equals(POST_PASSAGE_EXTRACTION)) {
-                    context.setPassageExtractionMode(SHOW_TAXONOMY_ON_FAILURE);
+
+                final Document doc = documentBuilder.parse(resp.getEntity().getContent());
+                final String response = parseResponse(doc);
+
+                return respond(context, replaceUsername(response), contextId);
+            }
+        }
+        catch(SAXException|XPathExpressionException e) {
+            return new Response(errorResponse);
+        }
+    }
+
+    protected String parseResponse(final Document doc) throws XPathExpressionException {
+        final NodeList prompts = (NodeList) xPrompts.evaluate(doc, XPathConstants.NODESET);
+
+        final StringBuilder builder = new StringBuilder();
+        for (int ii = 0; ii < prompts.getLength(); ++ii) {
+            if (ii > 0) {
+                builder.append("\n");
+            }
+            final Node prompt = prompts.item(ii);
+
+            builder.append(xPrompt.evaluate(prompt, XPathConstants.STRING));
+
+            List<String> choices = getOptions(prompt, xChoices);
+            List<String> suggestions = getOptions(prompt, xSuggestions);
+
+            if(!choices.isEmpty()) {
+                builder.append("\nChoose from: ");
+                for(String choice : choices) {
+                    builder.append("\n").append("<suggest query=\"")
+                            .append(escapeHtml4(choice))
+                            .append("\" label=\"")
+                            .append(escapeHtml4(choice))
+                            .append("\"/>");
                 }
             }
-        }
 
-        if(!isReplyToFollowUp) {
-            context.setLastActualQuery(query);
-            context.setFactAndAnswerBankDisabled(false);
-
-            if (initialMode.equals(PRE_PASSAGE_EXTRACTION) || isBlank(context.getInitialQuery())) {
-                context.setInitialQuery(query);
-            }
-        }
-
-        // If we're in passage extraction mode, we have to get the answer out and format it.
-        // If there's no answer, we go straight to intent detection as usual.
-        final boolean usePassageExtraction = initialMode.equals(PRE_PASSAGE_EXTRACTION);
-
-        // We should disable factbank if the last query was for factbank
-        final boolean disableFactAndAnswerBank = context.isFactAndAnswerBankDisabled();
-
-        final Response qaResponse = isSuccessfulAnswer || initialMode.equals(POST_PASSAGE_EXTRACTION)
-                || initialMode.equals(SHOW_TAXONOMY_ON_FAILURE) ? null : askQAServer(context, contextId, conversationServerQuery, usePassageExtraction, disableFactAndAnswerBank);
-        if (qaResponse != null) {
-            return qaResponse;
-        }
-
-        // There wasn't an answer from fact bank or passage extraction
-        context.setLastQueryWasFactOrAnswerBank(false);
-
-        final HttpResponse resp = queryConversationServer(contextId, conversationServerQuery);
-        final Header messageMeta = resp.getFirstHeader("X-Message-Meta");
-        final String answer = IOUtils.toString(resp.getEntity().getContent(), "utf-8");
-
-        if (resp.getStatusLine().getStatusCode() != 200) {
-            if(NO_SUCH_INSTANCE.equals(answer)) {
-                // the session has expired or the server was restarted; clear the context
-                contexts.remove(contextId);
-                return respond(history, errorResponse, null);
-            }
-            return respond(history, errorResponse, contextId);
-        }
-
-        if (isSuccessfulAnswer) {
-            context.setPassageExtractionMode(DISABLED);
-        }
-        else if (!initialMode.equals(DISABLED)) {
-            context.setPassageExtractionMode(SHOW_TAXONOMY_ON_FAILURE);
-            // Either intent detection found the task (putting us in disambiguation), or it found nothing (giving the error string)
-            // If we're in disambiguation, we want to stay in POST_PASSAGE_EXTRACTION mode.
-            if (messageMeta == null || !Arrays.asList("DISAMBIGUATION", "UNCHANGED", "REPEATEDQUESTION").contains(messageMeta.getValue())) {
-                // We're not in disambiguation. Either the user accepted the task which was presented, or the server said it didn't know which task to use.
-
-                context.setPassageExtractionMode(DISABLED);
-
-                final boolean shouldRedirectToTopic = UNRECOGNIZED_PATTERN.matcher(answer).find();
-
-                if (shouldRedirectToTopic) {
-                    // Fire a special trigger keyword to start taxonomy navigation.
-                    final HttpResponse taxonomyResp = queryConversationServer(contextId, "navigate by taxonomy");
-
-                    final String taxonomyAnswer = IOUtils.toString(taxonomyResp.getEntity().getContent(), "utf-8");
-
-                    if (taxonomyResp.getStatusLine().getStatusCode() != 200) {
-                        if(NO_SUCH_INSTANCE.equals(taxonomyAnswer)) {
-                            // the session has expired or the server was restarted; clear the context
-                            contexts.remove(contextId);
-                            return respond(history, errorResponse, null);
-                        }
-                        return respond(history, errorResponse, contextId);
-                    }
-
-                    return respond(history, taxonomyAnswer, contextId);
+            if(!suggestions.isEmpty()) {
+                builder.append("\nSuggestions: ");
+                for(String suggestion : suggestions) {
+                    builder.append("\n").append("<suggest query=\"")
+                            .append(escapeHtml4(suggestion))
+                            .append("\" label=\"")
+                            .append(escapeHtml4(suggestion))
+                            .append("\"/>");
                 }
             }
         }
 
-        final String replaced = answer.replace(ENABLE_PASSAGE_EXTRACTION, "");
-        if (!replaced.equals(answer)) {
-            // This is an incredibly horrible hack that we use to enable passage extraction mode.
-            context.setPassageExtractionMode(PRE_PASSAGE_EXTRACTION);
-        }
+        return builder.toString();
+    }
 
-        return respond(history, replaceUsername(replaceAnswerServerTokens(replaced, context.getInitialQuery())), contextId);
+    protected List<String> getOptions(final Node prompt, final XPathExpression xpath) throws XPathExpressionException {
+        final NodeList validChoices = (NodeList) xpath.evaluate(prompt, XPathConstants.NODESET);
+        final List<String> opts = new ArrayList<>();
+        for (int jj = 0; jj < validChoices.getLength(); ++jj) {
+            opts.add(validChoices.item(jj).getTextContent());
+        }
+        return opts;
     }
 
     private String replaceUsername(final String str){
@@ -416,361 +344,6 @@ class ConversationController {
         }
     }
 
-    private String replaceAnswerServerTokens(final String str, final String initialQuery) throws IOException {
-        // Replace all <answerserver query="..."> tokens with actual answer server responses.
-        final Matcher matcher = ANSWERSERVER_PLACEHOLDER.matcher(str);
-        final StringBuilder sb = new StringBuilder();
-        int idx = 0;
-
-        while(matcher.find()) {
-            final int start = matcher.start();
-
-            if (idx < start) {
-                final String prefix = str.substring(0, start);
-                sb.append(prefix);
-            }
-
-            final String proxyQuery = unescapeHtml4(matcher.group(1));
-            final String proxyContext = unescapeHtml4(matcher.group(2));
-
-            boolean found = false;
-            final boolean tryQuery = isNotBlank(proxyQuery);
-            if(tryQuery) {
-                final Response inlinedResponse = askQAServer(null, null, proxyQuery, false, false);
-                if (inlinedResponse != null) {
-                    sb.append(inlinedResponse.getResponse());
-                    found = true;
-                }
-            }
-
-            if (!found && isNotBlank(proxyContext)) {
-               final Response inlinedResponse = askQAServer(null, null, initialQuery + " " + proxyContext, true, true);
-               if (inlinedResponse != null) {
-                   sb.append(inlinedResponse.getResponse());
-                   found = true;
-               }
-            }
-
-            if (!found) {
-                sb.append("Sorry, we couldn't find any results for your query '").append(proxyQuery).append("'.");
-            }
-
-            idx = matcher.end();
-        }
-
-        if (idx < str.length()) {
-            final String suffix = str.substring(idx);
-            sb.append(suffix);
-        }
-
-        return sb.toString();
-    }
-
-    private HttpResponse queryConversationServer(final String contextId, final String query) throws IOException {
-        final HttpPost post = new HttpPost(this.url + "nadia/engine/dialog/" + contextId);
-        post.setHeader("User-Agent", USER_AGENT);
-        post.setEntity(new UrlEncodedFormEntity(Collections.singletonList(new BasicNameValuePair("userUtterance", query)), "UTF-8"));
-        return httpClient.execute(post);
-    }
-
-
-    private Response askQAServer(final ConversationContext context, final String contextId, final String query, final boolean usePassageExtraction, final boolean disableFactAndAnswerBank) throws IOException {
-        final AnswerServerConfig answerServer = configService.getConfig().getAnswerServer();
-        if (!answerServer.getEnabled()) {
-            return null;
-        }
-
-        if (SKIP_ANSWERSERVER.matcher(query).matches()) {
-            return null;
-        }
-
-        final ServerConfig sc = answerServer.getServer();
-        final String qaURL = sc.getProtocol() + "://" + sc.getHost() + ":" + sc.getPort() + "/";
-
-        final HttpPost post = new HttpPost(qaURL + "a=ask");
-
-        final ArrayList<BasicNameValuePair> params = new ArrayList<>();
-        // We remove brackets to workaround the answerserver not handling brackets in the request,
-        //   see https://jira.autonomy.com/browse/CORE-4181.
-        // We convert to spaces instead of "" so e.g. 'Red(Blue)' remains two words 'Red Blue' instead of 'RedBlue'.
-        // We remove spaces before commas to workaround the qualifier not being detected if there's a comma, e.g.
-        //  'what is the Order of Conversions Metal Account to Physical , in Client' doesn't work
-        //   but '... Physical, in Client' does; see https://jira.autonomy.com/browse/CORE-4182.
-        params.add(new BasicNameValuePair("text", query.replaceAll("[()]", " ").replaceAll(" +,", ",")));
-
-        final List<String> systems = new ArrayList<>();
-        if (isNotBlank(systemNames) && !disableFactAndAnswerBank) {
-            systems.add(systemNames);
-        }
-        if (usePassageExtraction) {
-            systems.add(passageExtractor);
-        }
-        if (systems.isEmpty()) {
-            return null;
-        }
-
-        params.add(new BasicNameValuePair("systemNames", StringUtils.join(systems, ",")));
-
-        final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
-        final String securityInfo = principal.getSecurityInfo();
-
-        if (isNotBlank(securityInfo)) {
-            params.add(new BasicNameValuePair("securityInfo", securityInfo));
-        }
-
-        if (isNotBlank(questionAnswerDatabaseMatch)) {
-            params.add(new BasicNameValuePair("databaseMatch", questionAnswerDatabaseMatch));
-        }
-
-        post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-        final HttpResponse resp = httpClient.execute(post);
-
-        if (resp.getStatusLine().getStatusCode() != 200) {
-            log.warn("Answer server returned error code {}", resp.getStatusLine());
-            return respond(context, errorResponse, contextId);
-        }
-
-        try {
-            final Document parse = documentBuilder.parse(resp.getEntity().getContent());
-
-            final List<Answer> unfiltered = new ArrayList<>();
-
-            final NodeList nodes = (NodeList) xAnswer.evaluate(parse, XPathConstants.NODESET);
-
-            for (int ii = 0; ii < nodes.getLength(); ++ii) {
-                final Node answer = nodes.item(ii);
-                final Answer current = new Answer(
-                    (String) xSystemName.evaluate(answer, XPathConstants.STRING),
-                    (String) xSource.evaluate(answer, XPathConstants.STRING),
-                    (String) xAnswerText.evaluate(answer, XPathConstants.STRING),
-                    (String) xEntityName.evaluate(answer, XPathConstants.STRING),
-                    (String) xPropertyName.evaluate(answer, XPathConstants.STRING)
-                );
-
-                parseQualifiers(answer, xFactQualifier, current.getQualifiers());
-                parseQualifiers(answer, xComponentQualifier, current.getAppliedQualifiers());
-
-                unfiltered.add(current);
-            }
-
-            final List<String> refsToCheck = unfiltered.stream().map(Answer::getSource).filter(source ->
-                    isNotBlank(source) && !source.equalsIgnoreCase("SQLDB")).collect(Collectors.toList());
-
-            final ArrayList<Answer> answers = new ArrayList<>();
-
-            if (!refsToCheck.isEmpty()) {
-                final HashMap<String, AnswerDetails> urls = answerFilter.resolveUrls(refsToCheck);
-
-                for(final Answer answer : unfiltered) {
-                    final String source = answer.getSource();
-
-                    if (!refsToCheck.contains(source)) {
-                        answers.add(answer);
-                    }
-                    else {
-                        // Empty string / actual URL is a URL, null means document not found and should be filtered out
-                        final AnswerDetails details = urls.get(answer.getSource());
-
-                        if (details != null || !filterByDocumentSecurity) {
-                            answers.add(answer);
-                        }
-
-                        if (details != null) {
-                            answer.setUrlTitle(details.getTitle());
-                            answer.setUrl(StringUtils.defaultIfBlank(details.getUrl(),
-                                    VIEW_RELATIVE_PATH
-                                            + "?index=*&reference=" + AciURLCodec.getInstance().encode(answer.getSource())
-                            ));
-                        }
-                    }
-                }
-            }
-            else {
-                answers.addAll(unfiltered);
-            }
-
-            if (answers.size() > 1) {
-                if (isNotBlank(systemNames)) {
-                    // Sort the answers so that they come in the order defined in systemnames, in practice we
-                    //   use this to sort factbank answers before answer server answers since we prefer factbank
-                    //   answers for e.g. 'what is the currency holiday for yen'.
-                    final List<String> sortOrder = new ArrayList<String>(Arrays.asList(systemNames.split("[, ]+")));
-                    sortOrder.add(passageExtractor);
-
-                    answers.sort((o1, o2) -> {
-                        final String s1 = o1.getSystemName();
-                        final String s2 = o2.getSystemName();
-                        if(s1.equals(s2)) {
-                            return 0;
-                        }
-
-                        return sortOrder.indexOf(s1) - sortOrder.indexOf(s2);
-                    });
-                }
-
-                final Answer first = answers.get(0);
-                for (int ii = answers.size() - 1; ii >= 1; --ii) {
-                    if (!answers.get(ii).isSameProperty(first)) {
-                        answers.remove(ii);
-                    }
-                }
-            }
-
-            if (!answers.isEmpty()) {
-                final Answer answer = answers.get(0);
-                final String answerText = answer.getAnswerText();
-                final String entityName = answer.getEntityName();
-                final String propertyName = answer.getPropertyName();
-                final String url = answer.getUrl();
-                final String urlTitle = answer.getUrlTitle();
-                final String cite = isBlank(urlTitle) ? "" : "\n<span class='conversation-cite'>["+escapeHtml4(abbreviateMiddle(urlTitle.trim().replace("\n", " "), "…", 160))+"]</span>";
-                final String answerLink = isBlank(url) ? answerText + cite
-                    // using a subscript link to the title if available, otherwise using a dagger \u2020 symbol to provide fact attribution links
-                    : answerText + "<a href='"+ escapeHtml4(url)+"' target='_blank'>"+(StringUtils.defaultString(cite, "<sup>\u2020</sup>"))+"</a>";
-
-
-                final boolean doConfirm = context != null;
-                final String questionPostfix = doConfirm ? " Does that answer your question? <suggest options='Yes|No'>" : "";
-                final boolean isPassageExtractor = answer.getSystemName().equalsIgnoreCase(passageExtractor);
-
-                if (doConfirm) {
-                    context.setLastQueryWasFactOrAnswerBank(!isPassageExtractor);
-                }
-
-                if (isPassageExtractor) {
-                    final String passagePrefix;
-                    if (context != null) {
-                        context.setPassageExtractionMode(POST_PASSAGE_EXTRACTION);
-                        passagePrefix = "I have found this in my documents: ";
-                    }
-                    else {
-                        passagePrefix = "I can't find any facts on that, but I did find this in our documents: ";
-                    }
-
-                    return respond(context, passagePrefix + "“" + answerLink + "”." + questionPostfix, contextId);
-                }
-                else if (isNotBlank(entityName) && isNotBlank(propertyName)) {
-                    final StringBuilder response = new StringBuilder("The " + propertyName + " of " + entityName);
-
-                    if (!answer.getQualifiers().isEmpty()){
-                        response.append(answer.getQualifiers().stream().map(str -> " in " + str.getValue()).collect(Collectors.joining(",")));
-                    }
-
-                    response.append(" is ").append(answerLink).append(".");
-
-                    if (answers.size() > 1) {
-                        // There are multiple answers, we need to format it
-                        response.append("\nWe also have data for");
-
-                        final Set<String> currentQualifiers = answer.getAppliedQualifiers().stream()
-                                .map(a -> a.getValue().toLowerCase(Locale.US))
-                                .collect(Collectors.toSet());
-
-                        final LinkedHashSet<Qualifier> candidates = new LinkedHashSet<>();
-                        final Set<String> uniquePropertyNames = new LinkedHashSet<>();
-
-                        for(Answer temp : answers) {
-                            for(Qualifier candidate : temp.getQualifiers()) {
-                                if (!currentQualifiers.contains(candidate.getValue().toLowerCase(Locale.US))) {
-                                    candidates.add(candidate);
-                                    uniquePropertyNames.add(candidate.getName());
-                                }
-                            }
-                        }
-
-                        int shown = 0;
-                        final boolean multipleProperties = uniquePropertyNames.size() > 1;
-
-                        for(Qualifier candidate : candidates) {
-                            if (shown >= maxDisambiguationQualifierValues) {
-                                if (candidates.size() > shown) {
-                                    response.append("…");
-                                }
-                                break;
-                            }
-
-                            final String suggestedValue = candidate.getValue();
-                            final String suggestedLabel = (multipleProperties ? candidate.getName() + "\u2192 " : "") + suggestedValue;
-                            final LinkedHashSet<String> toApply = new LinkedHashSet<>();
-
-                            for(Qualifier qualifier : answer.getAppliedQualifiers()) {
-                                final String appliedValue = qualifier.getValue();
-                                // use the canonical case of the qualifier if possible
-                                toApply.add(
-                                    answer.getQualifiers().stream().map(Qualifier::getValue)
-                                        .filter(qual -> qual.equalsIgnoreCase(appliedValue))
-                                        .findFirst().orElse(appliedValue)
-                                );
-                            }
-
-                            toApply.add(suggestedValue);
-
-                            if(toApply.equals(answer.getQualifiers().stream().map(Qualifier::getValue).collect(Collectors.toSet()))) {
-                                // If there's an exact match between what would be suggested and the first answer,
-                                //   we don't show it since we're already showing the first answer.
-                                continue;
-                            }
-
-                            final String suggestQuery = "what is the " + propertyName + " of " + entityName +
-                                toApply.stream().map(str -> ", in " + str).collect(Collectors.joining("")) + "?";
-
-                            response.append(" <suggest query=\"")
-                                    .append(escapeHtml4(suggestQuery))
-                                    .append("\" label=\"")
-                                    .append(escapeHtml4(suggestedLabel))
-                                    .append("\"/>");
-
-                            ++shown;
-                        }
-
-                        response.append(" .");
-                    }
-
-                    response.append(questionPostfix);
-
-                    return respond(context, response.toString(), contextId);
-                }
-
-                return respond(context, answerLink + questionPostfix, contextId);
-            }
-        }
-        catch(SAXException|XPathExpressionException e) {
-            log.warn("Exception while parsing question answer response", e);
-        }
-
-        return null;
-    }
-
-    private void parseQualifiers(final Node answer, final XPathExpression expr, final List<Qualifier> qualifiers) throws XPathExpressionException {
-        final NodeList qualifierNodes = (NodeList) expr.evaluate(answer, XPathConstants.NODESET);
-        for (int ii = 0; ii < qualifierNodes.getLength(); ++ii) {
-            final Node qn = qualifierNodes.item(ii);
-            qualifiers.add(new Qualifier(
-                (String) xQualifierName.evaluate(qn, XPathConstants.STRING),
-                (String) xQualifierValue.evaluate(qn, XPathConstants.STRING)
-            ));
-        }
-    }
-
-    @Data
-    public static class Answer {
-        private final String systemName, source, answerText, entityName, propertyName;
-        private final List<Qualifier> qualifiers = new ArrayList<>();
-        private final List<Qualifier> appliedQualifiers = new ArrayList<>();
-        private String url;
-        private String urlTitle;
-
-        public boolean isSameProperty(final Answer other){
-            return StringUtils.equals(systemName, other.getSystemName())
-                && StringUtils.equals(entityName, other.getEntityName())
-                && StringUtils.equals(propertyName, other.getPropertyName());
-        }
-    }
-
-    @Data
-    public static class Qualifier {
-        private final String name, value;
-    }
 
     @RequestMapping(value = "history", method = RequestMethod.GET)
     @ResponseBody
