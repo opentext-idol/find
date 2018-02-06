@@ -6,7 +6,9 @@
 package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.find.core.search.AbstractDocumentsControllerTest;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestBuilder;
@@ -67,6 +69,9 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
     @Mock
     private IdolGetContentRequestIndexBuilder getContentRequestIndexBuilder;
 
+    @Mock
+    private ConfigFileService<IdolFindConfig> configFileService;
+
     @Before
     public void setUp() {
         when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
@@ -99,7 +104,7 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
         when(getContentRequestBuilder.indexAndReferences(any())).thenReturn(getContentRequestBuilder);
         when(getContentRequestBuilder.print(any())).thenReturn(getContentRequestBuilder);
 
-        documentsController = new IdolDocumentsController(idolDocumentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory);
+        documentsController = new IdolDocumentsController(idolDocumentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory, configFileService);
         documentsService = idolDocumentsService;
         databaseType = String.class;
     }
