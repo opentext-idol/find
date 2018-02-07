@@ -220,7 +220,7 @@
   },
   "minScore": 0,
   "topicMapMaxResults": 1000,
-  "querySummaryMaxCharacters": 250,
+  "documentSummaryMaxCharacters": 250,
   "idolFieldPathNormalizerXMLPrefixes": ["DOCUMENTS"],
   "fieldsInfo": {
     "contentType": {

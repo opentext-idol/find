@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(DocumentsController.SEARCH_PATH)
 class IdolDocumentsController extends DocumentsController<IdolQueryRequest, IdolSuggestRequest, IdolGetContentRequest, String, IdolQueryRestrictions, IdolGetContentRequestIndex, IdolSearchResult, AciErrorException> {
 
-    private final Integer querySummaryMaxCharacters;
+    private final Integer documentSummaryMaxCharacters;
 
     @SuppressWarnings({"TypeMayBeWeakened", "ConstructorWithTooManyParameters"})
     @Autowired
@@ -47,9 +47,9 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
                                    final ConfigFileService<IdolFindConfig> configService) {
         super(documentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory);
 
-        this.querySummaryMaxCharacters = Optional.ofNullable(configService.getConfigResponse())
+        this.documentSummaryMaxCharacters = Optional.ofNullable(configService.getConfigResponse())
                 .map(ConfigResponse::getConfig)
-                .map(IdolFindConfig::getQuerySummaryMaxCharacters)
+                .map(IdolFindConfig::getDocumentSummaryMaxCharacters)
                 .orElse(null);
     }
 
@@ -66,6 +66,6 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
 
     @Override
     protected Integer getMaxSummaryCharacters() {
-        return this.querySummaryMaxCharacters;
+        return this.documentSummaryMaxCharacters;
     }
 }
