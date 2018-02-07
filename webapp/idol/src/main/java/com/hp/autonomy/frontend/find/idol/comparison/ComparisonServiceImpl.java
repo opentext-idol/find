@@ -35,7 +35,7 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
     private final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory;
 
     private final int stateTokenMaxResults;
-    private final Integer documentSummaryMaxCharacters;
+    private final Integer documentSummaryMaxLength;
 
     @Autowired
     public ComparisonServiceImpl(
@@ -51,9 +51,9 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
                 .map(ConfigResponse::getConfig)
                 .map(IdolFindConfig::getComparisonStoreStateMaxResults)
                 .orElse(Integer.MAX_VALUE);
-        this.documentSummaryMaxCharacters = Optional.ofNullable(configService.getConfigResponse())
+        this.documentSummaryMaxLength = Optional.ofNullable(configService.getConfigResponse())
                 .map(ConfigResponse::getConfig)
-                .map(IdolFindConfig::getDocumentSummaryMaxCharacters)
+                .map(IdolFindConfig::getDocumentSummaryMaxLength)
                 .orElse(null);
     }
 
@@ -107,7 +107,7 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
                 .start(resultsStart)
                 .maxResults(maxResults)
                 .summary(summary)
-                .summaryCharacters(documentSummaryMaxCharacters)
+                .summaryCharacters(documentSummaryMaxLength)
                 .sort(sort)
                 .highlight(highlight)
                 .autoCorrect(false)
