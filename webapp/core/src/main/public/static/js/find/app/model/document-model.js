@@ -144,8 +144,8 @@ define([
 
             if (reference) {
                 const patterns = [
-                    /^(https?:\/\/)?www.youtube.com\/.*/,
-                    /^(https?:\/\/)?www.facebook.com\/.*/
+                    /^(https?:\/\/)?www.youtube(-nocookie)?.com\/embed\/.*/,
+                    /^(https?:\/\/)?www.facebook.com\/plugins\/post\.php?.*/
                 ];
 
                 for (let ii = 0; ii < patterns.length; ++ii) {
