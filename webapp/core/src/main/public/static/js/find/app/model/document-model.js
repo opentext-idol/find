@@ -139,6 +139,25 @@ define([
             return Boolean(this.get('media') && this.get('url'));
         },
 
+        getPreviewTemplate: function() {
+            const reference = this.get('reference');
+
+            if (reference) {
+                const patterns = [
+                    /^(https?:\/\/)?www.youtube.com\/.*/,
+                    /^(https?:\/\/)?www.facebook.com\/.*/
+                ];
+
+                for (let ii = 0; ii < patterns.length; ++ii) {
+                    if (patterns[ii].test(reference)) {
+                        return '<iframe allow="autoplay; encrypted-media" allowfullscreen class="preview-document-frame" src="'+_.escape(reference)+'"></iframe>';
+                    }
+                }
+            }
+
+            return null;
+        },
+
         isWebType: function() {
             const contentType = this.get('contentType');
 

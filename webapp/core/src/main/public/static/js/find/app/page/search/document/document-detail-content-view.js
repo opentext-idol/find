@@ -79,12 +79,18 @@ define([
         renderDocument: function() {
             const $preview = this.$('.document-detail-view-container');
 
+            const previewTemplate = this.documentModel.getPreviewTemplate();
+
             if(this.documentModel.isMedia()) {
                 $preview.html(this.mediaTemplate({
                     i18n: i18n,
                     model: this.documentModel
                 }));
-            } else {
+            }
+            else if(previewTemplate) {
+                $preview.html(previewTemplate);
+            }
+            else {
                 $preview.html(this.documentTemplate({
                     i18n: i18n
                 }));

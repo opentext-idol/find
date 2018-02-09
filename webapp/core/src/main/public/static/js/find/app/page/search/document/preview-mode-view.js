@@ -106,11 +106,16 @@ define([
 
             const $preview = this.$('.preview-mode-document');
 
+            const previewTemplate = this.model.getPreviewTemplate();
+
             if(this.model.isMedia()) {
                 $preview.html(this.mediaTemplate({
                     i18n: i18n,
                     model: this.model
                 }));
+            }
+            else if(previewTemplate) {
+                $preview.html(previewTemplate);
             } else {
                 $preview.html(this.documentTemplate({
                     i18n: i18n
