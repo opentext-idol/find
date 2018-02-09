@@ -216,7 +216,11 @@
       "application/vnd.ms-project": "ms-project:ofv|u|",
       "application/x-mspublisher": "ms-publisher:ofv|u|"
     },
-    "errorCallSupportString": null
+    "errorCallSupportString": null,
+    "previewWhitelistUrls": {
+      "^(https?://)?www.youtube(-nocookie)?.com/embed/.*": "allow=\"autoplay; encrypted-media\" allowfullscreen",
+      "^(https?://)?www.facebook.com/plugins/post\\.php.*": "allow=\"autoplay; encrypted-media\" allowfullscreen"
+    }
   },
   "minScore": 0,
   "topicMapMaxResults": 1000,

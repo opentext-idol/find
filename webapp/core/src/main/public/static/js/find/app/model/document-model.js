@@ -20,6 +20,27 @@ define([
         return isUrlRegex.test(reference);
     }
 
+    let patterns = null;
+
+    function getPreviewWhitelistPatterns() {
+        if (!patterns) {
+            patterns = [];
+
+            const config = configuration();
+            if (config && config.uiCustomization && config.uiCustomization.previewWhitelistUrls) {
+
+                _.each(config.uiCustomization.previewWhitelistUrls, function(value, key){
+                    patterns.push({
+                        regex: new RegExp(key, 'i'),
+                        attribs: value
+                    })
+                })
+            }
+        }
+
+        return patterns;
+    }
+
     const fieldTypeParsers = {
         STRING: function (valueWrapper) {
             return valueWrapper.displayValue
@@ -143,14 +164,14 @@ define([
             const reference = this.get('reference');
 
             if (reference) {
-                const patterns = [
-                    /^(https?:\/\/)?www.youtube(-nocookie)?.com\/embed\/.*/,
-                    /^(https?:\/\/)?www.facebook.com\/plugins\/post\.php?.*/
-                ];
+                const patterns = getPreviewWhitelistPatterns();
 
                 for (let ii = 0; ii < patterns.length; ++ii) {
-                    if (patterns[ii].test(reference)) {
-                        return '<iframe allow="autoplay; encrypted-media" allowfullscreen class="preview-document-frame" src="'+_.escape(reference)+'"></iframe>';
+                    const pattern = patterns[ii];
+
+                    if (pattern.regex.test(reference)) {
+                        const attribs = pattern.attribs || '';
+                        return '<iframe class="preview-document-frame" src="'+_.escape(reference)+'" '+attribs+'></iframe>';
                     }
                 }
             }

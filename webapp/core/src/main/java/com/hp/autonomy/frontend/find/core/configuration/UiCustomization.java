@@ -40,6 +40,7 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
     private final Collection<FieldPath> parametricOrder;
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final Map<String, String> specialUrlPrefixes;
+    private final Map<String, String> previewWhitelistUrls;
     private final String errorCallSupportString;
     private final Boolean openSharedDashboardQueryAsNewSearch;
 
@@ -62,6 +63,9 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
                                      ? parametricOrder
                                      : uiCustomization.parametricOrder)
                 .specialUrlPrefixes(specialUrlPrefixes)
+                .previewWhitelistUrls(previewWhitelistUrls != null && !previewWhitelistUrls.isEmpty()
+                                     ? previewWhitelistUrls :
+                                     uiCustomization.previewWhitelistUrls)
                 .errorCallSupportString(errorCallSupportString != null ? errorCallSupportString : uiCustomization.errorCallSupportString)
                 .defaultDeselectedDatabases(CollectionUtils.isNotEmpty(defaultDeselectedDatabases)
                                             ? defaultDeselectedDatabases
