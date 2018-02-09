@@ -218,8 +218,8 @@
     },
     "errorCallSupportString": null,
     "previewWhitelistUrls": {
-      "^(https?://)?www.youtube(-nocookie)?.com/embed/.*": "allow=\"autoplay; encrypted-media\" allowfullscreen",
-      "^(https?://)?www.facebook.com/plugins/.*" : "allow=\"autoplay; encrypted-media\" allowfullscreen"
+      "^(https?://)?www.youtube(-nocookie)?.com/embed/.*": "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference%>\">",
+      "^(https?://)?www.facebook.com/plugins/.*" : "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference%>\">"
     }
   },
   "minScore": 0,

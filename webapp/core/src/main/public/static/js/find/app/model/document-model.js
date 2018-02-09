@@ -32,7 +32,7 @@ define([
                 _.each(config.uiCustomization.previewWhitelistUrls, function(value, key){
                     patterns.push({
                         regex: new RegExp(key, 'i'),
-                        attribs: value
+                        template: _.template(value)
                     })
                 })
             }
@@ -170,8 +170,7 @@ define([
                     const pattern = patterns[ii];
 
                     if (pattern.regex.test(reference)) {
-                        const attribs = pattern.attribs || '';
-                        return '<iframe class="preview-document-frame" src="'+_.escape(reference)+'" '+attribs+'></iframe>';
+                        return pattern.template(this.attributes);
                     }
                 }
             }
