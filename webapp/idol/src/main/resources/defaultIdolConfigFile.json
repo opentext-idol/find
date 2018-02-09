@@ -219,7 +219,7 @@
     "errorCallSupportString": null,
     "previewWhitelistUrls": {
       "^(https?://)?www.youtube(-nocookie)?.com/embed/.*": "allow=\"autoplay; encrypted-media\" allowfullscreen",
-      "^(https?://)?www.facebook.com/plugins/post\\.php.*": "allow=\"autoplay; encrypted-media\" allowfullscreen"
+      "^(https?://)?www.facebook.com/plugins/.*" : "allow=\"autoplay; encrypted-media\" allowfullscreen"
     }
   },
   "minScore": 0,
