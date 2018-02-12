@@ -164,7 +164,10 @@ module.exports = (grunt) ->
     uglify:
       options:
         compress:
+# Workaround for bug on https://github.com/mishoo/UglifyJS2/issues/2842
           inline: false
+# Similarly, avoids broken `const` references causing e.g. broken document preview due to incorrect const inlining.
+          reduce_funcs: false
         mangle: true
         sourceMap: jsSourceMap
         sourceMapName: (file) -> file + '.map'

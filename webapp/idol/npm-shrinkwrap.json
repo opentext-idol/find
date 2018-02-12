@@ -689,7 +689,7 @@
       "resolved": "https://registry.npmjs.org/grunt-contrib-requirejs/-/grunt-contrib-requirejs-1.0.0.tgz"
     },
     "grunt-contrib-uglify-es": {
-      "version": "3.0.1",
+      "version": "3.3.0",
       "from": "gruntjs/grunt-contrib-uglify#harmony",
       "resolved": "git+https://github.com/gruntjs/grunt-contrib-uglify.git#harmony"
     },
