@@ -218,8 +218,9 @@
     },
     "errorCallSupportString": null,
     "previewWhitelistUrls": {
-      "^(https?://)?www.youtube(-nocookie)?.com/embed/.*": "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference%>\">",
-      "^(https?://)?www.facebook.com/plugins/.*" : "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference%>\">"
+      "^(https?://)?www\\.youtube(-nocookie)?\\.com/embed/.*": "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference%>\">",
+      "^(https?://)?www\\.facebook\\.com/plugins/.*" : "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference%>\">",
+      "^(https?://)?video\\.xx\\.fbcdn\\.net/.*" : "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference%>\">"
     }
   },
   "minScore": 0,
