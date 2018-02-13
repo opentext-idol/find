@@ -6,6 +6,9 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 import org.springframework.data.domain.AuditorAware;
 
 import java.util.Collection;
@@ -18,24 +21,27 @@ import static java.util.stream.Collectors.toSet;
 public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B extends SavedSearch.Builder<T, B>> implements SavedSearchService<T, B> {
     private final SavedSearchRepository<T, B> crudRepository;
     private final SharedToUserRepository sharedToUserRepository;
+    private final SharedToEveryoneRepository sharedToEveryoneRepository;
     private final AuditorAware<UserEntity> userEntityAuditorAware;
     private final TagNameFactory tagNameFactory;
     private final Class<T> type;
 
     protected AbstractSavedSearchService(final SavedSearchRepository<T, B> crudRepository,
                                          final SharedToUserRepository sharedToUserRepository,
+                                         final SharedToEveryoneRepository sharedToEveryoneRepository,
                                          final AuditorAware<UserEntity> userEntityAuditorAware,
                                          final TagNameFactory tagNameFactory,
                                          final Class<T> type) {
         this.crudRepository = crudRepository;
         this.sharedToUserRepository = sharedToUserRepository;
+        this.sharedToEveryoneRepository = sharedToEveryoneRepository;
         this.userEntityAuditorAware = userEntityAuditorAware;
         this.tagNameFactory = tagNameFactory;
         this.type = type;
     }
 
     @Override
-    public Set<T> getAll() {
+    public Set<T> getOwned() {
         final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
 
         return augmentOutputWithDisplayNames(crudRepository.findByActiveTrueAndUser_UserId(userId));
@@ -46,11 +52,27 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
         final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
         final Set<SharedToUser> permissions = sharedToUserRepository.findByUserId(userId, type);
 
-        return augmentOutputWithDisplayNames(permissions.stream()
-                .map(sharedToUser -> type.cast(sharedToUser.getSavedSearch().toBuilder()
-                        .setCanEdit(sharedToUser.getCanEdit())
-                        .build()))
-                .collect(toSet()));
+        final Set<Long> uniqueSavedSearchIds = new HashSet<Long>();
+
+        final Set<T> userShared = permissions.stream()
+                .map(sharedToUser -> {
+                    uniqueSavedSearchIds.add(sharedToUser.getSavedSearch().getId());
+                    return type.cast(sharedToUser.getSavedSearch().toBuilder()
+                            .setCanEdit(sharedToUser.getCanEdit())
+                            .build());
+                })
+                .collect(toSet());
+
+        final LinkedHashSet<T> shared = new LinkedHashSet<>(userShared);
+
+        for(SharedToEveryone globalShare : sharedToEveryoneRepository.findActiveByType(type)) {
+            final SavedSearch<?, ?> savedSearch = globalShare.getSavedSearch();
+            if (!userId.equals(savedSearch.getUser().getUserId()) && !uniqueSavedSearchIds.contains(savedSearch.getId())) {
+                shared.add(type.cast(savedSearch));
+            }
+        }
+
+        return augmentOutputWithDisplayNames(shared);
     }
 
     @Override
@@ -96,7 +118,20 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
 
     @Override
     public T getDashboardSearch(final long id) {
-        return crudRepository.findByActiveTrueAndId(id);
+        final T search = crudRepository.findByActiveTrueAndId(id);
+
+        final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
+
+        if (!Objects.equals(search.getUser().getUserId(), userId)) {
+            search.setCanEdit(isUnownedSearchEditable(search, userId));
+        }
+
+        return search;
+    }
+
+    protected boolean isUnownedSearchEditable(final T search, final Long userId) {
+        final SharedToUser share = sharedToUserRepository.findOne(new SharedToUserPK(search.getId(), userId));
+        return share != null && Boolean.TRUE.equals(share.getCanEdit());
     }
 
     private T getSearch(final long id) throws IllegalArgumentException {
@@ -104,7 +139,10 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
         final T savedSearch = crudRepository.findByActiveTrueAndId(id);
 
         if(null != savedSearch) {
-            if (savedSearch.getUser().getUserId().equals(currentUserId) || sharedToUserRepository.findOne(new SharedToUserPK(id, currentUserId)) != null) {
+            if (savedSearch.getUser().getUserId().equals(currentUserId)
+                || sharedToUserRepository.findOne(new SharedToUserPK(id, currentUserId)) != null
+                || sharedToEveryoneRepository.findOne(new SharedToEveryonePK(id)) != null
+            ) {
                 return savedSearch;
             } else {
                 throw new IllegalArgumentException("User has no permissions to edit this saved search");

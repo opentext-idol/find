@@ -9,7 +9,8 @@ define([
     'jquery',
     'i18n!find/nls/bundle',
     'js-whatever/js/list-view',
-    'js-whatever/js/modal',
+    'find/app/util/modal',
+    'find/app/model/saved-searches/shared-with-everyone-model',
     'find/app/model/saved-searches/shared-with-users-collection',
     'find/app/model/saved-searches/not-shared-with-users-collection',
     'find/app/util/shared-with-users-item-view',
@@ -17,8 +18,9 @@ define([
     'find/app/util/filtering-collection',
     'find/app/configuration',
     'text!find/templates/app/util/sharing-options.html',
-    'moment'
-], function(Backbone, _, $, i18n, ListView, Modal, SharedWithUsersCollection, NotSharedWithUsersCollection, SharedWithUsersItemView,
+    'moment',
+    'iCheck'
+], function(Backbone, _, $, i18n, ListView, Modal, SharedWithEveryoneModel, SharedWithUsersCollection, NotSharedWithUsersCollection, SharedWithUsersItemView,
             NotSharedWithUsersItemView, FilteringCollection, config, template) {
     'use strict';
 
@@ -122,6 +124,42 @@ define([
                         }, this)
                     });
             },
+            'ifClicked .js-search-shared-with-everyone': function(e) {
+                const searchTitle = this.model.get('title');
+
+                if (e.target.checked) {
+                    this.sharedWithEveryoneModel.destroy({
+                        success: _.bind(function() {
+                            this.trigger('success',
+                                i18n['search.savedSearchControl.sharingOptions.success'] +
+                                i18n['search.savedSearchControl.sharingOptions.success.unsharedWithEveryone'](this.model.get('title')));
+                        }, this),
+                        error: _.bind(function(collection, xhr) {
+                            const message = i18n['search.savedSearchControl.sharingOptions.error'] +
+                                (xhr.responseJSON && xhr.responseJSON.message ||
+                                    i18n['search.savedSearchControl.sharingOptions.error.unsharedWithEveryone'](searchTitle));
+
+                            this.trigger('error', message);
+                        }, this)
+                    });
+                }
+                else {
+                    this.sharedWithEveryoneModel.save({ searchId: this.sharedWithEveryoneModel.searchId }, {
+                        success: _.bind(function() {
+                            this.trigger('success',
+                                i18n['search.savedSearchControl.sharingOptions.success'] +
+                                i18n['search.savedSearchControl.sharingOptions.success.sharedWithEveryone'](searchTitle));
+                        }, this),
+                        error: _.bind(function(collection, xhr) {
+                            const message = i18n['search.savedSearchControl.sharingOptions.error'] +
+                                (xhr.responseJSON && xhr.responseJSON.message ||
+                                    i18n['search.savedSearchControl.sharingOptions.error.sharedWithEveryone'](searchTitle));
+
+                            this.trigger('error', message);
+                        }, this)
+                    });
+                }
+            },
             'input .js-search-for-not-shared-with-users': function(e) {
                 const inputText = $(e.currentTarget).val();
 
@@ -141,6 +179,12 @@ define([
         template: _.template(template),
 
         initialize: function() {
+            this.sharedWithEveryoneModel = new SharedWithEveryoneModel({}, {
+                searchId: this.model.get('id')
+            });
+
+            this.sharedWithEveryoneModel.fetch();
+
             this.sharedWithUsersCollection = new SharedWithUsersCollection([], {
                 searchId: this.model.get('id')
             });
@@ -196,6 +240,16 @@ define([
                 }.bind(this));
             }.bind(this));
 
+            this.listenTo(this.sharedWithEveryoneModel, 'sync update', this.updateSharedWithEveryone);
+            this.listenTo(this.sharedWithEveryoneModel, 'destroy', function(){
+                this.sharedWithEveryoneModel.set('searchId', undefined);
+                this.updateSharedWithEveryone();
+            });
+        },
+
+        updateSharedWithEveryone: function(){
+            const tmp = this.sharedWithEveryoneModel;
+            this.$('.js-search-shared-with-everyone').iCheck(tmp.isNew() ? 'uncheck' : 'check');
         },
 
         render: function() {
@@ -207,6 +261,11 @@ define([
             this.notSharedWithList.setElement(this.$('.js-not-shared-with-list-container ul')).render();
 
             this.toggleEmptyUsersLists();
+
+            this.$('.js-search-shared-with-everyone').iCheck({
+                checkboxClass: 'icheckbox-hp clickable'
+            });
+            this.updateSharedWithEveryone();
         },
 
         toggleEmptyUsersLists: function() {

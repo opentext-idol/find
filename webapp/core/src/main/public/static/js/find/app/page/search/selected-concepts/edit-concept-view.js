@@ -7,9 +7,10 @@ define([
     'backbone',
     'underscore',
     'jquery',
+    'find/app/util/global-key-listener',
     'text!find/templates/app/page/search/selected-concepts/edit-concept-view.html',
     'i18n!find/nls/bundle'
-], function(Backbone, _, $, template, i18n) {
+], function(Backbone, _, $, globalKeyListener, template, i18n) {
     'use strict';
 
     return Backbone.View.extend({
@@ -45,6 +46,13 @@ define([
 
                 this.trigger('remove');
             }
+        },
+
+        initialize: function() {
+            Backbone.View.prototype.initialize.apply(this, arguments);
+            this.listenTo(globalKeyListener, 'escape', function(){
+                this.trigger('remove');
+            });
         },
 
         render: function() {

@@ -22,6 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Collection;
 
 import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizer.PRE_AUTHENTICATED_ROLES_PROPERTY_KEY;
+import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizer.PRE_AUTHENTICATED_USERNAME_PROPERTY_KEY;
 import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizer.REVERSE_PROXY_PROPERTY_KEY;
 import static com.hp.autonomy.frontend.find.idol.beanconfiguration.GrantedAuthorityMatcher.authority;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -39,7 +40,8 @@ import static org.mockito.Mockito.when;
         classes = ReverseProxyIdolSecurityCustomizer.class,
         properties = {
                 REVERSE_PROXY_PROPERTY_KEY + "=true",
-                PRE_AUTHENTICATED_ROLES_PROPERTY_KEY + "=FindUser,FindBI,FindAdmin"
+                PRE_AUTHENTICATED_ROLES_PROPERTY_KEY + "=FindUser,FindBI,FindAdmin",
+                PRE_AUTHENTICATED_USERNAME_PROPERTY_KEY + "="
         },
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class ReverseProxyIdolSecurityCustomizerTest {
@@ -72,6 +74,7 @@ public class ReverseProxyIdolSecurityCustomizerTest {
         when(userService.getUser(anyString(), anyBoolean())).thenReturn(userRoles);
     }
 
+    // We don't need to filter the roles anymore, so we just test the mapping.
     @Test
     public void testRoleFiltering() {
         final Collection<AuthenticationProvider> authenticationProviders = reverseProxyIdolSecurityCustomizer.getAuthenticationProviders();
@@ -83,7 +86,7 @@ public class ReverseProxyIdolSecurityCustomizerTest {
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("AuthenticationProvider did not authenticate"));
 
-        assertThat(authentication.getAuthorities(), contains(authority("FindUser"), authority("FindBI")));
+        assertThat(authentication.getAuthorities(), contains(authority("FindAdmin"), authority("FindUser"), authority("FindBI")));
     }
 
 

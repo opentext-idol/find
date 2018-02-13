@@ -220,6 +220,12 @@ define([
             }
         },
 
+        getSavedSearchRouterParameters: function() {
+            return _.map(_.compact([this.firstField, this.secondField]), function(val){
+                return '/' + encodeURIComponent(val.id);
+            }).join('')
+        },
+
         exportData: function() {
             const data = this.legendColorCollection.toJSON().sort(this.comparator).map(function(legendEntry) {
                 return {

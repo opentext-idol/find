@@ -7,5 +7,6 @@ DELETE FROM find.search_stored_state;
 DELETE FROM find.search_concept_cluster_phrases;
 DELETE FROM find.search_geography_filters;
 DELETE FROM find.shared_to_users;
+DELETE FROM find.shared_to_everyone;
 DELETE FROM find.searches;
 DELETE FROM find.users;

@@ -41,7 +41,6 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
     public static final String MAX_RESULTS_PARAM = "max_results";
     public static final String SUMMARY_PARAM = "summary";
     public static final String INDEXES_PARAM = "indexes";
-    public static final int MAX_SUMMARY_CHARACTERS = 250;
     static final String SIMILAR_DOCUMENTS_PATH = "similar-documents";
     static final String GET_DOCUMENT_CONTENT_PATH = "get-document-content";
     static final String REFERENCE_PARAM = "reference";
@@ -81,6 +80,10 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
 
     protected abstract void addParams(final GetContentRequestBuilder<RC, T, ?> request);
 
+    protected Integer getMaxSummaryCharacters() {
+        return 250;
+    }
+
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(value = QUERY_PATH, method = RequestMethod.GET)
     @ResponseBody
@@ -112,7 +115,7 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
             .queryRestrictions(queryRestrictions)
             .start(resultsStart)
             .maxResults(maxResults)
-            .summaryCharacters(MAX_SUMMARY_CHARACTERS)
+            .summaryCharacters(getMaxSummaryCharacters())
             .highlight(highlight)
             .autoCorrect(autoCorrect)
             .summary(summary)
@@ -152,7 +155,7 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
             .queryRestrictions(queryRestrictions)
             .start(resultsStart)
             .maxResults(maxResults)
-            .summaryCharacters(MAX_SUMMARY_CHARACTERS)
+            .summaryCharacters(getMaxSummaryCharacters())
             .highlight(highlight)
             .summary(summary)
             .sort(sort)

@@ -45,10 +45,20 @@ define([
 
             if(this.clickHandler && this.clickHandler !== _.noop) {
                 topicMapOptions.onLeafClick = _.bind(function(node) {
+                    if (String(window.getSelection()).length) {
+                        // If the user is partway selecting text for selection-entity-search, we suppress the click.
+                        return false;
+                    }
+
                     this.clickHandler([node.name]);
                 }, this);
 
                 topicMapOptions.onNodeTitleClick = _.bind(function(node) {
+                    if (String(window.getSelection()).length) {
+                        // If the user is partway selecting text for selection-entity-search, we suppress the click.
+                        return false;
+                    }
+
                     this.clickHandler(node.children
                         ? _.pluck(node.children, 'name')
                         : [node.name]);

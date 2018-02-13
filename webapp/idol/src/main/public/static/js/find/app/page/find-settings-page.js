@@ -10,6 +10,7 @@ define([
     'find/app/page/settings/answer-server-widget',
     'find/app/page/settings/community-widget',
     'find/app/page/settings/map-widget',
+    'find/app/page/settings/motd-widget',
     'find/app/page/settings/mmap-widget',
     'find/app/page/settings/query-manipulation-widget',
     'find/app/page/settings/saved-search-widget',
@@ -17,7 +18,7 @@ define([
     'find/app/page/settings/view-widget',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/settings/community-widget.html'
-], function (_, SettingsPage, AciWidget, AnswerServerWidget, CommunityWidget, MapWidget, MmapWidget, QueryManipulationWidget,
+], function (_, SettingsPage, AciWidget, AnswerServerWidget, CommunityWidget, MapWidget, MotdWidget, MmapWidget, QueryManipulationWidget,
              SavedSearchWidget, StatsServerWidget, ViewWidget, i18n, dropdownTemplate) {
 
     return SettingsPage.extend({
@@ -45,6 +46,18 @@ define([
                             loginTypeLabel: i18n['settings.community.login.type'],
                             validateFailed: i18n['settings.test.failed']
                         })
+                    }),
+                    new MotdWidget({
+                        configItem: 'messageOfTheDay',
+                        isOpened: true,
+                        title: i18n['settings.messageOfTheDay'],
+                        strings: _.extend(this.serverStrings(), {
+                            description: i18n['settings.messageOfTheDay.description'],
+                            message: i18n['settings.messageOfTheDay.message'],
+                            status: i18n['settings.messageOfTheDay.status'],
+                            statusInfo: i18n['settings.messageOfTheDay.status.info'],
+                            statusWarning: i18n['settings.messageOfTheDay.status.warning']
+                        })
                     })
                 ], [
                     new QueryManipulationWidget({
@@ -58,6 +71,7 @@ define([
                             disabled: i18n['settings.queryManipulation.disabled'],
                             dictionary: i18n['settings.queryManipulation.dictionary'],
                             expandQuery: i18n['settings.queryManipulation.expandQuery'],
+                            synonymDatabaseMatch: i18n['settings.queryManipulation.synonymDatabaseMatch'],
                             enable: i18n['settings.queryManipulation.enable'],
                             enabled: i18n['settings.queryManipulation.enabled'],
                             index: i18n['settings.queryManipulation.index'],
@@ -72,6 +86,7 @@ define([
                         title: i18n['settings.view'],
                         strings: _.extend(this.serverStrings(), {
                             connector: i18n['settings.view.connector'],
+                            universal: i18n['settings.view.universal'],
                             referenceFieldLabel: i18n['settings.view.referenceFieldLabel'],
                             referenceFieldBlank: i18n['settings.view.referenceFieldBlank'],
                             referenceFieldPlaceholder: i18n['settings.view.referenceFieldPlaceholder'],

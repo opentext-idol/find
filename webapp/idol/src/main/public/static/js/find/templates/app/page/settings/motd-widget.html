@@ -1,0 +1,14 @@
+<% var uid = _.uniqueId('motd') %>
+
+<div class="form-group col-sm-12">
+    <textarea class="full-width message-input" id="" placeholder="<%-strings.message%>" rows="2"></textarea>
+</div>
+<div class="form-group m-t-sm">
+    <div class="form-group m-t-sm col-sm-12">
+        <label for="<%-uid%>-viewing-mode" class="control-label"><%-strings.status%>: </label>
+        <select id="<%-uid%>-viewing-mode" class="form-control status-input">
+            <option value="motd-info"><%-strings.statusInfo%></option>
+            <option value="motd-warning"><%-strings.statusWarning%></option>
+        </select>
+    </div>
+</div>

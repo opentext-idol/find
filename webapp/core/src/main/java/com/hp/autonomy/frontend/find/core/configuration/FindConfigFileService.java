@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.configuration.AbstractAuthenticatingConfigFileService;
 import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
+import java.util.Collections;
 import org.jasypt.util.text.TextEncryptor;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
@@ -22,7 +23,9 @@ import java.util.Map;
  * Common logic applied to HoD and Idol config implementations
  */
 public abstract class FindConfigFileService<C extends FindConfig<C, B>, B extends FindConfigBuilder<C, B>> extends AbstractAuthenticatingConfigFileService<C> {
-    public static final String CONFIG_FILE_LOCATION = "hp.find.home";
+    public static final String CONFIG_FILE_LOCATION = "idol.find.home";
+    public static final String CONFIG_FILE_LOCATION_HP = "hp.find.home";
+    public static final String CONFIG_FILE_LOCATION_SPEL = "${"+CONFIG_FILE_LOCATION+":${"+CONFIG_FILE_LOCATION_HP+":}}";
     private static final String CONFIG_FILE_NAME = "config.json";
 
     protected FindConfigFileService(final FilterProvider filterProvider,
@@ -39,6 +42,7 @@ public abstract class FindConfigFileService<C extends FindConfig<C, B>, B extend
             .build();
 
         setConfigFileLocation(CONFIG_FILE_LOCATION);
+        setDeprecatedConfigFileLocations(Collections.singletonList(CONFIG_FILE_LOCATION_HP));
         setConfigFileName(CONFIG_FILE_NAME);
         setDefaultConfigFile(getDefaultConfigFile());
         setMapper(objectMapper);

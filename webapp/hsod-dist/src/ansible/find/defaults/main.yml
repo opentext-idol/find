@@ -23,10 +23,10 @@ find_datasource_username: "root"
 find_datasource_password: "root"
 
 find_options:
-  - "-Dhp.find.home='{{find_root_dir}}'"
+  - "-Didol.find.home='{{find_root_dir}}'"
   - "-Dserver.port=8080"
   - "-Djava.security.egd=file:/dev/./urandom"
-  - "-Dhp.find.persistentState=REDIS"
+  - "-Didol.find.persistentState=REDIS"
   - "-Dendpoints.health.enabled=true"
   - "-Dmanagement.port=8085"
   - "-Dflyway.enabled={{find_flyway_enabled}}"

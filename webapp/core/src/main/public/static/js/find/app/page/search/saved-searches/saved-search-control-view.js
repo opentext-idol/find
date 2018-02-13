@@ -12,7 +12,7 @@ define([
     'find/app/util/confirm-view',
     'find/app/util/csv-field-selection-view',
     'find/app/util/sharing-options',
-    'js-whatever/js/modal',
+    'find/app/util/modal',
     'text!find/templates/app/page/search/saved-searches/saved-search-control-view.html',
     'i18n!find/nls/bundle',
     'find/app/util/popover',
@@ -81,7 +81,11 @@ define([
                 }, this.savedSearchModel.attributes));
 
                 this.searchCollections.QUERY.add(newSearch);
-                this.selectedTabModel.set('selectedSearchCid', newSearch.cid);
+                const selectedTab = this.resultsViewSelectionModel.get('selectedTab');
+                this.selectedTabModel.set({
+                    selectedSearchCid: newSearch.cid,
+                    selectedResultsView: selectedTab,
+                });
             },
             'click .save-search-button': function() {
                 this.model.set({error: null, loading: true});
@@ -182,6 +186,7 @@ define([
             this.searchCollections = options.searchCollections;
             this.searchTypes = options.searchTypes;
             this.comparisonModalCallback = options.comparisonModalCallback;
+            this.resultsViewSelectionModel = options.resultsViewSelectionModel;
 
             this.model = new Backbone.Model({
                 // Is the saved search new, modified or up to date with the server?

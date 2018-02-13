@@ -25,7 +25,7 @@
     }
 
     i.fa-comments-o {
-      font-size: ~'calc(@{fontSize} * 2)';
+      font-size: (@fontSize * 2);
     }
   }
 
@@ -69,7 +69,7 @@
   .inline-block;
 
   color: @grey6;
-  font-size: ~'calc(@{font-size-base} - 1px)';
+  font-size: (@font-size-base - 1px);
 }
 
 .document-reference.shorten {
@@ -110,7 +110,11 @@
 
 .result-summary {
   .text-justify;
-  .text-clamp(2, 43px);
+  .text-clamp(2, 45px);
+}
+
+.result-summary:hover {
+  .text-clamp(40, 900px);
 }
 
 .results-popover-title,

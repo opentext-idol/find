@@ -171,7 +171,7 @@
     .flex-column;
 
     justify-content: center;
-    z-index: ~'calc(@{widgetUpdateSpinnerZIndex} - 1)';
+    z-index: (@widgetUpdateSpinnerZIndex - 1);
     align-content: center;
     height: 100%;
     width: 100%;
@@ -193,12 +193,12 @@
     width: 100%;
     height: 100%;
 
-    z-index: ~'calc(@{widgetUpdateSpinnerZIndex} - 1)';
+    z-index: (@widgetUpdateSpinnerZIndex - 1);
     justify-content: center;
     align-items: center;
 
     i {
-      font-size: ~'calc(2 * @{fontSizeXXLarge})';
+      font-size: (2 * @fontSizeXXLarge);
       margin-bottom: 10px;
     }
 
@@ -212,7 +212,7 @@
 
     flex: 1 0 80%;
 
-    z-index: ~'calc(@{widgetUpdateSpinnerZIndex} - 1)';
+    z-index: (@widgetUpdateSpinnerZIndex - 1);
     h2 {
       font-size: 1.5vw;
     }

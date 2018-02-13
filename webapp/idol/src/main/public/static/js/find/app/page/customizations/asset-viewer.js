@@ -52,7 +52,7 @@ define([
 
                 body.assets[this.type] = file;
 
-                $.ajax('../api/admin/customization/config', {
+                $.ajax('api/admin/customization/config', {
                     contentType: "application/json",
                     data: JSON.stringify(body),
                     dataType: 'json',
@@ -124,7 +124,7 @@ define([
                 data: {
                     id: null,
                     deletable: false,
-                    url: '/static-' + configuration().commit + options.defaultImage
+                    url: 'static-' + configuration().commit + options.defaultImage
                 }
             }));
 

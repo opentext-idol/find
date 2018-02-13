@@ -28,6 +28,8 @@ module.exports = (grunt) ->
     'src/test/**/*.js'
   ]
 
+  jsSourceMap = grunt.option('jsSourceMap') || false
+
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
     babel:
@@ -136,6 +138,7 @@ module.exports = (grunt) ->
         keepBuildDir: true
         mainConfigFile: 'target/webapp/static/js/require-config.js'
         optimize: 'none'
+        generateSourceMaps: jsSourceMap
       public:
         options:
           name: 'public',
@@ -160,13 +163,28 @@ module.exports = (grunt) ->
           ]
     uglify:
       options:
-        compress: true
+        compress:
+# Workaround for bug on https://github.com/mishoo/UglifyJS2/issues/2842
+          inline: false
+# Similarly, avoids broken `const` references causing e.g. broken document preview due to incorrect const inlining.
+          reduce_funcs: false
         mangle: true
+        sourceMap: jsSourceMap
+        sourceMapName: (file) -> file + '.map'
       js:
+        options:
+          sourceMapIn: (file) -> file + '.map'
         files: [{
           expand: true
           cwd: 'target/classes/static/js'
-          src: '**/*.js'
+          src: ['public.js', 'config.js', 'login.js']
+          dest: 'target/classes/static/js'
+        }]
+      languages:
+        files: [{
+          expand: true
+          cwd: 'target/classes/static/js'
+          src: ['find/**/nls/**/*.js']
           dest: 'target/classes/static/js'
         }]
 
@@ -175,7 +193,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-connect'
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-requirejs'
-  grunt.loadNpmTasks 'grunt-contrib-uglify'
+  grunt.loadNpmTasks 'grunt-contrib-uglify-es'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-sync'
   grunt.loadNpmTasks 'grunt-peg'
@@ -186,5 +204,5 @@ module.exports = (grunt) ->
   grunt.registerTask 'watch-test', ['babel:transform', 'jasmine:test', 'watch:test']
   grunt.registerTask 'copy-resources', ['sync:devResources', 'watch:copyResources']
   grunt.registerTask 'concatenate', ['requirejs']
-  grunt.registerTask 'minify', ['uglify:js']
+  grunt.registerTask 'minify', ['uglify:js', 'uglify:languages']
   grunt.registerTask 'compile', ['concatenate', 'minify']

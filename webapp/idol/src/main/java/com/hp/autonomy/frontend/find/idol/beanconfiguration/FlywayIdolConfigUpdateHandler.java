@@ -10,7 +10,7 @@ import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 import static db.migration.AbstractMigrateUsersToIncludeUsernames.COMMUNITY_HOST;
@@ -18,7 +18,7 @@ import static db.migration.AbstractMigrateUsersToIncludeUsernames.COMMUNITY_PORT
 import static db.migration.AbstractMigrateUsersToIncludeUsernames.COMMUNITY_PROTOCOL;
 
 @Component
-@ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
+@ConditionalOnExpression(BiConfiguration.BI_PROPERTY_SPEL)
 public class FlywayIdolConfigUpdateHandler implements IdolConfigUpdateHandler {
 
     private final AciService aciService;

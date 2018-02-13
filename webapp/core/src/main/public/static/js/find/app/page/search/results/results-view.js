@@ -55,6 +55,12 @@ define([
 
         events: {
             'click .preview-mode [data-cid]:not(.answered-question)': function(e) {
+                if (String(window.getSelection()).length >= 2) {
+                    // If the user is partway selecting text for selection-entity-search, we suppress the click,
+                    //   otherwise the preview pane will toggle every time you try and select something.
+                    return;
+                }
+
                 const $target = $(e.target);
 
                 if (!$target.is('a')) {
@@ -78,6 +84,11 @@ define([
                 }
             },
             'click .document-detail-mode [data-cid]': function(e) {
+                if (String(window.getSelection()).length >= 2) {
+                    // If the user is partway selecting text for selection-entity-search, we suppress the click.
+                    return;
+                }
+
                 const $target = $(e.currentTarget);
                 const cid = $target.data('cid');
                 const isPromotion = $target.closest('.main-results-list').hasClass('promotions');

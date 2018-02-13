@@ -11,7 +11,7 @@ define([
     'use strict';
 
     return FindBaseCollection.extend({
-        url: '/api/bi/user/search',
+        url: 'api/bi/user/search',
         parse: function(response) {
             return response.user;
         },

@@ -8,11 +8,12 @@ define([
     'jquery',
     './updating-widget',
     'find/idol/app/model/idol-indexes-collection',
+    'find/app/configuration',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/vent',
     'text!find/idol/templates/page/dashboards/saved-search-widget-error.html',
     'i18n!find/nls/bundle'
-], function(_, $, UpdatingWidget, IdolIndexesCollection, SavedSearchModel, vent, errorTemplate, i18n) {
+], function(_, $, UpdatingWidget, IdolIndexesCollection, configuration, SavedSearchModel, vent, errorTemplate, i18n) {
     'use strict';
 
     const DashboardSearchModel = SavedSearchModel.extend({
@@ -74,18 +75,12 @@ define([
         initialize: function(options) {
             UpdatingWidget.prototype.initialize.apply(this, arguments);
 
-            this.savedSearchRoute = '/search/tab/' +
-                options.datasource.config.type +
-                ':' +
-                options.datasource.config.id +
-                (this.viewType
-                    ? '/view/' + this.viewType
-                    : '');
-
             this.savedSearchModel = new DashboardSearchModel({
                 id: options.datasource.config.id,
                 type: options.datasource.config.type
             });
+
+            this.savedQueryCollection = options.savedQueryCollection;
         },
 
         // Called by the widget's update() method, which in turn is called by the dashboard-page's update().
@@ -132,7 +127,39 @@ define([
         },
 
         onClick: function() {
-            vent.navigate(this.savedSearchRoute);
+            const config = configuration();
+
+            const attribs = this.savedSearchModel.attributes;
+
+            const viewRoute = this.viewType ? '/view/' + this.viewType : '';
+
+            const isSharedQuery = attribs.type === SavedSearchModel.Type.QUERY && config.username !== attribs.user.username;
+
+            const savedSearchRoute = '/search/tab/' +
+                (attribs.canEdit && isSharedQuery ? SavedSearchModel.Type.SHARED_QUERY : attribs.type) +
+                ':' +
+                attribs.id +
+                viewRoute;
+
+            if (isSharedQuery && config && config.uiCustomization && config.uiCustomization.openSharedDashboardQueryAsNewSearch) {
+                // Create a new search
+                const newSearch = new SavedSearchModel(_.defaults({
+                    id: null,
+                    title: i18n['search.newSearch'],
+                    type: SavedSearchModel.Type.QUERY
+                }, attribs));
+
+                this.savedQueryCollection.add(newSearch);
+                const route = '/search/tab/QUERY:' + newSearch.cid + viewRoute;
+                vent.navigate(route + this.getSavedSearchRouterParameters());
+            }
+            else {
+                vent.navigate(savedSearchRoute + this.getSavedSearchRouterParameters());
+            }
+        },
+
+        getSavedSearchRouterParameters: function() {
+            return '';
         },
 
         onCancelled: function() {

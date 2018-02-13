@@ -1,0 +1,144 @@
+.selection-entity {
+  position: fixed;
+  z-index: (@zindex-navbar - 2);
+}
+
+.selection-entity:hover, .selection-entity.first-appearance {
+  z-index: (@zindex-navbar - 1);
+}
+
+.selection-entity-content {
+  max-width: 800px;
+  border: 1px solid @hpegreen-active;
+  background: white;
+  padding: 10px 15px;
+  cursor: move;
+}
+
+.mercator-svg-map {
+  width: 160px;
+  height: 80px;
+  position: relative;
+  background-image: url('@{staticResourcesPath}/img/map/Equirectangular.png');
+  background-size: contain;
+}
+
+.mercator-svg-marker {
+  position: absolute;
+  background-color: @hpegreen-active;
+}
+
+.selection-entity-header {
+  font-weight: bold;
+  padding-right: 10px;
+}
+
+.selection-entity-close {
+  position: absolute;
+  right: 2px;
+  top: -7px;
+  font-size: 30px;
+}
+
+.selection-entity-icon {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  font-size: 13px;
+  opacity: 0.5;
+}
+
+.entity-search-messages {
+  box-shadow: inset 0 2px 2px -2px rgba(0, 0, 0, 0.2);
+  max-height: 25vh;
+  max-width: 40vw;
+  overflow-y: auto;
+  padding: 5px 10px;
+  cursor: auto;
+}
+
+.entity-search-messages:empty {
+  display: none;
+}
+
+.entity-search-controls {
+  min-height: 30px;
+  box-shadow: 0 -1px 3px rgba(0,0,0,.1);
+  border-radius: 0 0 8px 8px;
+  padding: 8px;
+  cursor: auto;
+}
+
+.entity-search-loading {
+  float: left;
+  clear: both;
+  margin: 2px 0;
+}
+
+.entity-search-server {
+  border-radius: 8px 8px 8px 2px;
+  padding: 8px 16px;
+  background: darkgray;
+  float: left;
+  clear: both;
+  margin: 2px 0;
+  color: white;
+  text-shadow: rgba(0, 0, 0, 0.4) 0 1px 1px;
+}
+
+.entity-search-user {
+  float: right;
+  border-radius: 8px 8px 2px 8px;
+  padding: 8px 16px;
+  clear: both;
+  background: @hpegreen;
+  margin: 2px 0;
+  color: white;
+  text-shadow: rgba(0, 0, 0, 0.4) 0 1px 1px;
+}
+
+.entity-search-question {
+  width: ~"calc(100% - 80px)";
+  min-width: 200px;
+  border: none;
+  background: transparent;
+  margin-left: 8px;
+  outline: none !important;
+
+  /* This is to disable the 'X' button that only appears in IE11 */
+  /*noinspection CssInvalidPseudoSelector*/
+  &::-ms-clear {
+    display: none;
+  }
+}
+
+.entity-search-cite {
+  vertical-align: super;
+  font-size: smaller;
+}
+
+.selection-entity-db(@color) {
+  &-border {
+    border: 1px solid @color;
+  }
+  &-color {
+    color: @color;
+  }
+  &-background-color {
+    background-color: @color;
+  }
+  a&-color:hover, a&-color:focus {
+    color: lighten(@color, 10%);
+  }
+}
+.selection-entity-db-places {
+  .selection-entity-db(#009c2a)
+}
+
+.selection-entity-db-people {
+  .selection-entity-db(#c76700)
+}
+
+.selection-entity-db-companies {
+  .selection-entity-db(#0067c7)
+}

@@ -55,6 +55,27 @@
         </filter>
     </appender>
 
+    <appender name="TomcatAccessFileAppender"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/tomcat-access.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/tomcat-access.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>104857600</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <!--
+                This prints the string from the Tomcat access log valve, and should not be changed here.
+                To change the pattern, you should modify the 'server.tomcat.accesslog.pattern' property instead.
+            -->
+            <pattern>%msg%n</pattern>
+        </encoder>
+        <filter class="com.hp.autonomy.frontend.logging.LogbackMarkerFilter">
+            <markerName>TomcatAccess</markerName>
+        </filter>
+    </appender>
+
     <root level="INFO" additivity="false">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FileAppender" />
@@ -64,5 +85,8 @@
         <appender-ref ref="IdolFileAppender" />
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FileAppender" />
+    </logger>
+    <logger name="com.hp.autonomy.frontend.find.core.logging.TomcatAccessLogValve" level="TRACE" additivity="false">
+        <appender-ref ref="TomcatAccessFileAppender"/>
     </logger>
 </configuration>

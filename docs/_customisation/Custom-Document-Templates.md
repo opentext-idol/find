@@ -41,8 +41,9 @@ must exist in the $FIND_HOME/customization/templates directory.
 
 # Triggers
 
-A trigger condition consists of an IDOL field and a list of values. If the list of values is empty, a document matches
-the trigger if it has any value for the given field. Otherwise, a document matches if the given field has at least one
+A trigger condition consists of a field ID (the key in the fieldsInfo section of the config file) and a list of values. 
+If the list of values is empty, a document matches the trigger if it has any value for the given field. 
+Otherwise, a document matches if the given field has at least one
 of the values in the list.
 
 Triggers for a template are considered to be AND conditions. A document only matches a template if it matches all of its 

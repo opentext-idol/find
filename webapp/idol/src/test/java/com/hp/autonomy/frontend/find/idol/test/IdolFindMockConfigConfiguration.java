@@ -12,8 +12,10 @@ import com.hp.autonomy.frontend.configuration.authentication.Authentication;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
+import com.hp.autonomy.frontend.find.idol.configuration.EntitySearchConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
+import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
 import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import db.migration.AbstractMigrateUsersToIncludeUsernames;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +68,11 @@ public class IdolFindMockConfigConfiguration {
         ));
         when(config.getMap()).thenReturn(new MapConfiguration("", false, "", null, 2, null));
         when(config.getMmap()).thenReturn(mmapConfig);
+        final EntitySearchConfig entitySearchConfig = mock(EntitySearchConfig.class);
+        final AnswerServerConfig entitySearchAnswerServerConfig = mock(AnswerServerConfig.class);
+        when(entitySearchConfig.getEnabled()).thenReturn(false);
+        when(entitySearchConfig.getAnswerServer()).thenReturn(entitySearchAnswerServerConfig);
+        when(config.getEntitySearch()).thenReturn(entitySearchConfig);
         return config;
     }
 

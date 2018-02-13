@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2015-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -28,6 +28,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService.CONFIG_FILE_LOCATION_SPEL;
+
 @Service
 class TemplatesServiceImpl implements TemplatesService, ReloadableCustomizationComponent {
     static final String DIRECTORY_NAME = "templates";
@@ -39,7 +41,7 @@ class TemplatesServiceImpl implements TemplatesService, ReloadableCustomizationC
 
     public TemplatesServiceImpl(
             final CustomizationConfigService<TemplatesConfig> configService,
-            @Value("${" + FindConfigFileService.CONFIG_FILE_LOCATION + '}') final String homeDirectory
+            @Value(CONFIG_FILE_LOCATION_SPEL) final String homeDirectory
     ) {
         this.configService = configService;
 

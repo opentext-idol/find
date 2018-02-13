@@ -31,6 +31,7 @@ public abstract class MetricsControllerIT extends AbstractFindIT {
                 .with(authentication(userAuth())))
                 .andExpect(status().isNoContent());
         mockMvc.perform(get(metricsPath)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
                 .with(authentication(adminAuth())))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))

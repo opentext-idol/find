@@ -89,14 +89,14 @@ define([
             },
             'dp.change .results-filter-date[data-date-attribute="min-date"]': function(event) {
                 // The first time a user clicks the calendar a change event will be fired even though there is no change
-                const minInput = event.date.unix();
+                const minInput = event.date.valueOf();
                 if(minInput !== this.minInput) {
                     this.updateRestrictions([minInput, null]);
                 }
             },
             'dp.change .results-filter-date[data-date-attribute="max-date"]': function(event) {
                 // The first time a user clicks the calendar a change event will be fired even though there is no change
-                const maxInput = event.date.unix();
+                const maxInput = event.date.valueOf();
                 if(maxInput !== this.maxInput) {
                     this.updateRestrictions([null, maxInput]);
                 }
@@ -413,13 +413,10 @@ define([
         },
         dateFormatting: {
             format: function(unformattedString) {
-                const epochMoment = moment(Math.round(unformattedString));
-                return epochMoment.isValid()
-                    ? epochMoment.format(datePicker.DATE_WIDGET_FORMAT)
-                    : moment(unformattedString).format(datePicker.DATE_WIDGET_FORMAT);
+                return moment(unformattedString).format(datePicker.DATE_WIDGET_FORMAT);
             },
             parse: function(formattedString) {
-                return moment(formattedString, datePicker.DATE_WIDGET_FORMAT).unix();
+                return moment(formattedString, datePicker.DATE_WIDGET_FORMAT).valueOf();
             },
             parseBoundarySelection: function(input) {
                 return input;

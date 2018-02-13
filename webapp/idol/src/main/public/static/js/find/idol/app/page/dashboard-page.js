@@ -89,7 +89,8 @@ define([
                 const displayWidgetName = widget.displayWidgetName || options.displayWidgetNames || 'never';
                 const widgetOptions = _.extend({
                     updateInterval: this.updateInterval,
-                    displayWidgetName: displayWidgetName
+                    displayWidgetName: displayWidgetName,
+                    savedQueryCollection: options.savedQueryCollection
                 }, widget);
 
                 return {
@@ -260,21 +261,22 @@ define([
 
         toggleKeepAlive: function(bool) {
             if(bool) {
-                this.keepAlivePromise = $.post('/api/bi/dashboards/keep-alive')
+                this.keepAlivePromise = $.post('api/bi/dashboards/keep-alive')
                     .done(function(response) {
                         const sessionLengthInMs = response * 1000;
 
-                        // Schedule a server call two minutes before scheduled session timeout
+                        // Schedule a server call before scheduled session timeout
                         this.keepAliveTimeout = setTimeout(function() {
                             this.keepAliveTimeout = null;
                             this.toggleKeepAlive(true);
                         }.bind(this), Math.ceil(sessionLengthInMs * 0.7));
                     }.bind(this))
                     .fail(function() {
+                        // We don't know the session timeout, so just try again in a minute
                         this.keepAliveTimeout = setTimeout(function() {
                             this.keepAliveTimeout = null;
                             this.toggleKeepAlive(true);
-                        }.bind(this), Math.ceil(sessionLengthInMs * 0.05))
+                        }.bind(this), 60000)
                     }.bind(this))
                     .always(function() {
                         this.keepAlivePromise = null;

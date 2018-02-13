@@ -36,6 +36,7 @@
     },
     "typeAheadMode": "Index",
     "expandQuery": true,
+    "synonymDatabaseMatch": true,
     "blacklist": "ISO_BLACKLIST",
     "enabled": false
   },
@@ -82,6 +83,36 @@
     },
     "enabled": false
   },
+  "entitySearch": {
+    "server": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 9050,
+      "productType": [
+        "AXE",
+        "DAH",
+        "IDOLPROXY"
+      ]
+    },
+    "agentBooleanField": "AGENTBOOL",
+    "combine": "FieldCheck",
+    "enabled": false,
+    "idolPrintFields": [ "WIKIPEDIA_ENG", "WIKIPEDIA_IMAGE", "PERSON_DATE_OF_BIRTH", "PERSON_DATE_OF_DEATH", "PERSON_PROFESSION", "WIKIPEDIA_IMAGE", "LAT", "LON", "PLACE_COUNTRY_CODE", "PLACE_REGION1", "PLACE_POPULATION", "PLACE_TIMEZONE", "WIKIPEDIA_IMAGE", "URL_HOMEPAGE", "COMPANY_GOOGLE" ],
+    "answerServer": {
+      "server": {
+        "protocol": "HTTP",
+        "host": "localhost",
+        "port": 7700,
+        "productType": [
+          "ANSWERSERVER"
+        ]
+      },
+      "enabled": false
+    },
+    "answerServerDatabaseMatch": "Wikipedia",
+    "answerServerContentField": "DRECONTENT",
+    "answerServerTimeoutSecs": -1.0
+  },
   "savedSearches": {
     "pollForUpdates": true,
     "pollingInterval": 5
@@ -105,6 +136,10 @@
         "markerColor": "blue"
       }
     ]
+  },
+  "messageOfTheDay": {
+    "message": null,
+    "status": "text-info"
   },
   "trending" : {
     "dateField" : "AUTN_DATE",
@@ -162,6 +197,9 @@
         ]
       }
     },
+    "defaultDeselectedDatabases": [],
+    "filterOrder": ["metaFilter", "indexesFilter", "datesFilter", "geographyFilter", "-", "parametricFilter"],
+    "openSharedDashboardQueryAsNewSearch": false,
     "parametricNeverShow": [],
     "parametricAlwaysShow": [],
     "parametricOrder": [],
@@ -178,10 +216,18 @@
       "application/vnd.ms-project": "ms-project:ofv|u|",
       "application/x-mspublisher": "ms-publisher:ofv|u|"
     },
-    "errorCallSupportString": null
+    "errorCallSupportString": null,
+    "previewWhitelistUrls": {
+      "^(https?://)?www\\.youtube(-nocookie)?\\.com/embed/.*": "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference%>\">",
+      "^(https?://)?www\\.facebook\\.com/plugins/.*" : "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference%>\">",
+      "^(https?://)?video\\.xx\\.fbcdn\\.net/.*" : "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference%>\">",
+      "^(https?:\\/\\/)?www.youtube.com\\/watch(.*?)[?&]v=([^&?]+)(.*)": "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference.replace(/^(https?:\\/\\/)?www.youtube.com\\/watch(.*?)[?&]v=([^&?]+)(.*)/i, 'https://www.youtube-nocookie.com/embed/$3?$2$4')%>\">"
+    }
   },
   "minScore": 0,
   "topicMapMaxResults": 1000,
+  "documentSummaryMaxLength": 250,
+  "idolFieldPathNormalizerXMLPrefixes": ["DOCUMENTS"],
   "fieldsInfo": {
     "contentType": {
       "names": [

@@ -43,10 +43,17 @@ define([
             }, this);
         },
 
-        switchTab: function(tab) {
+        switchTab: function(tab, routeParams) {
             const $tab = this.$('[data-tab-id = "' + tab + '"]');
             if($tab) {
                 $tab.tab('show');
+
+                if(routeParams && routeParams.length) {
+                    const view = _.find(this.views, {id: tab});
+                    if (view && view.content && view.content.setRouteParams) {
+                        view.content.setRouteParams(routeParams);
+                    }
+                }
             }
         }
     });

@@ -25,6 +25,9 @@
             </ul>
         </li>
     </ul>
+    <div class="find-navbar-motd-container">
+        <span class="find-navbar-motd <%- data.messageOfTheDayCssClass || '' %>"><%- data.messageOfTheDay || '' %></span>
+    </div>
     <nav class="navbar-static-side-container nav-menu-btn-container-dark">
         <div class="nav-menu-btn-container nav-menu-btn-container-dark nav-menu-btn-container-top-light">
             <% if (data.pages.sidebar || data.pages.dashboards) { %>

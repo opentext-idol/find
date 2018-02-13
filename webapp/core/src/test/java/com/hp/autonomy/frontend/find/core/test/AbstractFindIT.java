@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2015-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -31,11 +31,10 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 @AutoConfigureJsonTesters(enabled = false)
 @SpringBootTest(properties = {
         "application.buildNumber=test",
-        "hp.find.persistentState = INMEMORY",
-        "hp.find.home = ./target/test",
+        "idol.find.persistentState = INMEMORY",
+        "idol.find.home = ./target/test",
         "find.https.proxyHost = web-proxy.sdc.hpecorp.net",
         "find.https.proxyPort: 8080",
-        "hp.find.home = ./target/test",
         "find.https.proxyHost = web-proxy.sdc.hpecorp.net",
         "find.https.proxyPort: 8080",
         "spring.datasource.url = jdbc:h2:mem:find-db;DB_CLOSE_ON_EXIT=FALSE",
@@ -56,7 +55,7 @@ public abstract class AbstractFindIT {
 
     @BeforeClass
     public static void init() throws IOException {
-        System.setProperty("hp.find.home", TEST_DIR);
+        System.setProperty("idol.find.home", TEST_DIR);
         final File directory = new File(TEST_DIR);
         FileUtils.forceMkdir(directory);
     }

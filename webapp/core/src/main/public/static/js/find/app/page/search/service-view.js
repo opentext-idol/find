@@ -61,7 +61,7 @@ define([
         displayDependentParametricViews: true,
 
         getSavedSearchControlViewOptions: function() {
-            return {};
+            return { resultsViewSelectionModel: this.resultsViewSelectionModel };
         },
 
         // Abstract
@@ -168,6 +168,8 @@ define([
                 savedSearchModel: this.savedSearchModel,
                 selectedTabModel: this.selectedTabModel
             };
+
+            this.resultsViewSelectionModel = new Backbone.Model({});
 
             if(hasBiRole) {
                 this.savedSearchControlView = new SavedSearchControlView(
@@ -303,7 +305,7 @@ define([
                     }, resultsViewsMap[viewId]);
                 });
 
-            this.resultsViewSelectionModel = new Backbone.Model({
+            this.resultsViewSelectionModel.set({
                 // ID of the currently selected tab
                 selectedTab: this.resultsViews[0].id
             });
@@ -502,8 +504,8 @@ define([
             this.$('.right-side-container').toggle(toggle);
         },
 
-        changeTab: function(tab) {
-            this.resultsViewSelection.switchTab(tab);
+        changeTab: function(tab, routeParams) {
+            this.resultsViewSelection.switchTab(tab, routeParams);
         },
 
         getSelectedTab: function() {

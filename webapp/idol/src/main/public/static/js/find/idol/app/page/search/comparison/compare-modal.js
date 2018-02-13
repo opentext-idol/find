@@ -6,7 +6,7 @@
 define([
     'underscore',
     'jquery',
-    'js-whatever/js/modal',
+    'find/app/util/modal',
     'find/idol/app/page/search/comparison/search-to-compare-view',
     'find/idol/app/model/comparison/comparison-model',
     'find/app/model/saved-searches/saved-search-model',

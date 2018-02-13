@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -20,7 +20,7 @@ import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMap
 
 @Configuration
 public class UserConfiguration {
-    @Value("${" + BiConfiguration.BI_PROPERTY + '}')
+    @Value(BiConfiguration.BI_PROPERTY_SPEL)
     private boolean enableBi;
 
     @Bean

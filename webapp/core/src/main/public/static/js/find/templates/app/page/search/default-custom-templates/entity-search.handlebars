@@ -1,0 +1,135 @@
+<div class="default-result-container selection-entity-content clearfix selection-entity-db-{{toLowerCase database}}-border">
+
+    {{#equal (toLowerCase database) 'places'}}
+        <div class="selection-entity-icon hp-icon hp-globe selection-entity-db-{{toLowerCase database}}-color"></div>
+    {{/equal}}
+    {{#equal (toLowerCase database) 'people'}}
+        <div class="selection-entity-icon hp-icon hp-user-m selection-entity-db-{{toLowerCase database}}-color"></div>
+    {{/equal}}
+    {{#equal (toLowerCase database) 'companies'}}
+        <div class="selection-entity-icon hp-icon hp-resources selection-entity-db-{{toLowerCase database}}-color"></div>
+    {{/equal}}
+
+    <div class="flex flex-align-center m-b-xs">
+    {{#equal (toLowerCase database) 'places' 'placesextended'}}
+        {{#hasField 'WIKIPEDIA_IMAGE'}}
+            <span class="pull-left m-t-xs m-b-xs m-r-sm">
+                <img alt="" class="max-half-screen-height" src="{{ wikiThumbnailHelper (getFieldValue 'WIKIPEDIA_IMAGE') 200 }}">
+            </span>
+        {{/hasField}}
+
+        <div class="results-contents">
+            <h4 class="m-l-xs m-t-xs m-b-nil result-header">
+                {{#hasField 'PLACE_COUNTRY_CODE'}}
+                    <img alt="" style="max-height: 18px; max-width: 36px;" src="static-HEAD/img/flags.wp/{{toLowerCase (getFieldValue 'PLACE_COUNTRY_CODE')}}.svg">
+                {{/hasField}}
+                <a class="selection-entity-db-places-color" target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
+            </h4>
+            {{#hasField 'latitude'}}
+                {{#hasField 'longitude'}}
+                    <div class="mercator-svg-map">
+                        <div class="mercator-svg-marker selection-entity-db-places-background-color" style="width: 4px; height: 4px; border-radius: 2px;
+                            left: {{ percentage (getFieldValue 'longitude') max=180 min=-180}};
+                            bottom: {{ percentage (getFieldValue 'latitude') max=90 min=-90}};
+                        "></div>
+                    </div>
+                {{/hasField}}
+            {{/hasField}}
+            <table class="m-l-xs">
+                {{#hasField 'PLACE_REGION1'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.place.region'}}</th><td>{{getFieldValue 'PLACE_REGION1'}}</td>
+                    </tr>
+                {{/hasField}}
+                {{#hasField 'PLACE_POPULATION'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.place.population'}}</th><td>{{prettyPrintNumber (getFieldValue 'PLACE_POPULATION')}}</td>
+                    </tr>
+                {{/hasField}}
+                {{#hasField 'PLACE_TIMEZONE'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.place.timeZone'}}</th><td>{{prettyPrintNumber (getFieldValue 'PLACE_TIMEZONE') plusIfPositive=true }}</td>
+                    </tr>
+                {{/hasField}}
+            </table>
+        </div>
+    {{/equal}}
+    {{#equal (toLowerCase database) 'people'}}
+        {{#hasField 'WIKIPEDIA_IMAGE'}}
+            <span class="pull-left m-t-xs m-b-xs m-r-sm">
+                <img alt="" class="max-half-screen-height" src="{{ wikiThumbnailHelper (getFieldValue 'WIKIPEDIA_IMAGE') 200 }}">
+            </span>
+        {{/hasField}}
+
+        <div class="results-contents">
+            <h4 class="m-l-xs m-t-xs m-b-nil result-header">
+                <a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
+            </h4>
+            <table class="m-l-xs">
+                {{#hasField 'PERSON_DATE_OF_BIRTH'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.person.dateOfBirth'}}</th><td>{{getFieldValue 'PERSON_DATE_OF_BIRTH'}}</td>
+                    </tr>
+                {{/hasField}}
+                {{#hasField 'PERSON_DATE_OF_DEATH'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.person.dateOfDeath'}}</th><td>{{getFieldValue 'PERSON_DATE_OF_DEATH'}}</td>
+                    </tr>
+                {{else}}
+                    {{#hasField 'PERSON_DATE_OF_BIRTH'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.person.age'}}</th><td>{{toRelativeTime (getFieldValue 'PERSON_DATE_OF_BIRTH') hideSuffix=true round='floor'}}</td>
+                    </tr>
+                    {{/hasField}}
+                {{/hasField}}
+                {{#hasField 'PERSON_PROFESSION'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.person.profession'}}</th><td>{{getFieldValues 'PERSON_PROFESSION' max=5}}</td>
+                    </tr>
+                {{/hasField}}
+            </table>
+        </div>
+    {{/equal}}
+    {{#equal (toLowerCase database) 'companies'}}
+        {{#hasField 'COMPANY_GOOGLE'}}
+            <span class="pull-left m-t-xs m-b-xs m-r-sm">
+                <img alt="" src="{{ placeholderTemplate (getFieldValue 'COMPANY_GOOGLE') 'https://finance.google.co.uk/finance/getchart?q=$1$&x=$0$&p=7d&i=240' placeholder='$' delimiter=':' }}">
+            </span>
+        {{/hasField}}
+
+        <div class="results-contents">
+            <h4 class="m-l-xs m-t-xs m-b-nil result-header">
+                <a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
+            </h4>
+            <table class="m-l-xs">
+                {{#hasField 'URL_HOMEPAGE'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.companies.url'}}</th><td><a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="{{toExternalUrl (getFieldValue 'URL_HOMEPAGE')}}">{{getFieldValue 'URL_HOMEPAGE'}}</a></td>
+                    </tr>
+                {{/hasField}}
+                {{#hasField 'COMPANY_GOOGLE'}}
+                    <tr>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.companies.stockTicker'}}</th><td><a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="https://finance.google.co.uk/finance?q={{getFieldValue 'COMPANY_GOOGLE'}}">{{getFieldValue 'COMPANY_GOOGLE'}}</a></td>
+                    </tr>
+                {{/hasField}}
+            </table>
+        </div>
+    {{/equal}}
+    </div>
+
+    {{#hasField 'WIKIPEDIA_ENG'}}
+        <div>
+            <div class="entity-search-messages"></div>
+            <div class="entity-search-controls clearfix">
+                <form>
+                    <input class="entity-search-question" data-context="{{ getFieldValue 'WIKIPEDIA_ENG' }}" name="query" type="text" autocomplete="off" placeholder="{{i18n 'entitySearch.template.question.placeholder'}}">
+                    <input class="btn btn-primary pull-right" type="submit" value="{{i18n 'entitySearch.template.question.send'}}">
+                </form>
+            </div>
+        </div>
+    {{/hasField}}
+
+    <button type="button" class="close selection-entity-close" data-dismiss="modal">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>

@@ -151,6 +151,8 @@ define([
             this.documentsCollection = new Backbone.Collection();
             this.documentsCollection.totalResults = 50;
 
+            this.resultsViewSelectionModel = new Backbone.Collection();
+
             const selectedIndexes = new Backbone.Collection([
                 {name: 'Wikipedia', domain: 'PUBLIC'}
             ]);
@@ -208,6 +210,7 @@ define([
                 savedSearchCollection: this.savedSearchCollection,
                 queryState: this.queryState,
                 selectedTabModel: this.selectedTabModel,
+                resultsViewSelectionModel: this.resultsViewSelectionModel,
                 searchCollections: {
                     QUERY: this.savedQueryCollection,
                     SNAPSHOT: this.savedSnapshotCollection
@@ -833,36 +836,34 @@ define([
                 });
 
                 describe('then the "Save As Snapshot" button is clicked and a Snapshot is saved', function() {
-                    beforeEach(clickSaveAsQueryButton);
+                    beforeEach(function() {
+                        clickSaveAsSnapshotButton.call(this);
+                        spyOn(this.savedSnapshotCollection, 'create');
 
-                    describe('and a Snapshot is saved', function() {
-                        beforeEach(function() {
-                            spyOn(this.savedSnapshotCollection, 'create');
-
-                            this.view.$('.popover-content .search-title-input-container .search-title-input')
-                                .val("My New Search").trigger('input');
-                            this.view.$('.popover-content .search-title-input-container .save-title-confirm-button')
-                                .click();
-                        });
-
-                        it('does not revert the search', function() {
-                            expect(this.queryState.conceptGroups.at(0).get('concepts')).toEqual(['archipelago']);
-                        });
+                        this.view.$('.popover-content .search-title-input-container .search-title-input')
+                            .val("My New Search").trigger('input');
+                        this.view.$('.popover-content .search-title-input-container .save-title-confirm-button')
+                            .click();
                     });
 
-                    describe('and a Query is saved', function() {
-                        beforeEach(function() {
-                            spyOn(this.savedQueryCollection, 'create');
+                    it('does not revert the search', function() {
+                        expect(this.queryState.conceptGroups.at(0).get('concepts')).toEqual(['archipelago']);
+                    });
+                });
 
-                            this.view.$('.popover-content .search-title-input-container .search-title-input')
-                                .val("My New Search").trigger('input');
-                            this.view.$('.popover-content .search-title-input-container .save-title-confirm-button')
-                                .click();
-                        });
+                describe('then the "Save As Query" button is clicked and a Query is saved', function() {
+                    beforeEach(function() {
+                        clickSaveAsQueryButton.call(this);
+                        spyOn(this.savedQueryCollection, 'create');
 
-                        it('reverts the search', function() {
-                            expect(this.queryState.conceptGroups.at(0).get('concepts')).toEqual(['cat']);
-                        });
+                        this.view.$('.popover-content .search-title-input-container .search-title-input')
+                            .val("My New Search").trigger('input');
+                        this.view.$('.popover-content .search-title-input-container .save-title-confirm-button')
+                            .click();
+                    });
+
+                    it('reverts the search', function() {
+                        expect(this.queryState.conceptGroups.at(0).get('concepts')).toEqual(['cat']);
                     });
                 });
             });

@@ -24,6 +24,7 @@ public class VideoWidgetSettings extends SimpleComponent<VideoWidgetSettings> im
     private final Boolean audio;
     private final Integer searchResultNumber;
     private final Boolean restrictSearch;
+    private final String crossOrigin;
 
     @Override
     @JsonAnyGetter
@@ -39,6 +40,7 @@ public class VideoWidgetSettings extends SimpleComponent<VideoWidgetSettings> im
         private Boolean audio;
         private Integer searchResultNumber;
         private Boolean restrictSearch;
+        private String crossOrigin;
 
         @SuppressWarnings("unused")
         @JsonAnySetter

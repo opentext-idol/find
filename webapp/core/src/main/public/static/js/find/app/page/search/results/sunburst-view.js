@@ -106,10 +106,11 @@ define([
                 return sunburstLabelTemplate(templateArguments);
             }.bind(this),
             hoverCallback: function(hoveredDatum, arc, outerRingAnimateSize, arcEls, arcData, svg) {
+                const maxDepth = _.max(arcData, 'depth').depth
                 svg.selectAll('path')
                     .filter(function(d) {
-                        // TODO Assumes depth=2 is the outer ring - will need to change if this changes
-                        return d.text !== '' && d.depth === 2 && d.text === hoveredDatum.text;
+                        // We want to expand the outermost layer on hover.
+                        return d.text !== '' && d.depth === maxDepth && d.text === hoveredDatum.text;
                     })
                     .each(function(d) {
                         d3.select(this)
@@ -168,7 +169,7 @@ define([
         render: function() {
             ParametricResultsView.prototype.render.apply(this);
 
-            this.$content.addClass('sunburst');
+            this.$content.addClass('sunburst fixed-height');
         }
     });
 });

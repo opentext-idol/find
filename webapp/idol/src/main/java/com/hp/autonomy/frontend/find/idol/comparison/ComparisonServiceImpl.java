@@ -6,7 +6,10 @@
 package com.hp.autonomy.frontend.find.idol.comparison;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.configuration.ConfigFileService;
+import com.hp.autonomy.frontend.configuration.ConfigResponse;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.annotations.IdolService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
@@ -16,6 +19,7 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.Documents;
+import java.util.Optional;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,15 +34,27 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
     private final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
     private final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory;
 
+    private final int stateTokenMaxResults;
+    private final Integer documentSummaryMaxLength;
+
     @Autowired
     public ComparisonServiceImpl(
             final IdolDocumentsService documentsService,
             final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
-            final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory
+            final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory,
+            final ConfigFileService<IdolFindConfig> configService
     ) {
         this.documentsService = documentsService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
         this.queryRequestBuilderFactory = queryRequestBuilderFactory;
+        this.stateTokenMaxResults = Optional.ofNullable(configService.getConfigResponse())
+                .map(ConfigResponse::getConfig)
+                .map(IdolFindConfig::getComparisonStoreStateMaxResults)
+                .orElse(Integer.MAX_VALUE);
+        this.documentSummaryMaxLength = Optional.ofNullable(configService.getConfigResponse())
+                .map(ConfigResponse::getConfig)
+                .map(IdolFindConfig::getDocumentSummaryMaxLength)
+                .orElse(null);
     }
 
     private Documents<IdolSearchResult> getEmptyResults() {
@@ -54,7 +70,12 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
                 .stateDontMatchId(secondQueryStateToken)
                 .build();
 
-        return documentsService.getStateToken(queryRestrictions, ComparisonController.STATE_TOKEN_MAX_RESULTS, false);
+        return documentsService.getStateToken(queryRestrictions, stateTokenMaxResults, false);
+    }
+
+    @Override
+    public int getStateTokenMaxResults() {
+        return stateTokenMaxResults;
     }
 
     @Override
@@ -86,7 +107,7 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
                 .start(resultsStart)
                 .maxResults(maxResults)
                 .summary(summary)
-                .summaryCharacters(DocumentsController.MAX_SUMMARY_CHARACTERS)
+                .summaryCharacters(documentSummaryMaxLength)
                 .sort(sort)
                 .highlight(highlight)
                 .autoCorrect(false)

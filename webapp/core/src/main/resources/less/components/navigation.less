@@ -59,6 +59,38 @@
   }
 }
 
+.find-navbar-motd-container {
+  position: absolute;
+  height: 100%;
+  left: 240px;
+  right: 160px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.find-navbar-motd {
+  // Overrides the normal fade transition speed from the 'fade' class
+  -webkit-transition: opacity 1s ease, color 1s ease;
+  -o-transition: opacity 1s ease, color 1s ease;
+  transition: opacity 1s ease, color 1s ease;
+  max-height: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.motd-info {
+  color: @white;
+}
+
+.motd-warning {
+  color: @warning;
+}
+
+.hide-navbar .find-navbar-motd-container {
+  left: 160px;
+}
+
 .find-navbar .dropdown-toggle:hover,
 .find-navbar .nav li.open a.dropdown-toggle,
 .find-navbar .settings-logout a:focus,

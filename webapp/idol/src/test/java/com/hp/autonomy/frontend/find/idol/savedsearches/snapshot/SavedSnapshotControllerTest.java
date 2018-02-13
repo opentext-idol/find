@@ -122,7 +122,7 @@ public class SavedSnapshotControllerTest {
     @Test
     public void getAll() {
         savedSnapshotController.getAll();
-        verify(savedSnapshotService).getAll();
+        verify(savedSnapshotService).getOwned();
     }
 
     @Test

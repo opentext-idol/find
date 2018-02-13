@@ -55,7 +55,8 @@ define([
                         triggers: []
                     }
                 ],
-                previewPanel: []
+                previewPanel: [],
+                entitySearch: []
             });
         });
 

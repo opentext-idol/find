@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2015 Hewlett-Packard Development Company, L.P.
+  ~ Copyright 2018 Micro Focus International plc.
   ~ Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
   -->
 
@@ -8,6 +8,6 @@
     <name>%FIND_SERVICE_NAME%</name>
     <description>Micro Focus Find</description>
     <executable>java</executable>
-    <arguments>-Dhp.find.home="%FIND_HOME_DIR%/" -Dserver.port=%FIND_PORT% -jar "%FIND_INSTALL_DIR%"/find.war</arguments>
+    <arguments>-Didol.find.home="%FIND_HOME_DIR%/" -Dserver.port=%FIND_PORT% -jar "%FIND_INSTALL_DIR%"/find.war</arguments>
     <logmode>rotate</logmode>
 </service>

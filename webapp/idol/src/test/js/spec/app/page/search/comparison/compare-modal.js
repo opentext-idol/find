@@ -5,7 +5,7 @@
 
 define([
     'find/idol/app/page/search/comparison/compare-modal',
-    'js-whatever/js/modal',
+    'find/app/util/modal',
     'find/idol/app/model/comparison/comparison-model',
     'jquery',
     'backbone',

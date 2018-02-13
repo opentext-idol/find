@@ -13,6 +13,7 @@ define([
     'find/app/util/document-mime-types',
     'find/app/util/url-manipulator',
     'text!find/templates/app/page/search/default-custom-templates/search-result.handlebars',
+    'text!find/templates/app/page/search/default-custom-templates/entity-search.handlebars',
     'text!find/templates/app/page/search/default-custom-templates/preview-mode-metadata.handlebars',
     'text!find/templates/app/page/search/default-custom-templates/promotion.handlebars',
     './template-helpers/equal-helper',
@@ -20,11 +21,21 @@ define([
     './template-helpers/has-field-value-helper',
     './template-helpers/get-field-value-helper',
     './template-helpers/get-field-values-helper',
+    './template-helpers/percentage-helper',
+    './template-helpers/placeholder-template-helper',
+    './template-helpers/pretty-print-number-helper',
+    './template-helpers/to-external-url-helper',
+    './template-helpers/to-lower-case-helper',
+    './template-helpers/to-relative-time-helper',
+    './template-helpers/to-upper-case-helper',
+    './template-helpers/wiki-thumbnail-helper',
     './template-helpers/with-field-helper',
     './template-helpers/i18n-helper'
-], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator, defaultResultTemplate,
-            defaultPreviewTemplate, defaultPromotionTemplate, equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper,
-            getFieldValuesHelper, withFieldHelper, i18nHelper) {
+], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator,
+            defaultResultTemplate, defaultEntitySearchTemplate, defaultPreviewTemplate, defaultPromotionTemplate,
+            equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper, getFieldValuesHelper,
+            percentageHelper, placeholderTemplateHelper, prettyPrintNumberHelper, toExternalUrlHelper, toLowerCaseHelper,
+            toRelativeTimeHelper, toUpperCaseHelper, wikiThumbnailHelper, withFieldHelper, i18nHelper) {
 
     function templatePredicate(triggers) {
         return function(model) {
@@ -100,6 +111,14 @@ define([
             hasFieldValue: hasFieldValueHelper,
             getFieldValue: getFieldValueHelper,
             getFieldValues: getFieldValuesHelper,
+            percentage: percentageHelper,
+            placeholderTemplate: placeholderTemplateHelper,
+            prettyPrintNumber: prettyPrintNumberHelper,
+            toExternalUrl: toExternalUrlHelper,
+            toLowerCase: toLowerCaseHelper,
+            toRelativeTime: toRelativeTimeHelper,
+            toUpperCase: toUpperCaseHelper,
+            wikiThumbnailHelper: wikiThumbnailHelper,
             withField: withFieldHelper
         });
 
@@ -108,6 +127,7 @@ define([
                 this.templates = _.chain([
                         {defaultTemplate: defaultResultTemplate, key: 'searchResult'},
                         {defaultTemplate: defaultPreviewTemplate, key: 'previewPanel'},
+                        {defaultTemplate: defaultEntitySearchTemplate, key: 'entitySearch'},
                         {defaultTemplate: defaultPromotionTemplate, key: 'promotion'}
                     ])
                     .map(function(type) {
@@ -134,7 +154,8 @@ define([
     _.extend(DocumentRenderer.prototype, {
         renderResult: renderTemplate('searchResult'),
         renderPromotion: renderTemplate('promotion'),
-        renderPreviewMetadata: renderTemplate('previewPanel')
+        renderPreviewMetadata: renderTemplate('previewPanel'),
+        renderEntity: renderTemplate('entitySearch')
     });
 
     return DocumentRenderer;

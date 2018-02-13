@@ -5,12 +5,11 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
-import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.savedsearches.AbstractSavedSearchServiceTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-@SpringBootTest(classes = SavedQueryService.class, properties = BiConfiguration.BI_PROPERTY, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(classes = SavedQueryService.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class SavedQueryServiceTest extends AbstractSavedSearchServiceTest<SavedQuery, SavedQuery.Builder> {
     @SuppressWarnings("unused")
     @MockBean

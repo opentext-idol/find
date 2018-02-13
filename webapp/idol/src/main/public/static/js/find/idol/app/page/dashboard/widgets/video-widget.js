@@ -27,7 +27,11 @@ define([
             this.$video = $('<video>')
                 .prop('autoplay', true)
                 .prop('loop', this.widgetSettings.loop !== false)
-                .prop('muted', !this.widgetSettings.audio && true);
+                .prop('muted', !this.widgetSettings.audio);
+
+            if (this.widgetSettings.crossOrigin) {
+                this.$video.prop('crossOrigin', this.widgetSettings.crossOrigin);
+            }
 
             this.listenTo(this.documentsCollection, 'add', function(model) {
                 // Re-creates DOM on every update. If this changes, the onHide() method must

@@ -18,6 +18,7 @@ import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfoConfigMixins;
 import com.hp.autonomy.searchcomponents.core.config.FieldValue;
 import com.hp.autonomy.searchcomponents.core.config.FieldValueConfigMixins;
+import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldPathNormaliserImpl;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
 import org.jasypt.util.text.TextEncryptor;
@@ -30,6 +31,7 @@ import java.util.Map;
 public class IdolFindConfigFileService extends FindConfigFileService<IdolFindConfig, IdolFindConfig.IdolFindConfigBuilder> {
 
     private final IdolConfigUpdateHandler idolConfigUpdateHandler;
+    private final IdolFieldPathNormaliserImpl idolFieldPathNormaliser;
 
     @Autowired
     public IdolFindConfigFileService(
@@ -37,11 +39,13 @@ public class IdolFindConfigFileService extends FindConfigFileService<IdolFindCon
             final TextEncryptor textEncryptor,
             final JsonSerializer<FieldPath> fieldPathSerializer,
             final JsonDeserializer<FieldPath> fieldPathDeserializer,
-            final IdolConfigUpdateHandler idolConfigUpdateHandler
+            final IdolConfigUpdateHandler idolConfigUpdateHandler,
+            final IdolFieldPathNormaliserImpl idolFieldPathNormaliser
     ) {
         super(filterProvider, textEncryptor, fieldPathSerializer, fieldPathDeserializer);
 
         this.idolConfigUpdateHandler = idolConfigUpdateHandler;
+        this.idolFieldPathNormaliser = idolFieldPathNormaliser;
     }
 
     @Override
@@ -61,7 +65,12 @@ public class IdolFindConfigFileService extends FindConfigFileService<IdolFindCon
 
     @Override
     public void postUpdate(final IdolFindConfig config) {
+
         idolConfigUpdateHandler.update(config);
+
+        if (config.getIdolFieldPathNormalizerXMLPrefixes() != null) {
+            idolFieldPathNormaliser.updatePattern(config.getIdolFieldPathNormalizerXMLPrefixes());
+        }
     }
 
     @Override

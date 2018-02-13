@@ -14,7 +14,7 @@
     <groupId>com.hp.autonomy.frontend.find</groupId>
     <artifactId>selenium-tests</artifactId>
     <packaging>pom</packaging>
-    <version>11.5.0</version>
+    <version>11.6.0</version>
 
     <properties>
         <qa.infrastructure.version>4.1.0</qa.infrastructure.version>

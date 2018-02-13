@@ -66,12 +66,16 @@ define([
                 .groupBy('navigation')
                 .value();
 
+            const conf = configuration();
+
             this.$el.html(this.template({
                 i18n: i18n,
                 menuItems: this.menuItems,
                 pages: pages,
-                applications: configuration().applications,
-                username: configuration().username
+                applications: conf.applications,
+                username: conf.username,
+                messageOfTheDay: conf.messageOfTheDay && conf.messageOfTheDay.message,
+                messageOfTheDayCssClass: conf.messageOfTheDay && conf.messageOfTheDay.cssClass,
             }));
 
             this.$('.side-menu').metisMenu({

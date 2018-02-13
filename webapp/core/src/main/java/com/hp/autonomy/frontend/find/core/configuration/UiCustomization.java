@@ -29,6 +29,9 @@ import java.util.Optional;
 @JsonDeserialize(builder = UiCustomization.UiCustomizationBuilder.class)
 public class UiCustomization implements ConfigurationComponent<UiCustomization> {
     private final UiCustomizationOptions options;
+    private final Collection<String> filterOrder;
+    @Singular("defaultDeselectedDatabase")
+    private final Collection<String> defaultDeselectedDatabases;
     @Singular("parametricNeverShowItem")
     private final Collection<FieldPath> parametricNeverShow;
     @Singular("parametricAlwaysShowItem")
@@ -37,7 +40,9 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
     private final Collection<FieldPath> parametricOrder;
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final Map<String, String> specialUrlPrefixes;
+    private final Map<String, String> previewWhitelistUrls;
     private final String errorCallSupportString;
+    private final Boolean openSharedDashboardQueryAsNewSearch;
 
     @Override
     public UiCustomization merge(final UiCustomization uiCustomization) {
@@ -58,7 +63,19 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
                                      ? parametricOrder
                                      : uiCustomization.parametricOrder)
                 .specialUrlPrefixes(specialUrlPrefixes)
-                .errorCallSupportString(uiCustomization.errorCallSupportString)
+                .previewWhitelistUrls(previewWhitelistUrls != null && !previewWhitelistUrls.isEmpty()
+                                     ? previewWhitelistUrls :
+                                     uiCustomization.previewWhitelistUrls)
+                .errorCallSupportString(errorCallSupportString != null ? errorCallSupportString : uiCustomization.errorCallSupportString)
+                .defaultDeselectedDatabases(CollectionUtils.isNotEmpty(defaultDeselectedDatabases)
+                                            ? defaultDeselectedDatabases
+                                            : uiCustomization.defaultDeselectedDatabases)
+                .filterOrder(CollectionUtils.isNotEmpty(filterOrder)
+                                            ? filterOrder
+                                            : uiCustomization.filterOrder)
+                .openSharedDashboardQueryAsNewSearch(openSharedDashboardQueryAsNewSearch != null
+                                            ? openSharedDashboardQueryAsNewSearch
+                                            : uiCustomization.openSharedDashboardQueryAsNewSearch)
                 .build();
         }
     }

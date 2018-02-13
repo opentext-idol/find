@@ -58,7 +58,8 @@ define([
 
         getSavedSearchControlViewOptions: function() {
             return {
-                comparisonModalCallback: this.comparisonModalCallback
+                comparisonModalCallback: this.comparisonModalCallback,
+                resultsViewSelectionModel: this.resultsViewSelectionModel
             };
         }
     });

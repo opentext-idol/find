@@ -6,8 +6,9 @@
 define([
     'i18n!find/nls/bundle',
     'i18n!find/idol/nls/snapshots',
+    'find/app/configuration',
     'moment'
-], function(i18n, snapshotsI18n, moment) {
+], function(i18n, snapshotsI18n, configuration, moment) {
 
     var DATE_FORMAT = 'YYYY/MM/DD HH:mm';
 
@@ -17,7 +18,8 @@ define([
     return {
         targetAttributes: [
             'resultCount',
-            'dateCreated'
+            'dateCreated',
+            'user'
         ],
 
         /**
@@ -25,6 +27,11 @@ define([
          */
         processAttributes: function(attributes) {
             var resultCount = attributes.resultCount;
+
+            var searchOwner = attributes.user && attributes.user.username !== configuration().username ? {
+                title: snapshotsI18n['detail.owner'],
+                content: attributes.user.username
+            } : null;
 
             // Cannot use falsy check here since result count could be 0
             //noinspection EqualityComparisonWithCoercionJS
@@ -35,13 +42,14 @@ define([
 
             var dateCreated = moment(attributes.dateCreated);
 
-            return [
+            return _.compact([
+                searchOwner,
                 {
                     title: snapshotsI18n['detail.dateCreated'],
                     content: dateCreated.format(DATE_FORMAT)
                 },
                 resultCountContent
-            ];
+            ]);
         }
     };
 

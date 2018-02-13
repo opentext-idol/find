@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2015-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -33,6 +33,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import java.io.File;
 import java.io.IOException;
 
+import static com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService.CONFIG_FILE_LOCATION;
 import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CLASSES_PROPERTY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -61,7 +62,7 @@ public abstract class FindConfigFileServiceTest<C extends FindConfig<C, B>, B ex
 
     @BeforeClass
     public static void init() {
-        System.setProperty("hp.find.home", TEST_DIR);
+        System.setProperty(CONFIG_FILE_LOCATION, TEST_DIR);
     }
 
     @SuppressWarnings("ProhibitedExceptionDeclared")

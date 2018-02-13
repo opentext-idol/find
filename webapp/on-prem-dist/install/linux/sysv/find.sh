@@ -25,7 +25,7 @@ JAVA_BIN="/usr/bin/java"
 PRODUCT_NAME="Micro Focus Find"
 LOCKFILE="/var/lock/${NAME}.pid"
 STARTUP_LOG="${FIND_INSTALL_DIR}/console.log"
-ARGS=("-Dhp.find.home=${FIND_HOME_DIR}" "-Dlogging.path=${FIND_LOGGING_DIR}" "-Dserver.port=${FIND_PORT}" "-jar" "${EXECUTABLE}")
+ARGS=("-Didol.find.home=${FIND_HOME_DIR}" "-Dlogging.path=${FIND_LOGGING_DIR}" "-Dserver.port=${FIND_PORT}" "-jar" "${EXECUTABLE}")
 SLEEP_TIME=2
 ##
 

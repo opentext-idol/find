@@ -51,6 +51,9 @@ define([
     };
 
     function zoomCallback(min, max) {
+        if (isNaN(min) || isNaN(max) || min === max) {
+            return;
+        }
         this.setMinMax(moment.unix(min), moment.unix(max));
         this.viewStateModel.set('currentState', renderState.ZOOMING);
         this.updateChart();
@@ -193,6 +196,10 @@ define([
             if(!this.parametricCollection.isEmpty()) {
                 this.setFieldSelector();
             }
+            else {
+                // If there's no parametric fields, tell the user that there are no parametric values.
+                this.viewStateModel.set('dataState', dataState.EMPTY);
+            }
             this.setRangeSelector();
         },
 
@@ -298,6 +305,13 @@ define([
         },
 
         fetchFieldAndRangeData: function() {
+            if (!this.model.get('field')) {
+                // If we don't have a selected field (e.g. there aren't any fields in the entire engine),
+                //   then we should show that there's no parametric values.
+                this.viewStateModel.set('dataState', dataState.EMPTY);
+                return;
+            }
+
             this.viewStateModel.set('dataState', dataState.LOADING);
 
             if(this.bucketedDataReqest) {
@@ -323,6 +337,12 @@ define([
                         return $.when(trendingStrategy.fetchRange(this.selectedFieldValues, fetchOptions))
                             .then(function(data) {
                                 this.setMinMax(moment(data.min), moment(data.max));
+                                // We need to explicitly update the chart and fetch the data.
+                                // The code previously assumed setMinMax would do it via the change event listeners,
+                                //   but those won't fire if there isn't a change e.g. when viewing two different
+                                //   fields with the same min/max values.
+                                this.updateChart();
+                                this.debouncedFetchBucketedData();
                             }.bind(this));
                     }
                 }.bind(this))
@@ -519,6 +539,13 @@ define([
                 }, ERROR_MESSAGE_ARGUMENTS);
                 this.errorHtml = generateErrorHtml(messageArguments);
                 this.$errorMessage && this.$errorMessage.html(this.errorHtml);
+            }
+        },
+
+        setRouteParams: function(routeParams) {
+            const fieldId = routeParams[0];
+            if (fieldId) {
+                this.model.set('field', fieldId);
             }
         }
     });

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hewlett-Packard Development Company, L.P.
+ * Copyright 2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -7,7 +7,7 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 
 @Controller
-@ConditionalOnProperty(BiConfiguration.BI_PROPERTY)
+@ConditionalOnExpression(BiConfiguration.BI_PROPERTY_SPEL)
 @RequestMapping(SharedToUserController.SHARED_SEARCHES_PATH)
 class SharedToUserController {
     static final String SHARED_SEARCHES_PATH = "/api/public/search/shared-searches";

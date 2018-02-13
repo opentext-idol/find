@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.idol.configuration;
 
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -20,6 +21,7 @@ import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationCo
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.MessageOfTheDayConfig;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.frontend.find.core.configuration.TrendingConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
@@ -31,9 +33,11 @@ import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import com.hp.autonomy.user.UserServiceConfig;
+import java.util.Collection;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
 import java.util.Arrays;
@@ -55,16 +59,24 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final QueryManipulation queryManipulation;
     private final ViewConfig view;
     private final AnswerServerConfig answerServer;
+    private final EntitySearchConfig entitySearch;
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
     private final MMAP mmap;
+    private final MessageOfTheDayConfig messageOfTheDay;
     private final UiCustomization uiCustomization;
+    @JsonProperty("idolFieldPathNormalizerXMLPrefixes")
+    private final Collection<String> idolFieldPathNormalizerXMLPrefixes;
     private final FieldsInfo fieldsInfo;
     private final MapConfiguration map;
     private final TrendingConfiguration trending;
     private final Integer minScore;
     private final StatsServerConfig statsServer;
     private final Integer topicMapMaxResults;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private final Integer comparisonStoreStateMaxResults;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private final Integer documentSummaryMaxLength;
     private final ExportConfig export;
 
     @JsonIgnore
@@ -79,15 +91,20 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .queryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
                 .view(view == null ? other.view : view.merge(other.view))
                 .answerServer(answerServer == null ? other.answerServer : answerServer.merge(other.answerServer))
+                .entitySearch(entitySearch == null ? other.entitySearch : entitySearch.merge(other.entitySearch))
                 .savedSearchConfig(savedSearchConfig == null ? other.savedSearchConfig : savedSearchConfig.merge(other.savedSearchConfig))
                 .mmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
+                .messageOfTheDay(messageOfTheDay == null ? other.messageOfTheDay : messageOfTheDay.merge(other.messageOfTheDay))
                 .uiCustomization(uiCustomization == null ? other.uiCustomization : uiCustomization.merge(other.uiCustomization))
+                .idolFieldPathNormalizerXMLPrefixes(CollectionUtils.isEmpty(idolFieldPathNormalizerXMLPrefixes) ? other.idolFieldPathNormalizerXMLPrefixes : idolFieldPathNormalizerXMLPrefixes)
                 .fieldsInfo(fieldsInfo == null ? other.fieldsInfo : fieldsInfo.merge(other.fieldsInfo))
                 .map(map == null ? other.map : map.merge(other.map))
                 .trending(trending == null ? other.trending : trending.merge(other.trending))
                 .minScore(minScore == null ? other.minScore : minScore)
                 .statsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
                 .topicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
+                .comparisonStoreStateMaxResults(comparisonStoreStateMaxResults == null ? other.comparisonStoreStateMaxResults : comparisonStoreStateMaxResults)
+                .documentSummaryMaxLength(documentSummaryMaxLength == null ? other.documentSummaryMaxLength : documentSummaryMaxLength)
                 .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(maybeOther.export)).orElse(maybeOther.export))
                 .build())
             .orElse(this);
@@ -157,6 +174,10 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         if(answerServer != null) {
             answerServer.basicValidate("AnswerServer");
         }
+
+        if(entitySearch != null) {
+            entitySearch.basicValidate(EntitySearchConfig.SECTION);
+        }
     }
 
     @JsonIgnore
@@ -188,6 +209,10 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
 
             if(isOptionalComponentEnabled(answerServer)) {
                 addEntriesToProductMap(tempProductMap, ProductType.ANSWERSERVER.getFriendlyName(), answerServer.getServer().getHost(), answerServer.getServer().getPort(), answerServer.getServer().getServicePort());
+            }
+
+            if(isOptionalComponentEnabled(entitySearch)) {
+                addEntriesToProductMap(tempProductMap, ProductType.AXE.getFriendlyName(), entitySearch.getServer().getHost(), entitySearch.getServer().getPort(), entitySearch.getServer().getServicePort());
             }
 
             if(isOptionalComponentEnabled(statsServer)) {
@@ -225,5 +250,9 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         @SuppressWarnings("unused")
         @JsonProperty("savedSearches")
         private SavedSearchConfig savedSearchConfig;
+
+        @SuppressWarnings("unused")
+        @JsonProperty("idolFieldPathNormalizerXMLPrefixes")
+        private Collection<String> idolFieldPathNormalizerXMLPrefixes;
     }
 }

@@ -20,6 +20,27 @@ define([
         return isUrlRegex.test(reference);
     }
 
+    let patterns = null;
+
+    function getPreviewWhitelistPatterns() {
+        if (!patterns) {
+            patterns = [];
+
+            const config = configuration();
+            if (config && config.uiCustomization && config.uiCustomization.previewWhitelistUrls) {
+
+                _.each(config.uiCustomization.previewWhitelistUrls, function(value, key){
+                    patterns.push({
+                        regex: new RegExp(key, 'i'),
+                        template: _.template(value)
+                    })
+                })
+            }
+        }
+
+        return patterns;
+    }
+
     const fieldTypeParsers = {
         STRING: function (valueWrapper) {
             return valueWrapper.displayValue
@@ -137,6 +158,24 @@ define([
 
         isMedia: function() {
             return Boolean(this.get('media') && this.get('url'));
+        },
+
+        getPreviewTemplate: function() {
+            const reference = this.get('reference');
+
+            if (reference) {
+                const patterns = getPreviewWhitelistPatterns();
+
+                for (let ii = 0; ii < patterns.length; ++ii) {
+                    const pattern = patterns[ii];
+
+                    if (pattern.regex.test(reference)) {
+                        return pattern.template(this.attributes);
+                    }
+                }
+            }
+
+            return null;
         },
 
         isWebType: function() {
