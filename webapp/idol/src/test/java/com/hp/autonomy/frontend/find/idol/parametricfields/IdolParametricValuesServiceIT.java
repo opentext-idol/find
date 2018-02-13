@@ -6,5 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.parametricfields;
 
 import com.hp.autonomy.frontend.find.core.parametricfields.AbstractParametricValuesServiceIT;
+import org.springframework.test.annotation.DirtiesContext;
 
+@DirtiesContext
 public class IdolParametricValuesServiceIT extends AbstractParametricValuesServiceIT {}
