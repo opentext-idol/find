@@ -37,6 +37,8 @@
         <skipITs>false</skipITs>
         <skipTests>false</skipTests>
         <selenium.version>2.46.0</selenium.version>
+        <!-- Override the Jackson dependencies to use 2.8.11 to avoid CVE-2017-17485 -->
+        <jackson.version>2.8.11</jackson.version>
     </properties>
 
     <build>
