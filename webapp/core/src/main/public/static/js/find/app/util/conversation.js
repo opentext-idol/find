@@ -176,6 +176,8 @@ define([
         })
 
         $dialog.find('.conversation-reset').on('click', function(){
+            endConversation();
+
             $messages.find('div').remove();
             startNewConversation();
         })
@@ -206,5 +208,14 @@ define([
             $form[0].query.value = $el.data('query') || $el.text();
             $form.submit();
         });
+
+        function endConversation() {
+            if (contextId) {
+                $.post(chatUrl + '/' + contextId + '/end');
+                contextId = null;
+            }
+        }
+
+        $(window).on('beforeunload', endConversation);
     };
 });
