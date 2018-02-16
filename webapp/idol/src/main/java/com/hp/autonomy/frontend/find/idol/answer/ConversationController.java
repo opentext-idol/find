@@ -14,6 +14,7 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping(AnswerServerController.BASE_PATH)
 class ConversationController {
@@ -33,14 +35,17 @@ class ConversationController {
     private final ConversationAnswerServerService conversationService;
     private final ObjectFactory<ConversationRequestBuilder> requestBuilderFactory;
     private final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever;
+    private final ConversationContexts contexts;
 
     @Autowired
     ConversationController(final ConversationAnswerServerService conversationService,
                            final ObjectFactory<ConversationRequestBuilder> requestBuilderFactory,
-                           final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever) {
+                           final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever,
+                           final ConversationContexts contexts) {
         this.conversationService = conversationService;
         this.requestBuilderFactory = requestBuilderFactory;
         this.authenticationInformationRetriever = authenticationInformationRetriever;
+        this.contexts = contexts;
     }
 
     @RequestMapping(value = CONVERSE_PATH, method = RequestMethod.POST)
@@ -48,9 +53,13 @@ class ConversationController {
                                final String text,
                                  @RequestParam(value = SESSION_ID_PARAM, required = false)
                                String sessionId) {
+        final boolean illegalSessionId = sessionId != null && !contexts.containsKey(sessionId);
+        if (illegalSessionId) {
+            // The user is trying to use a dialog ID which doesn't belong to their session.
+            log.warn("User {} tried to access a context ID {} which doesn't belong to them.", authenticationInformationRetriever.getPrincipal().getName(), sessionId);
+        }
 
-        if (sessionId == null) {
-            // TODO: security, and cleanup
+        if (sessionId == null || illegalSessionId) {
             sessionId = conversationService.conversationStart(
                 Collections.singletonMap("USER_NAME", authenticationInformationRetriever.getPrincipal().getName())
             );
@@ -58,6 +67,8 @@ class ConversationController {
             if (sessionId == null) {
                 throw new Error("Unable to start conversation");
             }
+
+            contexts.put(sessionId, new ConversationContexts.ConversationContext(sessionId));
         }
 
         final ConversationRequest request = requestBuilderFactory.getObject()
@@ -71,9 +82,15 @@ class ConversationController {
     @RequestMapping(value = CONVERSE_END_PATH, method = RequestMethod.POST)
     public boolean converseEnd(
             @PathVariable(SESSION_ID_PARAM) final String sessionId) {
+        final ConversationContexts.ConversationContext context = contexts.get(sessionId);
 
-        // TODO: security, and cleanup
+        if (context == null || context.isTerminated()) {
+            return false;
+        }
+
         conversationService.conversationEnd(sessionId);
+        context.setTerminated(true);
+        contexts.remove(sessionId);
 
         return true;
     }
