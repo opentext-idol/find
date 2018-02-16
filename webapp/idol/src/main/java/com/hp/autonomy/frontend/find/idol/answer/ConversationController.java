@@ -9,6 +9,9 @@ import com.hp.autonomy.searchcomponents.idol.answer.ask.ConversationAnswerServer
 import com.hp.autonomy.searchcomponents.idol.answer.ask.ConversationRequest;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.ConversationRequestBuilder;
 import com.hp.autonomy.types.idol.responses.conversation.ConversePrompt;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
+import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 import lombok.Data;
 import org.springframework.beans.factory.ObjectFactory;
@@ -29,12 +32,15 @@ class ConversationController {
 
     private final ConversationAnswerServerService conversationService;
     private final ObjectFactory<ConversationRequestBuilder> requestBuilderFactory;
+    private final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever;
 
     @Autowired
     ConversationController(final ConversationAnswerServerService conversationService,
-                           final ObjectFactory<ConversationRequestBuilder> requestBuilderFactory) {
+                           final ObjectFactory<ConversationRequestBuilder> requestBuilderFactory,
+                           final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever) {
         this.conversationService = conversationService;
         this.requestBuilderFactory = requestBuilderFactory;
+        this.authenticationInformationRetriever = authenticationInformationRetriever;
     }
 
     @RequestMapping(value = CONVERSE_PATH, method = RequestMethod.POST)
@@ -45,7 +51,9 @@ class ConversationController {
 
         if (sessionId == null) {
             // TODO: security, and cleanup
-            sessionId = conversationService.conversationStart();
+            sessionId = conversationService.conversationStart(
+                Collections.singletonMap("USER_NAME", authenticationInformationRetriever.getPrincipal().getName())
+            );
 
             if (sessionId == null) {
                 throw new Error("Unable to start conversation");
