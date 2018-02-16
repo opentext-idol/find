@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -52,6 +52,10 @@ define([
         'app.until': 'Until',
         'app.user': 'User',
         'app.users': 'Users',
+        'conversation.suggestions': 'Suggestions: ',
+        'conversation.title': 'Conversation Server',
+        'conversation.placeholder': 'What information are you looking for?',
+        'conversation.submit': 'Send',
         'customizations.apply.error': 'File {0} not found!',
         'customizations.apply.success': 'File {0} applied successfully',
         'customizations.applyDefault.success': 'Default file applied successfully',

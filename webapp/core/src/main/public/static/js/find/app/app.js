@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2014-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -21,10 +21,11 @@ define([
     'find/app/util/logout',
     'find/app/vent',
     'find/app/router',
+    'find/app/util/conversation',
     'js-whatever/js/escape-regex',
     'text!find/templates/app/app.html'
 ], function(_, $, Backbone, Dropzone, testBrowser, WindowScrollModel, SavedQueryCollection, SharedSavedQueryCollection, parseUrl, ModelRegistry,
-            Navigation, configuration, metrics, Pages, logout, vent, router, escapeRegex, template) {
+            Navigation, configuration, metrics, Pages, logout, vent, router, conversation, escapeRegex, template) {
     'use strict';
 
     function removeTrailingSlash(string) {
@@ -90,6 +91,8 @@ define([
             const applicationPath = config.applicationPath;
             this.internalHrefRegexp = new RegExp('^' + escapeRegex(removeTrailingSlash(baseURI) + applicationPath));
 
+            this.conversationEnabled = config.conversationEnabled;
+
             testBrowser().done(function() {
                 const modelRegistry = new ModelRegistry(this.getModelData());
                 const pageData = this.getPageData();
@@ -136,6 +139,10 @@ define([
             this.navigation.render();
 
             this.$('.header').prepend(this.navigation.el);
+
+            if (this.conversationEnabled) {
+                conversation(document.body);
+            }
         },
 
         // Can be overridden
