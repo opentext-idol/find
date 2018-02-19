@@ -403,6 +403,8 @@ define([
         'settings.answerServer.disabled': 'Answer Server is disabled',
         'settings.answerServer.loading': 'Loading\u2026',
         'settings.answerServer.title': 'Answer Server',
+        'settings.answerServer.conversationSystem': 'Conversation System ID',
+        'settings.answerServer.conversationSystemDisabled': '(chat disabled)',
         'settings.community.description': "Community handles authentication for Find. We recommend using a dedicated Community server for Find and not using it for any other parts of your IDOL installation.  Your Community server will need an Agentstore server for data storage.",
         'settings.community.login.type': 'Login Type',
         'settings.community.login.fetchTypes': 'Test connection to retrieve available login types.',
