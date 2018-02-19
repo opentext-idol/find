@@ -18,14 +18,18 @@
                 <%- i18n['search.answeredQuestion'] %>
             </span>
             <h4 class="m-b-nil m-t-sm result-header">
+                <% if (model.get('source')) {  %>
+                <a href="<%-model.get('source')%>" target="_blank"><%- i18n['search.answeredQuestion.question'] %><%- model.get('question') %></a>
+                <% } else { %>
                 <%- i18n['search.answeredQuestion.question'] %><%- model.get('question') %>
+                <% } %>
             </h4>
             <div class="result-summary summary-text m-t-xs m-b-xs">
-                <span><%- i18n['search.answeredQuestion.answer'] %><%- croppedAnswer %></span>
+                <span><%- i18n['search.answeredQuestion.answer'] %><%= allowLinks(croppedAnswer) %></span>
                 <% if (showMoreButton) { %>
                     <span class="ellipsis">...</span>
                 <% } %>
-                <span class="extended-answer hide"><%- extendedAnswer %></span>
+                <span class="extended-answer hide"><%= allowLinks(extendedAnswer) %></span>
             </div>
             <% if (showMoreButton) { %>
                 <a class="hyperlink read-more m-b-xs"><%- i18n['app.more'] %></a>
