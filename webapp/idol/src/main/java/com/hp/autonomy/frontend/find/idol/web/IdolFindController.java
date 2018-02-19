@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -27,6 +27,7 @@ import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import lombok.Getter;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -92,7 +93,11 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
                         dashboard.getRoles().stream().anyMatch(roles::contains))
                 .collect(Collectors.toList()));
         publicConfig.put(IdolMvcConstants.APPLICATIONS.getName(), enabledApps);
-        publicConfig.put(MvcConstants.ANSWER_SERVER_ENABLED.value(), config.getAnswerServer().getEnabled());
+
+        final Boolean answerServerEnabled = config.getAnswerServer().getEnabled();
+        publicConfig.put(MvcConstants.ANSWER_SERVER_ENABLED.value(), answerServerEnabled);
+        publicConfig.put(MvcConstants.CONVERSATION_ENABLED.value(), answerServerEnabled
+                && StringUtils.isNotEmpty(config.getAnswerServer().getConversationSystemName()));
 
         final EntitySearchConfig entitySearch = config.getEntitySearch();
         publicConfig.put(MvcConstants.ENTITY_SEARCH_ENABLED.value(), entitySearch.getEnabled());

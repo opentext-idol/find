@@ -22,7 +22,7 @@ define([
         const documentRenderer = options.documentRenderer;
         const answerServer = options.answerServer;
         // You can control which elements the popup will appear on by adjusting this selector.
-        const selector = options.selector || '.main-results-container,.parametric-value-element,.dt-bootstrap,.trending-chart,.sunburst,.entity-topic-map,.leaflet-popup-content,.document-detail-tabs-content,.entity-search-messages';
+        const selector = options.selector || '.main-results-container,.parametric-value-element,.dt-bootstrap,.trending-chart,.sunburst,.entity-topic-map,.leaflet-popup-content,.document-detail-tabs-content,.entity-search-messages,.conversation-dialog-messages';
         const debounceMillis = options.debounceMillis || 250;
         // The length of time you have to hover over the text in the topic map before we automatically entity-search it.
         const hoverDelay = options.hoverDelay || 1000;

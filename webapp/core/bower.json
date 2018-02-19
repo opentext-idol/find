@@ -28,6 +28,7 @@
     "corejs-typeahead": "#d60aed0",
     "d3": "3.3.8",
     "fontawesome": "components-font-awesome#4.5.0",
+    "flot": "flot#~0.8.3",
     "iCheck": "1.0.1",
     "jquery": "components/jquery#1.10.2",
     "json": "json2#c98948ae19",

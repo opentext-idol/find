@@ -1,0 +1,121 @@
+/*
+ * Copyright 2018 Micro Focus International plc.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+.conversation-button {
+  position: fixed;
+  bottom: 4px;
+  right: 20px;
+  z-index: (@zindex-navbar - 2);
+  opacity: 0.5;
+}
+
+.conversation-button:hover {
+  opacity: 1;
+}
+
+.conversation-dialog {
+  position: fixed;
+  bottom: 32px;
+  right: 20px;
+  z-index: (@zindex-navbar - 2);
+  transition: transform ease-out 0.25s;
+  transform-origin: bottom right;
+  border-radius: 8px;
+  box-shadow: inset 0 -6px 0 0 white, inset 0 6 0 0 white;
+  background-color: rgba(255,255,255,0.95);
+  min-width: 40vw;
+}
+
+.conversation-dialog-dismissed {
+  transform: rotateY(90deg) scale(0.01)
+}
+
+.conversation-dialog-title {
+  border-bottom: 1px solid @secondary-border;
+  padding: 8px;
+  background: @hpegreen-hover;
+  border-radius: 8px 8px 0 0;
+  color: white;
+  font-weight: bold;
+}
+
+.conversation-dialog-messages {
+  max-height: 80vh;
+  max-width: 40vw;
+  overflow-y: auto;
+  padding: 5px 10px;
+}
+
+.conversation-dialog-controls {
+  min-height: 30px;
+  box-shadow: 0 -1px 3px rgba(0,0,0,.1);
+  border-radius: 0 0 8px 8px;
+  padding: 8px;
+}
+
+.conversation-dialog-server {
+  border-radius: 8px 8px 8px 2px;
+  padding: 8px 16px;
+  background: darkgray;
+  float: left;
+  clear: both;
+  margin: 2px 0;
+  color: white;
+  text-shadow: rgba(0, 0, 0, 0.4) 0 1px 1px;
+}
+
+.conversation-dialog-user {
+  float: right;
+  border-radius: 8px 8px 2px 8px;
+  padding: 8px 16px;
+  clear: both;
+  background: @hpegreen;
+  margin: 2px 0;
+  color: white;
+  text-shadow: rgba(0, 0, 0, 0.4) 0 1px 1px;
+}
+
+.conversation-dialog-input {
+  width: ~"calc(100% - 80px)";
+  border: none;
+  background: transparent;
+  margin-left: 8px;
+  outline: none !important;
+
+  /* This is to disable the 'X' button that only appears in IE11 */
+  /*noinspection CssInvalidPseudoSelector*/
+  &::-ms-clear {
+    display: none;
+  }
+}
+
+.safe-image {
+  max-width: 90%;
+  display: block;
+  margin: 2px auto 10px;
+}
+
+.conversation-chart-tooltip {
+  position: absolute;
+  border: 1px solid #dfd;
+  padding: 2px;
+  color: white;
+  background-color : #efe;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.conversation-chart {
+  width: 95%;
+  height: 300px;
+}
+
+.conversation-reset {
+  margin-right: 5px;
+}
+
+.conversation-cite {
+  font-style: italic;
+}
