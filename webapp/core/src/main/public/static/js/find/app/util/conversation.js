@@ -139,7 +139,7 @@ define([
                 contextId = resp.sessionId;
 
                 const parsedResponse = escapeNonImages(response);
-                const $newEl = $('<div class="conversation-dialog-server">' + parsedResponse + '</div>');
+                const $newEl = $('<div class="conversation-dialog-server">' + parsedResponse + ' </div>');
 
                 if (parsedResponse && $.trim(parsedResponse)) {
                     $newEl.appendTo($messages);
@@ -193,7 +193,7 @@ define([
             const query = this.query.value;
 
             if (query) {
-                $messages.append('<div class="conversation-dialog-user">'+_.escape(query)+'</div>');
+                $messages.append('<div class="conversation-dialog-user">'+_.escape(query)+' </div>');
                 scrollDown();
                 sendQuery(query);
                 this.query.value = '';
