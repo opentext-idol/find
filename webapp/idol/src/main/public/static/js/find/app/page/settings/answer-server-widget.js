@@ -37,6 +37,7 @@ define([
             }));
 
             this.$conversationSystem = this.$('.conversation-system-input');
+            this.$conversationSystemControls = this.$conversationSystem.closest('div.' + this.controlGroupClass);
         },
 
         getConfig: function() {
@@ -48,6 +49,17 @@ define([
         updateConfig: function(config) {
             AnswerServerWidget.prototype.updateConfig.call(this, config);
             this.$conversationSystem.val(config.conversationSystemName || '');
-        }
+        },
+
+        setValidationFormatting: function (state) {
+            AnswerServerWidget.prototype.setValidationFormatting.apply(this, arguments);
+
+            if (state === 'clear') {
+                this.$conversationSystemControls.removeClass(this.successClass + ' ' + this.errorClass);
+            } else {
+                this.$conversationSystemControls.addClass(state)
+                    .removeClass(state === this.successClass ? this.errorClass : this.successClass);
+            }
+        },
     });
 });

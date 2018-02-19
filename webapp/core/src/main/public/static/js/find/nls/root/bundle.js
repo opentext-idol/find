@@ -515,6 +515,7 @@ define([
         'settings.FETCH_PORT_ERROR': "An error occurred while fetching the details of the server's index and service ports",
         'settings.FETCH_SERVICE_PORT_ERROR': "An error occurred while fetching the details of the server's service port",
         'settings.INCORRECT_SERVER_TYPE': 'Incorrect server type. Make sure you are using one of {0}',
+        'settings.INVALID_CONVERSATION_SYSTEM_NAME': 'Conversation system ID is invalid (note: case-sensitive)',
         'settings.INDEX_PORT_ERROR': "An error occurred while fetching the details of the server's index port",
         'settings.REQUIRED_FIELD_MISSING': 'One or more of the required fields is missing',
         'settings.REGULAR_EXPRESSION_MATCH_ERROR': 'The target server is of an incorrect type',
