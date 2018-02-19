@@ -96,7 +96,7 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
 
         final Boolean answerServerEnabled = config.getAnswerServer().getEnabled();
         publicConfig.put(MvcConstants.ANSWER_SERVER_ENABLED.value(), answerServerEnabled);
-        publicConfig.put(MvcConstants.CONVERSATION_ENABLED.value(), answerServerEnabled
+        publicConfig.put(MvcConstants.CONVERSATION_ENABLED.value(), Boolean.TRUE.equals(answerServerEnabled)
                 && StringUtils.isNotEmpty(config.getAnswerServer().getConversationSystemName()));
 
         final EntitySearchConfig entitySearch = config.getEntitySearch();
