@@ -56,6 +56,7 @@ define([
         'conversation.title': 'Conversation Server',
         'conversation.placeholder': 'What information are you looking for?',
         'conversation.submit': 'Send',
+        'conversation.error': 'There was an error processing your request',
         'customizations.apply.error': 'File {0} not found!',
         'customizations.apply.success': 'File {0} applied successfully',
         'customizations.applyDefault.success': 'Default file applied successfully',

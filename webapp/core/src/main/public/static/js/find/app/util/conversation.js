@@ -147,6 +147,15 @@ define([
                 }
 
                 scrollDown();
+            }).fail(function(xhr){
+                let error = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message
+                    : i18n['conversation.error'];
+
+                $('<div class="conversation-dialog-server conversation-dialog-error">').text(error).appendTo($messages)
+                    .on('click', function(e){
+                        $(e.currentTarget).remove();
+                    });
+                scrollDown();
             })
         }
 
