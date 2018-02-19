@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.answer;
 
+import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.ConversationAnswerServerService;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.ConversationRequest;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.ConversationRequestBuilder;
@@ -12,9 +13,12 @@ import com.hp.autonomy.types.idol.responses.conversation.ConversePrompt;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import java.security.Principal;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,9 +64,19 @@ class ConversationController {
         }
 
         if (sessionId == null || illegalSessionId) {
-            sessionId = conversationService.conversationStart(
-                Collections.singletonMap("USER_NAME", authenticationInformationRetriever.getPrincipal().getName())
-            );
+            final Principal principal = this.authenticationInformationRetriever.getPrincipal();
+
+            final Map<String, String> properties = new HashMap<>();
+            properties.put("USER_NAME", principal.getName());
+
+            if (principal instanceof CommunityPrincipal) {
+                final String securityInfo = ((CommunityPrincipal) principal).getSecurityInfo();
+                if (StringUtils.isNotBlank(securityInfo)) {
+                    properties.put("SECURITY_INFO", securityInfo);
+                }
+            }
+
+            sessionId = conversationService.conversationStart(properties);
 
             if (sessionId == null) {
                 throw new Error("Unable to start conversation");
