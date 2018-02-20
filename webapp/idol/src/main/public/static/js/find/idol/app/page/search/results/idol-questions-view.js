@@ -17,6 +17,10 @@ define([
     const MAX_SIZE = 1;
     const CROPPED_SUMMARY_CHAR_LENGTH = 300;
 
+    function isLink(value) {
+        return value && /^\s*https?:\/\/.+/.exec(value);
+    }
+
     function autoLink(value) {
         // Automatically convert plain HTTP/HTTPS links to <a> tags.
         // We use lookahead to ignore the trailing 'dot' if present, since that's placed as punctuation in an
@@ -101,6 +105,7 @@ define([
                     extendedAnswer: extendedAnswer,
                     showMoreButton: answeredQuestion.get('answer').length > CROPPED_SUMMARY_CHAR_LENGTH,
                     allowLinks: allowLinks,
+                    isLink: isLink
                 });
             }, this).join('');
 
