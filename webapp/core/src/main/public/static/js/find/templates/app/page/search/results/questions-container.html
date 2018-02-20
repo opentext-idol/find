@@ -18,10 +18,10 @@
                 <%- i18n['search.answeredQuestion'] %>
             </span>
             <h4 class="m-b-nil m-t-sm result-header">
-                <% if (model.get('source')) {  %>
-                <a href="<%-model.get('source')%>" target="_blank"><%- i18n['search.answeredQuestion.question'] %><%- model.get('question') %></a>
+                <% if (isLink(model.get('source'))) {  %>
+                <a title="<%-model.get('source')%>" href="<%-model.get('source')%>" target="_blank"><%- i18n['search.answeredQuestion.question'] %><%- model.get('question') %></a>
                 <% } else { %>
-                <%- i18n['search.answeredQuestion.question'] %><%- model.get('question') %>
+                <span title="<%-model.get('source') || ''%>"><%- i18n['search.answeredQuestion.question'] %><%- model.get('question') %></span>
                 <% } %>
             </h4>
             <div class="result-summary summary-text m-t-xs m-b-xs">
