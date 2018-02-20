@@ -51,7 +51,7 @@ define([
         while (match = regex.exec(value)) {
             escaped += autoLink(value.slice(lastIndex, match.index));
 
-            escaped += '<a href=' + hackUrl(match[1]) + ' target="_blank">' + match[2] + '</a>';
+            escaped += '<a href=' + match[1] + ' target="_blank">' + match[2] + '</a>';
 
             lastIndex = match.index + match[0].length
         }
