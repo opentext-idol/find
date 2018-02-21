@@ -25,19 +25,23 @@ define([
             },
             'submit': function(event) {
                 event.preventDefault();
-                const newConceptsString = this.$('.edit-concept-input').val();
+                var newConceptsString = this.$('.edit-concept-input').val() + '\n';
 
                 const concepts = [];
+                //matching quoted or non quoted string and new lines after them
+                const regex = /(("[^"]+"|[^"\n]+)( +("[^"]+"|[^"\n]+))*)\s*\n/g;
 
-                _.each(newConceptsString.split('\n'), function(str){
-                    const trimmed = str.trim();
-                    if(trimmed) {
-                        concepts.push(trimmed);
-                    }
-                });
+                let match = regex.exec(newConceptsString);
+                while(match != null) {
+                    concepts.push(match[1]);
+                    match = regex.exec(newConceptsString);
+                }
 
                 this.model.set({
-                    concepts: concepts
+                    concepts: _.compact(concepts.map(function(string) {
+                        // the regex above will leave new lines if they were between quotes
+                        return string.replace(/\n+/g, ' ').trim();
+                    }))
                 });
 
                 this.trigger('remove');
