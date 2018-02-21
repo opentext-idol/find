@@ -29,11 +29,11 @@ define([
 
                 const concepts = [];
                 //matching quoted or non quoted string and new lines after them
-                const regex = /(("[^"]+"|[^"\n]+)( +("[^"]+"|[^"\n]+))*)\s*\n/g;
+                const regex = /(("[^"]+"|[^"\n]+)+)\n/g;
 
                 let match = regex.exec(newConceptsString);
                 while(match != null) {
-                    concepts.push(match[1]);
+                    concepts.push(match[1].trim());
                     match = regex.exec(newConceptsString);
                 }
 
