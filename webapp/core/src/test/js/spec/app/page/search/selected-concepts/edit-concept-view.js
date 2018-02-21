@@ -39,5 +39,12 @@ define([
 
             expect(this.conceptModel.get('concepts')).toEqual(['cats', '"winston churchill"', '"bob marley"', 'foo']);
         });
+
+        it('saves concepts that are separated by new line and quoted and have other text on same line', function() {
+            this.view.$('textarea').val('cats "winston churchill"\n\n"bob\n\n\nmarley" test\n"foo');
+            this.view.$('.edit-concept-confirm-button').click();
+
+            expect(this.conceptModel.get('concepts')).toEqual(['cats "winston churchill"', '"bob marley" test', 'foo']);
+        });
     });
 });
