@@ -40,6 +40,23 @@ define([
     function templatePredicate(triggers) {
         return function(model) {
             return _.every(triggers, function(trigger) {
+                if (trigger.indexes) {
+                    const index = model.get('index');
+
+                    if (index) {
+                        const indexCaps = index.toUpperCase();
+
+                        if (!_.find(trigger.indexes, function(triggerIndex){
+                                return triggerIndex.toUpperCase() === indexCaps;
+                            })) {
+                            return false
+                        }
+                        else if (!trigger.field) {
+                            return true;
+                        }
+                    }
+                }
+
                 const documentField = _.findWhere(model.get('fields'), {id: trigger.field});
 
                 if (documentField) {

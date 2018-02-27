@@ -43,6 +43,19 @@ define([
                         ]
                     },
                     {
+                        file: 'scientist-lords.html',
+                        triggers: [
+                            {indexes: ['KNIGHTS', 'LORDS']},
+                            {field: 'PRESIDENT', values: ['true']}
+                        ]
+                    },
+                    {
+                        file: 'lords.html',
+                        triggers: [
+                            {indexes: ['KNIGHTS', 'LORDS']}
+                        ]
+                    },
+                    {
                         file: 'person.html',
                         triggers: [
                             {field: 'CATEGORY', values: ['PERSON']}
@@ -89,6 +102,8 @@ define([
                 $.get.promises[0].resolve({
                     'army-doctor.html': '<h1>Dr {{title}}</h1>',
                     'person.html': '<h1>{{getFieldValue "NAME_TITLE"}} {{title}}</h1>',
+                    'lords.html': '<h1>Sir {{title}}</h1>',
+                    'scientist-lords.html': '<h1>Sir {{title}} PRS</h1>',
                     'promotion.html': '<h1 class="shiny">{{title}}</h1>'
                 });
             });
@@ -100,6 +115,7 @@ define([
             it('renders a search result matching multiple triggers', function() {
                 const document = buildDocument({
                     title: 'Bob',
+                    index: 'people',
                     fields: [
                         {id: 'CATEGORY', values: ['PERSON', 'CELEBRITIES']},
                         {id: 'PROFESSION', values: ['DOCTOR', 'ARMY']}
@@ -113,6 +129,7 @@ define([
             it('renders a search result matching one trigger', function() {
                 const document = buildDocument({
                     title: 'Julie',
+                    index: 'people',
                     fields: [
                         {id: 'CATEGORY', values: ['PERSON']},
                         {id: 'PROFESSION', values: ['FLORIST']},
@@ -122,6 +139,33 @@ define([
 
                 const output = this.documentRenderer.renderResult(document);
                 expect(output).toBe('<h1>Mrs Julie</h1>');
+            });
+
+            it('renders a search result matching a database and field trigger', function() {
+                const document = buildDocument({
+                    title: 'Isaac Newton',
+                    index: 'lords',
+                    fields: [
+                        {id: 'CATEGORY', values: ['PERSON']},
+                        {id: 'PRESIDENT', values: ['true']}
+                    ]
+                });
+
+                const output = this.documentRenderer.renderResult(document);
+                expect(output).toBe('<h1>Sir Isaac Newton PRS</h1>');
+            });
+
+            it('renders a search result matching a database trigger', function() {
+                const document = buildDocument({
+                    title: 'Walter Raleigh',
+                    index: 'lords',
+                    fields: [
+                        {id: 'CATEGORY', values: ['PERSON']}
+                    ]
+                });
+
+                const output = this.documentRenderer.renderResult(document);
+                expect(output).toBe('<h1>Sir Walter Raleigh</h1>');
             });
 
             it('falls back to the default template if no configured search result templates match', function () {
