@@ -45,8 +45,7 @@ define([
                     {
                         file: 'scientist-lords.html',
                         triggers: [
-                            {indexes: ['KNIGHTS', 'LORDS']},
-                            {field: 'PRESIDENT', values: ['true']}
+                            {indexes: ['KNIGHTS', 'LORDS'], field: 'PRESIDENT', values: ['true']}
                         ]
                     },
                     {
