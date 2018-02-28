@@ -99,6 +99,7 @@ define([
             database: model.get('index'),
             promotionName: model.get('promotionName'),
             similarDocumentsUrl: vent.suggestUrlForDocument(model),
+            similarStudiesUrl: vent.suggestUrlForDocument(model, 'studies'),
             summary: addLinksToSummary(model.get('summary')),
             url: url ? urlManipulator.addSpecialUrlPrefix(model.get('contentType'), url) : null,
             icon: 'icomoon-file-' + getContentTypeClass(model),

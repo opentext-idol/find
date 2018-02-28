@@ -386,6 +386,7 @@ define([
         'search.savedSearches.deleteFailed': 'Error: could not delete the saved search',
         'search.selected': 'Selected',
         'search.similarDocuments': 'Similar documents',
+        'search.similarStudies': 'Similar studies',
         'search.similarDocuments.error': 'Error: could not fetch similar documents',
         'search.similarDocuments.none': 'No similar documents found',
         'search.spellCheck.showingResults': 'Showing results for',
