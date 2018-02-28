@@ -369,17 +369,21 @@ define([
                 this.$('.service-view-container').addClass('hide');
                 this.$('.suggest-service-view-container').removeClass('hide');
 
+                const suggestOptions = this.suggestOptions.apply(this, arguments);
+
+                const indexesCollection = suggestOptions.suggestIndexesCollection || this.indexesCollection;
+
                 this.suggestView = new DocumentContentView(_.extend({
                     backUrl: this.generateURL(),
                     ContentView: this.SuggestView,
                     contentViewOptions: {
                         configuration: config(),
                         documentRenderer: this.documentRenderer,
-                        indexesCollection: this.indexesCollection,
+                        indexesCollection: indexesCollection,
                         mmapTab: this.mmapTab,
                         scrollModel: this.windowScrollModel,
                     }
-                }, this.suggestOptions.apply(this, arguments)));
+                }, suggestOptions));
 
                 this.$('.suggest-service-view-container').append(this.suggestView.$el);
                 this.suggestView.render();

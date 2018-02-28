@@ -27,12 +27,18 @@ define([
             this.navigate('search/document/' + this.addSuffixForDocument(model));
         },
 
-        suggestRouteForDocument: function(model) {
-            return '/search/suggest/' + this.addSuffixForDocument(model);
+        suggestRouteForDocument: function(model, databases) {
+            let url = '/search/suggest/' + this.addSuffixForDocument(model);
+
+            if (databases) {
+                url += '/databases/' + databases;
+            }
+
+            return url;
         },
 
-        suggestUrlForDocument: function(model) {
-            return stripLeadingSlash(configuration().applicationPath) + this.suggestRouteForDocument(model);
+        suggestUrlForDocument: function(model, databases) {
+            return stripLeadingSlash(configuration().applicationPath) + this.suggestRouteForDocument(model, databases);
         }
     });
 

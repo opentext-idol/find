@@ -13,7 +13,7 @@ define([
         routes: function () {
             const routes = _.extend({
                 'search/document/:database/:reference': 'documentDetail',
-                'search/suggest/:database/:reference': 'suggest'
+                'search/suggest/:database/:reference(/databases/:suggestDatabase)': 'suggest'
             }, RouterConstructor.prototype.routes);
 
             if (configuration().enableSavedSearch) {
