@@ -24,6 +24,7 @@ define([
     './template-helpers/percentage-helper',
     './template-helpers/placeholder-template-helper',
     './template-helpers/pretty-print-number-helper',
+    './template-helpers/regex-if-helper',
     './template-helpers/to-external-url-helper',
     './template-helpers/to-lower-case-helper',
     './template-helpers/to-relative-time-helper',
@@ -34,8 +35,8 @@ define([
 ], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator,
             defaultResultTemplate, defaultEntitySearchTemplate, defaultPreviewTemplate, defaultPromotionTemplate,
             equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper, getFieldValuesHelper,
-            percentageHelper, placeholderTemplateHelper, prettyPrintNumberHelper, toExternalUrlHelper, toLowerCaseHelper,
-            toRelativeTimeHelper, toUpperCaseHelper, wikiThumbnailHelper, withFieldHelper, i18nHelper) {
+            percentageHelper, placeholderTemplateHelper, prettyPrintNumberHelper, regexIfHelper, toExternalUrlHelper,
+            toLowerCaseHelper, toRelativeTimeHelper, toUpperCaseHelper, wikiThumbnailHelper, withFieldHelper, i18nHelper) {
 
     function templatePredicate(triggers) {
         return function(model) {
@@ -131,6 +132,7 @@ define([
             percentage: percentageHelper,
             placeholderTemplate: placeholderTemplateHelper,
             prettyPrintNumber: prettyPrintNumberHelper,
+            regexIfHelper: regexIfHelper,
             toExternalUrl: toExternalUrlHelper,
             toLowerCase: toLowerCaseHelper,
             toRelativeTime: toRelativeTimeHelper,
