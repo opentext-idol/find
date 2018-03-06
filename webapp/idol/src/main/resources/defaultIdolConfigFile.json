@@ -203,6 +203,7 @@
     "parametricNeverShow": [],
     "parametricAlwaysShow": [],
     "parametricOrder": [],
+    "parametricValuesSort": "DocumentCount",
     "specialUrlPrefixes": {
       "application/msword": "ms-word:ofv|u|",
       "application/mspowerpoint": "ms-powerpoint:ofv|u|",

@@ -41,7 +41,8 @@ define([
                     queryModel: this.queryModel,
                     parametricFieldsCollection: this.parametricFieldsCollection,
                     selectedParametricValues: this.selectedParametricValues,
-                    indexesCollection: this.indexesCollection
+                    indexesCollection: this.indexesCollection,
+                    parametricValuesSort: this.parametricValuesSort
                 });
             }
         },
@@ -51,6 +52,7 @@ define([
             this.indexesCollection = options.indexesCollection;
             this.parametricFieldsCollection = options.parametricFieldsCollection;
             this.queryModel = options.queryModel;
+            this.parametricValuesSort = options.parametricValuesSort;
 
             this.listView = new ListView({
                 collection: this.collection,
@@ -98,6 +100,9 @@ define([
             this.selectedValuesCollection = new Backbone.Collection([]);
 
             this.parametricValuesCollection = new Backbone.Collection();
+
+            this.parametricValuesSort = options.parametricValuesSort;
+
             this.collapsible = new Collapsible({
                 collapseModel: this.collapseModel,
                 subtitle: null,
@@ -108,7 +113,8 @@ define([
                     parametricFieldsCollection: this.parametricFieldsCollection,
                     queryModel: this.queryModel,
                     selectedParametricValues: this.selectedParametricValues,
-                    indexesCollection: this.indexesCollection
+                    indexesCollection: this.indexesCollection,
+                    parametricValuesSort: this.parametricValuesSort
                 })
             });
 

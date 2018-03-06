@@ -213,6 +213,8 @@ define([
                         });
                     }
 
+                    const parametricValuesSort = config && config.uiCustomization && config.uiCustomization.parametricValuesSort || undefined;
+
                     this.parametricView = new ParametricView({
                         filterModel: this.filterModel,
                         queryModel: options.queryModel,
@@ -220,6 +222,7 @@ define([
                         timeBarModel: options.timeBarModel,
                         collection: this.filteredParametricFieldsCollection,
                         parametricFieldsCollection: this.parametricFieldsCollection,
+                        parametricValuesSort: parametricValuesSort,
                         inputTemplate: NumericParametricFieldView.dateInputTemplate,
                         formatting: NumericParametricFieldView.dateFormatting,
                         indexesCollection: options.indexesCollection,

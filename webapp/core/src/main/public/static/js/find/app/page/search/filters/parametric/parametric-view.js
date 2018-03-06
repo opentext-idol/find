@@ -103,7 +103,8 @@ define([
                         parametricFieldsCollection: options.parametricFieldsCollection,
                         filteredParametricCollection: this.filteredParametricCollection,
                         selectedParametricValues: this.selectedParametricValues,
-                        filterModel: this.filterModel
+                        filterModel: this.filterModel,
+                        parametricValuesSort: options.parametricValuesSort
                     },
                     numericViewItemOptions: {
                         inputTemplate: options.inputTemplate,

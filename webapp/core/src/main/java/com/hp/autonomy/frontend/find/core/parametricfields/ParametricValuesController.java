@@ -63,6 +63,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     private static final String MAX_VALUES_PARAM = "maxValues";
     private static final String VALUE_RESTRICTIONS_PARAM = "valueRestrictions";
     private static final String START_PARAM = "start";
+    private static final String SORT_PARAM = "sort";
 
     private final ParametricValuesService<R, Q, E> parametricValuesService;
     private final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory;
@@ -94,7 +95,8 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
         @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime maxDate,
         @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
-        @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
+        @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens,
+        @RequestParam(value = SORT_PARAM, defaultValue = "DocumentCount") final SortParam sort
     ) throws E {
         final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
             .queryText(queryText)
@@ -109,7 +111,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         final ParametricRequestBuilder<R, Q, ?> builder = parametricRequestBuilderFactory.getObject()
             .fieldNames(ListUtils.emptyIfNull(fieldNames))
             .queryRestrictions(queryRestrictions)
-            .sort(SortParam.DocumentCount);
+            .sort(sort);
 
         // Don't override defaults set in the request builder
         if(start != null) {
