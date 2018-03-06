@@ -29,7 +29,9 @@ public enum MvcConstants {
     PUBLIC_INDEXES_ENABLED("publicIndexesEnabled"),
     TEMPLATES_CONFIG("templatesConfig"),
     ASSETS_CONFIG("assetsConfig"),
-    MESSAGE_OF_THE_DAY_CONFIG("messageOfTheDay");
+    MESSAGE_OF_THE_DAY_CONFIG("messageOfTheDay"),
+    TERM_HIGHLIGHT_COLOR("termHighlightColor"),
+    TERM_HIGHLIGHT_BACKGROUND("termHighlightBackground");
 
     private final String value;
 

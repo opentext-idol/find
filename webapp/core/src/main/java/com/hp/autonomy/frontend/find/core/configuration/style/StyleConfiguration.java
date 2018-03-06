@@ -22,6 +22,8 @@ import java.util.Map;
 @JsonDeserialize(builder = StyleConfiguration.StyleConfigurationBuilder.class)
 public class StyleConfiguration extends AbstractConfig<StyleConfiguration> {
     private final Map<String, String> simpleVariables;
+    private final String termHighlightColor;
+    private final String termHighlightBackground;
 
     @Override
     public StyleConfiguration merge(final StyleConfiguration other) {

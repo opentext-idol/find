@@ -18,18 +18,29 @@ define([
     'find/app/util/url-manipulator',
     'text!find/templates/app/page/search/document/preview-mode-view.html',
     'text!find/templates/app/page/search/document/view-mode-document.html',
-    'text!find/templates/app/page/search/document/view-media-player.html',
-    'text!css/result-highlighting.css'
+    'text!find/templates/app/page/search/document/view-media-player.html'
 ], function(_, $, Backbone, i18n, i18nIndexes, vent, viewClient, DocumentModel, configuration, databaseNameResolver,
-            events, urlManipulator, template, documentTemplate, mediaTemplate, highlightingRule) {
+            events, urlManipulator, template, documentTemplate, mediaTemplate) {
     'use strict';
 
+    const highlightRuleTemplate = _.template('body.haven-search-view-document-highlighting-on .haven-search-view-document-highlighting { \n' +
+        'font-weight: bold; \n' +
+        '<% if (color) { %>color: <%-color%>; \n<% } %>' +
+        '<% if (background) { %>background: <%-background%>; \n<% } %>' +
+    '}')
+
     function highlighting(innerWindow) {
+        const config = configuration();
+
         const styleEl = innerWindow.createElement('style');
 
         // Append style element to iframe document head
         innerWindow.head.appendChild(styleEl);
 
+        const highlightingRule = highlightRuleTemplate({
+            color: config.termHighlightColor,
+            background: config.termHighlightBackground
+        })
         styleEl.sheet.insertRule(highlightingRule, 0);
     }
 

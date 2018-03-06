@@ -91,6 +91,9 @@ public class StyleSheetServiceImpl implements StyleSheetService {
         variables.put("compilationResourcesPath", "'../static'");
         // Path for making public API calls (logo customization, etc.)
         variables.put("publicApiPath", "'../../api/public'");
+        // Query term highlight colour and background
+        variables.put("termHighlightColor", configService.getConfig().getTermHighlightColor());
+        variables.put("termHighlightBackground", configService.getConfig().getTermHighlightBackground());
 
         final Map<String, String> customVariables = configService.getConfig().getSimpleVariables();
         if(customVariables != null) {

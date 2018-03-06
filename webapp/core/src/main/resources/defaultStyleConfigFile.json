@@ -1,3 +1,5 @@
 {
-  "simpleVariables": {}
+  "simpleVariables": {},
+  "termHighlightColor": "''",
+  "termHighlightBackground": "''"
 }

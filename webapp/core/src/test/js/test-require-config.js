@@ -28,7 +28,6 @@ require.config({
             'find/app/util/topic-map-view': 'mock/util/topic-map-view',
             'find/app/model/bucketed-numeric-collection': 'mock/model/bucketed-numeric-collection',
             'find/app/model/bucketed-date-collection': 'mock/model/bucketed-date-collection',
-            'css/result-highlighting.css': 'mock/css/result-highlighting.css',
             'find/app/model/parametric-collection': 'mock/model/parametric-collection',
             'find/app/model/date-field-details-model': 'mock/model/parametric-details-model'
         },

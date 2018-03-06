@@ -124,6 +124,14 @@
   font-weight: @fontWeightBold;
 }
 
+.search-text when not (@termHighlightColor = '') {
+  color: @termHighlightColor;
+}
+
+.search-text when not (@termHighlightBackground = '') {
+  background: @termHighlightBackground;
+}
+
 .selected-document {
   background-color: @secondary-hover;
 }

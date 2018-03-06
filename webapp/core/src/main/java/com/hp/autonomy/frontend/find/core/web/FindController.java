@@ -12,6 +12,7 @@ import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfi
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
+import com.hp.autonomy.frontend.find.core.configuration.style.StyleConfiguration;
 import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;
@@ -49,6 +50,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
     private final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever;
     private final ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService;
     private final FieldDisplayNameGenerator fieldDisplayNameGenerator;
+    private final ConfigService<StyleConfiguration> styleConfigService;
 
     @Value(AppConfiguration.GIT_COMMIT_PROPERTY)
     private String gitCommit;
@@ -63,12 +65,14 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
                              final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever,
                              final ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService,
                              final ConfigService<C> configService,
-                             final FieldDisplayNameGenerator fieldDisplayNameGenerator) {
+                             final FieldDisplayNameGenerator fieldDisplayNameGenerator,
+                             final ConfigService<StyleConfiguration> styleConfigService) {
         this.controllerUtils = controllerUtils;
         this.authenticationInformationRetriever = authenticationInformationRetriever;
         this.authenticationConfigService = authenticationConfigService;
         this.configService = configService;
         this.fieldDisplayNameGenerator = fieldDisplayNameGenerator;
+        this.styleConfigService = styleConfigService;
     }
 
     protected abstract Map<String, Object> getPublicConfig();
@@ -112,6 +116,11 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
         config.put(MvcConstants.FIELDS_INFO.value(), getFieldConfigWithDisplayNames(findConfig));
         config.put(MvcConstants.TOPIC_MAP_MAX_RESULTS.value(), findConfig.getTopicMapMaxResults());
         config.put(MvcConstants.METADATA_FIELD_INFO.value(), getMetadataNodeInfo());
+
+        final StyleConfiguration styleConfig = styleConfigService.getConfig();
+        config.put(MvcConstants.TERM_HIGHLIGHT_COLOR.value(), styleConfig.getTermHighlightColor());
+        config.put(MvcConstants.TERM_HIGHLIGHT_BACKGROUND.value(), styleConfig.getTermHighlightBackground());
+
         config.putAll(getPublicConfig());
 
         final Map<String, Object> attributes = new HashMap<>();

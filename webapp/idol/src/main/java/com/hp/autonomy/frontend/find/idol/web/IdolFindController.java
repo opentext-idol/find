@@ -9,6 +9,7 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.configuration.TemplatesConfig;
+import com.hp.autonomy.frontend.find.core.configuration.style.StyleConfiguration;
 import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.FindController;
@@ -57,9 +58,10 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
             final ConfigService<CustomApplicationsConfig> appsConfig,
             final FieldDisplayNameGenerator fieldDisplayNameGenerator,
             final ConfigService<TemplatesConfig> templatesConfig,
-            final ConfigService<AssetConfig> assetsConfigService
+            final ConfigService<AssetConfig> assetsConfigService,
+            final ConfigService<StyleConfiguration> styleSheetService
     ) {
-        super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService, fieldDisplayNameGenerator);
+        super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService, fieldDisplayNameGenerator, styleSheetService);
         this.authenticationInformationRetriever = authenticationInformationRetriever;
         this.dashConfig = dashConfig;
         this.appsConfig = appsConfig;

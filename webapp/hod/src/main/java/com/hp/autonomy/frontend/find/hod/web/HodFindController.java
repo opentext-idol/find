@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.hod.web;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
 import com.hp.autonomy.frontend.find.core.configuration.TemplatesConfig;
+import com.hp.autonomy.frontend.find.core.configuration.style.StyleConfiguration;
 import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.FindController;
@@ -38,8 +39,9 @@ public class HodFindController extends FindController<HodFindConfig, HodFindConf
                              final ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService,
                              final ConfigService<HodFindConfig> configService,
                              final ConfigService<TemplatesConfig> templatesConfig,
-                             final FieldDisplayNameGenerator fieldDisplayNameGenerator) {
-        super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService, fieldDisplayNameGenerator);
+                             final FieldDisplayNameGenerator fieldDisplayNameGenerator,
+                             final ConfigService<StyleConfiguration> styleSheetService) {
+        super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService, fieldDisplayNameGenerator, styleSheetService);
         this.templatesConfig = templatesConfig;
     }
 
