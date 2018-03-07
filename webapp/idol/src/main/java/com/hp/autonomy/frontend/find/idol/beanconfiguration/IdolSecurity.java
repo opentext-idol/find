@@ -28,6 +28,8 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.LinkedHashMap;
 
+import static com.hp.autonomy.frontend.find.core.beanconfiguration.SecurityConfiguration.firewallAllowingUrlEncodedCharacters;
+
 @Configuration
 @Order(99)
 public class IdolSecurity extends WebSecurityConfigurerAdapter {
@@ -42,7 +44,8 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(final WebSecurity web) {
-        web.ignoring()
+        web.httpFirewall(firewallAllowingUrlEncodedCharacters())
+            .ignoring()
             .antMatchers("/static-*/**")
             .antMatchers("/customization/**");
     }

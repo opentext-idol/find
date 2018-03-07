@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -19,9 +20,23 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final WebSecurity web) {
-        web.ignoring()
+        web.httpFirewall(firewallAllowingUrlEncodedCharacters())
+            .ignoring()
             .antMatchers("/static-*/**")
             .antMatchers("/customization/**");
+    }
+
+    public static StrictHttpFirewall firewallAllowingUrlEncodedCharacters() {
+        final StrictHttpFirewall firewall = new StrictHttpFirewall();
+
+        // We use encoded IDOL field names, e.g.
+        //   'api/public/parametric/numeric/buckets/NODE_PLACE%252FPLACE_POPULATION'
+        // so we have to allow these fields through.
+        firewall.setAllowUrlEncodedPercent(true);
+        firewall.setAllowUrlEncodedPeriod(true);
+        firewall.setAllowUrlEncodedSlash(true);
+
+        return firewall;
     }
 
     @SuppressWarnings("ProhibitedExceptionDeclared")
