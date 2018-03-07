@@ -62,6 +62,6 @@ abstract class IdolExportController extends ExportController<IdolQueryRequest, A
         final ExportFormat exportFormat = getExportFormat();
         final PlatformDataExportService<IdolQueryRequest, AciErrorException> exportService = exportServiceFactory.getPlatformDataExportService(exportFormat)
                 .orElseThrow(() -> new UnsupportedOperationException("Query result export not supported for format " + exportFormat.name()));
-        exportService.exportQueryResults(outputStream, queryRequestWithStateToken, exportFormat, selectedFieldNames, stateTokenAndResultCount.getResultCount());
+        exportService.exportQueryResults(outputStream, queryRequestWithStateToken, exportFormat, selectedFieldNames, Math.min(stateTokenAndResultCount.getResultCount(), this.stateTokenMaxResults));
     }
 }
