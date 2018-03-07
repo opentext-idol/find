@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.export;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.find.core.export.ExportControllerTest;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
@@ -33,6 +34,8 @@ abstract class IdolExportControllerTest extends ExportControllerTest<IdolQueryRe
     private IdolQueryRestrictions queryRestrictions;
     @Mock
     private IdolQueryRestrictionsBuilder queryRestrictionsBuilder;
+    @MockBean
+    private ConfigFileService configFileService;
 
     @Override
     protected void mockRequestObjects() throws IOException {
