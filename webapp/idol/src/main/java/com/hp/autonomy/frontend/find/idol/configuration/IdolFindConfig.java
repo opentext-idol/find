@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2015-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -76,6 +76,8 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final Integer comparisonStoreStateMaxResults;
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private final Integer exportStoreStateMaxResults;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private final Integer documentSummaryMaxLength;
     private final ExportConfig export;
 
@@ -104,6 +106,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .statsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
                 .topicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
                 .comparisonStoreStateMaxResults(comparisonStoreStateMaxResults == null ? other.comparisonStoreStateMaxResults : comparisonStoreStateMaxResults)
+                .exportStoreStateMaxResults(exportStoreStateMaxResults == null ? other.exportStoreStateMaxResults : exportStoreStateMaxResults)
                 .documentSummaryMaxLength(documentSummaryMaxLength == null ? other.documentSummaryMaxLength : documentSummaryMaxLength)
                 .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(maybeOther.export)).orElse(maybeOther.export))
                 .build())

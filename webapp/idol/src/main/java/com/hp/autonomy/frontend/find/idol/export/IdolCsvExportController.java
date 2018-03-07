@@ -1,10 +1,17 @@
+/*
+ * Copyright 2018 Micro Focus International plc.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
 package com.hp.autonomy.frontend.find.idol.export;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.find.core.export.service.ExportFormat;
 import com.hp.autonomy.frontend.find.core.export.service.ExportServiceFactory;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +32,9 @@ public class IdolCsvExportController extends IdolExportController {
     public IdolCsvExportController(final RequestMapper<IdolQueryRequest> requestMapper,
                                    final ControllerUtils controllerUtils,
                                    final ExportServiceFactory<IdolQueryRequest, AciErrorException> exportServiceFactory,
-                                   final IdolDocumentsService documentsService) {
-        super(requestMapper, controllerUtils, exportServiceFactory, documentsService);
+                                   final IdolDocumentsService documentsService,
+                                   final ConfigFileService<IdolFindConfig> configService) {
+        super(requestMapper, controllerUtils, exportServiceFactory, documentsService, configService);
     }
 
     @Override
