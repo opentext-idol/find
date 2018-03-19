@@ -200,6 +200,7 @@
     "defaultDeselectedDatabases": [],
     "filterOrder": ["metaFilter", "indexesFilter", "datesFilter", "geographyFilter", "-", "parametricFilter"],
     "openSharedDashboardQueryAsNewSearch": false,
+    "intentBasedRanking": true,
     "parametricNeverShow": [],
     "parametricAlwaysShow": [],
     "parametricOrder": [],

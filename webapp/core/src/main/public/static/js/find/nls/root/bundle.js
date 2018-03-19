@@ -278,6 +278,7 @@ define([
         'search.results.pagination.of': 'of',
         'search.results.pagination.showing': 'Showing',
         'search.results.pagination.to': 'to',
+        'search.intentBasedRanking': 'Intent-Based Ranking',
         'search.resultsSort': 'Sort',
         'search.resultsSort.date': 'by date',
         'search.resultsSort.relevance': 'by relevance',

@@ -46,6 +46,8 @@ public abstract class ViewController<R extends ViewRequest<S>, S extends Seriali
             @RequestParam(value = HIGHLIGHT_PARAM, required = false) final String highlightExpression,
             final HttpServletResponse response
     ) throws E, IOException {
+        // TODO: tag the document
+
         response.setContentType(MediaType.TEXT_HTML_VALUE);
         ViewContentSecurityPolicy.addContentSecurityPolicy(response);
         final R request = viewRequestBuilderFactory.getObject()

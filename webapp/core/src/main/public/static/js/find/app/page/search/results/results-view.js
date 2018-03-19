@@ -11,6 +11,7 @@ define([
     'find/app/vent',
     'find/app/model/document-model',
     'find/app/model/promotions-collection',
+    'find/app/page/search/intent-based-ranking-view',
     'find/app/page/search/sort-view',
     'find/app/page/search/results/results-number-view',
     'find/app/util/view-server-client',
@@ -24,7 +25,7 @@ define([
     'moment',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
-], function(_, $, Backbone, addChangeListener, vent, DocumentModel, PromotionsCollection, SortView, ResultsNumberView,
+], function(_, $, Backbone, addChangeListener, vent, DocumentModel, PromotionsCollection, IntentBasedRankingView, SortView, ResultsNumberView,
             viewClient, events, addLinksToSummary, configuration, generateErrorHtml, resultTemplate, html,
             loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
     'use strict';
@@ -142,13 +143,19 @@ define([
                 queryModel: this.queryModel
             });
 
+            if (configuration().uiCustomization.intentBasedRanking) {
+                this.intentBasedRankingView = new IntentBasedRankingView({
+                    queryModel: this.queryModel
+                })
+            }
+
             this.resultsNumberView = new ResultsNumberView({
                 documentsCollection: this.documentsCollection
             });
 
             addChangeListener(this,
                 this.queryModel,
-                ['sort', 'autoCorrect'].concat(this.fetchStrategy.queryModelAttributes),
+                ['sort', 'autoCorrect', 'intentBasedRanking'].concat(this.fetchStrategy.queryModelAttributes),
                 this.refreshResults);
 
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
@@ -172,6 +179,13 @@ define([
 
             this.sortView.setElement(this.$('.sort-container')).render();
             this.resultsNumberView.setElement(this.$('.results-number-container')).render();
+
+            if (this.intentBasedRankingView) {
+                this.intentBasedRankingView.setElement(
+                    this.$('.intent-based-ranking-container').removeClass('hide')
+                ).render();
+            }
+
 
             if (this.questionsView) {
                 this.questionsView.setElement(this.$('.main-results-content .answered-questions')).render();
@@ -366,7 +380,8 @@ define([
                 max_results: this.maxResults,
                 sort: this.queryModel.get('sort'),
                 auto_correct: this.queryModel.get('autoCorrect'),
-                queryType: 'MODIFIED'
+                queryType: 'MODIFIED',
+                intentBasedRanking: this.queryModel.get('intentBasedRanking')
             }, this.fetchStrategy.requestParams(this.queryModel, infiniteScroll));
 
             if (!infiniteScroll) {
@@ -421,6 +436,7 @@ define([
 
         remove: function() {
             this.sortView.remove();
+            this.intentBasedRankingView && this.intentBasedRankingView.remove();
             this.resultsNumberView.remove();
 
             if (this.questionsView) {
