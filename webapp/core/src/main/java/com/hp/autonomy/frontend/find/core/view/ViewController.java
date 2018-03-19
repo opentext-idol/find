@@ -28,7 +28,7 @@ public abstract class ViewController<R extends ViewRequest<S>, S extends Seriali
     public static final String REFERENCE_PARAM = "reference";
     public static final String DATABASE_PARAM = "index";
     private static final String VIEW_STATIC_CONTENT_PROMOTION_PATH = "/viewStaticContentPromotion";
-    private static final String HIGHLIGHT_PARAM = "highlightExpressions";
+    protected static final String HIGHLIGHT_PARAM = "highlightExpressions";
 
     private final ViewServerService<R, S, E> viewServerService;
     private final ObjectFactory<? extends ViewRequestBuilder<R, S, ?>> viewRequestBuilderFactory;

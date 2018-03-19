@@ -90,6 +90,7 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
         when(queryRequestBuilder.queryType(any())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.summary(anyString())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.sort(anyString())).thenReturn(queryRequestBuilder);
+        when(queryRequestBuilder.intentBasedRanking(anyBoolean())).thenReturn(queryRequestBuilder);
 
         when(suggestRequestBuilderFactory.getObject()).thenReturn(suggestRequestBuilder);
         when(suggestRequestBuilder.reference(any())).thenReturn(suggestRequestBuilder);
