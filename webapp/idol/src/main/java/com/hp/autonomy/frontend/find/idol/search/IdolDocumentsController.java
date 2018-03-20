@@ -113,7 +113,9 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
 
             final List<Term> usableTerms = allTerms.subList(0, Math.min(allTerms.size(), maxTerms));
 
-            final String terms = usableTerms.stream().map(Term::getValue).collect(Collectors.joining(" "));
+            final String terms = usableTerms.stream().map(
+                term -> term.getValue() + "~[" + term.getWeight() + "]"
+            ).collect(Collectors.joining(" "));
 
             final IdolQueryRestrictions queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                     .queryText(terms)
