@@ -143,7 +143,8 @@ define([
                 queryModel: this.queryModel
             });
 
-            if (configuration().uiCustomization.intentBasedRanking) {
+            const config = configuration();
+            if (config && config.uiCustomization && config.uiCustomization.profile.intentBasedRanking) {
                 this.intentBasedRankingView = new IntentBasedRankingView({
                     queryModel: this.queryModel
                 })

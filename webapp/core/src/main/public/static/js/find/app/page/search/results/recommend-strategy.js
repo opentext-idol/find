@@ -4,8 +4,9 @@
  */
 
 define([
-    'underscore'
-], function(_) {
+    'underscore',
+    'find/app/configuration'
+], function(_, configuration) {
     'use strict';
 
     return {
@@ -21,12 +22,15 @@ define([
         },
 
         requestParams: function(queryModel) {
+            const config = configuration();
+            const profile = config.uiCustomization.profile;
             return {
                 indexes: queryModel.get('indexes'),
                 summary: 'context',
-                maxResultsPerProfile: 2,
-                maxTerms: 30,
-                maxProfiles: 3
+                maxResultsPerProfile: profile.maxResultsPerProfile,
+                maxTerms: profile.maxTerms,
+                maxProfiles: profile.maxProfiles,
+                highlight: profile.highlightTerms || false
             };
         },
 

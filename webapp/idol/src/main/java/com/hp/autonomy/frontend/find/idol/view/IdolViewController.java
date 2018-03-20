@@ -6,15 +6,21 @@
 package com.hp.autonomy.frontend.find.idol.view;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.configuration.ConfigFileService;
+import com.hp.autonomy.frontend.configuration.ConfigResponse;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
+import com.hp.autonomy.frontend.find.core.configuration.ProfileOptions;
+import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.frontend.find.core.view.ViewController;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.logging.Markers;
 import com.hp.autonomy.searchcomponents.idol.view.*;
 import com.hp.autonomy.user.UserService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import java.io.IOException;
+import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectFactory;
@@ -38,6 +44,8 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
     private final UserService userService;
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
 
+    private final boolean updateProfileOnView;
+
     @SuppressWarnings("TypeMayBeWeakened")
     @Autowired
     public IdolViewController(
@@ -45,12 +53,18 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
             final ObjectFactory<IdolViewRequestBuilder> viewRequestBuilder,
             final ControllerUtils controllerUtils,
             final UserService userService,
-            final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever
+            final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
+            final ConfigFileService<IdolFindConfig> configService
     ) {
         super(viewServerService, viewRequestBuilder);
         this.controllerUtils = controllerUtils;
         this.userService = userService;
         this.authenticationInformationRetriever = authenticationInformationRetriever;
+
+
+        this.updateProfileOnView = Optional.ofNullable(configService.getConfigResponse()).map(ConfigResponse::getConfig).map(IdolFindConfig::getUiCustomization).map(UiCustomization::getProfile)
+                .map(ProfileOptions::getUpdateProfileOnView).orElse(false);
+
     }
 
     @Override
@@ -60,9 +74,11 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
         @RequestParam(value = HIGHLIGHT_PARAM, required = false) final String highlightExpression,
         final HttpServletResponse response
     ) throws AciErrorException, IOException {
-        final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
-        if (principal != null) {
-            userService.profileUser(principal.getName(), reference);
+        if (updateProfileOnView) {
+            final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
+            if (principal != null) {
+                userService.profileUser(principal.getName(), reference);
+            }
         }
 
         super.viewDocument(reference, database, highlightExpression, response);
