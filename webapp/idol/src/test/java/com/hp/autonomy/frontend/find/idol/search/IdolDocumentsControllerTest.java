@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
+import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.search.AbstractDocumentsControllerTest;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
@@ -21,6 +22,8 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequestBuilder;
+import com.hp.autonomy.user.UserService;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -72,6 +75,12 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
     @Mock
     private ConfigFileService<IdolFindConfig> configFileService;
 
+    @Mock
+    private UserService userService;
+
+    @Mock
+    private AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
+
     @Before
     public void setUp() {
         when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
@@ -105,7 +114,7 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
         when(getContentRequestBuilder.indexAndReferences(any())).thenReturn(getContentRequestBuilder);
         when(getContentRequestBuilder.print(any())).thenReturn(getContentRequestBuilder);
 
-        documentsController = new IdolDocumentsController(idolDocumentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory, configFileService);
+        documentsController = new IdolDocumentsController(idolDocumentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory, configFileService, authenticationInformationRetriever, userService);
         documentsService = idolDocumentsService;
         databaseType = String.class;
     }

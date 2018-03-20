@@ -187,6 +187,7 @@
         "bi": [
           "topic-map",
           "list",
+          "recommendations",
           "sunburst",
           "trending",
           "table",

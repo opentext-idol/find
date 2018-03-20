@@ -284,6 +284,7 @@ define([
         'search.resultsSort.relevance': 'by relevance',
         'search.resultsView.list': 'List',
         'search.resultsView.topic-map': 'Topic Map',
+        'search.resultsView.recommendation': 'My Recommendations',
         'search.resultsView.sunburst': 'Sunburst',
         'search.resultsView.sunburst.noParametricValues': 'Could not display Sunburst View: your search returned no parametric values',
         'search.resultsView.sunburst.error.query': 'Error: could not display Sunburst View',

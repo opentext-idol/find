@@ -15,7 +15,9 @@ define([
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/parametric-collection',
     'find/app/model/parametric-fields-collection',
+    'find/app/model/recommend-documents-collection',
     'find/app/page/search/results/query-strategy',
+    'find/app/page/search/results/recommend-strategy',
     'find/app/page/search/results/state-token-strategy',
     'find/app/util/results-view-container',
     'find/app/util/results-view-selection',
@@ -32,8 +34,8 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
 ], function(_, $, Backbone, moment, metrics, DatesFilterModel, EntityCollection, QueryModel,
-            SavedSearchModel, ParametricCollection, ParametricFieldsCollection, queryStrategy,
-            stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView,
+            SavedSearchModel, ParametricCollection, ParametricFieldsCollection, RecommendDocumentsCollection, queryStrategy,
+            recommendStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView,
             addChangeListener, SavedSearchControlView, TopicMapView, SunburstView, MapResultsView,
             TableView, TrendingView, TimeBarView, configuration, i18n, templateString) {
     'use strict';
@@ -65,6 +67,7 @@ define([
         },
 
         // Abstract
+        RecommendView: null,
         ResultsView: null,
         ResultsViewAugmentation: null,
         fetchParametricFields: null,
@@ -250,6 +253,32 @@ define([
                     selector: {
                         displayNameKey: 'list',
                         icon: 'hp-list'
+                    }
+                },
+                recommendation: {
+                    Constructor: this.ResultsViewAugmentation,
+                    shown: !!this.RecommendView,
+                    constructorArguments: {
+                        documentRenderer: options.documentRenderer,
+                        resultsView: this.RecommendView && new this.RecommendView(_.defaults({
+                            documentsCollection: new RecommendDocumentsCollection(),
+                            relatedConceptsClickHandler: relatedConceptsClickHandler,
+                            fetchStrategy: recommendStrategy,
+                            scrollModel: this.middleColumnScrollModel
+                        }, subViewArguments)),
+                        queryModel: this.queryModel,
+                        indexesCollection: this.indexesCollection,
+                        previewModeModel: this.previewModeModel,
+                        scrollModel: this.middleColumnScrollModel,
+                        mmapTab: options.mmapTab
+                    },
+                    events: {
+                        // needs binding as the view container will be the eventual listener
+                        'rightSideContainerHideToggle': _.bind(this.rightSideContainerHideToggle, this)
+                    },
+                    selector: {
+                        displayNameKey: 'recommendation',
+                        icon: 'hp-user-document'
                     }
                 },
                 sunburst: {

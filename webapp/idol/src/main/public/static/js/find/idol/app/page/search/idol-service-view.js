@@ -6,15 +6,17 @@
 define([
     'find/app/configuration',
     'find/app/page/search/service-view',
+    'find/idol/app/page/search/results/idol-recommend-view',
     'find/idol/app/page/search/results/idol-results-view-augmentation',
     'find/idol/app/page/search/results/idol-results-view',
     'js-whatever/js/model-any-changed-attribute-listener',
     'find/app/model/parametric-fields-collection'
-], function(configuration, ServiceView, ResultsViewAugmentation, ResultsView, addChangeListener,
+], function(configuration, ServiceView, RecommendView, ResultsViewAugmentation, ResultsView, addChangeListener,
             ParametricFieldsCollection) {
     'use strict';
 
     return ServiceView.extend({
+        RecommendView: RecommendView,
         ResultsViewAugmentation: ResultsViewAugmentation,
         ResultsView: ResultsView,
         mapViewResultsStep: configuration().map.resultsStep,
