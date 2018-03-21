@@ -146,6 +146,9 @@ define([
             // Tracks the document model which is currently shown in the preview
             this.previewModeModel = new Backbone.Model({document: null});
 
+            // Tracks the document model which is currently shown in the recommendation preview
+            const recommendationPreviewModel = new Backbone.Model({document: null});
+
             const subViewArguments = {
                 configuration: configuration(),
                 delayedIndexesSelection: options.delayedIndexesSelection,
@@ -265,10 +268,12 @@ define([
                             relatedConceptsClickHandler: relatedConceptsClickHandler,
                             fetchStrategy: recommendStrategy,
                             scrollModel: this.middleColumnScrollModel
-                        }, subViewArguments)),
+                        }, _.defaults({
+                            previewModeModel: recommendationPreviewModel
+                        }, subViewArguments))),
                         queryModel: this.queryModel,
                         indexesCollection: this.indexesCollection,
-                        previewModeModel: this.previewModeModel,
+                        previewModeModel: recommendationPreviewModel,
                         scrollModel: this.middleColumnScrollModel,
                         mmapTab: options.mmapTab
                     },
