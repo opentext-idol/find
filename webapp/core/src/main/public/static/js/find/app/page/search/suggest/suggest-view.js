@@ -53,6 +53,7 @@ define([
             });
 
             this.resultsViewAugmentation = new this.ResultsViewAugmentation({
+                documentRenderer: options.documentRenderer,
                 indexesCollection: options.indexesCollection,
                 queryModel: this.queryModel,
                 resultsView: this.resultsView,
