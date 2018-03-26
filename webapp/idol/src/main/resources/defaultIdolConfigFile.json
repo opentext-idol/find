@@ -231,7 +231,7 @@
       "maxProfiles": 3,
       "maxResultsPerProfile": 2,
       "maxTerms": 30,
-      "updateProfileOnView": true
+      "updateProfileOnView": false
     }
   },
   "minScore": 0,
