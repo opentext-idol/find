@@ -7,8 +7,13 @@ package com.hp.autonomy.frontend.find.idol.view;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciServiceException;
+import com.hp.autonomy.frontend.configuration.ConfigFileService;
+import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.view.AbstractViewControllerTest;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.view.*;
+import com.hp.autonomy.user.UserService;
+import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +35,12 @@ public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewC
     private ObjectFactory<IdolViewRequestBuilder> viewRequestBuilderFactory;
     @Mock
     private IdolViewRequestBuilder viewRequestBuilder;
+    @Mock
+    private UserService userService;
+    @Mock
+    private AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
+    @Mock
+    private ConfigFileService<IdolFindConfig> configService;
 
     @Override
     @Before
@@ -39,7 +50,7 @@ public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewC
         when(viewRequestBuilder.database(any())).thenReturn(viewRequestBuilder);
         when(viewRequestBuilder.highlightExpression(any())).thenReturn(viewRequestBuilder);
 
-        viewController = new IdolViewController(idolViewServerService, viewRequestBuilderFactory, controllerUtils);
+        viewController = new IdolViewController(idolViewServerService, viewRequestBuilderFactory, controllerUtils, userService, authenticationInformationRetriever, configService);
         viewServerService = idolViewServerService;
         response = new MockHttpServletResponse();
         super.setUp();

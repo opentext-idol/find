@@ -190,7 +190,8 @@
           "sunburst",
           "trending",
           "table",
-          "map"
+          "map",
+          "recommendation"
         ],
         "user": [
           "list"
@@ -223,6 +224,14 @@
       "^(https?://)?www\\.facebook\\.com/plugins/.*" : "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference%>\">",
       "^(https?://)?video\\.xx\\.fbcdn\\.net/.*" : "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference%>\">",
       "^(https?:\\/\\/)?www.youtube.com\\/watch(.*?)[?&]v=([^&?]+)(.*)": "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference.replace(/^(https?:\\/\\/)?www.youtube.com\\/watch(.*?)[?&]v=([^&?]+)(.*)/i, 'https://www.youtube-nocookie.com/embed/$3?$2$4')%>\">"
+    },
+    "profile": {
+      "intentBasedRanking": true,
+      "highlightTerms": true,
+      "maxProfiles": 3,
+      "maxResultsPerProfile": 2,
+      "maxTerms": 30,
+      "updateProfileOnView": true
     }
   },
   "minScore": 0,

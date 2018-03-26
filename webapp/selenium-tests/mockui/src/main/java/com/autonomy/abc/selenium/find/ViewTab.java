@@ -2,6 +2,7 @@ package com.autonomy.abc.selenium.find;
 
 public enum ViewTab {
     LIST("list"),
+    RECOMMENDATION("recommendation"),
     TOPIC_MAP("topic-map"),
     SUNBURST("sunburst"),
     TRENDING("trending"),

@@ -45,6 +45,7 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
     private final String errorCallSupportString;
     private final Boolean openSharedDashboardQueryAsNewSearch;
     private final SortParam parametricValuesSort;
+    private final ProfileOptions profile;
 
     @Override
     public UiCustomization merge(final UiCustomization uiCustomization) {
@@ -79,6 +80,9 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
                 .openSharedDashboardQueryAsNewSearch(openSharedDashboardQueryAsNewSearch != null
                                             ? openSharedDashboardQueryAsNewSearch
                                             : uiCustomization.openSharedDashboardQueryAsNewSearch)
+                .profile(profile != null
+                                            ? profile.merge(uiCustomization.profile)
+                                            : uiCustomization.profile)
                 .build();
         }
     }

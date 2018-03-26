@@ -103,6 +103,7 @@ define([
             summary: addLinksToSummary(model.get('summary')),
             url: url ? urlManipulator.addSpecialUrlPrefix(model.get('contentType'), url) : null,
             icon: 'icomoon-file-' + getContentTypeClass(model),
+            intentRankedHit: model.get('intentRankedHit'),
             thumbnailSrc: thumbnailSrc,
             age: date && date.fromNow(),
             fields: model.get('fields').map(_.partial(_.pick, _, ['id', 'displayName', 'advanced', 'values']))
