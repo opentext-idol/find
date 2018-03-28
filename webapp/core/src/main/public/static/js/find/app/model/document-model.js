@@ -168,9 +168,11 @@ define([
 
                 for (let ii = 0; ii < patterns.length; ++ii) {
                     const pattern = patterns[ii];
-
-                    if (pattern.regex.test(reference)) {
-                        return pattern.template(this.attributes);
+                    const match = pattern.regex.exec(reference);
+                    if (match) {
+                        return pattern.template(_.extend({
+                            match: match
+                        }, this.attributes));
                     }
                 }
             }
