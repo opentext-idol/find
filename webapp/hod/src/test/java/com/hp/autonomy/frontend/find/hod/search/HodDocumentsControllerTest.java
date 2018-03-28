@@ -86,6 +86,7 @@ public class HodDocumentsControllerTest extends AbstractDocumentsControllerTest<
         when(queryRequestBuilder.queryType(any())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.summary(any())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.sort(any())).thenReturn(queryRequestBuilder);
+        when(queryRequestBuilder.intentBasedRanking(anyBoolean())).thenReturn(queryRequestBuilder);
 
         when(suggestRequestBuilderFactory.getObject()).thenReturn(suggestRequestBuilder);
         when(suggestRequestBuilder.reference(any())).thenReturn(suggestRequestBuilder);
