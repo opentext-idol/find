@@ -227,7 +227,7 @@ define([
             const resultsViewsMap = {
                 'topic-map': {
                     Constructor: TopicMapView,
-                    shown: hasBiRole,
+                    shown: true,
                     constructorArguments: _.extend({
                         clickHandler: relatedConceptsClickHandler,
                         type: 'QUERY'
@@ -289,7 +289,7 @@ define([
                 sunburst: {
                     Constructor: SunburstView,
                     constructorArguments: subViewArguments,
-                    shown: hasBiRole && this.displayDependentParametricViews,
+                    shown: this.displayDependentParametricViews,
                     selector: {
                         displayNameKey: 'sunburst',
                         icon: 'hp-favorite'
@@ -297,7 +297,7 @@ define([
                 },
                 map: {
                     Constructor: MapResultsView,
-                    shown: hasBiRole && configuration().map.enabled,
+                    shown: configuration().map.enabled,
                     constructorArguments: _.extend({
                         resultsStep: this.mapViewResultsStep,
                         allowIncrement: this.mapViewAllowIncrement
@@ -310,7 +310,7 @@ define([
                 table: {
                     Constructor: TableView,
                     constructorArguments: subViewArguments,
-                    shown: hasBiRole && this.displayDependentParametricViews,
+                    shown: this.displayDependentParametricViews,
                     selector: {
                         displayNameKey: 'table',
                         icon: 'hp-table'
@@ -319,7 +319,7 @@ define([
                 trending: {
                     Constructor: TrendingView,
                     constructorArguments: subViewArguments,
-                    shown: hasBiRole,
+                    shown: true,
                     selector: {
                         displayNameKey: 'trending',
                         icon: 'hp-line-chart'
