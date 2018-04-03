@@ -18,6 +18,21 @@
                     </li>
                     <li class="divider"></li>
                 <% } %>
+
+                <% if(data.entitySearchOptions) { %>
+                    <li>
+                        <a>
+                            <i class="hp-icon hp-select"></i>
+
+                            <select class="find-navbar-entity-search-select">
+                                <% _.each(_.keys(data.entitySearchOptions), function(key){ %>
+                                <option><%- key %></option>
+                                <% }) %>
+                            </select>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                <% } %>
                 <%= data.menuItems({pages: data.pages.dropdown}) %>
                 <li>
                     <a class="clickable navigation-logout"><i class="hp-icon hp-steps hp-fw text-muted"></i> <%- data.i18n['app.logout'] %></a>

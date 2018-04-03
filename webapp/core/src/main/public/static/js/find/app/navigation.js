@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2014-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -27,12 +27,17 @@ define([
             'click li[data-pagename="custom-applications"] ul li a[target=_blank]': function(event) {
                 event.preventDefault();
                 window.open(event.currentTarget.href, '_blank');
+            },
+            'change .find-navbar-entity-search-select': function(evt){
+                this.onEntitySearchSelect(evt.currentTarget.value);
             }
         },
 
         template: _.template(template, {variable: 'data'}),
 
         menuItems: _.constant(''),
+
+        onEntitySearchSelect: function(){},
 
         initialize: function(options) {
             this.pageData = options.pageData;
@@ -76,7 +81,12 @@ define([
                 username: conf.username,
                 messageOfTheDay: conf.messageOfTheDay && conf.messageOfTheDay.message,
                 messageOfTheDayCssClass: conf.messageOfTheDay && conf.messageOfTheDay.cssClass,
+                entitySearchOptions: conf.entitySearchOptions
             }));
+
+            if(conf.entitySearchOptions) {
+                this.onEntitySearchSelect(_.keys(conf.entitySearchOptions)[0]);
+            }
 
             this.$('.side-menu').metisMenu({
                 activeClass: 'selected'

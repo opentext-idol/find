@@ -13,6 +13,8 @@ import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -38,6 +40,8 @@ public class EntitySearchConfig extends SimpleComponent<EntitySearchConfig> impl
     private final String answerServerDatabaseMatch;
     private final String answerServerContentField;
     private final Double answerServerTimeoutSecs;
+
+    private final LinkedHashMap<String, List<String>> databaseChoices;
 
     @Override
     public void basicValidate(final String configSection) throws ConfigException {

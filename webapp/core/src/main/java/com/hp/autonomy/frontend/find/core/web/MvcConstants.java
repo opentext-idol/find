@@ -25,6 +25,7 @@ public enum MvcConstants {
     ANSWER_SERVER_ENABLED("answerServerEnabled"),
     CONVERSATION_ENABLED("conversationEnabled"),
     ENTITY_SEARCH_ENABLED("entitySearchEnabled"),
+    ENTITY_SEARCH_OPTIONS("entitySearchOptions"),
     ENTITY_SEARCH_ANSWER_SERVER_ENABLED("entitySearchAnswerServerEnabled"),
     PUBLIC_INDEXES_ENABLED("publicIndexesEnabled"),
     TEMPLATES_CONFIG("templatesConfig"),

@@ -18,6 +18,8 @@ define([
 
     const loadingHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
 
+    let defaultDatabase;
+
     function SelectionEntitySearch(options) {
         const documentRenderer = options.documentRenderer;
         const answerServer = options.answerServer;
@@ -46,7 +48,7 @@ define([
             updateIndicator($hover, loadingHtml, bounds, null);
 
             lastFetch = entityModels.fetch({
-                data: { text: text }
+                data: { text: text, databaseGroup: defaultDatabase }
             }).done(function(){
                 if (text === lastQueryText && entityModels.length) {
                     const result = entityModels.first();
@@ -359,6 +361,10 @@ define([
         this.setElement = function(dom) {
             element = dom;
         }
+    }
+
+    SelectionEntitySearch.setDefaultDatabaseGroup = function(database) {
+        defaultDatabase = database;
     }
 
     return SelectionEntitySearch;

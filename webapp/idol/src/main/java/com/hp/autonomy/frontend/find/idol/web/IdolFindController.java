@@ -106,6 +106,10 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
         publicConfig.put(MvcConstants.ENTITY_SEARCH_ANSWER_SERVER_ENABLED.value(),
             BooleanUtils.isTrue(entitySearch.getEnabled()) && BooleanUtils.isTrue(entitySearch.getAnswerServer().getEnabled())
         );
+        publicConfig.put(MvcConstants.ENTITY_SEARCH_OPTIONS.value(),
+            BooleanUtils.isTrue(entitySearch.getEnabled()) ? entitySearch.getDatabaseChoices() : null
+        );
+
         publicConfig.put(MvcConstants.TEMPLATES_CONFIG.value(), templatesConfig.getConfig());
         publicConfig.put(MvcConstants.ASSETS_CONFIG.value(), assetsConfigService.getConfig());
         publicConfig.put(MvcConstants.MESSAGE_OF_THE_DAY_CONFIG.value(), config.getMessageOfTheDay());
