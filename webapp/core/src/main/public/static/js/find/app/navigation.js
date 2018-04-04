@@ -30,6 +30,9 @@ define([
             },
             'change .find-navbar-entity-search-select': function(evt){
                 this.onEntitySearchSelect(evt.currentTarget.value);
+            },
+            'click .suppress-click-propagation': function(evt){
+                evt.stopPropagation();
             }
         },
 
