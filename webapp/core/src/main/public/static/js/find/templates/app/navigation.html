@@ -26,7 +26,7 @@
 
                             <select class="chosen-select find-navbar-entity-search-select">
                                 <% _.each(_.keys(data.entitySearchOptions), function(key){ %>
-                                <option><%- key %></option>
+                                <option value="<%- key %>"><%- data.i18n['entitySearch.databaseChoice.' + key] || key %></option>
                                 <% }) %>
                             </select>
                         </a>
