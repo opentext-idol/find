@@ -37,7 +37,7 @@ define([
 
         menuItems: _.constant(''),
 
-        onEntitySearchSelect: function(){},
+        onEntitySearchSelect: function(group){},
 
         initialize: function(options) {
             this.pageData = options.pageData;
