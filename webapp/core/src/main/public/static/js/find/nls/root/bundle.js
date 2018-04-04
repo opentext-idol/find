@@ -100,6 +100,7 @@ define([
         'dropzone.dictCancelUploadConfirmation': 'Are you sure you want to cancel this upload?',
         'dropzone.dictRemoveFile': 'Remove file',
         'dropzone.dictRemoveFileConfirmation': '',
+        'entitySearch.databaseChoiceTitle': 'Entity Search Databases',
         'entitySearch.template.place.region': 'Region',
         'entitySearch.template.place.population': 'Population',
         'entitySearch.template.place.timeZone': 'Time Zone',

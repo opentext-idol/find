@@ -22,7 +22,7 @@
                 <% if(data.entitySearchOptions) { %>
                     <li class="suppress-click-propagation">
                         <a>
-                            <i class="hp-icon hp-select"></i>
+                            <i class="hp-icon hp-select" title="<%- data.i18n['entitySearch.databaseChoiceTitle'] %>"></i>
 
                             <select class="chosen-select find-navbar-entity-search-select">
                                 <% _.each(_.keys(data.entitySearchOptions), function(key){ %>
