@@ -11,6 +11,7 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/navigation.html',
+    'chosen',
     'metisMenu'
 ], function(_, $, Backbone, vent, configuration, i18n, template) {
     'use strict';
@@ -88,6 +89,10 @@ define([
             }));
 
             if(conf.entitySearchOptions) {
+                this.$('.chosen-select').chosen({
+                    disable_search_threshold: 10,
+                    width: '95%'
+                });
                 this.onEntitySearchSelect(_.keys(conf.entitySearchOptions)[0]);
             }
 
