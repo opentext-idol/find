@@ -203,7 +203,8 @@ define([
                     errorModel.set('hasError', false);
 
                     const fieldText = locationFieldsToRetrieve.map(function(locationField) {
-                        return '(EXISTS{}:' + config.fieldsInfo[locationField.latitudeField].names.join(':') +
+                        return locationField.geoindexField ? 'EXISTS{}:' + config.fieldsInfo[locationField.geoindexField].names.join(':') :
+                            '(EXISTS{}:' + config.fieldsInfo[locationField.latitudeField].names.join(':') +
                             ' AND EXISTS{}:' + config.fieldsInfo[locationField.longitudeField].names.join(':') + ')';
                     }).join(' OR ');
 

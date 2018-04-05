@@ -13,6 +13,7 @@ class MapField {
     final String displayName;
     final String latitudeField;
     final String longitudeField;
+    final String geoindexField;
     final String iconName;
     final String iconColor;
     final String markerColor;
@@ -21,12 +22,14 @@ class MapField {
             @JsonProperty("displayName") final String displayName,
             @JsonProperty("latitudeField") final String latitudeField,
             @JsonProperty("longitudeField") final String longitudeField,
+            @JsonProperty("geoindexField") final String geoindexField,
             @JsonProperty("iconName") final String iconName,
             @JsonProperty("iconColor") final String iconColor,
             @JsonProperty("markerColor") final String markerColor) {
         this.displayName = displayName;
         this.latitudeField = latitudeField;
         this.longitudeField = longitudeField;
+        this.geoindexField = geoindexField;
         this.iconName = iconName;
         this.iconColor = iconColor;
         this.markerColor = markerColor;

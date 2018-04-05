@@ -48,6 +48,9 @@ define([
         NUMBER: function (valueWrapper) {
             return valueWrapper.value
         },
+        GEOINDEX: function (valueWrapper) {
+            return valueWrapper.value
+        },
         /**
          * @return {boolean}
          */
@@ -120,10 +123,29 @@ define([
             if (configuration().map.enabled) {
                 response.locations = _.chain(configuration().map.locationFields)
                     .map(function (field) {
-                        const latitudes = getFieldValues(response.fieldMap[field.latitudeField]);
-                        const longitudes = getFieldValues(response.fieldMap[field.longitudeField]);
+                        let latLons = [];
 
-                        return _.zip(latitudes, longitudes).map(function (coordinates) {
+                        if (field.geoindexField) {
+                            const wellKnownText = getFieldValues(response.fieldMap[field.geoindexField]);
+
+                            _.each(wellKnownText, function(text){
+                                // We ignore area fields for now, only handling points.
+                                const match = /POINT *\((-?\d+(?:\.\d*)?)\s+(-?\d+(?:\.\d*)?)\)/.exec(text);
+
+                                if (match) {
+                                    // WKT uses (lon, lat) pairs, but IDOL uses (lat, lon), so we have to swap
+                                    //   the order of the parameters.
+                                    latLons.push([+match[2], +match[1]]);
+                                }
+                            });
+                        }
+                        else {
+                            const latitudes = getFieldValues(response.fieldMap[field.latitudeField]);
+                            const longitudes = getFieldValues(response.fieldMap[field.longitudeField]);
+                            latLons = _.zip(latitudes, longitudes);
+                        }
+
+                        return latLons.map(function (coordinates) {
                             return {
                                 displayName: field.displayName,
                                 latitude: coordinates[0],

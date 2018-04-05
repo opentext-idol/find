@@ -28,7 +28,7 @@ define([
         if (config && config.map && config.map.enabled && config.map.locationFields && config.fieldsInfo) {
             const fieldsInfo = config.fieldsInfo;
 
-            function getFieldName(fieldName) {
+            function getFieldNames(fieldName) {
                 const fieldMeta = fieldsInfo[fieldName];
                 if (fieldMeta && fieldMeta.names && fieldMeta.names.length) {
                     return fieldMeta.names;
@@ -36,29 +36,34 @@ define([
             }
 
             _.each(config.map.locationFields, function(field){
-                const latField = field.latitudeField;
-                const lonField = field.longitudeField;
+                const latLonFields = [];
 
-                const latFields = getFieldName(latField);
-                const lonFields = getFieldName(lonField);
-
-                if (latFields && lonFields) {
-                    const latLonFields = [];
-
-                    for (let ii = 0, max = Math.min(latFields.length, lonFields.length); ii < max; ++ii) {
-                        latLonFields.push([latFields[ii], lonFields[ii]])
+                if (field.geoindexField) {
+                    const latLonField = getFieldNames(field.geoindexField);
+                    if (latLonField && latLonField.length) {
+                        latLonFields.push([latLonField]);
                     }
-
-                    if (latLonFields.length) {
-                        const name = field.displayName;
-                        const id = field.id || name;
-                        const newField = new MapLatLonFields(id, name, latLonFields, field);
-
-                        // We avoid having any two fields with the same id.
-                        if (!locationFieldsById.hasOwnProperty(id)) {
-                            locationFields.push(newField);
-                            locationFieldsById[id] = newField;
+                }
+                else {
+                    const latFields = getFieldNames(field.latitudeField);
+                    const lonFields = getFieldNames(field.longitudeField);
+                    if (latFields && lonFields) {
+                        for (let ii = 0, max = Math.min(latFields.length, lonFields.length); ii < max; ++ii) {
+                            latLonFields.push([latFields[ii], lonFields[ii]])
                         }
+                    }
+                }
+
+
+                if (latLonFields.length) {
+                    const name = field.displayName;
+                    const id = field.id || name;
+                    const newField = new MapLatLonFields(id, name, latLonFields, field);
+
+                    // We avoid having any two fields with the same id.
+                    if (!locationFieldsById.hasOwnProperty(id)) {
+                        locationFields.push(newField);
+                        locationFieldsById[id] = newField;
                     }
                 }
             })
