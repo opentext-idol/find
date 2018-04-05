@@ -167,9 +167,9 @@ define([
 
                 const fieldtext = this.model.toFieldText();
                 expect(fieldtext.toString()).toEqual(
-                    'POLYGON{-12.76,-206.71,-5.09,-170.51,-27.21,-168.75,-29.07,-200.12}:OG_LATITUDE:OG_LONGITUDE OR ' +
-                    'POLYGON{-12.76,153.29,-5.09,189.49,-27.21,191.25,-29.07,159.88}:OG_LATITUDE:OG_LONGITUDE OR ' +
-                    'POLYGON{-12.76,-566.71,-5.09,-530.51,-27.21,-528.75,-29.07,-560.12}:OG_LATITUDE:OG_LONGITUDE');
+                    'POLYGON{-206.71,-12.76,-170.51,-5.09,-168.75,-27.21,-200.12,-29.07}:OG_LONGITUDE:OG_LATITUDE OR ' +
+                    'POLYGON{153.29,-12.76,189.49,-5.09,191.25,-27.21,159.88,-29.07}:OG_LONGITUDE:OG_LATITUDE OR ' +
+                    'POLYGON{-566.71,-12.76,-530.51,-5.09,-528.75,-27.21,-560.12,-29.07}:OG_LONGITUDE:OG_LATITUDE');
             });
 
             it('returns NOT DISTSPHERICAL for a circle exclusion', function() {
@@ -189,9 +189,9 @@ define([
                 const fieldtext = this.model.toFieldText();
                 expect(fieldtext.toString()).toEqual(
                     'NOT (' +
-                    'POLYGON{-12.76,-206.71,-5.09,-170.51,-27.21,-168.75,-29.07,-200.12}:OG_LATITUDE:OG_LONGITUDE OR ' +
-                    'POLYGON{-12.76,153.29,-5.09,189.49,-27.21,191.25,-29.07,159.88}:OG_LATITUDE:OG_LONGITUDE OR ' +
-                    'POLYGON{-12.76,-566.71,-5.09,-530.51,-27.21,-528.75,-29.07,-560.12}:OG_LATITUDE:OG_LONGITUDE' +
+                    'POLYGON{-206.71,-12.76,-170.51,-5.09,-168.75,-27.21,-200.12,-29.07}:OG_LONGITUDE:OG_LATITUDE OR ' +
+                    'POLYGON{153.29,-12.76,189.49,-5.09,191.25,-27.21,159.88,-29.07}:OG_LONGITUDE:OG_LATITUDE OR ' +
+                    'POLYGON{-566.71,-12.76,-530.51,-5.09,-528.75,-27.21,-560.12,-29.07}:OG_LONGITUDE:OG_LATITUDE' +
                     ')'
                 );
             });
@@ -205,9 +205,9 @@ define([
                 const fieldtext = this.model.toFieldText();
                 expect(fieldtext.toString()).toEqual(
                     'DISTSPHERICAL{-7.013,-193.007,3512}:OG_LATITUDE:OG_LONGITUDE OR ' +
-                    'POLYGON{-12.76,-206.71,-5.09,-170.51,-27.21,-168.75,-29.07,-200.12}:OG_LATITUDE:OG_LONGITUDE OR ' +
-                    'POLYGON{-12.76,153.29,-5.09,189.49,-27.21,191.25,-29.07,159.88}:OG_LATITUDE:OG_LONGITUDE OR ' +
-                    'POLYGON{-12.76,-566.71,-5.09,-530.51,-27.21,-528.75,-29.07,-560.12}:OG_LATITUDE:OG_LONGITUDE'
+                    'POLYGON{-206.71,-12.76,-170.51,-5.09,-168.75,-27.21,-200.12,-29.07}:OG_LONGITUDE:OG_LATITUDE OR ' +
+                    'POLYGON{153.29,-12.76,189.49,-5.09,191.25,-27.21,159.88,-29.07}:OG_LONGITUDE:OG_LATITUDE OR ' +
+                    'POLYGON{-566.71,-12.76,-530.51,-5.09,-528.75,-27.21,-560.12,-29.07}:OG_LONGITUDE:OG_LATITUDE'
                 );
             });
 
@@ -223,14 +223,14 @@ define([
                 expect(fieldtext.toString()).toEqual(
                     '(' +
                     'DISTSPHERICAL{-7.013,-193.007,3512}:OG_LATITUDE:OG_LONGITUDE OR ' +
-                    'POLYGON{-12.76,-206.71,-5.09,-170.51,-27.21,-168.75,-29.07,-200.12}:OG_LATITUDE:OG_LONGITUDE OR ' +
-                    'POLYGON{-12.76,153.29,-5.09,189.49,-27.21,191.25,-29.07,159.88}:OG_LATITUDE:OG_LONGITUDE OR ' +
-                    'POLYGON{-12.76,-566.71,-5.09,-530.51,-27.21,-528.75,-29.07,-560.12}:OG_LATITUDE:OG_LONGITUDE' +
+                    'POLYGON{-206.71,-12.76,-170.51,-5.09,-168.75,-27.21,-200.12,-29.07}:OG_LONGITUDE:OG_LATITUDE OR ' +
+                    'POLYGON{153.29,-12.76,189.49,-5.09,191.25,-27.21,159.88,-29.07}:OG_LONGITUDE:OG_LATITUDE OR ' +
+                    'POLYGON{-566.71,-12.76,-530.51,-5.09,-528.75,-27.21,-560.12,-29.07}:OG_LONGITUDE:OG_LATITUDE' +
                     ') AND NOT (' +
                     'DISTSPHERICAL{40.123,60.321,123}:OG_LATITUDE:OG_LONGITUDE OR ' +
-                    'POLYGON{50.76,-206.71,11.12,-170.51,17,-168.75}:OG_LATITUDE:OG_LONGITUDE OR ' +
-                    'POLYGON{50.76,153.29,11.12,189.49,17,191.25}:OG_LATITUDE:OG_LONGITUDE OR ' +
-                    'POLYGON{50.76,-566.71,11.12,-530.51,17,-528.75}:OG_LATITUDE:OG_LONGITUDE' +
+                    'POLYGON{-206.71,50.76,-170.51,11.12,-168.75,17}:OG_LONGITUDE:OG_LATITUDE OR ' +
+                    'POLYGON{153.29,50.76,189.49,11.12,191.25,17}:OG_LONGITUDE:OG_LATITUDE OR ' +
+                    'POLYGON{-566.71,50.76,-530.51,11.12,-528.75,17}:OG_LONGITUDE:OG_LATITUDE' +
                     ')'
                 );
             });
