@@ -9,11 +9,11 @@ PointExpression
     = 'POINT' _ '(' _ pos:Point _  ')' { return { type: 'POINT', point: pos } }
 
 PolygonExpression
-    = 'POLYGON' _ '(' _ first:LineExpression _ others:( ',' _ LineExpression )* ')' {  return { type: 'POLYGON', polygon: [first].concat(others.map(function(a){return a[2]})) } }
+    = 'POLYGON' _ '(' _ first:LineExpression _ others:( ',' _ LineExpression _ )* ')' {  return { type: 'POLYGON', polygon: [first].concat(others.map(function(a){return a[2]})) } }
 
 LineExpression
-	= '(' _ first:Point _ others: ( ',' _ Point )* _ ')' {
-    	return [first].concat(others.map(function(a) { return a[2] }))
+    = '(' _ first:Point _ others:( ',' _ Point _ )* ')' {
+        return [first].concat(others.map(function(a) { return a[2] }))
     }
 
 // Note: we return the numbers in (lat, lon) format; the reverse of WKT, for compatibility with Leaflet's input format
