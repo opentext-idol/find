@@ -31,6 +31,14 @@ define([
                     "iconName": "hp-pin",
                     "iconColor": "blue",
                     "markerColor": "orange"
+                },
+                {
+                    "id": "GeoindexLocation",
+                    "displayName": "Geoindex Location",
+                    "geoindexField": "geounified",
+                    "iconName" : "hp-navigate",
+                    "iconColor" : "green",
+                    "markerColor" : "red"
                 }
             ]
         },
@@ -63,6 +71,13 @@ define([
                     "OG_LONGITUDE"
                 ],
                 "type": "NUMBER",
+                "advanced": true
+            },
+            "geounified": {
+                "names": [
+                    "GEOUNIFIED"
+                ],
+                "type": "GEOINDEX",
                 "advanced": true
             }
         }
@@ -160,6 +175,15 @@ define([
                 expect(fieldtext.toString()).toEqual('DISTSPHERICAL{-7.013,-193.007,3512}:OG_LATITUDE:OG_LONGITUDE');
             });
 
+            it('returns DISTSPHERICAL for a circle for unified fields', function() {
+                this.model.set('GeoindexLocation', [
+                    {"type":"circle","center":[-7.013,-193.007],"radius":3511716.726}]
+                )
+
+                const fieldtext = this.model.toFieldText();
+                expect(fieldtext.toString()).toEqual('DISTSPHERICAL{-7.013,-193.007,3512}:GEOUNIFIED');
+            });
+
             it('returns three POLYGON fieldtext (with ±360° offsets) for a polygon', function() {
                 this.model.set('OGLocation', [
                     {"type":"polygon","points":[[-12.76,-206.71],[-5.09,-170.51],[-27.21,-168.75],[-29.07,-200.12]]}
@@ -170,6 +194,18 @@ define([
                     'POLYGON{-206.71,-12.76,-170.51,-5.09,-168.75,-27.21,-200.12,-29.07}:OG_LONGITUDE:OG_LATITUDE OR ' +
                     'POLYGON{153.29,-12.76,189.49,-5.09,191.25,-27.21,159.88,-29.07}:OG_LONGITUDE:OG_LATITUDE OR ' +
                     'POLYGON{-566.71,-12.76,-530.51,-5.09,-528.75,-27.21,-560.12,-29.07}:OG_LONGITUDE:OG_LATITUDE');
+            });
+
+            it('returns three POLYGON fieldtext (with ±360° offsets) for a polygon for unified fields', function() {
+                this.model.set('GeoindexLocation', [
+                    {"type":"polygon","points":[[-12.76,-206.71],[-5.09,-170.51],[-27.21,-168.75],[-29.07,-200.12]]}
+                ])
+
+                const fieldtext = this.model.toFieldText();
+                expect(fieldtext.toString()).toEqual(
+                    'POLYGON{-206.71,-12.76,-170.51,-5.09,-168.75,-27.21,-200.12,-29.07}:GEOUNIFIED OR ' +
+                    'POLYGON{153.29,-12.76,189.49,-5.09,191.25,-27.21,159.88,-29.07}:GEOUNIFIED OR ' +
+                    'POLYGON{-566.71,-12.76,-530.51,-5.09,-528.75,-27.21,-560.12,-29.07}:GEOUNIFIED');
             });
 
             it('returns NOT DISTSPHERICAL for a circle exclusion', function() {
