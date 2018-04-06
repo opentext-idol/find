@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -10,7 +10,7 @@ define([
 ], function(GeographyModel, configuration, parser) {
     'use strict';
 
-    const configWithTwoFields = {
+    const configWithThreeFields = {
         map: {
             "enabled" : true,
             "locationFields" : [
@@ -85,7 +85,7 @@ define([
 
     describe('Geography Model', function() {
         beforeEach(function() {
-            GeographyModel.parseConfiguration(configWithTwoFields)
+            GeographyModel.parseConfiguration(configWithThreeFields)
 
             this.model = new GeographyModel({});
         });
@@ -98,10 +98,11 @@ define([
             const locationFields = GeographyModel.LocationFields;
             const locationFieldsById = GeographyModel.LocationFieldsById;
 
-            it('should have parsed two location fields', function(){
-                expect(locationFields.length).toEqual(2);
+            it('should have parsed three location fields', function(){
+                expect(locationFields.length).toEqual(3);
                 expect(locationFieldsById['DefaultLocation']).toExist();
                 expect(locationFieldsById['OGLocation']).toExist();
+                expect(locationFieldsById['GeoindexLocation']).toExist();
             })
 
             it('should not parse any fields for an empty configuration', function(){
@@ -111,7 +112,7 @@ define([
             })
 
             it('should not parse any fields if the map is disabled', function(){
-                const config = _.clone(configWithTwoFields);
+                const config = _.clone(configWithThreeFields);
                 config.map = _.clone(config.map);
                 config.map.enabled = false;
 
@@ -121,7 +122,7 @@ define([
             })
 
             it('should not parse any fields if the map is not configured', function(){
-                const config = _.clone(configWithTwoFields);
+                const config = _.clone(configWithThreeFields);
                 delete config.map;
 
                 GeographyModel.parseConfiguration(config);
@@ -130,18 +131,19 @@ define([
             })
 
             it('should ignore any fields where the IDOL field config is missing', function(){
-                const config = _.clone(configWithTwoFields);
+                const config = _.clone(configWithThreeFields);
                 config.fieldsInfo = _.clone(config.fieldsInfo);
                 delete config.fieldsInfo['latitude'];
 
                 GeographyModel.parseConfiguration(config);
-                expect(locationFields.length).toEqual(1);
+                expect(locationFields.length).toEqual(2);
                 expect(locationFieldsById['DefaultLocation']).toBeUndefined();
                 expect(locationFieldsById['OGLocation']).toExist();
+                expect(locationFieldsById['GeoindexLocation']).toExist();
             })
 
             it('should work with a single field', function(){
-                const config = _.clone(configWithTwoFields);
+                const config = _.clone(configWithThreeFields);
                 config.map = _.clone(config.map);
                 config.map.locationFields = _.clone(config.map.locationFields);
                 config.map.locationFields.length = 1;
@@ -150,6 +152,7 @@ define([
                 expect(locationFields.length).toEqual(1);
                 expect(locationFieldsById['DefaultLocation']).toExist();
                 expect(locationFieldsById['OGLocation']).toBeUndefined();
+                expect(locationFieldsById['GeoindexLocation']).toBeUndefined();
             })
         })
 
