@@ -58,6 +58,30 @@ define([
             }, this))
 
             this.mapResultsView.addMarkers(markers, false);
+
+            const areasMap = this.model.get('areas');
+
+            const areaLayers = _.flatten(_.map(areasMap, function(areas) {
+                return _.map(areas, function(location){
+                    const popover = this.popoverTemplate({
+                        i18n: i18n,
+                        title: location.displayName,
+                        summary: addLinksToSummary(this.model.get('summary')),
+                        cidForClickRouting: null
+                    });
+
+                    const locationField = _.findWhere(this.locationFields, {displayName: location.displayName});
+
+                    return this.mapResultsView.getAreaLayer(location.polygon, locationField.markerColor, popover);
+                }, this)
+            }, this))
+
+            if (areaLayers.length) {
+                _.each(areaLayers, function(layer){
+                    this.mapResultsView.addLayer(layer, false);
+                }, this);
+            }
+
             this.mapResultsView.fitMapToMarkerBounds();
         },
 

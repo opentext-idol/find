@@ -160,6 +160,39 @@ define([
                     .flatten()
                     .groupBy('displayName')
                     .value()
+
+                response.areas = _.chain(configuration().map.locationFields)
+                    .map(function (field) {
+                        let polygons = [];
+
+                        if (field.geoindexField) {
+                            const wellKnownText = getFieldValues(response.fieldMap[field.geoindexField]);
+
+                            _.each(wellKnownText, function(text){
+                                try {
+                                    const parsed = idolWktParser.parse(text);
+                                    if (parsed.type === 'POLYGON') {
+                                        polygons.push(parsed.polygon)
+                                    }
+                                } catch (e) {
+                                    // this is not a valid polygon, ignore it
+                                }
+                            });
+                        }
+
+                        return polygons.map(function (polygon) {
+                            return {
+                                displayName: field.displayName,
+                                polygon: polygon,
+                                iconName: field.iconName,
+                                iconColor: field.iconColor,
+                                markerColor: field.markerColor
+                            }
+                        });
+                    })
+                    .flatten()
+                    .groupBy('displayName')
+                    .value()
             }
 
             response.media = getMediaType(response.contentType);

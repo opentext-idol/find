@@ -174,6 +174,16 @@ define([
             }
         },
 
+        getAreaLayer: function(polygon, color, popover){
+            const layer = leaflet.polygon(polygon, {color: color, fillOpacity: 0.2, weight: 1, opacity: 0.5});
+
+            if(popover) {
+                layer.bindPopup(popover);
+            }
+
+            return layer
+        },
+
         getIcon: function(iconName, iconColor, markerColor) {
             return leaflet.AwesomeMarkers.icon({
                 icon: iconName || 'hp-record',
