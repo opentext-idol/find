@@ -16,8 +16,9 @@ LineExpression
     	return [first].concat(others.map(function(a) { return a[2] }))
     }
 
+// Note: we return the numbers in (lat, lon) format; the reverse of WKT, for compatibility with Leaflet's input format
 Point
-    = lon:number __ lat:number { return [lon, lat] }
+    = lon:number __ lat:number { return [lat, lon] }
 
 number "number"
   = minus? int frac? exp? { return parseFloat(text()); }

@@ -18,6 +18,7 @@ require.config({
         'dropzone': '../bower_components/dropzone/dist/dropzone-amd-module',
         'd3': '../bower_components/d3/d3',
         'fieldtext/js/parser': 'pegjs/fieldtext/parser',
+        'idol-wkt/js/parser': 'pegjs/idol-wkt/parser',
         handlebars: '../bower_components/handlebars/handlebars',
         'html2canvas': '../bower_components/html2canvas/build/html2canvas',
         i18n: '../bower_components/requirejs-i18n/i18n',

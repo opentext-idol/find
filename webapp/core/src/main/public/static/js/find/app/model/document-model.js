@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -7,8 +7,9 @@ define([
     'backbone',
     'underscore',
     'moment',
-    'find/app/configuration'
-], function(Backbone, _, moment, configuration) {
+    'find/app/configuration',
+    'idol-wkt/js/parser'
+], function(Backbone, _, moment, configuration, idolWktParser) {
     
     'use strict';
 
@@ -129,13 +130,13 @@ define([
                             const wellKnownText = getFieldValues(response.fieldMap[field.geoindexField]);
 
                             _.each(wellKnownText, function(text){
-                                // We ignore area fields for now, only handling points.
-                                const match = /POINT *\((-?\d+(?:\.\d*)?)\s+(-?\d+(?:\.\d*)?)\)/.exec(text);
-
-                                if (match) {
-                                    // WKT uses (lon, lat) pairs, but IDOL uses (lat, lon), so we have to swap
-                                    //   the order of the parameters.
-                                    latLons.push([+match[2], +match[1]]);
+                                try {
+                                    const parsed = idolWktParser.parse(text);
+                                    if (parsed.type === 'POINT') {
+                                        latLons.push(parsed.point);
+                                    }
+                                } catch (e) {
+                                    // this is not a valid point, ignore it
                                 }
                             });
                         }

@@ -1,5 +1,5 @@
 #
-# Copyright 2017 Hewlett-Packard Enterprise Development Company, L.P.
+# Copyright 2017-2018 Micro Focus International plc.
 # Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
 #
 
@@ -92,6 +92,12 @@ module.exports = (grunt) ->
       fieldtext:
         src: 'src/main/public/static/bower_components/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
         dest: 'target/classes/static/js/pegjs/fieldtext/parser.js'
+        options:
+          format: 'amd'
+          trackLineAndColumn: true
+      wellknowntext:
+        src: 'src/main/public/static/js/find/app/util/geoindex/idol-wkt.pegjs'
+        dest: 'target/classes/static/js/pegjs/idol-wkt/parser.js'
         options:
           format: 'amd'
           trackLineAndColumn: true
