@@ -21,10 +21,10 @@ Point
     = lon:number __ lat:number { return [lat, lon] }
 
 number "number"
-  = minus? int frac? exp? { return parseFloat(text()); }
+  = minus? int frac? exp? { return parseFloat(text().replace(/,/,'.')); }
 
 decimal_point
-  = "."
+  = [.,]
 
 digit1_9
   = [1-9]
