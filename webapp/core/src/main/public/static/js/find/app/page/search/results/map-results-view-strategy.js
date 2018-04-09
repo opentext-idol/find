@@ -26,6 +26,7 @@ define([
 
         const mapView = new MapView(options.mapViewOptions);
         const parentLayerModel = new Backbone.Model();
+        const shapesParentLayerModel = new Backbone.Model();
         const errorModel = options.errorModel || new Backbone.Model();
 
         return {
@@ -34,7 +35,8 @@ define([
             createAddListeners: function(listenTo) {
                 resultSets.forEach(function(resultSet) {
                     listenTo(resultSet.collection, 'add', function(model) {
-                        return this.getMarkersFromDocumentModel(model, resultSet.markers, resultSet.color);
+                        this.getShapesFromDocumentModel(model, resultSet.shapes, resultSet.color);
+                        this.getMarkersFromDocumentModel(model, resultSet.markers, resultSet.color);
                     }.bind(this));
                 }, this);
             },
@@ -85,17 +87,70 @@ define([
                 });
             },
 
+            getShapesFromDocumentModel: function(model, shapeLayers, color) {
+                const areas = model.get('areas');
+                _.each(areas, function(areaPolygons, locationName) {
+                    areaPolygons.forEach(function(location) {
+                        const polygon = location.polygon;
+                        const title = model.get('title');
+                        const titleHover = i18n['search.resultsView.map.field'] + ': ' + locationName;
+
+                        const popover = popoverTemplate
+                            ? popoverTemplate({
+                                title: title,
+                                titleHover: titleHover,
+                                i18n: i18n,
+                                summary: addLinksToSummary(model.get('summary')),
+                                cidForClickRouting: model.cid
+                            })
+                            : null;
+                        const shape = mapView.getAreaLayer(polygon, color || location.markerColor, popover);
+
+                        if(shapeLayers[location.displayName]) {
+                            shapeLayers[location.displayName].push(shape);
+                        } else {
+                            shapeLayers[location.displayName] = [shape];
+                        }
+                    });
+                });
+            },
+
             createSyncListeners: function(listenTo, callback) {
-                const createParentLayers = resultSets.length > 1;
                 resultSets.forEach(function(resultSet) {
                     listenTo(resultSet.collection, 'sync', function() {
-                        this.addMarkersToMap(resultSet.markers, resultSet.clusterLayer, createParentLayers);
+                        this.addShapesToMap(resultSet.shapes, resultSet.clusterLayer, true);
+                        this.addMarkersToMap(resultSet.markers, resultSet.clusterLayer, true);
 
                         if(callback) {
                             callback();
                         }
                     }.bind(this));
                 }, this)
+            },
+
+            addShapesToMap: function(shapesMap, clusterLayer, createParentLayers) {
+                if(!_.isEmpty(shapesMap)) {
+                    _.each(shapesMap, function(shapeLayers, markerName) {
+                        const shapeLayerName = i18n['search.resultsView.map.shapes'](markerName);
+                        let parentLayer;
+                        if(createParentLayers) {
+                            parentLayer = shapesParentLayerModel.get(markerName);
+                            if(!parentLayer) {
+                                parentLayer = mapView.addGroupingLayer(shapeLayerName);
+                                shapesParentLayerModel.set(markerName, parentLayer);
+                            }
+                        }
+
+                        mapView.addShapeLayers(shapeLayers, {
+                            clusterLayer: clusterLayer,
+                            groupingLayer: parentLayer,
+                            name: parentLayer
+                                ? null
+                                : shapeLayerName
+                        });
+                    });
+                    mapView.fitMapToMarkerBounds();
+                }
             },
 
             addMarkersToMap: function(markerMap, clusterLayer, createParentLayers) {
@@ -131,8 +186,10 @@ define([
                             ? mapView.addClusterLayer(resultSet.name, resultSet.layerOptions)
                             : null;
                         resultSet.markers = {};
+                        resultSet.shapes = {};
                     });
                     parentLayerModel.clear();
+                    shapesParentLayerModel.clear();
                     return this.fetchDocuments();
                 }
 

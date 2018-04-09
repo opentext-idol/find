@@ -146,6 +146,24 @@ define([
             this.addLayer(layer, options.name);
         },
 
+        addShapeLayers: function(shapeLayers, options){
+            let layer;
+
+            if (options.clusterLayer) {
+                layer = leaflet.layerGroup(shapeLayers);
+                options.clusterLayer.checkIn(layer);
+            }
+            else {
+                layer = leaflet.featureGroup(shapeLayers);
+            }
+
+            if(options.groupingLayer) {
+                options.groupingLayer.addLayer(layer);
+            }
+
+            this.addLayer(layer, options.name);
+        },
+
         addLayer: function(layer, name) {
             this.map.addLayer(layer);
             this.layers.push(layer);

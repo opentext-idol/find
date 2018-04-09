@@ -77,9 +77,7 @@ define([
             }, this))
 
             if (areaLayers.length) {
-                _.each(areaLayers, function(layer){
-                    this.mapResultsView.addLayer(layer, false);
-                }, this);
+                this.mapResultsView.addShapeLayers(areaLayers, false);
             }
 
             this.mapResultsView.fitMapToMarkerBounds();

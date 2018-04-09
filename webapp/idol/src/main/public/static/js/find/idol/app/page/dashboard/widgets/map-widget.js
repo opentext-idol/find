@@ -20,7 +20,8 @@ define([
 
             this.resultSet = {
                 collection: new DocumentsCollection(),
-                markers: {}
+                markers: {},
+                shapes: {}
             };
 
             this.mapResultsViewStrategy = mapResultsViewStrategy({
@@ -59,8 +60,10 @@ define([
             return maybePromise.done(function() {
                 this.resultSet.collection.each(function(model) {
                     this.mapResultsViewStrategy.getMarkersFromDocumentModel(model, this.resultSet.markers);
+                    this.mapResultsViewStrategy.getShapesFromDocumentModel(model, this.resultSet.shapes)
                 }.bind(this));
 
+                this.mapResultsViewStrategy.addShapesToMap(this.resultSet.shapes, this.resultSet.clusterLayer, false);
                 this.mapResultsViewStrategy.addMarkersToMap(this.resultSet.markers, this.resultSet.clusterLayer, false);
             }.bind(this));
         },

@@ -103,6 +103,7 @@ define([
                     iconCreateFunction: this.mapResultsViewStrategy.mapView.getDivIconCreateFunction(resultSet.iconClass)
                 };
                 resultSet.markers = {};
+                resultSet.shapes = {};
             }, this);
 
             this.mapResultsViewStrategy.createAddListeners(this.listenTo.bind(this));
