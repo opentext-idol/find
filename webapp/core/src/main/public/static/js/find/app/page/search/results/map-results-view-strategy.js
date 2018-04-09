@@ -26,7 +26,6 @@ define([
 
         const mapView = new MapView(options.mapViewOptions);
         const parentLayerModel = new Backbone.Model();
-        const shapesParentLayerModel = new Backbone.Model();
         const errorModel = options.errorModel || new Backbone.Model();
 
         return {
@@ -35,8 +34,7 @@ define([
             createAddListeners: function(listenTo) {
                 resultSets.forEach(function(resultSet) {
                     listenTo(resultSet.collection, 'add', function(model) {
-                        this.getShapesFromDocumentModel(model, resultSet.shapes, resultSet.color);
-                        this.getMarkersFromDocumentModel(model, resultSet.markers, resultSet.color);
+                        return this.getMarkersFromDocumentModel(model, resultSet.markers, resultSet.color);
                     }.bind(this));
                 }, this);
             },
@@ -61,8 +59,6 @@ define([
                 const locations = model.get('locations');
                 _.each(locations, function(locationValues, locationName) {
                     locationValues.forEach(function(location) {
-                        const longitude = location.longitude;
-                        const latitude = location.latitude;
                         const title = model.get('title');
                         const titleHover = i18n['search.resultsView.map.field'] + ': ' + locationName;
 
@@ -76,7 +72,9 @@ define([
                             })
                             : null;
                         const icon = mapView.getIcon(location.iconName, location.iconColor, color || location.markerColor);
-                        const marker = mapView.getMarker(latitude, longitude, icon, title, popover);
+                        const marker = location.polygon
+                            ? mapView.getAreaLayer(location.polygon, color || location.markerColor, popover)
+                            : mapView.getMarker(location.latitude, location.longitude, icon, title, popover);
 
                         if(markers[location.displayName]) {
                             markers[location.displayName].push(marker);
@@ -87,70 +85,17 @@ define([
                 });
             },
 
-            getShapesFromDocumentModel: function(model, shapeLayers, color) {
-                const areas = model.get('areas');
-                _.each(areas, function(areaPolygons, locationName) {
-                    areaPolygons.forEach(function(location) {
-                        const polygon = location.polygon;
-                        const title = model.get('title');
-                        const titleHover = i18n['search.resultsView.map.field'] + ': ' + locationName;
-
-                        const popover = popoverTemplate
-                            ? popoverTemplate({
-                                title: title,
-                                titleHover: titleHover,
-                                i18n: i18n,
-                                summary: addLinksToSummary(model.get('summary')),
-                                cidForClickRouting: model.cid
-                            })
-                            : null;
-                        const shape = mapView.getAreaLayer(polygon, color || location.markerColor, popover);
-
-                        if(shapeLayers[location.displayName]) {
-                            shapeLayers[location.displayName].push(shape);
-                        } else {
-                            shapeLayers[location.displayName] = [shape];
-                        }
-                    });
-                });
-            },
-
             createSyncListeners: function(listenTo, callback) {
+                const createParentLayers = resultSets.length > 1;
                 resultSets.forEach(function(resultSet) {
                     listenTo(resultSet.collection, 'sync', function() {
-                        this.addShapesToMap(resultSet.shapes, resultSet.clusterLayer, true);
-                        this.addMarkersToMap(resultSet.markers, resultSet.clusterLayer, true);
+                        this.addMarkersToMap(resultSet.markers, resultSet.clusterLayer, createParentLayers);
 
                         if(callback) {
                             callback();
                         }
                     }.bind(this));
                 }, this)
-            },
-
-            addShapesToMap: function(shapesMap, clusterLayer, createParentLayers) {
-                if(!_.isEmpty(shapesMap)) {
-                    _.each(shapesMap, function(shapeLayers, markerName) {
-                        const shapeLayerName = i18n['search.resultsView.map.shapes'](markerName);
-                        let parentLayer;
-                        if(createParentLayers) {
-                            parentLayer = shapesParentLayerModel.get(markerName);
-                            if(!parentLayer) {
-                                parentLayer = mapView.addGroupingLayer(shapeLayerName);
-                                shapesParentLayerModel.set(markerName, parentLayer);
-                            }
-                        }
-
-                        mapView.addShapeLayers(shapeLayers, {
-                            clusterLayer: clusterLayer,
-                            groupingLayer: parentLayer,
-                            name: parentLayer
-                                ? null
-                                : shapeLayerName
-                        });
-                    });
-                    mapView.fitMapToMarkerBounds();
-                }
             },
 
             addMarkersToMap: function(markerMap, clusterLayer, createParentLayers) {
@@ -186,10 +131,8 @@ define([
                             ? mapView.addClusterLayer(resultSet.name, resultSet.layerOptions)
                             : null;
                         resultSet.markers = {};
-                        resultSet.shapes = {};
                     });
                     parentLayerModel.clear();
-                    shapesParentLayerModel.clear();
                     return this.fetchDocuments();
                 }
 

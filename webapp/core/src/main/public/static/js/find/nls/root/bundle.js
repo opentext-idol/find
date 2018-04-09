@@ -292,7 +292,6 @@ define([
         'search.resultsView.sunburst.noDependentParametricValues': 'There are too many parametric fields to display in Sunburst View',
         'search.resultsView.sunburst.error.noSecondFieldValues': 'There are no documents with values for both fields. Showing results for only first field.',
         'search.resultsView.map': 'Map',
-        'search.resultsView.map.shapes': 'Shapes: {0}',
         'search.resultsView.map.field': 'Field',
         'search.resultsView.map.show.more': 'Show More',
         'search.resultsView.map.title': 'Title',

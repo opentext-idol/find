@@ -46,8 +46,7 @@ define([
             title: i18n['search.document.detail.tabs.location'],
             shown: function(documentModel) {
                 const locations = documentModel.get('locations');
-                const areas = documentModel.get('areas');
-                return configuration().map.enabled && (!_.isEmpty(locations) || !_.isEmpty(areas));
+                return configuration().map.enabled && !_.isEmpty(locations);
             }
         },
         {

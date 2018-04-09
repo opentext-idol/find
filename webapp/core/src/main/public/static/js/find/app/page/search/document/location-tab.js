@@ -43,9 +43,6 @@ define([
 
             const markers = _.flatten(_.map(locationsMap, function(locations) {
                 return _.map(locations, function(location){
-                    const longitude = location.longitude;
-                    const latitude = location.latitude;
-
                     const popover = this.popoverTemplate({
                         i18n: i18n,
                         title: location.displayName,
@@ -53,32 +50,16 @@ define([
                         cidForClickRouting: null
                     });
 
-                    return this.mapResultsView.getMarker(latitude, longitude, this.getIcon(location.displayName), location.displayName, popover);
+                    if (location.polygon) {
+                        const locationField = _.findWhere(this.locationFields, {displayName: location.displayName});
+                        return this.mapResultsView.getAreaLayer(location.polygon, locationField.markerColor, popover);
+                    }
+
+                    return this.mapResultsView.getMarker(location.latitude, location.longitude, this.getIcon(location.displayName), location.displayName, popover);
                 }, this)
             }, this))
 
             this.mapResultsView.addMarkers(markers, false);
-
-            const areasMap = this.model.get('areas');
-
-            const areaLayers = _.flatten(_.map(areasMap, function(areas) {
-                return _.map(areas, function(location){
-                    const popover = this.popoverTemplate({
-                        i18n: i18n,
-                        title: location.displayName,
-                        summary: addLinksToSummary(this.model.get('summary')),
-                        cidForClickRouting: null
-                    });
-
-                    const locationField = _.findWhere(this.locationFields, {displayName: location.displayName});
-
-                    return this.mapResultsView.getAreaLayer(location.polygon, locationField.markerColor, popover);
-                }, this)
-            }, this))
-
-            if (areaLayers.length) {
-                this.mapResultsView.addShapeLayers(areaLayers, false);
-            }
 
             this.mapResultsView.fitMapToMarkerBounds();
         },

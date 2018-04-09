@@ -124,7 +124,7 @@ define([
             if (configuration().map.enabled) {
                 response.locations = _.chain(configuration().map.locationFields)
                     .map(function (field) {
-                        let latLons = [];
+                        let locations = [];
 
                         if (field.geoindexField) {
                             const wellKnownText = getFieldValues(response.fieldMap[field.geoindexField]);
@@ -133,7 +133,15 @@ define([
                                 try {
                                     const parsed = idolWktParser.parse(text);
                                     if (parsed.type === 'POINT') {
-                                        latLons.push(parsed.point);
+                                        locations.push({
+                                            latitude: parsed.point[0],
+                                            longitude: parsed.point[1]
+                                        });
+                                    }
+                                    else if (parsed.type === 'POLYGON') {
+                                        locations.push({
+                                            polygon: parsed.polygon
+                                        });
                                     }
                                 } catch (e) {
                                     // this is not a valid point, ignore it
@@ -143,51 +151,22 @@ define([
                         else {
                             const latitudes = getFieldValues(response.fieldMap[field.latitudeField]);
                             const longitudes = getFieldValues(response.fieldMap[field.longitudeField]);
-                            latLons = _.zip(latitudes, longitudes);
-                        }
 
-                        return latLons.map(function (coordinates) {
-                            return {
-                                displayName: field.displayName,
-                                latitude: coordinates[0],
-                                longitude: coordinates[1],
-                                iconName: field.iconName,
-                                iconColor: field.iconColor,
-                                markerColor: field.markerColor
-                            }
-                        });
-                    })
-                    .flatten()
-                    .groupBy('displayName')
-                    .value()
-
-                response.areas = _.chain(configuration().map.locationFields)
-                    .map(function (field) {
-                        let polygons = [];
-
-                        if (field.geoindexField) {
-                            const wellKnownText = getFieldValues(response.fieldMap[field.geoindexField]);
-
-                            _.each(wellKnownText, function(text){
-                                try {
-                                    const parsed = idolWktParser.parse(text);
-                                    if (parsed.type === 'POLYGON') {
-                                        polygons.push(parsed.polygon)
-                                    }
-                                } catch (e) {
-                                    // this is not a valid polygon, ignore it
-                                }
+                            _.each(_.zip(latitudes, longitudes), function(coordinates){
+                                locations.push({
+                                    latitude: coordinates[0],
+                                    longitude: coordinates[1]
+                                });
                             });
                         }
 
-                        return polygons.map(function (polygon) {
-                            return {
+                        return locations.map(function (info) {
+                            return _.extend(info, {
                                 displayName: field.displayName,
-                                polygon: polygon,
                                 iconName: field.iconName,
                                 iconColor: field.iconColor,
                                 markerColor: field.markerColor
-                            }
+                            });
                         });
                     })
                     .flatten()
