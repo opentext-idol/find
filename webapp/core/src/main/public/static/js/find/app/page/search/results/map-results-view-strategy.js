@@ -10,8 +10,9 @@ define([
     'find/app/configuration',
     'find/app/page/search/results/add-links-to-summary',
     'find/app/page/search/results/map-view',
-    'i18n!find/nls/bundle'
-], function(_, $, Backbone, configuration, addLinksToSummary, MapView, i18n) {
+    'i18n!find/nls/bundle',
+    'leaflet'
+], function(_, $, Backbone, configuration, addLinksToSummary, MapView, i18n, leaflet) {
     'use strict';
 
     return function(options) {
@@ -26,6 +27,7 @@ define([
 
         const mapView = new MapView(options.mapViewOptions);
         const parentLayerModel = new Backbone.Model();
+        const polygonParentLayerModel = new Backbone.Model();
         const errorModel = options.errorModel || new Backbone.Model();
 
         return {
@@ -86,10 +88,9 @@ define([
             },
 
             createSyncListeners: function(listenTo, callback) {
-                const createParentLayers = resultSets.length > 1;
                 resultSets.forEach(function(resultSet) {
                     listenTo(resultSet.collection, 'sync', function() {
-                        this.addMarkersToMap(resultSet.markers, resultSet.clusterLayer, createParentLayers);
+                        this.addMarkersToMap(resultSet.markers, resultSet.clusterLayer, true);
 
                         if(callback) {
                             callback();
@@ -101,21 +102,35 @@ define([
             addMarkersToMap: function(markerMap, clusterLayer, createParentLayers) {
                 if(!_.isEmpty(markerMap)) {
                     _.each(markerMap, function(markers, markerName) {
-                        let parentLayer;
-                        if(createParentLayers) {
-                            parentLayer = parentLayerModel.get(markerName);
-                            if(!parentLayer) {
-                                parentLayer = mapView.addGroupingLayer(markerName);
-                                parentLayerModel.set(markerName, parentLayer);
+                        // We put the polygons on their own parent layers so their visibility can be toggled separately.
+                        const split = _.partition(markers, function(marker){
+                            return marker instanceof leaflet.Polygon;
+                        })
+
+                        addMarkers(split[0], polygonParentLayerModel, i18n['search.resultsView.map.areas'](markerName))
+                        addMarkers(split[1], parentLayerModel, i18n['search.resultsView.map.points'](markerName))
+
+                        function addMarkers(markers, parentLayerModel, markerName){
+                            if(!markers.length) {
+                                return;
                             }
+
+                            let parentLayer;
+                            if(createParentLayers) {
+                                parentLayer = parentLayerModel.get(markerName);
+                                if(!parentLayer) {
+                                    parentLayer = mapView.addGroupingLayer(markerName);
+                                    parentLayerModel.set(markerName, parentLayer);
+                                }
+                            }
+                            mapView.addMarkers(markers, {
+                                clusterLayer: clusterLayer,
+                                groupingLayer: parentLayer,
+                                name: parentLayer
+                                    ? null
+                                    : markerName
+                            });
                         }
-                        mapView.addMarkers(markers, {
-                            clusterLayer: clusterLayer,
-                            groupingLayer: parentLayer,
-                            name: parentLayer
-                                ? null
-                                : markerName
-                        });
                     });
                     mapView.fitMapToMarkerBounds();
                 }
@@ -133,6 +148,7 @@ define([
                         resultSet.markers = {};
                     });
                     parentLayerModel.clear();
+                    polygonParentLayerModel.clear();
                     return this.fetchDocuments();
                 }
 
