@@ -6,10 +6,10 @@ ShapeExpression
     / PointExpression
 
 PointExpression
-    = 'POINT' _ '(' _ pos:Point _  ')' { return { type: 'POINT', point: pos } }
+    = 'POINT'i _ '(' _ pos:Point _  ')' { return { type: 'POINT', point: pos } }
 
 PolygonExpression
-    = 'POLYGON' _ '(' _ first:LineExpression _ others:( ',' _ LineExpression _ )* ')' {  return { type: 'POLYGON', polygon: [first].concat(others.map(function(a){return a[2]})) } }
+    = 'POLYGON'i _ '(' _ first:LineExpression _ others:( ',' _ LineExpression _ )* ')' {  return { type: 'POLYGON', polygon: [first].concat(others.map(function(a){return a[2]})) } }
 
 LineExpression
     = '(' _ first:Point _ others:( ',' _ Point _ )* ')' {
