@@ -23,6 +23,9 @@ Point
 number "number"
   = minus? int frac? exp? { return parseFloat(text().replace(/,/,'.')); }
 
+// From page 53 of the latest (1.2.1) WKT spec, you can use commas as the decimal point, i.e.
+//   <decimal point> ::= <period> | <comma>
+// See http://portal.opengeospatial.org/files/?artifact_id=25355 , from http://www.opengeospatial.org/standards/sfa.
 decimal_point
   = [.,]
 
