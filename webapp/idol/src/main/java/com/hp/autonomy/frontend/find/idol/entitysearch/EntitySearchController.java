@@ -79,6 +79,7 @@ class EntitySearchController {
         final Collection<String> printFields = entitySearch.getIdolPrintFields();
         aciParameters.add(QueryParams.PrintFields.name(), CollectionUtils.isEmpty(printFields) ? "*" : new PrintFields(printFields));
         aciParameters.add(QueryParams.Text.name(), text);
+        aciParameters.add(QueryParams.AbsWeight.name(), entitySearch.getAbsWeight());
 
         if (StringUtils.isNotBlank(databaseGroup) && entitySearch.getDatabaseChoices() != null) {
             final List<String> dbNames = entitySearch.getDatabaseChoices().get(databaseGroup);
