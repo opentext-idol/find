@@ -22,10 +22,25 @@ define([
     const INITIAL_ZOOM = 3;
 
     const leafletMarkerColorMap = {
-        'green': '#70ad25',
-        'orange': '#f0932f',
         'red': '#d33d2a',
-        'blue': '#37a8da'
+        'orange': '#f0932f',
+        'green': '#70ad25',
+        'blue': '#37a8da',
+        'purple': '#c64daf',
+        'darkred': '#9f3235',
+        'darkblue': '#0066a2',
+        'darkgreen': '#6d7c22',
+        'darkpurple': '#543563',
+        'cadetblue': '#406471',
+        'lightred': '#ff8676',
+        'beige': '#ffbc74',
+        'lightgreen': '#b8f271',
+        'lightblue': '#7dd5ff',
+        'pink': '#f888e2',
+        'white': '#fbfbfb',
+        'lightgray': '#9e9e9e',
+        'gray': '#555555',
+        'black': '#2f2f2f',
     };
 
     function leftPadHex(str) {
@@ -295,7 +310,7 @@ define([
                     }
 
                     const $pathEl = $(layer._path);
-                    const color = d3.rgb($pathEl.css('fill')) + '';
+                    const color = hexColor($pathEl.css('fill'));
 
                     const latLngsRings = layer.getLatLngs();
 
