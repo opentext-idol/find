@@ -192,7 +192,7 @@ define([
         },
 
         getAreaLayer: function(polygon, color, popover){
-            const layer = leaflet.polygon(polygon, {color: color, fillOpacity: 0.2, weight: 2, opacity: 0.5});
+            const layer = leaflet.polygon(polygon, {color: color, fillOpacity: 0.2, weight: 0.5, opacity: 0.5});
 
             if(popover) {
                 layer.bindPopup(popover);
