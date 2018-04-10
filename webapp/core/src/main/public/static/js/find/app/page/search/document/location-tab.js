@@ -52,7 +52,7 @@ define([
 
                     if (location.polygon) {
                         const locationField = _.findWhere(this.locationFields, {displayName: location.displayName});
-                        return this.mapResultsView.getAreaLayer(location.polygon, locationField.markerColor, popover);
+                        return this.mapResultsView.getAreaLayer(location.polygon, locationField.markerColor, location.displayName, popover);
                     }
 
                     return this.mapResultsView.getMarker(location.latitude, location.longitude, this.getIcon(location.displayName), location.displayName, popover);

@@ -191,8 +191,8 @@ define([
             }
         },
 
-        getAreaLayer: function(polygon, color, popover){
-            const layer = leaflet.polygon(polygon, {color: color, fillOpacity: 0.2, weight: 0.5, opacity: 0.5});
+        getAreaLayer: function(polygon, color, title, popover){
+            const layer = leaflet.polygon(polygon, {color: color, fillOpacity: 0.2, weight: 0.5, opacity: 0.5, title: title});
 
             if(popover) {
                 layer.bindPopup(popover);
@@ -303,10 +303,15 @@ define([
                     }
                 }
                 else if (layer instanceof leaflet.Polygon) {
-                    const popup = layer.getPopup();
                     let text;
-                    if(popup && popup._content) {
-                        text = $(popup._content).find('.map-popup-title').text()
+
+                    if(layer.options.title) {
+                        text = layer.options.title
+                    } else {
+                        const popup = layer.getPopup();
+                        if(popup && popup._content) {
+                            text = $(popup._content).find('.map-popup-title').text()
+                        }
                     }
 
                     const $pathEl = $(layer._path);

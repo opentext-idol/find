@@ -75,7 +75,7 @@ define([
                             : null;
                         const icon = mapView.getIcon(location.iconName, location.iconColor, color || location.markerColor);
                         const marker = location.polygon
-                            ? mapView.getAreaLayer(location.polygon, color || location.markerColor, popover)
+                            ? mapView.getAreaLayer(location.polygon, color || location.markerColor, title, popover)
                             : mapView.getMarker(location.latitude, location.longitude, icon, title, popover);
 
                         if(markers[location.displayName]) {
