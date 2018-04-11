@@ -14,8 +14,7 @@ define([
     'Leaflet.awesome-markers',
     'leaflet.markercluster',
     'leaflet.markercluster.layersupport',
-    'html2canvas',
-    'd3'
+    'html2canvas'
 ], function(_, $, Backbone, d3, configuration, vent, leaflet) {
     'use strict';
 
@@ -62,7 +61,7 @@ define([
         } else if(match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(str)) {
             return '#' + leftPadMatch(match);
         } else {
-            return str;
+            return d3.rgb(str).toString();
         }
     }
 
@@ -246,6 +245,7 @@ define([
 
             const map = this.map;
             const mapSize = map.getSize();
+            const mapBounds = leaflet.bounds(leaflet.point(0, 0), mapSize);
             const $mapEl = $(map.getContainer());
             const markers = [];
             const polygons = [];
@@ -317,35 +317,26 @@ define([
                     const $pathEl = $(layer._path);
                     const color = hexColor($pathEl.css('fill'));
 
-                    const latLngsRings = layer.getLatLngs();
-
-                    const projected = latLngsRings.map(function(latLngs){
-                        return latLngs.map(function(latLng){
+                    const pointRings = _.reduce(layer.getLatLngs(), function(pointRings, latLngRing){
+                        const clippedPoints = leaflet.PolyUtil.clipPolygon(latLngRing.map(function(latLng){
                             return map.latLngToContainerPoint(latLng);
-                        })
-                    });
-
-                    const mapBounds = leaflet.bounds(leaflet.point(0, 0), mapSize);
-
-                    const points = [];
-
-                    projected.forEach(function(projectedPoints){
-                        const list = [];
-
-                        const clippedPoints = leaflet.PolyUtil.clipPolygon(projectedPoints, mapBounds)
+                        }), mapBounds);
 
                         if (clippedPoints.length) {
-                            _.each(clippedPoints, function(pt){
-                                list.push(pt.x / mapSize.x, pt.y / mapSize.y);
-                            })
+                            const pointRing = _.reduce(clippedPoints, function(pointRing, point){
+                                pointRing.push(point.x / mapSize.x, point.y / mapSize.y);
+                                return pointRing;
+                            }, []);
 
-                            points.push(list);
+                            pointRings.push(pointRing);
                         }
-                    });
 
-                    if (points.length) {
+                        return pointRings;
+                    }, []);
+
+                    if (pointRings.length) {
                         polygons.push({
-                            points: points,
+                            points: pointRings,
                             text: text,
                             color: color
                         })
