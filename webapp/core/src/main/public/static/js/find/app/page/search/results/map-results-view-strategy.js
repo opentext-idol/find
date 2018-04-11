@@ -24,6 +24,7 @@ define([
         const toggleLoading = options.toggleLoading;
         const resultSets = options.resultSets;
         const errorCallback = options.errorCallback;
+        const disableAutoZoom = options.disableAutoZoom;
 
         const mapView = new MapView(options.mapViewOptions);
         const parentLayerModel = new Backbone.Model();
@@ -132,7 +133,7 @@ define([
                             });
                         }
                     });
-                    mapView.fitMapToMarkerBounds();
+                    disableAutoZoom || mapView.fitMapToMarkerBounds();
                 }
                 toggleLoading();
             },
