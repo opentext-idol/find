@@ -325,21 +325,31 @@ define([
                         })
                     });
 
-                    const points = projected.map(function(points){
+                    const mapBounds = leaflet.bounds(leaflet.point(0, 0), mapSize);
+
+                    const points = [];
+
+                    projected.forEach(function(projectedPoints){
                         const list = [];
 
-                        _.each(points, function(pt){
-                            list.push(pt.x / mapSize.x, pt.y / mapSize.y);
-                        })
+                        const clippedPoints = leaflet.PolyUtil.clipPolygon(projectedPoints, mapBounds)
 
-                        return list;
+                        if (clippedPoints.length) {
+                            _.each(clippedPoints, function(pt){
+                                list.push(pt.x / mapSize.x, pt.y / mapSize.y);
+                            })
+
+                            points.push(list);
+                        }
                     });
 
-                    polygons.push({
-                        points: points,
-                        text: text,
-                        color: color
-                    })
+                    if (points.length) {
+                        polygons.push({
+                            points: points,
+                            text: text,
+                            color: color
+                        })
+                    }
                 }
             });
 
