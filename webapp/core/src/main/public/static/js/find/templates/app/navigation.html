@@ -25,6 +25,7 @@
                             <i class="hp-icon hp-select" title="<%- data.i18n['entitySearch.databaseChoiceTitle'] %>"></i>
 
                             <select class="chosen-select find-navbar-entity-search-select">
+                                <option value=""></option>
                                 <% _.each(_.keys(data.entitySearchOptions), function(key){ %>
                                 <option value="<%- key %>"><%- data.i18n['entitySearch.databaseChoice.' + key] || key %></option>
                                 <% }) %>

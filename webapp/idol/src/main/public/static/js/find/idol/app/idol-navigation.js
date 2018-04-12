@@ -15,7 +15,7 @@ define([
         menuItems: _.template(menuItems),
 
         onEntitySearchSelect: function(group){
-            SelectionEntitySearch.setDefaultDatabaseGroup(group);
+            SelectionEntitySearch.setUserSelectedDatabaseGroup(group);
         }
     });
 });

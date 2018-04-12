@@ -111,7 +111,9 @@
     },
     "answerServerDatabaseMatch": "Wikipedia",
     "answerServerContentField": "DRECONTENT",
-    "answerServerTimeoutSecs": -1.0
+    "answerServerTimeoutSecs": -1.0,
+    "databaseChoices": null,
+    "databaseChoicesVisible": true
   },
   "savedSearches": {
     "pollForUpdates": true,

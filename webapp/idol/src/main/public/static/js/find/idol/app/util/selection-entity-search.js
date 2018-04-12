@@ -20,7 +20,7 @@ define([
 
     const databaseGroupSelector = '[data-entity-search-database-group]';
 
-    let defaultDatabase;
+    let userSelectedDatabase;
 
     function SelectionEntitySearch(options) {
         const documentRenderer = options.documentRenderer;
@@ -50,7 +50,7 @@ define([
             updateIndicator($hover, loadingHtml, bounds, null);
 
             lastFetch = entityModels.fetch({
-                data: { text: text, databaseGroup: databaseGroup || defaultDatabase }
+                data: { text: text, databaseGroup: userSelectedDatabase || databaseGroup }
             }).done(function(){
                 if (text === lastQueryText && entityModels.length) {
                     const result = entityModels.first();
@@ -368,8 +368,8 @@ define([
         }
     }
 
-    SelectionEntitySearch.setDefaultDatabaseGroup = function(database) {
-        defaultDatabase = database;
+    SelectionEntitySearch.setUserSelectedDatabaseGroup = function(database) {
+        userSelectedDatabase = database;
     }
 
     return SelectionEntitySearch;

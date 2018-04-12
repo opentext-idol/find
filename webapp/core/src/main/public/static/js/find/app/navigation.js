@@ -90,10 +90,10 @@ define([
 
             if(conf.entitySearchOptions) {
                 this.$('.chosen-select').chosen({
+                    allow_single_deselect: true,
                     disable_search_threshold: 10,
                     width: '95%'
                 });
-                this.onEntitySearchSelect(_.keys(conf.entitySearchOptions)[0]);
             }
 
             this.$('.side-menu').metisMenu({

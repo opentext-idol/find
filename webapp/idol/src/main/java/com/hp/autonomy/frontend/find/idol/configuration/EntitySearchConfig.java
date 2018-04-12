@@ -43,6 +43,7 @@ public class EntitySearchConfig extends SimpleComponent<EntitySearchConfig> impl
     private final Double answerServerTimeoutSecs;
 
     private final LinkedHashMap<String, List<String>> databaseChoices;
+    private final Boolean databaseChoicesVisible;
 
     @Override
     public void basicValidate(final String configSection) throws ConfigException {

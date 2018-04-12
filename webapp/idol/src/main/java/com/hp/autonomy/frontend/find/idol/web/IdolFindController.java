@@ -39,6 +39,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+
 @Controller
 public class IdolFindController extends FindController<IdolFindConfig, IdolFindConfigBuilder> {
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
@@ -81,7 +83,7 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
 
         final MMAP mmap = config.getMmap();
 
-        if(BooleanUtils.isTrue(mmap.getEnabled())) {
+        if(isTrue(mmap.getEnabled())) {
             publicConfig.put(IdolMvcConstants.MMAP_BASE_URL.getName(), mmap.getBaseUrl());
         }
         final Set<String> roles = authenticationInformationRetriever.getPrincipal().getIdolRoles();
@@ -102,12 +104,13 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
                 && StringUtils.isNotEmpty(config.getAnswerServer().getConversationSystemName()));
 
         final EntitySearchConfig entitySearch = config.getEntitySearch();
-        publicConfig.put(MvcConstants.ENTITY_SEARCH_ENABLED.value(), entitySearch.getEnabled());
+        final Boolean entitySearchEnabled = entitySearch.getEnabled();
+        publicConfig.put(MvcConstants.ENTITY_SEARCH_ENABLED.value(), entitySearchEnabled);
         publicConfig.put(MvcConstants.ENTITY_SEARCH_ANSWER_SERVER_ENABLED.value(),
-            BooleanUtils.isTrue(entitySearch.getEnabled()) && BooleanUtils.isTrue(entitySearch.getAnswerServer().getEnabled())
+            isTrue(entitySearchEnabled) && isTrue(entitySearch.getAnswerServer().getEnabled())
         );
         publicConfig.put(MvcConstants.ENTITY_SEARCH_OPTIONS.value(),
-            BooleanUtils.isTrue(entitySearch.getEnabled()) ? entitySearch.getDatabaseChoices() : null
+            isTrue(entitySearchEnabled) && isTrue(entitySearch.getDatabaseChoicesVisible()) ? entitySearch.getDatabaseChoices() : null
         );
 
         publicConfig.put(MvcConstants.TEMPLATES_CONFIG.value(), templatesConfig.getConfig());
