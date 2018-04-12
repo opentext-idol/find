@@ -18,6 +18,8 @@ define([
 
     const loadingHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
 
+    const databaseGroupSelector = '[data-entity-search-database-group]';
+
     let defaultDatabase;
 
     function SelectionEntitySearch(options) {
@@ -33,7 +35,7 @@ define([
         const entityModels = new EntitySearchCollection();
         let lastQueryText, lastFetch;
 
-        function loadModel(text, bounds) {
+        function loadModel(text, bounds, databaseGroup) {
             if (lastFetch && lastQueryText !== text) {
                 lastFetch.abort();
             }
@@ -48,7 +50,7 @@ define([
             updateIndicator($hover, loadingHtml, bounds, null);
 
             lastFetch = entityModels.fetch({
-                data: { text: text, databaseGroup: defaultDatabase }
+                data: { text: text, databaseGroup: databaseGroup || defaultDatabase }
             }).done(function(){
                 if (text === lastQueryText && entityModels.length) {
                     const result = entityModels.first();
@@ -293,8 +295,10 @@ define([
                 const $summary = $selectEnd.closest(selector);
 
                 if ($summary.length && $(sel.anchorNode).closest(selector).is($summary)) {
+                    const databaseGroup = $selectEnd.closest(databaseGroupSelector).data('entitySearchDatabaseGroup');
+
                     // We're in a summary, try fetching stuff
-                    loadModel(text, range.getBoundingClientRect());
+                    loadModel(text, range.getBoundingClientRect(), databaseGroup);
                 }
             }
         }
@@ -322,7 +326,8 @@ define([
                         //   already selecting text on it with the mouse.
                         if (!window.getSelection().length) {
                             clearAllIndicators();
-                            loadModel(text, target.getBoundingClientRect());
+                            const databaseGroup = $textEl.closest(databaseGroupSelector).data('entitySearchDatabaseHint');
+                            loadModel(text, target.getBoundingClientRect(), databaseGroup);
                         }
                     }, hoverDelay);
                 }
