@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Micro Focus International plc.
+ * Copyright 2017-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -8,7 +8,7 @@ define([
 ], function(_) {
 
     return function(value, size) {
-        return value && String(value).replace(/(\/wikipedia\/commons\/)([^/]+\/[^/]+\/([^/]+\.(jpg|jpeg|gif|png|svg)))/i, function(all, first, second, filename, extension){
+        return value && String(value).replace(/(\/wikipedia\/(?:commons|\w{2})\/)([^/]+\/[^/]+\/([^/]+\.(jpg|jpeg|gif|png|svg)))/i, function(all, first, second, filename, extension){
             const url = first + 'thumb/' + second + '/' + (size||300) + 'px-' + filename;
 
             if (extension && extension.toLowerCase() === 'svg') {
