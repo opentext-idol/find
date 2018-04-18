@@ -12,17 +12,17 @@
 
     <div class="flex flex-align-center m-b-xs">
     {{#equal (toLowerCase database) 'places' 'placesextended'}}
-        {{#hasField 'WIKIPEDIA_IMAGE'}}
+        {{#getFieldValue 'WIKIPEDIA_IMAGE'}}
             <span class="pull-left m-t-xs m-b-xs m-r-sm">
-                <img alt="" class="max-half-screen-height" src="{{ wikiThumbnailHelper (getFieldValue 'WIKIPEDIA_IMAGE') 200 }}">
+                <img alt="" class="max-half-screen-height" src="{{ wikiThumbnailHelper this 200 }}">
             </span>
-        {{/hasField}}
+        {{/getFieldValue}}
 
         <div class="results-contents">
             <h4 class="m-l-xs m-t-xs m-b-nil result-header">
-                {{#hasField 'PLACE_COUNTRY_CODE'}}
-                    <img alt="" style="max-height: 18px; max-width: 36px;" src="static-HEAD/img/flags.wp/{{toLowerCase (getFieldValue 'PLACE_COUNTRY_CODE')}}.svg">
-                {{/hasField}}
+                {{#getFieldValue 'PLACE_COUNTRY_CODE'}}
+                    <img alt="" style="max-height: 18px; max-width: 36px;" src="static-HEAD/img/flags.wp/{{toLowerCase this}}.svg">
+                {{/getFieldValue}}
                 <a class="selection-entity-db-places-color" target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
             </h4>
             {{#hasField 'latitude'}}
@@ -36,52 +36,52 @@
                 {{/hasField}}
             {{/hasField}}
             <table class="m-l-xs">
-                {{#hasField 'PLACE_REGION1'}}
+                {{#getFieldValue 'PLACE_REGION1'}}
                     <tr>
-                        <th class="selection-entity-header">{{i18n 'entitySearch.template.place.region'}}</th><td>{{getFieldValue 'PLACE_REGION1'}}</td>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.place.region'}}</th><td>{{this}}</td>
                     </tr>
-                {{/hasField}}
-                {{#hasField 'PLACE_POPULATION'}}
+                {{/getFieldValue}}
+                {{#getFieldValue 'PLACE_POPULATION'}}
                     <tr>
-                        <th class="selection-entity-header">{{i18n 'entitySearch.template.place.population'}}</th><td>{{prettyPrintNumber (getFieldValue 'PLACE_POPULATION')}}</td>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.place.population'}}</th><td>{{prettyPrintNumber this}}</td>
                     </tr>
-                {{/hasField}}
-                {{#hasField 'PLACE_TIMEZONE'}}
+                {{/getFieldValue}}
+                {{#getFieldValue 'PLACE_TIMEZONE'}}
                     <tr>
-                        <th class="selection-entity-header">{{i18n 'entitySearch.template.place.timeZone'}}</th><td>{{prettyPrintNumber (getFieldValue 'PLACE_TIMEZONE') plusIfPositive=true }}</td>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.place.timeZone'}}</th><td>{{prettyPrintNumber this plusIfPositive=true }}</td>
                     </tr>
-                {{/hasField}}
+                {{/getFieldValue}}
             </table>
         </div>
     {{/equal}}
     {{#equal (toLowerCase database) 'people'}}
-        {{#hasField 'WIKIPEDIA_IMAGE'}}
+        {{#getFieldValue 'WIKIPEDIA_IMAGE'}}
             <span class="pull-left m-t-xs m-b-xs m-r-sm">
-                <img alt="" class="max-half-screen-height" src="{{ wikiThumbnailHelper (getFieldValue 'WIKIPEDIA_IMAGE') 200 }}">
+                <img alt="" class="max-half-screen-height" src="{{ wikiThumbnailHelper this 200 }}">
             </span>
-        {{/hasField}}
+        {{/getFieldValue}}
 
         <div class="results-contents">
             <h4 class="m-l-xs m-t-xs m-b-nil result-header">
                 <a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
             </h4>
             <table class="m-l-xs">
-                {{#hasField 'PERSON_DATE_OF_BIRTH'}}
+                {{#getFieldValue 'PERSON_DATE_OF_BIRTH'}}
                     <tr>
-                        <th class="selection-entity-header">{{i18n 'entitySearch.template.person.dateOfBirth'}}</th><td>{{getFieldValue 'PERSON_DATE_OF_BIRTH'}}</td>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.person.dateOfBirth'}}</th><td>{{this}}</td>
                     </tr>
-                {{/hasField}}
-                {{#hasField 'PERSON_DATE_OF_DEATH'}}
+                {{/getFieldValue}}
+                {{#getFieldValue 'PERSON_DATE_OF_DEATH'}}
                     <tr>
-                        <th class="selection-entity-header">{{i18n 'entitySearch.template.person.dateOfDeath'}}</th><td>{{getFieldValue 'PERSON_DATE_OF_DEATH'}}</td>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.person.dateOfDeath'}}</th><td>{{this}}</td>
                     </tr>
                 {{else}}
-                    {{#hasField 'PERSON_DATE_OF_BIRTH'}}
+                    {{#getFieldValue 'PERSON_DATE_OF_BIRTH'}}
                     <tr>
-                        <th class="selection-entity-header">{{i18n 'entitySearch.template.person.age'}}</th><td>{{toRelativeTime (getFieldValue 'PERSON_DATE_OF_BIRTH') hideSuffix=true round='floor'}}</td>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.person.age'}}</th><td>{{toRelativeTime this hideSuffix=true round='floor'}}</td>
                     </tr>
-                    {{/hasField}}
-                {{/hasField}}
+                    {{/getFieldValue}}
+                {{/getFieldValue}}
                 {{#hasField 'PERSON_PROFESSION'}}
                     <tr>
                         <th class="selection-entity-header">{{i18n 'entitySearch.template.person.profession'}}</th><td>{{getFieldValues 'PERSON_PROFESSION' max=5}}</td>
@@ -91,43 +91,43 @@
         </div>
     {{/equal}}
     {{#equal (toLowerCase database) 'companies'}}
-        {{#hasField 'COMPANY_GOOGLE'}}
+        {{#getFieldValue 'COMPANY_GOOGLE'}}
             <span class="pull-left m-t-xs m-b-xs m-r-sm">
-                <img alt="" src="{{ placeholderTemplate (getFieldValue 'COMPANY_GOOGLE') 'https://finance.google.co.uk/finance/getchart?q=$1$&x=$0$&p=7d&i=240' placeholder='$' delimiter=':' }}">
+                <img alt="" src="{{ placeholderTemplate this 'https://finance.google.co.uk/finance/getchart?q=$1$&x=$0$&p=7d&i=240' placeholder='$' delimiter=':' }}">
             </span>
-        {{/hasField}}
+        {{/getFieldValue}}
 
         <div class="results-contents">
             <h4 class="m-l-xs m-t-xs m-b-nil result-header">
                 <a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="https://en.wikipedia.org/wiki/{{ getFieldValue 'WIKIPEDIA_ENG' }}">{{title}}</a>
             </h4>
             <table class="m-l-xs">
-                {{#hasField 'URL_HOMEPAGE'}}
+                {{#getFieldValue 'URL_HOMEPAGE'}}
                     <tr>
-                        <th class="selection-entity-header">{{i18n 'entitySearch.template.companies.url'}}</th><td><a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="{{toExternalUrl (getFieldValue 'URL_HOMEPAGE')}}">{{getFieldValue 'URL_HOMEPAGE'}}</a></td>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.companies.url'}}</th><td><a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="{{toExternalUrl this}}">{{this}}</a></td>
                     </tr>
-                {{/hasField}}
-                {{#hasField 'COMPANY_GOOGLE'}}
+                {{/getFieldValue}}
+                {{#getFieldValue 'COMPANY_GOOGLE'}}
                     <tr>
-                        <th class="selection-entity-header">{{i18n 'entitySearch.template.companies.stockTicker'}}</th><td><a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="https://finance.google.co.uk/finance?q={{getFieldValue 'COMPANY_GOOGLE'}}">{{getFieldValue 'COMPANY_GOOGLE'}}</a></td>
+                        <th class="selection-entity-header">{{i18n 'entitySearch.template.companies.stockTicker'}}</th><td><a class="selection-entity-db-{{toLowerCase database}}-color" target="_blank" href="https://finance.google.co.uk/finance?q={{this}}">{{this}}</a></td>
                     </tr>
-                {{/hasField}}
+                {{/getFieldValue}}
             </table>
         </div>
     {{/equal}}
     </div>
 
-    {{#hasField 'WIKIPEDIA_ENG'}}
+    {{#getFieldValue 'WIKIPEDIA_ENG'}}
         <div>
             <div class="entity-search-messages"></div>
             <div class="entity-search-controls clearfix">
                 <form>
-                    <input class="entity-search-question" data-context="{{ getFieldValue 'WIKIPEDIA_ENG' }}" name="query" type="text" autocomplete="off" placeholder="{{i18n 'entitySearch.template.question.placeholder'}}">
+                    <input class="entity-search-question" data-context="{{ this }}" name="query" type="text" autocomplete="off" placeholder="{{i18n 'entitySearch.template.question.placeholder'}}">
                     <input class="btn btn-primary pull-right" type="submit" value="{{i18n 'entitySearch.template.question.send'}}">
                 </form>
             </div>
         </div>
-    {{/hasField}}
+    {{/getFieldValue}}
 
     <button type="button" class="close selection-entity-close" data-dismiss="modal">
         <span aria-hidden="true">&times;</span>
