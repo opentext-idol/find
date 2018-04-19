@@ -18,7 +18,7 @@ define([
         }
 
         let values = field.values;
-        const delimiter = options.hash.delimiter != null ? options.hash.delimiter : options.fn ? '' : ', ';
+        const delimiter = options.hash.delimiter != null ? options.hash.delimiter : options.fn ? ' ' : ', ';
         const max = +options.hash.max;
         let ellipsis = '';
 
