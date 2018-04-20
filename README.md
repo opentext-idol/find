@@ -1,11 +1,11 @@
-# HPE Find
+# Micro Focus Find
 [![Build Status](https://travis-ci.org/hpe-idol/find.svg?branch=master)](https://travis-ci.org/hpe-idol/find)
 
-HPE Find is an end user search interface for [Haven OnDemand](https://www.havenondemand.com) and [HPE IDOL](http://www8.hp.com/uk/en/software-solutions/information-data-analytics-idol/index.html)
+Micro Focus Find is an end user search interface for [Haven OnDemand](https://www.havenondemand.com) and [Micro Focus IDOL](https://software.microfocus.com/en-us/products/information-data-analytics-idol/overview)
 
 ## How do I get it?
 - The latest version of Find is used in [Haven Search OnDemand](https://search.havenondemand.com/)
-- If you are an HPE IDOL Express or HPE IDOL Premium customer, Find is available to you in the HPE Big Data Download Center
+- If you are an Micro Focus IDOL Express or Micro Focus IDOL Premium customer, Find is available to you in the Micro Focus Big Data Download Center
 
 ## Documentation is on the Wiki
 
