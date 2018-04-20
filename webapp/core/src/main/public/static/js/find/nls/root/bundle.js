@@ -101,6 +101,10 @@ define([
         'dropzone.dictRemoveFile': 'Remove file',
         'dropzone.dictRemoveFileConfirmation': '',
         'entitySearch.databaseChoiceTitle': 'Entity Search Databases',
+        // You can optionally put translations for your config.json entitySearch.databaseChoices.* database groups, e.g.
+        //  if you had database groups called 'All' and 'People', you could add
+        //  'entitySearch.databaseChoice.All': 'Everything',
+        //  'entitySearch.databaseChoice.People': 'Only People',
         'entitySearch.template.place.region': 'Region',
         'entitySearch.template.place.population': 'Population',
         'entitySearch.template.place.timeZone': 'Time Zone',
