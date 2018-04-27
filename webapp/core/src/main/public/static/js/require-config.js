@@ -40,6 +40,7 @@ require.config({
         'leaflet.draw': '../bower_components/leaflet-draw/dist/leaflet.draw-src',
         'leaflet.draw.i18n': 'leaflet.draw.i18n/leaflet.draw.i18n',
         'leaflet.draw.negate': 'leaflet.draw.negate/leaflet.draw.negate',
+        'leaflet.draw.polygonSpatial': 'leaflet.draw.negate/leaflet.draw.polygonSpatial',
         'leaflet.markercluster': '../bower_components/leaflet.markercluster/dist/leaflet.markercluster-src',
         'leaflet.markercluster.layersupport': '../bower_components/leaflet.markercluster.layersupport/src/layersupport',
         'leaflet.notransform': 'leaflet.notransform/leaflet.notransform',
@@ -77,6 +78,9 @@ require.config({
         underscore: {
             exports: '_'
         },
+        // This isn't a real dependency, but just makes sure that the negate button is above the polygonSpatial one
+        //   since the last to load is closest to the top.
+        'leaflet.draw.negate': ['leaflet.draw.polygonSpatial'],
         'Leaflet.awesome-markers': ['leaflet'],
         'leaflet.draw': ['leaflet'],
         'leaflet.markercluster': ['leaflet'],

@@ -12,8 +12,21 @@ define([
 
     const INITIAL_ZOOM = 3;
 
+    const intersectionTypes = [
+        'within',
+        'intersect',
+        'contains'
+    ];
+
+    const colorMapping = {
+        'within': ['#01a982', '#ff0000'],
+        'intersect': ['#69edfa', '#a106ba'],
+        'contains': ['#e4ff00', '#fa8800']
+    }
+
     function shapeColor(shape) {
-        const color = shape && shape.negated ? '#ff0000' : '#01a982';
+        const colorMap = shape && shape.spatial && colorMapping[shape.spatial];
+        const color = (colorMap || colorMapping.within)[shape && shape.negated ? 1 : 0];
         return { color: color, fillColor: color };
     }
 
@@ -86,6 +99,11 @@ define([
                     poly: {
                         allowIntersection: false
                     },
+                    polygonSpatial: {
+                        shapeOptions: {
+                            colorFn: shapeColor
+                        }
+                    },
                     negate: {
                         shapeOptions: {
                             colorFn: shapeColor
@@ -126,7 +144,7 @@ define([
 
                 // We need to make the 'cancel' button trigger an explicit revert now.
                 drawControls._toolbars.edit.getActions = function(handler){
-                    if (handler instanceof leaflet.EditToolbar.Negate) {
+                    if (handler instanceof leaflet.EditToolbar.Negate || handler instanceof leaflet.EditToolbar.PolygonSpatial) {
                         return [];
                     }
                     return [{
