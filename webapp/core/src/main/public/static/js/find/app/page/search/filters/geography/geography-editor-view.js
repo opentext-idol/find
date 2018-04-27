@@ -12,6 +12,11 @@ define([
 
     const INITIAL_ZOOM = 3;
 
+    function shapeColor(shape) {
+        const color = shape && shape.negated ? '#ff0000' : '#01a982';
+        return { color: color, fillColor: color };
+    }
+
     return Backbone.View.extend({
         template: _.template(template),
         className: 'full-height',
@@ -72,9 +77,6 @@ define([
                 ? this.initialZoom
                 : INITIAL_ZOOM);
 
-            const color = '#01a982';
-            const negatedColor = '#ff0000';
-
             const drawControls = new leaflet.Control.Draw({
                 edit: {
                     featureGroup: drawnItems,
@@ -86,8 +88,7 @@ define([
                     },
                     negate: {
                         shapeOptions: {
-                            color: color,
-                            negatedColor: negatedColor
+                            colorFn: shapeColor
                         }
                     }
                 },
@@ -97,13 +98,13 @@ define([
                     rectangle: false,
                     circle: {
                         repeatMode: true,
-                        shapeOptions: { color: color }
+                        shapeOptions: shapeColor()
                     },
                     polygon: {
                         repeatMode: true,
                         allowIntersection: false,
                         showArea: true,
-                        shapeOptions: { color: color }
+                        shapeOptions: shapeColor()
                     }
                 }
             });
@@ -153,7 +154,8 @@ define([
 
             if (this.shapes) {
                 _.each(this.shapes, function(shape){
-                    const colorOpts = { color: shape.NOT ? negatedColor : color };
+                    const shapeOpts = { negated: shape.NOT };
+                    const colorOpts = shapeColor(shapeOpts);
                     let layer;
 
                     switch(shape.type) {
@@ -170,7 +172,7 @@ define([
                     }
 
                     if (layer) {
-                        layer.negated = shape.NOT;
+                        _.extend(layer, shapeOpts);
                         drawnItems.addLayer(layer);
                     }
                 }, this);

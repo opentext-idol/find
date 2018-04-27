@@ -135,8 +135,8 @@ define([
 
             layer.negated = !layer.negated;
 
-            const color = this.options.shapeOptions[layer.negated ? 'negatedColor' : 'color'];
-            layer.setStyle({ color: color, fillColor: color })
+            const colorOpts = this.options.shapeOptions.colorFn(layer);
+            layer.setStyle(colorOpts)
 
             layer.fire('negated');
         },
@@ -152,8 +152,10 @@ define([
     
     L.EditToolbar.prototype.options.negate = {
         shapeOptions: {
-            color: '#3388ff',
-            negatedColor: '#ff0000'
+            colorFn: function(shape){
+                const color = shape && shape.negated ? '#ff0000' : '#3388ff';
+                return { color: color, fillColor: color };
+            }
         }
     };
 
