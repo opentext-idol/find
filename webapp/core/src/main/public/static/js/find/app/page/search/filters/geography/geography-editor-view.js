@@ -15,7 +15,7 @@ define([
     const colorMapping = {
         'within': ['#01a982', '#ff0000'],
         'intersect': ['#e4ff00', '#fa8800'],
-        'contains': ['#69edfa', '#a106ba']
+        'contains': ['#0066ff', '#a106ba']
     }
 
     const intersectionTypes = _.keys(colorMapping);
