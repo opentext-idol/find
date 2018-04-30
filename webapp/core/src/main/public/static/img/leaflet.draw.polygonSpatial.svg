@@ -7,7 +7,8 @@
         d="M 5.5357143,12.5 56.25,6.9642856 53.035714,55.178571 7.8571429,47.321429 z"
         style="fill:#69edfa;fill-opacity:0.5;stroke:#69edfa;stroke-width:2" />
       <rect
-        style="fill:black;fill-opacity:0.3;stroke:none"
+        id="within"
+        style="fill:#01a982;fill-opacity:0.5;stroke:#01a982;stroke-width:2"
         width="40"
         height="20"
         x="10"
@@ -16,10 +17,6 @@
         id="intersect"
         d="M 22.98097,45.10025 50.002551,20.098974 48.73986,44.595174 z"
         style="fill:#e4ff00;fill-opacity:0.5;stroke:#e4ff00;stroke-width:2" />
-      <path
-        id="within"
-        d="M 18.687822,22.624356 16.920055,36.766491 33.84011,22.371818 z"
-        style="fill:#01a982;fill-opacity:0.5;stroke:#01a982;stroke-width:2" />
     </g>
   </g>
   <g id="enabled" fill="#464646" transform="translate(60)">
@@ -29,7 +26,8 @@
         d="M 5.5357143,12.5 56.25,6.9642856 53.035714,55.178571 7.8571429,47.321429 z"
         style="fill:#d0d0d0;fill-opacity:0.5;stroke:#d0d0d0;stroke-width:2" />
       <rect
-        style="fill:black;fill-opacity:0.3;stroke:none"
+        id="withinDisabled"
+        style="fill:#808080;fill-opacity:0.5;stroke:#808080;stroke-width:2"
         width="40"
         height="20"
         x="10"
@@ -38,10 +36,6 @@
         id="intersectDisabled"
         d="M 22.98097,45.10025 50.002551,20.098974 48.73986,44.595174 z"
         style="fill:#e6e6e6;fill-opacity:0.5;stroke:#e6e6e6;stroke-width:2" />
-      <path
-        id="withinDisabled"
-        d="M 18.687822,22.624356 16.920055,36.766491 33.84011,22.371818 z"
-        style="fill:#808080;fill-opacity:0.5;stroke:#808080;stroke-width:2" />
     </g>
   </g>
 </svg>
