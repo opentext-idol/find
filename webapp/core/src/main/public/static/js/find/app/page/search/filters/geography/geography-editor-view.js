@@ -26,6 +26,45 @@ define([
         return { color: color, fillColor: color };
     }
 
+    function bindTooltipOnAdd(layer) {
+        if (layer instanceof leaflet.Polygon || layer instanceof leaflet.Circle) {
+            layer.bindTooltip(layerTooltip, {direction: 'top', sticky: true, offset: [0, -10]});
+            // We have to call this explicitly, otherwise the tooltip doesn't update till the next time the user
+            //  hovers out of the shape, then moves the mouse back onto it.
+            layer.on('polygonSpatialChange negated', updateTooltipContent)
+        }
+    }
+
+    function updateTooltipContent(layer) {
+        const tooltip = layer.getTooltip();
+        if (tooltip) {
+            layer.setTooltipContent(layerTooltip);
+        }
+    }
+
+    function layerTooltip(shape) {
+        if (shape instanceof leaflet.Circle) {
+            return shape.negated ? i18n['search.geography.shape.tooltip.circle.negated']
+                : i18n['search.geography.shape.tooltip.circle']
+        }
+
+        if (shape instanceof leaflet.Polygon) {
+            switch (shape.spatial) {
+                case 'intersect':
+                    return shape.negated ? i18n['search.geography.shape.tooltip.polygon.intersect.negated']
+                        : i18n['search.geography.shape.tooltip.polygon.intersect']
+                case 'contains':
+                    return shape.negated ? i18n['search.geography.shape.tooltip.polygon.contain.negated']
+                        : i18n['search.geography.shape.tooltip.polygon.contain']
+            }
+
+            return shape.negated ? i18n['search.geography.shape.tooltip.polygon.within.negated']
+                : i18n['search.geography.shape.tooltip.polygon.within']
+        }
+
+        return '';
+    }
+
     return Backbone.View.extend({
         template: _.template(template),
         className: 'full-height',
@@ -59,6 +98,19 @@ define([
             });
 
             const drawnItems = this.drawnItems = leaflet.featureGroup().addTo(map);
+
+            drawnItems.on('layeradd', function(evt){
+                const layer = evt.layer;
+                bindTooltipOnAdd(layer);
+            }, this)
+
+            drawnItems.on('layerremove', function(evt){
+                const layer = evt.layer;
+                if (layer instanceof leaflet.Polygon || layer instanceof leaflet.Circle ) {
+                    layer.unbindTooltip();
+                    layer.off('polygonSpatialChange negated', updateTooltipContent);
+                }
+            }, this)
 
             leaflet
                 .tileLayer(configuration().map.tileUrlTemplate)

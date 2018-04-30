@@ -138,7 +138,7 @@ define([
             const colorOpts = this.options.shapeOptions.colorFn(layer);
             layer.setStyle(colorOpts)
 
-            layer.fire('negated');
+            layer.fire('negated', layer);
         },
 
         _onMouseMove: function (e) {

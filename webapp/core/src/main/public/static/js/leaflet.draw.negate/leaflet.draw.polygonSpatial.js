@@ -160,7 +160,7 @@ define([
             const colorOpts = this.options.shapeOptions.colorFn(layer);
             layer.setStyle(colorOpts)
 
-            layer.fire('polygonSpatialChange');
+            layer.fire('polygonSpatialChange', layer);
         },
 
         _onMouseMove: function (e) {
