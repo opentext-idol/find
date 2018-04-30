@@ -20,7 +20,8 @@ define([
             const actionButtonCallback = options.actionButtonCallback;
 
             this.geographyEditorView = new GeographyEditorView({
-                shapes: shapes
+                shapes: shapes,
+                geospatialUnified: options.geospatialUnified
             });
 
             Modal.prototype.initialize.call(this, {

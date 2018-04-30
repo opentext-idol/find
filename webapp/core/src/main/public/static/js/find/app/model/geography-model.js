@@ -12,6 +12,7 @@ define([
         this.iconName = cfg.iconName;
         this.iconColor = cfg.iconColor;
         this.markerColor = cfg.markerColor;
+        this.geospatialUnified = !!cfg.geoindexField;
     }
 
     const locationFields = [];

@@ -39,6 +39,7 @@ define([
 
         initialize: function (options) {
             this.shapes = options.shapes;
+            this.geospatialUnified = options.geospatialUnified;
         },
 
         render: function () {
@@ -99,11 +100,11 @@ define([
                     poly: {
                         allowIntersection: false
                     },
-                    polygonSpatial: {
+                    polygonSpatial: this.geospatialUnified ? {
                         shapeOptions: {
                             colorFn: shapeColor
                         }
-                    },
+                    } : false,
                     negate: {
                         shapeOptions: {
                             colorFn: shapeColor
