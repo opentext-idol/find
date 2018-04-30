@@ -19,6 +19,10 @@ define([
     L.Draw.Event.POLYGONSPATIALSTART = 'draw:polygonspatialstart';
     L.Draw.Event.POLYGONSPATIALSTOP = 'draw:polygonspatialstop';
 
+    function isPolygonLayer(layer) {
+        return layer instanceof L.Polygon;
+    }
+
     /**
      * @class L.EditToolbar.PolygonSpatial
      * @aka EditToolbar.PolygonSpatial
@@ -125,13 +129,17 @@ define([
         _enableLayerEdit: function (e) {
             var layer = e.layer || e.target || e;
 
-            layer.on('click', this._editLayer, this);
+            if (isPolygonLayer(layer)) {
+                layer.on('click', this._editLayer, this);
+            }
         },
 
         _disableLayerEdit: function (e) {
             var layer = e.layer || e.target || e;
 
-            layer.off('click', this._editLayer, this);
+            if (isPolygonLayer(layer)) {
+                layer.off('click', this._editLayer, this);
+            }
         },
 
         _editLayer: function (e) {
@@ -158,7 +166,7 @@ define([
         },
 
         _hasAvailableLayers: function () {
-            return this._editableLayers.getLayers().length !== 0;
+            return this._editableLayers.getLayers().filter(isPolygonLayer).length !== 0;
         }
     });
     
@@ -193,7 +201,7 @@ define([
     const orig_checkDisabled = L.EditToolbar.prototype._checkDisabled;
     L.EditToolbar.prototype._checkDisabled = function(){
         const featureGroup = this.options.featureGroup,
-            hasLayers = featureGroup.getLayers().length !== 0;
+            hasLayers = featureGroup.getLayers().filter(isPolygonLayer).length !== 0;
 
         if (this.options.polygonSpatial) {
             const button = this._modes[L.EditToolbar.PolygonSpatial.TYPE].button;
