@@ -12,17 +12,13 @@ define([
 
     const INITIAL_ZOOM = 3;
 
-    const intersectionTypes = [
-        'within',
-        'intersect',
-        'contains'
-    ];
-
     const colorMapping = {
         'within': ['#01a982', '#ff0000'],
         'intersect': ['#69edfa', '#a106ba'],
         'contains': ['#e4ff00', '#fa8800']
     }
+
+    const intersectionTypes = _.keys(colorMapping);
 
     function shapeColor(shape) {
         const colorMap = shape && shape.spatial && colorMapping[shape.spatial];
@@ -102,7 +98,8 @@ define([
                     },
                     polygonSpatial: this.geospatialUnified ? {
                         shapeOptions: {
-                            colorFn: shapeColor
+                            colorFn: shapeColor,
+                            intersectionTypes: intersectionTypes
                         }
                     } : false,
                     negate: {

@@ -2,7 +2,7 @@ define([
     'leaflet', 'leaflet.draw'
 ], function(L, leafletDraw){
 
-    const intersectionTypes = [
+    const DEFAULT_INTERSECTION_TYPES = [
         'within',
         'intersect',
         'contains'
@@ -147,6 +147,8 @@ define([
             L.DomEvent.preventDefault(e);
             var layer = e.layer || e.target || e;
 
+            const intersectionTypes = this.options.shapeOptions.intersectionTypes;
+
             if (!layer.spatial) {
                 layer.spatial = intersectionTypes[0];
             }
@@ -172,6 +174,7 @@ define([
     
     L.EditToolbar.prototype.options.polygonSpatial = {
         shapeOptions: {
+            intersectionTypes: DEFAULT_INTERSECTION_TYPES,
             colorFn: function(shape){
                 const color = '#3388ff';
                 return { color: color, fillColor: color };
