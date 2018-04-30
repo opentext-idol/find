@@ -253,7 +253,7 @@ define([
         'search.geography.edit.handlers.edit.tooltip.subtext': 'Click revert to undo changes.',
         'search.geography.edit.handlers.remove.tooltip.text': 'Click on a feature to remove',
         'search.geography.edit.handlers.negate.tooltip.text': 'Click on a feature to toggle between inclusion and exclusion filters',
-        'search.geography.edit.handlers.polygonSpatial.tooltip.text': 'Click polygons to switch showing results <span class="geography-spatial-within">within</span>, <span class="geography-spatial-intersect">intersecting</span> or <span class="geography-spatial-contains">containing</span> the polygon;<br/>or <span class="geography-spatial-negate-within">not within</span> / <span class="geography-spatial-negate-intersect">not intersecting</span> / <span class="geography-spatial-negate-contains">not containing</span> the polygon if using exclusion filters.',
+        'search.geography.edit.handlers.polygonSpatial.tooltip.text': 'Click polygons to switch between showing results <span class="geography-spatial-within">within</span>, <span class="geography-spatial-intersect">intersecting</span> or <span class="geography-spatial-contains">containing</span> the polygon;<br/>or between <span class="geography-spatial-negate-within">not within</span> / <span class="geography-spatial-negate-intersect">not intersecting</span> / <span class="geography-spatial-negate-contains">not containing</span> the polygon if using exclusion filters.',
         'search.indexes': 'Indexes',
         'search.indexes.all': 'All',
         'search.indexes.publicIndexes': 'Public Indexes',
