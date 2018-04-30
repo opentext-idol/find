@@ -12,7 +12,7 @@ define([
     L.drawLocal.edit.toolbar.buttons.polygonSpatialDisabled = 'No layers to change the polygon type of.';
     L.drawLocal.edit.handlers.polygonSpatial = {
         tooltip: {
-            text: 'Click on a polygon to change between within/intersects/contains'
+            text: 'Click/ctrl-click on a polygon to change between within/intersects/contains'
         }
     }
 
