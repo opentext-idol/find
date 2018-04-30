@@ -14,8 +14,8 @@ define([
 
     const colorMapping = {
         'within': ['#01a982', '#ff0000'],
-        'intersect': ['#69edfa', '#a106ba'],
-        'contains': ['#e4ff00', '#fa8800']
+        'intersect': ['#e4ff00', '#fa8800'],
+        'contains': ['#69edfa', '#a106ba']
     }
 
     const intersectionTypes = _.keys(colorMapping);
@@ -170,7 +170,7 @@ define([
 
             if (this.shapes) {
                 _.each(this.shapes, function(shape){
-                    const shapeOpts = { negated: shape.NOT };
+                    const shapeOpts = { negated: shape.NOT, spatial: shape.spatial };
                     const colorOpts = shapeColor(shapeOpts);
                     let layer;
 
@@ -270,6 +270,9 @@ define([
                     if (shape) {
                         if (layer.negated) {
                             shape.NOT = true;
+                        }
+                        if (layer.spatial) {
+                            shape.spatial = layer.spatial;
                         }
                         shapes.push(shape);
                     }
