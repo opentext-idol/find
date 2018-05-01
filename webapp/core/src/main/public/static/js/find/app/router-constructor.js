@@ -10,8 +10,11 @@ define([
     'use strict';
 
     return Backbone.Router.extend({
+        // Abstract function which can be overridden in the children.
+        parseEncodedDatabases: undefined,
+
         routes: {
-            'search/query(/:text)': 'search',
+            'search(/databases/:searchDatabase)/query(/:text)': 'search',
             ':page': 'page',
             'search/splash': 'searchSplash'
         },
@@ -22,7 +25,7 @@ define([
             return Backbone.Router.prototype.navigate.apply(this, arguments);
         },
 
-        search: function(optionalEncodedQuery) {
+        search: function(optionalEncodedDatabases, optionalEncodedQuery) {
             let query = optionalEncodedQuery;
             if (query) {
                 try {
@@ -33,7 +36,13 @@ define([
                 }
             }
 
-            this.trigger('route:page', 'search', query);
+            let databases = undefined;
+
+            if (this.parseEncodedDatabases && optionalEncodedDatabases) {
+                databases = this.parseEncodedDatabases(optionalEncodedDatabases);
+            }
+
+            this.trigger('route:page', 'search', query, databases);
         },
 
         documentDetail: function() {

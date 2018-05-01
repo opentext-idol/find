@@ -415,7 +415,7 @@ define([
             }, this);
 
             if (config().hasBiRole && this.selectedTabModel.get('selectedSearchCid') === null) {
-                this.createNewTab(this.lastNavigatedQueryText);
+                this.createNewTab(this.lastNavigatedQueryText, this.lastNavigatedDatabases);
             } else {
                 this.selectContentView();
             }
@@ -471,13 +471,19 @@ define([
             };
         },
 
-        createNewTab: function (queryText) {
-            const newSearch = new SavedSearchModel({
+        createNewTab: function (queryText, databases) {
+            const opts = {
                 relatedConcepts: queryText ? [queryText.split('\n')] : [],
                 title: i18n['search.newSearch'],
                 type: SavedSearchModel.Type.QUERY,
                 minScore: config().minScore
-            });
+            };
+
+            if (databases) {
+                opts.indexes = databases;
+            }
+
+            const newSearch = new SavedSearchModel(opts);
 
             this.savedQueryCollection.add(newSearch);
             this.selectedTabModel.set('selectedSearchCid', newSearch.cid);
@@ -690,8 +696,9 @@ define([
             return this.currentRoute;
         },
 
-        setLastNavigationOpts: function(queryText) {
+        setLastNavigationOpts: function(queryText, databases) {
             this.lastNavigatedQueryText = queryText || false;
+            this.lastNavigatedDatabases = databases || undefined;
         }
     });
 });

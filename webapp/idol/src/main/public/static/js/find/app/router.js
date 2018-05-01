@@ -25,6 +25,22 @@ define([
             }
 
             return routes;
+        },
+
+        // Implements abstract method in superclass.
+        parseEncodedDatabases: function(optionalEncodedDatabases){
+            try {
+                return optionalEncodedDatabases.split(',').map(function(str){
+                    const parsed = decodeURIComponent(str);
+
+                    return {
+                        name: parsed
+                    }
+                });
+            }
+            catch(e) {
+                // we'll ignore the databases
+            }
         }
     });
 
