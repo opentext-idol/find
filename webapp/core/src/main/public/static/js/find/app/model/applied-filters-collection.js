@@ -194,7 +194,9 @@ define([
         },
 
         allIndexesSelected: function() {
-            return this.indexesCollection.length === this.selectedIndexesCollection.length;
+            // This is a hack to disable showing the applied databases filters
+            return true;
+            // return this.indexesCollection.length === this.selectedIndexesCollection.length;
         },
 
         updateDatabases: function() {
