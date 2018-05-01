@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2014-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -248,7 +248,7 @@ define([
             }, this);
 
             // Bind routing to search model
-            this.listenTo(router, 'route:search', function(text) {
+            this.listenTo(router, 'route:search', function(databases, text) {
                 this.removeDocumentDetailView();
                 this.removeSuggestView();
 
@@ -524,8 +524,20 @@ define([
                     const documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
                     const savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
                     const isExistingSavedSearch = savedSearchModel.id;
+                    const lastNavigatedDatabases = this.lastNavigatedDatabases;
 
-                    const indexFilterFn = isExistingSavedSearch ? selectInitialIndexes : selectFilteredInitialIndexes;
+                    const indexFilterFn = isExistingSavedSearch ? selectInitialIndexes
+                        : lastNavigatedDatabases ? function(indexesCollection){
+                            const active = selectInitialIndexes(indexesCollection);
+                            return _.filter(active, function(index){
+                                return _.findWhere(lastNavigatedDatabases, {
+                                    name: index.name
+                                })
+                            });
+                        }
+                        : selectFilteredInitialIndexes;
+
+                    this.lastNavigatedDatabases = undefined;
 
                     /**
                      * @type {QueryState}
