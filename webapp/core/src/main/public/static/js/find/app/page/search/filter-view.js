@@ -114,6 +114,8 @@ define([
                     this.listenTo(this.indexesViewWrapper, 'toggle', function(newState) {
                         this.collapsed.indexes = newState;
                     });
+
+                    this.indexesViewWrapper.$el.addClass('hidden');
                 }.bind(this),
                 get$els: function() {
                     return [this.indexesViewWrapper.$el];
