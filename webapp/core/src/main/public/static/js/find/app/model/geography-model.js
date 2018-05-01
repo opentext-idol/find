@@ -12,6 +12,20 @@ define([
         this.iconName = cfg.iconName;
         this.iconColor = cfg.iconColor;
         this.markerColor = cfg.markerColor;
+        this.geospatialUnified = !!cfg.geoindexField;
+    }
+
+    function toWkt(points) {
+        let str = 'POLYGON ((';
+
+        for (let ii = 0, max = points.length; ii < max; ii += 2) {
+            if (ii) {
+                str += ', '
+            }
+            str += points[ii] + ' ' + points[ii + 1];
+        }
+
+        return str + '))';
     }
 
     const locationFields = [];
@@ -119,7 +133,7 @@ define([
                         })
                     }
                     else if (shape.type === 'polygon') {
-                        const points = _.flatten(_.map(shape.points, function(pt){
+                        let points = _.flatten(_.map(shape.points, function(pt){
                             // POLYGON uses (lon, lat) instead of leaflet's (lat, lon) so we have to flip them.
                             return [pt[1], pt[0]];
                         }));
@@ -129,18 +143,34 @@ define([
                         // Test with locations e.g. Fiji 17.7134° S, 178.0650° E and Samoa 14.2710° S, 170.1322° W,
                         //   a polygon search drawn over both should find both, but without this, it'll only find one.
                         // You have to test both cases (scrolling left, and scrolling right).
-                        const plus360 = points.slice(0);
-                        const minus360 = points.slice(0);
+                        let plus360 = points.slice(0);
+                        let minus360 = points.slice(0);
                         for (let ii = 0, max = points.length; ii < max; ii += 2) {
                             plus360[ii] += 360;
                             minus360[ii] -= 360;
                         }
 
+                        const WKT_OPERATORS = {
+                            // we handle 'within' with the normal non-WKT POLYGON operator
+                            intersect: 'GEOINTERSECTS',
+                            contains: 'GEOCONTAINS'
+                        }
+
+                        const wktOperator = WKT_OPERATORS[shape.spatial];
+
+                        if (wktOperator) {
+                            points = [encodeURIComponent(toWkt(points))];
+                            plus360 = [encodeURIComponent(toWkt(plus360))];
+                            minus360 = [encodeURIComponent(toWkt(minus360))];
+                        }
+
+                        const operator = wktOperator || 'POLYGON';
+
                         _.each(latLonFields, function(latLonField) {
                             const lonLatField = latLonField.slice().reverse();
-                            toAdd.push(new parser.ExpressionNode('POLYGON', lonLatField, points));
-                            toAdd.push(new parser.ExpressionNode('POLYGON', lonLatField, plus360));
-                            toAdd.push(new parser.ExpressionNode('POLYGON', lonLatField, minus360));
+                            toAdd.push(new parser.ExpressionNode(operator, lonLatField, points));
+                            toAdd.push(new parser.ExpressionNode(operator, lonLatField, plus360));
+                            toAdd.push(new parser.ExpressionNode(operator, lonLatField, minus360));
                         });
                     }
                 });
