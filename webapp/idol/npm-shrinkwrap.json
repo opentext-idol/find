@@ -691,7 +691,7 @@
     "grunt-contrib-uglify-es": {
       "version": "3.3.0",
       "from": "gruntjs/grunt-contrib-uglify#harmony",
-      "resolved": "git+https://github.com/gruntjs/grunt-contrib-uglify.git#harmony"
+      "resolved": "git+https://github.com/gruntjs/grunt-contrib-uglify.git#ccb95a70cad6a4e9e902d3bd5d0e38a4de09a1e1"
     },
     "grunt-contrib-watch": {
       "version": "0.6.1",
@@ -1638,9 +1638,9 @@
       "resolved": "https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz"
     },
     "uglify-es": {
-      "version": "3.0.15",
-      "from": "uglify-es@>=3.0.5 <3.1.0",
-      "resolved": "https://registry.npmjs.org/uglify-es/-/uglify-es-3.0.15.tgz"
+      "version": "3.3.9",
+      "from": "uglify-es@>=3.3.9 <3.4.0",
+      "resolved": "https://registry.npmjs.org/uglify-es/-/uglify-es-3.3.9.tgz"
     },
     "underscore": {
       "version": "1.7.0",
