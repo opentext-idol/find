@@ -76,7 +76,10 @@ define([
             },
 
             getDefaultCurrentRange: function() {
-                return defaultCurrentNumericRangeAttributes(this.pick('min', 'max'));
+                const absoluteRange = this.pick('min', 'max');
+                return this.get('type') === 'NumericDate'
+                    ? defaultCurrentDateRangeAttributes(absoluteRange)
+                    : defaultCurrentNumericRangeAttributes(absoluteRange);
             }
         })
     });
