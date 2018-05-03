@@ -271,6 +271,66 @@ define([
                 );
             });
 
+            it('returns NOT-OR of three POLYGON fieldtext (with ±360° offsets) for a polygon with unified fields', function() {
+                this.model.set('GeoindexLocation', [
+                    {"type":"polygon","points":[[-12.76,-206.71],[-5.09,-170.51],[-27.21,-168.75],[-29.07,-200.12]],"NOT":true}
+                ])
+
+                const fieldtext = this.model.toFieldText();
+                expect(fieldtext.toString()).toEqual(
+                    'NOT (' +
+                    'POLYGON{-206.71,-12.76,-170.51,-5.09,-168.75,-27.21,-200.12,-29.07}:GEOUNIFIED OR ' +
+                    'POLYGON{153.29,-12.76,189.49,-5.09,191.25,-27.21,159.88,-29.07}:GEOUNIFIED OR ' +
+                    'POLYGON{-566.71,-12.76,-530.51,-5.09,-528.75,-27.21,-560.12,-29.07}:GEOUNIFIED' +
+                    ')'
+                );
+            });
+
+            it('returns NOT-OR of three POLYGON fieldtext (with ±360° offsets) for a spatial=within polygon with unified fields', function() {
+                this.model.set('GeoindexLocation', [
+                    {"type":"polygon","points":[[-12.76,-206.71],[-5.09,-170.51],[-27.21,-168.75],[-29.07,-200.12]],"spatial":"within","NOT":true}
+                ])
+
+                const fieldtext = this.model.toFieldText();
+                expect(fieldtext.toString()).toEqual(
+                    'NOT (' +
+                    'POLYGON{-206.71,-12.76,-170.51,-5.09,-168.75,-27.21,-200.12,-29.07}:GEOUNIFIED OR ' +
+                    'POLYGON{153.29,-12.76,189.49,-5.09,191.25,-27.21,159.88,-29.07}:GEOUNIFIED OR ' +
+                    'POLYGON{-566.71,-12.76,-530.51,-5.09,-528.75,-27.21,-560.12,-29.07}:GEOUNIFIED' +
+                    ')'
+                );
+            });
+
+            it('returns NOT-OR of three POLYGON fieldtext (with ±360° offsets) for a spatial=intersect polygon with unified fields', function() {
+                this.model.set('GeoindexLocation', [
+                    {"type":"polygon","points":[[-12.76,-206.71],[-5.09,-170.51],[-27.21,-168.75],[-29.07,-200.12]],"spatial":"intersect","NOT":true}
+                ])
+
+                const fieldtext = this.model.toFieldText();
+                expect(fieldtext.toString()).toEqual(
+                    'NOT (' +
+                    'GEOINTERSECTS{POLYGON%20((-206.71%20-12.76%2C%20-170.51%20-5.09%2C%20-168.75%20-27.21%2C%20-200.12%20-29.07))}:GEOUNIFIED OR ' +
+                    'GEOINTERSECTS{POLYGON%20((153.29%20-12.76%2C%20189.49%20-5.09%2C%20191.25%20-27.21%2C%20159.88%20-29.07))}:GEOUNIFIED OR ' +
+                    'GEOINTERSECTS{POLYGON%20((-566.71%20-12.76%2C%20-530.51%20-5.09%2C%20-528.75%20-27.21%2C%20-560.12%20-29.07))}:GEOUNIFIED' +
+                    ')'
+                );
+            });
+
+            it('returns NOT-OR of three POLYGON fieldtext (with ±360° offsets) for a spatial=contains polygon with unified fields', function() {
+                this.model.set('GeoindexLocation', [
+                    {"type":"polygon","points":[[-12.76,-206.71],[-5.09,-170.51],[-27.21,-168.75],[-29.07,-200.12]],"spatial":"contains","NOT":true}
+                ])
+
+                const fieldtext = this.model.toFieldText();
+                expect(fieldtext.toString()).toEqual(
+                    'NOT (' +
+                    'GEOCONTAINS{POLYGON%20((-206.71%20-12.76%2C%20-170.51%20-5.09%2C%20-168.75%20-27.21%2C%20-200.12%20-29.07))}:GEOUNIFIED OR ' +
+                    'GEOCONTAINS{POLYGON%20((153.29%20-12.76%2C%20189.49%20-5.09%2C%20191.25%20-27.21%2C%20159.88%20-29.07))}:GEOUNIFIED OR ' +
+                    'GEOCONTAINS{POLYGON%20((-566.71%20-12.76%2C%20-530.51%20-5.09%2C%20-528.75%20-27.21%2C%20-560.12%20-29.07))}:GEOUNIFIED' +
+                    ')'
+                );
+            });
+
             it('returns DISTSPHERICAL OR POLYGON for a circle + polygon', function() {
                 this.model.set('OGLocation', [
                     {"type":"circle","center":[-7.013,-193.007],"radius":3511716.726},
