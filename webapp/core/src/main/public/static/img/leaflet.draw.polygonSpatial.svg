@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 120 60" height="60" width="120">
   <g id="enabled" fill="#464646">
-    <g id="enabled" transform="matrix(0.77235772,0,0,0.77235772,7.0325203,7.0731707)">
+    <g id="enabled" transform="matrix(0.74550978,0,0,0.74550978,7.8439501,7.8996701)">
       <path
         id="contains"
         d="M 5.5357143,12.5 54.910617,10.982434 53.928636,48.928117 7.8571429,47.321429 z"
@@ -20,7 +20,7 @@
     </g>
   </g>
   <g id="enabled" fill="#464646" transform="translate(60)">
-    <g id="disabled" transform="matrix(0.77235772,0,0,0.77235772,7.0325203,7.0731707)">
+    <g id="disabled" transform="matrix(0.74550978,0,0,0.74550978,7.8439501,7.8996701)">
       <path
         id="containsDisabled"
         d="M 5.5357143,12.5 54.910617,10.982434 53.928636,48.928117 7.8571429,47.321429 z"
