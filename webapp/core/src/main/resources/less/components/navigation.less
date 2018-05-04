@@ -35,6 +35,9 @@
   color: @white;
   height: @navBarHeight;
   transition: @transitAllFast;
+  // We need this to be 1001 to be highter than the leaflet-bottom's z-index:1000 to prevent the leaflet controls
+  //   appearing over the dropdown menu.
+  z-index: 1001;
 
   .dropdown {
     .dropdown-menu {
