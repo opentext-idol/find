@@ -3,7 +3,6 @@ package com.autonomy.abc.selenium.find.filters;
 import com.hp.autonomy.frontend.selenium.element.CheckboxBase;
 import com.hp.autonomy.frontend.selenium.util.ElementUtil;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 class FindIndexCheckbox extends CheckboxBase {

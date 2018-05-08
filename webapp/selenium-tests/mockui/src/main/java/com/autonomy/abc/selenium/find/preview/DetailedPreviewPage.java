@@ -1,6 +1,5 @@
 package com.autonomy.abc.selenium.find.preview;
 
-import com.google.common.base.Predicate;
 import com.hp.autonomy.frontend.selenium.util.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;

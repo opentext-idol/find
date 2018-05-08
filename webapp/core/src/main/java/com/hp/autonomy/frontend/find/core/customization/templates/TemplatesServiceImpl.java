@@ -7,7 +7,6 @@ package com.hp.autonomy.frontend.find.core.customization.templates;
 
 import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.find.core.configuration.CustomizationConfigService;
-import com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService;
 import com.hp.autonomy.frontend.find.core.configuration.TemplatesConfig;
 import com.hp.autonomy.frontend.find.core.customization.ReloadableCustomizationComponent;
 import org.springframework.beans.factory.annotation.Value;
