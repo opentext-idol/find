@@ -48,6 +48,7 @@ require.config({
         'moment-timezone-with-data': '../bower_components/moment-timezone/builds/moment-timezone-with-data',
         Raphael: '../bower_components/raphael/raphael',
         settings: '../bower_components/hp-autonomy-settings-page/src',
+        store: '../bower_components/store-js/store',
         slider: '../bower_components/seiyria-bootstrap-slider/dist',
         text: '../bower_components/requirejs-text/text',
         sunburst: '../bower_components/hp-autonomy-sunburst/src',

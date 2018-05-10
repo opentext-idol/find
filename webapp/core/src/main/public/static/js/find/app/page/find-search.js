@@ -7,6 +7,7 @@ define([
     'underscore',
     'jquery',
     'backbone',
+    'store',
     'js-whatever/js/base-page',
     'find/app/configuration',
     'find/app/model/dates-filter-model',
@@ -34,7 +35,7 @@ define([
     'find/app/vent',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/find-search.html'
-], function(_, $, Backbone, BasePage, config, DatesFilterModel, GeographyModel, DocumentRenderer, SelectedParametricValuesCollection,
+], function(_, $, Backbone, store, BasePage, config, DatesFilterModel, GeographyModel, DocumentRenderer, SelectedParametricValuesCollection,
             DocumentsCollection, InputView, queryTextStrategy, TabbedSearchView, MergeCollection,
             SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel, QueryTextModel, DocumentModel,
             DocumentContentView, DocumentDetailContentView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver,
@@ -74,6 +75,14 @@ define([
         return defaultDeselectedDatabases.length ? _.filter(active, function(index){
             return !_.has(dbSelectMap, index.name.toLowerCase());
         }) : active;
+    }
+
+    function getLocalStorageDatabases() {
+        return store.get('lastSavedDatabases') || undefined;
+    }
+
+    function setLocalStorageDatabases(databases) {
+        store.set('lastSavedDatabases', databases)
     }
 
     return BasePage.extend({
@@ -524,7 +533,7 @@ define([
                     const documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
                     const savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
                     const isExistingSavedSearch = savedSearchModel.id;
-                    const lastNavigatedDatabases = this.lastNavigatedDatabases;
+                    const lastNavigatedDatabases = this.lastNavigatedDatabases || getLocalStorageDatabases();
 
                     const indexFilterFn = isExistingSavedSearch ? selectInitialIndexes
                         : lastNavigatedDatabases ? function(indexesCollection){
@@ -711,6 +720,10 @@ define([
         setLastNavigationOpts: function(queryText, databases) {
             this.lastNavigatedQueryText = queryText || false;
             this.lastNavigatedDatabases = databases || undefined;
+
+            if (databases) {
+                setLocalStorageDatabases(databases);
+            }
         }
     });
 });
