@@ -133,7 +133,7 @@ define([
             percentage: percentageHelper,
             placeholderTemplate: placeholderTemplateHelper,
             prettyPrintNumber: prettyPrintNumberHelper,
-            regexIfHelper: regexIfHelper,
+            regexIf: regexIfHelper,
             toExternalUrl: toExternalUrlHelper,
             toLowerCase: toLowerCaseHelper,
             toRelativeTime: toRelativeTimeHelper,
