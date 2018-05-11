@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -9,8 +9,6 @@ import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationR
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-
-import javax.xml.bind.annotation.XmlElement;
 
 @Data
 @RequiredArgsConstructor(access = AccessLevel.NONE)

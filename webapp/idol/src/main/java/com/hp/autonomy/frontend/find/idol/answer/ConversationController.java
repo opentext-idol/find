@@ -12,7 +12,6 @@ import com.hp.autonomy.searchcomponents.idol.answer.ask.ConversationRequestBuild
 import com.hp.autonomy.types.idol.responses.conversation.ConversePrompt;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import java.security.Principal;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

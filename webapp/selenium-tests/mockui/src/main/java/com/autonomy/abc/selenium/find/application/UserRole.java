@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -7,7 +7,6 @@ package com.autonomy.abc.selenium.find.application;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public enum UserRole {
     BIFHI("bifhi"), FIND("find");
