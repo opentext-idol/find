@@ -54,6 +54,7 @@ public class IdolRelatedConceptsControllerTest extends AbstractRelatedConceptsCo
         when(relatedConceptsRequestBuilder.maxResults(anyInt())).thenReturn(relatedConceptsRequestBuilder);
         when(relatedConceptsRequestBuilder.querySummaryLength(anyInt())).thenReturn(relatedConceptsRequestBuilder);
         when(relatedConceptsRequestBuilder.queryRestrictions(any())).thenReturn(relatedConceptsRequestBuilder);
+        when(relatedConceptsRequestBuilder.queryType(any())).thenReturn(relatedConceptsRequestBuilder);
 
         return new IdolRelatedConceptsController(idolRelatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory);
     }
