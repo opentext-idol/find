@@ -5,11 +5,7 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequest;
-import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequestBuilder;
-import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
+import com.hp.autonomy.searchcomponents.core.search.*;
 import com.hp.autonomy.types.requests.idol.actions.query.QuerySummaryElement;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.ObjectFactory;
@@ -40,6 +36,7 @@ public abstract class RelatedConceptsController<T extends QuerySummaryElement, Q
     private static final String MAX_DATE_PARAM = "maxDate";
     private static final String MIN_SCORE_PARAM = "minScore";
     private static final String MAX_RESULTS = "maxResults";
+    private static final String QUERY_TYPE_PARAM = "queryType";
 
     private static final int QUERY_SUMMARY_LENGTH = 50;
 
@@ -67,7 +64,8 @@ public abstract class RelatedConceptsController<T extends QuerySummaryElement, Q
         @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final Integer minScore,
         @RequestParam(value = STATE_MATCH_TOKEN_PARAM, required = false) final List<String> stateMatchTokens,
         @RequestParam(value = STATE_DONT_MATCH_TOKEN_PARAM, required = false) final List<String> stateDontMatchTokens,
-        @RequestParam(value = MAX_RESULTS, required = false) final Integer maxResults
+        @RequestParam(value = MAX_RESULTS, required = false) final Integer maxResults,
+        @RequestParam(value = QUERY_TYPE_PARAM, defaultValue = "MODIFIED") final String queryType
     ) throws E {
         final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                 .queryText(queryText)
@@ -84,6 +82,7 @@ public abstract class RelatedConceptsController<T extends QuerySummaryElement, Q
             .maxResults(maxResults)
             .querySummaryLength(QUERY_SUMMARY_LENGTH)
             .queryRestrictions(queryRestrictions)
+            .queryType(QueryRequest.QueryType.valueOf(queryType))
             .build();
 
         return relatedConceptsService.findRelatedConcepts(relatedConceptsRequest);
