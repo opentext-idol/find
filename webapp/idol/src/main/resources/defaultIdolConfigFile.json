@@ -349,5 +349,6 @@
       "type": "NUMBER",
       "advanced": true
     }
-  }
+  },
+  "referenceField": "DREREFERENCE"
 }
