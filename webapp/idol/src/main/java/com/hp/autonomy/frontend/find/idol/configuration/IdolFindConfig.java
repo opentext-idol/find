@@ -80,6 +80,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final Integer documentSummaryMaxLength;
     private final ExportConfig export;
+    private final String referenceField;
 
     @JsonIgnore
     private volatile Map<String, Map<Integer, String>> productMap;
@@ -109,6 +110,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .exportStoreStateMaxResults(exportStoreStateMaxResults == null ? other.exportStoreStateMaxResults : exportStoreStateMaxResults)
                 .documentSummaryMaxLength(documentSummaryMaxLength == null ? other.documentSummaryMaxLength : documentSummaryMaxLength)
                 .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(maybeOther.export)).orElse(maybeOther.export))
+                .referenceField(referenceField == null ? other.referenceField : referenceField)
                 .build())
             .orElse(this);
     }
