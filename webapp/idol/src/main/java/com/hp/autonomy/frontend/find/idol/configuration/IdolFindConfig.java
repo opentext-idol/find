@@ -56,6 +56,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private static final String SECTION = "Find Config Root";
     private final CommunityAuthentication login;
     private final ServerConfig content;
+    private final String referenceField;
     private final QueryManipulation queryManipulation;
     private final ViewConfig view;
     private final AnswerServerConfig answerServer;
@@ -80,7 +81,6 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final Integer documentSummaryMaxLength;
     private final ExportConfig export;
-    private final String referenceField;
 
     @JsonIgnore
     private volatile Map<String, Map<Integer, String>> productMap;
@@ -90,6 +90,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         return Optional.ofNullable(maybeOther)
             .map(other -> builder()
                 .content(content == null ? other.content : content.merge(other.content))
+                .referenceField(referenceField == null ? other.referenceField : referenceField)
                 .login(login == null ? other.login : login.merge(other.login))
                 .queryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
                 .view(view == null ? other.view : view.merge(other.view))
@@ -110,7 +111,6 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .exportStoreStateMaxResults(exportStoreStateMaxResults == null ? other.exportStoreStateMaxResults : exportStoreStateMaxResults)
                 .documentSummaryMaxLength(documentSummaryMaxLength == null ? other.documentSummaryMaxLength : documentSummaryMaxLength)
                 .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(maybeOther.export)).orElse(maybeOther.export))
-                .referenceField(referenceField == null ? other.referenceField : referenceField)
                 .build())
             .orElse(this);
     }
