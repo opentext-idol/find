@@ -1,5 +1,5 @@
 # Micro Focus Find
-[![Build Status](https://travis-ci.org/hpe-idol/find.svg?branch=master)](https://travis-ci.org/hpe-idol/find)
+[![Build Status](https://travis-ci.org/microfocus-idol/find.svg?branch=master)](https://travis-ci.org/microfocus-idol/find)
 
 Micro Focus Find is an end user search interface for [Haven OnDemand](https://www.havenondemand.com) and [Micro Focus IDOL](https://software.microfocus.com/en-us/products/information-data-analytics-idol/overview)
 
@@ -9,7 +9,7 @@ Micro Focus Find is an end user search interface for [Haven OnDemand](https://ww
 
 ## Documentation is on the Wiki
 
-Questions about building, running, and configuring Find, plus many more subjects, are all covered on the [GitHub Wiki](https://github.com/hpe-idol/find/wiki)
+Questions about building, running, and configuring Find, plus many more subjects, are all covered on the [GitHub Wiki](https://github.com/microfocus-idol/find/wiki)
 
 ## Is it any good?
 Yes.
