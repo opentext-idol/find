@@ -8,25 +8,30 @@ define([
 ], function(_) {
 
     return function(fieldId, options) {
+        function transform(list){
+            return options.fn ? _.map(list, options.fn) : list;
+        }
+
         const field = _.findWhere(this.fields, {id: fieldId});
         if (!field) {
-            return undefined;
+            return options.inverse ? options.inverse(this) : undefined;
         }
 
         let values = field.values;
-        const delimiter = options.hash.delimiter != null ? options.hash.delimiter : ', ';
+        const delimiter = options.hash.delimiter != null ? options.hash.delimiter : options.fn ? ' ' : ', ';
         const max = +options.hash.max;
+        let ellipsis = '';
 
         if (max && values.length > max) {
             values = values.slice(0, max);
-
-            const ellipsis = options.hash.ellipsis != null ? options.hash.ellipsis : ' …';
-            if (ellipsis) {
-                return values.join(delimiter) + ellipsis;
-            }
+            ellipsis = options.hash.ellipsis != null ? options.hash.ellipsis : ' …';
         }
 
-        return values.join(delimiter);
+        if (!values.length) {
+            return options.inverse ? options.inverse(this) : undefined;
+        }
+
+        return transform(values).join(delimiter) + ellipsis;
     };
 
 });

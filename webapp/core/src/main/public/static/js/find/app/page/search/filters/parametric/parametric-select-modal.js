@@ -40,6 +40,7 @@ define([
                 indexesCollection: options.indexesCollection,
                 queryModel: options.queryModel,
                 parametricFieldsCollection: options.parametricFieldsCollection,
+                parametricValuesSort: options.parametricValuesSort,
                 selectedParametricValues: this.selectedParametricValues
             });
 

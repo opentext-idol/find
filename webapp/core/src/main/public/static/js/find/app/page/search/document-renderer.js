@@ -24,6 +24,7 @@ define([
     './template-helpers/percentage-helper',
     './template-helpers/placeholder-template-helper',
     './template-helpers/pretty-print-number-helper',
+    './template-helpers/regex-if-helper',
     './template-helpers/to-external-url-helper',
     './template-helpers/to-lower-case-helper',
     './template-helpers/to-relative-time-helper',
@@ -34,12 +35,29 @@ define([
 ], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator,
             defaultResultTemplate, defaultEntitySearchTemplate, defaultPreviewTemplate, defaultPromotionTemplate,
             equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper, getFieldValuesHelper,
-            percentageHelper, placeholderTemplateHelper, prettyPrintNumberHelper, toExternalUrlHelper, toLowerCaseHelper,
-            toRelativeTimeHelper, toUpperCaseHelper, wikiThumbnailHelper, withFieldHelper, i18nHelper) {
+            percentageHelper, placeholderTemplateHelper, prettyPrintNumberHelper, regexIfHelper, toExternalUrlHelper,
+            toLowerCaseHelper, toRelativeTimeHelper, toUpperCaseHelper, wikiThumbnailHelper, withFieldHelper, i18nHelper) {
 
     function templatePredicate(triggers) {
         return function(model) {
             return _.every(triggers, function(trigger) {
+                if (trigger.indexes) {
+                    const index = model.get('index');
+
+                    if (index) {
+                        const indexCaps = index.toUpperCase();
+
+                        if (!_.find(trigger.indexes, function(triggerIndex){
+                                return triggerIndex.toUpperCase() === indexCaps;
+                            })) {
+                            return false
+                        }
+                        else if (!trigger.field) {
+                            return true;
+                        }
+                    }
+                }
+
                 const documentField = _.findWhere(model.get('fields'), {id: trigger.field});
 
                 if (documentField) {
@@ -85,6 +103,7 @@ define([
             summary: addLinksToSummary(model.get('summary')),
             url: url ? urlManipulator.addSpecialUrlPrefix(model.get('contentType'), url) : null,
             icon: 'icomoon-file-' + getContentTypeClass(model),
+            intentRankedHit: model.get('intentRankedHit'),
             thumbnailSrc: thumbnailSrc,
             age: date && date.fromNow(),
             fields: model.get('fields').map(_.partial(_.pick, _, ['id', 'displayName', 'advanced', 'values']))
@@ -114,6 +133,7 @@ define([
             percentage: percentageHelper,
             placeholderTemplate: placeholderTemplateHelper,
             prettyPrintNumber: prettyPrintNumberHelper,
+            regexIf: regexIfHelper,
             toExternalUrl: toExternalUrlHelper,
             toLowerCase: toLowerCaseHelper,
             toRelativeTime: toRelativeTimeHelper,

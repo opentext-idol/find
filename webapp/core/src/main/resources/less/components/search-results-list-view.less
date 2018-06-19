@@ -43,6 +43,10 @@
   font-weight: bold;
 }
 
+.document-intent-based-ranking {
+  color: @grey6;
+}
+
 .main-results-container {
   .p-nil;
   .m-b-sm;
@@ -122,6 +126,14 @@
   .metric-semibold;
 
   font-weight: @fontWeightBold;
+}
+
+.search-text when not (@termHighlightColor = '') {
+  color: @termHighlightColor;
+}
+
+.search-text when not (@termHighlightBackground = '') {
+  background: @termHighlightBackground;
 }
 
 .selected-document {

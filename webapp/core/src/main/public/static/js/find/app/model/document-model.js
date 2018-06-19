@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
+ * Copyright 2014-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -7,8 +7,9 @@ define([
     'backbone',
     'underscore',
     'moment',
-    'find/app/configuration'
-], function(Backbone, _, moment, configuration) {
+    'find/app/configuration',
+    'idol-wkt/js/parser'
+], function(Backbone, _, moment, configuration, idolWktParser) {
     
     'use strict';
 
@@ -46,6 +47,9 @@ define([
             return valueWrapper.displayValue
         },
         NUMBER: function (valueWrapper) {
+            return valueWrapper.value
+        },
+        GEOINDEX: function (valueWrapper) {
             return valueWrapper.value
         },
         /**
@@ -120,18 +124,49 @@ define([
             if (configuration().map.enabled) {
                 response.locations = _.chain(configuration().map.locationFields)
                     .map(function (field) {
-                        const latitudes = getFieldValues(response.fieldMap[field.latitudeField]);
-                        const longitudes = getFieldValues(response.fieldMap[field.longitudeField]);
+                        let locations = [];
 
-                        return _.zip(latitudes, longitudes).map(function (coordinates) {
-                            return {
+                        if (field.geoindexField) {
+                            const wellKnownText = getFieldValues(response.fieldMap[field.geoindexField]);
+
+                            _.each(wellKnownText, function(text){
+                                try {
+                                    const parsed = idolWktParser.parse(text);
+                                    if (parsed.type === 'POINT') {
+                                        locations.push({
+                                            latitude: parsed.point[0],
+                                            longitude: parsed.point[1]
+                                        });
+                                    }
+                                    else if (parsed.type === 'POLYGON') {
+                                        locations.push({
+                                            polygon: parsed.polygon
+                                        });
+                                    }
+                                } catch (e) {
+                                    // this is not a valid point, ignore it
+                                }
+                            });
+                        }
+                        else {
+                            const latitudes = getFieldValues(response.fieldMap[field.latitudeField]);
+                            const longitudes = getFieldValues(response.fieldMap[field.longitudeField]);
+
+                            _.each(_.zip(latitudes, longitudes), function(coordinates){
+                                locations.push({
+                                    latitude: coordinates[0],
+                                    longitude: coordinates[1]
+                                });
+                            });
+                        }
+
+                        return locations.map(function (info) {
+                            return _.extend(info, {
                                 displayName: field.displayName,
-                                latitude: coordinates[0],
-                                longitude: coordinates[1],
                                 iconName: field.iconName,
                                 iconColor: field.iconColor,
                                 markerColor: field.markerColor
-                            }
+                            });
                         });
                     })
                     .flatten()
@@ -168,9 +203,11 @@ define([
 
                 for (let ii = 0; ii < patterns.length; ++ii) {
                     const pattern = patterns[ii];
-
-                    if (pattern.regex.test(reference)) {
-                        return pattern.template(this.attributes);
+                    const match = pattern.regex.exec(reference);
+                    if (match) {
+                        return pattern.template(_.extend({
+                            match: match
+                        }, this.attributes));
                     }
                 }
             }

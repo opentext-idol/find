@@ -18,11 +18,15 @@ define([
 
     const loadingHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
 
+    const databaseGroupSelector = '[data-entity-search-database-group]';
+
+    let userSelectedDatabase;
+
     function SelectionEntitySearch(options) {
         const documentRenderer = options.documentRenderer;
         const answerServer = options.answerServer;
         // You can control which elements the popup will appear on by adjusting this selector.
-        const selector = options.selector || '.main-results-container,.parametric-value-element,.dt-bootstrap,.trending-chart,.sunburst,.entity-topic-map,.leaflet-popup-content,.document-detail-tabs-content,.entity-search-messages';
+        const selector = options.selector || '.main-results-container,.parametric-value-element,.dt-bootstrap,.trending-chart,.sunburst,.entity-topic-map,.leaflet-popup-content,.document-detail-tabs-content,.entity-search-messages,.conversation-dialog-messages';
         const debounceMillis = options.debounceMillis || 250;
         // The length of time you have to hover over the text in the topic map before we automatically entity-search it.
         const hoverDelay = options.hoverDelay || 1000;
@@ -31,7 +35,7 @@ define([
         const entityModels = new EntitySearchCollection();
         let lastQueryText, lastFetch;
 
-        function loadModel(text, bounds) {
+        function loadModel(text, bounds, databaseGroup) {
             if (lastFetch && lastQueryText !== text) {
                 lastFetch.abort();
             }
@@ -46,7 +50,7 @@ define([
             updateIndicator($hover, loadingHtml, bounds, null);
 
             lastFetch = entityModels.fetch({
-                data: { text: text }
+                data: { text: text, databaseGroup: userSelectedDatabase || databaseGroup }
             }).done(function(){
                 if (text === lastQueryText && entityModels.length) {
                     const result = entityModels.first();
@@ -291,8 +295,10 @@ define([
                 const $summary = $selectEnd.closest(selector);
 
                 if ($summary.length && $(sel.anchorNode).closest(selector).is($summary)) {
+                    const databaseGroup = $selectEnd.closest(databaseGroupSelector).data('entitySearchDatabaseGroup');
+
                     // We're in a summary, try fetching stuff
-                    loadModel(text, range.getBoundingClientRect());
+                    loadModel(text, range.getBoundingClientRect(), databaseGroup);
                 }
             }
         }
@@ -320,7 +326,8 @@ define([
                         //   already selecting text on it with the mouse.
                         if (!window.getSelection().length) {
                             clearAllIndicators();
-                            loadModel(text, target.getBoundingClientRect());
+                            const databaseGroup = $textEl.closest(databaseGroupSelector).data('entitySearchDatabaseHint');
+                            loadModel(text, target.getBoundingClientRect(), databaseGroup);
                         }
                     }, hoverDelay);
                 }
@@ -359,6 +366,10 @@ define([
         this.setElement = function(dom) {
             element = dom;
         }
+    }
+
+    SelectionEntitySearch.setUserSelectedDatabaseGroup = function(database) {
+        userSelectedDatabase = database;
     }
 
     return SelectionEntitySearch;

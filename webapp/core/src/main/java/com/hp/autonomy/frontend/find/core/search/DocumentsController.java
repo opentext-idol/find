@@ -44,19 +44,20 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
     static final String SIMILAR_DOCUMENTS_PATH = "similar-documents";
     static final String GET_DOCUMENT_CONTENT_PATH = "get-document-content";
     static final String REFERENCE_PARAM = "reference";
-    static final String AUTO_CORRECT_PARAM = "auto_correct";
-    static final String QUERY_TYPE_PARAM = "queryType";
-    static final String DATABASE_PARAM = "database";
-    private static final String FIELD_TEXT_PARAM = "field_text";
-    private static final String SORT_PARAM = "sort";
-    private static final String MIN_DATE_PARAM = "min_date";
-    private static final String MAX_DATE_PARAM = "max_date";
-    private static final String HIGHLIGHT_PARAM = "highlight";
-    private static final String MIN_SCORE_PARAM = "min_score";
+    protected static final String AUTO_CORRECT_PARAM = "auto_correct";
+    protected static final String INTENT_BASED_RANKING_PARAM = "intentBasedRanking";
+    protected static final String QUERY_TYPE_PARAM = "queryType";
+    protected static final String DATABASE_PARAM = "database";
+    protected static final String FIELD_TEXT_PARAM = "field_text";
+    protected static final String SORT_PARAM = "sort";
+    protected static final String MIN_DATE_PARAM = "min_date";
+    protected static final String MAX_DATE_PARAM = "max_date";
+    protected static final String HIGHLIGHT_PARAM = "highlight";
+    protected static final String MIN_SCORE_PARAM = "min_score";
 
     protected final DocumentsService<RQ, RS, RC, Q, R, E> documentsService;
-    private final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory;
-    private final ObjectFactory<? extends QueryRequestBuilder<RQ, Q, ?>> queryRequestBuilderFactory;
+    protected final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory;
+    protected final ObjectFactory<? extends QueryRequestBuilder<RQ, Q, ?>> queryRequestBuilderFactory;
     private final ObjectFactory<? extends SuggestRequestBuilder<RS, Q, ?>> suggestRequestBuilderFactory;
     private final ObjectFactory<? extends GetContentRequestBuilder<RC, T, ?>> getContentRequestBuilderFactory;
     private final ObjectFactory<? extends GetContentRequestIndexBuilder<T, S, ?>> getContentRequestIndexBuilderFactory;
@@ -100,6 +101,7 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
         @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
         @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore,
         @RequestParam(value = AUTO_CORRECT_PARAM, defaultValue = "true") final boolean autoCorrect,
+        @RequestParam(value = INTENT_BASED_RANKING_PARAM, defaultValue = "false") final boolean intentBasedRanking,
         @RequestParam(value = QUERY_TYPE_PARAM, defaultValue = "MODIFIED") final String queryType
     ) throws E {
         final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
@@ -121,6 +123,7 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
             .summary(summary)
             .sort(sort)
             .queryType(QueryRequest.QueryType.valueOf(queryType))
+            .intentBasedRanking(intentBasedRanking)
             .build();
 
         return documentsService.queryTextIndex(queryRequest);

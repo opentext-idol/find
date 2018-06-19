@@ -7,9 +7,11 @@ define([
     'underscore'
 ], function(_) {
 
-    return function(fieldId) {
+    return function(fieldId, options) {
+        const fn = options && options.fn || _.identity;
+        const inverse = options && options.inverse;
         const field = _.findWhere(this.fields, {id: fieldId});
-        return field ? field.values[0] : undefined;
+        return field ? fn(field.values[0]) : inverse ? inverse(this) : undefined;
     };
 
 });

@@ -39,5 +39,19 @@ define([
 
             expect(this.conceptModel.get('concepts')).toEqual(['cats', '"winston churchill"', '"bob marley"', 'foo']);
         });
+
+        it('saves concepts that are separated by new line and quoted and have other text on same line', function() {
+            this.view.$('textarea').val('cats "winston churchill"\n\n"bob\n\n\nmarley" test\n"foo');
+            this.view.$('.edit-concept-confirm-button').click();
+
+            expect(this.conceptModel.get('concepts')).toEqual(['cats "winston churchill"', '"bob marley" test', 'foo']);
+        });
+
+        it('saves concepts with braces', function() {
+            this.view.$('textarea').val('(bonds OR "tax")\n("tax relief" AND taxes)');
+            this.view.$('.edit-concept-confirm-button').click();
+
+            expect(this.conceptModel.get('concepts')).toEqual(['(bonds OR "tax")', '("tax relief" AND taxes)']);
+        });
     });
 });

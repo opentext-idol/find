@@ -1,0 +1,18 @@
+<div class="conversation-dialog conversation-dialog-dismissed">
+    <div class="conversation-dialog-title clearfix">
+        <%-i18n['conversation.title'] %>
+        <div class="hp-icon btn btn-primary pull-right conversation-hide">
+            <i class="hp-icon hp-close"></i>
+        </div>
+        <div class="hp-icon btn btn-primary pull-right conversation-reset">
+            <i class="hp-icon hp-refresh"></i>
+        </div>
+    </div>
+    <div class="conversation-dialog-messages"></div>
+    <div class="conversation-dialog-controls clearfix">
+        <form>
+            <input class="conversation-dialog-input" name="query" type="text" autocomplete="off" placeholder="<%-i18n['conversation.placeholder']%>">
+            <input class="btn btn-primary pull-right" type="submit" value="<%-i18n['conversation.submit']%>">
+        </form>
+    </div>
+</div>

@@ -116,7 +116,8 @@ define([
                     fieldText: queryModel.get('fieldText'),
                     minDate: queryModel.getIsoDate('minDate'),
                     maxDate: queryModel.getIsoDate('maxDate'),
-                    minScore: queryModel.get('minScore')
+                    minScore: queryModel.get('minScore'),
+                    queryType: 'MODIFIED'
                 };
             }
 

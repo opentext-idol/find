@@ -50,7 +50,11 @@ define([
                     allIndexes: allIndexes,
                     selectedValues: options.selectedParametricValues,
                     fetchRestrictions: fetchRestrictions,
-                    fetchFunction: function(data) {
+                    fetchFunction: function(origData) {
+                        const data = _.extend({
+                            sort: options.parametricValuesSort
+                        }, origData);
+
                         return $.ajax({url: 'api/public/parametric/values', traditional: true, data: data})
                             .then(function(response) {
                                 return {

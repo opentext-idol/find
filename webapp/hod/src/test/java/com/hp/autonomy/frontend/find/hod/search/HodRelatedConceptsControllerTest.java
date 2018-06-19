@@ -52,6 +52,7 @@ public class HodRelatedConceptsControllerTest extends AbstractRelatedConceptsCon
         when(relatedConceptsRequestBuilder.maxResults(anyInt())).thenReturn(relatedConceptsRequestBuilder);
         when(relatedConceptsRequestBuilder.querySummaryLength(anyInt())).thenReturn(relatedConceptsRequestBuilder);
         when(relatedConceptsRequestBuilder.queryRestrictions(any())).thenReturn(relatedConceptsRequestBuilder);
+        when(relatedConceptsRequestBuilder.queryType(any())).thenReturn(relatedConceptsRequestBuilder);
 
         return new HodRelatedConceptsController(hodRelatedConceptsService, queryRestrictionsBuilderFactory, relatedConceptsRequestBuilderFactory);
     }

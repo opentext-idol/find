@@ -1,13 +1,13 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: find-ansible
-Source: https://github.com/hpe-idol/find
+Source: https://github.com/microfocus-idol/find
 
 Files: *
-Copyright: 2015-2016 Hewlett Packard Enterprise Development Company, L.P. <hpe-idol-oss@groups.ext.hpe.com>
+Copyright: 2015-2018 Micro Focus International plc. <microfocus-idol-oss@groups.ext.hpe.com>
 License: MIT
 The MIT License (MIT)
 .
-Copyright (c) 2015-2016 Hewlett Packard Enterprise Development Company, L.P.
+Copyright (c) 2015-2018 Micro Focus International plc.
 .
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

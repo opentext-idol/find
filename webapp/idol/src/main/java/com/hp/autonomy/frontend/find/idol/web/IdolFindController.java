@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -9,6 +9,7 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.configuration.TemplatesConfig;
+import com.hp.autonomy.frontend.find.core.configuration.style.StyleConfiguration;
 import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.FindController;
@@ -26,7 +27,7 @@ import com.hp.autonomy.frontend.find.idol.export.service.IdolMetadataNode;
 import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import lombok.Getter;
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -36,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 @Controller
 public class IdolFindController extends FindController<IdolFindConfig, IdolFindConfigBuilder> {
@@ -56,9 +59,10 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
             final ConfigService<CustomApplicationsConfig> appsConfig,
             final FieldDisplayNameGenerator fieldDisplayNameGenerator,
             final ConfigService<TemplatesConfig> templatesConfig,
-            final ConfigService<AssetConfig> assetsConfigService
+            final ConfigService<AssetConfig> assetsConfigService,
+            final ConfigService<StyleConfiguration> styleSheetService
     ) {
-        super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService, fieldDisplayNameGenerator);
+        super(controllerUtils, authenticationInformationRetriever, authenticationConfigService, configService, fieldDisplayNameGenerator, styleSheetService);
         this.authenticationInformationRetriever = authenticationInformationRetriever;
         this.dashConfig = dashConfig;
         this.appsConfig = appsConfig;
@@ -78,7 +82,7 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
 
         final MMAP mmap = config.getMmap();
 
-        if(BooleanUtils.isTrue(mmap.getEnabled())) {
+        if(isTrue(mmap.getEnabled())) {
             publicConfig.put(IdolMvcConstants.MMAP_BASE_URL.getName(), mmap.getBaseUrl());
         }
         final Set<String> roles = authenticationInformationRetriever.getPrincipal().getIdolRoles();
@@ -92,13 +96,22 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
                         dashboard.getRoles().stream().anyMatch(roles::contains))
                 .collect(Collectors.toList()));
         publicConfig.put(IdolMvcConstants.APPLICATIONS.getName(), enabledApps);
-        publicConfig.put(MvcConstants.ANSWER_SERVER_ENABLED.value(), config.getAnswerServer().getEnabled());
+
+        final Boolean answerServerEnabled = config.getAnswerServer().getEnabled();
+        publicConfig.put(MvcConstants.ANSWER_SERVER_ENABLED.value(), answerServerEnabled);
+        publicConfig.put(MvcConstants.CONVERSATION_ENABLED.value(), Boolean.TRUE.equals(answerServerEnabled)
+                && StringUtils.isNotEmpty(config.getAnswerServer().getConversationSystemName()));
 
         final EntitySearchConfig entitySearch = config.getEntitySearch();
-        publicConfig.put(MvcConstants.ENTITY_SEARCH_ENABLED.value(), entitySearch.getEnabled());
+        final Boolean entitySearchEnabled = entitySearch.getEnabled();
+        publicConfig.put(MvcConstants.ENTITY_SEARCH_ENABLED.value(), entitySearchEnabled);
         publicConfig.put(MvcConstants.ENTITY_SEARCH_ANSWER_SERVER_ENABLED.value(),
-            BooleanUtils.isTrue(entitySearch.getEnabled()) && BooleanUtils.isTrue(entitySearch.getAnswerServer().getEnabled())
+            isTrue(entitySearchEnabled) && isTrue(entitySearch.getAnswerServer().getEnabled())
         );
+        publicConfig.put(MvcConstants.ENTITY_SEARCH_OPTIONS.value(),
+            isTrue(entitySearchEnabled) && isTrue(entitySearch.getDatabaseChoicesVisible()) ? entitySearch.getDatabaseChoices() : null
+        );
+
         publicConfig.put(MvcConstants.TEMPLATES_CONFIG.value(), templatesConfig.getConfig());
         publicConfig.put(MvcConstants.ASSETS_CONFIG.value(), assetsConfigService.getConfig());
         publicConfig.put(MvcConstants.MESSAGE_OF_THE_DAY_CONFIG.value(), config.getMessageOfTheDay());

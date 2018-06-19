@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2014-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -12,7 +12,8 @@ require.config({
         'mock': '../../../../test/js/mock',
         'test-util': '../../../../test/js/util',
         'resources': '../../../../test/js/resources',
-        'fieldtext/js/parser': '../../../../../target/classes/static/js/pegjs/fieldtext/parser'
+        'fieldtext/js/parser': '../../../../../target/classes/static/js/pegjs/fieldtext/parser',
+        'idol-wkt/js/parser': '../../../../../target/classes/static/js/pegjs/idol-wkt/parser'
     },
     shim: {
         'jasmine-jquery': ['jquery']
@@ -28,7 +29,6 @@ require.config({
             'find/app/util/topic-map-view': 'mock/util/topic-map-view',
             'find/app/model/bucketed-numeric-collection': 'mock/model/bucketed-numeric-collection',
             'find/app/model/bucketed-date-collection': 'mock/model/bucketed-date-collection',
-            'css/result-highlighting.css': 'mock/css/result-highlighting.css',
             'find/app/model/parametric-collection': 'mock/model/parametric-collection',
             'find/app/model/date-field-details-model': 'mock/model/parametric-details-model'
         },

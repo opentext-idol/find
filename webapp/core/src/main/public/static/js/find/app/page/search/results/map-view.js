@@ -7,6 +7,7 @@ define([
     'underscore',
     'jquery',
     'backbone',
+    'd3',
     'find/app/configuration',
     'find/app/vent',
     'leaflet',
@@ -14,16 +15,31 @@ define([
     'leaflet.markercluster',
     'leaflet.markercluster.layersupport',
     'html2canvas'
-], function(_, $, Backbone, configuration, vent, leaflet) {
+], function(_, $, Backbone, d3, configuration, vent, leaflet) {
     'use strict';
 
     const INITIAL_ZOOM = 3;
 
     const leafletMarkerColorMap = {
-        'green': '#70ad25',
-        'orange': '#f0932f',
         'red': '#d33d2a',
-        'blue': '#37a8da'
+        'orange': '#f0932f',
+        'green': '#70ad25',
+        'blue': '#37a8da',
+        'purple': '#c64daf',
+        'darkred': '#9f3235',
+        'darkblue': '#0066a2',
+        'darkgreen': '#6d7c22',
+        'darkpurple': '#543563',
+        'cadetblue': '#406471',
+        'lightred': '#ff8676',
+        'beige': '#ffbc74',
+        'lightgreen': '#b8f271',
+        'lightblue': '#7dd5ff',
+        'pink': '#f888e2',
+        'white': '#fbfbfb',
+        'lightgray': '#9e9e9e',
+        'gray': '#555555',
+        'black': '#2f2f2f',
     };
 
     function leftPadHex(str) {
@@ -45,7 +61,7 @@ define([
         } else if(match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(str)) {
             return '#' + leftPadMatch(match);
         } else {
-            return str;
+            return d3.rgb(str).toString();
         }
     }
 
@@ -174,6 +190,16 @@ define([
             }
         },
 
+        getAreaLayer: function(polygon, color, title, popover){
+            const layer = leaflet.polygon(polygon, {color: color || 'orange', fillOpacity: 0.2, weight: 0.5, opacity: 0.5, title: title});
+
+            if(popover) {
+                layer.bindPopup(popover);
+            }
+
+            return layer
+        },
+
         getIcon: function(iconName, iconColor, markerColor) {
             return leaflet.AwesomeMarkers.icon({
                 icon: iconName || 'hp-record',
@@ -219,8 +245,10 @@ define([
 
             const map = this.map;
             const mapSize = map.getSize();
+            const mapBounds = leaflet.bounds(leaflet.point(0, 0), mapSize);
             const $mapEl = $(map.getContainer());
             const markers = [];
+            const polygons = [];
 
             map.eachLayer(function(layer) {
                 if(layer instanceof leaflet.Marker) {
@@ -274,6 +302,46 @@ define([
                         markers.push(marker)
                     }
                 }
+                else if (layer instanceof leaflet.Polygon) {
+                    let text;
+
+                    if(layer.options.title) {
+                        text = layer.options.title
+                    } else {
+                        const popup = layer.getPopup();
+                        if(popup && popup._content) {
+                            text = $(popup._content).find('.map-popup-title').text()
+                        }
+                    }
+
+                    const $pathEl = $(layer._path);
+                    const color = hexColor($pathEl.css('fill'));
+
+                    const pointRings = _.reduce(layer.getLatLngs(), function(pointRings, latLngRing){
+                        const clippedPoints = leaflet.PolyUtil.clipPolygon(latLngRing.map(function(latLng){
+                            return map.latLngToContainerPoint(latLng);
+                        }), mapBounds);
+
+                        if (clippedPoints.length) {
+                            const pointRing = _.reduce(clippedPoints, function(pointRing, point){
+                                pointRing.push(point.x / mapSize.x, point.y / mapSize.y);
+                                return pointRing;
+                            }, []);
+
+                            pointRings.push(pointRing);
+                        }
+
+                        return pointRings;
+                    }, []);
+
+                    if (pointRings.length) {
+                        polygons.push({
+                            points: pointRings,
+                            text: text,
+                            color: color
+                        })
+                    }
+                }
             });
 
             const $objs = $mapEl.find('.leaflet-objects-pane, .leaflet-marker-pane, .leaflet-shadow-pane')
@@ -297,7 +365,8 @@ define([
                             return a.z - b.z;
                         }).map(function(a) {
                             return _.omit(a, 'z')
-                        })
+                        }),
+                        polygons: polygons
                     });
                 }
             });

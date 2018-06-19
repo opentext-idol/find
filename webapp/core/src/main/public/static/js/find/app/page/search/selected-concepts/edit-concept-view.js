@@ -29,18 +29,18 @@ define([
 
                 const concepts = [];
                 //matching quoted or non quoted string and new lines after them
-                const regex = new RegExp('("[^"]+"|[^"\n]+)\s*\n', 'g');
+                const regex = /(("[^"]+"|[^"\n]+)+)\n/g;
 
                 let match = regex.exec(newConceptsString);
                 while(match != null) {
-                    concepts.push(match[1]);
+                    concepts.push(match[1].trim());
                     match = regex.exec(newConceptsString);
                 }
 
                 this.model.set({
                     concepts: _.compact(concepts.map(function(string) {
                         // the regex above will leave new lines if they were between quotes
-                        return string.replace('\n', ' ').trim();
+                        return string.replace(/\n+/g, ' ').trim();
                     }))
                 });
 

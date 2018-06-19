@@ -10,8 +10,9 @@ define([
     'find/app/configuration',
     'find/app/page/search/results/add-links-to-summary',
     'find/app/page/search/results/map-view',
-    'i18n!find/nls/bundle'
-], function(_, $, Backbone, configuration, addLinksToSummary, MapView, i18n) {
+    'i18n!find/nls/bundle',
+    'leaflet'
+], function(_, $, Backbone, configuration, addLinksToSummary, MapView, i18n, leaflet) {
     'use strict';
 
     return function(options) {
@@ -23,9 +24,11 @@ define([
         const toggleLoading = options.toggleLoading;
         const resultSets = options.resultSets;
         const errorCallback = options.errorCallback;
+        const disableAutoZoom = options.disableAutoZoom;
 
         const mapView = new MapView(options.mapViewOptions);
         const parentLayerModel = new Backbone.Model();
+        const polygonParentLayerModel = new Backbone.Model();
         const errorModel = options.errorModel || new Backbone.Model();
 
         return {
@@ -59,8 +62,6 @@ define([
                 const locations = model.get('locations');
                 _.each(locations, function(locationValues, locationName) {
                     locationValues.forEach(function(location) {
-                        const longitude = location.longitude;
-                        const latitude = location.latitude;
                         const title = model.get('title');
                         const titleHover = i18n['search.resultsView.map.field'] + ': ' + locationName;
 
@@ -74,7 +75,9 @@ define([
                             })
                             : null;
                         const icon = mapView.getIcon(location.iconName, location.iconColor, color || location.markerColor);
-                        const marker = mapView.getMarker(latitude, longitude, icon, title, popover);
+                        const marker = location.polygon
+                            ? mapView.getAreaLayer(location.polygon, color || location.markerColor, title, popover)
+                            : mapView.getMarker(location.latitude, location.longitude, icon, title, popover);
 
                         if(markers[location.displayName]) {
                             markers[location.displayName].push(marker);
@@ -86,10 +89,9 @@ define([
             },
 
             createSyncListeners: function(listenTo, callback) {
-                const createParentLayers = resultSets.length > 1;
                 resultSets.forEach(function(resultSet) {
                     listenTo(resultSet.collection, 'sync', function() {
-                        this.addMarkersToMap(resultSet.markers, resultSet.clusterLayer, createParentLayers);
+                        this.addMarkersToMap(resultSet.markers, resultSet.clusterLayer, true);
 
                         if(callback) {
                             callback();
@@ -101,23 +103,37 @@ define([
             addMarkersToMap: function(markerMap, clusterLayer, createParentLayers) {
                 if(!_.isEmpty(markerMap)) {
                     _.each(markerMap, function(markers, markerName) {
-                        let parentLayer;
-                        if(createParentLayers) {
-                            parentLayer = parentLayerModel.get(markerName);
-                            if(!parentLayer) {
-                                parentLayer = mapView.addGroupingLayer(markerName);
-                                parentLayerModel.set(markerName, parentLayer);
+                        // We put the polygons on their own parent layers so their visibility can be toggled separately.
+                        const split = _.partition(markers, function(marker){
+                            return marker instanceof leaflet.Polygon;
+                        })
+
+                        addMarkers(split[0], polygonParentLayerModel, i18n['search.resultsView.map.areas'](markerName))
+                        addMarkers(split[1], parentLayerModel, i18n['search.resultsView.map.points'](markerName))
+
+                        function addMarkers(markers, parentLayerModel, markerName){
+                            if(!markers.length) {
+                                return;
                             }
+
+                            let parentLayer;
+                            if(createParentLayers) {
+                                parentLayer = parentLayerModel.get(markerName);
+                                if(!parentLayer) {
+                                    parentLayer = mapView.addGroupingLayer(markerName);
+                                    parentLayerModel.set(markerName, parentLayer);
+                                }
+                            }
+                            mapView.addMarkers(markers, {
+                                clusterLayer: clusterLayer,
+                                groupingLayer: parentLayer,
+                                name: parentLayer
+                                    ? null
+                                    : markerName
+                            });
                         }
-                        mapView.addMarkers(markers, {
-                            clusterLayer: clusterLayer,
-                            groupingLayer: parentLayer,
-                            name: parentLayer
-                                ? null
-                                : markerName
-                        });
                     });
-                    mapView.fitMapToMarkerBounds();
+                    disableAutoZoom || mapView.fitMapToMarkerBounds();
                 }
                 toggleLoading();
             },
@@ -133,6 +149,7 @@ define([
                         resultSet.markers = {};
                     });
                     parentLayerModel.clear();
+                    polygonParentLayerModel.clear();
                     return this.fetchDocuments();
                 }
 
@@ -203,7 +220,8 @@ define([
                     errorModel.set('hasError', false);
 
                     const fieldText = locationFieldsToRetrieve.map(function(locationField) {
-                        return '(EXISTS{}:' + config.fieldsInfo[locationField.latitudeField].names.join(':') +
+                        return locationField.geoindexField ? 'EXISTS{}:' + config.fieldsInfo[locationField.geoindexField].names.join(':') :
+                            '(EXISTS{}:' + config.fieldsInfo[locationField.latitudeField].names.join(':') +
                             ' AND EXISTS{}:' + config.fieldsInfo[locationField.longitudeField].names.join(':') + ')';
                     }).join(' OR ');
 

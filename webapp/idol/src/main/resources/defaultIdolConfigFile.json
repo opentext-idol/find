@@ -23,6 +23,7 @@
       "IDOLPROXY"
     ]
   },
+  "referenceField": "DREREFERENCE",
   "queryManipulation": {
     "server": {
       "protocol": "HTTP",
@@ -111,7 +112,9 @@
     },
     "answerServerDatabaseMatch": "Wikipedia",
     "answerServerContentField": "DRECONTENT",
-    "answerServerTimeoutSecs": -1.0
+    "answerServerTimeoutSecs": -1.0,
+    "databaseChoices": null,
+    "databaseChoicesVisible": true
   },
   "savedSearches": {
     "pollForUpdates": true,
@@ -190,7 +193,8 @@
           "sunburst",
           "trending",
           "table",
-          "map"
+          "map",
+          "recommendation"
         ],
         "user": [
           "list"
@@ -203,6 +207,7 @@
     "parametricNeverShow": [],
     "parametricAlwaysShow": [],
     "parametricOrder": [],
+    "parametricValuesSort": "DocumentCount",
     "specialUrlPrefixes": {
       "application/msword": "ms-word:ofv|u|",
       "application/mspowerpoint": "ms-powerpoint:ofv|u|",
@@ -221,7 +226,15 @@
       "^(https?://)?www\\.youtube(-nocookie)?\\.com/embed/.*": "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference%>\">",
       "^(https?://)?www\\.facebook\\.com/plugins/.*" : "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference%>\">",
       "^(https?://)?video\\.xx\\.fbcdn\\.net/.*" : "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference%>\">",
-      "^(https?:\\/\\/)?www.youtube.com\\/watch(.*?)[?&]v=([^&?]+)(.*)": "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"<%-reference.replace(/^(https?:\\/\\/)?www.youtube.com\\/watch(.*?)[?&]v=([^&?]+)(.*)/i, 'https://www.youtube-nocookie.com/embed/$3?$2$4')%>\">"
+      "^(https?:\\/\\/)?www.youtube.com\\/watch(.*?)[?&]v=([^&?]+)(.*)": "<iframe class=\"preview-document-frame\" allow=\"autoplay; encrypted-media\" allowfullscreen src=\"https://www.youtube-nocookie.com/embed/<%-match[3]%>?<%-match[2]%><%-match[4]%>\">"
+    },
+    "profile": {
+      "intentBasedRanking": false,
+      "highlightTerms": true,
+      "maxProfiles": 3,
+      "maxResultsPerProfile": 2,
+      "maxTerms": 30,
+      "updateProfileOnView": false
     }
   },
   "minScore": 0,

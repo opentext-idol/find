@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2014-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -11,6 +11,7 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/navigation.html',
+    'chosen',
     'metisMenu'
 ], function(_, $, Backbone, vent, configuration, i18n, template) {
     'use strict';
@@ -27,12 +28,20 @@ define([
             'click li[data-pagename="custom-applications"] ul li a[target=_blank]': function(event) {
                 event.preventDefault();
                 window.open(event.currentTarget.href, '_blank');
+            },
+            'change .find-navbar-entity-search-select': function(evt){
+                this.onEntitySearchSelect(evt.currentTarget.value);
+            },
+            'click .suppress-click-propagation': function(evt){
+                evt.stopPropagation();
             }
         },
 
         template: _.template(template, {variable: 'data'}),
 
         menuItems: _.constant(''),
+
+        onEntitySearchSelect: function(group){},
 
         initialize: function(options) {
             this.pageData = options.pageData;
@@ -76,7 +85,16 @@ define([
                 username: conf.username,
                 messageOfTheDay: conf.messageOfTheDay && conf.messageOfTheDay.message,
                 messageOfTheDayCssClass: conf.messageOfTheDay && conf.messageOfTheDay.cssClass,
+                entitySearchOptions: conf.entitySearchOptions
             }));
+
+            if(conf.entitySearchOptions) {
+                this.$('.chosen-select').chosen({
+                    allow_single_deselect: true,
+                    disable_search_threshold: 10,
+                    width: '95%'
+                });
+            }
 
             this.$('.side-menu').metisMenu({
                 activeClass: 'selected'

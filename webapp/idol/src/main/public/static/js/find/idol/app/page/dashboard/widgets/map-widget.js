@@ -28,6 +28,7 @@ define([
                 resultsStep: this.widgetSettings.maxResults || 1000,
                 clusterMarkers: this.widgetSettings.clusterMarkers || false,
                 locationFields: this.widgetSettings.locationFieldPairs,
+                disableAutoZoom: this.widgetSettings.disableAutoZoom,
                 mapViewOptions: {
                     addControl: false,
                     centerCoordinates: this.widgetSettings.centerCoordinates,

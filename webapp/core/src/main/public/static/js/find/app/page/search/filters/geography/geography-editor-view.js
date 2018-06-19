@@ -12,6 +12,59 @@ define([
 
     const INITIAL_ZOOM = 3;
 
+    const colorMapping = {
+        'within': ['#01a982', '#ff0000'],
+        'intersect': ['#e4ff00', '#fa8800'],
+        'contains': ['#0066ff', '#a106ba']
+    }
+
+    const intersectionTypes = _.keys(colorMapping);
+
+    function shapeColor(shape) {
+        const colorMap = shape && shape.spatial && colorMapping[shape.spatial];
+        const color = (colorMap || colorMapping.within)[shape && shape.negated ? 1 : 0];
+        return { color: color, fillColor: color };
+    }
+
+    function bindTooltipOnAdd(layer) {
+        if (layer instanceof leaflet.Polygon || layer instanceof leaflet.Circle) {
+            layer.bindTooltip(layerTooltip, {direction: 'top', sticky: true, offset: [0, -10]});
+            // We have to call this explicitly, otherwise the tooltip doesn't update till the next time the user
+            //  hovers out of the shape, then moves the mouse back onto it.
+            layer.on('polygonSpatialChange negated', updateTooltipContent)
+        }
+    }
+
+    function updateTooltipContent(layer) {
+        const tooltip = layer.getTooltip();
+        if (tooltip) {
+            layer.setTooltipContent(layerTooltip);
+        }
+    }
+
+    function layerTooltip(shape) {
+        if (shape instanceof leaflet.Circle) {
+            return shape.negated ? i18n['search.geography.shape.tooltip.circle.negated']
+                : i18n['search.geography.shape.tooltip.circle']
+        }
+
+        if (shape instanceof leaflet.Polygon) {
+            switch (shape.spatial) {
+                case 'intersect':
+                    return shape.negated ? i18n['search.geography.shape.tooltip.polygon.intersect.negated']
+                        : i18n['search.geography.shape.tooltip.polygon.intersect']
+                case 'contains':
+                    return shape.negated ? i18n['search.geography.shape.tooltip.polygon.contain.negated']
+                        : i18n['search.geography.shape.tooltip.polygon.contain']
+            }
+
+            return shape.negated ? i18n['search.geography.shape.tooltip.polygon.within.negated']
+                : i18n['search.geography.shape.tooltip.polygon.within']
+        }
+
+        return '';
+    }
+
     return Backbone.View.extend({
         template: _.template(template),
         className: 'full-height',
@@ -21,6 +74,7 @@ define([
 
         initialize: function (options) {
             this.shapes = options.shapes;
+            this.geospatialUnified = options.geospatialUnified;
         },
 
         render: function () {
@@ -44,6 +98,19 @@ define([
             });
 
             const drawnItems = this.drawnItems = leaflet.featureGroup().addTo(map);
+
+            drawnItems.on('layeradd', function(evt){
+                const layer = evt.layer;
+                bindTooltipOnAdd(layer);
+            }, this)
+
+            drawnItems.on('layerremove', function(evt){
+                const layer = evt.layer;
+                if (layer instanceof leaflet.Polygon || layer instanceof leaflet.Circle ) {
+                    layer.unbindTooltip();
+                    layer.off('polygonSpatialChange negated', updateTooltipContent);
+                }
+            }, this)
 
             leaflet
                 .tileLayer(configuration().map.tileUrlTemplate)
@@ -72,9 +139,6 @@ define([
                 ? this.initialZoom
                 : INITIAL_ZOOM);
 
-            const color = '#01a982';
-            const negatedColor = '#ff0000';
-
             const drawControls = new leaflet.Control.Draw({
                 edit: {
                     featureGroup: drawnItems,
@@ -84,10 +148,15 @@ define([
                     poly: {
                         allowIntersection: false
                     },
+                    polygonSpatial: this.geospatialUnified ? {
+                        shapeOptions: {
+                            colorFn: shapeColor,
+                            intersectionTypes: intersectionTypes
+                        }
+                    } : false,
                     negate: {
                         shapeOptions: {
-                            color: color,
-                            negatedColor: negatedColor
+                            colorFn: shapeColor
                         }
                     }
                 },
@@ -97,13 +166,13 @@ define([
                     rectangle: false,
                     circle: {
                         repeatMode: true,
-                        shapeOptions: { color: color }
+                        shapeOptions: shapeColor()
                     },
                     polygon: {
                         repeatMode: true,
                         allowIntersection: false,
                         showArea: true,
-                        shapeOptions: { color: color }
+                        shapeOptions: shapeColor()
                     }
                 }
             });
@@ -125,7 +194,7 @@ define([
 
                 // We need to make the 'cancel' button trigger an explicit revert now.
                 drawControls._toolbars.edit.getActions = function(handler){
-                    if (handler instanceof leaflet.EditToolbar.Negate) {
+                    if (handler instanceof leaflet.EditToolbar.Negate || handler instanceof leaflet.EditToolbar.PolygonSpatial) {
                         return [];
                     }
                     return [{
@@ -153,7 +222,8 @@ define([
 
             if (this.shapes) {
                 _.each(this.shapes, function(shape){
-                    const colorOpts = { color: shape.NOT ? negatedColor : color };
+                    const shapeOpts = { negated: shape.NOT, spatial: shape.spatial };
+                    const colorOpts = shapeColor(shapeOpts);
                     let layer;
 
                     switch(shape.type) {
@@ -170,7 +240,7 @@ define([
                     }
 
                     if (layer) {
-                        layer.negated = shape.NOT;
+                        _.extend(layer, shapeOpts);
                         drawnItems.addLayer(layer);
                     }
                 }, this);
@@ -252,6 +322,9 @@ define([
                     if (shape) {
                         if (layer.negated) {
                             shape.NOT = true;
+                        }
+                        if (layer.spatial) {
+                            shape.spatial = layer.spatial;
                         }
                         shapes.push(shape);
                     }

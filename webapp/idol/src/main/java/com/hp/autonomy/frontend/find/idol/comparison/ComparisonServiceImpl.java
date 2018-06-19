@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -8,7 +8,6 @@ package com.hp.autonomy.frontend.find.idol.comparison;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.configuration.ConfigResponse;
-import com.hp.autonomy.frontend.find.core.search.DocumentsController;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.annotations.IdolService;

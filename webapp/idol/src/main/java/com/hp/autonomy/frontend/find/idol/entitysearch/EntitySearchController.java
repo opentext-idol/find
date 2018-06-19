@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.idol.entitysearch;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.AciParameters;
+import com.hp.autonomy.aci.content.database.Databases;
 import com.hp.autonomy.aci.content.printfields.PrintFields;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.idol.configuration.EntitySearchConfig;
@@ -22,6 +23,7 @@ import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
 import java.util.Collection;
 import java.util.List;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +37,7 @@ class EntitySearchController {
     static final String BASE_PATH = "/api/public/entitysearch";
     static final String SEARCH_PATH = "search";
     static final String TEXT_PARAM = "text";
+    static final String DATABASE_GROUP_PARAM = "databaseGroup";
 
     private final HavenSearchAciParameterHandler parameterHandler;
     private final Processor<QueryResponseData> queryResponseProcessor;
@@ -57,8 +60,10 @@ class EntitySearchController {
     }
 
     @RequestMapping(value = SEARCH_PATH, method = RequestMethod.GET)
-    public List<IdolSearchResult> search(@RequestParam(TEXT_PARAM)
-                               final String text) {
+    public List<IdolSearchResult> search(
+            @RequestParam(TEXT_PARAM) final String text,
+            @RequestParam(value = DATABASE_GROUP_PARAM, required = false) final String databaseGroup
+    ) {
         AciParameters aciParameters = new AciParameters(QueryActions.Query.name());
 
         final EntitySearchConfig entitySearch = configService.getConfig().getEntitySearch();
@@ -74,6 +79,15 @@ class EntitySearchController {
         final Collection<String> printFields = entitySearch.getIdolPrintFields();
         aciParameters.add(QueryParams.PrintFields.name(), CollectionUtils.isEmpty(printFields) ? "*" : new PrintFields(printFields));
         aciParameters.add(QueryParams.Text.name(), text);
+        aciParameters.add(QueryParams.AbsWeight.name(), entitySearch.getAbsWeight());
+
+        if (StringUtils.isNotBlank(databaseGroup) && entitySearch.getDatabaseChoices() != null) {
+            final List<String> dbNames = entitySearch.getDatabaseChoices().get(databaseGroup);
+
+            if (dbNames != null) {
+                aciParameters.add(QueryParams.DatabaseMatch.name(), new Databases(dbNames));
+            }
+        }
 
         this.parameterHandler.addSecurityInfo(aciParameters);
 

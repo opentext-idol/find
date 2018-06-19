@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 120 60" height="60" width="120">
+  <g id="enabled" fill="#464646">
+    <g id="enabled" transform="matrix(0.74550978,0,0,0.74550978,7.8439501,7.8996701)">
+      <path
+        id="contains"
+        d="M 5.5357143,12.5 54.910617,10.982434 53.928636,48.928117 7.8571429,47.321429 z"
+        style="fill:#01a982;fill-opacity:0.5;stroke:#01a982;stroke-width:2" />
+      <rect
+        id="within"
+        style="fill:#0066ff;fill-opacity:0.5;stroke:#0066ff;stroke-width:2"
+        width="40"
+        height="20"
+        x="10"
+        y="20" />
+      <path
+        id="intersect"
+        d="M 26.552658,41.082101 51.341934,1.3476128 41.150023,60.221308 z"
+        style="fill:#e4ff00;fill-opacity:0.5;stroke:#e4ff00;stroke-width:2" />
+    </g>
+  </g>
+  <g id="enabled" fill="#464646" transform="translate(60)">
+    <g id="disabled" transform="matrix(0.74550978,0,0,0.74550978,7.8439501,7.8996701)">
+      <path
+        id="containsDisabled"
+        d="M 5.5357143,12.5 54.910617,10.982434 53.928636,48.928117 7.8571429,47.321429 z"
+        style="fill:#d0d0d0;fill-opacity:0.5;stroke:#d0d0d0;stroke-width:2" />
+      <rect
+        id="withinDisabled"
+        style="fill:#808080;fill-opacity:0.5;stroke:#808080;stroke-width:2"
+        width="40"
+        height="20"
+        x="10"
+        y="20" />
+      <path
+        id="intersect"
+        d="M 26.552658,41.082101 51.341934,1.3476128 41.150023,60.221308 z"
+        style="fill:#e6e6e6;fill-opacity:0.5;stroke:#e6e6e6;stroke-width:2" />
+    </g>
+  </g>
+</svg>

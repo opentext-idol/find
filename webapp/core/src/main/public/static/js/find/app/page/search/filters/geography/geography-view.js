@@ -16,6 +16,7 @@ define([
     'use strict';
 
     const LocationFields = GeographyModel.LocationFields;
+    const LocationFieldsById = GeographyModel.LocationFieldsById;
 
     return Backbone.View.extend({
         events: {
@@ -85,6 +86,7 @@ define([
         showMapModal: function(locationId) {
             new GeographyModal({
                 shapes: this.shapes[locationId] || [],
+                geospatialUnified: LocationFieldsById[locationId].geospatialUnified,
                 actionButtonCallback: _.bind(function(shapes){
                     this.shapes[locationId] = shapes;
                     this.geographyModel.set(locationId, shapes);

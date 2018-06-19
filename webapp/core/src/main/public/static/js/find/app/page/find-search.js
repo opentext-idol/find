@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2014-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -248,7 +248,7 @@ define([
             }, this);
 
             // Bind routing to search model
-            this.listenTo(router, 'route:search', function(text) {
+            this.listenTo(router, 'route:search', function(databases, text) {
                 this.removeDocumentDetailView();
                 this.removeSuggestView();
 
@@ -369,17 +369,21 @@ define([
                 this.$('.service-view-container').addClass('hide');
                 this.$('.suggest-service-view-container').removeClass('hide');
 
+                const suggestOptions = this.suggestOptions.apply(this, arguments);
+
+                const indexesCollection = suggestOptions.suggestIndexesCollection || this.indexesCollection;
+
                 this.suggestView = new DocumentContentView(_.extend({
                     backUrl: this.generateURL(),
                     ContentView: this.SuggestView,
                     contentViewOptions: {
                         configuration: config(),
                         documentRenderer: this.documentRenderer,
-                        indexesCollection: this.indexesCollection,
+                        indexesCollection: indexesCollection,
                         mmapTab: this.mmapTab,
                         scrollModel: this.windowScrollModel,
                     }
-                }, this.suggestOptions.apply(this, arguments)));
+                }, suggestOptions));
 
                 this.$('.suggest-service-view-container').append(this.suggestView.$el);
                 this.suggestView.render();
@@ -411,7 +415,7 @@ define([
             }, this);
 
             if (config().hasBiRole && this.selectedTabModel.get('selectedSearchCid') === null) {
-                this.createNewTab(this.lastNavigatedQueryText);
+                this.createNewTab(this.lastNavigatedQueryText, this.lastNavigatedDatabases);
             } else {
                 this.selectContentView();
             }
@@ -467,13 +471,19 @@ define([
             };
         },
 
-        createNewTab: function (queryText) {
-            const newSearch = new SavedSearchModel({
+        createNewTab: function (queryText, databases) {
+            const opts = {
                 relatedConcepts: queryText ? [queryText.split('\n')] : [],
                 title: i18n['search.newSearch'],
                 type: SavedSearchModel.Type.QUERY,
                 minScore: config().minScore
-            });
+            };
+
+            if (databases) {
+                opts.indexes = databases;
+            }
+
+            const newSearch = new SavedSearchModel(opts);
 
             this.savedQueryCollection.add(newSearch);
             this.selectedTabModel.set('selectedSearchCid', newSearch.cid);
@@ -514,8 +524,20 @@ define([
                     const documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
                     const savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
                     const isExistingSavedSearch = savedSearchModel.id;
+                    const lastNavigatedDatabases = this.lastNavigatedDatabases;
 
-                    const indexFilterFn = isExistingSavedSearch ? selectInitialIndexes : selectFilteredInitialIndexes;
+                    const indexFilterFn = isExistingSavedSearch ? selectInitialIndexes
+                        : lastNavigatedDatabases ? function(indexesCollection){
+                            const active = selectInitialIndexes(indexesCollection);
+                            return _.filter(active, function(index){
+                                return _.findWhere(lastNavigatedDatabases, {
+                                    name: index.name
+                                })
+                            });
+                        }
+                        : selectFilteredInitialIndexes;
+
+                    this.lastNavigatedDatabases = undefined;
 
                     /**
                      * @type {QueryState}
@@ -686,8 +708,9 @@ define([
             return this.currentRoute;
         },
 
-        setLastNavigationOpts: function(queryText) {
+        setLastNavigationOpts: function(queryText, databases) {
             this.lastNavigatedQueryText = queryText || false;
+            this.lastNavigatedDatabases = databases || undefined;
         }
     });
 });

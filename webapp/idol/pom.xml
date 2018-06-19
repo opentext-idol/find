@@ -7,7 +7,7 @@
     <parent>
         <artifactId>find</artifactId>
         <groupId>com.hp.autonomy.frontend.find</groupId>
-        <version>11.6.0</version>
+        <version>12.0.0</version>
     </parent>
 
     <artifactId>idol</artifactId>
@@ -16,7 +16,6 @@
 
     <properties>
         <artifactName>${project.parent.artifactId}</artifactName>
-        <js.source.map>false</js.source.map>
     </properties>
 
     <build>
@@ -137,21 +136,10 @@
             <version>2.4</version>
         </dependency>
 
-        <!-- Override the Jackson dependencies to use 2.8.11 to avoid CVE-2017-17485 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-xml</artifactId>
-            <version>2.8.11</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-jaxb-annotations</artifactId>
-            <version>2.8.11</version>
-        </dependency>
+        <!-- Explicitly use the latest version of jackson-annotations, or Spring will use 2.8.0 -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.8.11</version>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -159,20 +147,17 @@
             <version>2.8.11</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.8.11.1</version>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
         <!-- Required by joda-time:joda-time:jar:2.9.9 -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-joda</artifactId>
-            <version>2.8.11</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.8.11</version>
         </dependency>
 
         <dependency>

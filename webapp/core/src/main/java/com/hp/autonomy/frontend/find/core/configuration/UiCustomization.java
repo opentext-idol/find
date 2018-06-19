@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
 import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
+import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
@@ -43,6 +44,8 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
     private final Map<String, String> previewWhitelistUrls;
     private final String errorCallSupportString;
     private final Boolean openSharedDashboardQueryAsNewSearch;
+    private final SortParam parametricValuesSort;
+    private final ProfileOptions profile;
 
     @Override
     public UiCustomization merge(final UiCustomization uiCustomization) {
@@ -67,6 +70,7 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
                                      ? previewWhitelistUrls :
                                      uiCustomization.previewWhitelistUrls)
                 .errorCallSupportString(errorCallSupportString != null ? errorCallSupportString : uiCustomization.errorCallSupportString)
+                .parametricValuesSort(parametricValuesSort != null ? parametricValuesSort : uiCustomization.parametricValuesSort)
                 .defaultDeselectedDatabases(CollectionUtils.isNotEmpty(defaultDeselectedDatabases)
                                             ? defaultDeselectedDatabases
                                             : uiCustomization.defaultDeselectedDatabases)
@@ -76,6 +80,9 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
                 .openSharedDashboardQueryAsNewSearch(openSharedDashboardQueryAsNewSearch != null
                                             ? openSharedDashboardQueryAsNewSearch
                                             : uiCustomization.openSharedDashboardQueryAsNewSearch)
+                .profile(profile != null
+                                            ? profile.merge(uiCustomization.profile)
+                                            : uiCustomization.profile)
                 .build();
         }
     }

@@ -222,11 +222,21 @@ define([
             };
         },
 
-        suggestOptions: function(database, reference) {
-            return {
+        suggestOptions: function(database, reference, suggestIndexes) {
+            const options = {
                 database: database,
                 reference: reference
             };
+
+            if (suggestIndexes) {
+                const filterBy = suggestIndexes.toUpperCase().split(',');
+
+                options.suggestIndexesCollection = new IndexesCollection(this.indexesCollection.filter(function(model){
+                    return _.contains(filterBy, model.get('name').toUpperCase());
+                }));
+            }
+
+            return options;
         },
 
         removeComparisonView: function() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2015-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -23,12 +23,16 @@ public enum MvcConstants {
     TOPIC_MAP_MAX_RESULTS("topicMapMaxResults"),
     METADATA_FIELD_INFO("metadataFieldInfo"),
     ANSWER_SERVER_ENABLED("answerServerEnabled"),
+    CONVERSATION_ENABLED("conversationEnabled"),
     ENTITY_SEARCH_ENABLED("entitySearchEnabled"),
+    ENTITY_SEARCH_OPTIONS("entitySearchOptions"),
     ENTITY_SEARCH_ANSWER_SERVER_ENABLED("entitySearchAnswerServerEnabled"),
     PUBLIC_INDEXES_ENABLED("publicIndexesEnabled"),
     TEMPLATES_CONFIG("templatesConfig"),
     ASSETS_CONFIG("assetsConfig"),
-    MESSAGE_OF_THE_DAY_CONFIG("messageOfTheDay");
+    MESSAGE_OF_THE_DAY_CONFIG("messageOfTheDay"),
+    TERM_HIGHLIGHT_COLOR("termHighlightColor"),
+    TERM_HIGHLIGHT_BACKGROUND("termHighlightBackground");
 
     private final String value;
 

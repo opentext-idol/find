@@ -381,7 +381,7 @@ div > input[type="text"].numeric-parametric-max-input.form-control, // required 
   vertical-align: top;
 }
 
-.sort-container {
+.sort-container, .intent-based-ranking-container {
   a {
     .clickable;
 
@@ -466,19 +466,30 @@ div > input[type="text"].numeric-parametric-max-input.form-control, // required 
   background-image: linear-gradient(transparent, transparent), url('@{staticResourcesPath}/img/leaflet.draw.negate.svg');
 }
 
-.leaflet-draw-toolbar .leaflet-draw-edit-negate {
+.leaflet-draw-toolbar a.leaflet-draw-edit-polygonSpatial {
+  background-image: url('@{staticResourcesPath}/img/leaflet.draw.polygonSpatial.png');
+  background-image: linear-gradient(transparent, transparent), url('@{staticResourcesPath}/img/leaflet.draw.polygonSpatial.svg');
+  background-size: 60px 30px;
+}
+
+.leaflet-retina .leaflet-draw-toolbar a.leaflet-draw-edit-polygonSpatial {
+  background-image: url('@{staticResourcesPath}/img/leaflet.draw.polygonSpatial-2x.png');
+  background-image: linear-gradient(transparent, transparent), url('@{staticResourcesPath}/img/leaflet.draw.polygonSpatial.svg');
+}
+
+.leaflet-draw-toolbar .leaflet-draw-edit-negate, .leaflet-draw-toolbar .leaflet-draw-edit-polygonSpatial {
   background-position: -2px -2px;
 }
 
-.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-edit-negate {
+.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-edit-negate, .leaflet-touch .leaflet-draw-toolbar .leaflet-draw-edit-polygonSpatial {
   background-position: 0 -1px;
 }
 
-.leaflet-draw-toolbar .leaflet-draw-edit-negate.leaflet-disabled {
+.leaflet-draw-toolbar .leaflet-draw-edit-negate.leaflet-disabled, .leaflet-draw-toolbar .leaflet-draw-edit-polygonSpatial.leaflet-disabled {
   background-position: -32px -2px;
 }
 
-.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-edit-negate.leaflet-disabled {
+.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-edit-negate.leaflet-disabled, .leaflet-touch .leaflet-draw-toolbar .leaflet-draw-edit-polygonSpatial.leaflet-disabled {
   background-position: -30px -1px;
 }
 
@@ -500,6 +511,13 @@ div > input[type="text"].numeric-parametric-max-input.form-control, // required 
   box-shadow: none;
   opacity: .65;
 }
+
+.geography-spatial-within { color: #01a982; }
+.geography-spatial-intersect { color: #e4ff00; }
+.geography-spatial-contains { color: #0066ff; }
+.geography-spatial-negate-within { color: #ff0000; }
+.geography-spatial-negate-intersect { color: #fa8800; }
+.geography-spatial-negate-contains { color: #a106ba; }
 
 .max-half-screen-height {
   max-height: 50vh;

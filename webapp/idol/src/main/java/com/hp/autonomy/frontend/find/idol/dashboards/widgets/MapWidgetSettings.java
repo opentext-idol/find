@@ -27,6 +27,7 @@ public class MapWidgetSettings extends SimpleComponent<MapWidgetSettings> implem
     private final InitialLocation centerCoordinates;
     private final Integer zoomLevel;
     private final Boolean clusterMarkers;
+    private final Boolean disableAutoZoom;
 
     @Override
     @JsonAnyGetter
@@ -43,6 +44,7 @@ public class MapWidgetSettings extends SimpleComponent<MapWidgetSettings> implem
         private InitialLocation centerCoordinates;
         private Integer zoomLevel;
         private Boolean clusterMarkers;
+        private Boolean disableAutoZoom;
 
         @SuppressWarnings("unused")
         @JsonAnySetter

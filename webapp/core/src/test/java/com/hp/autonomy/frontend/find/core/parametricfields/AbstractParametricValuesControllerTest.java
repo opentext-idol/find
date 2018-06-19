@@ -21,6 +21,7 @@ import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
 import com.hp.autonomy.types.requests.idol.actions.tags.NumericRangeInfo;
 import com.hp.autonomy.types.requests.idol.actions.tags.NumericValueDetails;
 import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
+import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import lombok.Data;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -128,7 +129,8 @@ public abstract class AbstractParametricValuesControllerTest<
                 null,
                 null,
                 null,
-                null
+                null,
+                SortParam.DocumentCount
         ), not(empty()));
     }
 

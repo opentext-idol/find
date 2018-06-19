@@ -15,7 +15,9 @@ define([
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/parametric-collection',
     'find/app/model/parametric-fields-collection',
+    'find/app/model/recommend-documents-collection',
     'find/app/page/search/results/query-strategy',
+    'find/app/page/search/results/recommend-strategy',
     'find/app/page/search/results/state-token-strategy',
     'find/app/util/results-view-container',
     'find/app/util/results-view-selection',
@@ -32,8 +34,8 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
 ], function(_, $, Backbone, moment, metrics, DatesFilterModel, EntityCollection, QueryModel,
-            SavedSearchModel, ParametricCollection, ParametricFieldsCollection, queryStrategy,
-            stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView,
+            SavedSearchModel, ParametricCollection, ParametricFieldsCollection, RecommendDocumentsCollection, queryStrategy,
+            recommendStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView,
             addChangeListener, SavedSearchControlView, TopicMapView, SunburstView, MapResultsView,
             TableView, TrendingView, TimeBarView, configuration, i18n, templateString) {
     'use strict';
@@ -65,6 +67,7 @@ define([
         },
 
         // Abstract
+        RecommendView: null,
         ResultsView: null,
         ResultsViewAugmentation: null,
         fetchParametricFields: null,
@@ -142,6 +145,9 @@ define([
 
             // Tracks the document model which is currently shown in the preview
             this.previewModeModel = new Backbone.Model({document: null});
+
+            // Tracks the document model which is currently shown in the recommendation preview
+            const recommendationPreviewModel = new Backbone.Model({document: null});
 
             const subViewArguments = {
                 configuration: configuration(),
@@ -221,7 +227,7 @@ define([
             const resultsViewsMap = {
                 'topic-map': {
                     Constructor: TopicMapView,
-                    shown: hasBiRole,
+                    shown: true,
                     constructorArguments: _.extend({
                         clickHandler: relatedConceptsClickHandler,
                         type: 'QUERY'
@@ -252,10 +258,38 @@ define([
                         icon: 'hp-list'
                     }
                 },
+                recommendation: {
+                    Constructor: this.ResultsViewAugmentation,
+                    shown: !!this.RecommendView,
+                    constructorArguments: {
+                        documentRenderer: options.documentRenderer,
+                        resultsView: this.RecommendView && new this.RecommendView(_.defaults({
+                            documentsCollection: new RecommendDocumentsCollection(),
+                            relatedConceptsClickHandler: relatedConceptsClickHandler,
+                            fetchStrategy: recommendStrategy,
+                            scrollModel: this.middleColumnScrollModel
+                        }, _.defaults({
+                            previewModeModel: recommendationPreviewModel
+                        }, subViewArguments))),
+                        queryModel: this.queryModel,
+                        indexesCollection: this.indexesCollection,
+                        previewModeModel: recommendationPreviewModel,
+                        scrollModel: this.middleColumnScrollModel,
+                        mmapTab: options.mmapTab
+                    },
+                    events: {
+                        // needs binding as the view container will be the eventual listener
+                        'rightSideContainerHideToggle': _.bind(this.rightSideContainerHideToggle, this)
+                    },
+                    selector: {
+                        displayNameKey: 'recommendation',
+                        icon: 'hp-user-document'
+                    }
+                },
                 sunburst: {
                     Constructor: SunburstView,
                     constructorArguments: subViewArguments,
-                    shown: hasBiRole && this.displayDependentParametricViews,
+                    shown: this.displayDependentParametricViews,
                     selector: {
                         displayNameKey: 'sunburst',
                         icon: 'hp-favorite'
@@ -263,7 +297,7 @@ define([
                 },
                 map: {
                     Constructor: MapResultsView,
-                    shown: hasBiRole && configuration().map.enabled,
+                    shown: configuration().map.enabled,
                     constructorArguments: _.extend({
                         resultsStep: this.mapViewResultsStep,
                         allowIncrement: this.mapViewAllowIncrement
@@ -276,7 +310,7 @@ define([
                 table: {
                     Constructor: TableView,
                     constructorArguments: subViewArguments,
-                    shown: hasBiRole && this.displayDependentParametricViews,
+                    shown: this.displayDependentParametricViews,
                     selector: {
                         displayNameKey: 'table',
                         icon: 'hp-table'
@@ -285,7 +319,7 @@ define([
                 trending: {
                     Constructor: TrendingView,
                     constructorArguments: subViewArguments,
-                    shown: hasBiRole,
+                    shown: true,
                     selector: {
                         displayNameKey: 'trending',
                         icon: 'hp-line-chart'

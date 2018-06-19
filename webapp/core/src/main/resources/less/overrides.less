@@ -46,6 +46,19 @@
 //
 
 //
+//HPE Elements navigation.less
+//
+
+.hidden-navbar, .hide-navbar {
+  .nav-menu-btn-container {
+    // Override the position: fixed which makes the top-left logo scroll down with the screen on the settings page.
+    position: static;
+    // And prevent the scroll bar which appears on mouseover on the logo
+    overflow-y: hidden;
+  }
+}
+
+//
 //HPE Elements controls.less
 //
 .icheckbox-hp,
