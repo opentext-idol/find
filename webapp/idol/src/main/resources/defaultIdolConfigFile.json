@@ -23,6 +23,7 @@
       "IDOLPROXY"
     ]
   },
+  "referenceField": "DREREFERENCE",
   "queryManipulation": {
     "server": {
       "protocol": "HTTP",
@@ -349,6 +350,5 @@
       "type": "NUMBER",
       "advanced": true
     }
-  },
-  "referenceField": "DREREFERENCE"
+  }
 }
