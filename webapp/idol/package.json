@@ -1,6 +1,6 @@
 {
   "name": "hp-find-idol",
-  "repository": "https://github.com/hpe-idol/find",
+  "repository": "https://github.com/microfocus-idol/find",
   "private": true,
   "license": "MIT",
   "devDependencies": {
