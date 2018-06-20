@@ -106,7 +106,8 @@ define([
             intentRankedHit: model.get('intentRankedHit'),
             thumbnailSrc: thumbnailSrc,
             age: date && date.fromNow(),
-            fields: model.get('fields').map(_.partial(_.pick, _, ['id', 'displayName', 'advanced', 'values']))
+            fields: model.get('fields').map(_.partial(_.pick, _, ['id', 'displayName', 'advanced', 'values'])),
+            weight: model.get('weight')
         };
     }
 
