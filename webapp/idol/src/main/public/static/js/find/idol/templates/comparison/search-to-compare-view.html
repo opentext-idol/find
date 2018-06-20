@@ -11,8 +11,8 @@
     <% _.each(searches, function(search) { %>
         <li>
             <div class="hpebox saved-search-box" data-search-cid="<%-search.cid%>">
-                <div class="hpebox-content shorten clickable secondary-model-title">
-                    <%-search.get('title')%>
+                <div class="hpebox-content shorten shorten-hoverable clickable secondary-model-title">
+                    <% if (/SNAPSHOT/.test(search.get('type'))) {%><i class="hp-icon hp-camera m-r-xs"></i><% } %><%-search.get('title')%>
                 </div>
             </div>
         </li>
