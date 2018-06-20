@@ -7,6 +7,12 @@
             {{/if}}
             {{title}}
         </h4>
+        <div class="document-database m-t-xs m-l-xs">
+            {{ database }}
+            {{#if weight}}
+                <span class="document-weight m-t-xs m-l-xs">{{ percentage weight }}</span>
+            {{/if}}
+        </div>
         <span class="document-date pull-left m-t-xs m-l-xs">{{age}}</span>
         <span class="document-reference shorten">{{reference}}</span>
         {{#if thumbnailSrc}}
