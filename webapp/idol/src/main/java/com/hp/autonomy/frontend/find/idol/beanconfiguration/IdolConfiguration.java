@@ -43,7 +43,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
-@ImportResource("required-statistics.xml")
+@ImportResource("classpath:required-statistics.xml")
 public class IdolConfiguration {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
