@@ -42,7 +42,7 @@ define([
                 appName: i18n['app.name'],
                 logout: i18n['settings.logoutFromSettings']
             },
-            logoutUri: '../logout',
+            logoutUri: 'logout',
             settingsPage: this.settingsPage,
             showLogout: true
         });

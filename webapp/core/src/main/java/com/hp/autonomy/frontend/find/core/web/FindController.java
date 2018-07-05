@@ -139,9 +139,10 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
     }
 
     @RequestMapping(value = CONFIG_PATH, method = RequestMethod.GET)
-    public ModelAndView config() {
+    public ModelAndView config(final HttpServletRequest request) {
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
+        attributes.put(MvcConstants.BASE_URL.value(), RequestUtils.buildBaseUrl(request));
         return new ModelAndView(ViewNames.CONFIG.viewName(), attributes);
     }
 
