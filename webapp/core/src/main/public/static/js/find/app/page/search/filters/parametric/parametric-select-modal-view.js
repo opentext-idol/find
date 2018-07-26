@@ -90,6 +90,11 @@ define([
             });
 
             this.updateSelectedField();
+
+            this.$el.tooltip({
+                selector: '[data-toggle="tooltip"]',
+                container: this.$el
+            })
         },
 
         checkScroll: function() {
