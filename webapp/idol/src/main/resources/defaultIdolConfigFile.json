@@ -203,6 +203,7 @@
     },
     "defaultDeselectedDatabases": [],
     "filterOrder": ["metaFilter", "indexesFilter", "datesFilter", "geographyFilter", "-", "parametricFilter"],
+    "listViewPagingSize": 30,
     "openSharedDashboardQueryAsNewSearch": false,
     "parametricNeverShow": [],
     "parametricAlwaysShow": [],

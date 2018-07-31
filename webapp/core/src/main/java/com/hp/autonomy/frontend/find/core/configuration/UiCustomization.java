@@ -46,6 +46,7 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
     private final Boolean openSharedDashboardQueryAsNewSearch;
     private final SortParam parametricValuesSort;
     private final ProfileOptions profile;
+    private final Integer listViewPagingSize;
 
     @Override
     public UiCustomization merge(final UiCustomization uiCustomization) {
@@ -83,6 +84,7 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
                 .profile(profile != null
                                             ? profile.merge(uiCustomization.profile)
                                             : uiCustomization.profile)
+                .listViewPagingSize(listViewPagingSize != null ? listViewPagingSize : uiCustomization.listViewPagingSize)
                 .build();
         }
     }
