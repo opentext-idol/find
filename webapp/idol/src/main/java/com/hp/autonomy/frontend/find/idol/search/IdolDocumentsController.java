@@ -82,7 +82,7 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(value = "recommend-documents", method = RequestMethod.GET)
     @ResponseBody
-    public Documents<IdolSearchResult> query(
+    public Documents<IdolSearchResult> recommendDocuments(
             @RequestParam(value = "maxResultsPerProfile", defaultValue = "2") final int maxResultsPerProfile,
             @RequestParam(value = "maxTerms", defaultValue = "30") final int maxTerms,
             @RequestParam(value = "maxProfiles", defaultValue = "3") final int maxProfiles,
