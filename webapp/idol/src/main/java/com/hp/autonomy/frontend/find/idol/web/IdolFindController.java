@@ -5,6 +5,7 @@
 
 package com.hp.autonomy.frontend.find.idol.web;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
@@ -24,8 +25,10 @@ import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
 import com.hp.autonomy.frontend.find.idol.customization.AssetConfig;
 import com.hp.autonomy.frontend.find.idol.dashboards.DashboardConfig;
 import com.hp.autonomy.frontend.find.idol.export.service.IdolMetadataNode;
+import com.hp.autonomy.frontend.find.idol.search.Holder;
 import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
+import javax.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +40,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
@@ -68,6 +74,25 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
         this.appsConfig = appsConfig;
         this.templatesConfig = templatesConfig;
         this.assetsConfigService = assetsConfigService;
+    }
+
+    @Autowired
+    private Holder holder;
+
+    @Override
+    @RequestMapping(value = APP_PATH + "/**", method = RequestMethod.GET)
+    public ModelAndView mainPage(final HttpServletRequest request) throws JsonProcessingException {
+        final String basicToken = request.getParameter("basicToken");
+        final String idPortaleRis = request.getParameter("idPortaleRis");
+
+        if (StringUtils.isNotBlank(basicToken)) {
+            holder.setBasicToken(basicToken);
+        }
+        if (StringUtils.isNotBlank(idPortaleRis)) {
+            holder.setIdPortaleRis(idPortaleRis);
+        }
+
+        return super.mainPage(request);
     }
 
     @Override

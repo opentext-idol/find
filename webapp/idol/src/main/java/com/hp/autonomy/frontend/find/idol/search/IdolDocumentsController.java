@@ -79,6 +79,50 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
         this.authenticationInformationRetriever = authenticationInformationRetriever;
     }
 
+    @Autowired
+    private Holder holder;
+
+    @Override
+    public Documents<IdolSearchResult> query(
+            @RequestParam(TEXT_PARAM) final String queryText,
+            @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
+            @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
+            @RequestParam(SUMMARY_PARAM) final String summary,
+            @RequestParam(value = INDEXES_PARAM, required = false) final List<String> databases,
+            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
+            @RequestParam(value = SORT_PARAM, required = false) final String sort,
+            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
+            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime maxDate,
+            @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
+            @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore,
+            @RequestParam(value = AUTO_CORRECT_PARAM, defaultValue = "true") final boolean autoCorrect,
+            @RequestParam(value = INTENT_BASED_RANKING_PARAM, defaultValue = "false") final boolean intentBasedRanking,
+            @RequestParam(value = QUERY_TYPE_PARAM, defaultValue = "MODIFIED") final String queryType
+    ) throws AciErrorException {
+        final Documents<IdolSearchResult> results = super.query(queryText, resultsStart, maxResults, summary, databases, fieldText, sort, minDate, maxDate, highlight, minScore, autoCorrect, intentBasedRanking, queryType);
+
+        final List<IdolSearchResult> origDocs = new ArrayList<>(results.getDocuments());
+
+        results.getDocuments().clear();
+
+        for(final IdolSearchResult doc : origDocs) {
+            final String username = authenticationInformationRetriever.getPrincipal().getName();
+            // TODO: call some external server based on the username
+            final boolean redact = true;
+
+            if (redact) {
+                results.getDocuments().add(doc.toBuilder()
+                    .summary("redacted" + holder.getBasicToken())
+                    .build());
+            }
+            else {
+                results.getDocuments().add(doc);
+            }
+        }
+
+        return results;
+    }
+
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(value = "recommend-documents", method = RequestMethod.GET)
     @ResponseBody
