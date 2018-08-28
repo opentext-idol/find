@@ -152,6 +152,7 @@
     "maxNumberOfBuckets": 100
   },
   "themeTracker": {
+    "enabled": true,
     "category": {
       "protocol": "HTTP",
       "host": "10.2.21.236",
