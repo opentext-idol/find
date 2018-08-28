@@ -100,6 +100,7 @@ public class IdolFindConfigTest {
         assertEquals(export, mergedConfig.getExport());
         assertEquals(trending, mergedConfig.getTrending());
         assertEquals(idolFindConfig, mergedConfig);
+        assertEquals(themeTracker, mergedConfig.getThemeTracker());
     }
 
     @Test
