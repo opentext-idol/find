@@ -47,7 +47,7 @@ define([
             }
 
             var jobsConf = {};
-            var job = 'BLACK_MDN_EVERYTHING_SG';
+            var job = '';
 
             jobsConf[job] = 'All';
 

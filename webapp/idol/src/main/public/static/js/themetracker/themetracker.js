@@ -357,7 +357,7 @@
                 data: JSON.stringify({
                     fromDate: cluster.fromDate,
                     toDate: cluster.toDate,
-                    jobName: jobName,
+                    jobName: cluster.jobName,
                     id: cluster.id
                 }),
                 type: 'POST',

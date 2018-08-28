@@ -151,6 +151,13 @@
     "minNumberOfBuckets": 3,
     "maxNumberOfBuckets": 100
   },
+  "themetracker": {
+    "databaseNames": ["News"],
+    "minScore": 50,
+    "host": "10.2.21.236",
+    "port": 19120,
+    "jobName": "BLACK_MDN_EVERYTHING_SG"
+  },
   "export": {
     "powerpoint": {
       "templateFile": ""

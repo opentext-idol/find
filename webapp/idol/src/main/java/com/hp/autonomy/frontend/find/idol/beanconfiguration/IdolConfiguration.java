@@ -25,6 +25,7 @@ import com.hp.autonomy.frontend.configuration.aci.CommunityServiceImpl;
 import com.hp.autonomy.frontend.configuration.authentication.Authentication;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthenticationValidator;
 import com.hp.autonomy.frontend.configuration.server.ServerConfigValidator;
+import com.hp.autonomy.frontend.find.core.configuration.ThemeTrackerConfiguration;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolAuthenticationMixins;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.Widget;
@@ -38,12 +39,10 @@ import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.user.UserService;
 import com.hp.autonomy.user.UserServiceImpl;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
-import java.util.List;
 import java.util.Set;
 import org.apache.http.client.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -152,19 +151,18 @@ public class IdolConfiguration {
 
     @Bean
     public ThemeTracker themeTracker(
-        @Value("${themetracker.databases}") final List<String> databaseNames,
-        @Value("${themetracker.cluster.min.score}") final Double minScore,
-        @Value("${themetracker.category.host}") final String host,
-        @Value("${themetracker.category.port}") final int port,
+        final ConfigService<IdolFindConfig> configService,
         final AciService aciService
     ) {
+        final ThemeTrackerConfiguration conf = configService.getConfig().getThemetracker();
+
         final ThemeTrackerImpl tracker = new ThemeTrackerImpl();
-        tracker.setClustersDatabase(new Databases(databaseNames));
-        tracker.setClustersMinScore(minScore);
+        tracker.setClustersDatabase(new Databases(conf.getDatabaseNames()));
+        tracker.setClustersMinScore(conf.getMinScore());
         tracker.setThemeTrackerAciService(new AbstractConfigurableAciService(aciService) {
             @Override
             public AciServerDetails getServerDetails() {
-                return new AciServerDetails(host, port);
+                return new AciServerDetails(conf.getHost(), conf.getPort());
             }
         });
 
