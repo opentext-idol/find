@@ -48,6 +48,9 @@ public class IdolFindConfigTest {
     @Mock
     private TrendingConfiguration trending;
 
+    @Mock
+    private ThemeTrackerConfig themeTracker;
+
     private IdolFindConfig idolFindConfig;
 
     @Before
@@ -58,6 +61,7 @@ public class IdolFindConfigTest {
                 .queryManipulation(queryManipulation)
                 .savedSearchConfig(savedSearchConfig)
                 .trending(trending)
+                .themeTracker(themeTracker)
                 .view(viewConfig)
                 .export(export)
                 .build();
@@ -83,6 +87,8 @@ public class IdolFindConfigTest {
         when(viewConfig.merge(any(ViewConfig.class))).thenReturn(viewConfig);
         when(export.merge(any(ExportConfig.class))).thenReturn(export);
         when(trending.merge(any(TrendingConfiguration.class))).thenReturn(trending);
+        when(themeTracker.merge(any(ThemeTrackerConfig.class))).thenReturn(themeTracker);
+
 
         final IdolFindConfig defaults = IdolFindConfig.builder().content(mock(ServerConfig.class)).build();
         final IdolFindConfig mergedConfig = idolFindConfig.merge(defaults);
