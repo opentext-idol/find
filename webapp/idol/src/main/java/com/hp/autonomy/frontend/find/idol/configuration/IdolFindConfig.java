@@ -23,7 +23,6 @@ import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.MessageOfTheDayConfig;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
-import com.hp.autonomy.frontend.find.core.configuration.ThemeTrackerConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.TrendingConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
@@ -72,7 +71,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final FieldsInfo fieldsInfo;
     private final MapConfiguration map;
     private final TrendingConfiguration trending;
-    private final ThemeTrackerConfiguration themetracker;
+    private final ThemeTrackerConfig themeTracker;
     private final Integer minScore;
     private final StatsServerConfig statsServer;
     private final Integer topicMapMaxResults;
@@ -106,7 +105,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .fieldsInfo(fieldsInfo == null ? other.fieldsInfo : fieldsInfo.merge(other.fieldsInfo))
                 .map(map == null ? other.map : map.merge(other.map))
                 .trending(trending == null ? other.trending : trending.merge(other.trending))
-                .themetracker(themetracker == null ? other.themetracker : themetracker.merge(other.themetracker))
+                .themeTracker(themeTracker == null ? other.themeTracker : themeTracker.merge(other.themeTracker))
                 .minScore(minScore == null ? other.minScore : minScore)
                 .statsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
                 .topicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
@@ -165,7 +164,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         login.basicValidate(SECTION);
         content.basicValidate("content");
         trending.basicValidate("trending");
-        themetracker.basicValidate("themetracker");
+        themeTracker.basicValidate("themeTracker");
         savedSearchConfig.basicValidate(SECTION);
 
         if(map != null) {

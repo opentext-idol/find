@@ -6,14 +6,9 @@
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
 import com.autonomy.aci.client.services.AciService;
-import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.services.impl.AciServiceImpl;
 import com.autonomy.aci.client.transport.AciServerDetails;
-import com.autonomy.aci.client.transport.ActionParameter;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
-import com.autonomy.aci.content.database.Databases;
-import com.autonomy.visualizers.themetracker.ThemeTracker;
-import com.autonomy.visualizers.themetracker.ThemeTrackerImpl;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -25,9 +20,9 @@ import com.hp.autonomy.frontend.configuration.aci.CommunityServiceImpl;
 import com.hp.autonomy.frontend.configuration.authentication.Authentication;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthenticationValidator;
 import com.hp.autonomy.frontend.configuration.server.ServerConfigValidator;
-import com.hp.autonomy.frontend.find.core.configuration.ThemeTrackerConfiguration;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolAuthenticationMixins;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.frontend.find.idol.configuration.ThemeTrackerConfig;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.Widget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.WidgetMixins;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
@@ -150,34 +145,17 @@ public class IdolConfiguration {
     }
 
     @Bean
-    public ThemeTracker themeTracker(
+    public AciService themeTrackerAciService(
         final ConfigService<IdolFindConfig> configService,
         final AciService aciService
     ) {
-        final ThemeTrackerConfiguration conf = configService.getConfig().getThemetracker();
+        final ThemeTrackerConfig conf = configService.getConfig().getThemeTracker();
 
-        final ThemeTrackerImpl tracker = new ThemeTrackerImpl();
-        tracker.setClustersDatabase(new Databases(conf.getDatabaseNames()));
-        tracker.setClustersMinScore(conf.getMinScore());
-        tracker.setThemeTrackerAciService(new AbstractConfigurableAciService(aciService) {
+        return new AbstractConfigurableAciService(aciService) {
             @Override
             public AciServerDetails getServerDetails() {
-                return new AciServerDetails(conf.getHost(), conf.getPort());
+                return conf.getCategory().toAciServerDetails();
             }
-        });
-
-        // We mock out the category DRE aci service, to get cluster terms but skipping the getquerytagvalues
-        tracker.setThemeTrackerCategoryDREAciService(new AciService() {
-            @Override
-            public <T> T executeAction(final Set<? extends ActionParameter<?>> parameters, final Processor<T> processor) {
-                return null;
-            }
-
-            @Override
-            public <T> T executeAction(final AciServerDetails serverDetails, final Set<? extends ActionParameter<?>> parameters, final Processor<T> processor) {
-                return null;
-            }
-        });
-        return tracker;
+        };
     }
 }
