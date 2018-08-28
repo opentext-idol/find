@@ -175,6 +175,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.autonomy.visualizers</groupId>
+            <artifactId>themetracker-backend</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.hp.autonomy.frontend.find</groupId>
             <artifactId>core</artifactId>
             <version>${project.version}</version>

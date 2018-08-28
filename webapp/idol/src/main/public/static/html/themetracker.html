@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IDOL Tracker</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <base href="../../">
+    <link rel="icon" type="image/x-icon" href="static-HEAD/find-favicon.ico">
+    <link rel="stylesheet" type="text/css" href="static-HEAD/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="static-HEAD/bower_components/open-sans-fontface/open-sans.css">
+    <link rel="stylesheet" type="text/css" href="static-HEAD/css/themetracker.css">
+    <script type="text/javascript" src="static-HEAD/bower_components/requirejs/require.js" data-main="static-HEAD/js/themetracker.js"></script>
+</head>
+<body>
+<div class="page">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+
+            <!-- TITLE -->
+            <div class="navbar-header">
+                <a href="public/search/query">
+                <div class="navbar-brand">
+                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="15px" y="0px" width="21px" height="32px" xml:space="preserve">
+                          <g transform="scale(0.67)">
+                            <polygon points="31 0 6 0 6 6 25 6 25 25 31 25 31 0 31 0" fill="#eee" fill-rule="evenodd"></polygon>
+                                <polygon points="6 6 0 6 0 31 25 31 25 25 6 25 6 6 6 6" fill="#eee" fill-rule="evenodd"></polygon>
+                          </g>
+                        </svg>
+                </div>
+                <div class="navbar-brand">IDOL Tracker</div>
+                </a>
+            </div>
+
+            <!-- CLOCK -->
+            <div class="navbar-right">
+                <div class="clock">
+                    <div class="row clock-time"></div>
+                    <div class="row clock-date"></div>
+                </div>
+            </div>
+
+        </div>
+    </nav>
+
+    <div class="container content clearfix">
+
+        <div class="date-controls dropdown pull-left">
+            <button class="btn btn-dark dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span></span>
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+            </ul>
+        </div>
+
+        <div class="label-controls dropdown pull-right">
+            <button class="btn btn-dark dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span>Show all labels</span>
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+                <li><a>Show all labels</a></li>
+                <li><a>Only new labels</a></li>
+            </ul>
+        </div>
+
+        <div class="themetracker"></div>
+    </div>
+</div>
+</body>
+</html>

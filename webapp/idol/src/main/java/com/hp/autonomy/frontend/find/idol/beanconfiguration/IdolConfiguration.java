@@ -6,9 +6,14 @@
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
 import com.autonomy.aci.client.services.AciService;
+import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.services.impl.AciServiceImpl;
 import com.autonomy.aci.client.transport.AciServerDetails;
+import com.autonomy.aci.client.transport.ActionParameter;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
+import com.autonomy.aci.content.database.Databases;
+import com.autonomy.visualizers.themetracker.ThemeTracker;
+import com.autonomy.visualizers.themetracker.ThemeTrackerImpl;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -33,9 +38,12 @@ import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.user.UserService;
 import com.hp.autonomy.user.UserServiceImpl;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
+import java.util.List;
+import java.util.Set;
 import org.apache.http.client.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -140,5 +148,38 @@ public class IdolConfiguration {
         aciHttpClient.setUsePostMethod(true);
 
         return new AciServiceImpl(aciHttpClient);
+    }
+
+    @Bean
+    public ThemeTracker themeTracker(
+        @Value("${themetracker.databases}") final List<String> databaseNames,
+        @Value("${themetracker.cluster.min.score}") final Double minScore,
+        @Value("${themetracker.category.host}") final String host,
+        @Value("${themetracker.category.port}") final int port,
+        final AciService aciService
+    ) {
+        final ThemeTrackerImpl tracker = new ThemeTrackerImpl();
+        tracker.setClustersDatabase(new Databases(databaseNames));
+        tracker.setClustersMinScore(minScore);
+        tracker.setThemeTrackerAciService(new AbstractConfigurableAciService(aciService) {
+            @Override
+            public AciServerDetails getServerDetails() {
+                return new AciServerDetails(host, port);
+            }
+        });
+
+        // We mock out the category DRE aci service, to get cluster terms but skipping the getquerytagvalues
+        tracker.setThemeTrackerCategoryDREAciService(new AciService() {
+            @Override
+            public <T> T executeAction(final Set<? extends ActionParameter<?>> parameters, final Processor<T> processor) {
+                return null;
+            }
+
+            @Override
+            public <T> T executeAction(final AciServerDetails serverDetails, final Set<? extends ActionParameter<?>> parameters, final Processor<T> processor) {
+                return null;
+            }
+        });
+        return tracker;
     }
 }
