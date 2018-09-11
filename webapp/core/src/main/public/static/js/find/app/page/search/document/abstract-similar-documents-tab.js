@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
+ * Copyright 2016-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -32,7 +32,7 @@ define([
                 summary: 'context',
                 indexes: this.getIndexes(),
                 reference: this.model.get('reference'),
-                highlight: false
+                highlight: true
             };
         }
 

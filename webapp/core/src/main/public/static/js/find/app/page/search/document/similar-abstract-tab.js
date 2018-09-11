@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
+ * Copyright 2016-2018 Micro Focus International plc.
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
@@ -9,12 +9,13 @@ define([
     'backbone',
     'i18n!find/nls/bundle',
     'find/app/vent',
+    'find/app/page/search/results/add-links-to-summary',
     'text!find/templates/app/page/search/document/similar-documents-tab.html'
-], function(_, $, Backbone, i18n, vent, template) {
+], function(_, $, Backbone, i18n, vent, addLinksToSummary, template) {
     'use strict';
 
     return Backbone.View.extend({
-        similarDocumentTemplate: _.template('<li data-cid="<%-cid%>" class="clickable"><h4><%-model.get("title")%></h4><p><%-model.get("summary").trim().substring(0, 200) + "\u2026"%></p></li>'),
+        similarDocumentTemplate: _.template('<li data-cid="<%-cid%>" class="clickable"><h4><%-model.get("title")%></h4><p><%= addLinksToSummary(model.get("summary").trim()) + "\u2026"%></p></li>'),
         template: _.template(template),
 
         events: {
@@ -70,7 +71,8 @@ define([
                             : _.map(filteredModels, function(model) {
                                 return this.similarDocumentTemplate({
                                     model: model,
-                                    cid: model.cid
+                                    cid: model.cid,
+                                    addLinksToSummary: addLinksToSummary
                                 });
                             }, this).join('');
                     }, this)
