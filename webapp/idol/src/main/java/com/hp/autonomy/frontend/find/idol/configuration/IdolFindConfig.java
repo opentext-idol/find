@@ -72,6 +72,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final MapConfiguration map;
     private final TrendingConfiguration trending;
     private final ThemeTrackerConfig themeTracker;
+    private final String combineMethod;
     private final Integer minScore;
     private final StatsServerConfig statsServer;
     private final Integer topicMapMaxResults;
@@ -106,6 +107,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .map(map == null ? other.map : map.merge(other.map))
                 .trending(trending == null ? other.trending : trending.merge(other.trending))
                 .themeTracker(themeTracker == null ? other.themeTracker : themeTracker.merge(other.themeTracker))
+                .combineMethod(combineMethod == null ? other.combineMethod : combineMethod)
                 .minScore(minScore == null ? other.minScore : minScore)
                 .statsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
                 .topicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)

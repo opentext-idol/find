@@ -254,6 +254,7 @@
       "updateProfileOnView": false
     }
   },
+  "combineMethod": "Simple",
   "minScore": 0,
   "topicMapMaxResults": 1000,
   "documentSummaryMaxLength": 250,
