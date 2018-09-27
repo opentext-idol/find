@@ -11,9 +11,11 @@ define([
     'find/idol/app/model/answer-bank/idol-answered-questions-collection',
     'find/idol/app/model/entitysearch/entity-search-collection',
     'find/app/page/search/template-helpers/pretty-print-number-helper',
+    'js-whatever/js/escape-regex',
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/nls/bundle'
-], function(_, $, d3, globalKeyListener, AnsweredQuestionsCollection, EntitySearchCollection, prettyPrintNumberHelper, loadingSpinnerTemplate, i18n) {
+], function(_, $, d3, globalKeyListener, AnsweredQuestionsCollection, EntitySearchCollection, prettyPrintNumberHelper,
+            escapeRegex, loadingSpinnerTemplate, i18n) {
     'use strict';
 
     const loadingHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
@@ -202,7 +204,13 @@ define([
 
                     const $loading = addHtmlMessage('entity-search-loading', loadingHtml);
 
-                    const questionText = /^(what|who|how|when|where|why)/i.exec(text) ? text : 'what is the ' + text + ' of ' + $input.data('context')
+                    let questionText = /^(what|who|how|when|where|why)/i.exec(text) ? text : 'what is the ' + text + ' of ' + $input.data('context');
+
+                    var pronounPattern = /\b(he|she|his|her|their|its|it's)\b/;
+
+                    if (pronounPattern) {
+                        questionText = questionText.replace(pronounPattern, escapeRegex($input.data('context')));
+                    }
 
                     const answeredQuestionsCollection = new AnsweredQuestionsCollection();
                     answeredQuestionsCollection.url = 'api/public/answer/entity-search-ask';
