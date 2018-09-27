@@ -118,6 +118,10 @@ define([
         'entitySearch.template.question.send': 'Send',
         'entitySearch.template.question.answerError': 'Sorry, we don\'t have an answer for that question at present.',
         'entitySearch.template.question.answerMissing': 'Sorry, we don\'t have an answer for that question at present.',
+        // Controls the question to answer server
+        'entitySearch.template.question.autoQuestion': 'what is the {0} of {1}',
+        // Controls the pronouns for this language, compiled as a regular expression
+        'entitySearch.template.question.pronouns.regex': 'he|she|his|her|their|its|it\'s',
         'error.message.default': 'An error has occurred.',
         'error.default.contactSupport': 'Please contact support.',
         'error.details': 'Error details: {0}',

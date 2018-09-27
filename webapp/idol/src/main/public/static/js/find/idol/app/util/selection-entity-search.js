@@ -22,6 +22,9 @@ define([
 
     const databaseGroupSelector = '[data-entity-search-database-group]';
 
+    const pronounPattern = i18n['entitySearch.template.question.pronouns.regex'];
+    const pronounRegex = pronounPattern && new RegExp('\b(' + pronounPattern + ')\b', 'gi');
+
     let userSelectedDatabase;
 
     function SelectionEntitySearch(options) {
@@ -204,12 +207,11 @@ define([
 
                     const $loading = addHtmlMessage('entity-search-loading', loadingHtml);
 
-                    let questionText = /^(what|who|how|when|where|why)/i.exec(text) ? text : 'what is the ' + text + ' of ' + $input.data('context');
+                    let questionText = /^(what|who|how|when|where|why)/i.exec(text) ? text
+                        : i18n['entitySearch.template.question.pronouns.regex'](text, $input.data('context'));
 
-                    var pronounPattern = /\b(he|she|his|her|their|its|it's)\b/;
-
-                    if (pronounPattern) {
-                        questionText = questionText.replace(pronounPattern, escapeRegex($input.data('context')));
+                    if (pronounRegex) {
+                        questionText = questionText.replace(pronounRegex, escapeRegex($input.data('context')));
                     }
 
                     const answeredQuestionsCollection = new AnsweredQuestionsCollection();
