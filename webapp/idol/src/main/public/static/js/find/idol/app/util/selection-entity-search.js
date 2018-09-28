@@ -208,7 +208,7 @@ define([
                     const $loading = addHtmlMessage('entity-search-loading', loadingHtml);
 
                     let questionText = /^(what|who|how|when|where|why)/i.exec(text) ? text
-                        : i18n['entitySearch.template.question.pronouns.regex'](text, $input.data('context'));
+                        : i18n['entitySearch.template.question.autoQuestion'](text, $input.data('context'));
 
                     if (pronounRegex) {
                         questionText = questionText.replace(pronounRegex, escapeRegex($input.data('context')));
