@@ -23,7 +23,7 @@ define([
     const databaseGroupSelector = '[data-entity-search-database-group]';
 
     const pronounPattern = i18n['entitySearch.template.question.pronouns.regex'];
-    const pronounRegex = pronounPattern && new RegExp('\b(' + pronounPattern + ')\b', 'gi');
+    const pronounRegex = pronounPattern && new RegExp('\\b(' + pronounPattern + ')\\b', 'gi');
 
     let userSelectedDatabase;
 
