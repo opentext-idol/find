@@ -49,7 +49,7 @@ It should be the 5.1 version on the system.
 After testing all the prerequisites, you will be able to build. 
 Open a GitShell terminal and run the following recipe
 ```sh
-$ git clone https://github.com/hpe-idol/find.git
+$ git clone -b onprem-release/12.1.0 https://github.com/microfocus-idol/find
 $ cd find/webapps
 $ mvn clean package -Pproduction -pl idol,hod -am
 ```
@@ -62,3 +62,4 @@ This version has all the Spanish version translations.
 Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
 Copyright 2015-2016 Hewlett Packard Enterprise Development LP
 Licensed under the MIT License (the "License"); you may not use this project except in compliance with the License.  
+x
