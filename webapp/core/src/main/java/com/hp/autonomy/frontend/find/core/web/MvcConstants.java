@@ -17,6 +17,7 @@ public enum MvcConstants {
     ROLES("roles"),
     SAVED_SEARCH_CONFIG("savedSearchConfig"),
     USERNAME("username"),
+    USERLABEL("userLabel"),
     MIN_SCORE("minScore"),
     UI_CUSTOMIZATION("uiCustomization"),
     FIELDS_INFO("fieldsInfo"),
