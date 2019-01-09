@@ -64,7 +64,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
     @Value(FIND_METRICS_ENABLED_PROPERTY)
     private boolean metricsEnabled;
 
-    @Value("${find.community.username.field}")
+    @Value("${find.community.username.field:}")
     private String usernameField;
 
     protected FindController(final ControllerUtils controllerUtils,
