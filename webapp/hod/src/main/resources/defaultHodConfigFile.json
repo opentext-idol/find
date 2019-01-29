@@ -93,6 +93,7 @@
             }
         },
         "defaultDeselectedDatabases": [],
+        "listViewPagingSize": 30,
         "parametricNeverShow": [],
         "parametricAlwaysShow": [],
         "parametricOrder": [],

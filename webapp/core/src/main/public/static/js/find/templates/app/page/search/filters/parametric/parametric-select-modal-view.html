@@ -4,7 +4,7 @@
             <% fields.forEach(function(fieldData) { %>
                 <li class="full-width" data-field="<%-fieldData.id%>">
                     <a href role="tab" class="tab-title full-width" >
-                        <span class="shorten inline-block full-width"> <%-fieldData.displayName%></span>
+                        <span class="shorten inline-block full-width" data-toggle="tooltip" title="<%-fieldData.displayName%>"> <%-fieldData.displayName%></span>
                     </a>
                 </li>
             <% }); %>

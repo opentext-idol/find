@@ -30,13 +30,23 @@ define([
             loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
     'use strict';
 
-    const SCROLL_INCREMENT = 30;
+    let SCROLL_INCREMENT;
     const INFINITE_SCROLL_POSITION_PIXELS = 500;
+
+    function getScrollIncrement() {
+        if (SCROLL_INCREMENT) {
+            return SCROLL_INCREMENT;
+        }
+
+        const config = configuration();
+        return SCROLL_INCREMENT = config && config.uiCustomization && config.uiCustomization.listViewPagingSize || 30;
+    }
 
     function infiniteScroll() {
         const resultsPresent = this.documentsCollection.size() > 0 && this.fetchStrategy.validateQuery(this.queryModel);
 
         if (resultsPresent && this.loadingTracker.resultsFinished && !this.endOfResults) {
+            const SCROLL_INCREMENT = getScrollIncrement();
             this.start = this.maxResults + 1;
             this.maxResults += SCROLL_INCREMENT;
 
@@ -289,7 +299,7 @@ define([
                 } else {
                     this.endOfResults = false;
                     this.start = 1;
-                    this.maxResults = SCROLL_INCREMENT;
+                    this.maxResults = getScrollIncrement();
                     this.loadData(false);
                     this.$('.main-results-content .promotions').empty();
 

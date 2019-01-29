@@ -22,6 +22,7 @@ import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentica
 import com.hp.autonomy.frontend.configuration.server.ServerConfigValidator;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolAuthenticationMixins;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.frontend.find.idol.configuration.ThemeTrackerConfig;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.Widget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.WidgetMixins;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
@@ -33,6 +34,7 @@ import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.user.UserService;
 import com.hp.autonomy.user.UserServiceImpl;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
+import java.util.Set;
 import org.apache.http.client.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,7 +45,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 @Configuration
-@ImportResource("required-statistics.xml")
+@ImportResource("classpath:required-statistics.xml")
 public class IdolConfiguration {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
@@ -140,5 +142,20 @@ public class IdolConfiguration {
         aciHttpClient.setUsePostMethod(true);
 
         return new AciServiceImpl(aciHttpClient);
+    }
+
+    @Bean
+    public AciService themeTrackerAciService(
+        final ConfigService<IdolFindConfig> configService,
+        final AciService aciService
+    ) {
+        final ThemeTrackerConfig conf = configService.getConfig().getThemeTracker();
+
+        return new AbstractConfigurableAciService(aciService) {
+            @Override
+            public AciServerDetails getServerDetails() {
+                return conf.getCategory().toAciServerDetails();
+            }
+        };
     }
 }

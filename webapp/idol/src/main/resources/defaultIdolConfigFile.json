@@ -151,6 +151,22 @@
     "minNumberOfBuckets": 3,
     "maxNumberOfBuckets": 100
   },
+  "themeTracker": {
+    "enabled": true,
+    "category": {
+      "protocol": "HTTP",
+      "host": "10.2.21.236",
+      "port": 19120,
+      "productType": [
+        "CLASSSERVER",
+        "DAH",
+        "IDOLPROXY"
+      ]
+    },
+    "databaseNames": ["News"],
+    "minScore": 50,
+    "jobName": "BLACK_MDN_EVERYTHING_SG"
+  },
   "export": {
     "powerpoint": {
       "templateFile": ""
@@ -203,6 +219,7 @@
     },
     "defaultDeselectedDatabases": [],
     "filterOrder": ["metaFilter", "indexesFilter", "datesFilter", "geographyFilter", "-", "parametricFilter"],
+    "listViewPagingSize": 30,
     "openSharedDashboardQueryAsNewSearch": false,
     "parametricNeverShow": [],
     "parametricAlwaysShow": [],
@@ -237,6 +254,7 @@
       "updateProfileOnView": false
     }
   },
+  "combineMethod": "Simple",
   "minScore": 0,
   "topicMapMaxResults": 1000,
   "documentSummaryMaxLength": 250,

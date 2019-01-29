@@ -20,7 +20,7 @@ define([
     }
 
     return Modal.extend({
-        className: Modal.prototype.className + ' fixed-height-modal',
+        className: Modal.prototype.className + ' fixed-height-modal wide-modal',
 
         events: _.defaults({
             'shown.bs.modal': function() {

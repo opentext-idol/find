@@ -19,7 +19,7 @@ define([
         }
 
         // Find highlighted query terms
-        var queryTextRegex = /<HavenSearch-QueryText-Placeholder>(.*?)<\/HavenSearch-QueryText-Placeholder>/g;
+        var queryTextRegex = /<HavenSearch-QueryText-Placeholder>([\s\S]*?)<\/HavenSearch-QueryText-Placeholder>/g;
         var queryText = [];
         var resultsArray;
 
@@ -28,7 +28,7 @@ define([
         }
 
         // Protect us from XSS (but leave injected highlight tags alone)
-        var otherText = summary.split(/<HavenSearch-QueryText-Placeholder>.*?<\/HavenSearch-QueryText-Placeholder>/);
+        var otherText = summary.split(/<HavenSearch-QueryText-Placeholder>[\s\S]*?<\/HavenSearch-QueryText-Placeholder>/);
         var escapedSummaryElements = [];
         escapedSummaryElements.push(_.escape(otherText[0]));
 

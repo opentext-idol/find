@@ -16,7 +16,7 @@ define([
 ], function(SettingsPage, ValidateOnSaveModal, Confirm, configModel, vent, router, i18n, template, _) {
     'use strict';
 
-    var urlRoot = /\bconfig$/.test(window.location.pathname) ? '../api/config/config/' : 'api/admin/config/';
+    var urlRoot = /\bconfig$/.test(window.location.pathname) ? 'api/config/config/' : 'api/admin/config/';
 
     return SettingsPage.extend({
         className: 'container-fluid',

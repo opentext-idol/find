@@ -127,9 +127,9 @@
       "resolved": "https://registry.npmjs.org/boom/-/boom-2.10.1.tgz"
     },
     "bower": {
-      "version": "1.7.9",
+      "version": "1.8.4",
       "from": "bower@>=1.7.7 <2.0.0",
-      "resolved": "https://registry.npmjs.org/bower/-/bower-1.7.9.tgz"
+      "resolved": "https://registry.npmjs.org/bower/-/bower-1.8.4.tgz"
     },
     "brace-expansion": {
       "version": "1.1.7",
@@ -1741,8 +1741,8 @@
     },
     "grunt-peg": {
       "version": "2.0.1",
-      "from": "jdesrosiers/grunt-peg#11252e0",
-      "resolved": "git+https://github.com/jdesrosiers/grunt-peg.git#11252e03aee989d1ff2028935b9c7b1526c6f2d7"
+      "from": "dvberkel/grunt-peg#11252e0",
+      "resolved": "git+https://github.com/dvberkel/grunt-peg.git#11252e03aee989d1ff2028935b9c7b1526c6f2d7"
     },
     "grunt-template-jasmine-requirejs": {
       "version": "0.2.3",
