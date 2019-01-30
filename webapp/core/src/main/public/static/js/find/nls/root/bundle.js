@@ -10,7 +10,7 @@ define([
 
     return substitution({
         'about.app.version': 'Version',
-        'about.copyright': "Find © Copyright 2014-2018 Micro Focus International plc.",
+        'about.copyright': "Find © Copyright 2014-2019 Micro Focus International plc.",
         'about.foss': 'FOSS Acknowledgements',
         'about.lib.name': 'Library Name',
         'about.lib.version': 'Version',
