@@ -125,6 +125,7 @@ define([
             this.answeredQuestionsCollection.fetch({
                 data: {
                     text: this.queryModel.get('queryText'),
+                    fieldText: this.queryModel.get('fieldText'),
                     maxResults: MAX_SIZE
                 },
                 reset: true,
