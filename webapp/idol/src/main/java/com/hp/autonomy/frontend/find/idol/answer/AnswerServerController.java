@@ -42,14 +42,14 @@ class AnswerServerController {
     @RequestMapping(value = ASK_PATH, method = RequestMethod.GET)
     public List<AskAnswer> ask(@RequestParam(TEXT_PARAM)
                                final String text,
-                               @RequestParam(FIELDTEXT_PARAM)
+                               @RequestParam(value = FIELDTEXT_PARAM, required = false)
                                final String fieldText,
                                @RequestParam(value = MAX_RESULTS_PARAM, required = false)
                                final Integer maxResults) {
         final AskAnswerServerRequest request = requestBuilderFactory.getObject()
                 .text(text)
                 .maxResults(maxResults)
-                .proxiedParams(StringUtils.isBlank(fieldText) ? null : Collections.singletonMap("fieldtext", fieldText))
+                .proxiedParams(StringUtils.isBlank(fieldText) ? Collections.emptyMap() : Collections.singletonMap("fieldtext", fieldText))
                 .build();
 
         return askAnswerServerService.ask(request);
