@@ -16,7 +16,8 @@ define([
         beforeEach(function() {
             this.view = new IdolQuestionsView({
                 queryModel: new Backbone.Model({
-                    queryText: 'This is some query text'
+                    queryText: 'This is some query text',
+                    fieldText: ''
                 }),
                 loadingTracker: {
                     questionsFinished: true
@@ -45,7 +46,8 @@ define([
                 expect(this.collection.fetch.calls.mostRecent().args[0].data).toEqual(
                     {
                         maxResults: 1,
-                        text: 'This is some query text'
+                        text: 'This is some query text',
+                        fieldText: ''
                     }
                 )
             });
