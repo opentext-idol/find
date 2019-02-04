@@ -5,6 +5,8 @@
 
 package com.hp.autonomy.frontend.find.idol.answer;
 
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequest;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerService;
@@ -30,13 +32,16 @@ class AnswerServerController {
 
     private final AskAnswerServerService askAnswerServerService;
     private final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory;
+    private final ConfigService<IdolFindConfig> configService;
 
     @Autowired
     AnswerServerController(final AskAnswerServerService askAnswerServerService,
-                           final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory
+                           final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory,
+                           final ConfigService<IdolFindConfig> configService
     ) {
         this.askAnswerServerService = askAnswerServerService;
         this.requestBuilderFactory = requestBuilderFactory;
+        this.configService = configService;
     }
 
     @RequestMapping(value = ASK_PATH, method = RequestMethod.GET)
@@ -50,6 +55,7 @@ class AnswerServerController {
                 .text(text)
                 .maxResults(maxResults)
                 .proxiedParams(StringUtils.isBlank(fieldText) ? Collections.emptyMap() : Collections.singletonMap("fieldtext", fieldText))
+                .systemNames(configService.getConfig().getAnswerServer().getSystemNames())
                 .build();
 
         return askAnswerServerService.ask(request);

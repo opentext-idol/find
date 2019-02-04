@@ -5,6 +5,8 @@
 
 package com.hp.autonomy.frontend.find.idol.answer;
 
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerService;
 import org.junit.Before;
@@ -27,6 +29,8 @@ public class AnswerServerControllerTest {
     private ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory;
     @Mock
     private AskAnswerServerRequestBuilder requestBuilder;
+    @Mock
+    private ConfigService<IdolFindConfig> configService;
 
     private AnswerServerController controller;
 
@@ -36,7 +40,7 @@ public class AnswerServerControllerTest {
         when(requestBuilder.text(any())).thenReturn(requestBuilder);
         when(requestBuilder.maxResults(anyInt())).thenReturn(requestBuilder);
 
-        controller = new AnswerServerController(askAnswerServerService, requestBuilderFactory);
+        controller = new AnswerServerController(askAnswerServerService, requestBuilderFactory, configService);
     }
 
     @Test

@@ -38,26 +38,32 @@ define([
 
             this.$conversationSystem = this.$('.conversation-system-input');
             this.$conversationSystemControls = this.$conversationSystem.closest('div.' + this.controlGroupClass);
+
+            this.$systemNames = this.$('.system-names');
+            this.$systemNamesControls = this.$systemNames.closest('div.' + this.controlGroupClass);
         },
 
         getConfig: function() {
+            const systemNames = this.$systemNames.val();
             return _.extend({
                 conversationSystemName: this.$conversationSystem.val(),
-            }, AnswerServerWidget.prototype.getConfig.call(this))
+                systemNames: systemNames ? systemNames.split(/,\s*/) : []
+            }, _.omit(AnswerServerWidget.prototype.getConfig.call(this), 'systemName'))
         },
 
         updateConfig: function(config) {
             AnswerServerWidget.prototype.updateConfig.call(this, config);
             this.$conversationSystem.val(config.conversationSystemName || '');
+            this.$systemNames.val((config.systemNames || []).join(','));
         },
 
         setValidationFormatting: function (state) {
             AnswerServerWidget.prototype.setValidationFormatting.apply(this, arguments);
 
             if (state === 'clear') {
-                this.$conversationSystemControls.removeClass(this.successClass + ' ' + this.errorClass);
+                this.$conversationSystemControls.add(this.$systemNamesControls).removeClass(this.successClass + ' ' + this.errorClass);
             } else {
-                this.$conversationSystemControls.addClass(state)
+                this.$conversationSystemControls.add(this.$systemNamesControls).addClass(state)
                     .removeClass(state === this.successClass ? this.errorClass : this.successClass);
             }
         },
