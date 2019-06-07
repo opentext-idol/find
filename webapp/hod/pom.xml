@@ -36,7 +36,7 @@
                             <executable>npm</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-                                <argument>install</argument>
+                                <argument>ci</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -123,7 +123,7 @@
         <dependency>
             <groupId>com.hp.autonomy.hod.redis</groupId>
             <artifactId>redis-hod-token-repository</artifactId>
-            <version>0.4.0</version>
+            <version>0.4.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.hp.autonomy.hod</groupId>
