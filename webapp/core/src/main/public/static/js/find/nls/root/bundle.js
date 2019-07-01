@@ -10,7 +10,7 @@ define([
 
     return substitution({
         'about.app.version': 'Version',
-        'about.copyright': "Find © Copyright 2014-2018 Micro Focus International plc.",
+        'about.copyright': "Find © Copyright 2014-2019 Micro Focus International plc.",
         'about.foss': 'FOSS Acknowledgements',
         'about.lib.name': 'Library Name',
         'about.lib.version': 'Version',
@@ -430,6 +430,8 @@ define([
         'settings.answerServer.title': 'Answer Server',
         'settings.answerServer.conversationSystem': 'Conversation System ID',
         'settings.answerServer.conversationSystemDisabled': '(chat disabled)',
+        'settings.answerServer.systemNames': 'System Names',
+        'settings.answerServer.systemNamesDisabled': '(all systems)',
         'settings.community.description': "Community handles authentication for Find. We recommend using a dedicated Community server for Find and not using it for any other parts of your IDOL installation.  Your Community server will need an Agentstore server for data storage.",
         'settings.community.login.type': 'Login Type',
         'settings.community.login.fetchTypes': 'Test connection to retrieve available login types.',
@@ -541,6 +543,7 @@ define([
         'settings.FETCH_SERVICE_PORT_ERROR': "An error occurred while fetching the details of the server's service port",
         'settings.INCORRECT_SERVER_TYPE': 'Incorrect server type. Make sure you are using one of {0}',
         'settings.INVALID_CONVERSATION_SYSTEM_NAME': 'Conversation system ID is invalid (note: case-sensitive)',
+        'settings.INVALID_SYSTEM_NAME': 'System name is invalid (note: case-sensitive)',
         'settings.INDEX_PORT_ERROR': "An error occurred while fetching the details of the server's index port",
         'settings.REQUIRED_FIELD_MISSING': 'One or more of the required fields is missing',
         'settings.REGULAR_EXPRESSION_MATCH_ERROR': 'The target server is of an incorrect type',

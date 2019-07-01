@@ -83,7 +83,7 @@ public class IdolSecurityCustomizerImplTest {
         when(authoritiesMapper.mapAuthorities(anyCollection())).then(returnsFirstArg());
 
         when(userService.authenticateUser(anyString(), anyString(), anyString())).thenReturn(true);
-        when(userService.getUser(anyString(), anyBoolean())).thenReturn(new UserRoles("Some Guy"));
+        when(userService.getUser(anyString(), anyBoolean(), anyString())).thenReturn(new UserRoles("Some Guy"));
 
         when(communityAuthentication.getMethod()).thenReturn("LDAP");
 

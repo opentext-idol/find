@@ -15,10 +15,11 @@ define([
     'find/app/util/modal',
     'text!find/templates/app/page/search/saved-searches/saved-search-control-view.html',
     'i18n!find/nls/bundle',
+    'find/app/configuration',
     'find/app/util/popover',
     'underscore'
 ], function(Backbone, $, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, CsvFieldSelectView, SharingOptions,
-            Modal, template, i18n, popover, _) {
+            Modal, template, i18n, configuration, popover, _) {
     'use strict';
 
     var SavedState = {
@@ -249,10 +250,12 @@ define([
             // only allow Save As buttons for these search types
             var saveAsSearchTypes = [SavedSearchModel.Type.QUERY, SavedSearchModel.Type.SNAPSHOT];
 
+            var enableSavedSearch = configuration().enableSavedSearch;
+
             this.$el.html(this.template({
                 i18n: i18n,
-                showCompare: Boolean(this.comparisonModalCallback),
-                showSaveAs: isMutable,
+                showCompare: enableSavedSearch && Boolean(this.comparisonModalCallback),
+                showSaveAs: enableSavedSearch && isMutable,
                 searchTypes: saveAsSearchTypes,
                 showOpenAsQuery: !isMutable,
                 readOnly: this.savedSearchModel.get('type').indexOf('READ_ONLY') !== -1

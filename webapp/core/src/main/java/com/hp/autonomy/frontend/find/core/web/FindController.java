@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.LoginTypes;
 import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
+import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
@@ -17,7 +18,9 @@ import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -61,6 +64,9 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
     @Value(FIND_METRICS_ENABLED_PROPERTY)
     private boolean metricsEnabled;
 
+    @Value("${find.community.username.field:}")
+    private String usernameField;
+
     protected FindController(final ControllerUtils controllerUtils,
                              final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever,
                              final ConfigService<? extends AuthenticationConfig<?>> authenticationConfigService,
@@ -92,9 +98,22 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
 
     @RequestMapping(value = APP_PATH + "/**", method = RequestMethod.GET)
     public ModelAndView mainPage(final HttpServletRequest request) throws JsonProcessingException {
-        final String username = authenticationInformationRetriever.getAuthentication().getName();
+        final Authentication auth = authenticationInformationRetriever.getAuthentication();
+        final String username = auth.getName();
+        String userLabel = username;
 
-        final Collection<String> roles = authenticationInformationRetriever.getAuthentication()
+        final Object principal = auth.getPrincipal();
+        if (principal instanceof CommunityPrincipal) {
+            final Map<String, String> fields = ((CommunityPrincipal) principal).getFields();
+            if (fields != null) {
+                final String givenName = fields.get(usernameField);
+                if (StringUtils.isNotBlank(givenName)) {
+                    userLabel = givenName;
+                }
+            }
+        }
+
+        final Collection<String> roles = auth
             .getAuthorities()
             .stream()
             .map(GrantedAuthority::getAuthority)
@@ -105,6 +124,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
         final Map<String, Object> config = new HashMap<>();
         config.put(MvcConstants.APPLICATION_PATH.value(), APP_PATH);
         config.put(MvcConstants.USERNAME.value(), username);
+        config.put(MvcConstants.USERLABEL.value(), userLabel);
         config.put(MvcConstants.ROLES.value(), roles);
         config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         config.put(MvcConstants.RELEASE_VERSION.value(), releaseVersion);

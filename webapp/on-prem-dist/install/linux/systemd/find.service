@@ -1,0 +1,34 @@
+[Unit]
+Description=Micro Focus Find
+Requires=network.target
+After=network.target
+
+[Service]
+# ExecStart is the main process of the service
+Type=simple
+Environment="FIND_INSTALL_DIR=/opt/find"
+Environment="FIND_HOME_DIR=/opt/find/home"
+Environment="FIND_PORT=8080"
+Environment="FIND_USER=find"
+
+ExecStart=java -Xmx1024m -Didol.find.home="$FIND_HOME_DIR" -Dlogging.path="$FIND_HOME_DIR/logs" -Dserver.port=$FIND_PORT -jar $FIND_INSTALL_DIR/find.jar >> $FIND_INSTALL_DIR/console.log
+
+# Ensures stdin, stdout and stderr are all connected to /dev/null
+StandardInput=null
+StandardOutput=null
+StandardError=null
+
+# Set the user and group to execute the process as
+User=$FIND_USER
+Group=$FIND_USER
+
+WorkingDirectory=$FIND_INSTALL_DIR
+
+# Waits 60 seconds on startup before considered failed
+TimeoutStartSec=60
+# Waits 30 seconds on shutdown before sending a SIGTERM, then a further 30 seconds before sending a SIGKILL
+TimeoutStopSec=30
+
+[Install]
+# Start on machine startup
+WantedBy=multi-user.target

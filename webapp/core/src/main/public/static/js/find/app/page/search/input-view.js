@@ -51,6 +51,14 @@ define([
             this.$input = this.$('.find-input');
 
             if (this.enableTypeAhead) {
+                // Prevent the Twitter right-arrow-key listener, since there's problems with text being overwritten
+                // by the suggestion when trying to scroll to the end.
+                this.$input.on('keydown', function(evt){
+                    if (evt.keyCode === 39) {
+                        evt.stopImmediatePropagation();
+                    }
+                });
+
                 this.$input.typeahead({
                     hint: false,
                     highlight: true,
@@ -71,6 +79,7 @@ define([
                         }
                     }
                 });
+
             }
 
             this.updateText();

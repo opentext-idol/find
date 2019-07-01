@@ -6,6 +6,7 @@
 define([
     'jquery',
     'backbone',
+    'find/app/configuration',
     'find/app/page/search/saved-searches/saved-search-control-view',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/dates-filter-model',
@@ -15,7 +16,7 @@ define([
     'find/app/util/database-name-resolver',
     'moment',
     'i18n!find/nls/bundle'
-], function($, Backbone, SavedSearchControlView, SavedSearchModel, DatesFilterModel, GeographyModel, MinScoreModel,
+], function($, Backbone, configuration, SavedSearchControlView, SavedSearchModel, DatesFilterModel, GeographyModel, MinScoreModel,
             MockConfirmView, databaseNameResolver, moment, i18n) {
     'use strict';
 
@@ -139,6 +140,10 @@ define([
 
     describe('SavedSearchControlView', function() {
         beforeEach(function() {
+            configuration.and.returnValue({
+                enableSavedSearch: true
+            });
+
             this.queryModel = new Backbone.Model({
                 queryText: 'cat AND Copenhagen'
             });

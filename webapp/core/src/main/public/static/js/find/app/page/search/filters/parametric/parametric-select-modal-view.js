@@ -49,6 +49,8 @@ define([
                     fieldDisplayName: fieldModel.get('displayName'),
                     allIndexes: allIndexes,
                     selectedValues: options.selectedParametricValues,
+                    // Use 200 instead of 20 since most of the cost is in processing the query, not returning the results
+                    pageSize: 200,
                     fetchRestrictions: fetchRestrictions,
                     fetchFunction: function(origData) {
                         const data = _.extend({

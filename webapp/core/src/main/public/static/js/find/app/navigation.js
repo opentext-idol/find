@@ -82,7 +82,7 @@ define([
                 menuItems: this.menuItems,
                 pages: pages,
                 applications: conf.applications,
-                username: conf.username,
+                username: conf.userLabel || conf.username,
                 messageOfTheDay: conf.messageOfTheDay && conf.messageOfTheDay.message,
                 messageOfTheDayCssClass: conf.messageOfTheDay && conf.messageOfTheDay.cssClass,
                 entitySearchOptions: conf.entitySearchOptions

@@ -5,10 +5,15 @@
 
 package com.hp.autonomy.frontend.find.idol.answer;
 
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequest;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerService;
 import com.hp.autonomy.types.idol.responses.answer.AskAnswer;
+import java.util.Collections;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,34 +21,41 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(AnswerServerController.BASE_PATH)
 class AnswerServerController {
     static final String BASE_PATH = "/api/public/answer";
     static final String ASK_PATH = "ask";
     static final String TEXT_PARAM = "text";
+    static final String FIELDTEXT_PARAM = "fieldText";
     static final String MAX_RESULTS_PARAM = "maxResults";
 
     private final AskAnswerServerService askAnswerServerService;
     private final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory;
+    private final ConfigService<IdolFindConfig> configService;
 
     @Autowired
     AnswerServerController(final AskAnswerServerService askAnswerServerService,
-                           final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory) {
+                           final ObjectFactory<AskAnswerServerRequestBuilder> requestBuilderFactory,
+                           final ConfigService<IdolFindConfig> configService
+    ) {
         this.askAnswerServerService = askAnswerServerService;
         this.requestBuilderFactory = requestBuilderFactory;
+        this.configService = configService;
     }
 
     @RequestMapping(value = ASK_PATH, method = RequestMethod.GET)
     public List<AskAnswer> ask(@RequestParam(TEXT_PARAM)
                                final String text,
+                               @RequestParam(value = FIELDTEXT_PARAM, required = false)
+                               final String fieldText,
                                @RequestParam(value = MAX_RESULTS_PARAM, required = false)
                                final Integer maxResults) {
         final AskAnswerServerRequest request = requestBuilderFactory.getObject()
                 .text(text)
                 .maxResults(maxResults)
+                .proxiedParams(StringUtils.isBlank(fieldText) ? Collections.emptyMap() : Collections.singletonMap("fieldtext", fieldText))
+                .systemNames(configService.getConfig().getAnswerServer().getSystemNames())
                 .build();
 
         return askAnswerServerService.ask(request);

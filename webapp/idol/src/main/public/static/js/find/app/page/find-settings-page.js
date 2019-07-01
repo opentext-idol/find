@@ -106,6 +106,8 @@ define([
                             loading: i18n['settings.answerServer.loading'],
                             conversationSystem: i18n['settings.answerServer.conversationSystem'],
                             conversationSystemDisabled: i18n['settings.answerServer.conversationSystemDisabled'],
+                            systemNames: i18n['settings.answerServer.systemNames'],
+                            systemNamesDisabled: i18n['settings.answerServer.systemNamesDisabled']
                         })
                     })
                 ], [
