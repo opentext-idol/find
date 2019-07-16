@@ -76,6 +76,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final Integer minScore;
     private final StatsServerConfig statsServer;
     private final Integer topicMapMaxResults;
+    private final String storedStateField;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final Integer comparisonStoreStateMaxResults;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -111,6 +112,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .minScore(minScore == null ? other.minScore : minScore)
                 .statsServer(statsServer == null ? other.statsServer : statsServer.merge(other.statsServer))
                 .topicMapMaxResults(topicMapMaxResults == null ? other.topicMapMaxResults : topicMapMaxResults)
+                .storedStateField(storedStateField == null ? other.storedStateField : storedStateField)
                 .comparisonStoreStateMaxResults(comparisonStoreStateMaxResults == null ? other.comparisonStoreStateMaxResults : comparisonStoreStateMaxResults)
                 .exportStoreStateMaxResults(exportStoreStateMaxResults == null ? other.exportStoreStateMaxResults : exportStoreStateMaxResults)
                 .documentSummaryMaxLength(documentSummaryMaxLength == null ? other.documentSummaryMaxLength : documentSummaryMaxLength)
