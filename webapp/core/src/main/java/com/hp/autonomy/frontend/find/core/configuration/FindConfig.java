@@ -17,6 +17,8 @@ import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
  * @param <B> configuration implementation builder
  */
 public interface FindConfig<C extends FindConfig<C, B>, B extends FindConfigBuilder<C, B>> extends Config<C>, AuthenticationConfig<C> {
+    SunburstConfiguration getSunburst();
+
     MapConfiguration getMap();
 
     SavedSearchConfig getSavedSearchConfig();

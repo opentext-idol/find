@@ -288,7 +288,9 @@ define([
                 },
                 sunburst: {
                     Constructor: SunburstView,
-                    constructorArguments: subViewArguments,
+                    constructorArguments: _.defaults({
+                        queryModel: this.queryModel
+                    }, subViewArguments),
                     shown: this.displayDependentParametricViews,
                     selector: {
                         displayNameKey: 'sunburst',

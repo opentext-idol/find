@@ -14,11 +14,7 @@ import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.authentication.Authentication;
 import com.hp.autonomy.frontend.configuration.passwords.PasswordsConfig;
 import com.hp.autonomy.frontend.configuration.redis.RedisConfig;
-import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
-import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
-import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
-import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
-import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
+import com.hp.autonomy.frontend.find.core.configuration.*;
 import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
 import com.hp.autonomy.hod.client.api.authentication.ApiKey;
 import com.hp.autonomy.hod.sso.HodSsoConfig;
@@ -48,6 +44,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodS
     private final Set<String> allowedOrigins;
     private final RedisConfig redis;
     private final FieldsInfo fieldsInfo;
+    private final SunburstConfiguration sunburst;
     private final MapConfiguration map;
     private final UiCustomization uiCustomization;
     private final Integer minScore;
@@ -68,6 +65,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodS
                 .queryManipulation(queryManipulation == null ? config.queryManipulation : queryManipulation.merge(config.queryManipulation))
                 .hsod(hsod == null ? config.hsod : hsod.merge(config.hsod))
                 .fieldsInfo(fieldsInfo == null ? config.fieldsInfo : fieldsInfo.merge(config.fieldsInfo))
+                .sunburst(sunburst == null ? config.sunburst : sunburst.merge(config.sunburst))
                 .map(map == null ? config.map : map.merge(config.map))
                 .uiCustomization(uiCustomization == null ? config.uiCustomization : uiCustomization.merge(config.uiCustomization))
                 .savedSearchConfig(savedSearchConfig == null ? config.savedSearchConfig : savedSearchConfig.merge(config.savedSearchConfig))

@@ -310,6 +310,7 @@ define([
         'search.resultsView.sunburst.error.query': 'Error: could not display Sunburst View',
         'search.resultsView.sunburst.noDependentParametricValues': 'There are too many parametric fields to display in Sunburst View',
         'search.resultsView.sunburst.error.noSecondFieldValues': 'There are no documents with values for both fields. Showing results for only first field.',
+        'search.resultsView.sunburst.multipleDatabases': 'Select a single database to use the Sunburst View',
         'search.resultsView.map': 'Map',
         'search.resultsView.map.areas': '{0} (Areas)',
         'search.resultsView.map.points': '{0}',

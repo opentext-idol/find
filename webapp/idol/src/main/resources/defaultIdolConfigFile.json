@@ -120,6 +120,9 @@
     "pollForUpdates": true,
     "pollingInterval": 5
   },
+  "sunburst": {
+    "allowMultipleDatabases": true
+  },
   "map": {
     "enabled": false,
     "attribution": null,

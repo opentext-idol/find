@@ -129,6 +129,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
         config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         config.put(MvcConstants.RELEASE_VERSION.value(), releaseVersion);
         config.put(MvcConstants.METRICS_ENABLED.value(), metricsEnabled);
+        config.put(MvcConstants.SUNBURST.value(), findConfig.getSunburst());
         config.put(MvcConstants.MAP.value(), findConfig.getMap());
         config.put(MvcConstants.UI_CUSTOMIZATION.value(), findConfig.getUiCustomization());
         config.put(MvcConstants.SAVED_SEARCH_CONFIG.value(), findConfig.getSavedSearchConfig());

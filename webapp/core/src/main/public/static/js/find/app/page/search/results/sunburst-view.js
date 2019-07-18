@@ -7,12 +7,13 @@ define([
     'underscore',
     'jquery',
     'd3',
+    'find/app/configuration',
     'sunburst/js/sunburst',
     'find/app/page/search/results/parametric-results-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/results/sunburst/sunburst-label.html',
     'find/app/vent'
-], function(_, $, d3, Sunburst, ParametricResultsView, i18n, labelTemplate, vent) {
+], function(_, $, d3, configuration, Sunburst, ParametricResultsView, i18n, labelTemplate, vent) {
     'use strict';
 
     const HIDDEN_COLOR = '#f0f0f0';
@@ -124,6 +125,13 @@ define([
 
     return ParametricResultsView.extend({
         initialize: function(options) {
+            this.queryModel = options.queryModel;
+            const config = configuration();
+            this.allowMultipleDatabases = config.sunburst && config.sunburst.allowMultipleDatabases;
+            if (this.allowMultipleDatabases === undefined || this.allowMultipleDatabases === null) {
+                this.allowMultipleDatabases = true;
+            }
+
             ParametricResultsView.prototype.initialize.call(this, _.defaults({
                 emptyDependentMessage: i18n['search.resultsView.sunburst.noDependentParametricValues'],
                 emptyMessage: i18n['search.resultsView.sunburst.noParametricValues'],
@@ -170,6 +178,16 @@ define([
             ParametricResultsView.prototype.render.apply(this);
 
             this.$content.addClass('sunburst fixed-height');
+        },
+
+        fetchDependentFields: function() {
+            if (this.allowMultipleDatabases || this.queryModel.get('indexes').length === 1) {
+                ParametricResultsView.prototype.fetchDependentFields.apply(this);
+            } else {
+                this.model.set('loading', false);
+                this.updateMessage(i18n['search.resultsView.sunburst.multipleDatabases']);
+                this.$parametricSelections.toggleClass('hide', true);
+            }
         }
     });
 });

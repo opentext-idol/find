@@ -18,13 +18,7 @@ import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentica
 import com.hp.autonomy.frontend.configuration.server.ProductType;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
-import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
-import com.hp.autonomy.frontend.find.core.configuration.FindConfigBuilder;
-import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
-import com.hp.autonomy.frontend.find.core.configuration.MessageOfTheDayConfig;
-import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
-import com.hp.autonomy.frontend.find.core.configuration.TrendingConfiguration;
-import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
+import com.hp.autonomy.frontend.find.core.configuration.*;
 import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig.IdolFindConfigBuilder;
 import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
@@ -37,6 +31,7 @@ import java.util.Collection;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
@@ -47,6 +42,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @SuppressWarnings({"InstanceVariableOfConcreteClass", "DefaultAnnotationParam"})
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -69,6 +65,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     @JsonProperty("idolFieldPathNormalizerXMLPrefixes")
     private final Collection<String> idolFieldPathNormalizerXMLPrefixes;
     private final FieldsInfo fieldsInfo;
+    private final SunburstConfiguration sunburst;
     private final MapConfiguration map;
     private final TrendingConfiguration trending;
     private final ThemeTrackerConfig themeTracker;
@@ -105,6 +102,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .uiCustomization(uiCustomization == null ? other.uiCustomization : uiCustomization.merge(other.uiCustomization))
                 .idolFieldPathNormalizerXMLPrefixes(CollectionUtils.isEmpty(idolFieldPathNormalizerXMLPrefixes) ? other.idolFieldPathNormalizerXMLPrefixes : idolFieldPathNormalizerXMLPrefixes)
                 .fieldsInfo(fieldsInfo == null ? other.fieldsInfo : fieldsInfo.merge(other.fieldsInfo))
+                .sunburst(sunburst == null ? other.sunburst : sunburst.merge(other.sunburst))
                 .map(map == null ? other.map : map.merge(other.map))
                 .trending(trending == null ? other.trending : trending.merge(other.trending))
                 .themeTracker(themeTracker == null ? other.themeTracker : themeTracker.merge(other.themeTracker))

@@ -11,6 +11,7 @@ public enum MvcConstants {
     CONFIG("configJson"),
     GIT_COMMIT("commit"),
     MAIN_JS("mainJs"),
+    SUNBURST("sunburst"),
     MAP("map"),
     RELEASE_VERSION("version"),
     METRICS_ENABLED("metricsEnabled"),
