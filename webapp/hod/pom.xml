@@ -123,7 +123,7 @@
         <dependency>
             <groupId>com.hp.autonomy.hod.redis</groupId>
             <artifactId>redis-hod-token-repository</artifactId>
-            <version>0.4.1</version>
+            <version>0.4.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.hp.autonomy.hod</groupId>
