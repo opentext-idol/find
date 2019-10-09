@@ -14,9 +14,7 @@ import com.google.common.collect.ImmutableSet;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.SimpleComponent;
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -74,11 +72,13 @@ public class TrendingWidgetSettings extends SimpleComponent<TrendingWidgetSettin
 
     @SuppressWarnings({"WeakerAccess", "unused"})
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class TrendingValue {
         @JsonProperty("name")
-        private final String name;
+        private String name;
         @JsonProperty("color")
-        private final String color;
+        private String color;
     }
 
     @SuppressWarnings({"FieldMayBeFinal", "WeakerAccess", "unused"})
