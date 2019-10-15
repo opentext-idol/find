@@ -5,6 +5,7 @@ import com.autonomy.aci.client.services.impl.AciServiceImpl;
 import com.autonomy.aci.client.transport.AciHttpClient;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
+import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
@@ -42,19 +43,23 @@ public class FlywayIdolConfigUpdateHandler implements IdolConfigUpdateHandler {
     public void update(final IdolFindConfig config) {
         final CommunityAuthentication community = config.getLogin();
 
-        if (community.validate(aciService, processorFactory).isValid()) {
-            final AciServerDetails serverDetails = config.getCommunityDetails();
-
-            // terrible hack - using system properties to pass data to migration
-            System.setProperty(COMMUNITY_PROTOCOL, serverDetails.getProtocol().toString());
-            System.setProperty(COMMUNITY_HOST, serverDetails.getHost());
-            System.setProperty(COMMUNITY_PORT, String.valueOf(serverDetails.getPort()));
-
-            flyway.migrate();
-
-            System.clearProperty(COMMUNITY_PROTOCOL);
-            System.clearProperty(COMMUNITY_HOST);
-            System.clearProperty(COMMUNITY_PORT);
+        final ValidationResult validation = community.validate(aciService, processorFactory);
+        if (!validation.isValid()) {
+            throw new RuntimeException(
+                "Community server configuration is invalid: " + validation.getData());
         }
+
+        final AciServerDetails serverDetails = config.getCommunityDetails();
+
+        // terrible hack - using system properties to pass data to migration
+        System.setProperty(COMMUNITY_PROTOCOL, serverDetails.getProtocol().toString());
+        System.setProperty(COMMUNITY_HOST, serverDetails.getHost());
+        System.setProperty(COMMUNITY_PORT, String.valueOf(serverDetails.getPort()));
+
+        flyway.migrate();
+
+        System.clearProperty(COMMUNITY_PROTOCOL);
+        System.clearProperty(COMMUNITY_HOST);
+        System.clearProperty(COMMUNITY_PORT);
     }
 }

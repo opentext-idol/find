@@ -64,7 +64,7 @@ public class FlywayIdolConfigUpdateHandlerTest {
         flywayIdolConfigUpdateHandler.update(config);
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void updateWithInvalidConfig() {
         when(validationResult.isValid()).thenReturn(false);
         flywayIdolConfigUpdateHandler.update(config);
