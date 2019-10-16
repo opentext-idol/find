@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -50,8 +51,10 @@ public class FlywayIdolConfigUpdateHandlerTest {
 
         when(config.getLogin()).thenReturn(community);
         when(config.getCommunityDetails()).thenReturn(serverDetails);
+        when(community.getMethod()).thenReturn("autonomy");
         //noinspection unchecked
         when(community.validate(Matchers.any(AciServiceImpl.class), Matchers.any(ProcessorFactory.class))).thenReturn(validationResult);
+        when(validationResult.isValid()).thenReturn(true);
 
         when(serverDetails.getProtocol()).thenReturn(AciServerDetails.TransportProtocol.HTTP);
         when(serverDetails.getHost()).thenReturn("communityHost");
@@ -60,13 +63,22 @@ public class FlywayIdolConfigUpdateHandlerTest {
 
     @Test
     public void updateWithValidConfig() {
-        when(validationResult.isValid()).thenReturn(true);
         flywayIdolConfigUpdateHandler.update(config);
+        Mockito.verify(flyway).migrate();
     }
 
     @Test(expected = RuntimeException.class)
     public void updateWithInvalidConfig() {
         when(validationResult.isValid()).thenReturn(false);
         flywayIdolConfigUpdateHandler.update(config);
+        Mockito.verify(flyway, Mockito.never()).migrate();
     }
+
+    @Test
+    public void updateWithInitialConfig() {
+        when(community.getMethod()).thenReturn("default");
+        flywayIdolConfigUpdateHandler.update(config);
+        Mockito.verify(flyway, Mockito.never()).migrate();
+    }
+
 }

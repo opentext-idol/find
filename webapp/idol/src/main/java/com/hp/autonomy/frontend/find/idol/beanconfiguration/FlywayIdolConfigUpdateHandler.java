@@ -4,6 +4,7 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.impl.AciServiceImpl;
 import com.autonomy.aci.client.transport.AciHttpClient;
 import com.autonomy.aci.client.transport.AciServerDetails;
+import com.hp.autonomy.frontend.configuration.LoginTypes;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
 import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
@@ -42,6 +43,9 @@ public class FlywayIdolConfigUpdateHandler implements IdolConfigUpdateHandler {
     @Override
     public void update(final IdolFindConfig config) {
         final CommunityAuthentication community = config.getLogin();
+        if (LoginTypes.DEFAULT.equalsIgnoreCase(community.getMethod())) {
+            return;
+        }
 
         final ValidationResult validation = community.validate(aciService, processorFactory);
         if (!validation.isValid()) {
