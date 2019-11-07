@@ -490,8 +490,9 @@ define([
 
                 it('activates the "Save as query" button and disabled rename button', function() {
                     expect(this.view.$('.show-save-as[data-search-type="QUERY"]')).toHaveClass('active');
-                    testDisablesOptionButton('.show-rename-button', 'rename button');
                 });
+
+                testDisablesOptionButton('.show-rename-button', 'rename button');
 
                 describe('then the "Save as query" button is clicked again', function() {
                     beforeEach(clickSaveAsQueryButton);
@@ -514,8 +515,9 @@ define([
 
                     it('activates the "Rename" button and disables "Save as query" button', function() {
                         expect(this.view.$('.show-rename-button')).toHaveClass('active');
-                        testDisablesOptionButton('.show-save-as[data-search-type="QUERY"]', 'save as query button');
                     });
+
+                    testDisablesOptionButton('.show-save-as[data-search-type="QUERY"]', 'save as query button');
                 });
 
                 describe('then the user enters a title and clicks "Save"', function() {
@@ -568,8 +570,9 @@ define([
 
                 it('activates the "Save as snapshot" button and disabled rename button', function() {
                     expect(this.view.$('.show-save-as[data-search-type="SNAPSHOT"]')).toHaveClass('active');
-                    testDisablesOptionButton('.show-rename-button', 'rename button');
                 });
+
+                testDisablesOptionButton('.show-rename-button', 'rename button');
 
                 describe('then the "Save as snapshot" button is clicked again', function() {
                     beforeEach(clickSaveAsSnapshotButton);
@@ -592,8 +595,9 @@ define([
 
                     it('activates the "Rename" button and disables "Save as snapshot" button', function() {
                         expect(this.view.$('.show-rename-button')).toHaveClass('active');
-                        testDisablesOptionButton('.show-save-as[data-search-type="SNAPSHOT"]', 'save as snapshot button');
                     });
+
+                    testDisablesOptionButton('.show-save-as[data-search-type="SNAPSHOT"]', 'save as snapshot button');
                 });
 
                 describe('then the user presses "Save snapshot" and clicks "Save"', function() {
@@ -646,8 +650,9 @@ define([
 
                 it('activates the "Rename" button', function() {
                     expect(this.view.$('.show-rename-button')).toHaveClass('active');
-                    testDisablesOptionButton('.show-save-as[data-search-type="QUERY"]', 'save as query button');
                 });
+
+                testDisablesOptionButton('.show-save-as[data-search-type="QUERY"]', 'save as query button');
 
                 describe('then the "Rename" button is clicked again', function() {
                     beforeEach(clickShowRename);
@@ -656,8 +661,9 @@ define([
 
                     it('deactivates the "Rename" button', function() {
                         expect(this.view.$('.show-rename-button')).not.toHaveClass('active');
-                        testEnablesOptionButton('.show-save-as[data-search-type="QUERY"]', 'save as query button');
                     });
+
+                    testEnablesOptionButton('.show-save-as[data-search-type="QUERY"]', 'save as query button');
                 });
 
                 describe('then a new title is input, then cancel button is clicked, then "Save As" button is clicked', function() {
@@ -677,8 +683,9 @@ define([
 
                     it('activates the "Save as query" button', function() {
                         expect(this.view.$('.show-save-as[data-search-type="QUERY"]')).toHaveClass('active');
-                        testDisablesOptionButton('.show-rename-button', 'rename button');
                     });
+
+                    testDisablesOptionButton('.show-rename-button', 'rename button');
                 });
 
                 describe('then the user enters and saves a new title', function() {
@@ -704,7 +711,6 @@ define([
 
                     it('deactivates the "Rename" button', function() {
                         expect(this.view.$('.show-rename-button')).not.toHaveClass('active');
-                        testDisablesOptionButton('.show-rename-button', 'rename button');
                     });
                 });
             });

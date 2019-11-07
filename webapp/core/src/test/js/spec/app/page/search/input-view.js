@@ -13,6 +13,7 @@ define([
     'use strict';
 
     describe('Input view', function() {
+        jasmine.getEnv().configure({ random: false });
         const model = new Backbone.Model({inputText: 'cat'});
         const collection = new Backbone.Collection([{concepts: ['cat']}]);
 

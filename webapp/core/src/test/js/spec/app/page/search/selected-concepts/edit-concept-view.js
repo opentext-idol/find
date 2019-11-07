@@ -20,6 +20,7 @@ define([
             });
 
             this.view.render();
+            $('body').append(this.view.$el);
         });
 
         it('displays a textarea with all the concepts in the model new line separated', function() {

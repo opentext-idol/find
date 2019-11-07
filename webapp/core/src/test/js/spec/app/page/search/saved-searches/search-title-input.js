@@ -95,6 +95,7 @@ define([
                 this.view.on('remove', this.listener);
 
                 this.view.render();
+                $('body').append(this.view.$el);
             });
 
             it('should display the initial title', function() {
