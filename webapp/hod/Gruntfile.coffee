@@ -61,7 +61,7 @@ module.exports = (grunt) ->
       test:
         src: sourcePath
         options:
-          keepRunner: false
+          allowFileAccess: true
           outfile: jasmineSpecRunner
           specs: specs
           template: jasmineRequireTemplate
@@ -73,7 +73,6 @@ module.exports = (grunt) ->
       'browser-test':
         src: sourcePath
         options:
-          keepRunner: false
           outfile: jasmineSpecRunner
           specs: browserSpecs
           template: jasmineRequireTemplate
