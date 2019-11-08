@@ -11,14 +11,13 @@
     "grunt-cli": "~0.1.13",
     "grunt-contrib-clean": "~1.0.0",
     "grunt-contrib-connect": "~0.11.2",
-    "grunt-contrib-jasmine": "~1.0.0",
+    "grunt-contrib-jasmine": "~2.1.0",
     "grunt-contrib-less": "~1.4.0",
     "grunt-contrib-requirejs": "1.0.0",
     "grunt-contrib-uglify-es": "github:gruntjs/grunt-contrib-uglify#harmony",
     "grunt-contrib-watch": "~0.6.1",
     "grunt-peg": "github:dvberkel/grunt-peg#11252e0",
     "grunt-sync": "~0.5.1",
-    "grunt-template-jasmine-requirejs": "~0.2.3",
-    "requirejs": "2.3.3"
+    "grunt-template-jasmine-requirejs": "github:cloudchen/grunt-template-jasmine-requirejs#e5770cd8a75f88e5e09a5f2d4f389ec23bb2dad2"
   }
 }

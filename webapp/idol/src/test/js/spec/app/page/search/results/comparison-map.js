@@ -14,6 +14,8 @@ define([
     'use strict';
 
     describe('Comparison Map View', function() {
+        jasmine.getEnv().configure({ random: false });
+
         beforeEach(function() {
             configuration.and.returnValue({
                 map: {
