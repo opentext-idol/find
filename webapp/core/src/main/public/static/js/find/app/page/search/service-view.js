@@ -184,12 +184,12 @@ define([
                         subViewArguments
                     )
                 );
+            }
 
-                if(this.searchTypes[searchType].showTimeBar) {
-                    this.timeBarModel = new Backbone.Model({});
+            if(this.searchTypes[searchType].showTimeBar) {
+                this.timeBarModel = new Backbone.Model({});
 
-                    this.listenTo(this.timeBarModel, 'change:graphedFieldId', this.updateTimeBar);
-                }
+                this.listenTo(this.timeBarModel, 'change:graphedFieldId', this.updateTimeBar);
             }
 
             this.leftSideFooterView = new this.searchTypes[searchType]
