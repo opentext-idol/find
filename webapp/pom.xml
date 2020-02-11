@@ -28,8 +28,8 @@
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
-        <haven.search.components.version>0.65.0-SNAPSHOT</haven.search.components.version>
-        <powerpoint.report.version>1.1.5</powerpoint.report.version>
+        <haven.search.components.version>0.66.0-SNAPSHOT</haven.search.components.version>
+        <powerpoint.report.version>1.2.0-SNAPSHOT</powerpoint.report.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
         <!--
             h2 version 1.4.200 disallows '<value> IS <value>', which, while incorrect SQL, was used
@@ -102,7 +102,7 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend.configuration</groupId>
             <artifactId>configuration-impl</artifactId>
-            <version>2.1.8</version>
+            <version>2.2.0-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
