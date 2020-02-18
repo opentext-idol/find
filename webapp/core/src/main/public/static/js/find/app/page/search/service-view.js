@@ -29,6 +29,7 @@ define([
     'find/app/page/search/results/map-results-view',
     'find/app/page/search/results/table/table-view',
     'find/app/page/search/results/trending/trending-view',
+    'find/app/page/search/results/facts-view',
     'find/app/page/search/time-bar-view',
     'find/app/configuration',
     'i18n!find/nls/bundle',
@@ -37,7 +38,7 @@ define([
             SavedSearchModel, ParametricCollection, ParametricFieldsCollection, RecommendDocumentsCollection, queryStrategy,
             recommendStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView,
             addChangeListener, SavedSearchControlView, TopicMapView, SunburstView, MapResultsView,
-            TableView, TrendingView, TimeBarView, configuration, i18n, templateString) {
+            TableView, TrendingView, FactsView, TimeBarView, configuration, i18n, templateString) {
     'use strict';
 
     const $window = $(window);
@@ -325,6 +326,19 @@ define([
                     selector: {
                         displayNameKey: 'trending',
                         icon: 'hp-line-chart'
+                    }
+                },
+                facts: {
+                    Constructor: this.ResultsViewAugmentation,
+                    constructorArguments: _.extend({
+                        resultsView: new FactsView(subViewArguments),
+                        scrollModel: this.middleColumnScrollModel,
+                        mmapTab: options.mmapTab
+                    }, subViewArguments),
+                    shown: configuration().answerServerEnabled,
+                    selector: {
+                        displayNameKey: 'facts',
+                        icon: 'hp-aggregated'
                     }
                 }
             };

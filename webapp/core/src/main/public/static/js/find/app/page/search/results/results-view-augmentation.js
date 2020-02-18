@@ -59,6 +59,12 @@ define([
             this.scrollFollow();
         },
 
+        update: function () {
+            if (this.resultsView.update) {
+                this.resultsView.update();
+            }
+        },
+
         togglePreviewMode: function(previewMode) {
             this.trigger('rightSideContainerHideToggle', !previewMode);
 

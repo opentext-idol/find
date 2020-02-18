@@ -17,6 +17,7 @@ define([
     'text!find/templates/app/page/search/default-custom-templates/preview-mode-metadata.handlebars',
     'text!find/templates/app/page/search/default-custom-templates/document-facts.handlebars',
     'text!find/templates/app/page/search/default-custom-templates/promotion.handlebars',
+    'text!find/templates/app/page/search/default-custom-templates/entity-facts.handlebars',
     './template-helpers/capitalise-helper',
     './template-helpers/equal-helper',
     './template-helpers/has-field-helper',
@@ -37,7 +38,7 @@ define([
     './template-helpers/with-field-helper',
     './template-helpers/i18n-helper'
 ], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator,
-            defaultResultTemplate, defaultEntitySearchTemplate, defaultPreviewTemplate, defaultDocumentFactsTemplate, defaultPromotionTemplate,
+            defaultResultTemplate, defaultEntitySearchTemplate, defaultPreviewTemplate, defaultDocumentFactsTemplate, defaultPromotionTemplate, defaultEntityFactsTemplate,
             capitaliseHelper, equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper, getFieldValuesHelper,
             jsonStringifyHelper, percentageHelper, placeholderTemplateHelper, prettyPrintNumberHelper, regexIfHelper, toExternalUrlHelper,
             toLowerCaseHelper, toRelativeTimeHelper, toUpperCaseHelper,
@@ -112,7 +113,8 @@ define([
             thumbnailSrc: thumbnailSrc,
             age: date && date.fromNow(),
             fields: model.get('fields').map(_.partial(_.pick, _, ['id', 'displayName', 'advanced', 'values'])),
-            weight: model.get('weight')
+            weight: model.get('weight'),
+            facts: model.get('facts')
         };
     }
 
@@ -158,8 +160,9 @@ define([
                         {defaultTemplate: defaultPreviewTemplate, key: 'previewPanel'},
                         {defaultTemplate: defaultDocumentFactsTemplate, key: 'documentFacts'},
                         {defaultTemplate: defaultEntitySearchTemplate, key: 'entitySearch'},
-                        {defaultTemplate: defaultPromotionTemplate, key: 'promotion'}
-                    ])
+                        {defaultTemplate: defaultPromotionTemplate, key: 'promotion'},
+                        {defaultTemplate: defaultEntityFactsTemplate, key: 'entityFacts'}
+                ])
                     .map(function(type) {
                         const configuredTemplates = (configuration[type.key] || [])
                             .map(function(templateConfig) {
@@ -186,7 +189,8 @@ define([
         renderPromotion: renderTemplate('promotion'),
         renderPreviewMetadata: renderTemplate('previewPanel'),
         renderDocumentFacts: renderTemplate('documentFacts'),
-        renderEntity: renderTemplate('entitySearch')
+        renderEntity: renderTemplate('entitySearch'),
+        renderEntityFacts: renderTemplate('entityFacts')
     });
 
     return DocumentRenderer;

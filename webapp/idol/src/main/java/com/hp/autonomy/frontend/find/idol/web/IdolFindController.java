@@ -96,6 +96,7 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
                         dashboard.getRoles().stream().anyMatch(roles::contains))
                 .collect(Collectors.toList()));
         publicConfig.put(IdolMvcConstants.APPLICATIONS.getName(), enabledApps);
+        publicConfig.put(IdolMvcConstants.REFERENCE_FIELD.getName(), config.getReferenceField());
 
         final Boolean answerServerEnabled = config.getAnswerServer().getEnabled();
         publicConfig.put(MvcConstants.ANSWER_SERVER_ENABLED.value(), answerServerEnabled);
@@ -129,7 +130,8 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
         VIEW_HIGHLIGHTING("viewHighlighting"),
         DASHBOARDS("dashboards"),
         APPLICATIONS("applications"),
-        TRENDING("trending");
+        TRENDING("trending"),
+        REFERENCE_FIELD("referenceField");
 
         @Getter
         private final String name;

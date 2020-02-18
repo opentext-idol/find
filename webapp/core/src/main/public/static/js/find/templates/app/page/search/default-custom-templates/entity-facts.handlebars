@@ -1,0 +1,13 @@
+{{! renders facts from AnswerServer's `report` action }}
+{{#each facts}}
+    <table class="table table-striped table-bordered m-b-xs">
+        <tr><td><strong>{{i18n 'search.resultsView.facts.facts.entityName'}}</strong></td><td>{{entityName}}</td></tr>
+        {{#each property}}
+            <tr><td><strong>{{capitalise name}}</strong></td><td>{{value}}</td></tr>
+            {{#each qualifier}}
+                <tr><td>{{capitalise name}}</td><td>{{value}}</td></tr>
+            {{/each}}
+        {{/each}}
+    </table>
+    <a data-docref="{{source}}" target="_blank" class="btn btn-primary pull-right m-b-md">{{i18n 'search.resultsView.facts.template.document'}}</a>
+{{/each}}
