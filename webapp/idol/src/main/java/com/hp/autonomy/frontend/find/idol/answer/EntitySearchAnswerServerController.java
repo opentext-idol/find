@@ -101,7 +101,7 @@ class EntitySearchAnswerServerController {
             }
 
             if (timeoutSecs != null && timeoutSecs > 0) {
-                params.add("Timeout", timeoutSecs);
+                params.add(AskParams.Timeout.name(), timeoutSecs);
             }
 
             parameterHandler.addSecurityInfo(params);
