@@ -15,7 +15,9 @@ define([
     'text!find/templates/app/page/search/default-custom-templates/search-result.handlebars',
     'text!find/templates/app/page/search/default-custom-templates/entity-search.handlebars',
     'text!find/templates/app/page/search/default-custom-templates/preview-mode-metadata.handlebars',
+    'text!find/templates/app/page/search/default-custom-templates/document-facts.handlebars',
     'text!find/templates/app/page/search/default-custom-templates/promotion.handlebars',
+    './template-helpers/capitalise-helper',
     './template-helpers/equal-helper',
     './template-helpers/has-field-helper',
     './template-helpers/has-field-value-helper',
@@ -35,8 +37,8 @@ define([
     './template-helpers/with-field-helper',
     './template-helpers/i18n-helper'
 ], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator,
-            defaultResultTemplate, defaultEntitySearchTemplate, defaultPreviewTemplate, defaultPromotionTemplate,
-            equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper, getFieldValuesHelper,
+            defaultResultTemplate, defaultEntitySearchTemplate, defaultPreviewTemplate, defaultDocumentFactsTemplate, defaultPromotionTemplate,
+            capitaliseHelper, equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper, getFieldValuesHelper,
             jsonStringifyHelper, percentageHelper, placeholderTemplateHelper, prettyPrintNumberHelper, regexIfHelper, toExternalUrlHelper,
             toLowerCaseHelper, toRelativeTimeHelper, toUpperCaseHelper,
             typeofHelper, wikiThumbnailHelper, withFieldHelper, i18nHelper) {
@@ -128,6 +130,7 @@ define([
         const handlebars = Handlebars.create();
 
         handlebars.registerHelper({
+            capitalise: capitaliseHelper,
             equal: equalHelper,
             i18n: i18nHelper,
             hasField: hasFieldHelper,
@@ -153,11 +156,12 @@ define([
                 this.templates = _.chain([
                         {defaultTemplate: defaultResultTemplate, key: 'searchResult'},
                         {defaultTemplate: defaultPreviewTemplate, key: 'previewPanel'},
+                        {defaultTemplate: defaultDocumentFactsTemplate, key: 'documentFacts'},
                         {defaultTemplate: defaultEntitySearchTemplate, key: 'entitySearch'},
                         {defaultTemplate: defaultPromotionTemplate, key: 'promotion'}
                     ])
                     .map(function(type) {
-                        const configuredTemplates = configuration[type.key]
+                        const configuredTemplates = (configuration[type.key] || [])
                             .map(function(templateConfig) {
                                 return {
                                     predicate: templatePredicate(templateConfig.triggers),
@@ -181,6 +185,7 @@ define([
         renderResult: renderTemplate('searchResult'),
         renderPromotion: renderTemplate('promotion'),
         renderPreviewMetadata: renderTemplate('previewPanel'),
+        renderDocumentFacts: renderTemplate('documentFacts'),
         renderEntity: renderTemplate('entitySearch')
     });
 

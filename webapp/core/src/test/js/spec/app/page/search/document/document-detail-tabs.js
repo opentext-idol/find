@@ -48,6 +48,11 @@ define([
                             longitude: 42.2
                         }
                     ],
+                    fields: [
+                        { id: 'facts', values: [
+                            { fact_extract_: { source: 'source', entities: [] } }
+                        ] }
+                    ],
                     url: true
                 });
 
@@ -96,7 +101,7 @@ define([
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.transcript')).toBeDefined();
             });
 
-            it('displays the location tab if the locations property is preset', function() {
+            it('displays the location tab if the locations property is present', function() {
                 const model = new DocumentModel({
                     locations: [
                         {
@@ -119,6 +124,33 @@ define([
                 expect(tabs).toHaveLength(3);
                 expect(byTitleKey(tabs, 'search.document.detail.tabs.location')).toBeUndefined();
             });
+
+            it('displays the facts tab if the facts field is present', function() {
+                const model = new DocumentModel({
+                    fields: [
+                        { id: 'facts', values: [
+                            { fact_extract_: { source: 'source', entities: [] } }
+                        ] }
+                    ]
+                });
+
+                const tabs = filterTabs(model);
+                expect(tabs).toHaveLength(4);
+                expect(byTitleKey(tabs, 'search.document.detail.tabs.facts')).toBeDefined();
+            });
+
+            it('does not display the facts tab if the facts field is empty', function() {
+                const model = new DocumentModel({
+                    fields: [
+                        { id: 'facts', values: [{}] }
+                    ]
+                });
+
+                const tabs = filterTabs(model);
+                expect(tabs).toHaveLength(3);
+                expect(byTitleKey(tabs, 'search.document.detail.tabs.facts')).toBeUndefined();
+            });
+
         });
 
         describe('with the location tab disabled', function() {

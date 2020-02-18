@@ -226,6 +226,51 @@ define([
 
             });
 
+            describe('renderDocumentFacts', function () {
+
+                it('renders the default template if not overridden', function() {
+                    const fact1 = { fact_extract_: [{
+                        date: ['2001-02-03'],
+                        entities: [
+                            { '@type': ['weather'], value: ['raining', 'snowing'] },
+                            { '@type': ['planet'], value: ['Mars'] }
+                        ],
+                        property: ['spokesperson'],
+                        sentence: ['This is a fact'],
+                        type: ['position'],
+                        value: ['Some Guy']
+                    }] }
+
+                    const fact2 = { fact_extract_: [{
+                            date: ['2003-02-01'],
+                            entities: [{ '@type': ['altitude'], value: ['high'] }],
+                            property: ['representative'],
+                            sentence: ['Another fact'],
+                            type: ['position'],
+                            value: ['Same Person']
+                        }] }
+
+                    const document = buildDocument({
+                        fields: [{ id: 'facts', values: [fact1, fact2], advanced: false }]
+                    });
+
+                    const output = this.documentRenderer.renderDocumentFacts(document);
+
+                    expect(output).toContain('<p>This is a fact</p>');
+                    expect(output).toContain('<tr><td>Spokesperson</td><td>Some Guy</td></tr>');
+                    expect(output).toContain('<tr><td>Weather</td><td>raining</td></tr>');
+                    expect(output).toContain('<tr><td>Weather</td><td>snowing</td></tr>');
+                    expect(output).toContain('<tr><td>Planet</td><td>Mars</td></tr>');
+                    expect(output).toContain('<tr><td>Date</td><td>2001-02-03</td></tr>');
+
+                    expect(output).toContain('<p>Another fact</p>');
+                    expect(output).toContain('<tr><td>Representative</td><td>Same Person</td></tr>');
+                    expect(output).toContain('<tr><td>Altitude</td><td>high</td></tr>');
+                    expect(output).toContain('<tr><td>Date</td><td>2003-02-01</td></tr>');
+                });
+
+            });
+
         });
     });
 

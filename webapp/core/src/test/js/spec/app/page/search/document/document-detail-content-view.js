@@ -59,6 +59,7 @@ define([
                         documentModel: new DocumentModel({
                             reference: DOCUMENT_MODEL_REF
                         }),
+                        documentRenderer: {},
                         indexesCollection: new Backbone.Collection(),
                         mmapTab: NO_MMAP
                     });

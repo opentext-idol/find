@@ -32,6 +32,9 @@ public class TemplatesConfig extends AbstractConfig<TemplatesConfig> {
     @Singular("previewPanelTemplate")
     private final List<Template> previewPanel;
 
+    @Singular("documentFactsTemplate")
+    private final List<Template> documentFacts;
+
     @Singular("entitySearchTemplate")
     private final List<Template> entitySearch;
 
@@ -45,12 +48,13 @@ public class TemplatesConfig extends AbstractConfig<TemplatesConfig> {
         validateTemplateList(searchResult);
         validateTemplateList(promotion);
         validateTemplateList(previewPanel);
+        validateTemplateList(documentFacts);
         validateTemplateList(entitySearch);
     }
 
     @JsonIgnore
     public Set<String> listTemplateFiles() {
-        return Stream.of(searchResult, promotion, previewPanel, entitySearch)
+        return Stream.of(searchResult, promotion, previewPanel, documentFacts, entitySearch)
                 .flatMap(Collection::stream)
                 .map(Template::getFile)
                 .collect(Collectors.toSet());

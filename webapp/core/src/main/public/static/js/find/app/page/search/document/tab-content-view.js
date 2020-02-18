@@ -28,7 +28,8 @@ define([
             this.contentView = new (this.TabSubContentConstructor)({
                 tab: this.tab,
                 model: options.model,
-                indexesCollection: options.indexesCollection
+                indexesCollection: options.indexesCollection,
+                documentRenderer: options.documentRenderer
             });
         },
 

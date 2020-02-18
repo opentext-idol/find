@@ -10,13 +10,14 @@ define([
     'find/app/configuration',
     'find/app/page/search/document/tab-content-view',
     'find/app/page/search/document/authors-tab',
+    'find/app/page/search/document/facts-tab',
     'find/app/page/search/document/location-tab',
     'find/app/page/search/document/similar-documents-tab',
     'find/app/page/search/document/similar-dates-tab',
     'find/app/page/search/document/metadata-tab',
     'find/app/page/search/document/similar-sources-tab',
     'find/app/page/search/document/transcript-tab'
-], function(_, Backbone, i18n, configuration, TabContentView, AuthorsTab, LocationTab,
+], function(_, Backbone, i18n, configuration, TabContentView, AuthorsTab, FactsTab, LocationTab,
             SimilarDocumentsTab, SimilarDatesTab, MetadataTab, SimilarSourcesTab,
             TranscriptTab) {
     'use strict';
@@ -71,6 +72,15 @@ define([
             title: i18n['search.document.detail.tabs.transcript'],
             shown: function(documentModel) {
                 return documentModel.isMedia() && documentModel.has('transcript');
+            }
+        },
+        {
+            TabContentConstructor: TabContentView.extend({TabSubContentConstructor: FactsTab}),
+            title: i18n['search.document.detail.tabs.facts'],
+            shown: function(documentModel) {
+                // when enabled, the field always exists, possibly with an empty-object value
+                const facts = _.findWhere(documentModel.get('fields'), { id: 'facts' });
+                return facts && facts.values[0].fact_extract_;
             }
         }
     ];

@@ -39,6 +39,7 @@ define([
 
         initialize: function(options) {
             this.indexesCollection = options.indexesCollection;
+            this.documentRenderer = options.documentRenderer;
             this.mmapTab = options.mmapTab;
             this.documentModel = options.documentModel;
 
@@ -127,7 +128,8 @@ define([
                 tab.view = new (tab.TabContentConstructor)({
                     tab: tab,
                     model: this.documentModel,
-                    indexesCollection: this.indexesCollection
+                    indexesCollection: this.indexesCollection,
+                    documentRenderer: this.documentRenderer
                 });
 
                 $tabContentContainer.append(tab.view.$el);

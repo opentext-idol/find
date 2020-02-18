@@ -1,0 +1,19 @@
+{{! render facts from the document's `facts` field }}
+<div class="document-facts">
+    {{#withField 'facts'}}
+        {{#each values}}
+            {{#each fact_extract_}}
+                <p>{{sentence.[0]}}</p>
+                <table class="table table-striped table-bordered">
+                    <tr><td>{{capitalise property.[0]}}</td><td>{{value.[0]}}</td></tr>
+                    {{#each entities}}
+                        {{#each value}}
+                            <tr><td>{{capitalise ../[@type].[0]}}</td><td>{{this}}</td></tr>
+                        {{/each}}
+                    {{/each}}
+                    <tr><td>{{i18n 'search.document.detail.tabs.facts.date'}}</td><td>{{date.[0]}}</td></tr>
+                </table>
+            {{/each}}
+        {{/each}}
+    {{/withField}}
+</div>
