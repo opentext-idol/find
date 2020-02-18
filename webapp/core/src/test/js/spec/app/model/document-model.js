@@ -42,6 +42,11 @@ define([
                     type: 'STRING',
                     displayName: 'transcript',
                     values: [{value: TRANSCRIPT, displayValue: TRANSCRIPT}]
+                },
+                aRecord: {
+                    type: 'RECORD',
+                    displayName: 'a record',
+                    values: [{ value: { record: 'value' }, displayValue: 'the record' }]
                 }
             }
         };
@@ -125,7 +130,7 @@ define([
 
             it('parses the field map into an array, converting date values to formatted strings and number values to javascript numbers', function() {
                 const fields = this.parse(fullResponse()).fields;
-                expect(fields).toHaveLength(7);
+                expect(fields).toHaveLength(8);
 
                 const longitudeField = _.findWhere(fields, {displayName: 'Longitude'});
                 expect(longitudeField).toBeDefined();
@@ -136,6 +141,14 @@ define([
                 expect(datePublishedField).toBeDefined();
                 expect(datePublishedField.values).toHaveLength(1);
                 expect(datePublishedField.values[0]).toBe(moment(DATE_PUBLISHED_SECONDS).format('LLLL'));
+            });
+
+            it('parses a record type from the field map', function() {
+                const fields = this.parse(fullResponse()).fields;
+                const recordField = _.findWhere(fields, { displayName: 'a record' });
+                expect(recordField).toBeDefined();
+                expect(recordField.values).toHaveLength(1);
+                expect(recordField.values[0]).toEqual({ record: 'value' });
             });
 
             it('parses the locations from the field map', function() {

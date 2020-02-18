@@ -21,6 +21,7 @@ define([
     './template-helpers/has-field-value-helper',
     './template-helpers/get-field-value-helper',
     './template-helpers/get-field-values-helper',
+    './template-helpers/json-stringify-helper',
     './template-helpers/percentage-helper',
     './template-helpers/placeholder-template-helper',
     './template-helpers/pretty-print-number-helper',
@@ -29,14 +30,16 @@ define([
     './template-helpers/to-lower-case-helper',
     './template-helpers/to-relative-time-helper',
     './template-helpers/to-upper-case-helper',
+    './template-helpers/typeof-helper',
     './template-helpers/wiki-thumbnail-helper',
     './template-helpers/with-field-helper',
     './template-helpers/i18n-helper'
 ], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator,
             defaultResultTemplate, defaultEntitySearchTemplate, defaultPreviewTemplate, defaultPromotionTemplate,
             equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper, getFieldValuesHelper,
-            percentageHelper, placeholderTemplateHelper, prettyPrintNumberHelper, regexIfHelper, toExternalUrlHelper,
-            toLowerCaseHelper, toRelativeTimeHelper, toUpperCaseHelper, wikiThumbnailHelper, withFieldHelper, i18nHelper) {
+            jsonStringifyHelper, percentageHelper, placeholderTemplateHelper, prettyPrintNumberHelper, regexIfHelper, toExternalUrlHelper,
+            toLowerCaseHelper, toRelativeTimeHelper, toUpperCaseHelper,
+            typeofHelper, wikiThumbnailHelper, withFieldHelper, i18nHelper) {
 
     function templatePredicate(triggers) {
         return function(model) {
@@ -131,6 +134,7 @@ define([
             hasFieldValue: hasFieldValueHelper,
             getFieldValue: getFieldValueHelper,
             getFieldValues: getFieldValuesHelper,
+            jsonStringify: jsonStringifyHelper,
             percentage: percentageHelper,
             placeholderTemplate: placeholderTemplateHelper,
             prettyPrintNumber: prettyPrintNumberHelper,
@@ -139,6 +143,7 @@ define([
             toLowerCase: toLowerCaseHelper,
             toRelativeTime: toRelativeTimeHelper,
             toUpperCase: toUpperCaseHelper,
+            typeof: typeofHelper,
             wikiThumbnailHelper: wikiThumbnailHelper,
             withField: withFieldHelper
         });

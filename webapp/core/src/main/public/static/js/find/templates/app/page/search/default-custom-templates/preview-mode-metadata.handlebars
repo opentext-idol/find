@@ -8,7 +8,11 @@
             <div class="font-bold">{{displayName}}</div>
             <ul class="list-unstyled m-b-nil">
                 {{#each values}}
-                    <li>{{.}}</li>
+                    {{#equal (typeof this) 'object'}}
+                        <li>{{jsonStringify this}}</li>
+                    {{else}}
+                        <li>{{.}}</li>
+                    {{/equal}}
                 {{/each}}
             </ul>
         </div>

@@ -196,19 +196,36 @@ define([
                 expect(output).toBe('<h1 class="shiny">Drugs</h1>');
             });
 
-            it('renders the default preview template if no preview templates are provided', function() {
-                const document = buildDocument({
-                    title: 'Drugs',
-                    fields: [
-                        {id: 'CATEGORY', values: ['FACTS'], advanced: false},
-                        {id: 'AUTHOR', values: ['GOVERNMENT'], advanced: false}
-                    ]
+            describe('renderPreviewMetadata', function () {
+
+                it('renders the default template if not overridden', function() {
+                    const document = buildDocument({
+                        title: 'Drugs',
+                        fields: [
+                            {id: 'CATEGORY', values: ['FACTS'], advanced: false},
+                            {id: 'AUTHOR', values: ['GOVERNMENT'], advanced: false}
+                        ]
+                    });
+
+                    const output = this.documentRenderer.renderPreviewMetadata(document);
+                    expect(output).toContain('GOVERNMENT');
+                    expect(output).toContain('FACTS');
                 });
 
-                const output = this.documentRenderer.renderPreviewMetadata(document);
-                expect(output).toContain('GOVERNMENT');
-                expect(output).toContain('FACTS');
+                it('displays record fields as JSON', function() {
+                    const document = buildDocument({
+                        title: 'With Record',
+                        fields: [
+                            { id: 'RECORD', values: [{ the: 'record value' }], advanced: false }
+                        ]
+                    });
+
+                    const output = this.documentRenderer.renderPreviewMetadata(document);
+                    expect(output).toContain('{&quot;the&quot;:&quot;record value&quot;}');
+                });
+
             });
+
         });
     });
 

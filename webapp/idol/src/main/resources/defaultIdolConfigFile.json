@@ -370,6 +370,14 @@
       ],
       "type": "NUMBER",
       "advanced": true
+    },
+    "facts": {
+      "names": [
+        "FACTS/*",
+        "FACTS"
+      ],
+      "type": "RECORD",
+      "advanced": true
     }
   }
 }

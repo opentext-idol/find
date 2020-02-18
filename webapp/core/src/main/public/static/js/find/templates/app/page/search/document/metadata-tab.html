@@ -29,7 +29,7 @@
             <td>
                 <ul class="list-unstyled m-b-nil">
                     <% _.each(field.values, function(value) { %>
-                        <li><%-value%></li>
+                        <li><%- (typeof value === 'object') ? JSON.stringify(value) : value %></li>
                     <% }); %>
                 </ul>
             </td>
@@ -41,7 +41,7 @@
             <td>
                 <ul class="list-unstyled m-b-nil">
                     <% _.each(field.values, function(value) { %>
-                        <li><%- value %></li>
+                    <li><%- (typeof value === 'object') ? JSON.stringify(value) : value %></li>
                     <% }); %>
                 </ul>
             </td>

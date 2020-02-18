@@ -60,6 +60,9 @@ define([
         },
         DATE: function (valueWrapper) {
             return moment(valueWrapper.value).format('LLLL');
+        },
+        RECORD: function (valueWrapper) {
+            return valueWrapper.value;
         }
     };
 
