@@ -16,6 +16,7 @@
 
     <properties>
         <artifactName>${project.parent.artifactId}-${project.artifactId}</artifactName>
+        <jenkins.jasmine.reportsDirectory>target/jasmine-reports</jenkins.jasmine.reportsDirectory>
     </properties>
 
     <build>

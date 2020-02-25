@@ -12,6 +12,10 @@
 
     <artifactId>core</artifactId>
 
+    <properties>
+        <jenkins.jasmine.reportsDirectory>target/jasmine-reports</jenkins.jasmine.reportsDirectory>
+    </properties>
+
     <build>
         <plugins>
             <plugin>

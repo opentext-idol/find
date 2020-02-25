@@ -5,6 +5,7 @@
 
 module.exports = (grunt) ->
   jasmineRequireTemplate = require 'grunt-template-jasmine-requirejs'
+  jasmineReportPath = 'target/jasmine-reports'
 
   jasmineSpecRunner = 'spec-runner.html'
 
@@ -68,8 +69,7 @@ module.exports = (grunt) ->
           templateOptions:
             requireConfigFile: testRequireConfig
           junit:
-            path: "target/jasmine-tests"
-            consolidate: true
+            path: jasmineReportPath
       'browser-test':
         src: sourcePath
         options:
