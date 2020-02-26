@@ -72,6 +72,11 @@ module.exports = (grunt) ->
             requireConfigFile: testRequireConfig
           junit:
             path: jasmineReportPath
+            # without this, some report filenames are too long; this doesn't cause an error, it just
+            # hangs test execution without any logging
+            consolidate: true
+          # needed to work around some browser crashes
+          noSandbox: true
       'browser-test':
         src: sourcePath
         options:
