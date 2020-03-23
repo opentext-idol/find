@@ -5,11 +5,11 @@
 
 define([
     'find/app/page/search/results/results-view-augmentation',
-    'find/idol/app/page/search/document/idol-preview-mode-view'
-], function(ResultsViewAugmentation, PreviewModeView) {
+    'find/idol/app/page/search/document/idol-preview-mode-summary-view'
+], function(ResultsViewAugmentation, PreviewModeSummaryView) {
     'use strict';
 
     return ResultsViewAugmentation.extend({
-        PreviewModeView: PreviewModeView
+        PreviewModeSummaryView: PreviewModeSummaryView
     });
 });

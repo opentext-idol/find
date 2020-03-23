@@ -95,7 +95,7 @@ define([
             };
             this.queryModel = new Backbone.Model({ indexes: ['index1', 'index2'] });
             this.parametricCollection = new Backbone.Collection();
-            this.previewModeModel = new Backbone.Model({ document: null });
+            this.previewModeModel = new Backbone.Model({ mode: null });
 
             this.view = new FactsView({
                 documentRenderer: this.documentRenderer,
@@ -278,7 +278,7 @@ define([
                         });
 
                         it('should not show the document preview', function () {
-                            expect(this.previewModeModel.get('document')).toBe(null);
+                            expect(this.previewModeModel.get('mode')).toBe(null);
                         })
 
                         expectFacts();

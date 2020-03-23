@@ -41,7 +41,7 @@ define([
                 indexes: this.getIndexes(options.indexesCollection, this.documentModel)
             });
 
-            const previewModeModel = new Backbone.Model({document: null});
+            const previewModeModel = new Backbone.Model({document: null, mode: 'summary'});
 
             this.resultsView = new this.ResultsView({
                 fetchStrategy: suggestStrategy,

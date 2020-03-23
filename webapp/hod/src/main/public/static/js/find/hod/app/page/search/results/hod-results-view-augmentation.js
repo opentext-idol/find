@@ -5,11 +5,11 @@
 
 define([
     'find/app/page/search/results/results-view-augmentation',
-    'find/hod/app/page/search/document/hod-preview-mode-view'
-], function(ResultsViewAugmentation, PreviewModeView) {
+    'find/hod/app/page/search/document/hod-preview-mode-summary-view'
+], function(ResultsViewAugmentation, PreviewModeSummaryView) {
     'use strict';
 
     return ResultsViewAugmentation.extend({
-        PreviewModeView: PreviewModeView
+        PreviewModeSummaryView: PreviewModeSummaryView
     });
 });

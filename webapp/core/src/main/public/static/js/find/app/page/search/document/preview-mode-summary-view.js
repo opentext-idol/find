@@ -16,7 +16,7 @@ define([
     'find/app/util/database-name-resolver',
     'find/app/util/events',
     'find/app/util/url-manipulator',
-    'text!find/templates/app/page/search/document/preview-mode-view.html',
+    'text!find/templates/app/page/search/document/preview-mode-summary-view.html',
     'text!find/templates/app/page/search/document/view-mode-document.html',
     'text!find/templates/app/page/search/document/view-media-player.html'
 ], function(_, $, Backbone, i18n, i18nIndexes, vent, viewClient, DocumentModel, configuration, databaseNameResolver,
@@ -79,7 +79,7 @@ define([
 
         triggerClose: function() {
             this.pauseMedia();
-            this.previewModeModel.set({document: null});
+            this.previewModeModel.set({ mode: null });
         },
 
         render: function() {

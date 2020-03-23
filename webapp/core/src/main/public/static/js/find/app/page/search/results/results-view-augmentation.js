@@ -16,7 +16,7 @@ define([
 
     return Backbone.View.extend({
         // abstract
-        PreviewModeView: null,
+        PreviewModeSummaryView: null,
 
         initialize: function(options) {
             this.resultsView = options.resultsView;
@@ -26,12 +26,13 @@ define([
             // Tracks document currently being previewed in the "documents" attribute
             this.previewModeModel = options.previewModeModel;
 
-            this.listenTo(this.previewModeModel, 'change:document', function(model, documentModel) {
-                if(documentModel) {
-                    this.removePreviewModeView();
+            this.listenTo(this.previewModeModel, 'change', function(model) {
+                this.removePreviewModeView();
+                const mode = model.get('mode');
 
-                    this.previewModeView = new this.PreviewModeView({
-                        model: documentModel,
+                if (mode === 'summary') {
+                    this.previewModeView = new this.PreviewModeSummaryView({
+                        model: model.get('document'),
                         documentRenderer: options.documentRenderer,
                         previewModeModel: this.previewModeModel,
                         queryText: this.queryModel.get('queryText'),
@@ -39,12 +40,16 @@ define([
                         mmapTab: options.mmapTab
                     });
 
+                } else {
+                    this.previewModeView = null;
+                }
+
+                if (this.previewModeView !== null) {
                     this.$previewModeContainer.append(this.previewModeView.$el);
                     this.previewModeView.render();
                     this.scrollFollow();
                 }
-
-                this.togglePreviewMode(!!documentModel);
+                this.togglePreviewMode(mode != null);
             });
 
             this.listenTo(this.scrollModel, 'change', this.scrollFollow);
@@ -63,6 +68,7 @@ define([
             if (this.resultsView.update) {
                 this.resultsView.update();
             }
+            this.togglePreviewMode(this.previewModeModel.get('mode') != null);
         },
 
         togglePreviewMode: function(previewMode) {

@@ -144,11 +144,9 @@ define([
 
             this.parametricCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
 
-            // Tracks the document model which is currently shown in the preview
-            this.previewModeModel = new Backbone.Model({document: null});
-
-            // Tracks the document model which is currently shown in the recommendation preview
-            const recommendationPreviewModel = new Backbone.Model({document: null});
+            // tracks the preview in different tabs
+            this.previewModeModel = new Backbone.Model({ mode: null });
+            const recommendationPreviewModel = new Backbone.Model({ mode: null });
 
             const subViewArguments = {
                 configuration: configuration(),

@@ -77,16 +77,18 @@ define([
                 if (!$target.is('a')) {
                     const $result = $(e.currentTarget).closest('.main-results-container');
 
-                    if ($result.hasClass('selected-document')) {
+                    if (this.previewModeModel.get('mode') === 'summary' &&
+                        $result.hasClass('selected-document')
+                    ) {
                         // disable preview mode
-                        this.previewModeModel.set({document: null});
+                        this.previewModeModel.set({mode: null});
                     } else {
                         // enable/choose another preview view
                         const cid = $result.data('cid');
                         const isPromotion = $result.closest('.main-results-list').hasClass('promotions');
                         const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
                         const model = collection.get(cid);
-                        this.previewModeModel.set({document: model});
+                        this.previewModeModel.set({mode: 'summary', document: model});
 
                         if (!isPromotion) {
                             events().preview(collection.indexOf(model) + 1);
@@ -178,7 +180,7 @@ define([
             });
 
             if (this.previewModeModel) {
-                this.listenTo(this.previewModeModel, 'change:document', this.updateSelectedDocument);
+                this.listenTo(this.previewModeModel, 'change', this.updateSelectedDocument);
             }
         },
 
@@ -323,10 +325,10 @@ define([
         },
 
         updateSelectedDocument: function() {
-            const documentModel = this.previewModeModel.get('document');
             this.$('.main-results-container').removeClass('selected-document');
 
-            if (documentModel !== null) {
+            if (this.previewModeModel.get('mode') === 'summary') {
+                const documentModel = this.previewModeModel.get('document');
                 this.$('.main-results-container[data-cid="' + documentModel.cid + '"]').addClass('selected-document');
             }
         },
