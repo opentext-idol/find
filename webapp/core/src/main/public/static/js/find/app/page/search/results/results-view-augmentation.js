@@ -7,8 +7,9 @@ define([
     'underscore',
     'jquery',
     'backbone',
+    'find/app/page/search/document/preview-mode-fact-view',
     'text!find/templates/app/page/search/results/results-view-augmentation.html'
-], function(_, $, Backbone, viewHtml) {
+], function(_, $, Backbone, PreviewModeFactView, viewHtml) {
     'use strict';
 
     // We always want a gap between the preview well and the container
@@ -38,6 +39,14 @@ define([
                         queryText: this.queryModel.get('queryText'),
                         indexesCollection: options.indexesCollection,
                         mmapTab: options.mmapTab
+                    });
+
+                } else if (mode === 'fact') {
+                    this.previewModeView = new PreviewModeFactView({
+                        model: model.get('fact'),
+                        factsView: model.get('factsView'),
+                        documentRenderer: options.documentRenderer,
+                        previewModeModel: this.previewModeModel
                     });
 
                 } else {

@@ -1,0 +1,19 @@
+{{! renders detailed information for facts from AnswerServerController.getEntityFacts }}
+{{#each facts}}
+    <table class="table table-striped table-bordered m-b-md">
+        <tr><td><strong>{{i18n 'search.resultsView.facts.facts.entityName'}}</strong></td><td>{{fact.entityName}}</td></tr>
+        {{#each fact.property}}
+            <tr><td><strong>{{capitalise name}}</strong></td><td>{{value}}</td></tr>
+            {{#each qualifier}}
+                <tr><td>{{capitalise name}}</td><td>{{value}}</td></tr>
+            {{/each}}
+        {{/each}}
+    </table>
+
+    {{#each documents}}
+        <p class="fact-sentence m-b-xs">{{sentence}}</p>
+        <span class="document-url shorten m-b-sm">
+            <a data-docindex="{{index}}" data-docref="{{reference}}" target="_blank">{{reference}}</a>
+        </span>
+    {{/each}}
+{{/each}}

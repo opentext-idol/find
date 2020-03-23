@@ -147,6 +147,7 @@ define([
             // tracks the preview in different tabs
             this.previewModeModel = new Backbone.Model({ mode: null });
             const recommendationPreviewModel = new Backbone.Model({ mode: null });
+            const factsPreviewModeModel = new Backbone.Model({ mode: null });
 
             const subViewArguments = {
                 configuration: configuration(),
@@ -328,12 +329,20 @@ define([
                 },
                 facts: {
                     Constructor: this.ResultsViewAugmentation,
-                    constructorArguments: _.extend({
-                        resultsView: new FactsView(subViewArguments),
+                    constructorArguments: _.defaults({
+                        previewModeModel: factsPreviewModeModel,
+                        resultsView: new FactsView(_.defaults({
+                            previewModeModel: factsPreviewModeModel,
+                        }, subViewArguments)),
                         scrollModel: this.middleColumnScrollModel,
                         mmapTab: options.mmapTab
                     }, subViewArguments),
                     shown: configuration().answerServerEnabled,
+                    events: {
+                        // needs binding as the view container will be the eventual listener
+                        'rightSideContainerHideToggle':
+                            _.bind(this.rightSideContainerHideToggle, this)
+                    },
                     selector: {
                         displayNameKey: 'facts',
                         icon: 'hp-aggregated'

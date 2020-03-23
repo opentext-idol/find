@@ -18,6 +18,7 @@ define([
     'text!find/templates/app/page/search/default-custom-templates/document-facts.handlebars',
     'text!find/templates/app/page/search/default-custom-templates/promotion.handlebars',
     'text!find/templates/app/page/search/default-custom-templates/entity-facts.handlebars',
+    'text!find/templates/app/page/search/default-custom-templates/entity-facts-detail.handlebars',
     './template-helpers/capitalise-helper',
     './template-helpers/equal-helper',
     './template-helpers/has-field-helper',
@@ -38,7 +39,7 @@ define([
     './template-helpers/with-field-helper',
     './template-helpers/i18n-helper'
 ], function(Backbone, _, Handlebars, $, vent, addLinksToSummary, documentMimeTypes, urlManipulator,
-            defaultResultTemplate, defaultEntitySearchTemplate, defaultPreviewTemplate, defaultDocumentFactsTemplate, defaultPromotionTemplate, defaultEntityFactsTemplate,
+            defaultResultTemplate, defaultEntitySearchTemplate, defaultPreviewTemplate, defaultDocumentFactsTemplate, defaultPromotionTemplate, defaultEntityFactsTemplate, defaultEntityFactsDetailTemplate,
             capitaliseHelper, equalHelper, hasFieldHelper, hasFieldValueHelper, getFieldValueHelper, getFieldValuesHelper,
             jsonStringifyHelper, percentageHelper, placeholderTemplateHelper, prettyPrintNumberHelper, regexIfHelper, toExternalUrlHelper,
             toLowerCaseHelper, toRelativeTimeHelper, toUpperCaseHelper,
@@ -161,7 +162,8 @@ define([
                         {defaultTemplate: defaultDocumentFactsTemplate, key: 'documentFacts'},
                         {defaultTemplate: defaultEntitySearchTemplate, key: 'entitySearch'},
                         {defaultTemplate: defaultPromotionTemplate, key: 'promotion'},
-                        {defaultTemplate: defaultEntityFactsTemplate, key: 'entityFacts'}
+                        {defaultTemplate: defaultEntityFactsTemplate, key: 'entityFacts'},
+                        {defaultTemplate: defaultEntityFactsDetailTemplate, key: 'entityFactsDetail'}
                 ])
                     .map(function(type) {
                         const configuredTemplates = (configuration[type.key] || [])
@@ -190,7 +192,8 @@ define([
         renderPreviewMetadata: renderTemplate('previewPanel'),
         renderDocumentFacts: renderTemplate('documentFacts'),
         renderEntity: renderTemplate('entitySearch'),
-        renderEntityFacts: renderTemplate('entityFacts')
+        renderEntityFacts: renderTemplate('entityFacts'),
+        renderEntityFactsDetail: renderTemplate('entityFactsDetail')
     });
 
     return DocumentRenderer;

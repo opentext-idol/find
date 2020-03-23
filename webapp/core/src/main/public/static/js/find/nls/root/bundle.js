@@ -355,6 +355,7 @@ define([
         'search.resultsView.facts.empty': 'No facts to show for this entity',
         'search.resultsView.facts.error.facts': 'Error: could not retrieve facts',
         'search.resultsView.facts.error.preview': 'Error: could not retrieve document to preview',
+        'search.resultsView.facts.detailTitle': 'Fact Sources',
         'search.resultsView.facts.facts.entityName': 'Name',
         'search.resultsView.facts.template.document': 'Open Document',
         'search.resultsView.amount.shown': 'Showing <strong>{0}</strong> to <strong>{1}</strong> of <strong>{2}</strong> results',
