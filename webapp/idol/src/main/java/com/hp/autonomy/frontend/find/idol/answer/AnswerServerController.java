@@ -9,10 +9,12 @@ import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.AciParameters;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hp.autonomy.aci.content.fieldtext.FieldText;
 import com.hp.autonomy.aci.content.fieldtext.MATCH;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.searchcomponents.core.config.FieldValue;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
@@ -39,10 +41,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.hp.autonomy.frontend.find.core.search.DocumentsController.INDEXES_PARAM;
@@ -60,6 +60,9 @@ class AnswerServerController {
     static final String ENTITY_PARAM = "entity";
     static final String FIELDTEXT_PARAM = "fieldText";
     static final String MAX_RESULTS_PARAM = "maxResults";
+    private static final int DEFAULT_MAX_FACTS = 10;
+    private static final String FACT_ID_FIELD = "FACTS/FACT_EXTRACT_/ID";
+    private static final String FACT_SENTENCE_FIELD = "FACTS/FACT_EXTRACT_/SENTENCE";
 
     private final AciService aciService;
     private final AskAnswerServerService askAnswerServerService;
@@ -112,7 +115,7 @@ class AnswerServerController {
      * Retrieve facts involving a specific entity from AnswerServer.
      */
     @RequestMapping(value = "entity-facts", method = RequestMethod.GET)
-    public List<ReportFact> getEntityFacts(
+    public List<SourcedFact> getEntityFacts(
         @RequestParam(ENTITY_PARAM) final String entity,
         @RequestParam(value = MAX_RESULTS_PARAM, required = false) final Integer maxResults,
         @RequestParam(INDEXES_PARAM) final Collection<String> databases
@@ -126,24 +129,22 @@ class AnswerServerController {
         final ReportResponsedata entityInfo = aciService.executeAction(
             configService.getConfig().getAnswerServer().toAciServerDetails(),
             params, reportProcessor);
-        final List<ReportFact> allFacts;
+        final List<ReportFact> reportFacts;
         if (entityInfo.getReport() != null) {
-            allFacts = entityInfo.getReport().getItem().stream()
+            reportFacts = entityInfo.getReport().getItem().stream()
                 .flatMap(item -> item.getMetadata().getFact().stream())
-                .limit(maxResults == null ? Long.MAX_VALUE : maxResults)
+                .limit(maxResults == null ? DEFAULT_MAX_FACTS : maxResults)
                 .collect(Collectors.toList());
         } else {
-            allFacts = Collections.emptyList();
+            reportFacts = Collections.emptyList();
         }
 
         // filter facts results to those extracted from visible documents
-        final List<ReportFact> visibleFacts;
-        if (allFacts.isEmpty()) {
-            visibleFacts = allFacts;
-        } else {
+        final List<SourcedFact> sourcedFacts = new ArrayList<>();
+        if (!reportFacts.isEmpty()) {
             final FieldText fieldText = new MATCH(
-                configService.getConfig().getReferenceField(),
-                allFacts.stream().map(ReportFact::getSource).collect(Collectors.toList()));
+                "*/" + FACT_ID_FIELD,
+                reportFacts.stream().map(ReportFact::getSource).collect(Collectors.toList()));
             final IdolQueryRestrictions queryRestrictions =
                 queryRestrictionsBuilderFactory.getObject()
                     .fieldText(fieldText.toString())
@@ -152,21 +153,100 @@ class AnswerServerController {
 
             final IdolQueryRequest queryRequest = queryRequestBuilderFactory.getObject()
                 .queryRestrictions(queryRestrictions)
-                .maxResults(allFacts.size())
+                .maxResults(reportFacts.size() * 100) // expect no more than 100 documents per fact
                 .queryType(QueryRequest.QueryType.RAW)
-                .print(PrintParam.None.name())
+                .print(PrintParam.Fields.name())
+                .printField(FACT_ID_FIELD)
+                .printField(FACT_SENTENCE_FIELD)
                 .build();
 
             final Documents<IdolSearchResult> docs = documentsService.queryTextIndex(queryRequest);
-            final Set<String> visibleDocRefs = docs.getDocuments().stream()
-                .map(doc -> doc.getReference())
-                .collect(Collectors.toSet());
-            visibleFacts = allFacts.stream()
-                .filter(fact -> visibleDocRefs.contains(fact.getSource()))
-                .collect(Collectors.toList());
+
+            // get important parts from docs, indexing by fact ID
+            final Map<String, List<DocumentFact>> docsByFactId = new HashMap<>();
+            for (final IdolSearchResult doc : docs.getDocuments()) {
+                for (final FieldValue<?> factsField : doc.getFieldMap().get("facts").getValues()) {
+                    // unpack result of RecordType.parseValue
+                    for (final Serializable factField :
+                        ((Map<String, List<Serializable>>) factsField.getValue())
+                            .get("fact_extract_")
+                    ) {
+                        final List<String> factIds = ((Map<String, List<String>>) factField)
+                            .getOrDefault("id", Collections.emptyList());
+                        final String sentence =
+                            ((Map<String, List<String>>) factField).get("sentence").get(0);
+                        for (final String factId : factIds) {
+                            if (!docsByFactId.containsKey(factId)) {
+                                docsByFactId.put(factId, new ArrayList<>());
+                            }
+                            docsByFactId.get(factId).add(
+                                new DocumentFact(doc.getIndex(), doc.getReference(), sentence));
+                        }
+                    }
+                }
+            }
+
+            for (final ReportFact reportFact : reportFacts) {
+                if (docsByFactId.containsKey(reportFact.getSource())) {
+                    sourcedFacts.add(
+                        new SourcedFact(reportFact, docsByFactId.get(reportFact.getSource())));
+                }
+            }
         }
 
-        return visibleFacts;
+        return sourcedFacts;
+    }
+
+
+    /**
+     * Reference to a document which is visible to the user and is a source for a fact.
+     */
+    public static class DocumentFact {
+        @JsonProperty
+        /**
+         * Database containing the document.
+         */
+        public final String index;
+        @JsonProperty
+        /**
+         * Value for the Find-configured reference field.
+         */
+        public final String reference;
+        @JsonProperty
+        /**
+         * Excerpt from the content that the fact was extracted from.
+         */
+        public final String sentence;
+
+        public DocumentFact(final String index, final String reference, final String sentence) {
+            this.index = index;
+            this.reference = reference;
+            this.sentence = sentence;
+        }
+
+    }
+
+
+    /**
+     * A fact, along with its sources.
+     */
+    public static class SourcedFact {
+        @JsonProperty
+        /**
+         * The fact.
+         */
+        public final ReportFact fact;
+        @JsonProperty
+        /**
+         * Non-empty list of documents which are sources for the fact.
+         */
+        public final List<DocumentFact> documents;
+
+        public SourcedFact(final ReportFact fact, final List<DocumentFact> documents) {
+            this.fact = fact;
+            this.documents = documents;
+        }
+
     }
 
 }
