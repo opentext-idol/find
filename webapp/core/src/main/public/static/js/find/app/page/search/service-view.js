@@ -539,20 +539,9 @@ define([
             const fieldNames = _.pluck(this.parametricFieldsCollection.where({type: 'Parametric'}), 'id');
 
             if(fieldNames.length > 0 && this.queryModel.get('indexes').length > 0) {
-                this.parametricCollection.fetch({
-                    data: {
-                        fieldNames: fieldNames,
-                        databases: this.queryModel.get('indexes'),
-                        queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery')
-                            ? this.queryModel.get('correctedQuery')
-                            : this.queryModel.get('queryText'),
-                        fieldText: this.queryModel.get('fieldText'),
-                        minDate: this.queryModel.getIsoDate('minDate'),
-                        maxDate: this.queryModel.getIsoDate('maxDate'),
-                        minScore: this.queryModel.get('minScore'),
-                        maxValues: 5,
-                        stateTokens: this.queryModel.get('stateMatchIds')
-                    }
+                this.parametricCollection.fetchFromQueryModel(this.queryModel, {
+                    fieldNames: fieldNames,
+                    maxValues: 5
                 });
             }
         },

@@ -40,21 +40,10 @@ define([
             this.matchingFieldIds = _.pluck(this.collection.filter(this.predicate), 'id');
             const fieldIds = _.difference(_.pluck(this.collection.where({type: 'Parametric'}), 'id'), this.matchingFieldIds);
             if(fieldIds.length > 0) {
-                this.valueRestrictedParametricCollection.fetch({
-                    data: {
-                        fieldNames: fieldIds,
-                        databases: this.queryModel.get('indexes'),
-                        queryText: this.queryModel.get('autoCorrect') && this.queryModel.get('correctedQuery')
-                            ? this.queryModel.get('correctedQuery')
-                            : this.queryModel.get('queryText'),
-                        fieldText: this.queryModel.get('fieldText'),
-                        minDate: this.queryModel.getIsoDate('minDate'),
-                        maxDate: this.queryModel.getIsoDate('maxDate'),
-                        minScore: this.queryModel.get('minScore'),
-                        maxValues: 5,
-                        stateTokens: this.queryModel.get('stateMatchIds'),
-                        valueRestrictions: filterText ? ["*" + filterText + "*"] : null
-                    }
+                this.valueRestrictedParametricCollection.fetchFromQueryModel(this.queryModel, {
+                    fieldNames: fieldIds,
+                    maxValues: 5,
+                    valueRestrictions: filterText ? ["*" + filterText + "*"] : null
                 });
             } else {
                 this.filteredParametricCollection.set(this.parametricCollection.models);

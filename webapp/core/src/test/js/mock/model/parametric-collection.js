@@ -9,7 +9,10 @@ define([
 ], function($, backboneMockFactory) {
 
     const collectionFetchSpy = jasmine.createSpy('fetch');
-    const Collection = backboneMockFactory.getCollection([], {fetch: collectionFetchSpy});
+    const Collection = backboneMockFactory.getCollection([], {
+        fetch: collectionFetchSpy,
+        fetchFromQueryModel: function () {}
+    });
     Collection.fetchPromises = [];
 
     collectionFetchSpy.and.callFake(function() {

@@ -4,10 +4,8 @@
  */
 
 define([
-    'underscore',
-    'find/app/model/find-base-collection',
-    'find/app/model/document-model'
-], function(_, FindBaseCollection, DocumentModel) {
+    'find/app/model/find-base-collection'
+], function(FindBaseCollection) {
     'use strict';
 
     return FindBaseCollection.extend({
