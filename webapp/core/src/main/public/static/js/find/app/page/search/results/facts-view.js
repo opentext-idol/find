@@ -25,19 +25,23 @@ define([
     'jquery',
     'find/app/configuration',
     'i18n!find/nls/bundle',
-    'find/app/model/documents-collection',
-    'find/app/page/search/results/field-selection-view',
+    'find/app/model/document-model',
+    'find/app/model/parametric-collection',
     'find/app/model/entity-fact-collection',
+    'find/app/page/search/results/field-selection-view',
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/search/results/facts-view.html'
 ], function(
     _, Backbone, $, configuration, i18n,
-    DocumentsCollection, FieldSelectionView, EntityFactCollection, generateErrorHtml,
+    DocumentModel, ParametricCollection, EntityFactCollection,
+    FieldSelectionView, generateErrorHtml,
     template
 ) {
     'use strict';
 
     const FACT_ENTITY_FIELD = 'FACTS/FACT_EXTRACT_/ENTITIES/VALUE';
+    const MAX_ENTITIES = 100;
+    const MAX_FACTS = 30;
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -48,41 +52,39 @@ define([
             this.parametricCollection = options.parametricCollection;
             this.previewModeModel = options.previewModeModel;
 
+            // fact entity values
+            this.factsParametricCollection = new ParametricCollection([], {
+                url: 'api/public/parametric/values'
+            });
             // listed facts - replaced on update
             this.entityFactCollection = new EntityFactCollection();
             // ongoing facts fetch
             this.entityFactCollectionRequest = null;
             // the previewed document - replaced on update
-            this.previewDocCollection = new DocumentsCollection();
+            this.previewDocModel = new DocumentModel();
             // the selected entity - owned by `entitySelector`
             this.entitySelectionModel = null;
             // `FieldSelectionView`
             this.entitySelector = null;
 
-            this.listenTo(this.parametricCollection, 'sync', this.updateEntitySelector);
+            this.listenTo(this.parametricCollection, 'sync', this.update);
+            this.listenTo(this.factsParametricCollection, 'sync', this.updateEntitySelector);
+            this.listenTo(this.factsParametricCollection, 'error', this.showEntitiesError);
             this.listenTo(this.entityFactCollection, 'sync', this.showFacts);
             this.listenTo(this.entityFactCollection, 'error', this.showFactsError);
-            this.listenTo(this.previewDocCollection, 'sync', this.showPreview);
-            this.listenTo(this.previewDocCollection, 'error', this.showPreviewError);
+            this.listenTo(this.previewModeModel, 'change', this.updateSelectedFact);
+            this.listenTo(this.previewDocModel, 'sync', this.showDocPreview);
+            this.listenTo(this.previewDocModel, 'error', this.showPreviewError);
         },
 
         events: {
-            'click .facts-list [data-docref]': function (e) {
-                const fieldText = 'MATCH{' + (
-                    encodeURIComponent($(e.target).data('docref'))
-                ) + '}:' + encodeURIComponent(configuration().referenceField);
-
-                this.previewDocCollection.fetch({
-                    reset: true,
-                    data: {
-                        indexes: this.queryModel.get('indexes'),
-                        max_results: 1,
-                        text: '*',
-                        field_text: fieldText,
-                        queryType: 'RAW',
-                        summary: 'context',
-                    }
-                });
+            'click .facts-list .fact-sentence[data-factid]': function (e) {
+                const $fact = $(e.target);
+                if ($fact.hasClass('selected-fact')) {
+                    this.previewModeModel.set({ mode: null });
+                } else {
+                    this.showFactPreview($fact);
+                }
             }
         },
 
@@ -94,7 +96,14 @@ define([
         },
 
         update: function() {
-            this.updateEntitySelector();
+            if (!this.$el.is(':visible')) {
+                return;
+            }
+
+            this.factsParametricCollection.fetchFromQueryModel(this.queryModel, {
+                fieldNames: [FACT_ENTITY_FIELD],
+                maxValues: MAX_ENTITIES
+            });
         },
 
         /**
@@ -109,15 +118,13 @@ define([
                 this.entitySelector.remove();
             }
 
-            const parametricModel = this.parametricCollection
+            const parametricModel = this.factsParametricCollection
                 .findWhere({ type: 'Parametric', id: FACT_ENTITY_FIELD });
             // entities are already sorted by descending count
             const entities = (
                 (parametricModel && parametricModel.get('values')) || []
             ).map(function (entity) {
-                const displayName = entity.displayValue +
-                    (entity.count == null ? '' : (' (' + entity.count + ')'));
-                return { id: entity.value, displayName: displayName };
+                return { id: entity.value, displayName: entity.displayValue };
             });
 
             if (!this.entitySelectionModel || entities.length === 0) {
@@ -130,7 +137,7 @@ define([
                 name: 'entity',
                 fields: entities,
                 model: this.entitySelectionModel,
-                width: "175px"
+                width: "50%"
             });
 
             this.$('.facts-entity-selector').prepend(this.entitySelector.$el);
@@ -142,6 +149,17 @@ define([
                     this.entityFactCollectionRequest.abort();
                 }
                 this.resetView();
+            }
+        },
+
+        updateSelectedFact: function () {
+            this.$('.facts-list [data-factid]').removeClass('selected-fact');
+            if (this.previewModeModel.get('mode') === 'fact') {
+                const selectedFact = this.previewModeModel.get('fact');
+                if (selectedFact) {
+                    this.$('.facts-list [data-factid="' + selectedFact.get('fact').source + '"]')
+                        .addClass('selected-fact');
+                }
             }
         },
 
@@ -159,9 +177,20 @@ define([
                 reset: true,
                 data: {
                     entity: entity,
-                    indexes: this.queryModel.get('indexes')
+                    indexes: this.queryModel.get('indexes'),
+                    maxResults: MAX_FACTS
                 }
             });
+        },
+
+        /**
+         * Show a preview for a document.
+         */
+        previewDoc: function (index, reference) {
+            this.previewDocModel.fetch({ data: {
+                database: index,
+                reference: reference
+            } });
         },
 
         /**
@@ -200,6 +229,18 @@ define([
         },
 
         /**
+         * Show an error because retrieving entity values failed.  Collection 'error' event handler.
+         */
+        showEntitiesError: function (_0, xhr) {
+            if (xhr.status === 0 && xhr.statusText === 'abort') {
+                // canceled
+                return;
+            }
+            this.resetView();
+            this.showError(xhr, 'entities');
+        },
+
+        /**
          * Show an error because retrieving facts failed.  Collection 'error' event handler.
          */
         showFactsError: function (_0, xhr) {
@@ -233,8 +274,8 @@ define([
             } else {
                 const document = new Backbone.Model();
                 document.set('facts', this.entityFactCollection.map(
-                    function (entityFactModel) {
-                        return entityFactModel.toJSON();
+                    function (factModel) {
+                        return factModel.toJSON();
                     }));
                 document.set('fields', []);
 
@@ -244,14 +285,33 @@ define([
         },
 
         /**
-         * Show already-retrieved document to preview (via `ResultsViewAugmentation`).
+         * Show preview for the given clicked fact sentence (via `ResultsViewAugmentation`).
+         *
+         * @param $fact
          */
-        showPreview: function () {
-            const docModel = this.previewDocCollection.models[0];
-            if (docModel) {
+        showFactPreview: function ($fact) {
+            const factModel = _.find(this.entityFactCollection.models, function (factModel) {
+                return factModel.get('fact').source === $fact.data('factid');
+            });
+
+            if (factModel) {
                 this.$('.facts-error').addClass('hide');
-                this.previewModeModel.set({ document: docModel, mode: 'summary' });
+                this.previewModeModel.set({
+                    mode: 'fact',
+                    fact: factModel,
+                    factsView: this
+                });
+                // keep the clicked fact visible
+                $fact[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
+        },
+
+        /**
+         * Show preview for already-retrieved document (via `ResultsViewAugmentation`).
+         */
+        showDocPreview: function () {
+            this.$('.facts-error').addClass('hide');
+            this.previewModeModel.set({ mode: 'summary', document: this.previewDocModel });
         }
 
     });

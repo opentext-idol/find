@@ -353,6 +353,8 @@ define([
         'search.resultsView.trending.snapToNow': 'Snap To Now',
         'search.resultsView.facts': 'Facts',
         'search.resultsView.facts.empty': 'No facts to show for this entity',
+        'search.resultsView.facts.entityLabel': '{0} ({1} documents)',
+        'search.resultsView.facts.error.entities': 'Error: could not retrieve entity field values',
         'search.resultsView.facts.error.facts': 'Error: could not retrieve facts',
         'search.resultsView.facts.error.preview': 'Error: could not retrieve document to preview',
         'search.resultsView.facts.detailTitle': 'Fact Sources',

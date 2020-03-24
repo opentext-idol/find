@@ -272,57 +272,53 @@ define([
 
             });
 
+            const ENTITY_FACTS = [
+                {
+                    fact: {
+                        entityName: 'Some Guy',
+                        source: 'fact1',
+                        property: [
+                            { name: 'position', value: 'representative', qualifier: [
+                                    { name: 'date', value: '2003-02-01' },
+                                    { name: 'weather', value: 'raining' }
+                                ] },
+                            { name: 'position', value: 'spokesperson', qualifier: [
+                                    { name: 'date', value: '2001-02-03' },
+                                    { name: 'weather', value: 'snowing' }
+                                ] }
+                        ]
+                    },
+                    documents: [
+                        { index: 'db1', reference: 'doc-ref1', sentence: 'source 1' },
+                        { index: 'db2', reference: 'doc-ref2', sentence: 'source 2' }
+                    ]
+                },
+
+                {
+                    fact: {
+                        entityName: 'Same Person',
+                        source: 'fact2',
+                        property: [
+                            { name: 'position', value: 'nowhere', qualifier: [
+                                    { name: 'date', value: '2004-05-06' },
+                                    { name: 'altitude', value: 'high' }
+                                ] }
+                        ]
+                    },
+                    documents: [
+                        { index: 'db1', reference: 'doc-ref3', sentence: 'source 3' }
+                    ]
+                }
+            ]
+
             describe('renderEntityFacts', function () {
 
                 it('renders the default template if not overridden', function() {
-                    const fact1 = {
-                        entityName: 'Some Guy',
-                        source: "doc-ref1",
-                        property: [
-                            { name: 'position', value: 'representative', qualifier: [
-                                { name: 'date', value: '2003-02-01' },
-                                { name: 'weather', value: 'raining' }
-                            ] },
-                            { name: 'position', value: 'spokesperson', qualifier: [
-                                { name: 'date', value: '2001-02-03' },
-                                { name: 'weather', value: 'snowing' }
-                            ] }
-                        ]
-                    }
-
-                    const fact2 = {
-                        entityName: 'Same Person',
-                        source: "doc-ref2",
-                        property: [
-                            { name: 'position', value: 'nowhere', qualifier: [
-                                { name: 'date', value: '2004-05-06' },
-                                { name: 'altitude', value: 'high' }
-                            ] }
-                        ]
-                    }
-
-                    const document = buildDocument({ facts: [fact1, fact2] });
-
+                    const document = buildDocument({ facts: ENTITY_FACTS });
                     const output = this.documentRenderer.renderEntityFacts(document);
 
-                    expect(output).toContain('<tr><td><strong>' +
-                        i18n['search.resultsView.facts.facts.entityName'] +
-                        '</strong></td><td>Some Guy</td></tr>');
-                    expect(output).toContain('<tr><td><strong>Position</strong></td><td>spokesperson</td></tr>');
-                    expect(output).toContain('<tr><td>Date</td><td>2001-02-03</td></tr>');
-                    expect(output).toContain('<tr><td>Weather</td><td>raining</td></tr>');
-                    expect(output).toContain('<tr><td><strong>Position</strong></td><td>representative</td></tr>');
-                    expect(output).toContain('<tr><td>Date</td><td>2003-02-01</td></tr>');
-                    expect(output).toContain('<tr><td>Weather</td><td>snowing</td></tr>');
-                    expect(output).toContain('<a data-docref="doc-ref1"');
-
-                    expect(output).toContain('<tr><td><strong>' +
-                        i18n['search.resultsView.facts.facts.entityName'] +
-                        '</strong></td><td>Same Person</td></tr>');
-                    expect(output).toContain('<tr><td><strong>Position</strong></td><td>nowhere</td></tr>');
-                    expect(output).toContain('<tr><td>Date</td><td>2004-05-06</td></tr>');
-                    expect(output).toContain('<tr><td>Altitude</td><td>high</td></tr>');
-                    expect(output).toContain('<a data-docref="doc-ref2"');
+                    expect(output).toContain('data-factid="fact1">source 1</li>');
+                    expect(output).toContain('data-factid="fact2">source 3</li>');
                 });
 
             });
@@ -330,45 +326,7 @@ define([
             describe('renderEntityFactsDetail', function () {
 
                 it('renders the default template if not overridden', function() {
-                    const fact1 = {
-                        fact: {
-                            entityName: 'Some Guy',
-                            source: "doc-ref1",
-                            property: [
-                                { name: 'position', value: 'representative', qualifier: [
-                                        { name: 'date', value: '2003-02-01' },
-                                        { name: 'weather', value: 'raining' }
-                                    ] },
-                                { name: 'position', value: 'spokesperson', qualifier: [
-                                        { name: 'date', value: '2001-02-03' },
-                                        { name: 'weather', value: 'snowing' }
-                                    ] }
-                            ]
-                        },
-                        documents: [
-                            { index: 'db1', reference: 'doc-ref1', sentence: 'source 1' },
-                            { index: 'db2', reference: 'doc-ref2', sentence: 'source 2' }
-                        ]
-                    };
-
-                    const fact2 = {
-                        fact: {
-                            entityName: 'Same Person',
-                            source: "doc-ref2",
-                            property: [
-                                { name: 'position', value: 'nowhere', qualifier: [
-                                        { name: 'date', value: '2004-05-06' },
-                                        { name: 'altitude', value: 'high' }
-                                    ] }
-                            ]
-                        },
-                        documents: [
-                            { index: 'db1', reference: 'doc-ref3', sentence: 'source 3' }
-                        ]
-                    };
-
-                    const document = buildDocument({ facts: [fact1, fact2] });
-
+                    const document = buildDocument({ facts: ENTITY_FACTS });
                     const output = this.documentRenderer.renderEntityFactsDetail(document);
 
                     expect(output).toContain('<tr><td><strong>' +
