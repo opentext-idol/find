@@ -178,7 +178,6 @@ define([
         'search.document.detail.openOriginal': 'Open Original',
         'search.document.detail.highlightQueryTerms': 'Highlight Query Terms',
         'search.document.detail.tabs.authors': 'Authors',
-        'search.document.detail.tabs.facts': 'Facts',
         'search.document.detail.tabs.location': 'Location',
         'search.document.detail.tabs.location.latitude': 'Latitude',
         'search.document.detail.tabs.location.longitude': 'Longitude',
