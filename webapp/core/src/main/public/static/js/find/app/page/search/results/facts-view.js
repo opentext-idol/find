@@ -67,6 +67,7 @@ define([
             // `FieldSelectionView`
             this.entitySelector = null;
 
+            this.listenTo(this.queryModel, 'change', this.update);
             this.listenTo(this.parametricCollection, 'sync', this.update);
             this.listenTo(this.factsParametricCollection, 'sync', this.updateEntitySelector);
             this.listenTo(this.factsParametricCollection, 'error', this.showEntitiesError);
@@ -100,10 +101,12 @@ define([
                 return;
             }
 
-            this.factsParametricCollection.fetchFromQueryModel(this.queryModel, {
-                fieldNames: [FACT_ENTITY_FIELD],
-                maxValues: MAX_ENTITIES
-            });
+            if (this.queryModel.get('indexes').length) {
+                this.factsParametricCollection.fetchFromQueryModel(this.queryModel, {
+                    fieldNames: [FACT_ENTITY_FIELD],
+                    maxValues: MAX_ENTITIES
+                });
+            }
         },
 
         /**
