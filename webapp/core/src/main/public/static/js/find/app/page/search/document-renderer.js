@@ -88,6 +88,7 @@ define([
         return matchedType.className;
     }
 
+    const LANG_REF_REGEX = new RegExp('://(?<lang>[^.]+)\\.');
     function buildContext(model) {
         const url = model.get('url');
         const date = model.get('date');
@@ -100,8 +101,14 @@ define([
             thumbnailSrc = model.get('thumbnailUrl');
         }
 
+        const reference = model.get('reference');
+        const langMatch = reference.match(LANG_REF_REGEX);
+        const lang = langMatch ?
+            langMatch.groups.lang :
+            'icomoon-file-' + getContentTypeClass(model);
+
         return {
-            reference: model.get('reference'),
+            reference: reference,
             title: model.get('title'),
             date: date && date.format('LLLL'),
             database: model.get('index'),
@@ -109,7 +116,7 @@ define([
             similarDocumentsUrl: vent.suggestUrlForDocument(model),
             summary: addLinksToSummary(model.get('summary')),
             url: url ? urlManipulator.addSpecialUrlPrefix(model.get('contentType'), url) : null,
-            icon: 'icomoon-file-' + getContentTypeClass(model),
+            icon: lang,
             intentRankedHit: model.get('intentRankedHit'),
             thumbnailSrc: thumbnailSrc,
             age: date && date.fromNow(),
