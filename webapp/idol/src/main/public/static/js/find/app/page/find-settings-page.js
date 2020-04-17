@@ -16,10 +16,11 @@ define([
     'find/app/page/settings/saved-search-widget',
     'find/app/page/settings/stats-server-widget',
     'find/app/page/settings/view-widget',
+    'find/app/page/settings/control-point-widget',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/settings/community-widget.html'
 ], function (_, SettingsPage, AciWidget, AnswerServerWidget, CommunityWidget, MapWidget, MotdWidget, MmapWidget, QueryManipulationWidget,
-             SavedSearchWidget, StatsServerWidget, ViewWidget, i18n, dropdownTemplate) {
+             SavedSearchWidget, StatsServerWidget, ViewWidget, ControlPointWidget, i18n, dropdownTemplate) {
 
     return SettingsPage.extend({
         initializeWidgets: function () {
@@ -108,6 +109,19 @@ define([
                             conversationSystemDisabled: i18n['settings.answerServer.conversationSystemDisabled'],
                             systemNames: i18n['settings.answerServer.systemNames'],
                             systemNamesDisabled: i18n['settings.answerServer.systemNamesDisabled']
+                        })
+                    }),
+                    new ControlPointWidget({
+                        configItem: 'controlPoint',
+                        description: i18n['settings.controlPoint.description'],
+                        isOpened: true,
+                        title: i18n['settings.controlPoint.title'],
+                        strings: _.extend(this.serverStrings(), {
+                            enable: i18n['settings.controlPoint.enable'],
+                            enabled: i18n['settings.controlPoint.enabled'],
+                            disable: i18n['settings.controlPoint.disable'],
+                            disabled: i18n['settings.controlPoint.disabled'],
+                            CONNECTION_ERROR: i18n['settings.controlPoint.validation.CONNECTION_ERROR']
                         })
                     })
                 ], [

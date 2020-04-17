@@ -75,12 +75,15 @@ define([
                 REQUIRED_FIELD_MISSING: i18n['settings.REQUIRED_FIELD_MISSING'],
                 REGULAR_EXPRESSION_MATCH_ERROR: i18n['settings.REGULAR_EXPRESSION_MATCH_ERROR'],
                 SERVICE_AND_INDEX_PORT_ERROR: i18n['settings.SERVICE_AND_INDEX_PORT_ERROR'],
-                SERVICE_PORT_ERROR: i18n['settings.SERVICE_PORT_ERROR']
+                SERVICE_PORT_ERROR: i18n['settings.SERVICE_PORT_ERROR'],
+                INVALID_CREDENTIALS: i18n['settings.INVALID_CREDENTIALS'],
+                UNKNOWN_ERROR: i18n['error.unknown']
             }
         },
 
         serverStrings: function() {
             return {
+                loading: i18n['app.loading'],
                 databaseLabel: i18n['settings.database'],
                 hostPlaceholder: i18n['placeholder.hostname'],
                 portPlaceholder: i18n['placeholder.port'],
@@ -92,6 +95,8 @@ define([
                 validatePortInvalid: i18n['settings.test.portInvalid'],
                 validateUsernameBlank: i18n['settings.test.usernameBlank'],
                 validateSuccess: i18n['settings.test.ok'],
+                passwordLabel: i18n['settings.password'],
+                passwordRedacted: i18n['settings.password.redacted'],
                 CONNECTION_ERROR: i18n['settings.CONNECTION_ERROR'],
                 DEFAULT_LOGIN: i18n['settings.DEFAULT_LOGIN'],
                 FETCH_PORT_ERROR: i18n['settings.FETCH_PORT_ERROR'],
@@ -103,7 +108,9 @@ define([
                 REQUIRED_FIELD_MISSING: i18n['settings.REQUIRED_FIELD_MISSING'],
                 REGULAR_EXPRESSION_MATCH_ERROR: i18n['settings.REGULAR_EXPRESSION_MATCH_ERROR'],
                 SERVICE_AND_INDEX_PORT_ERROR: i18n['settings.SERVICE_AND_INDEX_PORT_ERROR'],
-                SERVICE_PORT_ERROR: i18n['settings.SERVICE_PORT_ERROR']
+                SERVICE_PORT_ERROR: i18n['settings.SERVICE_PORT_ERROR'],
+                INVALID_CREDENTIALS: i18n['settings.INVALID_CREDENTIALS'],
+                UNKNOWN_ERROR: i18n['error.unknown']
             };
         },
 
