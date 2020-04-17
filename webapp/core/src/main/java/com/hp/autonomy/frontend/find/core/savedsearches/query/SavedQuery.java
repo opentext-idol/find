@@ -59,6 +59,13 @@ public class SavedQuery extends SavedSearch<SavedQuery, SavedQuery.Builder> {
         private ZonedDateTime dateNewDocsLastFetched;
         private ZonedDateTime dateDocsLastFetched;
 
+        /**
+         * Populate a builder with fields common to all {@link SavedSearch} types.
+         */
+        public Builder(final SavedSearch<?, ?> search) {
+            super(search);
+        }
+
         public Builder(final SavedQuery query) {
             super(query);
             dateNewDocsLastFetched = query.dateNewDocsLastFetched;

@@ -24,4 +24,10 @@ public interface SavedSearchService<T extends SavedSearch<T, B>, B extends Saved
     T getDashboardSearch(long id);
 
     void deleteById(long id);
+
+    /**
+     * Construct an instance from another saved search of any type.
+     */
+    T build(SavedSearch<?, ?> search);
+
 }

@@ -323,7 +323,10 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         private boolean canEdit = true;
         private UserEntity user;
 
-        protected Builder(final SavedSearch<T, B> search) {
+        /**
+         * Populate a builder with fields common to all {@link SavedSearch} types.
+         */
+        protected Builder(final SavedSearch<?, ?> search) {
             id = search.id;
             title = search.title;
             indexes = search.indexes;
