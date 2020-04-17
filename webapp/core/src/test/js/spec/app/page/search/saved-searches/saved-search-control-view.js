@@ -15,9 +15,11 @@ define([
     'find/app/util/confirm-view',
     'find/app/util/database-name-resolver',
     'moment',
-    'i18n!find/nls/bundle'
+    'i18n!find/nls/bundle',
+    'mock/util/modal',
+    'mock/util/policy-selection-view'
 ], function($, Backbone, configuration, SavedSearchControlView, SavedSearchModel, DatesFilterModel, GeographyModel, MinScoreModel,
-            MockConfirmView, databaseNameResolver, moment, i18n) {
+            MockConfirmView, databaseNameResolver, moment, i18n, MockModal, MockPolicySelectionView) {
     'use strict';
 
     const CREATE_TEXT = 'Make a new one!';
@@ -138,10 +140,45 @@ define([
         this.view.$('.save-search-button').click();
     }
 
+    function testApplyPolicy() {
+        it('displays the "Apply Policy" button', function() {
+            expect(this.view.$('.apply-policy-option')).toHaveLength(1);
+        });
+
+        describe('when the apply policy button is clicked', function () {
+
+            beforeEach(function () {
+                MockModal.reset();
+                MockPolicySelectionView.reset();
+                this.view.$('.apply-policy-option').click();
+            });
+
+            it('opens a confirm modal', function() {
+                expect(MockModal.instances.length).toBe(1);
+                expect(MockPolicySelectionView.instances.length).toBe(1);
+            });
+
+            describe('when the action is confirmed', function () {
+
+                beforeEach(function () {
+                    MockModal.instances[0].actionButtonCallback();
+                });
+
+                it('applies the selected policy', function () {
+                    expect(MockPolicySelectionView.instances[0].applyPolicy.calls.count())
+                        .toBe(1);
+                })
+
+            });
+
+        });
+    }
+
     describe('SavedSearchControlView', function() {
         beforeEach(function() {
             configuration.and.returnValue({
-                enableSavedSearch: true
+                enableSavedSearch: true,
+                controlPointEnabled: true
             });
 
             this.queryModel = new Backbone.Model({
@@ -299,6 +336,8 @@ define([
             });
         });
 
+        // TODO: cp disabled, doesn't show button
+
         describe('when the saved search is new', function() {
             beforeEach(function() {
                 this.savedQueryCollection.add(this.savedSearchModel);
@@ -371,6 +410,8 @@ define([
                     });
                 });
             });
+
+            testApplyPolicy();
         });
 
         describe('when the search is saved as a snapshot', function() {
@@ -428,6 +469,8 @@ define([
                     expect(this.selectedTabModel.get('selectedSearchCid')).toBe(this.savedQueryCollection.at(0).cid);
                 });
             });
+
+            testApplyPolicy();
 
             describe('when the snapshot is renamed', function() {
                 const NEW_TITLE = 'The new title for my snapshot';
@@ -757,6 +800,8 @@ define([
                 });
             });
 
+            testApplyPolicy();
+
             describe('then the query is changed', function() {
                 beforeEach(function() {
                     this.queryState.conceptGroups.set([{concepts: ['archipelago']}]);
@@ -898,5 +943,32 @@ define([
                 });
             });
         });
+
+        describe('when ControlPoint is disabled', function() {
+
+            beforeEach(function() {
+                configuration.and.returnValue({
+                    enableSavedSearch: true,
+                    controlPointEnabled: false
+                });
+
+                this.savedQueryCollection.add(this.savedSearchModel);
+                this.savedSearchCollection.add(this.savedSearchModel);
+
+                this.view = new SavedSearchControlView(this.viewOptions);
+                this.view.render();
+                $('body').append(this.view.$el);
+            });
+
+            afterEach(function() {
+                this.view.remove();
+            });
+
+            it('hides the "Apply Policy" button', function() {
+                expect(this.view.$('.apply-policy-option')).toHaveLength(0);
+            });
+
+        });
+
     });
 });

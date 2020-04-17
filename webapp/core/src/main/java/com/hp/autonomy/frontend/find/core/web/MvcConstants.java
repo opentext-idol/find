@@ -30,6 +30,7 @@ public enum MvcConstants {
     ENTITY_SEARCH_OPTIONS("entitySearchOptions"),
     ENTITY_SEARCH_ANSWER_SERVER_ENABLED("entitySearchAnswerServerEnabled"),
     PUBLIC_INDEXES_ENABLED("publicIndexesEnabled"),
+    CONTROL_POINT_ENABLED("controlPointEnabled"),
     TEMPLATES_CONFIG("templatesConfig"),
     ASSETS_CONFIG("assetsConfig"),
     MESSAGE_OF_THE_DAY_CONFIG("messageOfTheDay"),

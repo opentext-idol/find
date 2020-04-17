@@ -36,7 +36,7 @@ public abstract class AbstractSavedSearchServiceTest<T extends SavedSearch<T, B>
     @MockBean
     private TagNameFactory tagNameFactory;
     @Autowired
-    private SavedSearchService<T, B> service;
+    protected SavedSearchService<T, B> service;
     @Autowired
     private SavedSearchRepository<T, B> crudRepository;
 

@@ -11,6 +11,7 @@ define([
     'find/app/model/saved-searches/saved-search-model',
     'find/app/util/confirm-view',
     'find/app/util/csv-field-selection-view',
+    'find/app/util/policy-selection-view',
     'find/app/util/sharing-options',
     'find/app/util/modal',
     'text!find/templates/app/page/search/saved-searches/saved-search-control-view.html',
@@ -18,7 +19,7 @@ define([
     'find/app/configuration',
     'find/app/util/popover',
     'underscore'
-], function(Backbone, $, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, CsvFieldSelectView, SharingOptions,
+], function(Backbone, $, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, CsvFieldSelectView, PolicySelectionView, SharingOptions,
             Modal, template, i18n, configuration, popover, _) {
     'use strict';
 
@@ -118,6 +119,27 @@ define([
                         this.hide();
                     }
                 })
+            },
+            'click .apply-policy-option': function() {
+                let modal;
+                const policySelectionView = new PolicySelectionView({
+                    queryState: this.queryState,
+                    savedSearchModel: this.savedSearchModel
+                });
+
+                modal = new Modal({
+                    actionButtonClass: 'button-primary',
+                    actionButtonText: i18n['search.savedSearchControl.applyCPPolicy.action'],
+                    className: Modal.prototype.className,
+                    contentView: policySelectionView,
+                    secondaryButtonText: i18n['app.cancel'],
+                    title: i18n['search.savedSearchControl.applyCPPolicy.modal.title'],
+                    actionButtonCallback: function () {
+                        policySelectionView.applyPolicy(function () {
+                            modal.hide();
+                        });
+                    }
+                });
             },
             'click .saved-search-delete-option': function() {
                 this.model.set('error', null);
@@ -258,6 +280,7 @@ define([
                 showSaveAs: enableSavedSearch && isMutable,
                 searchTypes: saveAsSearchTypes,
                 showOpenAsQuery: !isMutable,
+                showApplyPolicy: configuration().controlPointEnabled,
                 readOnly: this.savedSearchModel.get('type').indexOf('READ_ONLY') !== -1
             }));
 
