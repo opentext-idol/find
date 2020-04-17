@@ -116,6 +116,19 @@
     "databaseChoices": null,
     "databaseChoicesVisible": true
   },
+  "controlPoint": {
+    "enabled": false,
+    "server": {
+      "protocol": "HTTPS",
+      "host": "localhost",
+      "port": 80,
+      "credentials": {
+        "username": "",
+        "password": ""
+      },
+      "basePath": "/WebApi/api"
+    }
+  },
   "savedSearches": {
     "pollForUpdates": true,
     "pollingInterval": 5

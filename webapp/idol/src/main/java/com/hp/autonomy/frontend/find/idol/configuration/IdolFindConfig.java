@@ -15,6 +15,7 @@ import com.hp.autonomy.frontend.configuration.AbstractConfig;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.authentication.Authentication;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
+import com.hp.autonomy.frontend.configuration.passwords.PasswordsConfig;
 import com.hp.autonomy.frontend.configuration.server.ProductType;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
@@ -27,20 +28,15 @@ import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
 import com.hp.autonomy.user.UserServiceConfig;
-import java.util.Collection;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.jasypt.util.text.TextEncryptor;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @SuppressWarnings({"InstanceVariableOfConcreteClass", "DefaultAnnotationParam"})
@@ -48,7 +44,7 @@ import java.util.Optional;
 @EqualsAndHashCode(callSuper = false)
 @Builder(toBuilder = true)
 @JsonDeserialize(builder = IdolFindConfigBuilder.class)
-public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements UserServiceConfig, IdolSearchCapable, FindConfig<IdolFindConfig, IdolFindConfigBuilder> {
+public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements UserServiceConfig, IdolSearchCapable, FindConfig<IdolFindConfig, IdolFindConfigBuilder>, PasswordsConfig<IdolFindConfig> {
     private static final String SECTION = "Find Config Root";
     private final CommunityAuthentication login;
     private final ServerConfig content;
@@ -57,6 +53,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final ViewConfig view;
     private final AnswerServerConfig answerServer;
     private final EntitySearchConfig entitySearch;
+    private final ControlPointConfig controlPoint;
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
     private final MMAP mmap;
@@ -96,6 +93,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .view(view == null ? other.view : view.merge(other.view))
                 .answerServer(answerServer == null ? other.answerServer : answerServer.merge(other.answerServer))
                 .entitySearch(entitySearch == null ? other.entitySearch : entitySearch.merge(other.entitySearch))
+                .controlPoint(controlPoint == null ? other.controlPoint : controlPoint.merge(other.controlPoint))
                 .savedSearchConfig(savedSearchConfig == null ? other.savedSearchConfig : savedSearchConfig.merge(other.savedSearchConfig))
                 .mmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
                 .messageOfTheDay(messageOfTheDay == null ? other.messageOfTheDay : messageOfTheDay.merge(other.messageOfTheDay))
@@ -162,6 +160,21 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     }
 
     @Override
+    public IdolFindConfig withoutPasswords() {
+        return toBuilder().controlPoint(controlPoint.withoutPasswords()).build();
+    }
+
+    @Override
+    public IdolFindConfig withEncryptedPasswords(final TextEncryptor encryptor) {
+        return toBuilder().controlPoint(controlPoint.withEncryptedPasswords(encryptor)).build();
+    }
+
+    @Override
+    public IdolFindConfig withDecryptedPasswords(final TextEncryptor encryptor) {
+        return toBuilder().controlPoint(controlPoint.withDecryptedPasswords(encryptor)).build();
+    }
+
+    @Override
     public void basicValidate(final String section) throws ConfigException {
         login.basicValidate(SECTION);
         content.basicValidate("content");
@@ -187,6 +200,10 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
 
         if(entitySearch != null) {
             entitySearch.basicValidate(EntitySearchConfig.SECTION);
+        }
+
+        if(controlPoint != null) {
+            controlPoint.basicValidate(ControlPointConfig.SECTION);
         }
     }
 
