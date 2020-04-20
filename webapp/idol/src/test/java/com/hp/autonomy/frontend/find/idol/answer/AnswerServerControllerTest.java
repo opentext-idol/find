@@ -336,6 +336,24 @@ public class AnswerServerControllerTest {
     }
 
     @Test
+    public void getEntityFacts_duplicateReports() {
+        mockReportResponse(Arrays.asList(
+            createReport(Collections.singletonList(createFact("1"))),
+            createReport(Collections.singletonList(createFact("1")))
+        ));
+        mockQueryResponse(Collections.singletonList(
+            createDoc("doc 1", Collections.singletonList(
+                createFactField("first fact", Collections.singletonList("1"))
+            ))
+        ));
+        final List<SourcedFact> response =
+            controller.getEntityFacts("space", 7, Collections.singletonList("db"));
+
+        Assert.assertEquals("should return the fact only once", 1, response.size());
+        Assert.assertEquals("should return first fact", "1", response.get(0).fact.getSource());
+    }
+
+    @Test
     public void getEntityFacts_noFacts() {
         // no ReportItems - different from empty ReportItems
         when(aciService.executeAction(any(), any(), any())).thenReturn(new ReportResponsedata());
