@@ -8,7 +8,8 @@ define([
     'find/app/page/search/filters/parametric/parametric-select-modal-item-view',
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/loading-spinner.html',
-    'text!find/templates/app/page/search/filters/parametric/parametric-select-modal-list-view.html'
+    'text!find/templates/app/page/search/filters/parametric/parametric-select-modal-list-view.html',
+    'iCheck'
 ], function (Backbone, $, _, ListView, vent, i18n, ItemView, generateErrorHtml, loadingTemplate, template) {
     'use strict';
 
@@ -29,6 +30,19 @@ define([
 
         events: {
             'scroll': 'checkScroll',
+
+            'ifClicked .parametric-value-all-label': function (e) {
+                // if everything is selected, select nothing; otherwise, select everything
+                e.preventDefault();
+                const paginator = this.paginator;
+                const allSelected = paginator.valuesCollection.every(function (model) {
+                    return model.get('selected');
+                });
+                paginator.valuesCollection.forEach(function (model) {
+                    paginator.setSelected(model.get('value'), !allSelected);
+                });
+            },
+
             'ifClicked .parametric-value-label': function (e) {
                 this.paginator.toggleSelection($(e.currentTarget).attr('data-value'));
             }
@@ -47,6 +61,7 @@ define([
 
             // Check scroll when values are added in case the returned values are not enough to fill the modal
             this.listenTo(this.paginator.valuesCollection, 'update', this.checkScroll);
+            this.listenTo(this.paginator.valuesCollection, 'update change', this.updateAll);
 
             // Check scroll on resize because the height may have changed such that we need more values to fill the modal
             this.listenTo(vent, 'vent:resize', this.checkScroll);
@@ -62,9 +77,14 @@ define([
             this.$loading = this.$('.loading-spinner');
             this.$error = this.$('.parametric-select-error');
             this.$empty = this.$('.parametric-select-empty');
+            this.$all = this.$('.parametric-value-all-label');
 
-            this.listView.setElement(this.$('ul')).render();
+            // don't show 'all' checkbox until we've loaded some values
+            this.$all.toggleClass('hide', true);
+            this.$all.find('input').iCheck({ checkboxClass: 'icheckbox-hp' });
+            this.listView.setElement(this.$('ul.values-list')).render();
 
+            this.updateAll();
             this.updateLoading();
             this.updateError();
             this.updateEmpty();
@@ -82,6 +102,27 @@ define([
                     this.paginator.fetchNext();
                 }
             }.bind(this));
+        },
+
+        updateAll: function () {
+            // throttle: when 'all' is toggled, it toggles lots of checkboxes, each of which
+            // triggers this handler
+            _.throttle(function () {
+                if (this.$all) {
+                    const numValues = this.paginator.valuesCollection.length;
+                    if (numValues > 0) {
+                        // will never be hidden again - values shouldn't disappear
+                        this.$all.toggleClass('hide', false);
+                    }
+
+                    const numSelected = this.paginator.valuesCollection.countBy(function (model) {
+                        return model.get('selected');
+                    }).true || 0;
+                    const determinate = numSelected === 0 || numSelected === numValues;
+                    this.$all.find('input').iCheck(numSelected === 0 ? 'uncheck' : 'check');
+                    this.$all.find('input').iCheck(determinate ? 'determinate' : 'indeterminate');
+                }
+            }.bind(this), 100)();
         },
 
         updateLoading: function () {

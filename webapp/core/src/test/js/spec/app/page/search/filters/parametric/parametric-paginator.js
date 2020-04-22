@@ -320,6 +320,53 @@ define([
                         });
                     });
                 });
+
+                describe('then setSelected is called with true', function () {
+                    beforeEach(function() {
+                        this.paginator.setSelected('PLANTS', true);
+                        this.paginator.setSelected('ANIMALS', true); // already true
+                    });
+
+                    it('adds to the selectedValues collection', function () {
+                        expect(this.selectedValues.length).toBe(3);
+                        expect(this.selectedValues.findWhere(
+                            { field: 'CATEGORY', value: 'PLANTS' })
+                        ).toBeDefined();
+                        expect(this.selectedValues.findWhere(
+                            { field: 'CATEGORY', value: 'ANIMALS' })
+                        ).toBeDefined();
+                        expect(this.selectedValues.findWhere(
+                            { field: 'THINGS', value: 'ANIMALS' })
+                        ).toBeDefined();
+                    });
+
+                    it('updates the models in the values collection', checkModels([
+                        { value: 'PLANTS', displayValue: 'Plants', count: 5, selected: true },
+                        { value: 'ANIMALS', displayValue: 'Animals', count: 3, selected: true }
+                    ]));
+
+                });
+
+                describe('then setSelected is called with false', function() {
+                    beforeEach(function () {
+                        this.paginator.setSelected('PLANTS', false); // already false
+                        this.paginator.setSelected('ANIMALS', false);
+                    });
+
+                    it('removes from the selectedValues collection', function () {
+                        expect(this.selectedValues.length).toBe(1);
+                        expect(this.selectedValues.findWhere(
+                            { field: 'THINGS', value: 'ANIMALS' })
+                        ).toBeDefined();
+                    });
+
+                    it('updates the models in the values collection', checkModels([
+                        { value: 'PLANTS', displayValue: 'Plants', count: 5, selected: false },
+                        { value: 'ANIMALS', displayValue: 'Animals', count: 3, selected: false }
+                    ]));
+
+                });
+
             });
 
             describe('then the fetch fails', function() {

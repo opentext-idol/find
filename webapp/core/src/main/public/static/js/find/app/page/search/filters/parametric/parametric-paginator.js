@@ -77,16 +77,18 @@ define([
         },
 
         /**
-         * Toggle the selected property of the given value, updating the selected parametric values collection and the
-         * values collection.
-         * @param value
+         * Set the selected property of the given value, updating the selected parametric values
+         * collection and the values collection.
          */
-        toggleSelection: function (value) {
+        setSelected: function (value, isSelected) {
             const model = this.valuesCollection.findWhere({value: value});
-            const isSelected = !model.get('selected');
             model.set('selected', isSelected);
 
-            if (isSelected) {
+            const currentValue = this.selectedValues.findWhere({
+                field: this.fetchOptions.fieldName,
+                value: value
+            });
+            if (isSelected && !currentValue) {
                 this.selectedValues.add({
                     field: this.fetchOptions.fieldName,
                     displayName: this.fieldDisplayName,
@@ -94,9 +96,19 @@ define([
                     displayValue: model.get('displayValue'),
                     type: 'Parametric'
                 });
-            } else {
-                this.selectedValues.remove(this.selectedValues.findWhere({field: this.fetchOptions.fieldName, value: value}));
+            } else if (!isSelected && currentValue) {
+                this.selectedValues.remove(currentValue);
             }
+        },
+
+        /**
+         * Toggle the selected property of the given value, updating the selected parametric values collection and the
+         * values collection.
+         * @param value
+         */
+        toggleSelection: function (value) {
+            const model = this.valuesCollection.findWhere({value: value});
+            this.setSelected(value, !model.get('selected'));
         }
     });
 

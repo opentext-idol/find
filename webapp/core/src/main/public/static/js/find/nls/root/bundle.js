@@ -285,6 +285,7 @@ define([
         'search.noMoreResults': 'No more results found',
         'search.parametricFilters.modal.empty': 'No parametric values',
         'search.parametricFilters.modal.title': 'Select parametric filters',
+        'search.parametricFilters.modal.all': 'All',
         'search.parametricFields': 'Parametric Fields',
         'search.parametric.empty': 'No parametric fields found',
         'search.preview': 'Preview',
