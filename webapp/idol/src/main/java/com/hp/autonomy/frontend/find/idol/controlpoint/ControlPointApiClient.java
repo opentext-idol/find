@@ -179,10 +179,12 @@ public class ControlPointApiClient {
         final HttpUriRequest request,
         final Class<R> resultType
     ) throws ControlPointApiException {
-        if (loginState == null || tokenExpireTime.isBefore(clock.instant())) {
-            authenticate();
+        if (serverDetails.getUsername() != null) {
+            if (loginState == null || tokenExpireTime.isBefore(clock.instant())) {
+                authenticate();
+            }
+            request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + loginState.getAccessToken());
         }
-        request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + loginState.getAccessToken());
         return performRequest(request, resultType);
     }
 

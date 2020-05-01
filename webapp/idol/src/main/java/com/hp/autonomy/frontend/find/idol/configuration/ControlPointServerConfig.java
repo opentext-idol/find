@@ -51,23 +51,28 @@ public class ControlPointServerConfig extends SimpleComponent<ControlPointServer
         if (StringUtils.isBlank(host)) failValidate(component, "host must not be blank");
         if (port == null) failValidate(component, "port must be specified");
         if (port <= 0 || port > 65535) failValidate(component, "port must be between 1 and 65535");
-        if (credentials == null) failValidate(component, "credentials must be specified");
-        credentials.basicValidate(component);
+        if (credentials != null) credentials.basicValidate(component);
     }
 
     @Override
     public ControlPointServerConfig withoutPasswords() {
-        return toBuilder().credentials(credentials.withoutPasswords()).build();
+        return toBuilder()
+            .credentials(credentials == null ? null : credentials.withoutPasswords())
+            .build();
     }
 
     @Override
     public ControlPointServerConfig withEncryptedPasswords(final TextEncryptor encryptor) {
-        return toBuilder().credentials(credentials.withEncryptedPasswords(encryptor)).build();
+        return toBuilder()
+            .credentials(credentials == null ? null : credentials.withEncryptedPasswords(encryptor))
+            .build();
     }
 
     @Override
     public ControlPointServerConfig withDecryptedPasswords(final TextEncryptor encryptor) {
-        return toBuilder().credentials(credentials.withDecryptedPasswords(encryptor)).build();
+        return toBuilder()
+            .credentials(credentials == null ? null : credentials.withDecryptedPasswords(encryptor))
+            .build();
     }
 
     public ControlPointServerDetails toServerDetails() {
@@ -76,8 +81,8 @@ public class ControlPointServerConfig extends SimpleComponent<ControlPointServer
                 .protocol(protocol.toLowerCase())
                 .host(host)
                 .port(port)
-                .username(credentials.getUsername())
-                .password(credentials.getPassword());
+                .username(credentials == null ? null : credentials.getUsername())
+                .password(credentials == null ? null : credentials.getPassword());
         // fields with defaults we shouldn't override with null
         if (basePath != null) builder.basePath(basePath);
         return builder.build();

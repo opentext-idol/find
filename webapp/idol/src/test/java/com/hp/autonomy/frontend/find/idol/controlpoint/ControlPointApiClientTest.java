@@ -5,7 +5,6 @@
 
 package com.hp.autonomy.frontend.find.idol.controlpoint;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hp.autonomy.frontend.find.idol.testutil.AssertExt;
 import com.hp.autonomy.frontend.find.idol.testutil.TestClock;
 import org.apache.commons.io.IOUtils;
@@ -26,10 +25,7 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -391,6 +387,26 @@ public class ControlPointApiClientTest {
         Assert.assertEquals("should login again after expiry", "POST", requests.get(3).getMethod());
         Assert.assertEquals("should make request after 2nd login",
             "GET", requests.get(4).getMethod());
+    }
+
+    @Test
+    public void testGet_noCredentials() throws ControlPointApiException, IOException {
+        Mockito.when(defaultHttpClient.execute(Mockito.any())).thenReturn(buildStandardResponse());
+        final ControlPointServerDetails serverDetails = ControlPointServerDetails.builder()
+            .protocol("http").host("cp-host").port(123).basePath("base/path")
+            .build();
+        final ControlPointApiClient cpClient =
+            new ControlPointApiClient(defaultHttpClient, serverDetails);
+        cpClient.setClock(clock);
+
+        final int result = cpClient.get("status", Arrays.asList(
+            new BasicNameValuePair("version", "3"),
+            new BasicNameValuePair("format", "standard")
+        ), Integer.class);
+        final List<HttpUriRequest> requests = getRequests(1);
+
+        Assert.assertEquals("only request should be GET", "GET", requests.get(0).getMethod());
+        Assert.assertEquals("should parse result", 456, result);
     }
 
 }

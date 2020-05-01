@@ -9,8 +9,10 @@ import com.hp.autonomy.frontend.configuration.authentication.UsernameAndPassword
 import lombok.Builder;
 import lombok.Getter;
 
+// username and password are optional because we currently only use APIs which don't require
+// authentication
 /**
- * Configuration used when building Control API requests.
+ * Configuration used when building Control API requests.  Username and password are optional.
  */
 @Getter
 @Builder(toBuilder = true)

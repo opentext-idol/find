@@ -39,11 +39,13 @@ define([
                 this.$('.settings-required-flag').toggleClass('hide', !this.enableView.getConfig());
             });
 
-            this.passwordView = new PasswordView({
-                strings: this.strings,
-                className: this.controlGroupClass + ' m-t-sm',
-                formControlClass: this.formControlClass
-            });
+            // credentials not needed for now
+            // this.passwordView = new PasswordView({
+            //     strings: this.strings,
+            //     className: this.controlGroupClass + ' m-t-sm',
+            //     formControlClass: this.formControlClass
+            // });
+            this.credentials = null;
         },
 
         render: function () {
@@ -52,22 +54,25 @@ define([
             const $testControl = this.$('button[name=validate]').parent();
             this.enableView.render();
             $testControl.before(this.enableView.el);
-            $testControl.before(this.controlPointTemplate({
-                strings: this.strings
-            }));
-            this.$username = this.$('input[name=username]');
-            this.passwordView.render();
-            $testControl.before(this.passwordView.$el);
+            // credentials not needed for now
+            // $testControl.before(this.controlPointTemplate({
+            //     strings: this.strings
+            // }));
+            // this.$username = this.$('input[name=username]');
+            // this.passwordView.render();
+            // $testControl.before(this.passwordView.$el);
         },
 
         updateConfig: function (config) {
             AciWidget.prototype.updateConfig.call(this, config.server);
             this.enableView.updateConfig(config.enabled);
-            this.$username.val(config.server.credentials.username);
-            this.passwordView.updateConfig({
-                passwordRedacted: true,
-                password: ''
-            });
+            // credentials not needed for now
+            // this.$username.val(config.server.credentials.username);
+            // this.passwordView.updateConfig({
+            //     passwordRedacted: true,
+            //     password: ''
+            // });
+            this.credentials = config.server.credentials;
         },
 
         getConfig: function () {
@@ -78,10 +83,12 @@ define([
                     protocol: aciServer.protocol,
                     host: aciServer.host,
                     port: aciServer.port,
-                    credentials: {
-                        username: this.$username.val(),
-                        password: this.passwordView.getConfig().password // empty if unchanged
-                    }
+                    // credentials not needed for now
+                    // credentials: {
+                    //     username: this.$username.val(),
+                    //     password: this.passwordView.getConfig().password // empty if unchanged
+                    // }
+                    credentials: this.credentials
                 }
             };
         },
@@ -99,12 +106,14 @@ define([
                 return false;
             }
 
-            if (this.$username.val() === '') {
-                this.updateInputValidation(this.$username, false);
-                return false;
-            }
-
-            return this.passwordView.validateInputs();
+            // credentials not needed for now
+            // if (this.$username.val() === '') {
+            //     this.updateInputValidation(this.$username, false);
+            //     return false;
+            // }
+            //
+            // return this.passwordView.validateInputs();
+            return true;
         }
 
     });

@@ -46,7 +46,7 @@ public class ControlPointServerConfigTest {
         validConfig.toBuilder().port(null).build().basicValidate("cp");
     }
 
-    @Test(expected = ConfigException.class)
+    @Test
     public void testBasicValidate_missingCredentials() throws ConfigException {
         validConfig.toBuilder().credentials(null).build().basicValidate("cp");
     }
