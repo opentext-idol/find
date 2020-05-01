@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.controlpoint;
 
 import lombok.Getter;
+import org.apache.http.HttpStatus;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -29,6 +30,12 @@ public class ControlPointApiException extends Exception {
         super(error.getDescription());
         this.statusCode = statusCode;
         errorId = ErrorId.fromValue(error.getId());
+    }
+
+    public ControlPointApiException(final String message) {
+        super(message);
+        statusCode = HttpStatus.SC_OK;
+        errorId = ErrorId.UNKNOWN;
     }
 
     public enum ErrorId {

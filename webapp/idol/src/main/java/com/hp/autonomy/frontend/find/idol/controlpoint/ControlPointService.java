@@ -11,13 +11,16 @@ import com.hp.autonomy.frontend.find.idol.configuration.ControlPointConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.types.idol.responses.answer.ReportResponsedata;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Interact with ControlPoint.  Methods also throw {@link ControlPointServiceException}.
@@ -65,15 +68,23 @@ public class ControlPointService {
         final String documentsStateToken,
         final String documentsSecurityInfo
     ) throws ControlPointApiException {
-        apiClient.postUrlencoded("policyfiles/bystoredstate",
-            Arrays.asList(
-                new BasicNameValuePair("api-version", "1.0"),
-                new BasicNameValuePair("policyId", policy),
-                new BasicNameValuePair("stateMatchId", documentsStateToken),
-                new BasicNameValuePair("securityInfo", documentsSecurityInfo)
-            ),
-            Collections.emptyList(),
-            Void.class);
+        final ControlPointApplyPolicyResponse response =
+            apiClient.postUrlencoded("policyfiles/bystoredstate",
+                Arrays.asList(
+                    new BasicNameValuePair("api-version", "1.0"),
+                    new BasicNameValuePair("policyId", policy),
+                    new BasicNameValuePair("stateMatchId", documentsStateToken),
+                    new BasicNameValuePair("securityInfo", documentsSecurityInfo)
+                ),
+                Collections.emptyList(),
+                ControlPointApplyPolicyResponse.class);
+
+        if (!response.isSuccess()) {
+            throw new ControlPointApiException("Failed to apply policy");
+        }
+        if (response.isPartialApplication()) {
+            throw new ControlPointApiException("Policy was partially applied");
+        }
     }
 
 }
