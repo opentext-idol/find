@@ -40,7 +40,7 @@ public class ControlPointConfig extends SimpleComponent<ControlPointConfig>
         if (BooleanUtils.isTrue(enabled)) {
             if (server == null) {
                 throw new ConfigException(SECTION,
-                    "ControlPoint is enabled but server details missing");
+                    "ControlPoint is enabled but server details are missing");
             }
             server.basicValidate(SECTION);
         }
@@ -48,17 +48,21 @@ public class ControlPointConfig extends SimpleComponent<ControlPointConfig>
 
     @Override
     public ControlPointConfig withoutPasswords() {
-        return toBuilder().server(server.withoutPasswords()).build();
+        return toBuilder().server(server == null ? null : server.withoutPasswords()).build();
     }
 
     @Override
     public ControlPointConfig withEncryptedPasswords(final TextEncryptor encryptor) {
-        return toBuilder().server(server.withEncryptedPasswords(encryptor)).build();
+        return toBuilder()
+            .server(server == null ? null : server.withEncryptedPasswords(encryptor))
+            .build();
     }
 
     @Override
     public ControlPointConfig withDecryptedPasswords(final TextEncryptor encryptor) {
-        return toBuilder().server(server.withDecryptedPasswords(encryptor)).build();
+        return toBuilder()
+            .server(server == null ? null : server.withDecryptedPasswords(encryptor))
+            .build();
     }
 
     @JsonPOJOBuilder(withPrefix = "")

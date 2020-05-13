@@ -161,17 +161,23 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
 
     @Override
     public IdolFindConfig withoutPasswords() {
-        return toBuilder().controlPoint(controlPoint.withoutPasswords()).build();
+        return toBuilder()
+            .controlPoint(controlPoint == null ? null : controlPoint.withoutPasswords())
+            .build();
     }
 
     @Override
     public IdolFindConfig withEncryptedPasswords(final TextEncryptor encryptor) {
-        return toBuilder().controlPoint(controlPoint.withEncryptedPasswords(encryptor)).build();
+        return toBuilder().controlPoint(
+            controlPoint == null ? null : controlPoint.withEncryptedPasswords(encryptor)
+        ).build();
     }
 
     @Override
     public IdolFindConfig withDecryptedPasswords(final TextEncryptor encryptor) {
-        return toBuilder().controlPoint(controlPoint.withDecryptedPasswords(encryptor)).build();
+        return toBuilder().controlPoint(
+            controlPoint == null ? null : controlPoint.withDecryptedPasswords(encryptor)
+        ).build();
     }
 
     @Override
