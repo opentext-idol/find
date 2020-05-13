@@ -11,6 +11,7 @@ import com.hp.autonomy.frontend.find.idol.configuration.ControlPointConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.types.idol.responses.answer.ReportResponsedata;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -27,6 +28,7 @@ import java.util.List;
  */
 @Component
 public class ControlPointService {
+    // null if ControlPoint is disabled
     private final ControlPointApiClient apiClient;
 
     /**
@@ -36,7 +38,11 @@ public class ControlPointService {
      * @param config How to connect to the server
      */
     public ControlPointService(final HttpClient httpClient, final ControlPointConfig config) {
-        apiClient = new ControlPointApiClient(httpClient, config.getServer().toServerDetails());
+        if (config == null || !BooleanUtils.isTrue(config.getEnabled())) {
+            apiClient = null;
+        } else {
+            apiClient = new ControlPointApiClient(httpClient, config.getServer().toServerDetails());
+        }
     }
 
     @Autowired
@@ -47,10 +53,24 @@ public class ControlPointService {
         this(httpClient, configService.getConfig().getControlPoint());
     }
 
+    private void checkEnabled() {
+        if (apiClient == null) {
+            throw new IllegalArgumentException("ControlPoint is disabled");
+        }
+    }
+
+    /**
+     * @return Whether ControlPoint is enabled; if false, methods will throw
+     */
+    public boolean isEnabled() {
+        return apiClient != null;
+    }
+
     /**
      * Retrieve available policies.
      */
     public ControlPointPolicies getPolicies() throws ControlPointApiException {
+        checkEnabled();
         return apiClient.get("policies", Collections.singletonList(
             new BasicNameValuePair("api-version", "1.0")
         ), ControlPointPolicies.class);
@@ -68,6 +88,8 @@ public class ControlPointService {
         final String documentsStateToken,
         final String documentsSecurityInfo
     ) throws ControlPointApiException {
+        checkEnabled();
+
         final ControlPointApplyPolicyResponse response =
             apiClient.postUrlencoded("policyfiles/bystoredstate",
                 Arrays.asList(

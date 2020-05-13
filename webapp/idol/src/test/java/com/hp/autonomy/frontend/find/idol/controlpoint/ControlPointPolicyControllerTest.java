@@ -6,13 +6,10 @@
 package com.hp.autonomy.frontend.find.idol.controlpoint;
 
 import com.autonomy.aci.client.util.AciParameters;
-import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
-import com.hp.autonomy.frontend.find.idol.configuration.ControlPointConfig;
-import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
@@ -31,7 +28,6 @@ import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ControlPointPolicyControllerTest {
-    @Mock private ConfigService<IdolFindConfig> configService;
     @Mock private ControlPointService cpService;
     @Mock private SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> savedSnapshotService;
     @Mock private HavenSearchAciParameterHandler aciParameterHandler;
@@ -39,9 +35,7 @@ public class ControlPointPolicyControllerTest {
 
     @Before
     public void setUp() throws ControlPointApiException {
-        Mockito.when(configService.getConfig()).thenReturn(IdolFindConfig.builder()
-            .controlPoint(ControlPointConfig.builder().enabled(true).build())
-            .build());
+        Mockito.when(cpService.isEnabled()).thenReturn(true);
 
         Mockito.when(savedSnapshotService.getDashboardSearch(Mockito.anyLong()))
             .thenReturn(new SavedSnapshot.Builder()
@@ -65,14 +59,12 @@ public class ControlPointPolicyControllerTest {
         }).when(aciParameterHandler).addSecurityInfo(Mockito.any());
 
         controller = new ControlPointPolicyController(
-            configService, cpService, savedSnapshotService, aciParameterHandler);
+            cpService, savedSnapshotService, aciParameterHandler);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetPolicies_controlPointDisabled() throws ControlPointApiException {
-        Mockito.when(configService.getConfig()).thenReturn(IdolFindConfig.builder()
-            .controlPoint(ControlPointConfig.builder().enabled(false).build())
-            .build());
+        Mockito.when(cpService.isEnabled()).thenReturn(false);
         controller.getPolicies();
     }
 
@@ -96,9 +88,7 @@ public class ControlPointPolicyControllerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testApplyPolicy_controlPointDisabled() throws ControlPointApiException {
-        Mockito.when(configService.getConfig()).thenReturn(IdolFindConfig.builder()
-            .controlPoint(ControlPointConfig.builder().enabled(false).build())
-            .build());
+        Mockito.when(cpService.isEnabled()).thenReturn(false);
         controller.applyPolicy("the policy", 123L, null);
     }
 

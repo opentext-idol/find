@@ -5,18 +5,13 @@
 
 package com.hp.autonomy.frontend.find.idol.controlpoint;
 
-import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.util.AciParameters;
-import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
-import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
-import com.hp.autonomy.frontend.find.idol.savedsearches.snapshot.SavedSnapshotService;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
-import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,28 +31,25 @@ class ControlPointPolicyController {
     private static final String SAVED_SNAPSHOT_ID_PARAM = "savedSnapshotId";
     private static final int DEFAULT_MAX_POLICIES = 30;
 
-    private final ConfigService<IdolFindConfig> configService;
     private final ControlPointService controlPointService;
     private final SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> savedSnapshotService;
     private final HavenSearchAciParameterHandler aciParameterHandler;
 
-    private void checkEnabled() {
-        if (!BooleanUtils.isTrue(configService.getConfig().getControlPoint().getEnabled())) {
-            throw new IllegalArgumentException("ControlPoint is disabled");
-        }
-    }
-
     @Autowired
     ControlPointPolicyController(
-        final ConfigService<IdolFindConfig> configService,
         final ControlPointService controlPointService,
         final SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> savedSnapshotService,
         final HavenSearchAciParameterHandler aciParameterHandler
     ) {
-        this.configService = configService;
         this.controlPointService = controlPointService;
         this.savedSnapshotService = savedSnapshotService;
         this.aciParameterHandler = aciParameterHandler;
+    }
+
+    private void checkEnabled() {
+        if (!controlPointService.isEnabled()) {
+            throw new IllegalArgumentException("ControlPoint is disabled");
+        }
     }
 
     /**
