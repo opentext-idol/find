@@ -113,7 +113,8 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
             isTrue(entitySearchEnabled) && isTrue(entitySearch.getDatabaseChoicesVisible()) ? entitySearch.getDatabaseChoices() : null
         );
 
-        final Boolean controlPointEnabled = config.getControlPoint().getEnabled();
+        final Boolean controlPointEnabled = config.getControlPoint() != null &&
+            config.getControlPoint().getEnabled();
         publicConfig.put(MvcConstants.CONTROL_POINT_ENABLED.value(), controlPointEnabled);
 
         publicConfig.put(MvcConstants.TEMPLATES_CONFIG.value(), templatesConfig.getConfig());
