@@ -65,7 +65,7 @@ public class SavedSnapshotService extends AbstractSavedSearchService<SavedSnapsh
         final IdolQueryRestrictions restrictions = queryRestrictionsBuilderFactory.getObject()
             .databases(indexes)
             .queryText(query.toQueryText())
-            .fieldText(fieldTextParser.toFieldText(query))
+            .fieldText(fieldTextParser.toFieldText(query, !promotions))
             .maxDate(query.getMaxDate())
             .minDate(query.getMinDate())
             .minScore(query.getMinScore())

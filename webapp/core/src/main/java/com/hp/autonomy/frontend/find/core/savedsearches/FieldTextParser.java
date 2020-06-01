@@ -7,5 +7,10 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 
 @FunctionalInterface
 public interface FieldTextParser {
-    String toFieldText(SavedSearch<?, ?> savedSearch);
+    /**
+     * @param savedSearch
+     * @param applyDocumentSelection Whether to include the effect of document selection
+     * @return Field text for performing the saved search
+     */
+    String toFieldText(SavedSearch<?, ?> savedSearch, Boolean applyDocumentSelection);
 }

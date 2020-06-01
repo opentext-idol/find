@@ -3,39 +3,48 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.savedsearches;
+package com.hp.autonomy.frontend.find.idol.savedsearches;
 
-import com.hp.autonomy.aci.content.fieldtext.FieldText;
-import com.hp.autonomy.aci.content.fieldtext.MATCH;
-import com.hp.autonomy.aci.content.fieldtext.NRANGE;
-import com.hp.autonomy.aci.content.fieldtext.RANGE;
+import com.hp.autonomy.aci.content.fieldtext.*;
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.savedsearches.*;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class FieldTextParserImpl implements FieldTextParser {
+    @Autowired
+    private final ConfigService<IdolFindConfig> configService;
+
+    FieldTextParserImpl(final ConfigService<IdolFindConfig> configService) {
+        this.configService = configService;
+    }
+
     // WARNING: This logic is duplicated in the client side SelectedValuesCollection
     @Override
-    public String toFieldText(final SavedSearch<?, ?> savedSearch) {
+    public String toFieldText(
+        final SavedSearch<?, ?> savedSearch, final Boolean applyDocumentSelection
+    ) {
         final Set<FieldAndValue> parametricValues = savedSearch.getParametricValues();
         final Set<NumericRangeRestriction> numericRangeRestrictions = savedSearch.getNumericRangeRestrictions();
         final Set<DateRangeRestriction> dateRangeRestrictions = savedSearch.getDateRangeRestrictions();
+        final Optional<FieldText> documentSelectionFieldText = applyDocumentSelection ?
+            documentSelectionToFieldText(
+                savedSearch.getDocumentSelectionIsWhitelist(),
+                savedSearch.getDocumentSelection()) :
+            Optional.empty();
 
         return andFieldText(Arrays.asList(
                 valuesToFieldText(parametricValues),
                 rangesToFieldText(numericRangeRestrictions, this::numericRangeToFieldText),
-                rangesToFieldText(dateRangeRestrictions, this::dateRangeToFieldText)));
+                rangesToFieldText(dateRangeRestrictions, this::dateRangeToFieldText),
+                documentSelectionFieldText));
     }
 
     private String andFieldText(final Iterable<Optional<FieldText>> fieldTextItems) {
@@ -102,4 +111,22 @@ public class FieldTextParserImpl implements FieldTextParser {
     private FieldText dateRangeToFieldText(final DateRangeRestriction range) {
         return new RANGE(range.getField(), range.getMin(), range.getMax());
     }
+
+    private Optional<FieldText> documentSelectionToFieldText(
+        final boolean isWhitelist, final Set<DocumentSelection> documents
+    ) {
+        if (CollectionUtils.isEmpty(documents)) {
+            if (isWhitelist) {
+                return Optional.of(new NOTWILD(configService.getConfig().getReferenceField(), "*"));
+            } else {
+                return Optional.empty();
+            }
+        } else {
+            final FieldText matchAny = new MATCH(
+                configService.getConfig().getReferenceField(),
+                documents.stream().map(doc -> doc.getReference()).collect(Collectors.toList()));
+            return Optional.of(isWhitelist ? matchAny : matchAny.NOT());
+        }
+    }
+
 }

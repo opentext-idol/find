@@ -79,6 +79,9 @@ public class SavedSnapshotServiceTest extends AbstractSavedSearchServiceTest<Sav
             .build();
         final SavedSnapshot snapshot = service.build(query);
 
+        Mockito.verify(fieldTextParser).toFieldText(query, true);
+        Mockito.verify(fieldTextParser).toFieldText(query, false);
+
         Assert.assertEquals("should copy input properties",
             conceptClusterPhrases,
             snapshot.getConceptClusterPhrases());

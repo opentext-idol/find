@@ -3,9 +3,12 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-package com.hp.autonomy.frontend.find.core.savedsearches;
+package com.hp.autonomy.frontend.find.idol.savedsearches;
 
 import com.google.common.collect.ImmutableSet;
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.savedsearches.*;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,9 +16,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.Matchers.*;
@@ -30,17 +31,23 @@ public class FieldTextParserTest {
     private static final Pattern FIELD_TEXT_EXPRESSION_SUFFIX = Pattern.compile("}:");
     @Mock
     private SavedSearch<?, ?> savedSearch;
+    @Mock
+    private ConfigService<IdolFindConfig> configService;
+    @Mock
+    private IdolFindConfig config;
 
     private FieldTextParser fieldTextParser;
 
     @Before
     public void setUp() {
-        fieldTextParser = new FieldTextParserImpl();
+        when(configService.getConfig()).thenReturn(config);
+        when(config.getReferenceField()).thenReturn("CUSTOMREF");
+        fieldTextParser = new FieldTextParserImpl(configService);
     }
 
     @Test
-    public void toFieldTextWithNoParametricValuesOrRanges() {
-        assertThat(fieldTextParser.toFieldText(savedSearch), is(""));
+    public void toFieldTextWithNoFilters() {
+        assertThat(fieldTextParser.toFieldText(savedSearch, true), is(""));
     }
 
     @Test
@@ -48,7 +55,7 @@ public class FieldTextParserTest {
         final FieldAndValue fieldAndValue = FieldAndValue.builder().field("SPECIES").value("cat").build();
         when(savedSearch.getParametricValues()).thenReturn(Collections.singleton(fieldAndValue));
 
-        assertThat(fieldTextParser.toFieldText(savedSearch), is("MATCH{cat}:SPECIES"));
+        assertThat(fieldTextParser.toFieldText(savedSearch, true), is("MATCH{cat}:SPECIES"));
     }
 
     @Test
@@ -60,7 +67,7 @@ public class FieldTextParserTest {
                 .build();
         when(savedSearch.getNumericRangeRestrictions()).thenReturn(Collections.singleton(range));
 
-        assertThat(fieldTextParser.toFieldText(savedSearch), is("NRANGE{1066,1485}:YEAR"));
+        assertThat(fieldTextParser.toFieldText(savedSearch, true), is("NRANGE{1066,1485}:YEAR"));
     }
 
     @Test
@@ -72,7 +79,7 @@ public class FieldTextParserTest {
                 .build();
         when(savedSearch.getDateRangeRestrictions()).thenReturn(Collections.singleton(range));
 
-        assertThat(fieldTextParser.toFieldText(savedSearch), is("RANGE{2017-02-15T15:39:00Z,2017-02-15T15:40:00Z}:SOME_DATE"));
+        assertThat(fieldTextParser.toFieldText(savedSearch, true), is("RANGE{2017-02-15T15:39:00Z,2017-02-15T15:40:00Z}:SOME_DATE"));
     }
 
     @Test
@@ -95,7 +102,7 @@ public class FieldTextParserTest {
         when(savedSearch.getNumericRangeRestrictions()).thenReturn(Collections.singleton(numericRange));
         when(savedSearch.getDateRangeRestrictions()).thenReturn(Collections.singleton(dateRange));
 
-        final String fieldText = fieldTextParser.toFieldText(savedSearch);
+        final String fieldText = fieldTextParser.toFieldText(savedSearch, true);
 
         final String[] expressions = AND_SEPARATOR.split(fieldText);
         assertThat(expressions, arrayWithSize(4));
@@ -114,4 +121,45 @@ public class FieldTextParserTest {
         assertThat(fieldToValues, hasEntry(is("YEAR"), arrayContaining("1066", "1485")));
         assertThat(fieldToValues, hasEntry(is("DATE"), arrayContaining("2017-02-15T15:39:00Z", "2017-02-15T15:40:00Z")));
     }
+
+    @Test
+    public void toFieldTextWithEmptyDocumentWhitelist() {
+        when(savedSearch.getDocumentSelectionIsWhitelist()).thenReturn(true);
+        assertThat(fieldTextParser.toFieldText(savedSearch, true), is("NOTWILD{*}:CUSTOMREF"));
+    }
+
+    @Test
+    public void toFieldTextWithDocumentWhitelist() {
+        when(savedSearch.getDocumentSelectionIsWhitelist()).thenReturn(true);
+        when(savedSearch.getDocumentSelection()).thenReturn(new HashSet<>(Arrays.asList(
+            new DocumentSelection("ref1"),
+            new DocumentSelection("ref,2")
+        )));
+        assertThat(fieldTextParser.toFieldText(savedSearch, true), isOneOf(
+            "MATCH{ref1,ref%2C2}:CUSTOMREF",
+            "MATCH{ref%2C2,ref1}:CUSTOMREF"
+        ));
+    }
+
+    @Test
+    public void toFieldTextWithDocumentBlacklist() {
+        when(savedSearch.getDocumentSelection()).thenReturn(new HashSet<>(Arrays.asList(
+            new DocumentSelection("ref1"),
+            new DocumentSelection("ref,2")
+        )));
+        assertThat(fieldTextParser.toFieldText(savedSearch, true), isOneOf(
+            "NOT+MATCH{ref1,ref%2C2}:CUSTOMREF",
+            "NOT+MATCH{ref%2C2,ref1}:CUSTOMREF"
+        ));
+    }
+
+    @Test
+    public void toFieldTextWithIgnoredDocumentBlacklist() {
+        when(savedSearch.getDocumentSelection()).thenReturn(new HashSet<>(Arrays.asList(
+            new DocumentSelection("ref1"),
+            new DocumentSelection("ref,2")
+        )));
+        assertThat(fieldTextParser.toFieldText(savedSearch, false), is(""));
+    }
+
 }

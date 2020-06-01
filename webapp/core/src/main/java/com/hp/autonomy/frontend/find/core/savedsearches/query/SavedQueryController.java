@@ -128,7 +128,7 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
         if(savedQuery.getMaxDate() == null || savedQuery.getMaxDate().isAfter(dateDocsLastFetched)) {
             final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
                 .queryText(savedQuery.toQueryText())
-                .fieldText(fieldTextParser.toFieldText(savedQuery))
+                .fieldText(fieldTextParser.toFieldText(savedQuery, true))
                 .databases(convertEmbeddableIndexes(savedQuery.getIndexes()))
                 .minDate(dateDocsLastFetched)
                 .minScore(savedQuery.getMinScore())
