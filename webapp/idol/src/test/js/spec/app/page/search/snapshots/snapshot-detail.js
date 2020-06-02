@@ -6,15 +6,17 @@
 define([
     'underscore',
     'moment',
+    'backbone',
     'find/idol/app/page/search/snapshots/snapshot-detail',
     'i18n!find/nls/bundle',
     'i18n!find/idol/nls/snapshots'
-], function(_, moment, snapshotDetail, i18n, snapshotsI18n) {
+], function(_, moment, Backbone, snapshotDetail, i18n, snapshotsI18n) {
     'use strict';
 
     function runProcessAttributes(input) {
         // Only pick the target attributes to reflect how processAttributes is called in the DataPanelView
-        return snapshotDetail.processAttributes(_.pick(input, snapshotDetail.targetAttributes));
+        return snapshotDetail.processAttributes(
+            new Backbone.Model(input), _.pick(input, snapshotDetail.targetAttributes));
     }
 
     describe('Snapshot detail panel', function() {

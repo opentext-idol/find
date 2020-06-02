@@ -8,13 +8,14 @@ define([
     'js-testing/backbone-mock-factory',
     'find/app/model/dates-filter-model',
     'find/app/model/geography-model',
+    'find/app/model/document-selection-model',
     'find/app/model/applied-filters-collection',
     'parametric-refinement/selected-values-collection',
     'i18n!find/nls/bundle',
     'fieldtext/js/field-text-parser',
     'find/app/util/database-name-resolver',
     'moment'
-], function(Backbone, mockFactory, DatesFilterModel, GeographyModel, FiltersCollection, SelectedParametricValues,
+], function(Backbone, mockFactory, DatesFilterModel, GeographyModel, DocumentSelectionModel, FiltersCollection, SelectedParametricValues,
             i18n, fieldTextParser, databaseNameResolver, moment) {
     'use strict';
 
@@ -33,7 +34,7 @@ define([
     const INITIAL_MIN_DATE = moment();
     const DATE_FORMAT = 'LLL';
 
-    describe('Search filters collection initialised with an indexes filter, a DatesFilterModel with a min date set and a selected parametric value on the AGE field', function() {
+    describe('AppliedFiltersCollection', function() {
         beforeEach(function() {
             this.indexesCollection = new Backbone.Collection([WOOKIEPEDIA, WIKI_ENG]);
             this.selectedIndexesCollection = new Backbone.Collection([WIKI_ENG]);
@@ -52,6 +53,8 @@ define([
 
             this.geographyModel = new GeographyModel({})
 
+            this.documentSelectionModel = new DocumentSelectionModel();
+
             this.selectedParametricValues = new SelectedParametricValues([
                 {field: 'AGE', displayName: 'Age', value: '4', displayValue: '4', type: 'Parametric'}
             ]);
@@ -62,6 +65,7 @@ define([
                 queryState: {
                     datesFilterModel: this.datesFilterModel,
                     geographyModel: this.geographyModel,
+                    documentSelectionModel: this.documentSelectionModel,
                     selectedIndexes: this.selectedIndexesCollection,
                     selectedParametricValues: this.selectedParametricValues
                 }
@@ -257,6 +261,78 @@ define([
             it('selects all of the indexes', function() {
                 expect(this.selectedIndexesCollection.length).toBe(2);
             });
+        });
+
+        describe('after a document is excluded', function () {
+
+            beforeEach(function () {
+                this.documentSelectionModel.exclude('a');
+            });
+
+            it('contains four models', function () {
+                expect(this.collection.length).toBe(4);
+            });
+
+            it('contains a document selection model', function () {
+                const model = this.collection.get(FiltersCollection.FilterType.DOCUMENT_SELECTION);
+                expect(model).toBeTruthy();
+                expect(model.get('text')).toContain('Documents excluded: 1');
+            });
+
+            describe('then the document is selected again', function () {
+
+                beforeEach(function () {
+                    this.documentSelectionModel.select('a');
+                });
+
+                it('contains three models', function () {
+                    expect(this.collection.length).toBe(3);
+                });
+
+                it('does not contain a document selection model', function () {
+                    expect(this.collection.get(FiltersCollection.FilterType.DOCUMENT_SELECTION))
+                        .toBeUndefined();
+                });
+
+            });
+
+            describe('then another document is excluded', function () {
+
+                beforeEach(function () {
+                    this.documentSelectionModel.exclude('b');
+                });
+
+                it('updates the filter description', function () {
+                    const model = this.collection.get(
+                        FiltersCollection.FilterType.DOCUMENT_SELECTION);
+                    expect(model).toBeTruthy();
+                    expect(model.get('text')).toContain('Documents excluded: 2');
+                });
+
+            });
+
+            describe('then the filter is removed', function () {
+
+                beforeEach(function () {
+                    this.collection.remove(this.collection.where(
+                        { type: FiltersCollection.FilterType.DOCUMENT_SELECTION }));
+                });
+
+                it('contains three models', function () {
+                    expect(this.collection.length).toBe(3);
+                });
+
+                it('does not contain a document selection model', function () {
+                    expect(this.collection.get(FiltersCollection.FilterType.DOCUMENT_SELECTION))
+                        .toBeUndefined();
+                });
+
+                it('selects the excluded document', function () {
+                    expect(this.documentSelectionModel.isSelected('a')).toBe(true);
+                });
+
+            });
+
         });
 
         describe('after adding a selected parametric value with a displayName in the configuration', function() {

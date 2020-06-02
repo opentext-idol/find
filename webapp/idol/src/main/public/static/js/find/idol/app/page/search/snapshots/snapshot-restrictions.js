@@ -8,8 +8,9 @@ define([
     'i18n!find/nls/indexes',
     'i18n!find/idol/nls/snapshots',
     'underscore',
-    'moment'
-], function(rounder, i18n, indexesI18n, snapshotsI18n, _, moment) {
+    'moment',
+    'find/app/model/document-selection-model'
+], function(rounder, i18n, indexesI18n, snapshotsI18n, _, moment, DocumentSelectionModel) {
 
     const DATE_FORMAT = 'YYYY/MM/DD HH:mm';
 
@@ -28,6 +29,15 @@ define([
         } : null;
     }
 
+    function documentSelection (savedSearchModel) {
+        const documentSelectionModel =
+            new DocumentSelectionModel(savedSearchModel.toDocumentSelectionModelAttributes());
+        return documentSelectionModel.isDefault() ? null : {
+            title: snapshotsI18n['restrictions.documentSelection'],
+            content: documentSelectionModel.describe()
+        };
+    }
+
     /**
      * Target attributes and an attributes processor for the "Query Restrictions" {@link DataPanelView}.
      */
@@ -39,13 +49,15 @@ define([
             'parametricValues',
             'minDate',
             'maxDate',
+            'documentSelectionIsWhitelist',
+            'documentSelection',
             'parametricRanges'
         ],
 
         /**
          * @type {DataPanelAttributesProcessor}
          */
-        processAttributes: function(attributes) {
+        processAttributes: function(savedSearchModel, attributes) {
             const indexesContent = _.pluck(attributes.indexes, 'name').join(', ');
 
             const parametricRestrictions = _.map(_.groupBy(attributes.parametricValues, 'field'), function (items) {
@@ -71,7 +83,8 @@ define([
                     content: indexesContent
                 },
                 dateRestriction(snapshotsI18n['restrictions.minDate'], attributes.minDate),
-                dateRestriction(snapshotsI18n['restrictions.maxDate'], attributes.maxDate)
+                dateRestriction(snapshotsI18n['restrictions.maxDate'], attributes.maxDate),
+                documentSelection(savedSearchModel),
             ].concat(
                 parametricRestrictions,
                 numericRestrictions);

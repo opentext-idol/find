@@ -12,6 +12,8 @@ define([
 ], function(_, $, Backbone, i18n, selectorTemplate) {
     'use strict';
 
+    const LIST_RESULTS_VIEW_ID = 'list';
+
     return Backbone.View.extend({
         selectorTemplate: _.template(selectorTemplate, {variable: 'data'}),
 
@@ -24,6 +26,14 @@ define([
         initialize: function(options) {
             this.views = options.views;
             this.model = options.model;
+            this.queryModel = options.queryModel;
+
+            if (this.queryModel) {
+                this.listenTo(this.queryModel,
+                    'change:editingDocumentSelection', this.updateTabForDocumentSelection);
+                this.listenTo(this.model,
+                    'change:selectedTab', this.updateEditingDocumentSelection);
+            }
         },
 
         render: function() {
@@ -55,6 +65,21 @@ define([
                     }
                 }
             }
+        },
+
+        updateEditingDocumentSelection: function () {
+            // disable document selection mode on context switch to avoid confusion on what mode
+            // the user is in
+            if (this.model.get('selectedTab') !== LIST_RESULTS_VIEW_ID) {
+                this.queryModel.set('editingDocumentSelection', false);
+            }
+        },
+
+        updateTabForDocumentSelection: function () {
+            if (this.queryModel.get('editingDocumentSelection')) {
+                this.switchTab(LIST_RESULTS_VIEW_ID);
+            }
         }
+
     });
 });

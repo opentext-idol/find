@@ -16,7 +16,8 @@ define([
      * Given a hash of model attributes, return a list of title-content pairs to be rendered. There need not be a one to
      * one mapping between the target attributes and the output title-content pairs. Null values will be ignored.
      * @callback DataPanelAttributesProcessor
-     * @property {Object} attributes
+     * @parameter {Backbone.Model} model
+     * @parameter {Object} attributes
      * @returns {?{title: String, content: String}[]}
      */
     /**
@@ -40,7 +41,7 @@ define([
         },
 
         render: function() {
-            var items = this.processAttributes(this.model.pick(this.targetAttributes));
+            var items = this.processAttributes(this.model, this.model.pick(this.targetAttributes));
             var html = _.map(_.compact(items), itemTemplateFunction).join('');
             this.$el.html(html);
         }

@@ -38,7 +38,12 @@ define([
                     currentQueryModel.trigger('refresh');
                 }
 
-                currentQueryModel.set({newDocuments: 0});
+                currentQueryModel.set({
+                    newDocuments: 0,
+                    // disable document selection mode on context switch to avoid confusion on what
+                    // mode the user is in
+                    editingDocumentSelection: false
+                });
             },
             'click .start-new-search': function() {
                 vent.navigate('search/query', {trigger: false});

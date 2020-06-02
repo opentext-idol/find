@@ -430,6 +430,7 @@ define([
         resetQueryState: function() {
             this.queryState.datesFilterModel.set(this.savedSearchModel.toDatesFilterModelAttributes());
             this.queryState.geographyModel.set(this.savedSearchModel.toGeographyModelAttributes());
+            this.queryState.documentSelectionModel.setFromSavedSearch(this.savedSearchModel);
             this.queryState.conceptGroups.set(this.savedSearchModel.toConceptGroups());
             this.queryState.selectedIndexes.set(this.savedSearchModel.toSelectedIndexes());
             this.queryState.selectedParametricValues.set(this.savedSearchModel.toSelectedParametricValues());

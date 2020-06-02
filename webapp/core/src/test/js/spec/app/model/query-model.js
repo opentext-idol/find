@@ -5,13 +5,28 @@
 
 define([
     'backbone',
+    'find/app/configuration',
     'find/app/model/query-model',
     'parametric-refinement/selected-values-collection',
-    'find/app/model/dates-filter-model'
-], function(Backbone, QueryModel, SelectedValuesCollection, DatesFilterModel) {
+    'find/app/model/dates-filter-model',
+    'find/app/model/geography-model',
+    'find/app/model/document-selection-model'
+], function (
+    Backbone, configuration, QueryModel, SelectedValuesCollection,
+    DatesFilterModel, GeographyModel, DocumentSelectionModel
+) {
     'use strict';
 
     describe('QueryModel', function() {
+
+        beforeEach(function () {
+            configuration.and.callFake(function () {
+                return {
+                    referenceField: 'CUSTOMREF'
+                };
+            });
+        });
+
         describe('with auto-correct enabled', function() {
             beforeEach(function() {
                 this.queryState = {
@@ -21,7 +36,9 @@ define([
                     selectedParametricValues: new SelectedValuesCollection(),
                     conceptGroups: new Backbone.Collection([
                         {concepts: ['cat']}
-                    ])
+                    ]),
+                    geographyModel: new GeographyModel(),
+                    documentSelectionModel: new DocumentSelectionModel()
                 };
 
                 this.queryModel = new QueryModel({
@@ -49,7 +66,9 @@ define([
                     selectedParametricValues: new SelectedValuesCollection(),
                     conceptGroups: new Backbone.Collection([
                         {concepts: ['cat']}
-                    ])
+                    ]),
+                    geographyModel: new GeographyModel(),
+                    documentSelectionModel: new DocumentSelectionModel()
                 };
 
                 this.queryModel = new QueryModel({

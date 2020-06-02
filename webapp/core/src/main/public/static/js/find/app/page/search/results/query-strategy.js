@@ -9,6 +9,7 @@ define(['underscore'], function(_) {
     return {
         answers: _.constant(true),
         promotions: _.constant(true),
+        canEditDocumentSelection: true,
 
         queryModelAttributes: [
             'indexes',
@@ -16,13 +17,20 @@ define(['underscore'], function(_) {
             'minDate',
             'maxDate',
             'minScore',
-            'queryText'
+            'queryText',
+            'editingDocumentSelection',
+            'fieldTextWithoutDocumentSelection'
         ],
 
         requestParams: function(queryModel) {
+            // show deselected documents while editing document selection
+            const fieldTextAttr = queryModel.get('editingDocumentSelection') ?
+                'fieldTextWithoutDocumentSelection' :
+                'fieldText';
+
             return {
                 indexes: queryModel.get('indexes'),
-                field_text: queryModel.get('fieldText'),
+                field_text: queryModel.get(fieldTextAttr),
                 min_date: queryModel.getIsoDate('minDate'),
                 max_date: queryModel.getIsoDate('maxDate'),
                 min_score: queryModel.get('minScore'),
@@ -33,6 +41,8 @@ define(['underscore'], function(_) {
 
         promotionsRequestParams: function(queryModel){
             const params = this.requestParams(queryModel);
+            // promotions ignore document selection editing - always use full fieldtext
+            params.field_text = queryModel.get('fieldText');
             delete params.indexes;
             return params;
         },

@@ -371,7 +371,8 @@ define([
             if(this.resultsViews.length > 1) {
                 this.resultsViewSelection = new ResultsViewSelection({
                     views: this.resultsViews,
-                    model: this.resultsViewSelectionModel
+                    model: this.resultsViewSelectionModel,
+                    queryModel: this.queryModel
                 });
             }
 
@@ -483,7 +484,10 @@ define([
 
         fetchData: function() {
             this.fetchEntities();
-            this.fetchParametricCollection();
+            // only depends on indexes
+            if (_.contains(this.queryModel.changedAttributes(), 'indexes')) {
+                this.fetchParametricCollection();
+            }
         },
 
         fetchEntities: function() {
@@ -534,15 +538,15 @@ define([
         },
 
         fetchParametricCollection: function() {
-            this.parametricCollection.reset();
-
             const fieldNames = _.pluck(this.parametricFieldsCollection.where({type: 'Parametric'}), 'id');
 
             if(fieldNames.length > 0 && this.queryModel.get('indexes').length > 0) {
                 this.parametricCollection.fetchFromQueryModel(this.queryModel, {
                     fieldNames: fieldNames,
                     maxValues: 5
-                });
+                }, { reset: true });
+            } else {
+                this.parametricCollection.reset();
             }
         },
 

@@ -5,9 +5,14 @@
 
 define([
     'find/app/util/search-data-util',
-    'parametric-refinement/to-field-text-node'
-], function(searchDataUtil, toFieldTextNode) {
+    'parametric-refinement/to-field-text-node',
+    'fieldtext/js/field-text-parser'
+], function(searchDataUtil, toFieldTextNode, fieldTextParser) {
     'use strict';
+
+    const createFieldText = function (id) {
+        return new fieldTextParser.ExpressionNode('MATCH', ['field'], [id]);
+    };
 
     describe('Search Data Utils', function() {
         describe('makeQueryText', function() {
@@ -61,5 +66,67 @@ define([
                 expect(searchDataUtil.buildFieldText(parametricValues)).toEqual(toFieldTextNode(parametricValues).toString());
             })
         });
+
+        describe('buildMergedFieldText', function () {
+
+            it('combines fieldtext from provided sources', function () {
+                const fieldText = searchDataUtil.buildMergedFieldText(
+                    { toFieldTextNode: () => createFieldText('a') },
+                    { toFieldText: () => createFieldText('b') },
+                    { toFieldText: () => createFieldText('c') }
+                );
+                expect(fieldText.toString())
+                    .toBe('MATCH{a}:field AND MATCH{b}:field AND MATCH{c}:field');
+            });
+
+            it('omits null fieldtext', function () {
+                const fieldText = searchDataUtil.buildMergedFieldText(
+                    { toFieldTextNode: () => createFieldText('a') },
+                    { toFieldText: () => null },
+                    { toFieldText: () => createFieldText('c') }
+                );
+                expect(fieldText.toString()).toBe('MATCH{a}:field AND MATCH{c}:field');
+            });
+
+            it('returns null if all sources return null', function () {
+                const fieldText = searchDataUtil.buildMergedFieldText(
+                    { toFieldTextNode: () => null },
+                    { toFieldText: () => null },
+                    { toFieldText: () => null }
+                );
+                expect(fieldText).toBe(null);
+            });
+
+        });
+
+        describe('buildMergedFieldTextWithoutDocumentSelection', function () {
+
+            it('combines fieldtext from provided sources', function () {
+                const fieldText = searchDataUtil.buildMergedFieldTextWithoutDocumentSelection(
+                    { toFieldTextNode: () => createFieldText('a') },
+                    { toFieldText: () => createFieldText('b') }
+                );
+                expect(fieldText.toString())
+                    .toBe('MATCH{a}:field AND MATCH{b}:field');
+            });
+
+            it('omits null fieldtext', function () {
+                const fieldText = searchDataUtil.buildMergedFieldTextWithoutDocumentSelection(
+                    { toFieldTextNode: () => createFieldText('a') },
+                    { toFieldText: () => null }
+                );
+                expect(fieldText.toString()).toBe('MATCH{a}:field');
+            });
+
+            it('returns null if all sources return null', function () {
+                const fieldText = searchDataUtil.buildMergedFieldTextWithoutDocumentSelection(
+                    { toFieldTextNode: () => null },
+                    { toFieldText: () => null }
+                );
+                expect(fieldText).toBe(null);
+            });
+
+        });
+
     });
 });

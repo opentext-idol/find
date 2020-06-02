@@ -6,16 +6,25 @@
 define([
     'underscore',
     'moment',
+    'backbone',
     'find/idol/app/page/search/snapshots/snapshot-restrictions',
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'i18n!find/idol/nls/snapshots'
-], function(_, moment, snapshotRestrictions, i18n, indexesI18n, snapshotsI18n) {
+], function(_, moment, Backbone, snapshotRestrictions, i18n, indexesI18n, snapshotsI18n) {
     'use strict';
 
     function runProcessAttributes(input) {
+        const model = new Backbone.Model(input);
+        model.toDocumentSelectionModelAttributes = function () {
+            return {
+                isWhitelist: input.documentSelectionIsWhitelist,
+                references: _.pluck(input.documentSelection, 'reference')
+            };
+        };
         // Only pick the target attributes to reflect how processAttributes is called in the DataPanelView
-        return _.compact(snapshotRestrictions.processAttributes(_.pick(input, snapshotRestrictions.targetAttributes)));
+        return _.compact(snapshotRestrictions.processAttributes(
+            model, _.pick(input, snapshotRestrictions.targetAttributes)));
     }
 
     describe('Snapshot restrictions panel', function() {
@@ -24,7 +33,9 @@ define([
                 indexes: [{name: 'Wikipedia', domain: null}, {name: 'Admissions', domain: null}],
                 queryText: 'cat',
                 relatedConcepts: [],
-                parametricValues: []
+                parametricValues: [],
+                documentSelectionIsWhitelist: false,
+                documentSelection: []
             });
 
             expect(output).toHaveLength(1);
@@ -38,7 +49,9 @@ define([
                 indexes: [{name: 'Wikipedia', domain: null}, {name: 'Admissions', domain: null}],
                 queryText: 'cat',
                 relatedConcepts: ['Copenhagen', 'Quantum'],
-                parametricValues: []
+                parametricValues: [],
+                documentSelectionIsWhitelist: false,
+                documentSelection: []
             });
 
             expect(output).toHaveLength(2);
@@ -53,7 +66,9 @@ define([
                 queryText: 'cat',
                 relatedConcepts: [],
                 parametricValues: [],
-                minDate: moment(1455026659454)
+                minDate: moment(1455026659454),
+                documentSelectionIsWhitelist: false,
+                documentSelection: []
             });
 
             expect(output).toHaveLength(2);
@@ -67,7 +82,9 @@ define([
                 queryText: 'cat',
                 relatedConcepts: [],
                 parametricValues: [],
-                maxDate: moment(1455026659454)
+                maxDate: moment(1455026659454),
+                documentSelectionIsWhitelist: false,
+                documentSelection: []
             });
 
             expect(output).toHaveLength(2);
@@ -96,7 +113,9 @@ define([
                         displayValue: 'Black',
                         type: 'Parametric'
                     }
-                ]
+                ],
+                documentSelectionIsWhitelist: false,
+                documentSelection: []
             });
 
             expect(output).toHaveLength(3);
@@ -106,5 +125,21 @@ define([
             expect(output[2].content).toContain('Ginger');
             expect(output[2].content).toContain('Black');
         });
+
+        it('returns document selection', function() {
+            const output = runProcessAttributes({
+                indexes: [{name: 'Wikipedia', domain: null}, {name: 'Admissions', domain: null}],
+                queryText: 'cat',
+                relatedConcepts: [],
+                parametricValues: [],
+                documentSelectionIsWhitelist: false,
+                documentSelection: [{ reference: 'first' }, { reference: 'second' }]
+            });
+
+            expect(output).toHaveLength(2);
+            expect(output[1].title).toBe('Document Selection');
+            expect(output[1].content).toBe('Documents excluded: 2');
+        });
+
     });
 });

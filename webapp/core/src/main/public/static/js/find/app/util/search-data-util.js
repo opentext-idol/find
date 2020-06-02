@@ -6,8 +6,12 @@
 define([
     'underscore',
     'parametric-refinement/to-field-text-node',
-    'find/app/model/geography-model'
-], function(_, toFieldTextNode, GeographyModel) {
+    'parametric-refinement/selected-values-collection',
+    'find/app/model/geography-model',
+    'find/app/model/document-selection-model'
+], function(
+    _, toFieldTextNode, SelectedParametricValuesCollection, GeographyModel, DocumentSelectionModel
+) {
     'use strict';
 
     function wrapInBrackets(concept) {
@@ -55,10 +59,38 @@ define([
         return fieldTextNode && fieldTextNode.toString();
     }
 
-    function buildMergedFieldText(parametricValues, geographyModel) {
-        const fieldTextNode = toFieldTextNode(parametricValues);
-        const mergedFieldText = geographyModel.appendFieldText(fieldTextNode);
-        return mergedFieldText && mergedFieldText.toString();
+    /**
+     * Return a fieldtext node which is the AND-combination of multiple fieldtext nodes, each
+     * possibly null.
+     */
+    function mergeFieldText(nodes) {
+        return _.chain(nodes)
+            .compact()
+            .reduce(function (fieldText, extraFieldText) {
+                return fieldText ?
+                    (extraFieldText ? fieldText.AND(extraFieldText) : fieldText) :
+                    extraFieldText
+            }, null)
+            .value() || null;
+    }
+
+    function buildMergedFieldText(
+        selectedParametricValues, geographyModel, documentSelectionModel
+    ) {
+        return mergeFieldText([
+            selectedParametricValues.toFieldTextNode(),
+            geographyModel.toFieldText(),
+            documentSelectionModel.toFieldText()
+        ]);
+    }
+
+    function buildMergedFieldTextWithoutDocumentSelection(
+        selectedParametricValues, geographyModel
+    ) {
+        return mergeFieldText([
+            selectedParametricValues.toFieldTextNode(),
+            geographyModel.toFieldText()
+        ]);
     }
 
     /**
@@ -67,12 +99,18 @@ define([
      * @return {{minDate: *, maxDate: *, queryText: string, databases, fieldText, anyLanguage: boolean}}
      */
     function buildQuery(model) {
+        const fieldTextNode = buildMergedFieldText(
+            new SelectedParametricValuesCollection(model.toSelectedParametricValues()),
+            new GeographyModel(model.toGeographyModelAttributes()),
+            new DocumentSelectionModel(model.toDocumentSelectionModelAttributes())
+        );
+
         return {
             minDate: model.get('minDate'),
             maxDate: model.get('maxDate'),
             queryText: makeQueryText(model.get('relatedConcepts')),
             databases: buildIndexes(model.get('indexes')),
-            fieldText: buildMergedFieldText(model.get('parametricValues'), new GeographyModel(model.toGeographyModelAttributes())),
+            fieldText: fieldTextNode && fieldTextNode.toString(),
             anyLanguage: true
         };
     }
@@ -81,6 +119,8 @@ define([
         makeQueryText: makeQueryText,
         buildIndexes: buildIndexes,
         buildQuery: buildQuery,
-        buildFieldText: buildFieldText
+        buildFieldText: buildFieldText,
+        buildMergedFieldText: buildMergedFieldText,
+        buildMergedFieldTextWithoutDocumentSelection: buildMergedFieldTextWithoutDocumentSelection
     };
 });

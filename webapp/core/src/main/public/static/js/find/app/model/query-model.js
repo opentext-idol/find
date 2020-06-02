@@ -42,7 +42,9 @@ define([
             minScore: 0,
             sort: Sort.relevance,
             stateMatchIds: [],
-            promotionsStateMatchIds: []
+            promotionsStateMatchIds: [],
+            editingDocumentSelection: false,
+            fieldTextWithoutDocumentSelection: null
         },
 
         /**
@@ -72,7 +74,11 @@ define([
             });
 
             this.listenTo(this.queryState.geographyModel, 'change', function() {
-                this.set('fieldText', this.getMergedFieldText());
+                this.updateFieldText();
+            });
+
+            this.listenTo(this.queryState.documentSelectionModel, 'change', function() {
+                this.updateFieldText();
             });
 
             this.listenTo(this.queryState.minScoreModel, 'change', function() {
@@ -86,21 +92,31 @@ define([
             this.listenTo(this.queryState.selectedParametricValues,
                 'add remove reset change',
                 _.debounce(_.bind(function() {
-                    this.set('fieldText', this.getMergedFieldText());
+                    this.updateFieldText();
                 }, this), DEBOUNCE_WAIT_MILLISECONDS));
 
             this.set(_.extend({
                 queryText: makeQueryText(this.queryState),
                 minScore: this.queryState.minScoreModel.get('minScore'),
-                indexes: collectionBuildIndexes(this.queryState.selectedIndexes),
-                fieldText: this.getMergedFieldText()
+                indexes: collectionBuildIndexes(this.queryState.selectedIndexes)
             }, this.queryState.datesFilterModel.toQueryModelAttributes()));
+            this.updateFieldText();
         },
 
-        getMergedFieldText: function() {
-            const fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
-            const geographyModel = this.queryState.geographyModel;
-            return (geographyModel ? geographyModel.appendFieldText(fieldTextNode) : fieldTextNode) || null;
+        /**
+         * Update fieldText and fieldTextWithotDocumentSelection attributes from current queryState.
+         */
+        updateFieldText: function () {
+            this.set({
+                fieldText: searchDataUtil.buildMergedFieldText(
+                    this.queryState.selectedParametricValues,
+                    this.queryState.geographyModel,
+                    this.queryState.documentSelectionModel),
+                fieldTextWithoutDocumentSelection:
+                    searchDataUtil.buildMergedFieldTextWithoutDocumentSelection(
+                        this.queryState.selectedParametricValues,
+                        this.queryState.geographyModel)
+            });
         },
 
         getIsoDate: function(type) {

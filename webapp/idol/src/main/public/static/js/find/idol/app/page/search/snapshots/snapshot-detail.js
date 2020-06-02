@@ -25,7 +25,7 @@ define([
         /**
          * @type {DataPanelAttributesProcessor}
          */
-        processAttributes: function(attributes) {
+        processAttributes: function(savedSearchModel, attributes) {
             var resultCount = attributes.resultCount;
 
             var searchOwner = attributes.user && attributes.user.username !== configuration().username ? {

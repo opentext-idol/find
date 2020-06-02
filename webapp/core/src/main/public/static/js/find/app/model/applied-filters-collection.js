@@ -27,7 +27,8 @@ define([
         MIN_DATE: 'MIN_DATE',
         DATE_RANGE: 'DATE_RANGE',
         PARAMETRIC: 'PARAMETRIC',
-        GEOGRAPHY: 'GEOGRAPHY'
+        GEOGRAPHY: 'GEOGRAPHY',
+        DOCUMENT_SELECTION: 'DOCUMENT_SELECTION'
     };
 
     const customDatesFilters = [
@@ -107,6 +108,7 @@ define([
 
             this.datesFilterModel = options.queryState.datesFilterModel;
             this.geographyModel = options.queryState.geographyModel;
+            this.documentSelectionModel = options.queryState.documentSelectionModel;
             this.selectedIndexesCollection = options.queryState.selectedIndexes;
             this.selectedParametricValues = options.queryState.selectedParametricValues;
 
@@ -115,6 +117,7 @@ define([
             this.listenTo(this.selectedIndexesCollection, 'reset update', this.updateDatabases);
             this.listenTo(this.datesFilterModel, 'change', this.updateDateFilters);
             this.listenTo(this.geographyModel, 'change', this.updateGeographyFilters);
+            this.listenTo(this.documentSelectionModel, 'change', this.updateDocumentSelection);
 
             this.on('remove', function(model) {
                 const type = model.get('type');
@@ -134,6 +137,8 @@ define([
                     this.datesFilterModel.set('customMinDate', null);
                 } else if(type === FilterType.GEOGRAPHY) {
                     this.geographyModel.set(model.get('locationId'), null);
+                } else if(type === FilterType.DOCUMENT_SELECTION) {
+                    this.documentSelectionModel.reset();
                 }
             });
 
@@ -181,6 +186,15 @@ define([
                     });
                 }
             }, this);
+
+            if (!this.documentSelectionModel.isDefault()) {
+                models.push({
+                    id: FilterType.DOCUMENT_SELECTION,
+                    type: FilterType.DOCUMENT_SELECTION,
+                    text: this.documentSelectionModel.describe(),
+                    heading: i18n['search.documentSelection.title']
+                });
+            }
 
             Array.prototype.push.apply(models, extractParametricFilters(this.selectedParametricValues));
         },
@@ -304,7 +318,7 @@ define([
             }
         },
 
-        updateGeographyFilters: function() {
+        updatethaoeunsthaoetnshutnsaoehueographyFilters: function() {
             _.each(GeographyModel.LocationFields, function(locationField){
                 const id = locationField.id;
 
@@ -331,6 +345,24 @@ define([
                     this.remove(existing);
                 }
             }, this);
+        },
+
+        updateDocumentSelection: function () {
+            const currentModel = this.findWhere({ type: FilterType.DOCUMENT_SELECTION });
+            const isDefault = this.documentSelectionModel.isDefault();
+
+            if (!currentModel && !isDefault) {
+                this.add({
+                    id: FilterType.DOCUMENT_SELECTION,
+                    type: FilterType.DOCUMENT_SELECTION,
+                    text: this.documentSelectionModel.describe(),
+                    heading: i18n['search.documentSelection.title']
+                });
+            } else if (currentModel && isDefault) {
+                this.remove(currentModel);
+            } else if (currentModel && !isDefault) {
+                currentModel.set('text', this.documentSelectionModel.describe());
+            }
         },
 
         resetParametricSelection: function() {

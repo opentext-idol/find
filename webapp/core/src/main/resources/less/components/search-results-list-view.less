@@ -139,3 +139,41 @@
 .selected-document {
   background-color: @secondary-hover;
 }
+
+// .results excludes promotions
+.main-results-content.editing-document-selection .main-results-list.results .main-results-container {
+  &.selected-document {
+    background: none;
+
+    .document-selected-indicator {
+      .hp-check;
+      color: @positive-color;
+    }
+  }
+
+  &:not(.selected-document) {
+    * {
+      color: @disabled-text-color;
+    }
+
+    .document-selected-indicator {
+      .hp-close;
+      color: @negative-color;
+    }
+  }
+
+  .document-selected-indicator {
+    .hp-icon;
+    font-size: 33px;
+  }
+
+}
+
+.end-document-selection-container {
+  .m-b-md;
+  .text-center;
+}
+
+.results-list-container:not(.editing-document-selection) .end-document-selection-container {
+  .hidden;
+}

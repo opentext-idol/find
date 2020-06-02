@@ -16,6 +16,7 @@ define([
         'restrictions.maxDate': 'Until Date',
         'restrictions.minDate': 'From Date',
         'restrictions.relatedConcepts': 'Concepts',
+        'restrictions.documentSelection': 'Document Selection',
         'restrictionsTitle': 'Query Restrictions',
         'openEdit.create': 'Save as snapshot',
         'openEdit.edit': 'Save as snapshot'

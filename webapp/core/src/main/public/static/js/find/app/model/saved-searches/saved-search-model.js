@@ -12,9 +12,10 @@ define([
     'parametric-refinement/selected-values-collection',
     'find/app/util/database-name-resolver',
     'find/app/model/dates-filter-model',
-    'find/app/model/geography-model'
+    'find/app/model/geography-model',
+    'find/app/model/document-selection-model'
 ], function(_, Backbone, moment, arraysEqual, QueryModel, SelectedParametricValuesCollection,
-            databaseNameResolver, DatesFilterModel, GeographyModel) {
+            databaseNameResolver, DatesFilterModel, GeographyModel, DocumentSelectionModel) {
     'use strict';
 
     /**
@@ -32,6 +33,8 @@ define([
      * @property {String} title
      * @property {String[][]} relatedConcepts
      * @property {{name: String, domain: String}[]} indexes
+     * @property {boolean} documentSelectionIsWhitelist
+     * @property {{reference: String}[]} documentSelection
      * @property {{field: String, value: String}[]} parametricValues
      * @property {{field: String, min: Number, max: Number, type: String}[]} parametricRanges
      * @property {Integer} minScore
@@ -40,6 +43,7 @@ define([
      * @property {Moment} dateModified
      * @property {Moment} dateCreated
      * @property {DateRange} dateRange
+     * @property
      */
     const DATE_FIELDS = [
         'minDate',
@@ -107,6 +111,18 @@ define([
         return parsed;
     }
 
+    /**
+     * Determine SavedSearchModel attributes corresponding to a DocumentSelectionModel.
+     */
+    function parseDocumentSelectionModel(model) {
+        return {
+            documentSelectionIsWhitelist: model.get('isWhitelist'),
+            documentSelection: _.map(model.getReferences(), function (ref) {
+                return { reference: ref };
+            })
+        };
+    }
+
     function compareWithoutDisplayNames(x, y) {
         return _.isEqual(_.omit(x, ['displayName', 'displayValue']), _.omit(y, 'displayName', 'displayValue'));
     }
@@ -157,6 +173,8 @@ define([
             title: null,
             indexes: [],
             geographyFilters: [],
+            documentSelectionIsWhitelist: false,
+            documentSelection: [],
             parametricValues: [],
             parametricRanges: [],
             relatedConcepts: [],
@@ -228,6 +246,7 @@ define([
 
             const parametricRestrictions = parseParametricRestrictions(queryState.selectedParametricValues);
             const geographyFilters = parseGeographyModel(queryState.geographyModel);
+            const documentSelection = parseDocumentSelectionModel(queryState.documentSelectionModel);
 
             return this.equalsQueryStateDateFilters(queryState)
                 && arraysEqual(this.get('relatedConcepts'), queryState.conceptGroups.pluck('concepts'), arrayEqualityPredicate)
@@ -235,7 +254,9 @@ define([
                 && this.get('minScore') === queryState.minScoreModel.get('minScore')
                 && arraysEqual(this.get('parametricValues'), parametricRestrictions.parametricValues, compareWithoutDisplayNames)
                 && arraysEqual(this.get('parametricRanges'), parametricRestrictions.parametricRanges, compareWithoutDisplayNames)
-                && arraysEqual(this.get('geographyFilters'), geographyFilters, _.isEqual);
+                && arraysEqual(this.get('geographyFilters'), geographyFilters, _.isEqual)
+                && this.get('documentSelectionIsWhitelist') === documentSelection.documentSelectionIsWhitelist
+                && arraysEqual(this.get('documentSelection'), documentSelection.documentSelection, _.isEqual);
         },
 
         equalsQueryStateDateFilters: function(queryState) {
@@ -275,6 +296,16 @@ define([
             return map
         },
 
+        /**
+         * Get DocumentSelectionModel attributes for this saved search.
+         */
+        toDocumentSelectionModelAttributes: function() {
+            return {
+                isWhitelist: this.get('documentSelectionIsWhitelist'),
+                references: _.pluck(this.get('documentSelection'), 'reference')
+            };
+        },
+
         toConceptGroups: function() {
             return this.get('relatedConcepts').map(function(concepts) {
                 return {concepts: concepts};
@@ -305,11 +336,14 @@ define([
         },
 
         toQueryModel: function(IndexesCollection, autoCorrect) {
+            // also constructed in find-search:selectContentView
             const queryState = {
                 conceptGroups: new Backbone.Collection(this.toConceptGroups()),
                 minScoreModel: new Backbone.Model({minScore: 0}),
                 datesFilterModel: new DatesFilterModel(this.toDatesFilterModelAttributes()),
                 geographyModel: new GeographyModel(this.toGeographyModelAttributes()),
+                documentSelectionModel:
+                    new DocumentSelectionModel(this.toDocumentSelectionModelAttributes()),
                 selectedIndexes: new IndexesCollection(this.get('indexes')),
                 selectedParametricValues: new SelectedParametricValuesCollection(this.toSelectedParametricValues())
             };
@@ -344,6 +378,7 @@ define([
                     minScore: queryState.minScoreModel.get('minScore')
                 },
                 queryState.datesFilterModel.toQueryModelAttributes(),
+                parseDocumentSelectionModel(queryState.documentSelectionModel),
                 {
                     dateNewDocsLastFetched: moment(),
                     dateDocsLastFetched: moment()

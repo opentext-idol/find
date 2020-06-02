@@ -31,6 +31,9 @@ define([
                     {field: 'FILE_TYPE', value: 'html'}
                 ]
             });
+            this.savedSearchModel.toDocumentSelectionModelAttributes = function () {
+                return { isWhitelist: false, references: [] };
+            };
 
             this.view = new SnapshotFilterView({
                 savedSearchModel: this.savedSearchModel

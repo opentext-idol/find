@@ -9,9 +9,12 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'find/app/model/saved-searches/saved-search-model',
+    'find/app/model/document-selection-model',
     'find/app/util/policy-selection-view',
     'jasmine-ajax'
-], function($, Backbone, configuration, i18n, SavedSearchModel, PolicySelectionView) {
+], function (
+    $, Backbone, configuration, i18n, SavedSearchModel, DocumentSelectionModel, PolicySelectionView
+) {
     'use strict';
 
     const expectLoading = function () {
@@ -60,7 +63,8 @@ define([
                 selectedParametricValues: [],
                 conceptGroups: new Backbone.Collection([{ concepts: 'term-new' }]),
                 minScoreModel: new Backbone.Model({ minScore: 7 }),
-                datesFilterModel: { toQueryModelAttributes: _.constant({}) }
+                datesFilterModel: { toQueryModelAttributes: _.constant({}) },
+                documentSelectionModel: new DocumentSelectionModel()
             };
             this.savedSearchModel = new Backbone.Model({
                 type: SavedSearchModel.Type.QUERY,

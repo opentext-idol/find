@@ -22,8 +22,8 @@ define([
             this.url = options.url;
         },
 
-        fetchFromQueryModel: function (queryModel, data) {
-            return this.fetch({
+        fetchFromQueryModel: function (queryModel, data, options) {
+            return this.fetch(_.defaults({
                 data: _.extend({
                     databases: queryModel.get('indexes'),
                     queryText: queryModel.get('autoCorrect') && queryModel.get('correctedQuery')
@@ -35,7 +35,7 @@ define([
                     minScore: queryModel.get('minScore'),
                     stateTokens: queryModel.get('stateMatchIds')
                 }, data)
-            });
+            }, options));
         }
     });
 });

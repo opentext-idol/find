@@ -21,7 +21,7 @@ define([
             this.view = new DataPanelView({
                 model: this.model,
                 targetAttributes: ['name', 'age'],
-                processAttributes: function(attributes) {
+                processAttributes: function(model, attributes) {
                     return [
                         {title: 'Name', content: attributes.name},
                         {title: 'Age', content: attributes.age}
