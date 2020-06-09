@@ -15,8 +15,15 @@ Questions about building, running, and configuring Find, plus many more subjects
 Yes.
 
 ## License
-Copyright 2014-2015 Hewlett-Packard Development Company, L.P.
-<br>Copyright 2015-2017 Hewlett Packard Enterprise Development LP
-<br>Copyright 2017-2018 Micro Focus International plc.
 
-Licensed under the MIT License (the "License"); you may not use this project except in compliance with the License.
+(c) Copyright 2014-2020 Micro Focus or one of its affiliates.
+
+Licensed under the MIT License (the "License"); you may not use this project
+except in compliance with the License.
+
+The only warranties for products and services of Micro Focus and its affiliates
+and licensors ("Micro Focus") are as may be set forth in the express warranty
+statements accompanying such products and services. Nothing herein should be
+construed as constituting an additional warranty. Micro Focus shall not be
+liable for technical or editorial errors or omissions contained herein. The
+information contained herein is subject to change without notice.
