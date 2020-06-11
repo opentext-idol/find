@@ -493,10 +493,7 @@ define([
 
         fetchData: function() {
             this.fetchEntities();
-            // only depends on indexes
-            if (_.contains(this.queryModel.changedAttributes(), 'indexes')) {
-                this.fetchParametricCollection();
-            }
+            this.fetchParametricCollection();
         },
 
         fetchEntities: function() {
