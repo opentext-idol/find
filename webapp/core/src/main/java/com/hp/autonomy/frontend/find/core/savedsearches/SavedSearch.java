@@ -165,6 +165,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         minScore = builder.minScore;
         canEdit = builder.canEdit;
         user = builder.user;
+        documentSelectionIsWhitelist = builder.documentSelectionIsWhitelist;
     }
 
     /**
@@ -193,6 +194,8 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             parametricValues = other.getParametricValues() == null ? parametricValues : other.getParametricValues();
             numericRangeRestrictions = Optional.ofNullable(other.getNumericRangeRestrictions()).orElse(numericRangeRestrictions);
             dateRangeRestrictions = Optional.ofNullable(other.getDateRangeRestrictions()).orElse(dateRangeRestrictions);
+            documentSelectionIsWhitelist = other.getDocumentSelectionIsWhitelist() == null ?
+                documentSelectionIsWhitelist : other.getDocumentSelectionIsWhitelist();
 
             if (other.getConceptClusterPhrases() != null) {
                 conceptClusterPhrases.clear();
