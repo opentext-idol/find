@@ -83,10 +83,6 @@ define([
                 }
 
                 const $target = $(e.target);
-                if ($target.is('a')) {
-                    return;
-                }
-
                 const $result = $(e.currentTarget).closest('.main-results-container');
                 const isSelected = $result.hasClass('selected-document');
                 const cid = $result.data('cid');
@@ -105,6 +101,11 @@ define([
                             this.queryState.documentSelectionModel.select(reference);
                         }
                     }
+
+                    e.preventDefault();
+
+                } else if ($target.is('a')) {
+                    return;
 
                 } else if (this.previewModeModel.get('mode') === 'summary' && isSelected) {
                     // disable preview mode
