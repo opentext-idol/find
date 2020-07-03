@@ -43,21 +43,23 @@ public class ControlPointServiceTest {
         service.applyPolicy("the policy", "state token", null);
     }
 
-    @Test(expected = ControlPointApiException.class)
+    @Test
     public void testApplyPolicy_returnsFailure() throws IOException, ControlPointApiException {
         Mockito.when(httpClient.execute(Mockito.any()))
             .thenReturn(ControlPointApiClientTest.buildLoginResponse())
             .thenReturn(ControlPointApiClientTest.buildResponse(200, "OK",
                 "{\"Success\":false,\"ItemsWillBeIgnored\":false}"));
+        // expect no exception thrown
         service.applyPolicy("the policy", "state token", null);
     }
 
-    @Test(expected = ControlPointApiException.class)
+    @Test
     public void testApplyPolicy_partialSuccess() throws IOException, ControlPointApiException {
         Mockito.when(httpClient.execute(Mockito.any()))
             .thenReturn(ControlPointApiClientTest.buildLoginResponse())
             .thenReturn(ControlPointApiClientTest.buildResponse(200, "OK",
                 "{\"Success\":true,\"ItemsWillBeIgnored\":true}"));
+        // expect no exception thrown
         service.applyPolicy("the policy", "state token", null);
     }
 

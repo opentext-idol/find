@@ -13,6 +13,9 @@ import lombok.Getter;
  */
 @Getter
 public class ControlPointApplyPolicyResponse {
+    /**
+     * Whether any changes happened.  False when all documents already had the policy applied.
+     */
     private final boolean success;
     private final boolean partialApplication;
 
