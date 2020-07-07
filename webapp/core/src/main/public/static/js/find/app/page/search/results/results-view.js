@@ -271,10 +271,7 @@ define([
                 }
             });
 
-            this.listenTo(this.documentsCollection, 'sync reset', function() {
-                this.loadingTracker.resultsFinished = true;
-                this.clearLoadingSpinner();
-
+            const updateDocsDisplay = (function () {
                 this.endOfResults = this.maxResults >= this.documentsCollection.totalResults;
 
                 if (this.endOfResults && !this.documentsCollection.isEmpty()) {
@@ -284,6 +281,14 @@ define([
                     this.$('.main-results-content .results')
                         .append(this.messageTemplate({message: i18n["search.noResults"]}));
                 }
+            }).bind(this);
+
+            this.listenTo(this.documentsCollection, 'reset', updateDocsDisplay);
+
+            this.listenTo(this.documentsCollection, 'sync', function() {
+                this.loadingTracker.resultsFinished = true;
+                this.clearLoadingSpinner();
+                updateDocsDisplay();
             });
 
             this.listenTo(this.documentsCollection, 'error', function(collection, xhr) {
@@ -369,7 +374,7 @@ define([
         clearLoadingSpinner: function() {
             const notLoading = this.documentRenderer.loadPromise.state() !== 'pending' &&
                 this.loadingTracker.resultsFinished && this.loadingTracker.questionsFinished
-                && this.loadingTracker.promotionsFinished || !this.showPromotions;
+                && (this.loadingTracker.promotionsFinished || !this.showPromotions);
 
             if (notLoading) {
                 this.$loadingSpinner.addClass('hide');
