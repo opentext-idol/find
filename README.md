@@ -4,7 +4,7 @@
 Micro Focus Find is an end user search interface for [Micro Focus IDOL](https://software.microfocus.com/en-us/products/information-data-analytics-idol/overview)
 
 ## How do I get it?
-If you are an Micro Focus IDOL Express or Micro Focus IDOL Premium customer, Find is available to you in the Micro Focus Big Data Download Center
+If you are an Micro Focus IDOL customer, Find is available to you in the Micro Focus Big Data Download Center
 
 ## Documentation is on the Wiki
 
