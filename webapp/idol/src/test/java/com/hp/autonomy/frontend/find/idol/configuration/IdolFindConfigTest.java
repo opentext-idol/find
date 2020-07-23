@@ -20,6 +20,7 @@ import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentica
 import com.hp.autonomy.frontend.configuration.server.ProductType;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
+import com.hp.autonomy.frontend.find.core.configuration.SearchConfig;
 import com.hp.autonomy.frontend.find.core.configuration.TrendingConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
@@ -60,6 +61,9 @@ public class IdolFindConfigTest {
     @Mock
     private ThemeTrackerConfig themeTracker;
 
+    @Mock
+    private SearchConfig search;
+
     private IdolFindConfig idolFindConfig;
 
     @Before
@@ -73,6 +77,7 @@ public class IdolFindConfigTest {
                 .themeTracker(themeTracker)
                 .view(viewConfig)
                 .export(export)
+                .search(search)
                 .build();
     }
 

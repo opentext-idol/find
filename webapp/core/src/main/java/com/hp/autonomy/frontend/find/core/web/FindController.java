@@ -146,6 +146,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
         config.put(MvcConstants.FIELDS_INFO.value(), getFieldConfigWithDisplayNames(findConfig));
         config.put(MvcConstants.TOPIC_MAP_MAX_RESULTS.value(), findConfig.getTopicMapMaxResults());
         config.put(MvcConstants.METADATA_FIELD_INFO.value(), getMetadataNodeInfo());
+        config.put(MvcConstants.SEARCH_CONFIG.value(), findConfig.getSearch());
 
         final StyleConfiguration styleConfig = styleConfigService.getConfig();
         config.put(MvcConstants.TERM_HIGHLIGHT_COLOR.value(), styleConfig.getTermHighlightColor());

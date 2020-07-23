@@ -42,5 +42,7 @@ public interface FindConfig<C extends FindConfig<C, B>, B extends FindConfigBuil
 
     ExportConfig getExport();
 
+    SearchConfig getSearch();
+
     B toBuilder();
 }

@@ -266,6 +266,14 @@
       "updateProfileOnView": false
     }
   },
+  "search": {
+    "defaultSortOption": "relevance",
+    "sortOptions": {
+      "relevance": { "sort": "relevance", "label": null },
+      "date": { "sort": "date", "label": null },
+      "reverseDate": { "sort": "reversedate", "label": null }
+    }
+  },
   "combineMethod": "Simple",
   "minScore": 0,
   "topicMapMaxResults": 1000,

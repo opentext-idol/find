@@ -26,6 +26,20 @@ define([
 ) {
     'use strict';
 
+    const makeDefaultQueryState = function () {
+        return {
+            datesFilterModel: new DatesFilterModel(),
+            minScoreModel: new Backbone.Model({minScore: 0}),
+            selectedIndexes: new Backbone.Collection(),
+            selectedParametricValues: new SelectedValuesCollection(),
+            conceptGroups: new Backbone.Collection([
+                {concepts: ['cat']}
+            ]),
+            geographyModel: new GeographyModel(),
+            documentSelectionModel: new DocumentSelectionModel()
+        };
+    }
+
     describe('QueryModel', function() {
 
         beforeEach(function () {
@@ -36,20 +50,22 @@ define([
             });
         });
 
+        describe('defaults', function () {
+
+            it('uses default sort option from config', function () {
+                const queryModel = new QueryModel({}, {
+                    enableAutoCorrect: true,
+                    queryState: makeDefaultQueryState()
+                });
+                // see configuration mock
+                expect(queryModel.get('sort')).toBe('labeled');
+            });
+
+        });
+
         describe('with auto-correct enabled', function() {
             beforeEach(function() {
-                this.queryState = {
-                    datesFilterModel: new DatesFilterModel(),
-                    minScoreModel: new Backbone.Model({minScore: 0}),
-                    selectedIndexes: new Backbone.Collection(),
-                    selectedParametricValues: new SelectedValuesCollection(),
-                    conceptGroups: new Backbone.Collection([
-                        {concepts: ['cat']}
-                    ]),
-                    geographyModel: new GeographyModel(),
-                    documentSelectionModel: new DocumentSelectionModel()
-                };
-
+                this.queryState = makeDefaultQueryState();
                 this.queryModel = new QueryModel({
                     autoCorrect: true
                 }, {
@@ -68,18 +84,7 @@ define([
 
         describe('with auto-correct disabled', function() {
             beforeEach(function() {
-                this.queryState = {
-                    datesFilterModel: new DatesFilterModel(),
-                    minScoreModel: new Backbone.Model({minScore: 0}),
-                    selectedIndexes: new Backbone.Collection(),
-                    selectedParametricValues: new SelectedValuesCollection(),
-                    conceptGroups: new Backbone.Collection([
-                        {concepts: ['cat']}
-                    ]),
-                    geographyModel: new GeographyModel(),
-                    documentSelectionModel: new DocumentSelectionModel()
-                };
-
+                this.queryState = makeDefaultQueryState();
                 this.queryModel = new QueryModel({
                     autoCorrect: false
                 }, {

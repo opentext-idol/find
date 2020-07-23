@@ -59,6 +59,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodS
     private final Integer minScore;
     private final Integer topicMapMaxResults;
     private final ExportConfig export;
+    private final SearchConfig search;
 
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
@@ -81,7 +82,8 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodS
                 .minScore(minScore == null ? config.minScore : minScore)
                 .topicMapMaxResults(topicMapMaxResults == null ? config.topicMapMaxResults : topicMapMaxResults)
                 .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(config.export)).orElse(config.export))
-                .build() : this;
+                .search(search == null ? config.search : search)
+            .build() : this;
     }
 
     @Override
@@ -110,6 +112,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodS
         redis.basicValidate(SECTION);
         queryManipulation.basicValidate(SECTION);
         savedSearchConfig.basicValidate(SECTION);
+        search.basicValidate("search");
 
         if(map != null) {
             map.basicValidate("map");
@@ -164,5 +167,7 @@ public class HodFindConfig extends AbstractConfig<HodFindConfig> implements HodS
         @SuppressWarnings("unused")
         @JsonProperty("savedSearches")
         private SavedSearchConfig savedSearchConfig;
+
+        private SearchConfig search = SearchConfig.builder().build();
     }
 }

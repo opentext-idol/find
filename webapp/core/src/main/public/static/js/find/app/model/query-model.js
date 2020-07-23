@@ -15,18 +15,16 @@
 define([
     'underscore',
     'backbone',
+    'find/app/configuration',
     'find/app/util/search-data-util'
-], function(_, Backbone, searchDataUtil) {
+], function(_, Backbone, config, searchDataUtil) {
     'use strict';
 
     /**
      * @readonly
      * @enum {String}
      */
-    const Sort = {
-        date: 'date',
-        relevance: 'relevance'
-    };
+    const Sort = config().search.sortOptions;
 
     const DEBOUNCE_WAIT_MILLISECONDS = 500;
 
@@ -49,7 +47,7 @@ define([
             minDate: undefined,
             maxDate: undefined,
             minScore: 0,
-            sort: Sort.relevance,
+            sort: Sort[config().search.defaultSortOption].sort,
             stateMatchIds: [],
             promotionsStateMatchIds: [],
             editingDocumentSelection: false,

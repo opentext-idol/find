@@ -35,7 +35,8 @@ public enum MvcConstants {
     ASSETS_CONFIG("assetsConfig"),
     MESSAGE_OF_THE_DAY_CONFIG("messageOfTheDay"),
     TERM_HIGHLIGHT_COLOR("termHighlightColor"),
-    TERM_HIGHLIGHT_BACKGROUND("termHighlightBackground");
+    TERM_HIGHLIGHT_BACKGROUND("termHighlightBackground"),
+    SEARCH_CONFIG("search");
 
     private final String value;
 

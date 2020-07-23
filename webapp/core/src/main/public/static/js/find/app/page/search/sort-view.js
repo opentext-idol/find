@@ -16,10 +16,11 @@ define([
     'underscore',
     'jquery',
     'backbone',
+    'find/app/configuration',
     'find/app/model/query-model',
     'text!find/templates/app/page/search/sort-view.html',
     'i18n!find/nls/bundle'
-], function(_, $, Backbone, QueryModel, template, i18n) {
+], function(_, $, Backbone, config, QueryModel, template, i18n) {
     'use strict';
 
     return Backbone.View.extend({
@@ -28,13 +29,13 @@ define([
         events: {
             'click [data-sort]': function(e) {
                 const sortType = $(e.currentTarget).attr('data-sort');
-                this.queryModel.set('sort', sortType);
+                this.queryModel.set('sort', QueryModel.Sort[sortType].sort);
+                this.updateCurrentSort(sortType);
             }
         },
 
         initialize: function(options) {
             this.queryModel = options.queryModel;
-            this.listenTo(this.queryModel, 'change:sort', this.updateCurrentSort);
         },
 
         render: function() {
@@ -44,12 +45,15 @@ define([
             }));
 
             this.$currentSort = this.$('.current-search-sort');
-            this.updateCurrentSort();
+            this.updateCurrentSort(config().search.defaultSortOption);
         },
 
-        updateCurrentSort: function() {
+        updateCurrentSort: function(sortType) {
             if(this.$currentSort) {
-                this.$currentSort.text(i18n['search.resultsSort.' + this.queryModel.get('sort')]);
+                this.$currentSort.text(
+                    QueryModel.Sort[sortType].label ||
+                        i18n['search.resultsSort.' + sortType] ||
+                        sortType);
             }
         }
     });

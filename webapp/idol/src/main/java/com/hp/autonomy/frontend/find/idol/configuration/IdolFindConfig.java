@@ -78,6 +78,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final Integer documentSummaryMaxLength;
     private final ExportConfig export;
+    private final SearchConfig search;
 
     @JsonIgnore
     private volatile Map<String, Map<Integer, String>> productMap;
@@ -113,6 +114,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .exportStoreStateMaxResults(exportStoreStateMaxResults == null ? other.exportStoreStateMaxResults : exportStoreStateMaxResults)
                 .documentSummaryMaxLength(documentSummaryMaxLength == null ? other.documentSummaryMaxLength : documentSummaryMaxLength)
                 .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(maybeOther.export)).orElse(maybeOther.export))
+                .search(search == null ? other.search : search)
                 .build())
             .orElse(this);
     }
@@ -187,6 +189,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         trending.basicValidate("trending");
         themeTracker.basicValidate("themeTracker");
         savedSearchConfig.basicValidate(SECTION);
+        search.basicValidate("search");
 
         if(map != null) {
             map.basicValidate("map");
@@ -287,5 +290,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         @SuppressWarnings("unused")
         @JsonProperty("idolFieldPathNormalizerXMLPrefixes")
         private Collection<String> idolFieldPathNormalizerXMLPrefixes;
+
+        private SearchConfig search = SearchConfig.builder().build();
     }
 }
