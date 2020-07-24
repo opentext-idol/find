@@ -31,6 +31,12 @@ define([], function() {
                 latitudeField: 'LATITUDE',
                 longitudeField: 'LONGITUDE'
             }]
+        },
+        search: {
+            defaultSortOption: 'default',
+            sortOptions: {
+                default: { sort: 'relevance', label: null }
+            }
         }
     });
     return spy;

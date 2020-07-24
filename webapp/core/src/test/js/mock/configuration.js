@@ -15,15 +15,12 @@
 define([], function() {
     'use strict';
 
-    return jasmine.createSpy('configuration').and.callFake(function () {
-        return {
-            search: {
-                defaultSortOption: 'labeledSort',
-                sortOptions: {
-                    unlabeledSort: { sort: 'unlabeled', label: null },
-                    labeledSort: { sort: 'labeled', label: 'the label' }
-                }
+    return jasmine.createSpy('configuration').and.returnValue({
+        search: {
+            defaultSortOption: 'default',
+            sortOptions: {
+                default: { sort: 'relevance', label: null }
             }
-        };
+        }
     });
 });

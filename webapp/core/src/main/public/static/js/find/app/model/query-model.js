@@ -20,12 +20,6 @@ define([
 ], function(_, Backbone, config, searchDataUtil) {
     'use strict';
 
-    /**
-     * @readonly
-     * @enum {String}
-     */
-    const Sort = config().search.sortOptions;
-
     const DEBOUNCE_WAIT_MILLISECONDS = 500;
 
     const collectionBuildIndexes = function(collection) {
@@ -47,7 +41,7 @@ define([
             minDate: undefined,
             maxDate: undefined,
             minScore: 0,
-            sort: Sort[config().search.defaultSortOption].sort,
+            sort: null,
             stateMatchIds: [],
             promotionsStateMatchIds: [],
             editingDocumentSelection: false,
@@ -59,6 +53,8 @@ define([
          * @param {{queryState: QueryState, enableAutoCorrect: boolean}} options
          */
         initialize: function(attributes, options) {
+            this.set('sort', attributes.sort ||
+                config().search.sortOptions[config().search.defaultSortOption].sort);
             this.queryState = options.queryState;
 
             this.listenTo(this.queryState.conceptGroups, 'change:concepts update reset', function() {
@@ -133,7 +129,5 @@ define([
                 ? date.toISOString()
                 : null;
         }
-    }, {
-        Sort: Sort
     });
 });

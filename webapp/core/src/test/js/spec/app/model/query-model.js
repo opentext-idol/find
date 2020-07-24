@@ -43,10 +43,15 @@ define([
     describe('QueryModel', function() {
 
         beforeEach(function () {
-            configuration.and.callFake(function () {
-                return {
-                    referenceField: 'CUSTOMREF'
-                };
+            configuration.and.returnValue({
+                referenceField: 'CUSTOMREF',
+                search: {
+                    defaultSortOption: 'labeledSort',
+                    sortOptions: {
+                        unlabeledSort: { sort: 'unlabeled', label: null },
+                        labeledSort: { sort: 'labeled', label: 'the label' }
+                    }
+                }
             });
         });
 
@@ -57,7 +62,6 @@ define([
                     enableAutoCorrect: true,
                     queryState: makeDefaultQueryState()
                 });
-                // see configuration mock
                 expect(queryModel.get('sort')).toBe('labeled');
             });
 

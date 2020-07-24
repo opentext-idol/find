@@ -14,13 +14,24 @@
 
 define([
     'backbone',
+    'find/app/configuration',
     'find/app/page/search/sort-view'
-], function (Backbone, SortView) {
+], function (Backbone, configuration, SortView) {
     'use strict';
 
     describe('SortView', function () {
 
         beforeEach(function () {
+            configuration.and.returnValue({
+                search: {
+                    defaultSortOption: 'labeledSort',
+                    sortOptions: {
+                        unlabeledSort: { sort: 'unlabeled', label: null },
+                        labeledSort: { sort: 'labeled', label: 'the label' }
+                    }
+                }
+            });
+
             this.queryModel = new Backbone.Model({ sort: 'labeled' });
             this.sortView = new SortView({ queryModel: this.queryModel });
             this.sortView.render();

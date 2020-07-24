@@ -17,10 +17,9 @@ define([
     'jquery',
     'backbone',
     'find/app/configuration',
-    'find/app/model/query-model',
     'text!find/templates/app/page/search/sort-view.html',
     'i18n!find/nls/bundle'
-], function(_, $, Backbone, config, QueryModel, template, i18n) {
+], function(_, $, Backbone, config, template, i18n) {
     'use strict';
 
     return Backbone.View.extend({
@@ -29,7 +28,7 @@ define([
         events: {
             'click [data-sort]': function(e) {
                 const sortType = $(e.currentTarget).attr('data-sort');
-                this.queryModel.set('sort', QueryModel.Sort[sortType].sort);
+                this.queryModel.set('sort', config().search.sortOptions[sortType].sort);
                 this.updateCurrentSort(sortType);
             }
         },
@@ -41,7 +40,7 @@ define([
         render: function() {
             this.$el.html(this.template({
                 i18n: i18n,
-                sortTypes: QueryModel.Sort
+                sortTypes: config().search.sortOptions
             }));
 
             this.$currentSort = this.$('.current-search-sort');
@@ -51,7 +50,7 @@ define([
         updateCurrentSort: function(sortType) {
             if(this.$currentSort) {
                 this.$currentSort.text(
-                    QueryModel.Sort[sortType].label ||
+                    config().search.sortOptions[sortType].label ||
                         i18n['search.resultsSort.' + sortType] ||
                         sortType);
             }
