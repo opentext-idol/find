@@ -81,6 +81,7 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
         @RequestParam(REFERENCE_PARAM) final String reference,
         @RequestParam(DATABASE_PARAM) final String database,
         @RequestParam(value = HIGHLIGHT_PARAM, required = false) final String highlightExpression,
+        @RequestParam(ORIGINAL_PARAM) final boolean original,
         final HttpServletResponse response
     ) throws AciErrorException, IOException {
         if (updateProfileOnView) {
@@ -90,7 +91,7 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
             }
         }
 
-        super.viewDocument(reference, database, highlightExpression, response);
+        super.viewDocument(reference, database, highlightExpression, original, response);
     }
 
     @SuppressWarnings("TypeMayBeWeakened")

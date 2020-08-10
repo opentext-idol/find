@@ -204,8 +204,12 @@ define([
                 this.view.render();
             });
 
-            it('should not render the open original button', function() {
-                expect(this.view.$('.document-detail-open-original-link')).toHaveLength(0);
+            it('should render an open original button for viewing', function() {
+                expect(this.view.$('.document-detail-open-original-link')).toHaveLength(1);
+                expect(this.view.$('.document-detail-open-original-link')).toHaveAttr('href',
+                    'api/public/view/viewDocument?reference=' + DOCUMENT_MODEL_REF +
+                    '&index=&highlightExpressions=&original=true'
+                );
             });
 
             it('should not render the mmap link', function() {
@@ -233,8 +237,8 @@ define([
                 this.view.render();
             });
 
-            it('should not render the open original button', function() {
-                expect(this.view.$('.document-detail-open-original-link')).toHaveLength(0);
+            it('should render the open original button', function() {
+                expect(this.view.$('.document-detail-open-original-link')).toHaveLength(1);
             });
 
             it('should render the open mmap button', function() {

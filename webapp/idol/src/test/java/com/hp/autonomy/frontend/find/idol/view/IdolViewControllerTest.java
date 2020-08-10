@@ -20,9 +20,11 @@ import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.view.AbstractViewControllerTest;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.searchcomponents.core.view.ViewRequest;
 import com.hp.autonomy.searchcomponents.idol.view.*;
 import com.hp.autonomy.user.UserService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +36,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -58,6 +61,7 @@ public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewC
         when(viewRequestBuilder.documentReference(any())).thenReturn(viewRequestBuilder);
         when(viewRequestBuilder.database(any())).thenReturn(viewRequestBuilder);
         when(viewRequestBuilder.highlightExpression(any())).thenReturn(viewRequestBuilder);
+        when(viewRequestBuilder.original(anyBoolean())).thenReturn(viewRequestBuilder);
 
         viewController = new IdolViewController(idolViewServerService, viewRequestBuilderFactory, controllerUtils, userService, authenticationInformationRetriever, configService);
         viewServerService = idolViewServerService;

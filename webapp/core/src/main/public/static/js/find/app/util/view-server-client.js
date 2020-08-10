@@ -6,19 +6,20 @@ define([
     return {
         /**
          * Get the view document URL for a document in a text index.
-         * @param {String} reference
          * @param {String} model
          * @param {Boolean} highlightExpressions
+         * @param {Boolean} original Whether to retrieve the original file (skip conversion to HTML)
          * @return {String}
          */
-        getHref: function(reference, model, highlightExpressions) {
+        getHref: function(model, highlightExpressions, original) {
             var database = databaseNameResolver.resolveDatabaseNameForDocumentModel(model);
             
             return 'api/public/view/viewDocument?' + $.param({
-                    reference: reference,
-                    index: database,
-                    highlightExpressions: highlightExpressions || null
-                }, true);
+                reference: model.get('reference'),
+                index: database,
+                highlightExpressions: highlightExpressions || null,
+                original: original
+            }, true);
         },
 
         /**

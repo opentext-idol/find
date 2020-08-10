@@ -14,10 +14,13 @@
 
 package com.hp.autonomy.frontend.find.core.web;
 
+import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -63,4 +66,23 @@ public class RequestUtilsTest {
 
         return request;
     }
+
+    @Test
+    public void setFilenameHeader() {
+        final HttpServletResponse response = new MockHttpServletResponse();
+        RequestUtils.setFilenameHeader(response, "the file.txt");
+        Assert.assertEquals(
+            response.getHeader("Content-Disposition"),
+            "attachment; filename=\"the file.txt\"");
+    }
+
+    @Test
+    public void setFilenameHeader_escapingRequired() {
+        final HttpServletResponse response = new MockHttpServletResponse();
+        RequestUtils.setFilenameHeader(response, "some\\thing\\the \"file\".txt");
+        Assert.assertEquals(
+            response.getHeader("Content-Disposition"),
+            "attachment; filename=\"some\\\\thing\\\\the \\\"file\\\".txt\"");
+    }
+
 }

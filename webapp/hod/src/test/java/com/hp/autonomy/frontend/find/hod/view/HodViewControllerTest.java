@@ -58,6 +58,7 @@ public class HodViewControllerTest extends AbstractViewControllerTest<HodViewCon
         when(viewRequestBuilder.documentReference(any())).thenReturn(viewRequestBuilder);
         when(viewRequestBuilder.database(any())).thenReturn(viewRequestBuilder);
         when(viewRequestBuilder.highlightExpression(any())).thenReturn(viewRequestBuilder);
+        when(viewRequestBuilder.original(anyBoolean())).thenReturn(viewRequestBuilder);
 
         viewController = new HodViewController(hodViewServerService, viewRequestBuilderFactory, controllerUtils);
         viewServerService = hodViewServerService;

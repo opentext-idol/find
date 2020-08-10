@@ -17,19 +17,16 @@ define([
     'jquery',
     'backbone',
     'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes',
     'find/app/vent',
     'find/app/util/view-server-client',
-    'find/app/model/document-model',
     'find/app/configuration',
     'find/app/util/database-name-resolver',
     'find/app/util/events',
     'find/app/util/url-manipulator',
-    'text!find/templates/app/page/search/document/preview-mode-summary-view.html',
-    'text!find/templates/app/page/search/document/view-mode-document.html',
-    'text!find/templates/app/page/search/document/view-media-player.html'
-], function(_, $, Backbone, i18n, i18nIndexes, vent, viewClient, DocumentModel, configuration, databaseNameResolver,
-            events, urlManipulator, template, documentTemplate, mediaTemplate) {
+    'find/app/page/search/document/document-preview-helper',
+    'text!find/templates/app/page/search/document/preview-mode-summary-view.html'
+], function(_, $, Backbone, i18n, vent, viewClient, configuration, databaseNameResolver, events,
+            urlManipulator, DocumentPreviewHelper, template) {
     'use strict';
 
     const highlightRuleTemplate = _.template('body.haven-search-view-document-highlighting-on .haven-search-view-document-highlighting { \n' +
@@ -57,8 +54,6 @@ define([
         className: 'well flex-column m-b-nil full-height',
 
         template: _.template(template),
-        documentTemplate: _.template(documentTemplate),
-        mediaTemplate: _.template(mediaTemplate),
 
         events: {
             'click .preview-mode-open-detail-button': 'openDocumentDetail',
@@ -95,6 +90,8 @@ define([
             let href;
             if(this.model.get('url')) {
                 href = urlManipulator.addSpecialUrlPrefix(this.model.get('contentType'), this.model.get('url'));
+            } else {
+                href = viewClient.getHref(this.model, false, true);
             }
 
             const referenceKey = this.model.get('url') ? 'url' : 'reference';
@@ -124,42 +121,14 @@ define([
             //noinspection JSUnresolvedFunction
             this.$('.preview-mode-metadata').html(this.documentRenderer.renderPreviewMetadata(this.model));
 
-            const $preview = this.$('.preview-mode-document');
+            const $iframe = DocumentPreviewHelper.showPreview(
+                this.$('.preview-mode-document'),
+                this.model,
+                this.highlighting ? this.queryText : null);
 
-            const previewTemplate = this.model.getPreviewTemplate();
-
-            if(this.model.isMedia()) {
-                $preview.html(this.mediaTemplate({
-                    i18n: i18n,
-                    model: this.model
-                }));
-            }
-            else if(previewTemplate) {
-                $preview.html(previewTemplate);
-            } else {
-                $preview.html(this.documentTemplate({
-                    i18n: i18n
-                }));
-
-                const $iframe = this.$('.preview-document-frame');
-
+            if ($iframe) {
                 $iframe.on('load', _.bind(function() {
-                    // Cannot execute scripts in iframe or detect error event, so look for attribute on html
-                    if($iframe.contents().find('html').data('hpeFindAuthError')) {
-                        window.location.reload();
-                    }
-
-                    this.$('.view-server-loading-indicator').addClass('hidden');
-                    $iframe.removeClass('hidden');
-
-                    const $contents = $iframe.contents();
-
-                    // View server adds script tags to rendered HTML documents, which are blocked by the application
-                    // This replicates their functionality
-                    $contents.find('.InvisibleAbsolute').hide();
-
-                    const $contentDocument = $contents[0];
-
+                    const $contentDocument = $iframe.contents()[0];
                     if(this.highlighting) {
                         highlighting($contentDocument);
                     }
@@ -168,17 +137,6 @@ define([
                     this.updateHighlighting();
                     this.listenTo(this.highlightingModel, 'change:highlighting', this.updateHighlighting);
                 }, this));
-
-                // The src attribute has to be added retrospectively to avoid a race condition
-                const src = viewClient.getHref(this.model.get('reference'),
-                    this.model,
-                    this.highlighting
-                        ? this.queryText
-                        : null);
-
-                const srcWithHashFragment = urlManipulator.appendHashFragment(this.model, src);
-
-                $iframe.attr('src', srcWithHashFragment);
             }
 
             this.listenTo(this.model, 'remove destroy', this.triggerClose);

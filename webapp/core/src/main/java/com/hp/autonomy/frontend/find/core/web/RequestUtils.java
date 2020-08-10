@@ -17,14 +17,20 @@ package com.hp.autonomy.frontend.find.core.web;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.StringUtils;
+import sun.misc.Regexp;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 // TODO: Unify with ISO version
 @NoArgsConstructor(access = AccessLevel.NONE)
 public class RequestUtils {
+    private static final Pattern BACKSLASH = Pattern.compile("\\\\");
+    private static final Pattern QUOTE = Pattern.compile( "\"");
 
     /**
      * Build the href attribute for the base tag of an HTML response to the given request. The output base URL should
@@ -43,6 +49,20 @@ public class RequestUtils {
         // Subtract 1 for the / after the context path
         final int depth = StringUtils.countMatches(path, "/") - 1;
         return depth <= 0 ? "." : StringUtils.repeat("../", depth);
+    }
+
+    /**
+     * Set a header on the HTTP response which sets the download filename.
+     */
+    public static void setFilenameHeader(
+        final HttpServletResponse response, final String filename
+    ) {
+        // Spring 5 provides ContentDisposition for this, but we're on 4
+        final String escapedFilename = QUOTE.matcher(
+            BACKSLASH.matcher(filename).replaceAll("\\\\\\\\")
+        ).replaceAll("\\\\\"");
+        response.setHeader("Content-Disposition",
+            "attachment; filename=\"" + escapedFilename + "\"");
     }
 
 }

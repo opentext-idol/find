@@ -18,9 +18,11 @@ import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.searchcomponents.core.view.ViewRequest;
 import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -54,7 +56,16 @@ public abstract class AbstractViewControllerTest<C extends ViewController<R, S, 
     public void viewDocument() throws E, IOException {
         final String reference = "SomeReference";
         final S sampleDatabase = getSampleDatabase();
-        viewController.viewDocument(reference, sampleDatabase, null, response);
+        viewController.viewDocument(reference, sampleDatabase, null, false, response);
+
         verify(viewServerService).viewDocument(any(), any(OutputStream.class));
+        Assert.assertEquals("text/html", response.getContentType());
     }
+
+    @Test
+    public void viewDocument_original() throws E, IOException {
+        viewController.viewDocument("SomeReference", getSampleDatabase(), null, true, response);
+        Assert.assertEquals("application/octet-stream", response.getContentType());
+    }
+
 }

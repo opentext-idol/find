@@ -19,18 +19,15 @@ define([
     'find/app/util/events',
     'find/app/util/url-manipulator',
     'find/app/util/view-server-client',
+    'find/app/page/search/document/document-preview-helper',
     'i18n!find/nls/bundle',
-    'text!find/templates/app/page/search/document/document-detail-content-view.html',
-    'text!find/templates/app/page/search/document/view-mode-document.html',
-    'text!find/templates/app/page/search/document/view-media-player.html'
-], function(_, Backbone, tabs, events, urlManipulator, viewClient, i18n, template,
-            documentTemplate, mediaTemplate) {
+    'text!find/templates/app/page/search/document/document-detail-content-view.html'
+], function(_, Backbone, tabs, events, urlManipulator, viewClient, DocumentPreviewHelper, i18n,
+            template) {
     'use strict';
 
     return Backbone.View.extend({
         template: _.template(template),
-        mediaTemplate: _.template(mediaTemplate),
-        documentTemplate: _.template(documentTemplate),
 
         events: {
             'click .document-detail-open-original-link': function() {
@@ -61,7 +58,7 @@ define([
                 ? urlManipulator.addSpecialUrlPrefix(
                     this.documentModel.get('contentType'),
                     this.documentModel.get('url'))
-                : null;
+                : viewClient.getHref(this.documentModel, false, true);
 
             this.$el.html(this.template({
                 i18n: i18n,
@@ -87,47 +84,8 @@ define([
         },
 
         renderDocument: function() {
-            const $preview = this.$('.document-detail-view-container');
-
-            const previewTemplate = this.documentModel.getPreviewTemplate();
-
-            if(this.documentModel.isMedia()) {
-                $preview.html(this.mediaTemplate({
-                    i18n: i18n,
-                    model: this.documentModel
-                }));
-            }
-            else if(previewTemplate) {
-                $preview.html(previewTemplate);
-            }
-            else {
-                $preview.html(this.documentTemplate({
-                    i18n: i18n
-                }));
-
-                const iframe = this.$('.preview-document-frame');
-
-                iframe.on('load', _.bind(function() {
-                    // Cannot execute scripts in iframe or detect error event, so look for attribute on html
-                    if(iframe.contents().find('html').data('hpeFindAuthError')) {
-                        window.location.reload();
-                    }
-
-                    this.$('.view-server-loading-indicator').addClass('hidden');
-                    iframe.removeClass('hidden');
-
-                    // View server adds script tags to rendered PDF documents, which are blocked by the application
-                    // This replicates their functionality
-                    iframe.contents().find('.InvisibleAbsolute').hide();
-                }, this));
-
-                // The src attribute has to be added retrospectively to avoid a race condition
-                const url = viewClient.getHref(this.documentModel.get('reference'), this.documentModel);
-
-                const urlWithHashFragment = urlManipulator.appendHashFragment(this.documentModel, url);
-
-                iframe.attr('src', urlWithHashFragment);
-            }
+            DocumentPreviewHelper.showPreview(
+                this.$('.document-detail-view-container'), this.documentModel, null);
         },
 
         renderTabContent: function() {
