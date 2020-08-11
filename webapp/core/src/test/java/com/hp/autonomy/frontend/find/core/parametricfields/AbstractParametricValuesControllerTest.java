@@ -172,6 +172,15 @@ public abstract class AbstractParametricValuesControllerTest<
                 null));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void getNumericValueDetails_missingField() throws E {
+        final FieldPath field = tagNameFactory.getFieldPath("SomeNumericField");
+        when(parametricValuesService.getNumericValueDetails(Matchers.any()))
+            .thenReturn(Collections.emptyMap());
+        parametricValuesController.getNumericValueDetails(
+            field, "Some query text", null, Collections.emptyList(), null, null, 0, null);
+    }
+
     @Test
     public void getDateValueDetails() throws E {
         final FieldPath field = tagNameFactory.getFieldPath("SomeDateField");
@@ -184,6 +193,15 @@ public abstract class AbstractParametricValuesControllerTest<
                 null,
                 0,
                 null));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getDateValueDetails_missingField() throws E {
+        final FieldPath field = tagNameFactory.getFieldPath("SomeDateField");
+        when(parametricValuesService.getDateValueDetails(Matchers.any()))
+            .thenReturn(Collections.emptyMap());
+        parametricValuesController.getDateValueDetails(
+            field, "Some query text", null, Collections.emptyList(), null, null, 0, null);
     }
 
     @Test

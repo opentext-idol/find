@@ -236,7 +236,13 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             .queryRestrictions(queryRestrictions)
             .build();
 
-        return parametricValuesService.getNumericValueDetails(parametricRequest).get(fieldName);
+        final NumericValueDetails details =
+            parametricValuesService.getNumericValueDetails(parametricRequest).get(fieldName);
+        if (details == null) {
+            throw new IllegalArgumentException(
+                "Field " + fieldName.getFieldName() + " is not a parametric field");
+        }
+        return details;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = DATE_PATH + VALUE_DETAILS_PATH)
@@ -267,7 +273,13 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             .queryRestrictions(queryRestrictions)
             .build();
 
-        return parametricValuesService.getDateValueDetails(parametricRequest).get(fieldName);
+        final DateValueDetails details =
+            parametricValuesService.getDateValueDetails(parametricRequest).get(fieldName);
+        if (details == null) {
+            throw new IllegalArgumentException(
+                "Field " + fieldName.getFieldName() + " is not a parametric field");
+        }
+        return details;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = DEPENDENT_VALUES_PATH)
