@@ -13,14 +13,15 @@
  */
 
 define([
+    'backbone',
     'find/app/util/search-data-util',
     'parametric-refinement/to-field-text-node',
     'fieldtext/js/field-text-parser'
-], function(searchDataUtil, toFieldTextNode, fieldTextParser) {
+], function(Backbone, searchDataUtil, toFieldTextNode, fieldTextParser) {
     'use strict';
 
-    const createFieldText = function (id) {
-        return new fieldTextParser.ExpressionNode('MATCH', ['field'], [id]);
+    const createFieldText = function (field, value) {
+        return new fieldTextParser.ExpressionNode('MATCH', [field], [value]);
     };
 
     describe('Search Data Utils', function() {
@@ -55,51 +56,34 @@ define([
             })
         });
 
-        describe('buildFieldText', function() {
-            it('called with the empty array returns null', function() {
-                expect(searchDataUtil.buildFieldText([])).toBeNull();
-            });
-
-            it('called with the non-empty array returns the result of the toString method on the return value of the toFieldTextNode function', function() {
-                const parametricValues = [
-                    {
-                        field: 'CATEGORY',
-                        value: 'GENERAL'
-                    },
-                    {
-                        field: 'SOURCE',
-                        value: 'GOOGLE'
-                    }
-                ];
-
-                expect(searchDataUtil.buildFieldText(parametricValues)).toEqual(toFieldTextNode(parametricValues).toString());
-            })
-        });
-
         describe('buildMergedFieldText', function () {
 
             it('combines fieldtext from provided sources', function () {
                 const fieldText = searchDataUtil.buildMergedFieldText(
-                    { toFieldTextNode: () => createFieldText('a') },
-                    { toFieldText: () => createFieldText('b') },
-                    { toFieldText: () => createFieldText('c') }
+                    [
+                        new Backbone.Model({ field: 'fielda1', value: 'a1' }),
+                        new Backbone.Model({ field: 'fielda2', value: 'a2' })
+                    ],
+                    { toFieldText: () => createFieldText('fieldb', 'b') },
+                    { toFieldText: () => createFieldText('fieldc', 'c') }
                 );
-                expect(fieldText.toString())
-                    .toBe('MATCH{a}:field AND MATCH{b}:field AND MATCH{c}:field');
+                expect(fieldText.toString()).toBe(
+                    'MATCH{a1}:fielda1 AND MATCH{a2}:fielda2 AND ' +
+                        'MATCH{b}:fieldb AND MATCH{c}:fieldc');
             });
 
             it('omits null fieldtext', function () {
                 const fieldText = searchDataUtil.buildMergedFieldText(
-                    { toFieldTextNode: () => createFieldText('a') },
+                    [new Backbone.Model({ field: 'fielda', value: 'a' })],
                     { toFieldText: () => null },
-                    { toFieldText: () => createFieldText('c') }
+                    { toFieldText: () => createFieldText('fieldc', 'c') }
                 );
-                expect(fieldText.toString()).toBe('MATCH{a}:field AND MATCH{c}:field');
+                expect(fieldText.toString()).toBe('MATCH{a}:fielda AND MATCH{c}:fieldc');
             });
 
             it('returns null if all sources return null', function () {
                 const fieldText = searchDataUtil.buildMergedFieldText(
-                    { toFieldTextNode: () => null },
+                    [],
                     { toFieldText: () => null },
                     { toFieldText: () => null }
                 );
@@ -112,19 +96,19 @@ define([
 
             it('combines fieldtext from provided sources', function () {
                 const fieldText = searchDataUtil.buildMergedFieldTextWithoutDocumentSelection(
-                    { toFieldTextNode: () => createFieldText('a') },
-                    { toFieldText: () => createFieldText('b') }
+                    { toFieldTextNode: () => createFieldText('fielda', 'a') },
+                    { toFieldText: () => createFieldText('fieldb', 'b') }
                 );
                 expect(fieldText.toString())
-                    .toBe('MATCH{a}:field AND MATCH{b}:field');
+                    .toBe('MATCH{a}:fielda AND MATCH{b}:fieldb');
             });
 
             it('omits null fieldtext', function () {
                 const fieldText = searchDataUtil.buildMergedFieldTextWithoutDocumentSelection(
-                    { toFieldTextNode: () => createFieldText('a') },
+                    { toFieldTextNode: () => createFieldText('fielda', 'a') },
                     { toFieldText: () => null }
                 );
-                expect(fieldText.toString()).toBe('MATCH{a}:field');
+                expect(fieldText.toString()).toBe('MATCH{a}:fielda');
             });
 
             it('returns null if all sources return null', function () {

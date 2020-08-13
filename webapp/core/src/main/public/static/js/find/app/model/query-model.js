@@ -112,7 +112,7 @@ define([
         updateFieldText: function () {
             this.set({
                 fieldText: searchDataUtil.buildMergedFieldText(
-                    this.queryState.selectedParametricValues,
+                    this.queryState.selectedParametricValues.models,
                     this.queryState.geographyModel,
                     this.queryState.documentSelectionModel),
                 fieldTextWithoutDocumentSelection:

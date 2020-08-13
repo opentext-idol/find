@@ -17,6 +17,7 @@ define([
     'jquery',
     'moment',
     'backbone',
+    'fieldtext/js/field-text-parser',
     'i18n!find/nls/bundle',
     'js-testing/backbone-mock-factory',
     'find/app/configuration',
@@ -25,9 +26,14 @@ define([
     'find/app/model/bucketed-date-collection',
     'find/app/page/search/results/trending/trending-strategy',
     'mock/page/results/trending'
-], function(_, $, moment, Backbone, i18n, backboneMockFactory, configuration, ParametricCollection,
-            ParametricDetailsModel, BucketedParametricCollection, trendingStrategy, Trending) {
+], function(_, $, moment, Backbone, fieldTextParser, i18n, backboneMockFactory, configuration,
+            ParametricCollection, ParametricDetailsModel, BucketedParametricCollection,
+            trendingStrategy, Trending) {
     'use strict';
+
+    const createFieldText = function (field, value) {
+        return new fieldTextParser.ExpressionNode('MATCH', [field], [value]);
+    };
 
     describe('Trending Strategy', function() {
         beforeEach(function() {
@@ -39,7 +45,7 @@ define([
                 indexes: ['WIKIPEDIA'],
                 autoCorrect: false,
                 queryText: 'cat',
-                fieldText: null,
+                fieldText: createFieldText('fieldA', 'valueA'),
                 minScore: 0,
                 stateTokens: []
             });
@@ -100,12 +106,11 @@ define([
                 max: '2017-05-17T15:51:20Z'
             };
 
-            this.numberOfValuesToDisplay = 5;
+            this.numberOfValuesToDisplay = 3;
             this.numberOfBuckets = 4;
 
             this.fetchOptions = {
                 queryModel: this.queryModel,
-                selectedParametricValues: new Backbone.Collection(),
                 field: 'cheeses',
                 dateField: 'AUTN_DATE',
                 numberOfValuesToDisplay: this.numberOfValuesToDisplay,
@@ -132,7 +137,9 @@ define([
 
             it('with the correct arguments', function() {
                 expect(ParametricCollection.instances[0].fetch.calls.argsFor(0)[0].data.fieldNames).toEqual(['cheeses']);
-                expect(ParametricCollection.instances[0].fetch.calls.argsFor(0)[0].data.queryText).toBe(this.queryModel.get('queryText'));
+                expect(ParametricCollection.instances[0].fetch.calls.argsFor(0)[0].data.queryText).toBe('cat');
+                expect(ParametricCollection.instances[0].fetch.calls.argsFor(0)[0].data.fieldText.toString())
+                    .toBe('MATCH{valueA}:fieldA');
             });
 
             describe('when the fetch fails then the method returns a rejected promise', function() {
@@ -185,7 +192,9 @@ define([
 
             it('with the correct arguments', function() {
                 expect(ParametricDetailsModel.instances[0].fetch.calls.argsFor(0)[0].data.fieldName).toEqual('AUTN_DATE');
-                expect(ParametricDetailsModel.instances[0].fetch.calls.argsFor(0)[0].data.queryText).toBe(this.queryModel.get('queryText'));
+                expect(ParametricDetailsModel.instances[0].fetch.calls.argsFor(0)[0].data.queryText).toBe('cat');
+                expect(ParametricDetailsModel.instances[0].fetch.calls.argsFor(0)[0].data.fieldText.toString())
+                    .toBe('MATCH{valueA}:fieldA AND MATCH{CHEDDAR,STILTON,BRIE}:cheeses');
             });
 
             describe('when the fetch fails then the method returns a rejected promise', function() {
@@ -223,7 +232,18 @@ define([
             });
 
             it('should trigger a fetch for each of the selected values', function() {
-                expect(BucketedParametricCollection.Model.fetchPromises).toHaveLength(4);
+                expect(BucketedParametricCollection.Model.fetchPromises).toHaveLength(3);
+            });
+
+            it('with the correct arguments', function() {
+                const calls = BucketedParametricCollection.Model.instances[0].fetch.calls;
+                expect(calls.argsFor(0)[0].data.queryText).toBe('cat');
+                expect(calls.argsFor(0)[0].data.fieldText.toString())
+                    .toBe('MATCH{valueA}:fieldA AND MATCH{CHEDDAR}:cheeses');
+                expect(calls.argsFor(1)[0].data.fieldText.toString())
+                    .toBe('MATCH{valueA}:fieldA AND MATCH{STILTON}:cheeses');
+                expect(calls.argsFor(2)[0].data.fieldText.toString())
+                    .toBe('MATCH{valueA}:fieldA AND MATCH{BRIE}:cheeses');
             });
 
             describe('one of the fetches fails', function() {
@@ -248,7 +268,7 @@ define([
                     this.bucketedResult.then(function() {
                         bucketedResult = Array.prototype.slice.call(arguments);
                     });
-                    expect(bucketedResult).toHaveLength(4);
+                    expect(bucketedResult).toHaveLength(3);
                     expect(bucketedResult[0].values).toEqual(this.bucketData.values)
                 });
             });

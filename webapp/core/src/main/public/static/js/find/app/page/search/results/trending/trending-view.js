@@ -102,7 +102,6 @@ define([
             this.dateField = configuration().trending.dateField;
             this.numberOfValuesToDisplay = configuration().trending.numberOfValues;
             this.queryModel = options.queryModel;
-            this.selectedParametricValues = options.queryState.selectedParametricValues;
             this.parametricFieldsCollection = options.parametricFieldsCollection;
             this.parametricCollection = options.parametricCollection;
 
@@ -329,7 +328,6 @@ define([
 
             const fetchOptions = {
                 queryModel: this.queryModel,
-                selectedParametricValues: this.selectedParametricValues,
                 field: this.model.get('field'),
                 dateField: this.dateField,
                 numberOfValuesToDisplay: this.numberOfValuesToDisplay
@@ -377,7 +375,6 @@ define([
             const fetchOptions = {
                 queryModel: this.queryModel,
                 selectedFieldValues: this.selectedFieldValues,
-                selectedParametricValues: this.selectedParametricValues,
                 field: this.model.get('field'),
                 currentMin: this.model.get('currentMin'),
                 currentMax: this.model.get('currentMax'),

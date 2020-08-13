@@ -63,10 +63,6 @@ define([
                 stateTokens: []
             });
 
-            const queryState = {
-                selectedParametricValues: new Backbone.Collection()
-            };
-
             this.parametricCollection = new Backbone.Collection([
                 {
                     id: 'cheeses',
@@ -131,7 +127,6 @@ define([
 
             this.view = new TrendingView({
                 queryModel: this.queryModel,
-                queryState: queryState,
                 parametricCollection: this.parametricCollection,
                 parametricFieldsCollection: this.parametricFieldsCollection
             });

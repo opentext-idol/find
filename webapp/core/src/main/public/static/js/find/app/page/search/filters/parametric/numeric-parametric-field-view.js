@@ -24,18 +24,18 @@ define([
     'find/app/page/search/filters/parametric/numeric-widget',
     'find/app/model/bucketed-numeric-collection',
     'find/app/model/bucketed-date-collection',
-    'parametric-refinement/to-field-text-node',
     'find/app/util/date-picker',
+    'find/app/util/search-data-util',
     'js-whatever/js/model-any-changed-attribute-listener',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-numeric-input.html',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-date-input.html',
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/nls/bundle'
-], function(_, $, Backbone, moment, vent, FindBaseCollection, calibrateBuckets, rounder, numericWidget,
-            BucketedNumericParametricCollection, BucketedDateParametricCollection, toFieldTextNode,
-            datePicker, addChangeListener, template, numericInputTemplate, dateInputTemplate,
-            loadingTemplate, i18n) {
+], function(_, $, Backbone, moment, vent, FindBaseCollection, calibrateBuckets, rounder,
+            numericWidget, BucketedNumericParametricCollection, BucketedDateParametricCollection,
+            datePicker, searchDataUtil, addChangeListener, template, numericInputTemplate,
+            dateInputTemplate, loadingTemplate, i18n) {
     'use strict';
 
     function sum(a, b) {
@@ -352,16 +352,15 @@ define([
                 // If the SVG has no width or there are no values, there is no point fetching new data
                 if(!(width === 0 || this.model.get('totalValues') === 0)) {
                     // Exclude any restrictions for this field from the field text
-                    const otherSelectedValues = this.selectedParametricValues
-                        .reject(this.isTargetModel.bind(this))
-                        .map(function(model) {
-                            return model.toJSON();
-                        });
+                    const fieldText = searchDataUtil.buildMergedFieldText(
+                        this.selectedParametricValues.reject(this.isTargetModel.bind(this)),
+                        this.queryModel.queryState.geographyModel,
+                        this.queryModel.queryState.documentSelectionModel);
 
                     this.bucketModel.fetch({
                         data: {
                             queryText: this.queryModel.get('queryText'),
-                            fieldText: toFieldTextNode(otherSelectedValues),
+                            fieldText: fieldText,
                             minDate: this.queryModel.getIsoDate('minDate'),
                             maxDate: this.queryModel.getIsoDate('maxDate'),
                             minScore: this.queryModel.get('minScore'),

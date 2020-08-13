@@ -50,7 +50,6 @@ define([
         getData: function() {
             const fetchOptions = {
                 queryModel: this.queryModel,
-                selectedParametricValues: this.queryModel.queryState.selectedParametricValues,
                 model: this.model,
                 field: this.widgetSettings.parametricField.id,
                 dateField: this.widgetSettings.dateField.id,

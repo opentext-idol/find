@@ -59,16 +59,6 @@ define([
     }
 
     /**
-     * Convert an array of parametric fields and values or ranges to a field text string.
-     * @param {Array} parametricValues
-     * @return {string} A field text string or null
-     */
-    function buildFieldText(parametricValues) {
-        const fieldTextNode = toFieldTextNode(parametricValues);
-        return fieldTextNode && fieldTextNode.toString();
-    }
-
-    /**
      * Return a fieldtext node which is the AND-combination of multiple fieldtext nodes, each
      * possibly null.
      */
@@ -84,10 +74,13 @@ define([
     }
 
     function buildMergedFieldText(
-        selectedParametricValues, geographyModel, documentSelectionModel
+        parametricValueModels, geographyModel, documentSelectionModel
     ) {
+        const parametricFieldText = toFieldTextNode(_.map(parametricValueModels, function (model) {
+            return model.toJSON();
+        }));
         return mergeFieldText([
-            selectedParametricValues.toFieldTextNode(),
+            parametricFieldText,
             geographyModel.toFieldText(),
             documentSelectionModel.toFieldText()
         ]);
@@ -109,7 +102,7 @@ define([
      */
     function buildQuery(model) {
         const fieldTextNode = buildMergedFieldText(
-            new SelectedParametricValuesCollection(model.toSelectedParametricValues()),
+            new SelectedParametricValuesCollection(model.toSelectedParametricValues().models),
             new GeographyModel(model.toGeographyModelAttributes()),
             new DocumentSelectionModel(model.toDocumentSelectionModelAttributes())
         );
@@ -128,7 +121,7 @@ define([
         makeQueryText: makeQueryText,
         buildIndexes: buildIndexes,
         buildQuery: buildQuery,
-        buildFieldText: buildFieldText,
+        mergeFieldText: mergeFieldText,
         buildMergedFieldText: buildMergedFieldText,
         buildMergedFieldTextWithoutDocumentSelection: buildMergedFieldTextWithoutDocumentSelection
     };

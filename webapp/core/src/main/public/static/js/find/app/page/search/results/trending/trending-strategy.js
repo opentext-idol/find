@@ -18,6 +18,7 @@ define([
     'moment',
     'd3',
     'backbone',
+    'fieldtext/js/field-text-parser',
     'i18n!find/nls/bundle',
     'find/app/configuration',
     'find/app/vent',
@@ -28,10 +29,11 @@ define([
     'find/app/model/date-field-details-model',
     'find/app/model/parametric-collection',
     'find/app/page/search/results/trending/trending',
-    'parametric-refinement/to-field-text-node',
-], function(_, $, moment, d3, Backbone, i18n, configuration, vent, ParametricResultsView,
-            FieldSelectionView, calibrateBuckets, BucketedParametricCollection, ParametricDetailsModel,
-            ParametricCollection, Trending, toFieldTextNode) {
+    'find/app/util/search-data-util'
+], function(_, $, moment, d3, Backbone, fieldTextParser, i18n, configuration, vent,
+            ParametricResultsView, FieldSelectionView, calibrateBuckets,
+            BucketedParametricCollection, ParametricDetailsModel, ParametricCollection, Trending,
+            searchDataUtil) {
     'use strict';
 
     const HOURS_TO_SECONDS = 3600;
@@ -48,7 +50,7 @@ define([
                 queryText: options.queryModel.get('autoCorrect') && options.queryModel.get('correctedQuery')
                     ? options.queryModel.get('correctedQuery')
                     : options.queryModel.get('queryText'),
-                fieldText: toFieldTextNode(getFieldText(options.selectedParametricValues)),
+                fieldText: options.queryModel.get('fieldText'),
                 minDate: options.queryModel.getIsoDate('minDate'),
                 maxDate: options.queryModel.getIsoDate('maxDate'),
                 minScore: options.queryModel.get('minScore'),
@@ -75,16 +77,16 @@ define([
         const encodedValues = _.map(trendingValues, function(value) {
             return encodeURIComponent(value.value);
         });
-        const trendingValuesRestriction = 'MATCH{' + encodedValues.toString() + '}:' + options.field;
-        const fieldText = getFieldText(options.selectedParametricValues).length > 0
-            ? ' AND ' + toFieldTextNode(getFieldText(options.selectedParametricValues))
-            : '';
+        const fieldText = searchDataUtil.mergeFieldText([
+            options.queryModel.get('fieldText'),
+            new fieldTextParser.ExpressionNode('MATCH', [options.field], encodedValues)
+        ]);
 
         return new ParametricDetailsModel().fetch({
             data: {
                 fieldName: options.dateField,
                 queryText: options.queryModel.get('queryText'),
-                fieldText: trendingValuesRestriction + fieldText,
+                fieldText: fieldText,
                 minDate: options.queryModel.getIsoDate('minDate'),
                 maxDate: options.queryModel.getIsoDate('maxDate'),
                 minScore: options.queryModel.get('minScore'),
@@ -102,15 +104,17 @@ define([
                 valueName: value.value
             });
 
-            const fieldText = getFieldText(options.selectedParametricValues).length > 0
-                ? ' AND ' + toFieldTextNode(getFieldText(options.selectedParametricValues))
-                : '';
+            const fieldText = searchDataUtil.mergeFieldText([
+                options.queryModel.get('fieldText'),
+                new fieldTextParser.ExpressionNode(
+                    'MATCH', [options.field], [encodeURIComponent(value.value)])
+            ]);
 
             const xhr = bucketModel
                 .fetch({
                     data: {
                         queryText: options.queryModel.get('queryText'),
-                        fieldText: 'MATCH{' + encodeURIComponent(value.value) + '}:' + options.field + fieldText,
+                        fieldText: fieldText,
                         minDate: options.queryModel.getIsoDate('minDate'),
                         maxDate: options.queryModel.getIsoDate('maxDate'),
                         minScore: options.queryModel.get('minScore'),
@@ -147,12 +151,6 @@ define([
         };
 
         return promise;
-    }
-
-    function getFieldText(selectedParametricValues) {
-        return selectedParametricValues.map(function(model) {
-            return model.toJSON();
-        });
     }
 
     function createChartData(options) {
