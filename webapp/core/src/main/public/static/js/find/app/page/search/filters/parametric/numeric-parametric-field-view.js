@@ -84,10 +84,10 @@ define([
 
         events: {
             'click .numeric-parametric-no-min': function() {
-                this.updateRestrictions([this.parseValue(this.model.get('min')), null]);
+                this.updateRestrictions([this.getSelection().defaultRange.min, null]);
             },
             'click .numeric-parametric-no-max': function() {
-                this.updateRestrictions([null, this.parseValue(this.model.get('max'))]);
+                this.updateRestrictions([null, this.getSelection().defaultRange.max]);
             },
             'click .numeric-parametric-reset': function() {
                 this.clearRestrictions();
@@ -290,18 +290,12 @@ define([
         // inputs to match the selected parametric range model
         updateSelection: function() {
             if(this.graph) {
-                const rangeModel = this.selectedParametricValues
-                    .find(this.isTargetModel.bind(this));
-
-                if(rangeModel) {
-                    const range = rangeModel.get('range');
-
-                    this.updateMinInput(range[0]);
-                    this.updateMaxInput(range[1]);
-                    this.graph.setSelection(range);
+                const selection = this.getSelection();
+                this.updateMinInput(selection.range.min);
+                this.updateMaxInput(selection.range.max);
+                if (selection.selectionModel) {
+                    this.graph.setSelection([selection.range.min, selection.range.max]);
                 } else {
-                    this.updateMinInput(this.model.get('min'));
-                    this.updateMaxInput(this.model.get('max'));
                     this.graph.clearSelection();
                 }
             }
@@ -310,11 +304,8 @@ define([
         // Apply a new range selection; a null boundary will not be updated
         // Should be called with values that are already parsed
         updateRestrictions: function(newRange) {
-            const existingModel = this.selectedParametricValues
-                .find(this.isTargetModel.bind(this));
-            const existingRange = existingModel
-                ? existingModel.get('range')
-                : [this.model.get('min'), this.model.get('max')];
+            const selection = this.getSelection();
+            const existingRange = [selection.range.min, selection.range.max];
 
             const newAttributes = {
                 field: this.fieldName,
@@ -337,8 +328,8 @@ define([
                 }
             }
 
-            if(existingModel) {
-                existingModel.set(newAttributes);
+            if(selection.selectionModel) {
+                selection.selectionModel.set(newAttributes);
             } else {
                 this.selectedParametricValues.add(newAttributes);
             }
@@ -431,6 +422,41 @@ define([
                 minDate: this.queryModel.getIsoDate('minDate'),
                 maxDate: this.queryModel.getIsoDate('maxDate'),
                 minScore: this.queryModel.get('minScore')
+            };
+        },
+
+        /**
+         * Get information about the selected range of values.
+         *
+         * @returns object with properties:
+         * @property selectionModel The relevant model in the selectedParametricValues collection,
+         *                          or null if there's no selection
+         * @property defaultRange The full range of values ignoring the selection, as a { min, max }
+         *                        object with number values
+         * @property range The selected range as a { min, max } object with number values
+         */
+        getSelection: function () {
+            const selectionModel = this.selectedParametricValues
+                .find(this.isTargetModel.bind(this));
+            const defaultsModel = this.fieldDetailsModel.has('min') ?
+                this.fieldDetailsModel : this.model;
+            const defaultRange = {
+                min: this.parseValue(defaultsModel.get('min')),
+                max: this.parseValue(defaultsModel.get('max'))
+            };
+
+            let range;
+            if (selectionModel) {
+                const selectionRange = selectionModel.get('range');
+                range = { min: selectionRange[0], max: selectionRange[1] };
+            } else {
+                range = defaultRange;
+            }
+
+            return {
+                selectionModel: selectionModel || null,
+                defaultRange: defaultRange,
+                range: range
             };
         }
 
