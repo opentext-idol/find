@@ -36,8 +36,8 @@ define([
      * @return {Buckets[]} Ordered, complete buckets filling the given range exactly
      */
     function calibrateBuckets(buckets, range) {
-        const filteredBuckets = _.filter(buckets, function(value) {
-            return !(value.min < range[0] || value.max > range[1]);
+        const filteredBuckets = _.reject(buckets, function(value) {
+            return value.max < range[0] || value.min > range[1];
         });
 
         if(filteredBuckets.length === 0) {
