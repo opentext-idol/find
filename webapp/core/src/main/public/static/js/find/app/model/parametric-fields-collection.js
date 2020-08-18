@@ -107,6 +107,21 @@ define([
             },
 
             /**
+             * Get the current selected range (ie. currentMin/currentMax, handling null values),
+             * with numeric values.
+             *
+             * @param defaultRange Optionally override the absolute range as a { min, max } object
+             *                     with number values (before overriding with currentMin/currentMax)
+             * @returns Range as a { min, max } object, with number values
+             */
+            getNumericRange: function (defaultRange) {
+                const range = this.getRange(defaultRange);
+                return this.get('type') === 'NumericDate' ?
+                    { min: range.min.valueOf(), max: range.max.valueOf() } :
+                    range;
+            },
+
+            /**
              * Get the range to use in query restrictions.
              *
              * @param defaultRange Optionally override the absolute range as a { min, max } object

@@ -41,6 +41,10 @@ define([
             loadingTemplate, i18n) {
     'use strict';
 
+    const ZOOM_IN_RATIO = 1.4;
+    const ZOOM_OUT_RATIO = 1.96;
+    const PAN_RATIO = 0.3;
+
     function sum(a, b) {
         return a + b;
     }
@@ -93,6 +97,27 @@ define([
                 this.clearRestrictions();
                 this.model.resetCurrent();
             },
+            'click .numeric-parametric-pan-left': function () {
+                const range = this.model.getNumericRange();
+                const offset = PAN_RATIO * (range.max - range.min);
+                this.model.set({ currentMin: range.min - offset, currentMax: range.max - offset });
+            },
+            'click .numeric-parametric-pan-right': function () {
+                const range = this.model.getNumericRange();
+                const offset = PAN_RATIO * (range.max - range.min);
+                this.model.set({ currentMin: range.min + offset, currentMax: range.max + offset });
+            },
+            'click .numeric-parametric-zoom-out': function () {
+                const range = this.model.getNumericRange();
+                const offset = 0.5 * (ZOOM_OUT_RATIO - 1) * (range.max - range.min);
+                this.model.set({ currentMin: range.min - offset, currentMax: range.max + offset });
+            },
+            'click .numeric-parametric-zoom-in': function () {
+                const range = this.model.getNumericRange();
+                const offset = 0.5 * (1 - 1 / ZOOM_IN_RATIO) * (range.max - range.min);
+                this.model.set({ currentMin: range.min + offset, currentMax: range.max - offset });
+            },
+
             'change .numeric-parametric-min-input': function() {
                 this.updateRestrictions([this.readMinInput(), null]);
             },
