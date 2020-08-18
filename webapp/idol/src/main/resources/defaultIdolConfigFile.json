@@ -16,7 +16,7 @@
   "content": {
     "protocol": "HTTP",
     "host": "localhost",
-    "port": 9000,
+    "port": 9100,
     "productType": [
       "AXE",
       "DAH",
