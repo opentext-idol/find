@@ -26,7 +26,12 @@
     "bjoska.bowser": "1.0.0",
     "chosen": "1.5.1",
     "corejs-typeahead": "#d60aed0",
-    "d3": "3.3.8",
+    "d3": "https://d3js.org/d3.v5.min.js",
+    "d3-collection": "https://unpkg.com/d3-collection@1.0.7/dist/d3-collection.min.js",
+    "d3-path": "https://unpkg.com/d3-path@2.0.0/dist/d3-path.min.js",
+    "d3-array": "https://unpkg.com/d3-array@2.6.0/dist/d3-array.min.js",
+    "d3-shape": "https://unpkg.com/d3-shape@2.0.0/dist/d3-shape.min.js",
+    "d3-sankey": "https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js",
     "fontawesome": "components-font-awesome#4.5.0",
     "flot": "flot#~0.8.3",
     "iCheck": "1.0.1",
@@ -76,6 +81,7 @@
     "requirejs-text": "2.0.15",
     "underscore": "1.8.3",
     "bootstrap": "3.3.7",
-    "hp-autonomy-fieldtext-js": "1.6.0"
+    "hp-autonomy-fieldtext-js": "1.6.0",
+    "d3": "e-tag:W/\"5f42fa3"
   }
 }
