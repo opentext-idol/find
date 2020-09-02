@@ -387,13 +387,13 @@ define([
         return color.hex;
     }
 
-    function addDragAndZoomRectangle(chart, scales) {
+    function addDragAndZoomRectangle(chart, scales, dragEnabled) {
         chart.selectAll('.graph-area').remove();
 
         const xScaleRange = scales.xScale.range();
         const yScaleRange = scales.yScale.range();
         return chart.insert("rect", "g")
-            .attr('class', 'graph-area')
+            .attr('class', 'graph-area' + (dragEnabled ? ' draggable' : ''))
             .attr("x", xScaleRange[0])
             .attr("y", yScaleRange[1])
             .attr("width", xScaleRange[1] - xScaleRange[0])
@@ -557,7 +557,7 @@ define([
 
                 });
 
-            const graphArea = addDragAndZoomRectangle(this.chart, scales);
+            const graphArea = addDragAndZoomRectangle(this.chart, scales, this.dragEnabled);
             const behaviourOptions = {
                 chart: graphArea,
                 xScale: scales.xScale,
