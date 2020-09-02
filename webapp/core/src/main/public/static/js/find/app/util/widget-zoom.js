@@ -40,7 +40,7 @@ define([
     }
 
     function addZoomBehaviour(options) {
-        const zoomBehaviour = d3.behavior.zoom()
+        const zoomBehaviour = d3.zoom()
             .on('zoom', zoom(options.xScale, options.scaleType, options.min, options.max, options.callback))
             .scaleExtent(options.zoomExtent || ZOOM_EXTENT);
 

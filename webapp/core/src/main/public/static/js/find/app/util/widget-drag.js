@@ -59,10 +59,10 @@ define([
     }
 
     function addDragBehaviour(options) {
-        const dragBehaviour = d3.behavior.drag()
-            .on('dragstart', dragStart(options.xScale, options.scaleType, options.max, options.min))
+        const dragBehaviour = d3.drag()
+            .on('start', dragStart(options.xScale, options.scaleType, options.max, options.min))
             .on('drag', dragMove(options.xScale, options.scaleType, options.dragMoveCallback))
-            .on('dragend', dragEnd(options.xScale, options.scaleType, options.dragEndCallback));
+            .on('end', dragEnd(options.xScale, options.scaleType, options.dragEndCallback));
 
         options.chart.call(dragBehaviour);
     }

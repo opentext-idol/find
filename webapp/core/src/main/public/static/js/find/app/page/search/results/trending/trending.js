@@ -48,10 +48,10 @@ define([
 
     function setScales(options, chartHeight, chartWidth) {
         return {
-            xScale: d3.time.scale()
+            xScale: d3.scaleTime()
                 .domain([options.minDate, options.maxDate])
                 .range([CHART_PADDING, chartWidth]),
-            yScale: d3.scale.linear()
+            yScale: d3.scaleLinear()
                 .domain([options.chartData.minRate, options.chartData.maxRate])
                 .range([chartHeight - CHART_PADDING, CHART_PADDING / 2])
         };
@@ -182,16 +182,12 @@ define([
         chart.selectAll('.x-axis').remove();
         chart.selectAll('.dashed-axis-line').remove();
 
-        const yAxisScale = d3.svg.axis()
-            .scale(scales.yScale)
-            .orient('left')
-            .outerTickSize(0);
+        const yAxisScale = d3.axisLeft(scales.yScale)
+            .tickSizeOuter(0);
 
-        const xAxisScale = d3.svg.axis()
-            .scale(scales.xScale)
-            .orient('bottom')
+        const xAxisScale = d3.axisBottom(scales.xScale)
             .tickFormat(timeFormat)
-            .outerTickSize(0);
+            .tickSizeOuter(0);
 
         const yAxis = chart.append('g')
             .attr('class', 'y-axis')
@@ -236,10 +232,10 @@ define([
 
     function htmlLabelWrap(labelWrapper) {
         const tickPadding = 5;
-        const labels = labelWrapper[0];
+        const labels = labelWrapper.nodes();
         const numberOfTicks = labels.length;
         const getTickTranslation = function getTickTranslationFn(label) {
-            return d3.transform(label.node().parentNode.getAttribute('transform')).translate[0];
+            return label.node().parentNode.transform.baseVal.consolidate().matrix.e;
         };
 
         let prevLabelTick = 0;
@@ -278,9 +274,10 @@ define([
         d3.selectAll('.x-axis text').remove();
     }
 
-    function textLabelWrap(labels, width) {
+    function textLabelWrap(labelWrapper, width) {
+        const labels = labelWrapper.nodes();
         const tickPadding = 5;
-        const tickWidth = width / labels[0].length;
+        const tickWidth = width / labels.length;
 
         labels.each(function() {
             const label = d3.select(this);
@@ -360,26 +357,26 @@ define([
     function getTimeFormat(max, min) {
         const range = max.getTime() / MILLISECONDS_TO_SECONDS - min.getTime() / MILLISECONDS_TO_SECONDS;
         if(range > SECONDS_IN_ONE_YEAR) {
-            return d3.time.format("%b %Y");
+            return d3.timeFormat("%b %Y");
         } else if(range < SECONDS_IN_ONE_DAY) {
-            return d3.time.format("%H:%M:%S %d&nbsp;%b %Y");
+            return d3.timeFormat("%H:%M:%S %d&nbsp;%b %Y");
         } else if(range < SECONDS_IN_ONE_WEEK) {
-            return d3.time.format("%H:%M %d&nbsp;%b %Y");
+            return d3.timeFormat("%H:%M %d&nbsp;%b %Y");
         } else {
-            return d3.time.format("%d&nbsp;%b %Y");
+            return d3.timeFormat("%d&nbsp;%b %Y");
         }
     }
 
     function getIESafeTimeFormat(max, min) {
         const range = max.getTime() / MILLISECONDS_TO_SECONDS - min.getTime() / MILLISECONDS_TO_SECONDS;
         if(range > SECONDS_IN_ONE_YEAR) {
-            return d3.time.format("%b %Y");
+            return d3.timeFormat("%b %Y");
         } else if(range < SECONDS_IN_ONE_DAY) {
-            return d3.time.format("%H:%M:%S %d %b %Y");
+            return d3.timeFormat("%H:%M:%S %d %b %Y");
         } else if(range < SECONDS_IN_ONE_WEEK) {
-            return d3.time.format("%H:%M %d %b %Y");
+            return d3.timeFormat("%H:%M %d %b %Y");
         } else {
-            return d3.time.format("%d %b %Y");
+            return d3.timeFormat("%d %b %Y");
         }
     }
 
@@ -450,86 +447,44 @@ define([
                 timeFormat
             );
 
-            const line = d3.svg.line()
+            const line = d3.line()
                 .x(function(d) {
                     return scales.xScale(d.mid)
                 })
                 .y(function(d) {
                     return scales.yScale(d.rate)
-                })
-                .interpolate('linear');
+                });
 
             this.chart
                 .attr('width', elWidth)
                 .attr('height', elHeight);
 
-            if(this.dataJoin) {
-                this.dataJoin = this.dataJoin
-                    .data(data, function(d) {
-                        return d.name;
-                    });
-            } else {
-                this.dataJoin = this.chart.selectAll('.value')
-                    .data(data, function(d) {
-                        return d.name;
-                    });
-            }
-
-            this.dataJoin.enter()
-                .append('g')
-                .attr('data-name', function(d) {
-                    return d.name;
-                })
-                .append('path');
-
-            this.dataJoin
-                .attr('stroke', function(d) {
-                    return getColor(data, d);
-                });
-
-            this.dataJoin.select('path')
+            const join = this.chart
+                .selectAll('.value')
+                .data(data)
+                .join('g')
+                    .attr('data-name', function(d) { return d.name; })
+                    .attr('class', 'value')
+                    .style('stroke', function(d) { return getColor(data, d); });
+            join.selectAll('path')
+                .data(function(d) { return [d]; })
+                .join('path')
                 .attr('class', 'line')
                 .attr('stroke-width', 2)
                 .attr('fill', 'none')
-                .attr('d', function(d) {
-                    return line(d.points);
-                })
+                .attr('d', function(d) { return line(d.points); })
                 .on('mouseover', hoverCallbacks.lineAndPointMouseover)
-                .on('mouseout', hoverCallbacks.lineAndPointMouseout);
-
-            this.dataJoin.exit().remove();
-
-            if(this.pointsJoin && !reloaded) {
-                this.pointsJoin = this.pointsJoin
-                    .data(function(d) {
-                        return d.points;
-                    });
-            } else {
-                this.pointsJoin = this.dataJoin
-                    .selectAll('circle')
-                    .data(function(d) {
-                        return d.points;
-                    });
-            }
-
-            this.pointsJoin
-                .enter()
-                .append('circle')
-                .attr('r', 4)
-                .attr('fill', 'white')
-                .attr('stroke-width', 3);
-
-            this.pointsJoin
-                .attr('cy', function(d) {
-                    return scales.yScale(d.rate);
-                })
-                .attr('cx', function(d) {
-                    return scales.xScale(d.mid);
-                })
-                .on('mouseover', hoverCallbacks.pointMouseover)
-                .on('mouseout', hoverCallbacks.pointMouseout);
-
-            this.pointsJoin.exit().remove();
+                .on('mouseout', hoverCallbacks.lineAndPointMouseout)
+            join.selectAll('circle')
+                .data(function(d) { return d.points; })
+                .join('circle')
+                    .attr('r', 4)
+                    .attr('fill', 'white')
+                    .attr('stroke-width', 3)
+                    .attr('cy', function(d) { return scales.yScale(d.rate); })
+                    .attr('cx', function(d) { return scales.xScale(d.mid); })
+                    .on('mouseover', hoverCallbacks.pointMouseover)
+                    .on('mouseout', hoverCallbacks.pointMouseout);
 
             setAxes(this.chart, scales, chartHeight, chartWidth, this.yAxisLabelForUnit(yUnitText), timeFormat);
 

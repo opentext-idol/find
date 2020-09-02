@@ -360,6 +360,7 @@ define([
         'search.resultsView.trending.unit.SECOND': 'second',
         'search.resultsView.trending.unit.YEAR': 'year',
         'search.resultsView.trending.snapToNow': 'Snap To Now',
+        'search.resultsView.polls.tooltipText': '{0}{1} {2} poll average between {3} and {4}',
         'search.resultsView.facts': 'Facts',
         'search.resultsView.facts.empty': 'No facts to show for this entity',
         'search.resultsView.facts.entityLabel': '{0} ({1} documents)',
