@@ -9,12 +9,13 @@ define([
     'jquery',
     'moment',
     'd3',
+    'd3-path',
     'd3-sankey',
     'find/app/model/parametric-collection',
     'find/app/model/documents-collection',
     'find/app/model/entity-collection',
     'text!find/templates/app/page/search/results/election/topic-interest-view.html'
-], function(_, Backbone, $, moment, d3, d3Sankey,
+], function(_, Backbone, $, moment, d3, d3Path, d3Sankey,
             ParametricCollection, DocumentsCollection, EntityCollection, template) {
     'use strict';
 
@@ -79,6 +80,30 @@ define([
         return _.reduce(ns, function (total, n) {
             return total + n;
         }, 0)
+    }
+
+    const drawLinkCurveHorizontal = function (path, link) {
+        const xMid = (link.source.x + link.target.x) / 2;
+        path.bezierCurveTo(
+            xMid, link.source.y,
+            xMid, link.target.y,
+            link.target.x, link.target.y);
+    }
+
+    const buildLinkPathHorizontal = function (link) {
+        const links = _.map(['y0', 'y1'], function(yProperty) {
+            return {
+                source: { x: link.source.x1, y: link.source[yProperty] },
+                target: { x: link.target.x0, y: link.target[yProperty] }
+            };
+        });
+        const path = d3Path.path();
+        path.moveTo(links[0].source.x, links[0].source.y);
+        drawLinkCurveHorizontal(path, links[0]);
+        path.lineTo(links[1].target.x, links[1].target.y);
+        drawLinkCurveHorizontal(path, { source: links[1].target, target: links[1].source });
+        path.closePath();
+        return path;
     }
 
     return Backbone.View.extend({
@@ -311,9 +336,9 @@ define([
                 .selectAll('path')
                 .data(graph.links)
                 .join('path')
-                    .attr('d', d3Sankey.sankeyLinkHorizontal())
-                    .attr('stroke-width', function (link) { return link.width; })
-                    .attr('stroke', function (link) { return topicColourScale(link.source.topic); })
+                    .attr('d', buildLinkPathHorizontal)
+                    .attr('stroke-width', 0)
+                    .attr('fill', function (link) { return topicColourScale(link.source.topic); })
                     .style('mix-blend-mode', 'multiply')
                 .append('title')
                     .text(function (link) { return link.source.terms.join(', '); });
