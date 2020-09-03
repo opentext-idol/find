@@ -91,11 +91,15 @@ class ThemeTrackerController {
             @RequestParam("startDate") final long startDate,
             @RequestParam(value="interval", defaultValue = INTERVAL) final long interval,
             @RequestParam(value = "jobName", required = false) final String jobName,
+            @RequestParam(value = "imageWidth", required = false) final String imageWidth,
+            @RequestParam(value = "imageHeight", required = false) final String imageHeight,
             final HttpServletResponse response) throws AciServiceException, IOException {
         final AciParameters params = new AciParameters("clustersgpicserve");
         params.add("startdate", startDate);
         params.add("enddate", startDate + interval);
         params.add("sourcejobname", getJobName(jobName));
+        if (imageWidth != null) params.add("SGWidth", imageWidth);
+        if (imageHeight != null) params.add("SGHeight", imageHeight);
 
         final ServletOutputStream outputStream = response.getOutputStream();
 

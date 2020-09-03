@@ -41,6 +41,7 @@ define([
     'find/app/page/search/results/facts-view',
     'find/app/page/search/results/election/topic-interest-view',
     'find/app/page/search/results/election/polls-view',
+    'find/app/page/search/results/election/stories-view',
     'find/app/page/search/time-bar-view',
     'find/app/configuration',
     'i18n!find/nls/bundle',
@@ -50,7 +51,7 @@ define([
             recommendStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView,
             addChangeListener, SavedSearchControlView, TopicMapView, SunburstView, MapResultsView,
             TableView, TrendingView, FactsView, ElectionTopicInterestView, ElectionPollsView,
-            TimeBarView, configuration, i18n, templateString) {
+            ElectionStoriesView, TimeBarView, configuration, i18n, templateString) {
     'use strict';
 
     const $window = $(window);
@@ -375,6 +376,15 @@ define([
                     shown: true,
                     selector: {
                         displayNameKey: 'election-polls',
+                        icon: 'hp-group'
+                    }
+                },
+                'election-stories': {
+                    Constructor: ElectionStoriesView,
+                    constructorArguments: subViewArguments,
+                    shown: true,
+                    selector: {
+                        displayNameKey: 'election-stories',
                         icon: 'hp-group'
                     }
                 }
