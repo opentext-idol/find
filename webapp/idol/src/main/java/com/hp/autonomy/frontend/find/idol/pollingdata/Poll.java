@@ -1,4 +1,4 @@
-package com.hp.autonomy.frontend.find.core.pollingdata;
+package com.hp.autonomy.frontend.find.idol.pollingdata;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;

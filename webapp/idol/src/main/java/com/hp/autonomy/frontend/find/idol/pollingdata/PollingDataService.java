@@ -1,5 +1,7 @@
-package com.hp.autonomy.frontend.find.core.pollingdata;
+package com.hp.autonomy.frontend.find.idol.pollingdata;
 
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.types.requests.idol.actions.tags.DateRangeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,14 +26,18 @@ import static java.time.ZoneOffset.UTC;
 @Component
 public class PollingDataService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PollingDataService.class);
-    // https://projects.fivethirtyeight.com/polls-page/president_polls.csv
-    private static final Path DATA_FILE = Paths.get("/home/j/polls/president_polls.csv");
     private static final CSVFormat DATA_FORMAT = CSVFormat.DEFAULT.withFirstRecordAsHeader();
+
+    private final Path dataFile;
+
+    private PollingDataService(final ConfigService<IdolFindConfig> configService) {
+        dataFile = Paths.get(configService.getConfig().getPollingDataFilePath());
+    }
 
     public List<Poll> getPolls() throws IOException {
         final List<Poll> parsedPolls = new ArrayList<>();
         try (final CSVParser parser =
-                 CSVParser.parse(DATA_FILE.toFile(), StandardCharsets.UTF_8, DATA_FORMAT)
+                 CSVParser.parse(dataFile.toFile(), StandardCharsets.UTF_8, DATA_FORMAT)
         ) {
             for (final CSVRecord record : parser) {
                 try {

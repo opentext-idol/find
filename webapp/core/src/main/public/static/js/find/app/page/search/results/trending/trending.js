@@ -38,9 +38,10 @@ define([
     const AXIS_DASHED_LINE_LENGTH = 15;
     const FADE_OUT_OPACITY = 0.3;
     const POINT_RADIUS = 5;
-    const LEGEND_MARKER_WIDTH = 15;
-    const LEGEND_TEXT_HEIGHT = 12;
+    const LEGEND_MARKER_WIDTH = 25;
+    const LEGEND_TEXT_HEIGHT = 20;
     const LEGEND_PADDING = 5;
+    const AXIS_TICK_PADDING = 5;
     const MILLISECONDS_TO_SECONDS = 1000;
     const SECONDS_IN_ONE_YEAR = 31556926;
     const SECONDS_IN_ONE_WEEK = 604800;
@@ -195,9 +196,11 @@ define([
             .call(yAxisScale);
 
         yAxis.append('text')
-            .attr('x', -(CHART_PADDING + chartHeight) / 2)
+            .attr('x', -(scales.yScale.range()[0] + scales.yScale.range()[1]) / 2)
             .attr('y', -CHART_PADDING / 3 * 2)
             .attr('transform', 'rotate(270)')
+            .attr('text-anchor', 'middle')
+            .attr('fill', 'currentColor')
             .text(yAxisLabel);
 
         const xAxis = chart.append('g')
@@ -261,7 +264,9 @@ define([
                 .append('foreignObject')
                 .attr('class', 'x-axis-label')
                 .attr('width', widthToDouble - tickPadding)
-                .attr('transform', 'translate(' + (-(widthToDouble - tickPadding) / 2) + ', 0)')
+                .attr('transform', 'translate(' +
+                    (-(widthToDouble - tickPadding) / 2) + ', ' +
+                    AXIS_TICK_PADDING + ')')
                 .attr('height', CHART_PADDING)
                 .attr('cursor', 'default')
                 .append('xhtml:p')
@@ -381,10 +386,9 @@ define([
     }
 
     function getColor(data, d) {
-        const color = d.color
-            ? _.findWhere(COLORS, {name: d.color})
-            : COLORS[_.pluck(data, 'name').indexOf(d.name) % COLORS.length];
-        return color.hex;
+        return d.color ?
+            (d.color[0] === '#' ? d.color : _.findWhere(COLORS, {name: d.color}).hex) :
+            COLORS[_.pluck(data, 'name').indexOf(d.name) % COLORS.length].hex;
     }
 
     function addDragAndZoomRectangle(chart, scales, dragEnabled) {
@@ -524,7 +528,7 @@ define([
                         g.append('foreignObject')
                             .attr('class', 'legend-text')
                             .attr('x', chartWidth + LEGEND_MARKER_WIDTH + LEGEND_PADDING)
-                            .attr('y', d.labelY - (2 * LEGEND_PADDING))
+                            .attr('y', d.labelY - 0.6 * LEGEND_TEXT_HEIGHT)
                             .attr('width', legendWidth - LEGEND_MARKER_WIDTH - LEGEND_PADDING)
                             .attr('height', LEGEND_TEXT_HEIGHT)
                             .attr('cursor', 'default')
@@ -540,10 +544,10 @@ define([
                         g.append('text')
                             .attr('class', 'legend-text')
                             .attr('x', chartWidth + LEGEND_MARKER_WIDTH + LEGEND_PADDING)
-                            .attr('y', d.labelY)
+                            .attr('y', d.labelY - 0.6 * LEGEND_TEXT_HEIGHT)
                             .attr('width', legendWidth - LEGEND_MARKER_WIDTH - LEGEND_PADDING)
                             .attr('cursor', 'default')
-                            .attr('fill', 'black')
+                            .attr('fill', 'currentColor')
                             .attr('stroke', 'none')
                             .attr('font-size', LEGEND_TEXT_HEIGHT)
                             .text(d.name)

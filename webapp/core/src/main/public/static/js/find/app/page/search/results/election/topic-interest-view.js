@@ -42,9 +42,9 @@ define([
         'twitter-republican-trump'
     ];
 
-    const MAX_TOPICS = 10;
+    const MAX_TOPICS = 15;
     const MAX_TOPIC_TERMS = 5;
-    const MIN_TOPIC_SIZE_PCT = 3;
+    const MIN_TOPIC_SIZE_PCT = 7;
     const MAX_DOCS_SAMPLED = 5000;
     const START_DATE = moment().subtract(1, 'week').toISOString();
     const SENTIMENT_FIELD = 'SENTIMENT';
@@ -62,15 +62,15 @@ define([
     const CHART_TOPIC_LABEL_PADDING = 2 * CHART_PADDING;
 
     const CHART_BACKGROUND_COLOUR = 'none';
-    const CHART_NODE_BORDER_COLOUR = '#000';
-    const CHART_TEXT_COLOUR = '#000';
+    const CHART_NODE_BORDER_COLOUR = 'currentcolor';
+    const CHART_TEXT_COLOUR = 'currentcolor';
     const CHART_SENTIMENT_COLOURS = {
         Positive: '#1aac60',
         Neutral: '#656668',
         Negative: '#e5004c'
     };
-    // MF colours not light enough
-    const CHART_TOPIC_COLOURS = d3.schemePastel1;
+    const CHART_TOPIC_COLOURS = ['#dcdedf'];
+
     const COLOURS_MF_BRIGHT =
         ['#3939c6', '#00abf3', '#43e4ff', '#1ffbba', '#75da4d', '#ffce00', '#eb23c2', '#ba47e2'];
     const COLOURS_MF_DARK =
@@ -127,7 +127,7 @@ define([
         getDocumentCount: function (topic, source) {
             const requestData = {
                 indexes: source.indexes,
-                text: topic,
+                text: '"' + topic + '"',
                 min_date: START_DATE,
                 max_results: 1,
                 summary: 'off',
@@ -219,20 +219,27 @@ define([
 
         getData: function (sources, topicsInterest) {
             const sourceMultipliers = {};
+            const sourcesTotalInterest = {};
             const sourcesTotalDocs = sum(_.pluck(sources, 'documents'));
             _.each(sources, function (source) {
                 sourceMultipliers[source.name] = sourcesTotalDocs / source.documents;
+                sourcesTotalInterest[source.name] = sum(_.map(topicsInterest,
+                    function (topicInterest) {
+                        return topicInterest.sources[source.name].interest;
+                    }));
             });
-            const topicsTotalInterest = sum(_.map(topicsInterest, function (topicInterest) {
+            sum(_.map(topicsInterest, function (topicInterest) {
                 return sum(_.pluck(topicInterest.sources, 'interest'));
             }));
 
             const nodes = [];
             const links = [];
             _.each(topicsInterest, function (topicInterest, topic) {
-                const topicCountRatio =
-                    sum(_.pluck(topicInterest.sources, 'interest')) / topicsTotalInterest;
-                if (topicCountRatio < (MIN_TOPIC_SIZE_PCT / 100)) {
+                if (_.all(topicInterest.sources, function (sourceInterest, sourceName) {
+                    const sourceInterestRatio =
+                        sourceInterest.interest / sourcesTotalInterest[sourceName];
+                    return sourceInterestRatio < (MIN_TOPIC_SIZE_PCT / 100);
+                })) {
                     return;
                 }
 

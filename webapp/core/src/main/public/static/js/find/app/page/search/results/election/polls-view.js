@@ -20,8 +20,8 @@ define([
     const END_DATE = moment();
     const START_DATE = END_DATE.clone().subtract(6, 'month');
     const PARTIES = {
-        DEM: { name: 'Democrat', colour: 'blue' },
-        REP: { name: 'Republican', colour: 'red' }
+        DEM: { name: 'Democrat', colour: '#1668c1' },
+        REP: { name: 'Republican', colour: '#ff454f' }
     };
     const CHART_ASPECT_RATIO = 1.8;
 

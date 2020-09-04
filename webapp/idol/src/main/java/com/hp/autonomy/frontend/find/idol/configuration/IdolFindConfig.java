@@ -79,6 +79,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final Integer documentSummaryMaxLength;
     private final ExportConfig export;
     private final SearchConfig search;
+    private final String pollingDataFilePath;
 
     @JsonIgnore
     private volatile Map<String, Map<Integer, String>> productMap;
@@ -115,6 +116,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .documentSummaryMaxLength(documentSummaryMaxLength == null ? other.documentSummaryMaxLength : documentSummaryMaxLength)
                 .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(maybeOther.export)).orElse(maybeOther.export))
                 .search(search == null ? other.search : search)
+                .pollingDataFilePath(pollingDataFilePath == null ? other.pollingDataFilePath : pollingDataFilePath)
                 .build())
             .orElse(this);
     }

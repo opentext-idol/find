@@ -1,4 +1,4 @@
-package com.hp.autonomy.frontend.find.core.pollingdata;
+package com.hp.autonomy.frontend.find.idol.pollingdata;
 
 import com.hp.autonomy.types.requests.idol.actions.tags.DateRangeInfo;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.hp.autonomy.frontend.find.core.pollingdata;
+package com.hp.autonomy.frontend.find.idol.pollingdata;
 
 class RecordFormatException extends Exception {
 
