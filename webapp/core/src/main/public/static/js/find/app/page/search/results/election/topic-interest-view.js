@@ -25,7 +25,7 @@ define([
             'twitter-democrat-house',
             'twitter-democrat-biden'
         ] },
-        { name: 'general public', indexes: ['twitter-replies'] },
+        { name: 'Citizens', indexes: ['twitter-replies'] },
         { name: 'Republican', indexes: [
             'twitter-republican-senate',
             'twitter-republican-house',
@@ -43,8 +43,7 @@ define([
     ];
 
     const MAX_TOPICS = 15;
-    const MAX_TOPIC_TERMS = 5;
-    const MIN_TOPIC_SIZE_PCT = 7;
+    const MIN_TOPIC_SIZE_PCT = 0.3;
     const MAX_DOCS_SAMPLED = 5000;
     const START_DATE = moment().subtract(1, 'week').toISOString();
     const SENTIMENT_FIELD = 'SENTIMENT';
@@ -104,6 +103,10 @@ define([
         drawLinkCurveHorizontal(path, { source: links[1].target, target: links[1].source });
         path.closePath();
         return path;
+    }
+
+    const normInterest = function (interest) {
+        return Math.round(Math.pow(interest, 0.8));
     }
 
     return Backbone.View.extend({
@@ -189,11 +192,23 @@ define([
 
             return this.entityCollection.fetch({ data: requestData })
                 .then(_.bind(function () {
-                    const topics =
-                        _.first(this.entityCollection.processDataForTopicMap(), MAX_TOPICS);
+                    const topics = {};
+                    _.find(this.entityCollection.models, function (model) {
+                        if (_.size(topics) >= MAX_TOPICS) {
+                            return true;
+                        }
+
+                        const topic = model.get('text');
+                        const cluster = model.get('cluster');
+                        if (topics[cluster] === undefined) {
+                            topics[cluster] = { name: topic, terms: [topic] };
+                        } else {
+                            topics[cluster].terms.push(topic);
+                        }
+                        return false;
+                    });
 
                     const topicPromises = _.map(topics, _.bind(function (topic) {
-                        const terms = _.pluck(_.first(topic.children, MAX_TOPIC_TERMS), 'name');
                         const sourcePromises = _.map(SOURCES, _.bind(function (source) {
                             return $.when(
                                 this.getDocumentCount(topic.name, source),
@@ -206,7 +221,7 @@ define([
                         return $.when.apply($, sourcePromises).then(function () {
                             return {
                                 sources: _.object(_.pluck(SOURCES, 'name'), _.toArray(arguments)),
-                                terms: terms
+                                terms: topic.terms
                             };
                         });
                     }, this));
@@ -219,14 +234,11 @@ define([
 
         getData: function (sources, topicsInterest) {
             const sourceMultipliers = {};
-            const sourcesTotalInterest = {};
+            const sourcesTotalInterest =
+                _.object(_.pluck(sources, 'name'), _.pluck(sources, 'documents'));
             const sourcesTotalDocs = sum(_.pluck(sources, 'documents'));
             _.each(sources, function (source) {
                 sourceMultipliers[source.name] = sourcesTotalDocs / source.documents;
-                sourcesTotalInterest[source.name] = sum(_.map(topicsInterest,
-                    function (topicInterest) {
-                        return topicInterest.sources[source.name].interest;
-                    }));
             });
             sum(_.map(topicsInterest, function (topicInterest) {
                 return sum(_.pluck(topicInterest.sources, 'interest'));
@@ -244,9 +256,9 @@ define([
                 }
 
                 _.each(sources, function (source, sourceIndex) {
-                    const sourceInterest =
+                    const sourceInterest = normInterest(
                         sourceMultipliers[source.name] *
-                        topicInterest.sources[source.name].interest;
+                        topicInterest.sources[source.name].interest);
                     if (sourceInterest <= 0) {
                         return;
                     }
@@ -256,13 +268,13 @@ define([
                         topic: topic,
                         terms: topicInterest.terms,
                         sentiment: topicInterest.sources[source.name].sentiment,
-                        fixedValue: Math.round(sourceInterest)
+                        fixedValue: sourceInterest
                     });
 
                     _.find(sources.slice(sourceIndex + 1), function (targetSource) {
-                        const targetInterest =
+                        const targetInterest = normInterest(
                             sourceMultipliers[targetSource.name] *
-                            topicInterest.sources[targetSource.name].interest;
+                            topicInterest.sources[targetSource.name].interest);
                         if (targetInterest <= 0) {
                             return false;
                         }
