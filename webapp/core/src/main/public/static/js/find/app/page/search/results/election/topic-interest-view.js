@@ -42,8 +42,14 @@ define([
         'twitter-republican-trump'
     ];
 
+    const HARDCODED_TOPICS = [
+        { name: 'President Trump', terms: ['President Trump'] },
+        { name: 'Coronavirus', terms: ['Coronavirus'] },
+        { name: 'Covid', terms: ['Covid'] }
+    ];
+
     const MAX_TOPICS = 15;
-    const MIN_TOPIC_SIZE_PCT = 0.3;
+    const MIN_TOPIC_SIZE_PCT = 0.45;
     const MAX_DOCS_SAMPLED = 5000;
     const START_DATE = moment().subtract(1, 'week').toISOString();
     const SENTIMENT_FIELD = 'SENTIMENT';
@@ -106,7 +112,7 @@ define([
     }
 
     const normInterest = function (interest) {
-        return Math.round(Math.pow(interest, 0.8));
+        return Math.round(Math.pow(interest, 0.7));
     }
 
     return Backbone.View.extend({
@@ -208,7 +214,8 @@ define([
                         return false;
                     });
 
-                    const topicPromises = _.map(topics, _.bind(function (topic) {
+                    const allTopics = HARDCODED_TOPICS.concat(_.values(topics));
+                    const topicPromises = _.map(allTopics, _.bind(function (topic) {
                         const sourcePromises = _.map(SOURCES, _.bind(function (source) {
                             return $.when(
                                 this.getDocumentCount(topic.name, source),
@@ -227,7 +234,7 @@ define([
                     }, this));
 
                     return $.when.apply($, topicPromises).then(function () {
-                        return _.object(_.pluck(topics, 'name'), _.toArray(arguments));
+                        return _.object(_.pluck(allTopics, 'name'), _.toArray(arguments));
                     });
                 }, this));
         },
