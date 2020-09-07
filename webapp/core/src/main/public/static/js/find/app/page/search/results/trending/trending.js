@@ -284,8 +284,8 @@ define([
         const tickPadding = 5;
         const tickWidth = width / labels.length;
 
-        labels.each(function() {
-            const label = d3.select(this);
+        _.each(labels, function(labelNode) {
+            const label = d3.select(labelNode);
             const words = label.text().split(/\s+/).reverse();
             const y = label.attr("y");
             const dy = parseFloat(label.attr("dy"));
@@ -544,7 +544,7 @@ define([
                         g.append('text')
                             .attr('class', 'legend-text')
                             .attr('x', chartWidth + LEGEND_MARKER_WIDTH + LEGEND_PADDING)
-                            .attr('y', d.labelY - 0.6 * LEGEND_TEXT_HEIGHT)
+                            .attr('y', d.labelY + 0.2 * LEGEND_TEXT_HEIGHT)
                             .attr('width', legendWidth - LEGEND_MARKER_WIDTH - LEGEND_PADDING)
                             .attr('cursor', 'default')
                             .attr('fill', 'currentColor')
