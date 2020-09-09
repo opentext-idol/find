@@ -1,0 +1,141 @@
+/*
+ * (c) Copyright 2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
+ */
+
+a.unstyled {
+  .text-decoration-none;
+
+  color: @white;
+
+  &:hover {
+    .text-decoration-none;
+
+    color: @white !important;
+  }
+}
+
+.absolute {
+  position: absolute;
+}
+
+.bold {
+  font-family: Metric-Bold;
+  font-weight: 900;
+}
+
+.break-all {
+  word-break: break-all;
+}
+
+.centre {
+  .text-center;
+}
+
+.crisp-edges {
+  image-rendering: -moz-crisp-edges; /* Firefox */
+  image-rendering: -o-crisp-edges; /* Opera */
+  image-rendering: -webkit-optimize-contrast; /* Webkit */
+  image-rendering: crisp-edges;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed !important;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-align-center {
+  align-items: center;
+}
+
+.flex-column {
+  .flex;
+
+  flex-direction: column;
+}
+
+.flex-row {
+  .flex;
+
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.full-height-viewport {
+  height: 100vh;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.m-b-xl {
+  margin-bottom: 40px;
+}
+
+.m-b-xxl {
+  margin-bottom: 60px;
+}
+
+.no-box-shadow {
+  box-shadow: none !important;
+}
+
+.not-clickable {
+  cursor: default;
+  pointer-events: none;
+}
+
+.position-right {
+  right: @nil;
+}
+
+.relative {
+  position: relative;
+}
+
+.shorten {
+  .no-overflow;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Utility class to allow disabling ellipsis in templates
+.show-full-text {
+  text-overflow: clip !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+
+.text-decoration-none {
+  text-decoration: none !important;
+}
+
+.thin-btn {
+  padding: @nil 7px;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}

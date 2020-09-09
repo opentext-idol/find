@@ -1,0 +1,94 @@
+/*
+ * (c) Copyright 2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
+ */
+
+.concepts-controls {
+  .find-input-button {
+    .absolute;
+    .no-box-shadow;
+
+    &:hover {
+      background-color: @white;
+    }
+
+    &:focus {
+      outline: 0;
+    }
+
+    height: 34px;
+    right: @nil;
+    top: @nil;
+    border-top: 1px solid @findConceptInputBorder;
+    border-right: 1px solid @findConceptInputBorder;
+    border-bottom: 1px solid @findConceptInputBorder;
+    border-left: 0;
+  }
+
+  .find-input-button.in-focus {
+    border-top: 1px solid @findConceptInputButtonBorder;
+    border-right: 1px solid @findConceptInputButtonBorder;
+    border-bottom: 1px solid @findConceptInputButtonBorder;
+  }
+
+  input::-webkit-input-placeholder,
+  input::-moz-placeholder {
+    color: @blue1;
+    opacity: 0.5;
+  }
+}
+
+.related-concepts-list {
+  padding-left: @nil;
+}
+
+.selected-concept-container {
+  .inline-block;
+  .m-b-xs;
+
+  &:not(last-child) {
+    .m-r-xs;
+  }
+
+  textarea.edit-concept-input {
+    .text-muted;
+  }
+
+  .selected-related-concept {
+    .inline-flex;
+
+    border-radius: @nil;
+    border: solid 1px @sidePanelLabelBorderColour;
+    color: @sidePanelLabelColour;
+    font-size: @labelSize;
+    font-weight: normal;
+    height: 19px;
+    line-height: @selectedConceptsLineHeight;
+    padding: 1px 6px;
+    background-color: @white;
+    cursor: pointer;
+
+    i:before {
+      color: @sidePanelLabelColour;
+    }
+
+    .concept-remove-icon {
+      line-height: inherit;
+    }
+
+    .selected-related-concept-text {
+      .m-r-xs;
+
+      max-width: @selectedConceptsMaxWidth;
+    }
+  }
+}

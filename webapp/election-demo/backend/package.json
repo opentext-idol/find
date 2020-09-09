@@ -1,0 +1,11 @@
+{
+  "name": "election-demo-backend",
+  "version": "1.0.0",
+  "main": "build-data.js",
+  "dependencies": {
+    "async": "3.2.0",
+    "moment": "2.27.0",
+    "superagent": "3.1.0",
+    "underscore": "1.11.0"
+  }
+}

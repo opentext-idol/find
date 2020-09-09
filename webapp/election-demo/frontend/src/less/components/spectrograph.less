@@ -1,0 +1,48 @@
+/*
+ * Copyright 2020 Micro Focus International plc.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+.stories-graph {
+  position: relative;
+  font-size: 8pt;
+  margin: 24px;
+
+  .header {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .headings {
+    margin: auto;
+    position: relative;
+    height: 55px;
+    line-height: 40px;
+  }
+
+  .dateheader {
+    top: 8px;
+    position: absolute;
+    font-weight: normal;
+    text-align: center;
+    font-size: 40px;
+  }
+
+  .textwrap {
+    color: #ffffff;
+    position: absolute;
+    text-align: center;
+    padding: 1px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    //cursor: pointer;
+  }
+
+  .textwrap:hover {
+    overflow-x: visible;
+  }
+
+}

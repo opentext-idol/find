@@ -1,0 +1,238 @@
+/*
+ * (c) Copyright 2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
+ */
+
+@hpeThumbBackground: @hpegreen;
+@hpeThumbBorder: 1px solid shade(@hpeThumbBackground, 5%);
+@hpeThumbBackgroundFocus: tint(@hpeThumbBackground, 1%);
+@hpeThumbBorderFocus: 1px solid tint(@hpeThumbBackground, 4%);
+@hpeTrackBackground: tint(@hpegreen, 80%);
+@hpeTrackBorder: 1px solid @hpegreen;
+@hpeTrackBackgroundFocus: tint(@hpegreen, 90%);
+@hpeThumbShadow: none;
+@hpeTrackShadow: none;
+@hpeThumbBorderRadius: 10px;
+@hpeTrackBorderRadius: 4px;
+@hpeThumbSize: 20px;
+@hpeTrackWidth: 210px;
+@hpeTrackHeight: 10px;
+
+.after-slider-div .slider.slider-horizontal .slider-track .slider-selection.tick-slider-selection,
+.after-slider-div .slider.slider-horizontal .slider-track .in-selection,
+.before-slider-div .slider.slider-horizontal .slider-track .slider-track-high,
+.after-slider-div .slider.slider-horizontal .slider-track .slider-tick.round.in-selection,
+.before-slider-div .slider.slider-horizontal .slider-track .slider-tick.round {
+  background: @blue0 none;
+}
+
+.after-slider-div {
+  .slider.slider-horizontal {
+    .slider-track {
+      .slider-tick.round {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.before-slider-div .slider.slider-horizontal .slider-track .slider-selection.tick-slider-selection,
+.before-slider-div .slider.slider-horizontal.slider-track .in-selection,
+.before-slider-div .slider.slider-horizontal .slider-track .slider-tick.round.in-selection,
+.after-slider-div .slider.slider-horizontal .slider-track .slider-track-high,
+.after-slider-div .slider.slider-horizontal .slider-track .slider-tick.round {
+  background: @grey12 none;
+}
+
+.before-slider-div {
+  .slider.slider-horizontal {
+    .slider-track {
+      .slider-tick.round {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.date-slider-div {
+  .m-b-sm;
+  .p-l-sm;
+
+  vertical-align: middle;
+
+  .slider {
+    width: 350px;
+
+    .slider-track {
+      .slider-handle.min-slider-handle.round {
+        background: @white none;
+        border: 2px solid @blue0;
+      }
+    }
+  }
+}
+
+.date-slider-div > label {
+  color: @text-color;
+  display: block;
+  margin-left: -@spacing-sm;
+}
+
+input[type=range].range-input-slider {
+  -webkit-appearance: none;
+  width: @hpeTrackWidth;
+  height: @hpeThumbSize;
+  margin: 5px;
+  padding: 0;
+  cursor: pointer;
+  display: inline;
+  background: transparent;
+  // added for Firefox alignment issues
+  vertical-align: middle;
+
+  &::-webkit-slider-runnable-track {
+    width: @hpeTrackWidth;
+    height: @hpeTrackHeight;
+    cursor: pointer;
+    box-shadow: @hpeTrackShadow;
+    background: @hpeTrackBackground;
+    border-radius: @hpeTrackBorderRadius;
+    border: @hpeTrackBorder;
+  }
+  &::-moz-range-track {
+    width: @hpeTrackWidth;
+    height: @hpeTrackHeight;
+    cursor: pointer;
+    box-shadow: @hpeTrackShadow;
+    background: @hpeTrackBackground;
+    border-radius: @hpeTrackBorderRadius;
+    border: @hpeTrackBorder;
+  }
+  &::-ms-track {
+    width: @hpeTrackWidth;
+    height: @hpeTrackHeight;
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+  }
+  &::-ms-fill-lower {
+    background: @hpeTrackBackground;
+    border: @hpeTrackBorder;
+    border-radius: @hpeTrackBorderRadius;
+    box-shadow: @hpeTrackShadow;
+  }
+  &::-ms-fill-upper {
+    background: @hpeTrackBackground;
+    border: @hpeTrackBorder;
+    border-radius: @hpeTrackBorderRadius;
+    box-shadow: @hpeTrackShadow;
+  }
+
+  &:focus {
+    outline: none;
+  }
+  &:focus::-webkit-slider-runnable-track {
+    background: @hpeTrackBackgroundFocus;
+  }
+  &:focus::-moz-range-track {
+    background: @hpeTrackBackgroundFocus;
+  }
+  &:focus::-ms-fill-lower {
+    background: @hpeTrackBackgroundFocus;
+  }
+  &:focus::-ms-fill-upper {
+    background: @hpeTrackBackgroundFocus;
+  }
+
+  &::-webkit-slider-thumb {
+    box-shadow: @hpeThumbShadow;
+    border: @hpeThumbBorder;
+    height: @hpeThumbSize;
+    width: @hpeThumbSize;
+    border-radius: @hpeThumbBorderRadius;
+    background: @hpeThumbBackground;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -6px;
+    box-sizing: border-box;
+  }
+  &::-moz-range-thumb {
+    box-shadow: @hpeThumbShadow;
+    border: @hpeThumbBorder;
+    height: @hpeThumbSize;
+    width: @hpeThumbSize;
+    border-radius: @hpeThumbBorderRadius;
+    background: @hpeThumbBackground;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+  &::-ms-thumb {
+    box-shadow: @hpeThumbShadow;
+    border: @hpeThumbBorder;
+    height: @hpeThumbSize;
+    width: @hpeThumbSize;
+    border-radius: @hpeThumbBorderRadius;
+    background: @hpeThumbBackground;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+
+  &:focus::-webkit-slider-thumb {
+    background: @hpeThumbBackgroundFocus;
+    border: @hpeThumbBorderFocus;
+  }
+  &:focus::-moz-range-thumb {
+    background: @hpeThumbBackgroundFocus;
+    border: @hpeThumbBorderFocus;
+  }
+  &:focus::-ms-thumb {
+    background: @hpeThumbBackgroundFocus;
+    border: @hpeThumbBorderFocus;
+  }
+
+  // IE tries to be clever and add a value label of its own
+  &::-ms-tooltip {
+    .hidden;
+  }
+}
+
+.numeric-parametric-slider-block,
+.numeric-parametric-slider-block > .slider {
+  width: 100%;
+}
+
+.slider-block {
+  label {
+    display: block;
+  }
+
+  .slider {
+    .m-b-xs;
+    .m-t-xxs;
+
+    display: block;
+  }
+}
+
+.slider-track-low,
+.slider-track-high {
+  background: rgba(1, 169, 130, 0.1);
+}
+
+.slider-selection {
+  background: rgba(1, 169, 130, 0.2);
+}
+
+.slider-handle {
+  background: @hpegreen;
+}

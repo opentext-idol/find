@@ -1,0 +1,187 @@
+@font-face {
+  font-family: Metric-Light;
+  src: url('../../font/Metric-Light.eot');
+  src: url('../../font/Metric-Light.eot?#iefix') format('embedded-opentype'), url('../../font/Metric-Light.woff') format('woff');
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Metric-Thin;
+  src: url('../../font/Metric-Thin.eot');
+  src: url('../../font/Metric-Thin.eot?#iefix') format('embedded-opentype'), url('../../font/Metric-Thin.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Metric;
+  src: url('../../font/Metric-Regular.eot');
+  src: url('../../font/Metric-Regular.eot?#iefix') format('embedded-opentype'), url('../../font/Metric-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Metric-Semibold;
+  src: url('../../font/Metric-Semibold.eot');
+  src: url('../../font/Metric-Semibold.eot?#iefix') format('embedded-opentype'), url('../../font/Metric-Semibold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Metric-Bold;
+  src: url('../../font/Metric-Bold.eot');
+  src: url('../../font/Metric-Bold.eot?#iefix') format('embedded-opentype'), url('../../font/Metric-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: Simple-regular;
+  src: url('../../font/Simple-regular.eot');
+  src: url('../../font/Simple-regular.eot?#iefix') format('embedded-opentype'), url('../../font/Simple-regular.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+.simple-regular {
+  font-family: Simple-regular;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.metric-regular {
+  font-family: Metric;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.metric-light {
+ font-family: Metric-Light;
+ font-style: normal;
+}
+
+.metric-semibold, .font-bold{
+  font-family: Metric-Semibold;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Metric-Light;
+  font-weight: 400;
+}
+small{
+  font-weight: 300;
+}
+
+
+h1{
+  font-size: @fontSizeH1;
+  small{
+    font-size: 60%;
+    margin-left: 10px;
+  }
+}
+
+h2{
+  font-size: @fontSizeH2;
+  small{
+    font-size: 65%;
+    margin-left: 8px;
+  }
+}
+
+h3{
+  font-size: @fontSizeH3;
+  small{
+    font-size: 70%;
+    margin-left: 5px;
+  }
+}
+
+h4{
+  font-family: Metric-Semibold;
+  font-size: @fontSizeH4;
+  small{
+    font-family: Metric-Light;
+    font-size: 100%;
+    margin-left: 3px;
+  }
+}
+
+h5{
+  font-family: Metric-Semibold;
+  font-size: @fontSizeH5;
+  small{
+    font-family: Metric-Light;
+    font-size: 100%;
+    margin-left: 3px;
+  }
+}
+
+p {
+  font-size: @fontSize;
+}
+
+
+/* COLORED TEXT */
+
+
+.text-primary {
+  color: @hpegreen;
+}
+
+.text-success {
+  color: @hpegreen;
+}
+
+.text-secondary, .text-accent {
+  color: @accent;
+}
+
+.text-alert, .text-error, .text-warning {
+  color: @warning;
+}
+
+.text-white{
+  color:@white !important;
+}
+.text-black{
+  color:@black !important;
+}
+.text-muted {
+  color: #888888;
+}
+
+.alignment-box {
+  border: 1px solid darken(@white,10%);
+  padding: 10px;
+}
+
+.v-separator {
+  display: inline-block;
+  border-right: 1px solid #D3D3D3;
+  box-shadow: 1px 0px 0px #FFFFFF;
+  height: 25px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.affix-toolbar-condensed .v-separator, .affix .v-separator {
+ height: 20px;
+}
+
+.pos-absolute {
+ position: absolute !important;
+}
+
+strong{
+  .metric-semibold;
+}
+
+.align-right {
+ float: right;
+}
+
+.inline-block {
+  display: inline-block;
+}

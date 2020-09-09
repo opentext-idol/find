@@ -1,0 +1,164 @@
+/*
+ * (c) Copyright 2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
+ */
+
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+  background-color: @hpeNavBarColour;
+  background-image: none;
+}
+
+.drop-list {
+  .absolute;
+
+  font-size: @fontSizeLarge;
+  right: 20px;
+  z-index: @zindex-dropdown;
+
+  .dropdown-toggle {
+    padding: 5px 7px 5px 13px;
+  }
+}
+
+.find-navbar .dropdown-toggle,
+.find-navbar a {
+  color: @white;
+}
+
+.find-navbar {
+  .m-b-nil;
+
+  -webkit-transition: @transitAllFast;
+  background-color: @hpeNavBarColour;
+  color: @white;
+  height: @navBarHeight;
+  transition: @transitAllFast;
+  // We need this to be 1001 to be highter than the leaflet-bottom's z-index:1000 to prevent the leaflet controls
+  //   appearing over the dropdown menu.
+  z-index: 1001;
+
+  .dropdown {
+    .dropdown-menu {
+      li > a {
+        .text-muted;
+      }
+    }
+  }
+
+  .navbar-right.drop-list {
+    .m-nil;
+  }
+
+  .dropdown-toggle {
+    .pull-right;
+  }
+
+  .settings-logout-icon {
+    .m-r-sm;
+
+    vertical-align: middle;
+  }
+}
+
+.find-navbar-motd-container {
+  position: absolute;
+  height: 100%;
+  left: 240px;
+  right: 160px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.find-navbar-motd {
+  // Overrides the normal fade transition speed from the 'fade' class
+  -webkit-transition: opacity 1s ease, color 1s ease;
+  -o-transition: opacity 1s ease, color 1s ease;
+  transition: opacity 1s ease, color 1s ease;
+  max-height: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.motd-info {
+  color: @white;
+}
+
+.motd-warning {
+  color: @warning;
+}
+
+.hide-navbar .find-navbar-motd-container {
+  left: 160px;
+}
+
+.find-navbar .dropdown-toggle:hover,
+.find-navbar .nav li.open a.dropdown-toggle,
+.find-navbar .settings-logout a:focus,
+.find-navbar .settings-logout a:hover {
+  background-color: @grey4;
+}
+
+.hide-navbar .nav-menu-btn-container a.nav-menu-toggle-btn {
+  color: @white;
+}
+
+.navbar .navbar-nav .open .dropdown-menu > .active > a,
+.navbar .navbar-nav .open .dropdown-menu > .active > a:hover {
+  background-color: @hpeNavBarColour;
+  background-image: none;
+}
+
+.navbar-username {
+  right: @custom8 !important;
+  top: @custom11 !important;
+}
+
+.navbar-username.shorten {
+  max-width: @navbarUsernameMaxWidth;
+}
+
+.username.shorten {
+  max-width: @shortUsernameMaxWidth;
+}
+
+//Media queries
+@media @xxsmWidthScreen {
+  .navbar-nav .open .dropdown-menu {
+    .absolute;
+
+    background-color: @white;
+    box-shadow: @nil @nil 3px @blue2;
+    top: @custom9;
+  }
+
+  .navbar .navbar-nav .open .dropdown-menu > .active > a,
+  .navbar .navbar-nav .open .dropdown-menu > .active > a:hover {
+    background-color: @hpeNavBarColour;
+    background-image: none;
+  }
+}
+
+@media @xsmWidthScreen {
+  .find-logo-small,
+  .navbar-username { /* hackish, minimise overlap of navbar username with See all docs link. See [FIND-450] */
+    .hidden;
+  }
+}
+
+@media @smWidthScreen {
+  .navbar-username.shorten {
+    max-width: @smWidthScreenNavbarUsernameMaxWidth;
+  }
+}
