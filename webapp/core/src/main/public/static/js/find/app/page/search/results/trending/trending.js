@@ -38,10 +38,9 @@ define([
     const AXIS_DASHED_LINE_LENGTH = 15;
     const FADE_OUT_OPACITY = 0.3;
     const POINT_RADIUS = 5;
-    const LEGEND_MARKER_WIDTH = 25;
-    const LEGEND_TEXT_HEIGHT = 20;
+    const LEGEND_MARKER_WIDTH = 15;
+    const LEGEND_TEXT_HEIGHT = 12;
     const LEGEND_PADDING = 5;
-    const AXIS_TICK_PADDING = 5;
     const MILLISECONDS_TO_SECONDS = 1000;
     const SECONDS_IN_ONE_YEAR = 31556926;
     const SECONDS_IN_ONE_WEEK = 604800;
@@ -49,10 +48,10 @@ define([
 
     function setScales(options, chartHeight, chartWidth) {
         return {
-            xScale: d3.scaleTime()
+            xScale: d3.time.scale()
                 .domain([options.minDate, options.maxDate])
                 .range([CHART_PADDING, chartWidth]),
-            yScale: d3.scaleLinear()
+            yScale: d3.scale.linear()
                 .domain([options.chartData.minRate, options.chartData.maxRate])
                 .range([chartHeight - CHART_PADDING, CHART_PADDING / 2])
         };
@@ -183,12 +182,16 @@ define([
         chart.selectAll('.x-axis').remove();
         chart.selectAll('.dashed-axis-line').remove();
 
-        const yAxisScale = d3.axisLeft(scales.yScale)
-            .tickSizeOuter(0);
+        const yAxisScale = d3.svg.axis()
+            .scale(scales.yScale)
+            .orient('left')
+            .outerTickSize(0);
 
-        const xAxisScale = d3.axisBottom(scales.xScale)
+        const xAxisScale = d3.svg.axis()
+            .scale(scales.xScale)
+            .orient('bottom')
             .tickFormat(timeFormat)
-            .tickSizeOuter(0);
+            .outerTickSize(0);
 
         const yAxis = chart.append('g')
             .attr('class', 'y-axis')
@@ -196,11 +199,9 @@ define([
             .call(yAxisScale);
 
         yAxis.append('text')
-            .attr('x', -(scales.yScale.range()[0] + scales.yScale.range()[1]) / 2)
+            .attr('x', -(CHART_PADDING + chartHeight) / 2)
             .attr('y', -CHART_PADDING / 3 * 2)
             .attr('transform', 'rotate(270)')
-            .attr('text-anchor', 'middle')
-            .attr('fill', 'currentColor')
             .text(yAxisLabel);
 
         const xAxis = chart.append('g')
@@ -235,10 +236,10 @@ define([
 
     function htmlLabelWrap(labelWrapper) {
         const tickPadding = 5;
-        const labels = labelWrapper.nodes();
+        const labels = labelWrapper[0];
         const numberOfTicks = labels.length;
         const getTickTranslation = function getTickTranslationFn(label) {
-            return label.node().parentNode.transform.baseVal.consolidate().matrix.e;
+            return d3.transform(label.node().parentNode.getAttribute('transform')).translate[0];
         };
 
         let prevLabelTick = 0;
@@ -264,9 +265,7 @@ define([
                 .append('foreignObject')
                 .attr('class', 'x-axis-label')
                 .attr('width', widthToDouble - tickPadding)
-                .attr('transform', 'translate(' +
-                    (-(widthToDouble - tickPadding) / 2) + ', ' +
-                    AXIS_TICK_PADDING + ')')
+                .attr('transform', 'translate(' + (-(widthToDouble - tickPadding) / 2) + ', 0)')
                 .attr('height', CHART_PADDING)
                 .attr('cursor', 'default')
                 .append('xhtml:p')
@@ -279,13 +278,12 @@ define([
         d3.selectAll('.x-axis text').remove();
     }
 
-    function textLabelWrap(labelWrapper, width) {
-        const labels = labelWrapper.nodes();
+    function textLabelWrap(labels, width) {
         const tickPadding = 5;
-        const tickWidth = width / labels.length;
+        const tickWidth = width / labels[0].length;
 
-        _.each(labels, function(labelNode) {
-            const label = d3.select(labelNode);
+        labels.each(function() {
+            const label = d3.select(this);
             const words = label.text().split(/\s+/).reverse();
             const y = label.attr("y");
             const dy = parseFloat(label.attr("dy"));
@@ -362,42 +360,43 @@ define([
     function getTimeFormat(max, min) {
         const range = max.getTime() / MILLISECONDS_TO_SECONDS - min.getTime() / MILLISECONDS_TO_SECONDS;
         if(range > SECONDS_IN_ONE_YEAR) {
-            return d3.timeFormat("%b %Y");
+            return d3.time.format("%b %Y");
         } else if(range < SECONDS_IN_ONE_DAY) {
-            return d3.timeFormat("%H:%M:%S %d&nbsp;%b %Y");
+            return d3.time.format("%H:%M:%S %d&nbsp;%b %Y");
         } else if(range < SECONDS_IN_ONE_WEEK) {
-            return d3.timeFormat("%H:%M %d&nbsp;%b %Y");
+            return d3.time.format("%H:%M %d&nbsp;%b %Y");
         } else {
-            return d3.timeFormat("%d&nbsp;%b %Y");
+            return d3.time.format("%d&nbsp;%b %Y");
         }
     }
 
     function getIESafeTimeFormat(max, min) {
         const range = max.getTime() / MILLISECONDS_TO_SECONDS - min.getTime() / MILLISECONDS_TO_SECONDS;
         if(range > SECONDS_IN_ONE_YEAR) {
-            return d3.timeFormat("%b %Y");
+            return d3.time.format("%b %Y");
         } else if(range < SECONDS_IN_ONE_DAY) {
-            return d3.timeFormat("%H:%M:%S %d %b %Y");
+            return d3.time.format("%H:%M:%S %d %b %Y");
         } else if(range < SECONDS_IN_ONE_WEEK) {
-            return d3.timeFormat("%H:%M %d %b %Y");
+            return d3.time.format("%H:%M %d %b %Y");
         } else {
-            return d3.timeFormat("%d %b %Y");
+            return d3.time.format("%d %b %Y");
         }
     }
 
     function getColor(data, d) {
-        return d.color ?
-            (d.color[0] === '#' ? d.color : _.findWhere(COLORS, {name: d.color}).hex) :
-            COLORS[_.pluck(data, 'name').indexOf(d.name) % COLORS.length].hex;
+        const color = d.color
+            ? _.findWhere(COLORS, {name: d.color})
+            : COLORS[_.pluck(data, 'name').indexOf(d.name) % COLORS.length];
+        return color.hex;
     }
 
-    function addDragAndZoomRectangle(chart, scales, dragEnabled) {
+    function addDragAndZoomRectangle(chart, scales) {
         chart.selectAll('.graph-area').remove();
 
         const xScaleRange = scales.xScale.range();
         const yScaleRange = scales.yScale.range();
         return chart.insert("rect", "g")
-            .attr('class', 'graph-area' + (dragEnabled ? ' draggable' : ''))
+            .attr('class', 'graph-area')
             .attr("x", xScaleRange[0])
             .attr("y", yScaleRange[1])
             .attr("width", xScaleRange[1] - xScaleRange[0])
@@ -451,44 +450,86 @@ define([
                 timeFormat
             );
 
-            const line = d3.line()
+            const line = d3.svg.line()
                 .x(function(d) {
                     return scales.xScale(d.mid)
                 })
                 .y(function(d) {
                     return scales.yScale(d.rate)
-                });
+                })
+                .interpolate('linear');
 
             this.chart
                 .attr('width', elWidth)
                 .attr('height', elHeight);
 
-            const join = this.chart
-                .selectAll('.value')
-                .data(data)
-                .join('g')
-                    .attr('data-name', function(d) { return d.name; })
-                    .attr('class', 'value')
-                    .style('stroke', function(d) { return getColor(data, d); });
-            join.selectAll('path')
-                .data(function(d) { return [d]; })
-                .join('path')
+            if(this.dataJoin) {
+                this.dataJoin = this.dataJoin
+                    .data(data, function(d) {
+                        return d.name;
+                    });
+            } else {
+                this.dataJoin = this.chart.selectAll('.value')
+                    .data(data, function(d) {
+                        return d.name;
+                    });
+            }
+
+            this.dataJoin.enter()
+                .append('g')
+                .attr('data-name', function(d) {
+                    return d.name;
+                })
+                .append('path');
+
+            this.dataJoin
+                .attr('stroke', function(d) {
+                    return getColor(data, d);
+                });
+
+            this.dataJoin.select('path')
                 .attr('class', 'line')
                 .attr('stroke-width', 2)
                 .attr('fill', 'none')
-                .attr('d', function(d) { return line(d.points); })
+                .attr('d', function(d) {
+                    return line(d.points);
+                })
                 .on('mouseover', hoverCallbacks.lineAndPointMouseover)
-                .on('mouseout', hoverCallbacks.lineAndPointMouseout)
-            join.selectAll('circle')
-                .data(function(d) { return d.points; })
-                .join('circle')
-                    .attr('r', 4)
-                    .attr('fill', 'white')
-                    .attr('stroke-width', 3)
-                    .attr('cy', function(d) { return scales.yScale(d.rate); })
-                    .attr('cx', function(d) { return scales.xScale(d.mid); })
-                    .on('mouseover', hoverCallbacks.pointMouseover)
-                    .on('mouseout', hoverCallbacks.pointMouseout);
+                .on('mouseout', hoverCallbacks.lineAndPointMouseout);
+
+            this.dataJoin.exit().remove();
+
+            if(this.pointsJoin && !reloaded) {
+                this.pointsJoin = this.pointsJoin
+                    .data(function(d) {
+                        return d.points;
+                    });
+            } else {
+                this.pointsJoin = this.dataJoin
+                    .selectAll('circle')
+                    .data(function(d) {
+                        return d.points;
+                    });
+            }
+
+            this.pointsJoin
+                .enter()
+                .append('circle')
+                .attr('r', 4)
+                .attr('fill', 'white')
+                .attr('stroke-width', 3);
+
+            this.pointsJoin
+                .attr('cy', function(d) {
+                    return scales.yScale(d.rate);
+                })
+                .attr('cx', function(d) {
+                    return scales.xScale(d.mid);
+                })
+                .on('mouseover', hoverCallbacks.pointMouseover)
+                .on('mouseout', hoverCallbacks.pointMouseout);
+
+            this.pointsJoin.exit().remove();
 
             setAxes(this.chart, scales, chartHeight, chartWidth, this.yAxisLabelForUnit(yUnitText), timeFormat);
 
@@ -528,7 +569,7 @@ define([
                         g.append('foreignObject')
                             .attr('class', 'legend-text')
                             .attr('x', chartWidth + LEGEND_MARKER_WIDTH + LEGEND_PADDING)
-                            .attr('y', d.labelY - 0.6 * LEGEND_TEXT_HEIGHT)
+                            .attr('y', d.labelY - (2 * LEGEND_PADDING))
                             .attr('width', legendWidth - LEGEND_MARKER_WIDTH - LEGEND_PADDING)
                             .attr('height', LEGEND_TEXT_HEIGHT)
                             .attr('cursor', 'default')
@@ -544,10 +585,10 @@ define([
                         g.append('text')
                             .attr('class', 'legend-text')
                             .attr('x', chartWidth + LEGEND_MARKER_WIDTH + LEGEND_PADDING)
-                            .attr('y', d.labelY + 0.2 * LEGEND_TEXT_HEIGHT)
+                            .attr('y', d.labelY)
                             .attr('width', legendWidth - LEGEND_MARKER_WIDTH - LEGEND_PADDING)
                             .attr('cursor', 'default')
-                            .attr('fill', 'currentColor')
+                            .attr('fill', 'black')
                             .attr('stroke', 'none')
                             .attr('font-size', LEGEND_TEXT_HEIGHT)
                             .text(d.name)
@@ -561,7 +602,7 @@ define([
 
                 });
 
-            const graphArea = addDragAndZoomRectangle(this.chart, scales, this.dragEnabled);
+            const graphArea = addDragAndZoomRectangle(this.chart, scales);
             const behaviourOptions = {
                 chart: graphArea,
                 xScale: scales.xScale,
