@@ -87,7 +87,6 @@ const View = Backbone.View.extend({
     },
 
     showGraph: function () {
-        this.$container.html('');
         const chart = new Trending({
             el: this.$container.get(0),
             tooltipText: function (value, unit, series, t0, t1) {

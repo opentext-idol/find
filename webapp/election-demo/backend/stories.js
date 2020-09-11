@@ -30,12 +30,11 @@ exports.getData = function (destPath, callback) {
 
     async.parallel({
         clusters: _.partial(Find.get, Find.URLs.themeClusters, clustersRequestData),
-        image: done_ => {
-            const outStream = fs.createWriteStream(Path.join(destPath, 'img', 'spectrograph.jpg'))
-            Find.getRaw(Find.URLs.themeImage, imageRequestData).pipe(outStream)
-            const done = _.once(done_)
-            outStream.on('error', err => done(err || 'error'))
-            outStream.on('finish', () => done(null))
+        image: done => {
+            const inStream = Find.getRaw(Find.URLs.themeImage, imageRequestData)
+            const outStream = fs.createWriteStream(
+                Path.join(destPath, 'src', 'img', 'spectrograph.jpg'))
+            Util.pipe(inStream, outStream, done)
         }
     }, Util.cbDone(callback, results => ({
         clusters: results.clusters.clusters,
