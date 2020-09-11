@@ -10,7 +10,7 @@ const DAY_COUNT = 7
 const DAY_SECONDS = 24 * 60 * 60
 const SPAN_SECONDS = DAY_COUNT * DAY_SECONDS
 const IMAGE_WIDTH = 1200
-const IMAGE_HEIGHT = 1200;
+const IMAGE_HEIGHT = IMAGE_WIDTH
 
 exports.getData = function (destPath, callback) {
     const endDateUnix = Math.floor(moment().unix() / DAY_SECONDS) * DAY_SECONDS + DAY_SECONDS

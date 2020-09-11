@@ -3,17 +3,76 @@
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
  */
 
-.interests-graph, .polls-timescale-selector, .polls-graph, .stories-graph, .demo-intro {
-  margin: 24px 12px;
-  color: #323435;
+// font size
+body {
+  font-size: 16px;
 }
-.interests-graph, .polls-graph, .demo-intro {
+.body-text {
   font-size: 20px;
 }
-.polls-graph .legend-text p, .polls-graph .legend-text.bold p {
-  font-size: 20px;
+#banner h1 {
+  font-size: 48px;
+  font-family: Metric-Bold;
+}
+.polls-graph text, .polls-graph p {
+  font-size: 13px;
+}
+.polls-graph .legend-text p {
+  font-size: 16px;
   line-height: 1;
 }
-.polls-graph text {
-  font-size: 16px;
+.stories-graph .headings {
+  height: 40px;
+  font-size: 30px;
+}
+.stories-graph .textwrap {
+  font-size: 11px;
+}
+
+// colours
+body {
+  color: #323435;
+  background: #f1f2f3;
+}
+#page {
+  background: #ffffff;
+  box-shadow: 2px 2px rgba(0, 0, 0, 0.15);
+  border: 1px rgba(0, 0, 0, 0.08);
+}
+#banner {
+  color: #ffffff;
+  background: #0073e7;
+}
+
+// layout
+#page {
+  width: 80%;
+  min-width: 1248px; // stories + padding
+  max-width: 1600px;
+  margin: 0 auto;
+  padding-top: 64px;
+}
+#banner {
+  padding: 24px 64px;
+  h1 {
+    margin: 0;
+  }
+}
+#content {
+  padding: 64px 24px 24px 24px;
+}
+.polls-view {
+  float: left;
+  width: 60%;
+}
+.interests-view {
+  clear: left;
+  float: right;
+  width: 70%;
+}
+.stories-view {
+  clear: right;
+}
+.stories-graph {
+  margin: 0 auto;
 }

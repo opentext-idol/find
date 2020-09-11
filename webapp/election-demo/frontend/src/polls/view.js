@@ -74,7 +74,8 @@ const View = Backbone.View.extend({
         this.timescaleSelector = new FieldSelectionView({
             model: this.timescaleModel,
             fields: TIME_SCALES,
-            allowEmpty: false
+            allowEmpty: false,
+            width: '200px'
         });
         this.$('.polls-timescale-selector').prepend(this.timescaleSelector.$el);
         this.timescaleSelector.render();

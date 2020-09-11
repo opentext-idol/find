@@ -16,7 +16,7 @@ const View = Backbone.View.extend({
         const $container = this.$('.stories-graph');
 
         // spectrograph needs to know final text size to render boxes
-        document.fonts.load('8pt Metric').then(() => {
+        document.fonts.load('11px Metric').then(() => {
             Spectrograph({
                 clustersData: this.data.clusters,
                 dayCount: this.data.dayCount,
