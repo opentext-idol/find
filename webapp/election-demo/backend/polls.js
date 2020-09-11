@@ -5,7 +5,7 @@ const Find = require('./find')
 const Util = require('./util')
 
 const TIME_SCALES = [
-    { id: '6m', duration: moment.duration(6, 'month'), bucketCount: 30 },
+    { id: '6m', duration: moment.duration(6, 'month'), bucketCount: 20 },
     { id: '6w', duration: moment.duration(6, 'week'), bucketCount: 20 },
     { id: '2w', duration: moment.duration(2, 'week'), bucketCount: 10 }
 ]

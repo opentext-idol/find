@@ -28,6 +28,9 @@ body {
 .stories-graph .textwrap {
   font-size: 11px;
 }
+#page .btn {
+  font-size: 24px;
+}
 
 // colours
 body {
@@ -41,7 +44,10 @@ body {
 }
 #banner {
   color: #ffffff;
-  background: #0073e7;
+  background: url('../../img/mf-logo-white.png') no-repeat top 0 right 0, #0073e7;
+}
+#page .button-secondary {
+  color: #656668;
 }
 
 // layout
@@ -52,14 +58,25 @@ body {
   margin: 0 auto;
   padding-top: 64px;
 }
+.learn-more {
+  display: block;
+  text-align: center;
+}
 #banner {
-  padding: 24px 64px;
+  padding: 24px 0 24px 64px;
+  display: flex;
   h1 {
     margin: 0;
   }
+  .learn-more {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 }
 #content {
-  padding: 64px 24px 24px 24px;
+  padding: 64px 24px 48px 24px;
 }
 .polls-view {
   float: left;
