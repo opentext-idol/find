@@ -53,7 +53,8 @@ require.config({
         sunburst: '../bower_components/hp-autonomy-sunburst/src',
         topicmap: '../bower_components/hp-autonomy-topic-map/src',
         underscore: '../bower_components/underscore/underscore',
-        typeahead: '../bower_components/corejs-typeahead/dist/typeahead.jquery'
+        typeahead: '../bower_components/corejs-typeahead/dist/typeahead.jquery',
+        uuidjs: '../bower_components/uuid.js/src/uuid'
     },
     shim: {
         'backbone': {
@@ -85,6 +86,9 @@ require.config({
         'leaflet.draw': ['leaflet'],
         'leaflet.markercluster': ['leaflet'],
         'leaflet.markercluster.layersupport': ['leaflet.markercluster'],
-        'leaflet': ['leaflet.notransform']
+        'leaflet': ['leaflet.notransform'],
+        uuidjs: {
+            exports: 'UUID'
+        }
     }
 });

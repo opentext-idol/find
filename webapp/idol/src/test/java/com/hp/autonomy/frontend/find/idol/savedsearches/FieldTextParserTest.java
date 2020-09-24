@@ -134,7 +134,13 @@ public class FieldTextParserTest {
     @Test
     public void toFieldTextWithEmptyDocumentWhitelist() {
         when(savedSearch.getDocumentSelectionIsWhitelist()).thenReturn(true);
-        assertThat(fieldTextParser.toFieldText(savedSearch, true), is("NOTWILD{*}:CUSTOMREF"));
+        final String result1 = fieldTextParser.toFieldText(savedSearch, true);
+        final String result2 = fieldTextParser.toFieldText(savedSearch, true);
+        assertThat(result1, startsWith("MATCH{"));
+        assertThat(result1, endsWith("}:CUSTOMREF"));
+        assertThat(result2, startsWith("MATCH{"));
+        assertThat(result2, endsWith("}:CUSTOMREF"));
+        assertThat(result1, not(result2));
     }
 
     @Test

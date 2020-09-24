@@ -6,10 +6,11 @@
 define([
     'underscore',
     'backbone',
+    'uuidjs',
     'i18n!find/nls/bundle',
     'find/app/configuration',
     'fieldtext/js/field-text-parser'
-], function (_, Backbone, i18n, configuration, fieldTextParser) {
+], function (_, Backbone, UUID, i18n, configuration, fieldTextParser) {
 
     /**
      * Convert array references to object with `true` values.  Return a copy if already an object.
@@ -92,8 +93,9 @@ define([
 
             if (fieldValues.length === 0) {
                 if (isWhitelist) {
+                    const uuid = UUID.generate();
                     return new fieldTextParser.ExpressionNode(
-                        'NOTWILD', [referenceField], ['*']);
+                        'MATCH', [referenceField], [uuid]);
                 } else {
                     return null;
                 }
