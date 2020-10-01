@@ -17,8 +17,9 @@ define([
     'jquery',
     'backbone',
     'find/app/page/search/document/preview-mode-fact-view',
+    'find/app/page/search/document/preview-mode-user-view',
     'text!find/templates/app/page/search/results/results-view-augmentation.html'
-], function(_, $, Backbone, PreviewModeFactView, viewHtml) {
+], function(_, $, Backbone, PreviewModeFactView, PreviewModeUserView, viewHtml) {
     'use strict';
 
     // We always want a gap between the preview well and the container
@@ -55,6 +56,12 @@ define([
                         model: model.get('fact'),
                         factsView: model.get('factsView'),
                         documentRenderer: options.documentRenderer,
+                        previewModeModel: this.previewModeModel
+                    });
+
+                } else if (mode === 'user') {
+                    this.previewModeView = new PreviewModeUserView({
+                        model: model.get('user'),
                         previewModeModel: this.previewModeModel
                     });
 

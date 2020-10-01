@@ -6,6 +6,7 @@
 package com.hp.autonomy.frontend.find.idol.users;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.configuration.RelatedUsersConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.types.idol.responses.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +55,12 @@ public class IdolUserController {
         @RequestParam(PARAMETER_SEARCH_TEXT) final String searchText,
         @RequestParam(PARAMETER_MAX_USERS) final int maxUsers
     ) {
-        return idolUserSearchService.getRelatedToSearch(
-            configService.getConfig().getUsers().getRelatedUsers(), searchText, maxUsers);
+        final RelatedUsersConfig config = configService.getConfig().getUsers().getRelatedUsers();
+        // this is an important check for security reasons
+        if (!config.getEnabled()) {
+            throw new IllegalArgumentException("The related users feature is disabled");
+        }
+        return idolUserSearchService.getRelatedToSearch(config, searchText, maxUsers);
     }
 
 }

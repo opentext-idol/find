@@ -39,6 +39,7 @@ define([
     'find/app/page/search/results/table/table-view',
     'find/app/page/search/results/trending/trending-view',
     'find/app/page/search/results/facts-view',
+    'find/app/page/search/results/related-users-view',
     'find/app/page/search/time-bar-view',
     'find/app/configuration',
     'i18n!find/nls/bundle',
@@ -47,7 +48,8 @@ define([
             SavedSearchModel, ParametricCollection, ParametricFieldsCollection, RecommendDocumentsCollection, queryStrategy,
             recommendStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView,
             addChangeListener, SavedSearchControlView, TopicMapView, SunburstView, MapResultsView,
-            TableView, TrendingView, FactsView, TimeBarView, configuration, i18n, templateString) {
+            TableView, TrendingView, FactsView, RelatedUsersView,
+            TimeBarView, configuration, i18n, templateString) {
     'use strict';
 
     const $window = $(window);
@@ -157,6 +159,8 @@ define([
             this.previewModeModel = new Backbone.Model({ mode: null });
             const recommendationPreviewModel = new Backbone.Model({ mode: null });
             const factsPreviewModeModel = new Backbone.Model({ mode: null });
+            const relatedUsersPreviewModeModel = new Backbone.Model({ mode: null });
+            const expertsPreviewModeModel = new Backbone.Model({ mode: null });
 
             const subViewArguments = {
                 configuration: configuration(),
@@ -343,8 +347,7 @@ define([
                         resultsView: new FactsView(_.defaults({
                             previewModeModel: factsPreviewModeModel,
                         }, subViewArguments)),
-                        scrollModel: this.middleColumnScrollModel,
-                        mmapTab: options.mmapTab
+                        scrollModel: this.middleColumnScrollModel
                     }, subViewArguments),
                     shown: configuration().answerServerEnabled,
                     events: {
@@ -355,6 +358,26 @@ define([
                     selector: {
                         displayNameKey: 'facts',
                         icon: 'hp-aggregated'
+                    }
+                },
+                'related-users': {
+                    Constructor: this.ResultsViewAugmentation,
+                    constructorArguments: _.defaults({
+                        previewModeModel: relatedUsersPreviewModeModel,
+                        resultsView: new RelatedUsersView(_.defaults({
+                            previewModeModel: relatedUsersPreviewModeModel,
+                            config: configuration().relatedUsers
+                        }, subViewArguments)),
+                        scrollModel: this.middleColumnScrollModel
+                    }, subViewArguments),
+                    shown: configuration().relatedUsers.enabled,
+                    events: {
+                        'rightSideContainerHideToggle':
+                            _.bind(this.rightSideContainerHideToggle, this)
+                    },
+                    selector: {
+                        displayNameKey: 'related-users',
+                        icon: 'hp-group'
                     }
                 }
             };

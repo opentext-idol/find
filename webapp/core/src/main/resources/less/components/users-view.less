@@ -1,0 +1,38 @@
+/*
+ * Copyright 2020 Micro Focus International plc.
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ */
+
+@import "variables";
+
+.users-list {
+    .p-nil;
+    .m-b-sm;
+    width: 100%;
+    .clickable;
+
+    .results-contents.user-expert h4 {
+        color: @red1;
+    }
+
+}
+
+.preview-mode-user-header h4 {
+    display: inline;
+}
+
+// preview scrolling
+
+.preview-mode-user {
+    // overriding .well padding
+    .p-r-xs;
+}
+
+.preview-mode-user-header .close-preview-mode {
+    .p-r-sm;
+}
+
+.preview-mode-user-container {
+    overflow-y: auto;
+    .p-r-sm;
+}
