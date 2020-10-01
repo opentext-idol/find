@@ -44,5 +44,7 @@ public interface FindConfig<C extends FindConfig<C, B>, B extends FindConfigBuil
 
     SearchConfig getSearch();
 
+    UsersConfig getUsers();
+
     B toBuilder();
 }

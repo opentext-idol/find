@@ -52,6 +52,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final QueryManipulation queryManipulation;
     private final ViewConfig view;
     private final AnswerServerConfig answerServer;
+    private final CommunityAgentStoreConfig communityAgentStore;
     private final EntitySearchConfig entitySearch;
     private final ControlPointConfig controlPoint;
     @JsonProperty("savedSearches")
@@ -79,6 +80,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final Integer documentSummaryMaxLength;
     private final ExportConfig export;
     private final SearchConfig search;
+    private final UsersConfig users;
 
     @JsonIgnore
     private volatile Map<String, Map<Integer, String>> productMap;
@@ -93,6 +95,8 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .queryManipulation(queryManipulation == null ? other.queryManipulation : queryManipulation.merge(other.queryManipulation))
                 .view(view == null ? other.view : view.merge(other.view))
                 .answerServer(answerServer == null ? other.answerServer : answerServer.merge(other.answerServer))
+                .communityAgentStore(communityAgentStore == null ?
+                    other.communityAgentStore : communityAgentStore.merge(other.communityAgentStore))
                 .entitySearch(entitySearch == null ? other.entitySearch : entitySearch.merge(other.entitySearch))
                 .controlPoint(controlPoint == null ? other.controlPoint : controlPoint.merge(other.controlPoint))
                 .savedSearchConfig(savedSearchConfig == null ? other.savedSearchConfig : savedSearchConfig.merge(other.savedSearchConfig))
@@ -115,8 +119,22 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                 .documentSummaryMaxLength(documentSummaryMaxLength == null ? other.documentSummaryMaxLength : documentSummaryMaxLength)
                 .export(Optional.ofNullable(export).map(exportConfig -> exportConfig.merge(maybeOther.export)).orElse(maybeOther.export))
                 .search(search == null ? other.search : search)
+                .users(users == null ? other.users : users)
                 .build())
             .orElse(this);
+    }
+
+    // These getters fill in defaults, so that we can safely use config without null checks.  We
+    // can't actually store the defaults, because we need the actual values to be null so that
+    // config merging works.  Such getters must be implemented for every property that the UI's
+    // settings page omits - currently, this is only the case for top-level properties.
+
+    public SearchConfig getSearch() {
+        return search != null ? search : SearchConfig.builder().build();
+    }
+
+    public UsersConfig getUsers() {
+        return users != null ? users : UsersConfig.builder().build();
     }
 
     // somewhat messy workaround for the fact that default method does not handle @JsonProperty annotations
@@ -133,6 +151,13 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     @Override
     public AciServerDetails getCommunityDetails() {
         return login.getCommunity().toAciServerDetails();
+    }
+
+    @JsonIgnore
+    @Override
+    public AciServerDetails getCommunityAgentStoreDetails() {
+        return communityAgentStore == null ? null :
+            communityAgentStore.getServer().toAciServerDetails();
     }
 
     @JsonIgnore
@@ -189,7 +214,8 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         trending.basicValidate("trending");
         themeTracker.basicValidate("themeTracker");
         savedSearchConfig.basicValidate(SECTION);
-        search.basicValidate("search");
+        getSearch().basicValidate("search");
+        getUsers().basicValidate("users");
 
         if(map != null) {
             map.basicValidate("map");
@@ -205,6 +231,16 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
 
         if(answerServer != null) {
             answerServer.basicValidate("AnswerServer");
+        }
+
+        if(communityAgentStore != null) {
+            communityAgentStore.basicValidate("communityAgentStore");
+        }
+        if (isOptionalComponentEnabled(getUsers().getRelatedUsers()) &&
+            !isOptionalComponentEnabled(communityAgentStore)
+        ) {
+            throw new ConfigException("users.relatedUsers",
+                "relatedUsers feature requires communityAgentStore to be configured");
         }
 
         if(entitySearch != null) {
@@ -245,6 +281,15 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
 
             if(isOptionalComponentEnabled(answerServer)) {
                 addEntriesToProductMap(tempProductMap, ProductType.ANSWERSERVER.getFriendlyName(), answerServer.getServer().getHost(), answerServer.getServer().getPort(), answerServer.getServer().getServicePort());
+            }
+
+            if(isOptionalComponentEnabled(communityAgentStore)) {
+                addEntriesToProductMap(
+                    tempProductMap,
+                    ProductType.AXE.getFriendlyName(),
+                    communityAgentStore.getServer().getHost(),
+                    communityAgentStore.getServer().getPort(),
+                    communityAgentStore.getServer().getServicePort());
             }
 
             if(isOptionalComponentEnabled(entitySearch)) {
@@ -290,7 +335,5 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         @SuppressWarnings("unused")
         @JsonProperty("idolFieldPathNormalizerXMLPrefixes")
         private Collection<String> idolFieldPathNormalizerXMLPrefixes;
-
-        private SearchConfig search = SearchConfig.builder().build();
     }
 }

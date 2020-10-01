@@ -84,6 +84,15 @@
     },
     "enabled": false
   },
+  "communityAgentStore": {
+    "enabled": false,
+    "server": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 9050,
+      "productType": ["AXE"]
+    }
+  },
   "entitySearch": {
     "server": {
       "protocol": "HTTP",
@@ -272,6 +281,21 @@
       "relevance": { "sort": "relevance", "label": null },
       "date": { "sort": "date", "label": null },
       "reverseDate": { "sort": "reversedate", "label": null }
+    }
+  },
+  "users": {
+    "relatedUsers": {
+      "enabled": false,
+      "interests": {
+        "agentStoreProfilesDatabase": "profile",
+        "namedArea": "default",
+        "userDetailsFields": []
+      },
+      "expertise": {
+        "agentStoreProfilesDatabase": "profile",
+        "namedArea": "experts",
+        "userDetailsFields": []
+      }
     }
   },
   "combineMethod": "Simple",

@@ -19,9 +19,7 @@ import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
 import com.hp.autonomy.frontend.configuration.server.ProductType;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
-import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
-import com.hp.autonomy.frontend.find.core.configuration.SearchConfig;
-import com.hp.autonomy.frontend.find.core.configuration.TrendingConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.*;
 import com.hp.autonomy.frontend.find.core.configuration.export.ExportConfig;
 import com.hp.autonomy.searchcomponents.idol.configuration.QueryManipulation;
 import com.hp.autonomy.searchcomponents.idol.view.configuration.ViewConfig;
@@ -54,6 +52,7 @@ public class IdolFindConfigTest {
 
     @Mock
     private ViewConfig viewConfig;
+    @Mock private CommunityAgentStoreConfig communityAgentStore;
 
     @Mock
     private TrendingConfiguration trending;
@@ -63,6 +62,7 @@ public class IdolFindConfigTest {
 
     @Mock
     private SearchConfig search;
+    @Mock private UsersConfig users;
 
     private IdolFindConfig idolFindConfig;
 
@@ -76,19 +76,37 @@ public class IdolFindConfigTest {
                 .trending(trending)
                 .themeTracker(themeTracker)
                 .view(viewConfig)
+                .communityAgentStore(communityAgentStore)
                 .export(export)
                 .search(search)
+                .users(users)
                 .build();
     }
 
     @Test
-    public void validateGoodConfig() throws ConfigException {
+    public void basicValidate_valid() throws ConfigException {
         idolFindConfig.basicValidate(null);
     }
 
     @Test(expected = ConfigException.class)
-    public void validateBadConfig() throws ConfigException {
+    public void basicValidate_invalidSection() throws ConfigException {
         doThrow(new ConfigException("QMS", "Bad Config")).when(queryManipulation).basicValidate(anyString());
+        idolFindConfig.basicValidate(null);
+    }
+
+    @Test(expected = ConfigException.class)
+    public void basicValidate_relatedUsersWithoutCommunityAgentStore() throws ConfigException {
+        final RelatedUsersConfig relatedUsers = mock(RelatedUsersConfig.class);
+        when(users.getRelatedUsers()).thenReturn(relatedUsers);
+        when(relatedUsers.getEnabled()).thenReturn(true);
+        idolFindConfig.basicValidate(null);
+    }
+
+    public void basicValidate_relatedUsersWithCommunityAgentStore() throws ConfigException {
+        final RelatedUsersConfig relatedUsers = mock(RelatedUsersConfig.class);
+        when(users.getRelatedUsers()).thenReturn(relatedUsers);
+        when(relatedUsers.getEnabled()).thenReturn(true);
+        when(communityAgentStore.getEnabled()).thenReturn(true);
         idolFindConfig.basicValidate(null);
     }
 
@@ -99,6 +117,7 @@ public class IdolFindConfigTest {
         when(queryManipulation.merge(any(QueryManipulation.class))).thenReturn(queryManipulation);
         when(savedSearchConfig.merge(any(SavedSearchConfig.class))).thenReturn(savedSearchConfig);
         when(viewConfig.merge(any(ViewConfig.class))).thenReturn(viewConfig);
+        when(communityAgentStore.merge(any())).thenReturn(communityAgentStore);
         when(export.merge(any(ExportConfig.class))).thenReturn(export);
         when(trending.merge(any(TrendingConfiguration.class))).thenReturn(trending);
         when(themeTracker.merge(any(ThemeTrackerConfig.class))).thenReturn(themeTracker);

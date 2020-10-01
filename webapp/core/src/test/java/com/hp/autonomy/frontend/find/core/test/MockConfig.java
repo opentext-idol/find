@@ -23,6 +23,7 @@ public class MockConfig extends SimpleComponent<MockConfig> implements FindConfi
     Integer topicMapMaxResults;
     ExportConfig export;
     SearchConfig search;
+    UsersConfig users;
     MessageOfTheDayConfig messageOfTheDay;
 
     @Override

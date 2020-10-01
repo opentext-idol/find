@@ -18,6 +18,7 @@ define([
     'find/app/page/settings/aci-widget',
     'find/app/page/settings/answer-server-widget',
     'find/app/page/settings/community-widget',
+    'find/app/page/settings/optional-aci-widget',
     'find/app/page/settings/map-widget',
     'find/app/page/settings/motd-widget',
     'find/app/page/settings/mmap-widget',
@@ -28,8 +29,9 @@ define([
     'find/app/page/settings/control-point-widget',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/settings/community-widget.html'
-], function (_, SettingsPage, AciWidget, AnswerServerWidget, CommunityWidget, MapWidget, MotdWidget, MmapWidget, QueryManipulationWidget,
-             SavedSearchWidget, StatsServerWidget, ViewWidget, ControlPointWidget, i18n, dropdownTemplate) {
+], function (_, SettingsPage, AciWidget, AnswerServerWidget, CommunityWidget, OptionalAciWidget,
+             MapWidget, MotdWidget, MmapWidget, QueryManipulationWidget, SavedSearchWidget,
+             StatsServerWidget, ViewWidget, ControlPointWidget, i18n, dropdownTemplate) {
 
     return SettingsPage.extend({
         initializeWidgets: function () {
@@ -55,6 +57,19 @@ define([
                             invalidSecurityType: i18n['settings.community.login.invalidType'],
                             loginTypeLabel: i18n['settings.community.login.type'],
                             validateFailed: i18n['settings.test.failed']
+                        })
+                    }),
+                    new OptionalAciWidget({
+                        configItem: 'communityAgentStore',
+                        description: i18n['settings.communityAgentStore.description'],
+                        isOpened: true,
+                        title: i18n['settings.communityAgentStore.title'],
+                        strings: _.extend(this.serverStrings(), {
+                            disable: i18n['settings.communityAgentStore.disable'],
+                            disabled: i18n['settings.communityAgentStore.disabled'],
+                            enable: i18n['settings.communityAgentStore.enable'],
+                            enabled: i18n['settings.communityAgentStore.enabled'],
+                            loading: i18n['settings.communityAgentStore.loading']
                         })
                     }),
                     new MotdWidget({

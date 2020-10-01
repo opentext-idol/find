@@ -36,7 +36,8 @@ public enum MvcConstants {
     MESSAGE_OF_THE_DAY_CONFIG("messageOfTheDay"),
     TERM_HIGHLIGHT_COLOR("termHighlightColor"),
     TERM_HIGHLIGHT_BACKGROUND("termHighlightBackground"),
-    SEARCH_CONFIG("search");
+    SEARCH_CONFIG("search"),
+    RELATED_USERS_CONFIG("relatedUsers");
 
     private final String value;
 
