@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping(IdolUserController.BASE_PATH)
 public class IdolUserController {
 
-    static final String BASE_PATH = "/api/bi/user";
+    static final String BASE_PATH = "/api/public/user";
     static final String SEARCH_PATH = "/search";
     static final String RELATED_PATH = "/related-to-search";
     static final String PARAMETER_SEARCH_TEXT = "searchText";

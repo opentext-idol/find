@@ -13,7 +13,7 @@ define([
      * Models have `User` attributes, plus the `expert` attribute from `RelatedUser`.
      */
     return FindBaseCollection.extend({
-        url: 'api/bi/user/related-to-search',
+        url: 'api/public/user/related-to-search',
 
         parse: function (res) {
             return _.map(res, relatedUser => _.defaults(
