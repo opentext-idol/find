@@ -88,7 +88,7 @@ define([
         });
 
         afterEach(function() {
-            configuration.and.stub();
+            configuration.reset();
             this.view.remove();
             TopicMapView.reset();
             EntityCollection.reset();

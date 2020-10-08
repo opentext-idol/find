@@ -86,7 +86,7 @@ define([
             });
 
             afterEach(function() {
-                configuration.and.stub();
+                configuration.reset();
             });
 
             it('uses the title from the response if present', function() {
