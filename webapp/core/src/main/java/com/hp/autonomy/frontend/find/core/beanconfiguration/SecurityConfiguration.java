@@ -68,7 +68,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .disable()
             .headers()
                 .defaultsDisabled()
-                .frameOptions()
-                .sameOrigin();
+                .frameOptions().sameOrigin()
+                .contentSecurityPolicy("frame-ancestors 'self'");
     }
 }

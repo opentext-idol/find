@@ -100,8 +100,8 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
                 .and()
             .headers()
                 .defaultsDisabled()
-                .frameOptions()
-                .sameOrigin();
+                .frameOptions().sameOrigin()
+                .contentSecurityPolicy("frame-ancestors 'self'");
 
         idolSecurityCustomizer.customize(http, authenticationManager());
     }
