@@ -140,6 +140,13 @@ define([
                     this.loadFromConfig();
                 }, this)
             });
+        },
+
+        onConfigSaved: function () {
+            // it should be possible to have config changes take effect without a reload, but there
+            // are lots of places that would need changes to re-render on change, so this makes it
+            // work for now
+            setTimeout(function () { location.reload(); }, 1000);
         }
     });
 });

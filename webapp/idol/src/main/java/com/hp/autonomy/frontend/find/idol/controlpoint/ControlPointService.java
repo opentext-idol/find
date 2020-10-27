@@ -22,34 +22,47 @@ import java.util.Collections;
  */
 @Component
 public class ControlPointService {
-    // null if ControlPoint is disabled
-    private final ControlPointApiClient apiClient;
-
-    /**
-     * Interact with ControlPoint using alternative configuration.
-     *
-     * @param httpClient Used to make API requests
-     * @param config How to connect to the server
-     */
-    public ControlPointService(final HttpClient httpClient, final ControlPointConfig config) {
-        if (config == null || !BooleanUtils.isTrue(config.getEnabled())) {
-            apiClient = null;
-        } else {
-            apiClient = new ControlPointApiClient(httpClient, config.getServer().toServerDetails());
-        }
-    }
+    private final HttpClient httpClient;
+    // one of configService or config is null
+    private final ConfigService<IdolFindConfig> configService;
+    private final ControlPointConfig config;
 
     @Autowired
     ControlPointService(
         final HttpClient httpClient,
         final ConfigService<IdolFindConfig> configService
     ) {
-        this(httpClient, configService.getConfig().getControlPoint());
+        this.httpClient = httpClient;
+        this.configService = configService;
+        this.config = null;
     }
 
-    private void checkEnabled() {
-        if (apiClient == null) {
+    /**
+     * Interact with ControlPoint using a fixed configuration.
+     *
+     * @param httpClient Used to make API requests
+     * @param config How to connect to the server
+     */
+    public ControlPointService(final HttpClient httpClient, final ControlPointConfig config) {
+        this.httpClient = httpClient;
+        this.configService = null;
+        this.config = config;
+    }
+
+    private ControlPointConfig getConfig() {
+        if (config != null) {
+            return config;
+        } else {
+            return configService.getConfig().getControlPoint();
+        }
+    }
+
+    private ControlPointApiClient getApiClient() {
+        final ControlPointConfig config = getConfig();
+        if (config == null || !BooleanUtils.isTrue(config.getEnabled())) {
             throw new IllegalArgumentException("ControlPoint is disabled");
+        } else {
+            return new ControlPointApiClient(httpClient, config.getServer().toServerDetails());
         }
     }
 
@@ -57,7 +70,8 @@ public class ControlPointService {
      * @return Whether ControlPoint is enabled; if false, methods will throw
      */
     public boolean isEnabled() {
-        return apiClient != null;
+        final ControlPointConfig config = getConfig();
+        return config != null && BooleanUtils.isTrue(config.getEnabled());
     }
 
     /**
@@ -66,8 +80,7 @@ public class ControlPointService {
      * @throws ControlPointApiException
      */
     public void checkStatus() throws ControlPointApiException {
-        checkEnabled();
-        apiClient.get("status", Collections.singletonList(
+        getApiClient().get("status", Collections.singletonList(
             new BasicNameValuePair("api-version", "1.0")
         ), null);
     }
@@ -80,8 +93,7 @@ public class ControlPointService {
     public ControlPointPolicies getPolicies(final String userSecurityInfo)
         throws ControlPointApiException
     {
-        checkEnabled();
-        return apiClient.get("policies/foridolfind", Arrays.asList(
+        return getApiClient().get("policies/foridolfind", Arrays.asList(
             new BasicNameValuePair("api-version", "1.0"),
             new BasicNameValuePair("securityInfo", userSecurityInfo)
         ), ControlPointPolicies.class);
@@ -99,9 +111,7 @@ public class ControlPointService {
         final String documentsStateToken,
         final String documentsSecurityInfo
     ) throws ControlPointApiException {
-        checkEnabled();
-
-        apiClient.postUrlencoded("policyfiles/bystoredstate",
+        getApiClient().postUrlencoded("policyfiles/bystoredstate",
             Arrays.asList(
                 new BasicNameValuePair("api-version", "1.0"),
                 new BasicNameValuePair("policyId", policy),
