@@ -126,7 +126,8 @@ public class FieldTextParserImpl implements FieldTextParser {
     ) {
         if (CollectionUtils.isEmpty(documents)) {
             if (isWhitelist) {
-                return Optional.of(new NOTWILD(configService.getConfig().getReferenceField(), "*"));
+                final String uuid = UUID.randomUUID().toString();
+                return Optional.of(new MATCH(configService.getConfig().getReferenceField(), uuid));
             } else {
                 return Optional.empty();
             }

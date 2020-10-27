@@ -147,11 +147,19 @@ define([
                 }).toFieldText().toString()).toBe('NOT MATCH{a,b%2Cc,d}:CUSTOMREF');
             });
 
-            it('should return NOTWILD expression with empty whitelist', function () {
-                expect(new DocumentSelectionModel({
+            it('should return MATCH expression with empty whitelist', function () {
+                const result1 = new DocumentSelectionModel({
                     isWhitelist: true,
                     references: []
-                }).toFieldText().toString()).toBe('NOTWILD{*}:CUSTOMREF');
+                }).toFieldText().toString();
+                const result2 = new DocumentSelectionModel({
+                    isWhitelist: true,
+                    references: []
+                }).toFieldText().toString();
+
+                expect(result1).toMatch(/MATCH\{.+\}:CUSTOMREF/);
+                expect(result2).toMatch(/MATCH\{.+\}:CUSTOMREF/);
+                expect(result1).not.toBe(result2);
             });
 
             it('should return MATCH expression with whitelist', function () {

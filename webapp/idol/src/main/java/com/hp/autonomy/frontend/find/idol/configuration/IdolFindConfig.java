@@ -139,6 +139,12 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
 
     @JsonIgnore
     @Override
+    public AciServerDetails getCommunityAgentStoreDetails() {
+        return null;
+    }
+
+    @JsonIgnore
+    @Override
     public Authentication<?> getAuthentication() {
         return login;
     }
