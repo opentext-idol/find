@@ -40,8 +40,7 @@ public class ControlPointConfigValidator implements Validator<ControlPointConfig
             new ControlPointService(httpClient, config);
 
         try {
-            // there's no status API or similar
-            controlPointService.getPolicies();
+            controlPointService.checkStatus();
 
         } catch (final ControlPointApiException e) {
             if (e.getStatusCode() == HttpStatus.SC_UNAUTHORIZED ||

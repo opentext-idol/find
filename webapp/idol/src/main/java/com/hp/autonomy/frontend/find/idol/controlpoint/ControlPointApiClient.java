@@ -123,7 +123,8 @@ public class ControlPointApiClient {
     }
 
     /**
-     * Perform an API request, handle errors, and parse the JSON response into the given type.
+     * Perform an API request, handle errors, and parse the JSON response into the given type.  If
+     * resultType is null, don't read the response, and return null.
      */
     private <R> R performRequest(final HttpUriRequest request, final Class<R> resultType)
         throws ControlPointApiException
@@ -143,7 +144,11 @@ public class ControlPointApiClient {
 
         try {
             if (statusCode >= 200 && statusCode < 300) {
-                return objectMapper.readValue(resBody, resultType);
+                if (resultType == null) {
+                    return null;
+                } else {
+                    return objectMapper.readValue(resBody, resultType);
+                }
             } else {
                 final ControlPointErrorResponse error =
                     objectMapper.readValue(resBody, ControlPointErrorResponse.class);
@@ -193,7 +198,7 @@ public class ControlPointApiClient {
      *
      * @param path URL-encoded path which may contain '/'
      * @param queryParams Query-string parameters
-     * @param resultType Type to parse the JSON response into
+     * @param resultType Type to parse the JSON response into, or null to skip reading the response
      * @return Parsed response
      */
     public <R> R get(
@@ -209,7 +214,7 @@ public class ControlPointApiClient {
      *
      * @param path URL-encoded path which may contain '/'
      * @param queryParams Query-string parameters
-     * @param resultType Type to parse the JSON response into
+     * @param resultType Type to parse the JSON response into, or null to skip reading the response
      * @param bodyParams Parameters to send in the request body
      * @return Parsed response
      */

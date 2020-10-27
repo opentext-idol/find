@@ -53,12 +53,22 @@ class ControlPointPolicyController {
     }
 
     /**
+     * @return Security info string for the current user session.
+     */
+    private String getSecurityInfo() {
+        // get the ACI parameter handler to determine security info for us
+        final AciParameters aciParams = new AciParameters();
+        aciParameterHandler.addSecurityInfo(aciParams);
+        return aciParams.get(QueryParams.SecurityInfo.name());
+    }
+
+    /**
      * Retrieve active policies.
      */
     @RequestMapping(method = RequestMethod.GET)
     public List<ControlPointPolicy> getPolicies() throws ControlPointApiException {
         checkEnabled();
-        return controlPointService.getPolicies().stream()
+        return controlPointService.getPolicies(getSecurityInfo()).stream()
             .filter(policy -> policy.isActive() && policy.isPublished())
             .collect(Collectors.toList());
     }
@@ -74,13 +84,7 @@ class ControlPointPolicyController {
             .findFirst()
             .orElseThrow(() ->
                 new RuntimeException("Saved Snapshot has no associated state token"));
-
-        // get the ACI parameter handler to determine security info for us
-        final AciParameters aciParams = new AciParameters();
-        aciParameterHandler.addSecurityInfo(aciParams);
-        final String securityInfo = aciParams.get(QueryParams.SecurityInfo.name());
-
-        controlPointService.applyPolicy(policy, stateToken.getStateToken(), securityInfo);
+        controlPointService.applyPolicy(policy, stateToken.getStateToken(), getSecurityInfo());
     }
 
     /**

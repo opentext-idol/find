@@ -258,9 +258,22 @@ public class ControlPointApiClientTest {
         final TestResponse res = defaultCPClient.get("status", Collections.singletonList(
             new BasicNameValuePair("format", "standard")
         ), TestResponse.class);
-        final List<HttpUriRequest> requests = getRequests(2);
 
         Assert.assertEquals("should ignore extra field", "val1", res.field1);
+    }
+
+    @Test
+    public void testSkipResponse() throws ControlPointApiException, IOException {
+        final String resJson = "{";
+        Mockito.when(defaultHttpClient.execute(Mockito.any()))
+            .thenReturn(buildLoginResponse())
+            .thenReturn(buildResponse(200, "OK", resJson));
+
+        final TestResponse res = defaultCPClient.get("status", Collections.singletonList(
+            new BasicNameValuePair("format", "standard")
+        ), null);
+
+        Assert.assertNull("should return null", res);
     }
 
     public void testResponseInvalidJson() throws ControlPointApiException, IOException {

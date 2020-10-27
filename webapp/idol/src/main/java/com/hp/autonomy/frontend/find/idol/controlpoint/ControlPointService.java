@@ -5,23 +5,17 @@
 
 package com.hp.autonomy.frontend.find.idol.controlpoint;
 
-import com.autonomy.aci.client.services.Processor;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.idol.configuration.ControlPointConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
-import com.hp.autonomy.types.idol.responses.answer.ReportResponsedata;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * Interact with ControlPoint.  Methods also throw {@link ControlPointServiceException}.
@@ -67,12 +61,29 @@ public class ControlPointService {
     }
 
     /**
-     * Retrieve available policies.
+     * Check the API is accessible.
+     *
+     * @throws ControlPointApiException
      */
-    public ControlPointPolicies getPolicies() throws ControlPointApiException {
+    public void checkStatus() throws ControlPointApiException {
         checkEnabled();
-        return apiClient.get("policies", Collections.singletonList(
+        apiClient.get("status", Collections.singletonList(
             new BasicNameValuePair("api-version", "1.0")
+        ), null);
+    }
+
+    /**
+     * Retrieve available policies.
+     *
+     * @param userSecurityInfo Used to determine which policies are visible
+     */
+    public ControlPointPolicies getPolicies(final String userSecurityInfo)
+        throws ControlPointApiException
+    {
+        checkEnabled();
+        return apiClient.get("policies/foridolfind", Arrays.asList(
+            new BasicNameValuePair("api-version", "1.0"),
+            new BasicNameValuePair("securityInfo", userSecurityInfo)
         ), ControlPointPolicies.class);
     }
 
