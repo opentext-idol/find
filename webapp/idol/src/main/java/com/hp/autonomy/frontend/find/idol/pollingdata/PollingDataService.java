@@ -83,8 +83,8 @@ public class PollingDataService {
         }
 
         public DateRangeInfo.Value getDateRangeInfoValue() {
-            int totalCount = 0;
-            int totalWeighting = 0;
+            long totalCount = 0;
+            long totalWeighting = 0;
             for (final Count count : counts) {
                 totalCount += count.weighting * count.value;
                 totalWeighting += count.weighting;
