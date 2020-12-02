@@ -535,6 +535,7 @@ define([
         'settings.queryManipulation.enabled': 'Query Manipulation is enabled',
         'settings.queryManipulation.expandQuery': 'Enable synonyms',
         'settings.queryManipulation.synonymDatabaseMatch': 'Apply database match to synonyms',
+        'settings.queryManipulation.explicitProfiling': 'Enable explicit profiling',
         'settings.queryManipulation.index': 'Index',
         'settings.queryManipulation.loading': 'Loading\u2026',
         'settings.queryManipulation.typeaheadMode': 'Typeahead Mode',

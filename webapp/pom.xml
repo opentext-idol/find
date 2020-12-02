@@ -28,7 +28,7 @@
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
-        <haven.search.components.version>0.67.0</haven.search.components.version>
+        <haven.search.components.version>0.68.0-SNAPSHOT</haven.search.components.version>
         <powerpoint.report.version>1.1.6</powerpoint.report.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
         <!--

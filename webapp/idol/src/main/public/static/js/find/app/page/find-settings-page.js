@@ -97,6 +97,7 @@ define([
                             dictionary: i18n['settings.queryManipulation.dictionary'],
                             expandQuery: i18n['settings.queryManipulation.expandQuery'],
                             synonymDatabaseMatch: i18n['settings.queryManipulation.synonymDatabaseMatch'],
+                            explicitProfiling: i18n['settings.queryManipulation.explicitProfiling'],
                             enable: i18n['settings.queryManipulation.enable'],
                             enabled: i18n['settings.queryManipulation.enabled'],
                             index: i18n['settings.queryManipulation.index'],

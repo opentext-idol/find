@@ -38,6 +38,7 @@
     "typeAheadMode": "Index",
     "expandQuery": true,
     "synonymDatabaseMatch": true,
+    "explicitProfiling": true,
     "blacklist": "ISO_BLACKLIST",
     "enabled": false
   },
