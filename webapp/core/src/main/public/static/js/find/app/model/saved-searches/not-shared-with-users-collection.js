@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2016 Micro Focus or one of its affiliates.
+ * (c) Copyright 2016, 2020 Micro Focus or one of its affiliates.
  *
  * Licensed under the MIT License (the "License"); you may not use this file
  * except in compliance with the License.
@@ -22,7 +22,9 @@ define([
     return FindBaseCollection.extend({
         url: 'api/public/user/search',
         parse: function(response) {
-            return response.user;
+            return _.map(response, function (username) {
+                return { username: username };
+            });
         },
 
         model: Backbone.Model.extend({

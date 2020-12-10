@@ -10,7 +10,15 @@ define([
     'use strict';
 
     /**
-     * Models have `User` attributes, plus the `expert` attribute from `RelatedUser`.
+     * Users with interest or expertise in a specific document search.
+     *
+     * Model attributes:
+     *  - expert: Whether the user is explicitly tagged as a relevant 'expert', rather than just
+     *            having an interest in the topic
+     *  - uid
+     *  - username
+     *  - emailaddress:
+     *  - fields: The user's fields as `{ name: value }`
      */
     return FindBaseCollection.extend({
         url: 'api/public/user/related-to-search',
