@@ -21,6 +21,7 @@ import com.hp.autonomy.frontend.configuration.authentication.Authentication;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.UsersConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.EntitySearchConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
@@ -82,6 +83,7 @@ public class IdolFindMockConfigConfiguration {
         when(entitySearchConfig.getEnabled()).thenReturn(false);
         when(entitySearchConfig.getAnswerServer()).thenReturn(entitySearchAnswerServerConfig);
         when(config.getEntitySearch()).thenReturn(entitySearchConfig);
+        when(config.getUsers()).thenReturn(UsersConfig.builder().build());
         return config;
     }
 
