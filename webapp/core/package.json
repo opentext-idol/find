@@ -15,6 +15,7 @@
     "grunt-contrib-less": "^1.4.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-peg": "github:dvberkel/grunt-peg#11252e0",
-    "grunt-template-jasmine-requirejs": "github:cloudchen/grunt-template-jasmine-requirejs#e5770cd8a75f88e5e09a5f2d4f389ec23bb2dad2"
+    "grunt-template-jasmine-requirejs": "github:cloudchen/grunt-template-jasmine-requirejs#e5770cd8a75f88e5e09a5f2d4f389ec23bb2dad2",
+    "auditjs": "latest"
   }
 }
