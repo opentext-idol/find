@@ -263,7 +263,6 @@
                                     <workingDirectory>${basedir}</workingDirectory>
                                     <arguments>
                                         <argument>compile</argument>
-                                        <argument>--jsSourceMap=${js.source.map}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

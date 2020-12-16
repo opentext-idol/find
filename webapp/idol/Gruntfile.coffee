@@ -35,7 +35,7 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON 'package.json'
     babel:
       options:
-        plugins: ['transform-es2015-block-scoping']
+        plugins: ['@babel/plugin-transform-block-scoping']
       transform:
         files: [{
           expand: true
@@ -176,19 +176,8 @@ module.exports = (grunt) ->
             'login-page/js/login',
             'i18n!find/nls/bundle'
           ]
-    uglify:
-      options:
-        compress:
-# Workaround for bug on https://github.com/mishoo/UglifyJS2/issues/2842
-          inline: false
-# Similarly, avoids broken `const` references causing e.g. broken document preview due to incorrect const inlining.
-          reduce_funcs: false
-        mangle: true
-        sourceMap: jsSourceMap
-        sourceMapName: (file) -> file + '.map'
+    terser:
       js:
-        options:
-          sourceMapIn: (file) -> file + '.map'
         files: [{
           expand: true
           cwd: 'target/classes/static/js'
@@ -208,7 +197,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-connect'
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-requirejs'
-  grunt.loadNpmTasks 'grunt-contrib-uglify-es'
+  grunt.loadNpmTasks 'grunt-terser'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-sync'
   grunt.loadNpmTasks 'grunt-peg'
@@ -219,5 +208,5 @@ module.exports = (grunt) ->
   grunt.registerTask 'watch-test', ['babel:transform', 'jasmine:test', 'watch:test']
   grunt.registerTask 'copy-resources', ['sync:devResources', 'watch:copyResources']
   grunt.registerTask 'concatenate', ['requirejs']
-  grunt.registerTask 'minify', ['uglify:js', 'uglify:languages']
+  grunt.registerTask 'minify', ['terser:js', 'terser:languages']
   grunt.registerTask 'compile', ['concatenate', 'minify']
