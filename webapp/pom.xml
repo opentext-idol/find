@@ -20,7 +20,6 @@
     <modules>
         <module>core</module>
         <module>idol</module>
-        <module>hod</module>
         <module>on-prem-dist</module>
         <module>hsod-dist</module>
         <module>selenium-tests</module>

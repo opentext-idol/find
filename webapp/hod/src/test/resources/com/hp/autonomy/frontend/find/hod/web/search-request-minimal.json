@@ -1,8 +1,0 @@
-{
-  "queryRestrictions": {
-    "text": "Homer",
-    "indexes": [{"domain": "ClassicalDomain", "name": "ClassicalLiterature"}, {"domain": "ClassicalDomain", "name": "EpicLiterature"}]
-  },
-  "max_results": 30,
-  "summary": "off"
-}
