@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -44,7 +45,7 @@ public class ReverseProxyIdolSecurityCustomizer implements IdolSecurityCustomize
 
     private final UserService userService;
     private final GrantedAuthoritiesMapper grantedAuthoritiesMapper;
-    private final String preAuthenticatedRoles;
+    private final List<String> preAuthenticatedRoles;
 
     private final String preAuthenticatedUsername;
 
@@ -58,7 +59,9 @@ public class ReverseProxyIdolSecurityCustomizer implements IdolSecurityCustomize
 
         this.userService = userService;
         this.grantedAuthoritiesMapper = grantedAuthoritiesMapper;
-        this.preAuthenticatedRoles = preAuthenticatedRoles;
+        this.preAuthenticatedRoles = StringUtils.isEmpty(preAuthenticatedRoles) ?
+            Collections.emptyList() :
+            Arrays.asList(preAuthenticatedRoles.split(","));
         this.preAuthenticatedUsername = preAuthenticatedUsername;
     }
 
@@ -82,10 +85,11 @@ public class ReverseProxyIdolSecurityCustomizer implements IdolSecurityCustomize
         return Collections.singleton(new IdolPreAuthenticatedAuthenticationProvider(
                 userService,
                 grantedAuthoritiesMapper,
-                Arrays.stream(preAuthenticatedRoles.split(","))
+                preAuthenticatedRoles.stream()
                         .map(FindCommunityRole::fromValue)
                         .map(FindCommunityRole::value)
-                        .collect(Collectors.toSet())
+                        .collect(Collectors.toSet()),
+                !preAuthenticatedRoles.isEmpty()
         ));
     }
 }
