@@ -5,14 +5,10 @@
 
 package com.hp.autonomy.frontend.find.idol.controlpoint;
 
-import com.autonomy.aci.client.util.AciParameters;
-import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
-import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
-import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,24 +35,12 @@ public class ControlPointPolicyControllerTest {
 
         Mockito.when(savedSnapshotService.getDashboardSearch(Mockito.anyLong()))
             .thenReturn(new SavedSnapshot.Builder()
-                .setStateTokens(new HashSet<>(Arrays.asList(
-                    new TypedStateToken("fetched,qms", TypedStateToken.StateTokenType.PROMOTIONS),
-                    new TypedStateToken("fetched,normal", TypedStateToken.StateTokenType.QUERY)
-                )))
-                .build());
-        Mockito.when(savedSnapshotService.build(Mockito.any()))
-            .thenReturn(new SavedSnapshot.Builder()
-                .setStateTokens(new HashSet<>(Arrays.asList(
-                    new TypedStateToken("built,qms", TypedStateToken.StateTokenType.PROMOTIONS),
-                    new TypedStateToken("built,normal", TypedStateToken.StateTokenType.QUERY)
+                .setStateTokens(new HashSet<>(Collections.singletonList(
+                    new TypedStateToken("token", TypedStateToken.StateTokenType.QUERY)
                 )))
                 .build());
 
-        Mockito.doAnswer(invocation -> {
-            invocation.getArgumentAt(0, AciParameters.class)
-                .put(QueryParams.SecurityInfo.name(), "sec info");
-            return null;
-        }).when(aciParameterHandler).addSecurityInfo(Mockito.any());
+        Mockito.doReturn("sec info").when(aciParameterHandler).getSecurityInfo();
 
         controller = new ControlPointPolicyController(
             cpService, savedSnapshotService, aciParameterHandler);
@@ -94,39 +78,11 @@ public class ControlPointPolicyControllerTest {
         controller.applyPolicy("the policy", 123L, null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testApplyPolicy_missingDocs() throws ControlPointApiException {
-        controller.applyPolicy("the policy", null, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testApplyPolicy_tooManyArguments() throws ControlPointApiException {
-        controller.applyPolicy("the policy", 123L, new SavedQuery());
-    }
-
     @Test
-    public void testApplyPolicy_snapshot() throws ControlPointApiException {
+    public void testApplyPolicy() throws ControlPointApiException {
         controller.applyPolicy("the policy", 123L, null);
         Mockito.verify(savedSnapshotService).getDashboardSearch(123L);
-        Mockito.verify(cpService).applyPolicy("the policy", "fetched,normal", "sec info");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testApplyPolicy_missingSnapshot() throws ControlPointApiException {
-        Mockito.when(savedSnapshotService.getDashboardSearch(123L)).thenReturn(null);
-        controller.applyPolicy("the policy", 123L, null);
-    }
-
-    @Test
-    public void testApplyPolicy_query() throws ControlPointApiException {
-        final SavedQuery query = new SavedQuery.Builder()
-            .setConceptClusterPhrases(Collections.singleton(
-                new ConceptClusterPhrase("query", true, 1)
-            ))
-            .build();
-        controller.applyPolicy("the policy", null, query);
-        Mockito.verify(savedSnapshotService).build(query);
-        Mockito.verify(cpService).applyPolicy("the policy", "built,normal", "sec info");
+        Mockito.verify(cpService).applyPolicy("the policy", "token", "sec info");
     }
 
 }

@@ -138,11 +138,11 @@ define([
 
                 modal = new Modal({
                     actionButtonClass: 'button-primary',
-                    actionButtonText: i18n['search.savedSearchControl.applyCPPolicy.action'],
+                    actionButtonText: i18n['search.savedSearchControl.applyPolicy.action'],
                     className: Modal.prototype.className,
                     contentView: policySelectionView,
                     secondaryButtonText: i18n['app.cancel'],
-                    title: i18n['search.savedSearchControl.applyCPPolicy.modal.title'],
+                    title: i18n['search.savedSearchControl.applyPolicy.modal.title'],
                     actionButtonCallback: function () {
                         policySelectionView.applyPolicy(function () {
                             modal.hide();
@@ -289,7 +289,7 @@ define([
                 showSaveAs: enableSavedSearch && isMutable,
                 searchTypes: saveAsSearchTypes,
                 showOpenAsQuery: !isMutable,
-                showApplyPolicy: configuration().controlPointEnabled,
+                showApplyPolicy: configuration().nifiEnabled || configuration().controlPointEnabled,
                 readOnly: this.savedSearchModel.get('type').indexOf('READ_ONLY') !== -1
             }));
 

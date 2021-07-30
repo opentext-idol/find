@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -95,6 +97,44 @@ public class SavedSnapshotService extends AbstractSavedSearchService<SavedSnapsh
             .setStateTokens(stateTokens)
             .setResultCount(resultCount)
             .build();
+    }
+
+    /**
+     * Retrieve a state token with type QUERY for either a snapshot or query.  Exactly one of
+     * `snapshotId` and `query` is required.
+     *
+     * @param savedSnapshotService
+     * @param snapshotId
+     * @param query
+     * @return State token
+     */
+    public static TypedStateToken toSnapshotToken(
+        final SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> savedSnapshotService,
+        final Long snapshotId,
+        final SavedQuery query
+    ) {
+        if (snapshotId == null && query == null) {
+            throw new IllegalArgumentException("Snapshot ID or saved query required");
+        }
+        if (snapshotId != null && query != null) {
+            throw new IllegalArgumentException("Only one of snapshot ID and saved query allowed");
+        }
+
+        final SavedSnapshot snapshot;
+        if (snapshotId != null) {
+            snapshot = savedSnapshotService.getDashboardSearch(snapshotId);
+            if (snapshot == null) {
+                throw new IllegalArgumentException("No Saved Snapshot found with ID " + snapshotId);
+            }
+        } else {
+            snapshot = savedSnapshotService.build(query);
+        }
+
+        return snapshot.getStateTokens().stream()
+            .filter(x -> x.getType().equals(TypedStateToken.StateTokenType.QUERY))
+            .findFirst()
+            .orElseThrow(() ->
+                new RuntimeException("Saved Snapshot has no associated state token"));
     }
 
 }

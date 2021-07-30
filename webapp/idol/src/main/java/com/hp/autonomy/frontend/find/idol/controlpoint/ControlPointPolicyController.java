@@ -5,13 +5,11 @@
 
 package com.hp.autonomy.frontend.find.idol.controlpoint;
 
-import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
-import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
+import com.hp.autonomy.frontend.find.idol.savedsearches.snapshot.SavedSnapshotService;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
-import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,38 +51,14 @@ class ControlPointPolicyController {
     }
 
     /**
-     * @return Security info string for the current user session.
-     */
-    private String getSecurityInfo() {
-        // get the ACI parameter handler to determine security info for us
-        final AciParameters aciParams = new AciParameters();
-        aciParameterHandler.addSecurityInfo(aciParams);
-        return aciParams.get(QueryParams.SecurityInfo.name());
-    }
-
-    /**
      * Retrieve active policies.
      */
     @RequestMapping(method = RequestMethod.GET)
     public List<ControlPointPolicy> getPolicies() throws ControlPointApiException {
         checkEnabled();
-        return controlPointService.getPolicies(getSecurityInfo()).stream()
+        return controlPointService.getPolicies(aciParameterHandler.getSecurityInfo()).stream()
             .filter(policy -> policy.isActive() && policy.isPublished())
             .collect(Collectors.toList());
-    }
-
-    /**
-     * Apply a policy to documents in a snapshot.
-     */
-    private void applyPolicy(final String policy, final SavedSnapshot snapshot)
-        throws ControlPointApiException
-    {
-        final TypedStateToken stateToken = snapshot.getStateTokens().stream()
-            .filter(x -> x.getType().equals(TypedStateToken.StateTokenType.QUERY))
-            .findFirst()
-            .orElseThrow(() ->
-                new RuntimeException("Saved Snapshot has no associated state token"));
-        controlPointService.applyPolicy(policy, stateToken.getStateToken(), getSecurityInfo());
     }
 
     /**
@@ -102,24 +76,11 @@ class ControlPointPolicyController {
         @RequestBody(required = false) final SavedQuery query
     ) throws ControlPointApiException {
         checkEnabled();
-        if (snapshotId == null && query == null) {
-            throw new IllegalArgumentException("Snapshot ID or saved query required");
-        }
-        if (snapshotId != null && query != null) {
-            throw new IllegalArgumentException("Only one of snapshot ID and saved query allowed");
-        }
-
-        final SavedSnapshot snapshot;
-        if (snapshotId != null) {
-            snapshot = savedSnapshotService.getDashboardSearch(snapshotId);
-            if (snapshot == null) {
-                throw new IllegalArgumentException("No Saved Snapshot found with ID " + snapshotId);
-            }
-        } else {
-            snapshot = savedSnapshotService.build(query);
-        }
-
-        applyPolicy(policy, snapshot);
+        final String stateToken = SavedSnapshotService
+            .toSnapshotToken(savedSnapshotService, snapshotId, query)
+            .getStateToken();
+        controlPointService.applyPolicy(
+            policy, stateToken, aciParameterHandler.getSecurityInfo());
     }
 
 }

@@ -188,7 +188,8 @@ define([
         beforeEach(function() {
             configuration.and.returnValue({
                 enableSavedSearch: true,
-                controlPointEnabled: true
+                nifiEnabled: true,
+                controlPointEnabled: false
             });
 
             this.queryModel = new Backbone.Model({
@@ -348,8 +349,6 @@ define([
                 });
             });
         });
-
-        // TODO: cp disabled, doesn't show button
 
         describe('when the saved search is new', function() {
             beforeEach(function() {
@@ -957,11 +956,35 @@ define([
             });
         });
 
-        describe('when ControlPoint is disabled', function() {
+        describe('when Nifi is disabled and ControlPoint is enabled', function() {
+            beforeEach(function() {
+                configuration.and.returnValue({
+                    enableSavedSearch: true,
+                    nifiEnabled: false,
+                    controlPointEnabled: true
+                });
+
+                this.savedQueryCollection.add(this.savedSearchModel);
+                this.savedSearchCollection.add(this.savedSearchModel);
+
+                this.view = new SavedSearchControlView(this.viewOptions);
+                this.view.render();
+                $('body').append(this.view.$el);
+            });
+
+            afterEach(function() {
+                this.view.remove();
+            });
+
+            testApplyPolicy();
+        });
+
+        describe('when NiFi and ControlPoint are disabled', function() {
 
             beforeEach(function() {
                 configuration.and.returnValue({
                     enableSavedSearch: true,
+                    nifiEnabled: false,
                     controlPointEnabled: false
                 });
 

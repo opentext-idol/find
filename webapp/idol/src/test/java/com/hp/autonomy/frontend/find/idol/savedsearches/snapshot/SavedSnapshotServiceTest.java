@@ -17,6 +17,7 @@ package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 import com.hp.autonomy.frontend.find.core.savedsearches.AbstractSavedSearchServiceTest;
 import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
+import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
@@ -55,6 +56,8 @@ public class SavedSnapshotServiceTest extends AbstractSavedSearchServiceTest<Sav
     @MockBean
     private IdolQueryRestrictionsBuilder queryRestrictionsBuilder;
 
+    private SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> savedSnapshotService;
+
     @Before
     public void setUpSnapshot() {
         Mockito.when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
@@ -73,6 +76,22 @@ public class SavedSnapshotServiceTest extends AbstractSavedSearchServiceTest<Sav
         Mockito.when(documentsService.getStateTokenAndResultCount(
             Mockito.any(), Mockito.anyInt(), Mockito.eq(true)
         )).thenReturn(new StateTokenAndResultCount(promotionsToken, 456));
+
+        savedSnapshotService = Mockito.mock(SavedSnapshotService.class);
+        Mockito.when(savedSnapshotService.getDashboardSearch(Mockito.anyLong()))
+            .thenReturn(new SavedSnapshot.Builder()
+                .setStateTokens(new HashSet<>(Arrays.asList(
+                    new TypedStateToken("fetched,qms", TypedStateToken.StateTokenType.PROMOTIONS),
+                    new TypedStateToken("fetched,normal", TypedStateToken.StateTokenType.QUERY)
+                )))
+                .build());
+        Mockito.when(savedSnapshotService.build(Mockito.any()))
+            .thenReturn(new SavedSnapshot.Builder()
+                .setStateTokens(new HashSet<>(Arrays.asList(
+                    new TypedStateToken("built,qms", TypedStateToken.StateTokenType.PROMOTIONS),
+                    new TypedStateToken("built,normal", TypedStateToken.StateTokenType.QUERY)
+                )))
+                .build());
     }
 
     public SavedSnapshotServiceTest() {
@@ -97,6 +116,43 @@ public class SavedSnapshotServiceTest extends AbstractSavedSearchServiceTest<Sav
         Assert.assertEquals("should retrieve tokens",
             new HashSet<>(Arrays.asList(normalToken, promotionsToken)),
             snapshot.getStateTokens());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToSnapshotToken_missingArguments() {
+        SavedSnapshotService.toSnapshotToken(savedSnapshotService, null, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToSnapshotToken_tooManyArguments() {
+        SavedSnapshotService.toSnapshotToken(savedSnapshotService, 123L, new SavedQuery());
+    }
+
+    @Test
+    public void testToSnapshotToken_snapshot() {
+        final TypedStateToken token =
+            SavedSnapshotService.toSnapshotToken(savedSnapshotService, 123L, null);
+        Mockito.verify(savedSnapshotService).getDashboardSearch(123L);
+        Assert.assertEquals("fetched,normal", token.getStateToken());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToSnapshotToken_missingSnapshot() {
+        Mockito.when(savedSnapshotService.getDashboardSearch(123L)).thenReturn(null);
+        SavedSnapshotService.toSnapshotToken(savedSnapshotService, 123L, null);
+    }
+
+    @Test
+    public void testToSnapshotToken_query() {
+        final SavedQuery query = new SavedQuery.Builder()
+            .setConceptClusterPhrases(Collections.singleton(
+                new ConceptClusterPhrase("query", true, 1)
+            ))
+            .build();
+        final TypedStateToken token =
+            SavedSnapshotService.toSnapshotToken(savedSnapshotService, null, query);
+        Mockito.verify(savedSnapshotService).build(query);
+        Assert.assertEquals("built,normal", token.getStateToken());
     }
 
 }

@@ -15,19 +15,27 @@ define([
     'underscore',
     'jquery',
     'backbone',
+    'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/loading-spinner.html',
     'find/app/util/generate-error-support-message',
     'find/app/page/search/results/field-selection-view',
+    'find/app/util/text-input',
     'find/app/model/saved-searches/saved-search-model',
-    'find/app/model/policy-collection',
+    'find/app/model/controlpoint-policy-collection',
+    'find/app/model/nifi-action-collection',
     'text!find/templates/app/page/search/saved-searches/policy-empty.html'
 ], function(
-    _, $, Backbone, i18n,
-    loadingTemplate, generateErrorHtml, FieldSelectionView,
-    SavedSearchModel, PolicyCollection, emptyTemplate
+    _, $, Backbone, configuration, i18n,
+    loadingTemplate, generateErrorHtml, FieldSelectionView, TextInput,
+    SavedSearchModel, CPPolicyCollection, NifiActionCollection, emptyTemplate
 ) {
     'use strict';
+    // policy implementations
+    const IMPL = {
+        nifi: 'nifi',
+        cp: 'controlpoint'
+    }
 
     return Backbone.View.extend({
         loadingTemplate: _.template(loadingTemplate),
@@ -36,13 +44,19 @@ define([
         initialize: function (options) {
             this.queryState = options.queryState;
             this.savedSearchModel = options.savedSearchModel;
+            this.impl = configuration().nifiEnabled ? IMPL.nifi : IMPL.cp
 
             // listed policies
-            this.policyCollection = new PolicyCollection();
+            this.policyCollection = this.impl === IMPL.nifi ? new NifiActionCollection() :
+                this.impl === IMPL.cp ? new CPPolicyCollection() : null;
             // the selected policy - owned by `policySelector`
             this.policySelectionModel = new Backbone.Model();
             // `FieldSelectionView`
             this.policySelector = null;
+            // the policy execution label - owned by `policyLabel`
+            this.policyLabelModel = new Backbone.Model({ text: '' });
+            // `TextInput`
+            this.policyLabel = null;
 
             this.listenTo(this.policyCollection, 'sync', this.showPolicies);
             this.listenTo(this.policyCollection, 'error', _.partial(this.showError, 'fetch'));
@@ -82,10 +96,20 @@ define([
                     fields: policies,
                     model: this.policySelectionModel,
                     allowEmpty: false,
-                    width: '50%'
+                    width: '100%'
                 });
                 this.policySelector.render();
                 this.$el.html(this.policySelector.$el);
+
+                this.policyLabel = new TextInput({
+                    model: this.policyLabelModel,
+                    modelAttribute: 'text',
+                    templateOptions: {
+                        placeholder: i18n['search.savedSearchControl.applyPolicy.label.placeholder']
+                    }
+                });
+                this.policyLabel.render();
+                this.$el.append(this.policyLabel.$el);
 
             } else {
                 this.$el.html(this.emptyTemplate({ i18n: i18n }));
@@ -96,7 +120,7 @@ define([
          * Replace view with an error message.
          *
          * @param errorId - ID from which to retrieve the error message string, below
-         *                  'search.savedSearchControl.applyCPPolicy.error'
+         *                  'search.savedSearchControl.applyPolicy.error'
          * Remaining arguments form a Collection 'error' event handler.
          */
         showError: function (errorId, _0, xhr) {
@@ -108,8 +132,79 @@ define([
                 errorDetails: xhr.responseJSON && xhr.responseJSON.message,
                 errorUUID: xhr.responseJSON && xhr.responseJSON.uuid,
                 isUserError: xhr.responseJSON && xhr.responseJSON.isUserError,
-                messageToUser: i18n['search.savedSearchControl.applyCPPolicy.error.' + errorId]
+                messageToUser: i18n['search.savedSearchControl.applyPolicy.error.' + errorId]
             }));
+        },
+
+        /**
+         * Apply a policy.
+         *
+         * @param path Path of the API to call
+         * @param params Query parameters to pass to the API
+         * @param postData POST body to pass to the API
+         * @param successCallback Function to call on success
+         */
+        applyPolicyBase: function (path, params, postData, successCallback) {
+            const queryString = _.map(params, function (param) {
+                return param.name + '=' + encodeURIComponent(param.value);
+            }).join('&');
+
+            $.ajax(path + '?' + queryString, {
+                method: 'POST',
+                contentType: postData === null ? null : 'application/json',
+                data: postData,
+                dataType: 'text',
+                success: successCallback,
+                error: _.bind(this.showError, this, 'apply', null)
+            });
+        },
+
+        /**
+         * Execute an action using NiFi.
+         *
+         * @param action ID of the action to execute
+         * @param snapshotId Saved snapshot ID, if any
+         * @param queryJson Saved search details as JSON, if any
+         * @param successCallback Function to call on success
+         */
+        executeNifiAction: function (action, snapshotId, queryJson, successCallback) {
+            const params = [
+                { name: 'action', value: action }
+            ];
+            if (snapshotId) {
+                params.push({ name: 'savedSnapshotId', value: snapshotId });
+            }
+            const title = this.savedSearchModel.get('title');
+            if (title) {
+                params.push({ name: 'searchName', value: title });
+            }
+            const label = this.policyLabelModel.get('text');
+            if (label) {
+                params.push({ name: 'label', value: label });
+            }
+
+            const path = 'api/public/nifi/actions/execute';
+            this.applyPolicyBase(path, params, queryJson, successCallback);
+        },
+
+        /**
+         * Apply a policy using ControlPoint.
+         *
+         * @param action ID of the policy to execute
+         * @param snapshotId Saved snapshot ID, if any
+         * @param queryJson Saved search details as JSON, if any
+         * @param successCallback Function to call on success
+         */
+        applyCPPolicy: function (policy, snapshotId, queryJson, successCallback) {
+            const params = [
+                { name: 'policy', value: policy }
+            ];
+            if (snapshotId) {
+                params.push({ name: 'savedSnapshotId', value: snapshotId });
+            }
+
+            const path = 'api/public/controlpoint/policy/apply';
+            this.applyPolicyBase(path, params, queryJson, successCallback);
         },
 
         /**
@@ -120,34 +215,27 @@ define([
         applyPolicy: function (successCallback) {
             this.showLoading();
 
-            const params = [
-                { name: 'policy', value: this.policySelectionModel.get('field') }
-            ];
-            let postData = null;
+            const policy = this.policySelectionModel.get('field');
+            let snapshotId = null;
+            let queryJson = null;
             const searchType = this.savedSearchModel.get('type');
             if (searchType === SavedSearchModel.Type.SNAPSHOT ||
                 searchType === SavedSearchModel.Type.READ_ONLY_SNAPSHOT ||
                 searchType === SavedSearchModel.Type.SHARED_SNAPSHOT ||
                 searchType === SavedSearchModel.Type.SHARED_READ_ONLY_SNAPSHOT
             ) {
-                params.push({ name: 'savedSnapshotId', value: this.savedSearchModel.get('id') });
+                snapshotId = this.savedSearchModel.get('id');
             } else {
                 const queryModel = this.savedSearchModel.clone();
                 queryModel.set(SavedSearchModel.attributesFromQueryState(this.queryState));
-                postData = JSON.stringify(queryModel.toJSON());
+                queryJson = JSON.stringify(queryModel.toJSON());
             }
 
-            const queryString = _.map(params, function (param) {
-                return param.name + '=' + encodeURIComponent(param.value);
-            }).join('&');
-            $.ajax('api/public/controlpoint/policy/apply?' + queryString, {
-                method: 'POST',
-                contentType: postData === null ? null : 'application/json',
-                data: postData,
-                dataType: 'text',
-                success: successCallback,
-                error: _.bind(this.showError, this, 'apply', null)
-            });
+            if (this.impl === IMPL.nifi) {
+                this.executeNifiAction(policy, snapshotId, queryJson, successCallback);
+            } else if (this.impl === IMPL.cp) {
+                this.applyCPPolicy(policy, snapshotId, queryJson, successCallback);
+            }
         }
 
     });

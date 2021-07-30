@@ -55,6 +55,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
     private final CommunityAgentStoreConfig communityAgentStore;
     private final EntitySearchConfig entitySearch;
     private final ControlPointConfig controlPoint;
+    private final NifiConfig nifi;
     @JsonProperty("savedSearches")
     private final SavedSearchConfig savedSearchConfig;
     private final MMAP mmap;
@@ -99,6 +100,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
                     other.communityAgentStore : communityAgentStore.merge(other.communityAgentStore))
                 .entitySearch(entitySearch == null ? other.entitySearch : entitySearch.merge(other.entitySearch))
                 .controlPoint(controlPoint == null ? other.controlPoint : controlPoint.merge(other.controlPoint))
+                .nifi(nifi == null ? other.nifi : nifi.merge(other.nifi))
                 .savedSearchConfig(savedSearchConfig == null ? other.savedSearchConfig : savedSearchConfig.merge(other.savedSearchConfig))
                 .mmap(mmap == null ? other.mmap : mmap.merge(other.mmap))
                 .messageOfTheDay(messageOfTheDay == null ? other.messageOfTheDay : messageOfTheDay.merge(other.messageOfTheDay))
@@ -249,6 +251,10 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
 
         if(controlPoint != null) {
             controlPoint.basicValidate(ControlPointConfig.SECTION);
+        }
+
+        if(nifi != null) {
+            nifi.basicValidate(NifiConfig.SECTION);
         }
     }
 

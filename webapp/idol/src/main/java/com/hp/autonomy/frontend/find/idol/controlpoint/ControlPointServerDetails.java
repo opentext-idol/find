@@ -12,7 +12,7 @@ import lombok.Getter;
 // username and password are optional because we currently only use APIs which don't require
 // authentication
 /**
- * Configuration used when building Control API requests.  Username and password are optional.
+ * Configuration used when building ControlPoint API requests.  Username and password are optional.
  */
 @Getter
 @Builder(toBuilder = true)

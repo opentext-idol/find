@@ -135,6 +135,14 @@
       "basePath": "/WebApi/api"
     }
   },
+  "nifi": {
+    "enabled": false,
+    "server": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 10000
+    }
+  },
   "savedSearches": {
     "pollForUpdates": true,
     "pollingInterval": 5

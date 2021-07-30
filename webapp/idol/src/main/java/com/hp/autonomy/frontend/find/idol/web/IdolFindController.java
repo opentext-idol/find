@@ -117,6 +117,9 @@ public class IdolFindController extends FindController<IdolFindConfig, IdolFindC
             config.getControlPoint().getEnabled();
         publicConfig.put(MvcConstants.CONTROL_POINT_ENABLED.value(), controlPointEnabled);
 
+        final Boolean nifiEnabled = config.getNifi() != null && config.getNifi().getEnabled();
+        publicConfig.put(MvcConstants.NIFI_ENABLED.value(), nifiEnabled);
+
         publicConfig.put(MvcConstants.TEMPLATES_CONFIG.value(), templatesConfig.getConfig());
         publicConfig.put(MvcConstants.ASSETS_CONFIG.value(), assetsConfigService.getConfig());
         publicConfig.put(MvcConstants.MESSAGE_OF_THE_DAY_CONFIG.value(), config.getMessageOfTheDay());

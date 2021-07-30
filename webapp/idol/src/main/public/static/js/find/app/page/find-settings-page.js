@@ -83,6 +83,19 @@ define([
                             statusInfo: i18n['settings.messageOfTheDay.status.info'],
                             statusWarning: i18n['settings.messageOfTheDay.status.warning']
                         })
+                    }),
+                    new OptionalAciWidget({
+                        configItem: 'nifi',
+                        description: i18n['settings.nifi.description'],
+                        isOpened: true,
+                        title: i18n['settings.nifi.title'],
+                        strings: _.extend(this.serverStrings(), {
+                            enable: i18n['settings.nifi.enable'],
+                            enabled: i18n['settings.nifi.enabled'],
+                            disable: i18n['settings.nifi.disable'],
+                            disabled: i18n['settings.nifi.disabled'],
+                            loading: i18n['app.loading']
+                        })
                     })
                 ], [
                     new QueryManipulationWidget({
