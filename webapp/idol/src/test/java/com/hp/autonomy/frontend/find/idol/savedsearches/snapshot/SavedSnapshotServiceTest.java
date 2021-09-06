@@ -20,6 +20,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
@@ -71,10 +72,10 @@ public class SavedSnapshotServiceTest extends AbstractSavedSearchServiceTest<Sav
         Mockito.when(queryRestrictionsBuilder.stateDontMatchIds(Mockito.any())).thenReturn(queryRestrictionsBuilder);
 
         Mockito.when(documentsService.getStateTokenAndResultCount(
-            Mockito.any(), Mockito.anyInt(), Mockito.eq(false)
+            Mockito.any(), Mockito.anyInt(), Mockito.eq(QueryRequest.QueryType.MODIFIED), Mockito.eq(false)
         )).thenReturn(new StateTokenAndResultCount(normalToken, 123));
         Mockito.when(documentsService.getStateTokenAndResultCount(
-            Mockito.any(), Mockito.anyInt(), Mockito.eq(true)
+            Mockito.any(), Mockito.anyInt(), Mockito.eq(QueryRequest.QueryType.MODIFIED), Mockito.eq(true)
         )).thenReturn(new StateTokenAndResultCount(promotionsToken, 456));
 
         savedSnapshotService = Mockito.mock(SavedSnapshotService.class);

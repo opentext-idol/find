@@ -16,6 +16,7 @@ package com.hp.autonomy.frontend.find.idol.comparison;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.idol.comparison.ComparisonRequest.Builder;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
@@ -55,7 +56,7 @@ public class ComparisonControllerTest {
     @Before
     public void setUp() throws Exception {
         comparisonController = new ComparisonController<>(comparisonService, documentsService);
-        when(documentsService.getStateToken(any(), anyInt(), anyBoolean()))
+        when(documentsService.getStateToken(any(), anyInt(), eq(QueryRequest.QueryType.MODIFIED), anyBoolean()))
                 .thenReturn(MOCK_STATE_TOKEN_1);
     }
 

@@ -41,7 +41,8 @@ abstract class IdolExportController extends ExportController<IdolQueryRequest, A
         this.stateTokenMaxResults = Optional.ofNullable(configService.getConfigResponse())
                 .map(ConfigResponse::getConfig)
                 .map(IdolFindConfig::getExportStoreStateMaxResults)
-                .orElse(Integer.MAX_VALUE);
+                // maximum allowed value for config MaxValue
+                .orElse(1_000_000);
     }
 
     @Override
@@ -51,7 +52,7 @@ abstract class IdolExportController extends ExportController<IdolQueryRequest, A
         final int maxResults = Math.min(queryRequest.getMaxResults(), this.stateTokenMaxResults);
 
         final StateTokenAndResultCount stateTokenAndResultCount = documentsService.getStateTokenAndResultCount(
-                queryRequest.getQueryRestrictions(), maxResults, false);
+                queryRequest.getQueryRestrictions(), maxResults, queryRequest.getQueryType(), false);
 
         final IdolQueryRequest queryRequestWithStateToken = queryRequest.toBuilder()
                 .queryRestrictions(queryRequest.getQueryRestrictions().toBuilder()

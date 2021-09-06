@@ -64,6 +64,6 @@ abstract class IdolExportControllerTest extends ExportControllerTest<IdolQueryRe
 
     @Override
     protected void mockNumberOfResults(final int numberOfResults) throws AciErrorException {
-        when(documentsService.getStateTokenAndResultCount(any(), anyInt(), anyBoolean())).thenReturn(new StateTokenAndResultCount(new TypedStateToken(), numberOfResults));
+        when(documentsService.getStateTokenAndResultCount(any(), anyInt(), any(), anyBoolean())).thenReturn(new StateTokenAndResultCount(new TypedStateToken(), numberOfResults));
     }
 }

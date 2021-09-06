@@ -18,6 +18,7 @@ package com.hp.autonomy.frontend.find.idol.comparison;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.requests.IdolQueryRestrictionsMixin;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
@@ -59,8 +60,8 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .fieldText("")
                 .minScore(0)
                 .build();
-        twoDocStateToken = documentsService.getStateToken(queryRestrictions, 2, false);
-        sixDocStateToken = documentsService.getStateToken(queryRestrictions, 6, false);
+        twoDocStateToken = documentsService.getStateToken(queryRestrictions, 2, QueryRequest.QueryType.RAW, false);
+        sixDocStateToken = documentsService.getStateToken(queryRestrictions, 6, QueryRequest.QueryType.RAW, false);
     }
 
     @Test

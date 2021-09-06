@@ -15,6 +15,7 @@
 package com.hp.autonomy.frontend.find.idol.comparison;
 
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
@@ -59,8 +60,8 @@ class ComparisonController<Q extends QueryRestrictions<?>, R extends SearchResul
     public ComparisonStateTokens getCompareStateTokens(@RequestBody final ComparisonRequest<Q> body) throws E {
         final int STATE_TOKEN_MAX_RESULTS = comparisonService.getStateTokenMaxResults();
         // If either query state token is null then try and fetch one using the query restrictions
-        final String firstStateToken = body.getFirstQueryStateToken() != null ? body.getFirstQueryStateToken() : documentsService.getStateToken(body.getFirstRestrictions(), STATE_TOKEN_MAX_RESULTS, false);
-        final String secondStateToken = body.getSecondQueryStateToken() != null ? body.getSecondQueryStateToken() : documentsService.getStateToken(body.getSecondRestrictions(), STATE_TOKEN_MAX_RESULTS, false);
+        final String firstStateToken = body.getFirstQueryStateToken() != null ? body.getFirstQueryStateToken() : documentsService.getStateToken(body.getFirstRestrictions(), STATE_TOKEN_MAX_RESULTS, QueryRequest.QueryType.MODIFIED, false);
+        final String secondStateToken = body.getSecondQueryStateToken() != null ? body.getSecondQueryStateToken() : documentsService.getStateToken(body.getSecondRestrictions(), STATE_TOKEN_MAX_RESULTS, QueryRequest.QueryType.MODIFIED, false);
 
         return comparisonService.getCompareStateTokens(firstStateToken, secondStateToken);
     }

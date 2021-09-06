@@ -49,7 +49,8 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
         this.stateTokenMaxResults = Optional.ofNullable(configService.getConfigResponse())
                 .map(ConfigResponse::getConfig)
                 .map(IdolFindConfig::getComparisonStoreStateMaxResults)
-                .orElse(Integer.MAX_VALUE);
+                // maximum allowed value for config MaxValue
+                .orElse(1_000_000);
         this.documentSummaryMaxLength = Optional.ofNullable(configService.getConfigResponse())
                 .map(ConfigResponse::getConfig)
                 .map(IdolFindConfig::getDocumentSummaryMaxLength)
@@ -69,7 +70,7 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
                 .stateDontMatchId(secondQueryStateToken)
                 .build();
 
-        return documentsService.getStateToken(queryRestrictions, stateTokenMaxResults, false);
+        return documentsService.getStateToken(queryRestrictions, stateTokenMaxResults, QueryRequest.QueryType.MODIFIED, false);
     }
 
     @Override
@@ -110,7 +111,7 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
                 .sort(sort)
                 .highlight(highlight)
                 .autoCorrect(false)
-                .queryType(QueryRequest.QueryType.RAW)
+                .queryType(QueryRequest.QueryType.MODIFIED)
                 .build();
 
         return documentsService.queryTextIndex(queryRequest);

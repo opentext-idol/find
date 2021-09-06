@@ -16,6 +16,7 @@ package com.hp.autonomy.frontend.find.idol.search;
 
 import com.hp.autonomy.frontend.find.core.search.AbstractRelatedConceptsServiceIT;
 import com.hp.autonomy.frontend.find.core.search.RelatedConceptsController;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
@@ -50,7 +51,7 @@ public class IdolRelatedConceptsServiceIT extends AbstractRelatedConceptsService
                 .minScore(0)
                 .build();
 
-        final String stateToken = documentsService.getStateToken(queryRestrictions, Integer.MAX_VALUE, false);
+        final String stateToken = documentsService.getStateToken(queryRestrictions, Integer.MAX_VALUE, QueryRequest.QueryType.RAW, false);
 
         final MockHttpServletRequestBuilder request = get(RelatedConceptsController.RELATED_CONCEPTS_PATH)
                 .param(RelatedConceptsController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())

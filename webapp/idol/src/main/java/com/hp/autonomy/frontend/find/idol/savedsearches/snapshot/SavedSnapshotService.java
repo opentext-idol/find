@@ -11,6 +11,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.*;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.idol.annotations.IdolService;
@@ -32,7 +33,8 @@ import java.util.stream.Collectors;
 @IdolService
 @ConditionalOnExpression(BiConfiguration.BI_PROPERTY_SPEL)
 public class SavedSnapshotService extends AbstractSavedSearchService<SavedSnapshot, SavedSnapshot.Builder> {
-    private static final Integer STATE_TOKEN_MAX_RESULTS = Integer.MAX_VALUE;
+    // maximum allowed value for config MaxValue
+    private static final Integer STATE_TOKEN_MAX_RESULTS = 1_000_000;
 
     private final IdolDocumentsService documentsService;
     private final FieldTextParser fieldTextParser;
@@ -73,7 +75,8 @@ public class SavedSnapshotService extends AbstractSavedSearchService<SavedSnapsh
             .minScore(query.getMinScore())
             .build();
 
-        return documentsService.getStateTokenAndResultCount(restrictions, STATE_TOKEN_MAX_RESULTS, promotions);
+        return documentsService.getStateTokenAndResultCount(
+            restrictions, STATE_TOKEN_MAX_RESULTS, QueryRequest.QueryType.MODIFIED, promotions);
     }
 
     @Override
