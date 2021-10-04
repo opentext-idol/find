@@ -35,6 +35,10 @@ define([
             configuration.and.callFake(function() {
                 return {
                     enableMetaFilter: true,
+                    enableIndexesFilter: true,
+                    enableDatesFilter: true,
+                    enableGeographyFilter: true,
+                    enableDocumentSelectionFilter: true,
                     resultViewOrder: ["topic-map", "list"]
                 };
             });

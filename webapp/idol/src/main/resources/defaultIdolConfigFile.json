@@ -216,6 +216,22 @@
         "user": false,
         "bi": true
       },
+      "enableIndexesFilter": {
+        "user": true,
+        "bi": true
+      },
+      "enableDatesFilter": {
+        "user": true,
+        "bi": true
+      },
+      "enableGeographyFilter": {
+        "user": true,
+        "bi": true
+      },
+      "enableDocumentSelectionFilter": {
+        "user": true,
+        "bi": true
+      },
       "enableRelatedConcepts": {
         "user": true,
         "bi": false

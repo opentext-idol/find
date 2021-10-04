@@ -20,8 +20,8 @@ define([
 
     let config;
 
-    function parseBooleanOption(config, uiCustomization, option) {
-        const optionRules = uiCustomization.options[option];
+    function parseBooleanOption(config, uiCustomization, option, defaultValue) {
+        const optionRules = uiCustomization.options[option] || defaultValue;
 
         return optionRules.user && !(config.hasBiRole && optionRules.bi === false) ||
             optionRules.bi && config.hasBiRole;
@@ -43,6 +43,10 @@ define([
                 if(uiCustomization) {
                     config.enableDashboards = parseBooleanOption(config, uiCustomization, 'enableDashboards') && !_.isEmpty(config.dashboards);
                     config.enableMetaFilter = parseBooleanOption(config, uiCustomization, 'enableMetaFilter');
+                    config.enableIndexesFilter = parseBooleanOption(config, uiCustomization, 'enableIndexesFilter', { user: true, bi: true });
+                    config.enableDatesFilter = parseBooleanOption(config, uiCustomization, 'enableDatesFilter', { user: true, bi: true });
+                    config.enableGeographyFilter = parseBooleanOption(config, uiCustomization, 'enableGeographyFilter', { user: true, bi: true });
+                    config.enableDocumentSelectionFilter = parseBooleanOption(config, uiCustomization, 'enableDocumentSelectionFilter', { user: true, bi: true });
                     config.enableRelatedConcepts = parseBooleanOption(config, uiCustomization, 'enableRelatedConcepts');
                     config.enableSavedSearch = parseBooleanOption(config, uiCustomization, 'enableSavedSearch');
                     config.enableSideBar = parseBooleanOption(config, uiCustomization, 'enableSideBar') && (config.enableDashboards || !_.isEmpty(config.applications));

@@ -132,13 +132,15 @@ define([
                 render: function() {
                     this.indexesViewWrapper.render();
                 }.bind(this),
-                postRender: _.noop,
+                postRender: function() {
+                    this.updateIndexesVisibility();
+                }.bind(this),
                 remove: function() {
                     this.indexesViewWrapper.remove();
                 }.bind(this)
             }, {
                 id: 'datesFilter',
-                shown: true,
+                shown: config.enableDatesFilter,
                 initialize: function() {
                     this.collapsed.dates = true;
 
@@ -164,13 +166,15 @@ define([
                 render: function() {
                     this.dateViewWrapper.render();
                 }.bind(this),
-                postRender: _.noop,
+                postRender: function() {
+                    this.updateDatesVisibility();
+                }.bind(this),
                 remove: function() {
                     this.dateViewWrapper.remove();
                 }.bind(this)
             }, {
                 id: 'geographyFilter',
-                shown: showGeographyFilter,
+                shown: config.enableGeographyFilter && showGeographyFilter,
                 initialize: function() {
                     const geographyModel = options.queryState.geographyModel;
                     this.collapsed.geography = !_.find(_.map(geographyModel.attributes, function(v){ return v && v.length }));
@@ -196,14 +200,17 @@ define([
                 render: function() {
                     this.geographyViewWrapper.render();
                 }.bind(this),
-                postRender: _.noop,
+                postRender: function() {
+                    this.updateGeographyVisibility();
+                }.bind(this),
                 remove: function() {
                     this.geographyViewWrapper.remove();
                 }.bind(this)
             }, {
 
                 id: 'documentSelectionFilter',
-                shown: _.contains(config.resultViewOrder, LIST_RESULTS_VIEW_ID),
+                shown: config.enableDocumentSelectionFilter &&
+                    _.contains(config.resultViewOrder, LIST_RESULTS_VIEW_ID),
                 initialize: function() {
                     const documentSelectionView = new DocumentSelectionFilterView({
                         documentSelectionModel: options.queryState.documentSelectionModel,
@@ -369,6 +376,10 @@ define([
         },
 
         updateDatesVisibility: function() {
+            if (!this.dateViewWrapper) {
+                return;
+            }
+
             const search = this.filterModel.get('text');
             this.hideDates = !(!search || searchMatches(datesTitle, search));
 
@@ -388,18 +399,13 @@ define([
             this.geographyViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.geography);
         },
 
-        updateDocumentSelectionVisibility: function () {
-            if (!this.documentSelectionViewWrapper) {
-                return;
-            }
-
-            const hidden = !!this.filterModel.get('text');
-            this.documentSelectionViewWrapper.$el.toggleClass('hide', hidden);
-        },
-
         updateIndexesVisibility: function() {
-            this.indexesViewWrapper.$el.toggleClass('hide', this.indexesEmpty);
-            this.indexesViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.indexes);
+            if (configuration().enableIndexesFilter) {
+                this.indexesViewWrapper.$el.toggleClass('hide', this.indexesEmpty);
+                this.indexesViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.indexes);
+            } else {
+                this.indexesViewWrapper.$el.toggleClass('hide', true);
+            }
         },
 
         parametricFieldsEmpty: function() {
