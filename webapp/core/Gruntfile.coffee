@@ -62,6 +62,7 @@ module.exports = (grunt) ->
       test:
         src: sourcePath
         options:
+          version: '3.8.0' # https://github.com/gruntjs/grunt-contrib-jasmine/issues/339
           allowFileAccess: true
           outfile: jasmineSpecRunner
           specs: specs
