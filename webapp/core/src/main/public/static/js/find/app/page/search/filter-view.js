@@ -372,7 +372,7 @@ define([
 
         updateParametricVisibility: function() {
             this.parametricView.$el.toggleClass('hide',
-                this.parametricFieldsEmpty() && !!(this.filterModel.get('text')));
+                this.parametricFieldsEmpty() && !!(this.filterModel && this.filterModel.get('text')));
         },
 
         updateDatesVisibility: function() {
@@ -380,11 +380,11 @@ define([
                 return;
             }
 
-            const search = this.filterModel.get('text');
+            const search = this.filterModel && this.filterModel.get('text');
             this.hideDates = !(!search || searchMatches(datesTitle, search));
 
             this.dateViewWrapper.$el.toggleClass('hide', this.hideDates);
-            this.dateViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.dates);
+            this.dateViewWrapper.toggle(search || !this.collapsed.dates);
         },
 
         updateGeographyVisibility: function() {
@@ -392,17 +392,17 @@ define([
                 return;
             }
 
-            const search = this.filterModel.get('text');
+            const search = this.filterModel && this.filterModel.get('text');
             this.hideGeography = !(!search || searchMatches(geographyTitle, search));
 
             this.geographyViewWrapper.$el.toggleClass('hide', this.hideGeography);
-            this.geographyViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.geography);
+            this.geographyViewWrapper.toggle(search || !this.collapsed.geography);
         },
 
         updateIndexesVisibility: function() {
             if (configuration().enableIndexesFilter) {
                 this.indexesViewWrapper.$el.toggleClass('hide', this.indexesEmpty);
-                this.indexesViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.indexes);
+                this.indexesViewWrapper.toggle((this.filterModel && this.filterModel.get('text')) || !this.collapsed.indexes);
             } else {
                 this.indexesViewWrapper.$el.toggleClass('hide', true);
             }
