@@ -30,6 +30,11 @@
         <li class="export-csv-option">
             <a><%-i18n['app.exportToCsv']%></a>
         </li>
+        <% if (showApplyPolicy) { %>
+        <li class="apply-policy-option">
+            <a><%-i18n['search.savedSearchControl.applyPolicy']%></a>
+        </li>
+        <% } %>
         <% if (readOnly) { %>
         <li class="saved-search-close-option">
             <a><%-i18n['app.close']%></a>

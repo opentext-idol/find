@@ -1,13 +1,28 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016-2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
+    'backbone',
     'find/app/util/search-data-util',
-    'parametric-refinement/to-field-text-node'
-], function(searchDataUtil, toFieldTextNode) {
+    'parametric-refinement/to-field-text-node',
+    'fieldtext/js/field-text-parser'
+], function(Backbone, searchDataUtil, toFieldTextNode, fieldTextParser) {
     'use strict';
+
+    const createFieldText = function (field, value) {
+        return new fieldTextParser.ExpressionNode('MATCH', [field], [value]);
+    };
 
     describe('Search Data Utils', function() {
         describe('makeQueryText', function() {
@@ -41,25 +56,70 @@ define([
             })
         });
 
-        describe('buildFieldText', function() {
-            it('called with the empty array returns null', function() {
-                expect(searchDataUtil.buildFieldText([])).toBeNull();
+        describe('buildMergedFieldText', function () {
+
+            it('combines fieldtext from provided sources', function () {
+                const fieldText = searchDataUtil.buildMergedFieldText(
+                    [
+                        new Backbone.Model({ field: 'fielda1', value: 'a1' }),
+                        new Backbone.Model({ field: 'fielda2', value: 'a2' })
+                    ],
+                    { toFieldText: () => createFieldText('fieldb', 'b') },
+                    { toFieldText: () => createFieldText('fieldc', 'c') }
+                );
+                expect(fieldText.toString()).toBe(
+                    'MATCH{a1}:fielda1 AND MATCH{a2}:fielda2 AND ' +
+                        'MATCH{b}:fieldb AND MATCH{c}:fieldc');
             });
 
-            it('called with the non-empty array returns the result of the toString method on the return value of the toFieldTextNode function', function() {
-                const parametricValues = [
-                    {
-                        field: 'CATEGORY',
-                        value: 'GENERAL'
-                    },
-                    {
-                        field: 'SOURCE',
-                        value: 'GOOGLE'
-                    }
-                ];
+            it('omits null fieldtext', function () {
+                const fieldText = searchDataUtil.buildMergedFieldText(
+                    [new Backbone.Model({ field: 'fielda', value: 'a' })],
+                    { toFieldText: () => null },
+                    { toFieldText: () => createFieldText('fieldc', 'c') }
+                );
+                expect(fieldText.toString()).toBe('MATCH{a}:fielda AND MATCH{c}:fieldc');
+            });
 
-                expect(searchDataUtil.buildFieldText(parametricValues)).toEqual(toFieldTextNode(parametricValues).toString());
-            })
+            it('returns null if all sources return null', function () {
+                const fieldText = searchDataUtil.buildMergedFieldText(
+                    [],
+                    { toFieldText: () => null },
+                    { toFieldText: () => null }
+                );
+                expect(fieldText).toBe(null);
+            });
+
         });
+
+        describe('buildMergedFieldTextWithoutDocumentSelection', function () {
+
+            it('combines fieldtext from provided sources', function () {
+                const fieldText = searchDataUtil.buildMergedFieldTextWithoutDocumentSelection(
+                    { toFieldTextNode: () => createFieldText('fielda', 'a') },
+                    { toFieldText: () => createFieldText('fieldb', 'b') }
+                );
+                expect(fieldText.toString())
+                    .toBe('MATCH{a}:fielda AND MATCH{b}:fieldb');
+            });
+
+            it('omits null fieldtext', function () {
+                const fieldText = searchDataUtil.buildMergedFieldTextWithoutDocumentSelection(
+                    { toFieldTextNode: () => createFieldText('fielda', 'a') },
+                    { toFieldText: () => null }
+                );
+                expect(fieldText.toString()).toBe('MATCH{a}:fielda');
+            });
+
+            it('returns null if all sources return null', function () {
+                const fieldText = searchDataUtil.buildMergedFieldTextWithoutDocumentSelection(
+                    { toFieldTextNode: () => null },
+                    { toFieldText: () => null }
+                );
+                expect(fieldText).toBe(null);
+            });
+
+        });
+
     });
 });

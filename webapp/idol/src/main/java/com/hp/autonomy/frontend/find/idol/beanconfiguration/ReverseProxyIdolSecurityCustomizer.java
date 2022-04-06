@@ -1,6 +1,15 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2014-2016 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
@@ -23,6 +32,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -35,7 +45,7 @@ public class ReverseProxyIdolSecurityCustomizer implements IdolSecurityCustomize
 
     private final UserService userService;
     private final GrantedAuthoritiesMapper grantedAuthoritiesMapper;
-    private final String preAuthenticatedRoles;
+    private final List<String> preAuthenticatedRoles;
 
     private final String preAuthenticatedUsername;
 
@@ -49,7 +59,9 @@ public class ReverseProxyIdolSecurityCustomizer implements IdolSecurityCustomize
 
         this.userService = userService;
         this.grantedAuthoritiesMapper = grantedAuthoritiesMapper;
-        this.preAuthenticatedRoles = preAuthenticatedRoles;
+        this.preAuthenticatedRoles = StringUtils.isEmpty(preAuthenticatedRoles) ?
+            Collections.emptyList() :
+            Arrays.asList(preAuthenticatedRoles.split(","));
         this.preAuthenticatedUsername = preAuthenticatedUsername;
     }
 
@@ -73,10 +85,11 @@ public class ReverseProxyIdolSecurityCustomizer implements IdolSecurityCustomize
         return Collections.singleton(new IdolPreAuthenticatedAuthenticationProvider(
                 userService,
                 grantedAuthoritiesMapper,
-                Arrays.stream(preAuthenticatedRoles.split(","))
+                preAuthenticatedRoles.stream()
                         .map(FindCommunityRole::fromValue)
                         .map(FindCommunityRole::value)
-                        .collect(Collectors.toSet())
+                        .collect(Collectors.toSet()),
+                !preAuthenticatedRoles.isEmpty()
         ));
     }
 }

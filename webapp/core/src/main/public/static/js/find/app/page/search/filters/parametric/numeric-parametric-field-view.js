@@ -1,6 +1,15 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016-2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
@@ -10,24 +19,31 @@ define([
     'moment',
     'find/app/vent',
     'find/app/model/find-base-collection',
+    'find/app/model/numeric-field-details-model',
+    'find/app/model/date-field-details-model',
     'find/app/page/search/filters/parametric/calibrate-buckets',
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/page/search/filters/parametric/numeric-widget',
     'find/app/model/bucketed-numeric-collection',
     'find/app/model/bucketed-date-collection',
-    'parametric-refinement/to-field-text-node',
     'find/app/util/date-picker',
+    'find/app/util/search-data-util',
     'js-whatever/js/model-any-changed-attribute-listener',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view.html',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-numeric-input.html',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-date-input.html',
     'text!find/templates/app/page/loading-spinner.html',
     'i18n!find/nls/bundle'
-], function(_, $, Backbone, moment, vent, FindBaseCollection, calibrateBuckets, rounder, numericWidget,
-            BucketedNumericParametricCollection, BucketedDateParametricCollection, toFieldTextNode,
-            datePicker, addChangeListener, template, numericInputTemplate, dateInputTemplate,
+], function(_, $, Backbone, moment, vent, FindBaseCollection, NumericFieldDetailsModel,
+            DateFieldDetailsModel, calibrateBuckets, rounder, numericWidget,
+            BucketedNumericParametricCollection, BucketedDateParametricCollection, datePicker,
+            searchDataUtil, addChangeListener, template, numericInputTemplate, dateInputTemplate,
             loadingTemplate, i18n) {
     'use strict';
+
+    const ZOOM_IN_RATIO = 1.4;
+    const ZOOM_OUT_RATIO = 1.96;
+    const PAN_RATIO = 0.3;
 
     function sum(a, b) {
         return a + b;
@@ -72,15 +88,36 @@ define([
 
         events: {
             'click .numeric-parametric-no-min': function() {
-                this.updateRestrictions([this.model.get('min'), null]);
+                this.updateRestrictions([this.getSelection().defaultRange.min, null]);
             },
             'click .numeric-parametric-no-max': function() {
-                this.updateRestrictions([null, this.model.get('max')]);
+                this.updateRestrictions([null, this.getSelection().defaultRange.max]);
             },
             'click .numeric-parametric-reset': function() {
                 this.clearRestrictions();
-                this.model.set(this.model.getDefaultCurrentRange());
+                this.model.resetCurrent();
             },
+            'click .numeric-parametric-pan-left': function () {
+                const range = this.model.getNumericRange();
+                const offset = PAN_RATIO * (range.max - range.min);
+                this.model.set({ currentMin: range.min - offset, currentMax: range.max - offset });
+            },
+            'click .numeric-parametric-pan-right': function () {
+                const range = this.model.getNumericRange();
+                const offset = PAN_RATIO * (range.max - range.min);
+                this.model.set({ currentMin: range.min + offset, currentMax: range.max + offset });
+            },
+            'click .numeric-parametric-zoom-out': function () {
+                const range = this.model.getNumericRange();
+                const offset = 0.5 * (ZOOM_OUT_RATIO - 1) * (range.max - range.min);
+                this.model.set({ currentMin: range.min - offset, currentMax: range.max + offset });
+            },
+            'click .numeric-parametric-zoom-in': function () {
+                const range = this.model.getNumericRange();
+                const offset = 0.5 * (1 - 1 / ZOOM_IN_RATIO) * (range.max - range.min);
+                this.model.set({ currentMin: range.min + offset, currentMax: range.max - offset });
+            },
+
             'change .numeric-parametric-min-input': function() {
                 this.updateRestrictions([this.readMinInput(), null]);
             },
@@ -129,7 +166,8 @@ define([
                 ? NumericParametricFieldView.dateFormatting
                 : NumericParametricFieldView.defaultFormatting;
             this.formatValue = function(value) {
-                return formatting.format(value, this.model.get('currentMin'), this.model.get('currentMax'));
+                const range = this.model.getRange();
+                return formatting.format(value, range.min, range.max);
             }.bind(this);
             this.parseValue = formatting.parse;
             this.renderCustomFormatting = formatting.render;
@@ -137,6 +175,8 @@ define([
 
             this.widget = numericWidget({formattingFn: this.formatValue});
 
+            this.fieldDetailsModel = this.type === 'NumericDate' ?
+                new DateFieldDetailsModel() : new NumericFieldDetailsModel();
             // The view's this.model contains the current and
             // absolute ranges, the bucketModel contains the values
             this.bucketModel = this.type === 'NumericDate'
@@ -171,6 +211,7 @@ define([
 
             this.listenTo(vent, 'vent:resize', this.delayedFetchBucketsAndUpdate);
 
+            this.listenTo(this.fieldDetailsModel, 'error', this.updateGraph);
             this.listenTo(this.bucketModel, 'change:values request sync error', this.updateGraph);
         },
 
@@ -213,8 +254,8 @@ define([
         // Draw the graph with the current data and ranges, or display
         // the loading spinner if we don't have any data yet
         updateGraph: function() {
-            const noError = !this.bucketModel.error;
-            const fetching = this.bucketModel.fetching;
+            const noError = !this.fieldDetailsModel.error && !this.bucketModel.error;
+            const fetching = this.fieldDetailsModel.fetching || this.bucketModel.fetching;
             const hasValues = this.model.get('totalValues') !== 0;
             const modelBuckets = this.type === 'NumericDate'
                 ? _.map(this.bucketModel.get('values'), function(bucket) {
@@ -239,10 +280,9 @@ define([
                 const $chart = $(this.svgTemplate({selectionEnabled: this.selectionEnabled}));
                 $chartRow.append($chart);
 
-                const buckets = calibrateBuckets(
-                        modelBuckets,
-                        [this.model.get('currentMin'), this.model.get('currentMax')]
-                    );
+                const bucketRange =
+                    this.model.getRangeForQuery(this.fieldDetailsModel.pick('min', 'max'));
+                const buckets = calibrateBuckets(modelBuckets, [bucketRange.min, bucketRange.max]);
 
                 this.graph = this.widget.drawGraph({
                     chart: $chart.get(0),
@@ -275,18 +315,12 @@ define([
         // inputs to match the selected parametric range model
         updateSelection: function() {
             if(this.graph) {
-                const rangeModel = this.selectedParametricValues
-                    .find(this.isTargetModel.bind(this));
-
-                if(rangeModel) {
-                    const range = rangeModel.get('range');
-
-                    this.updateMinInput(range[0]);
-                    this.updateMaxInput(range[1]);
-                    this.graph.setSelection(range);
+                const selection = this.getSelection();
+                this.updateMinInput(selection.range.min);
+                this.updateMaxInput(selection.range.max);
+                if (selection.selectionModel) {
+                    this.graph.setSelection([selection.range.min, selection.range.max]);
                 } else {
-                    this.updateMinInput(this.model.get('min'));
-                    this.updateMaxInput(this.model.get('max'));
                     this.graph.clearSelection();
                 }
             }
@@ -295,11 +329,8 @@ define([
         // Apply a new range selection; a null boundary will not be updated
         // Should be called with values that are already parsed
         updateRestrictions: function(newRange) {
-            const existingModel = this.selectedParametricValues
-                .find(this.isTargetModel.bind(this));
-            const existingRange = existingModel
-                ? existingModel.get('range')
-                : [this.model.get('min'), this.model.get('max')];
+            const selection = this.getSelection();
+            const existingRange = [selection.range.min, selection.range.max];
 
             const newAttributes = {
                 field: this.fieldName,
@@ -322,8 +353,8 @@ define([
                 }
             }
 
-            if(existingModel) {
-                existingModel.set(newAttributes);
+            if(selection.selectionModel) {
+                selection.selectionModel.set(newAttributes);
             } else {
                 this.selectedParametricValues.add(newAttributes);
             }
@@ -339,33 +370,30 @@ define([
         fetchBuckets: function() {
             if(!(this.collapseModel && this.collapseModel.get('collapsed'))) {
                 const width = this.$('.numeric-parametric-chart-row').width();
-
                 // If the SVG has no width or there are no values, there is no point fetching new data
                 if(!(width === 0 || this.model.get('totalValues') === 0)) {
-                    // Exclude any restrictions for this field from the field text
-                    const otherSelectedValues = this.selectedParametricValues
-                        .reject(this.isTargetModel.bind(this))
-                        .map(function(model) {
-                            return model.toJSON();
-                        });
+                    const filteredQueryParams = this.filteredQueryParams();
+                    const detailsParams = _.defaults({
+                        fieldName: this.fieldName
+                    }, filteredQueryParams);
 
-                    this.bucketModel.fetch({
-                        data: {
-                            queryText: this.queryModel.get('queryText'),
-                            fieldText: toFieldTextNode(otherSelectedValues),
-                            minDate: this.queryModel.getIsoDate('minDate'),
-                            maxDate: this.queryModel.getIsoDate('maxDate'),
-                            minScore: this.queryModel.get('minScore'),
-                            databases: this.queryModel.get('indexes'),
-                            targetNumberOfBuckets: Math.floor(width / this.pixelsPerBucket),
-                            bucketMin: this.type === 'NumericDate'
-                                ? moment(this.model.get('currentMin')).utc().milliseconds(0).format()
-                                : this.model.get('currentMin'),
-                            bucketMax: this.type === 'NumericDate'
-                                ? moment(this.model.get('currentMax')).utc().milliseconds(0).format()
-                                : this.model.get('currentMax')
-                        }
-                    });
+                    // first retrieve min + max values taking into account other query restrictions
+                    this.fieldDetailsModel.fetch({ data: detailsParams }).done(_.bind(function () {
+                        // then split values into buckets within that range
+                        const bucketRange =
+                            this.model.getRangeForQuery(this.fieldDetailsModel.pick('min', 'max'));
+                        this.bucketModel.fetch({
+                            data: _.defaults({
+                                targetNumberOfBuckets: Math.floor(width / this.pixelsPerBucket),
+                                bucketMin: this.type === 'NumericDate'
+                                    ? moment(bucketRange.min).utc().milliseconds(0).format()
+                                    : bucketRange.min,
+                                bucketMax: this.type === 'NumericDate'
+                                    ? moment(bucketRange.max).utc().milliseconds(0).format()
+                                    : bucketRange.max
+                            }, filteredQueryParams)
+                        });
+                    }, this));
                 }
             }
         },
@@ -401,7 +429,62 @@ define([
             return model.get('field') === this.fieldName &&
                 model.get('range') &&
                 model.get('type') === this.type;
+        },
+
+        /**
+         * Get standard parameters used to restrict query's results to the current search.
+         */
+        filteredQueryParams: function () {
+            // Exclude any restrictions for this field from the field text
+            const fieldText = searchDataUtil.buildMergedFieldText(
+                this.selectedParametricValues.reject(this.isTargetModel.bind(this)),
+                this.queryModel.queryState.geographyModel,
+                this.queryModel.queryState.documentSelectionModel);
+            return {
+                databases: this.queryModel.get('indexes'),
+                queryText: this.queryModel.get('queryText'),
+                fieldText: fieldText,
+                minDate: this.queryModel.getIsoDate('minDate'),
+                maxDate: this.queryModel.getIsoDate('maxDate'),
+                minScore: this.queryModel.get('minScore')
+            };
+        },
+
+        /**
+         * Get information about the selected range of values.
+         *
+         * @returns object with properties:
+         * @property selectionModel The relevant model in the selectedParametricValues collection,
+         *                          or null if there's no selection
+         * @property defaultRange The full range of values ignoring the selection, as a { min, max }
+         *                        object with number values
+         * @property range The selected range as a { min, max } object with number values
+         */
+        getSelection: function () {
+            const selectionModel = this.selectedParametricValues
+                .find(this.isTargetModel.bind(this));
+            const defaultsModel = this.fieldDetailsModel.has('min') ?
+                this.fieldDetailsModel : this.model;
+            const defaultRange = {
+                min: this.parseValue(defaultsModel.get('min')),
+                max: this.parseValue(defaultsModel.get('max'))
+            };
+
+            let range;
+            if (selectionModel) {
+                const selectionRange = selectionModel.get('range');
+                range = { min: selectionRange[0], max: selectionRange[1] };
+            } else {
+                range = defaultRange;
+            }
+
+            return {
+                selectionModel: selectionModel || null,
+                defaultRange: defaultRange,
+                range: range
+            };
         }
+
     }, {
         dateInputTemplate: _.template(dateInputTemplate),
         numericInputTemplate: _.template(numericInputTemplate),

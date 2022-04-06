@@ -62,6 +62,10 @@ require.config({
         },
         'find/app/page/search/document-content-view': {
             'find/app/model/document-model': 'mock/model/document-model'
+        },
+        'find/app/page/search/saved-searches/saved-search-control-view': {
+            'find/app/util/modal': 'mock/util/modal',
+            'find/app/util/policy-selection-view': 'mock/util/policy-selection-view'
         }
     }
 });

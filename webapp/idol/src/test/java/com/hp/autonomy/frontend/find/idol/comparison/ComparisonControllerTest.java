@@ -1,12 +1,22 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016-2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 package com.hp.autonomy.frontend.find.idol.comparison;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.idol.comparison.ComparisonRequest.Builder;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
@@ -46,7 +56,7 @@ public class ComparisonControllerTest {
     @Before
     public void setUp() throws Exception {
         comparisonController = new ComparisonController<>(comparisonService, documentsService);
-        when(documentsService.getStateToken(any(), anyInt(), anyBoolean()))
+        when(documentsService.getStateToken(any(), anyInt(), eq(QueryRequest.QueryType.MODIFIED), anyBoolean()))
                 .thenReturn(MOCK_STATE_TOKEN_1);
     }
 

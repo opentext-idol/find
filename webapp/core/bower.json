@@ -36,7 +36,7 @@
     "handlebars": "4.0.10",
     "hp-autonomy-js-whatever": "2.12.1",
     "hp-autonomy-login-page": "1.2.0",
-    "hp-autonomy-settings-page": "0.12.0",
+    "hp-autonomy-settings-page": "0.13.0",
     "hp-autonomy-fieldtext-js": "1.6.0",
     "hp-autonomy-topic-map": "1.5.3",
     "hp-autonomy-sunburst": "2.1.0",
@@ -61,7 +61,8 @@
     "hp-autonomy-about-page": "0.3.0",
     "dropzone": "4.3.0",
     "bootstrap": "3.3.7",
-    "moment-timezone": "0.5.11"
+    "moment-timezone": "0.5.11",
+    "uuid.js": "4.2.6"
   },
   "devDependencies": {
     "hp-autonomy-js-testing-utils": "2.2.0",

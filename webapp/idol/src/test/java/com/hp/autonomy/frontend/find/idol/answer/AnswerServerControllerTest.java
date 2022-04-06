@@ -1,6 +1,15 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016-2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 package com.hp.autonomy.frontend.find.idol.answer;
@@ -333,6 +342,24 @@ public class AnswerServerControllerTest {
         Assert.assertEquals("should return both facts", 2, response.size());
         Assert.assertEquals("should return first fact", "1", response.get(0).fact.getSource());
         Assert.assertEquals("should return second fact", "2", response.get(1).fact.getSource());
+    }
+
+    @Test
+    public void getEntityFacts_duplicateReports() {
+        mockReportResponse(Arrays.asList(
+            createReport(Collections.singletonList(createFact("1"))),
+            createReport(Collections.singletonList(createFact("1")))
+        ));
+        mockQueryResponse(Collections.singletonList(
+            createDoc("doc 1", Collections.singletonList(
+                createFactField("first fact", Collections.singletonList("1"))
+            ))
+        ));
+        final List<SourcedFact> response =
+            controller.getEntityFacts("space", 7, Collections.singletonList("db"));
+
+        Assert.assertEquals("should return the fact only once", 1, response.size());
+        Assert.assertEquals("should return first fact", "1", response.get(0).fact.getSource());
     }
 
     @Test

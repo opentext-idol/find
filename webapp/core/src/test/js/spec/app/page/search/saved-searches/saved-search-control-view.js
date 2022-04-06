@@ -1,6 +1,15 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016-2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
@@ -11,13 +20,16 @@ define([
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/dates-filter-model',
     'find/app/model/geography-model',
+    'find/app/model/document-selection-model',
     'find/app/model/min-score-model',
     'find/app/util/confirm-view',
     'find/app/util/database-name-resolver',
     'moment',
-    'i18n!find/nls/bundle'
-], function($, Backbone, configuration, SavedSearchControlView, SavedSearchModel, DatesFilterModel, GeographyModel, MinScoreModel,
-            MockConfirmView, databaseNameResolver, moment, i18n) {
+    'i18n!find/nls/bundle',
+    'mock/util/modal',
+    'mock/util/policy-selection-view'
+], function($, Backbone, configuration, SavedSearchControlView, SavedSearchModel, DatesFilterModel, GeographyModel, DocumentSelectionModel, MinScoreModel,
+            MockConfirmView, databaseNameResolver, moment, i18n, MockModal, MockPolicySelectionView) {
     'use strict';
 
     const CREATE_TEXT = 'Make a new one!';
@@ -138,10 +150,46 @@ define([
         this.view.$('.save-search-button').click();
     }
 
+    function testApplyPolicy() {
+        it('displays the "Apply Policy" button', function() {
+            expect(this.view.$('.apply-policy-option')).toHaveLength(1);
+        });
+
+        describe('when the apply policy button is clicked', function () {
+
+            beforeEach(function () {
+                MockModal.reset();
+                MockPolicySelectionView.reset();
+                this.view.$('.apply-policy-option').click();
+            });
+
+            it('opens a confirm modal', function() {
+                expect(MockModal.instances.length).toBe(1);
+                expect(MockPolicySelectionView.instances.length).toBe(1);
+            });
+
+            describe('when the action is confirmed', function () {
+
+                beforeEach(function () {
+                    MockModal.instances[0].actionButtonCallback();
+                });
+
+                it('applies the selected policy', function () {
+                    expect(MockPolicySelectionView.instances[0].applyPolicy.calls.count())
+                        .toBe(1);
+                })
+
+            });
+
+        });
+    }
+
     describe('SavedSearchControlView', function() {
         beforeEach(function() {
             configuration.and.returnValue({
-                enableSavedSearch: true
+                enableSavedSearch: true,
+                nifiEnabled: true,
+                controlPointEnabled: false
             });
 
             this.queryModel = new Backbone.Model({
@@ -182,10 +230,13 @@ define([
 
             const geographyModel = new GeographyModel({});
 
+            const documentSelectionModel = new DocumentSelectionModel();
+
             this.queryState = {
                 conceptGroups: conceptGroups,
                 datesFilterModel: datesFilterModel,
                 geographyModel: geographyModel,
+                documentSelectionModel: documentSelectionModel,
                 selectedIndexes: selectedIndexes,
                 selectedParametricValues: selectedParametricValues,
                 minScoreModel: minScoreModel
@@ -371,6 +422,8 @@ define([
                     });
                 });
             });
+
+            testApplyPolicy();
         });
 
         describe('when the search is saved as a snapshot', function() {
@@ -428,6 +481,8 @@ define([
                     expect(this.selectedTabModel.get('selectedSearchCid')).toBe(this.savedQueryCollection.at(0).cid);
                 });
             });
+
+            testApplyPolicy();
 
             describe('when the snapshot is renamed', function() {
                 const NEW_TITLE = 'The new title for my snapshot';
@@ -757,6 +812,8 @@ define([
                 });
             });
 
+            testApplyPolicy();
+
             describe('then the query is changed', function() {
                 beforeEach(function() {
                     this.queryState.conceptGroups.set([{concepts: ['archipelago']}]);
@@ -898,5 +955,56 @@ define([
                 });
             });
         });
+
+        describe('when Nifi is disabled and ControlPoint is enabled', function() {
+            beforeEach(function() {
+                configuration.and.returnValue({
+                    enableSavedSearch: true,
+                    nifiEnabled: false,
+                    controlPointEnabled: true
+                });
+
+                this.savedQueryCollection.add(this.savedSearchModel);
+                this.savedSearchCollection.add(this.savedSearchModel);
+
+                this.view = new SavedSearchControlView(this.viewOptions);
+                this.view.render();
+                $('body').append(this.view.$el);
+            });
+
+            afterEach(function() {
+                this.view.remove();
+            });
+
+            testApplyPolicy();
+        });
+
+        describe('when NiFi and ControlPoint are disabled', function() {
+
+            beforeEach(function() {
+                configuration.and.returnValue({
+                    enableSavedSearch: true,
+                    nifiEnabled: false,
+                    controlPointEnabled: false
+                });
+
+                this.savedQueryCollection.add(this.savedSearchModel);
+                this.savedSearchCollection.add(this.savedSearchModel);
+
+                this.view = new SavedSearchControlView(this.viewOptions);
+                this.view.render();
+                $('body').append(this.view.$el);
+            });
+
+            afterEach(function() {
+                this.view.remove();
+            });
+
+            it('hides the "Apply Policy" button', function() {
+                expect(this.view.$('.apply-policy-option')).toHaveLength(0);
+            });
+
+        });
+
     });
 });

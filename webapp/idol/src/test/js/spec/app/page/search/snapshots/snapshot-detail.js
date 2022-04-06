@@ -1,20 +1,31 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016-2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
     'underscore',
     'moment',
+    'backbone',
     'find/idol/app/page/search/snapshots/snapshot-detail',
     'i18n!find/nls/bundle',
     'i18n!find/idol/nls/snapshots'
-], function(_, moment, snapshotDetail, i18n, snapshotsI18n) {
+], function(_, moment, Backbone, snapshotDetail, i18n, snapshotsI18n) {
     'use strict';
 
     function runProcessAttributes(input) {
         // Only pick the target attributes to reflect how processAttributes is called in the DataPanelView
-        return snapshotDetail.processAttributes(_.pick(input, snapshotDetail.targetAttributes));
+        return snapshotDetail.processAttributes(
+            new Backbone.Model(input), _.pick(input, snapshotDetail.targetAttributes));
     }
 
     describe('Snapshot detail panel', function() {

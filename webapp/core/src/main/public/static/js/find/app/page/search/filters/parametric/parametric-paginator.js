@@ -1,6 +1,15 @@
 /*
- * Copyright 2017 Hewlett-Packard Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
@@ -77,16 +86,18 @@ define([
         },
 
         /**
-         * Toggle the selected property of the given value, updating the selected parametric values collection and the
-         * values collection.
-         * @param value
+         * Set the selected property of the given value, updating the selected parametric values
+         * collection and the values collection.
          */
-        toggleSelection: function (value) {
+        setSelected: function (value, isSelected) {
             const model = this.valuesCollection.findWhere({value: value});
-            const isSelected = !model.get('selected');
             model.set('selected', isSelected);
 
-            if (isSelected) {
+            const currentValue = this.selectedValues.findWhere({
+                field: this.fetchOptions.fieldName,
+                value: value
+            });
+            if (isSelected && !currentValue) {
                 this.selectedValues.add({
                     field: this.fetchOptions.fieldName,
                     displayName: this.fieldDisplayName,
@@ -94,9 +105,19 @@ define([
                     displayValue: model.get('displayValue'),
                     type: 'Parametric'
                 });
-            } else {
-                this.selectedValues.remove(this.selectedValues.findWhere({field: this.fetchOptions.fieldName, value: value}));
+            } else if (!isSelected && currentValue) {
+                this.selectedValues.remove(currentValue);
             }
+        },
+
+        /**
+         * Toggle the selected property of the given value, updating the selected parametric values collection and the
+         * values collection.
+         * @param value
+         */
+        toggleSelection: function (value) {
+            const model = this.valuesCollection.findWhere({value: value});
+            this.setSelected(value, !model.get('selected'));
         }
     });
 

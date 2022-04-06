@@ -1,15 +1,14 @@
 <div class="row">
 	<div class="col-md-12">
 		<h1><%- title %></h1>
+		<a class="document-detail-open-original-link btn button-secondary m-b-nil m-t-xs" href="<%= href %>" target="_blank">
+			<%- i18n['search.document.detail.openOriginal'] %>
+		</a>
 		<% if (mmap) { %>
 		<button type="button" class="document-detail-mmap-button btn btn-white m-b-nil m-t-xs">
 			<i class="fa fa-external-link"></i>
 			<%-i18n['search.preview.mmap']%>
 		</button>
-		<% } else if(href) { %>
-		<a class="document-detail-open-original-link btn button-secondary m-b-nil m-t-xs" href="<%= href %>" target="_blank">
-			<%- i18n['search.document.detail.openOriginal'] %>
-		</a>
 		<% } %>
 	</div>
 </div>

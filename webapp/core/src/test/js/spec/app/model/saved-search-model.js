@@ -1,6 +1,15 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
@@ -10,10 +19,11 @@ define([
     'find/app/model/saved-searches/saved-search-model',
     'find/app/model/dates-filter-model',
     'find/app/model/geography-model',
+    'find/app/model/document-selection-model',
     'find/app/model/min-score-model',
     'find/app/util/database-name-resolver',
     'moment'
-], function(Backbone, _, configuration, SavedSearchModel, DatesFilterModel, GeographyModel, MinScoreModel, databaseNameResolver, moment) {
+], function(Backbone, _, configuration, SavedSearchModel, DatesFilterModel, GeographyModel, DocumentSelectionModel, MinScoreModel, databaseNameResolver, moment) {
 
     const configWithTwoFields = {
         map: {
@@ -88,6 +98,12 @@ define([
         { field: 'OGLocation', json: '{"type":"polygon","points":[[-12.76,-206.71],[-5.09,-170.51],[-27.21,-168.75],[-29.07,-200.12]]}' }
     ];
 
+    const DOCUMENT_SELECTION = [
+        { reference: 'a' },
+        { reference: 'b' },
+        { reference: 'c' }
+    ];
+
     const PARAMETRIC_VALUES = [
         {field: 'CATEGORY', displayName: 'Category', value: 'person', displayValue: 'Person'},
         {field: 'CATEGORY', displayName: 'Category', value: 'film', displayValue: 'Film'}
@@ -118,6 +134,8 @@ define([
                 minScore: MIN_SCORE,
                 dateRange: DatesFilterModel.DateRange.CUSTOM,
                 geographyFilters: GEOGRAPHY_FILTERS,
+                documentSelectionIsWhitelist: false,
+                documentSelection: DOCUMENT_SELECTION,
                 relatedConcepts: RELATED_CONCEPTS,
                 indexes: BASE_INDEXES,
                 parametricValues: PARAMETRIC_VALUES,
@@ -144,6 +162,11 @@ define([
                 ]
             });
 
+            this.documentSelectionModel = new DocumentSelectionModel({
+                isWhitelist: false,
+                references: ['a', 'b', 'c']
+            });
+
             this.minScoreModel = new MinScoreModel({
                 minScore: MIN_SCORE
             });
@@ -160,6 +183,7 @@ define([
                 conceptGroups: this.conceptGroups,
                 datesFilterModel: this.datesFilterModel,
                 geographyModel: this.geographyModel,
+                documentSelectionModel: this.documentSelectionModel,
                 selectedIndexes: this.selectedIndexes,
                 selectedParametricValues: this.selectedParametricValues,
                 minScoreModel: this.minScoreModel
@@ -179,6 +203,12 @@ define([
 
             it('returns false when the geography model is different', function() {
                 this.geographyModel.set('OGLocation', [])
+
+                expect(this.model.equalsQueryState(this.queryState)).toBe(false);
+            });
+
+            it('returns false when the document selection model is different', function() {
+                this.documentSelectionModel.exclude('d');
 
                 expect(this.model.equalsQueryState(this.queryState)).toBe(false);
             });
@@ -241,6 +271,11 @@ define([
 
             it('returns the geographic filters from the geographic model', function() {
                 expect(this.attributes.geographyFilters).toEqual(GEOGRAPHY_FILTERS);
+            });
+
+            it('returns the document selection information', function() {
+                expect(this.attributes.documentSelectionIsWhitelist).toEqual(false);
+                expect(this.attributes.documentSelection).toEqual(DOCUMENT_SELECTION);
             });
 
             it('returns the min and max dates from the dates filter model model', function() {

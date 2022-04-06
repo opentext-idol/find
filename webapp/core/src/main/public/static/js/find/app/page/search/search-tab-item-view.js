@@ -1,6 +1,15 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016-2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
@@ -100,6 +109,7 @@ define([
                 this.stopListening(this.queryState.selectedParametricValues);
                 this.stopListening(this.queryState.datesFilterModel);
                 this.stopListening(this.queryState.geographyModel);
+                this.stopListening(this.queryState.documentSelectionModel);
             }
 
             this.queryState = newQueryState;
@@ -109,7 +119,7 @@ define([
                 this.listenTo(this.queryState.conceptGroups, 'update change', this.updateSavedness);
                 this.listenTo(this.queryState.selectedParametricValues, 'add remove', this.updateSavedness);
                 this.listenTo(this.queryState.datesFilterModel, 'change', this.updateSavedness);
-                this.listenTo(this.queryState.geographyModel, 'change', this.updateSavedness);
+                this.listenTo(this.queryState.documentSelectionModel, 'change', this.updateSavedness);
             }
         }
     });

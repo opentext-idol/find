@@ -1,13 +1,26 @@
 /*
- * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2015-2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
     'underscore',
     'parametric-refinement/to-field-text-node',
-    'find/app/model/geography-model'
-], function(_, toFieldTextNode, GeographyModel) {
+    'parametric-refinement/selected-values-collection',
+    'find/app/model/geography-model',
+    'find/app/model/document-selection-model'
+], function(
+    _, toFieldTextNode, SelectedParametricValuesCollection, GeographyModel, DocumentSelectionModel
+) {
     'use strict';
 
     function wrapInBrackets(concept) {
@@ -46,19 +59,40 @@ define([
     }
 
     /**
-     * Convert an array of parametric fields and values or ranges to a field text string.
-     * @param {Array} parametricValues
-     * @return {string} A field text string or null
+     * Return a fieldtext node which is the AND-combination of multiple fieldtext nodes, each
+     * possibly null.
      */
-    function buildFieldText(parametricValues) {
-        const fieldTextNode = toFieldTextNode(parametricValues);
-        return fieldTextNode && fieldTextNode.toString();
+    function mergeFieldText(nodes) {
+        return _.chain(nodes)
+            .compact()
+            .reduce(function (fieldText, extraFieldText) {
+                return fieldText ?
+                    (extraFieldText ? fieldText.AND(extraFieldText) : fieldText) :
+                    extraFieldText
+            }, null)
+            .value() || null;
     }
 
-    function buildMergedFieldText(parametricValues, geographyModel) {
-        const fieldTextNode = toFieldTextNode(parametricValues);
-        const mergedFieldText = geographyModel.appendFieldText(fieldTextNode);
-        return mergedFieldText && mergedFieldText.toString();
+    function buildMergedFieldText(
+        parametricValueModels, geographyModel, documentSelectionModel
+    ) {
+        const parametricFieldText = toFieldTextNode(_.map(parametricValueModels, function (model) {
+            return model.toJSON();
+        }));
+        return mergeFieldText([
+            parametricFieldText,
+            geographyModel.toFieldText(),
+            documentSelectionModel.toFieldText()
+        ]);
+    }
+
+    function buildMergedFieldTextWithoutDocumentSelection(
+        selectedParametricValues, geographyModel
+    ) {
+        return mergeFieldText([
+            selectedParametricValues.toFieldTextNode(),
+            geographyModel.toFieldText()
+        ]);
     }
 
     /**
@@ -67,12 +101,18 @@ define([
      * @return {{minDate: *, maxDate: *, queryText: string, databases, fieldText, anyLanguage: boolean}}
      */
     function buildQuery(model) {
+        const fieldTextNode = buildMergedFieldText(
+            new SelectedParametricValuesCollection(model.toSelectedParametricValues().models),
+            new GeographyModel(model.toGeographyModelAttributes()),
+            new DocumentSelectionModel(model.toDocumentSelectionModelAttributes())
+        );
+
         return {
             minDate: model.get('minDate'),
             maxDate: model.get('maxDate'),
             queryText: makeQueryText(model.get('relatedConcepts')),
             databases: buildIndexes(model.get('indexes')),
-            fieldText: buildMergedFieldText(model.get('parametricValues'), new GeographyModel(model.toGeographyModelAttributes())),
+            fieldText: fieldTextNode && fieldTextNode.toString(),
             anyLanguage: true
         };
     }
@@ -81,6 +121,8 @@ define([
         makeQueryText: makeQueryText,
         buildIndexes: buildIndexes,
         buildQuery: buildQuery,
-        buildFieldText: buildFieldText
+        mergeFieldText: mergeFieldText,
+        buildMergedFieldText: buildMergedFieldText,
+        buildMergedFieldTextWithoutDocumentSelection: buildMergedFieldTextWithoutDocumentSelection
     };
 });

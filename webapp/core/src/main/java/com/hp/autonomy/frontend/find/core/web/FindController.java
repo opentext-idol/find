@@ -1,6 +1,15 @@
 /*
- * Copyright 2015-2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2015-2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 package com.hp.autonomy.frontend.find.core.web;
@@ -137,6 +146,8 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
         config.put(MvcConstants.FIELDS_INFO.value(), getFieldConfigWithDisplayNames(findConfig));
         config.put(MvcConstants.TOPIC_MAP_MAX_RESULTS.value(), findConfig.getTopicMapMaxResults());
         config.put(MvcConstants.METADATA_FIELD_INFO.value(), getMetadataNodeInfo());
+        config.put(MvcConstants.SEARCH_CONFIG.value(), findConfig.getSearch());
+        config.put(MvcConstants.RELATED_USERS_CONFIG.value(), findConfig.getUsers().getRelatedUsers());
 
         final StyleConfiguration styleConfig = styleConfigService.getConfig();
         config.put(MvcConstants.TERM_HIGHLIGHT_COLOR.value(), styleConfig.getTermHighlightColor());

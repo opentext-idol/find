@@ -1,0 +1,21 @@
+<div class="preview-mode-user-header m-b-md">
+    <span class="pull-right m-b-nil font-bold">
+        <i class="hp-icon hp-close clickable close-preview-mode"></i>
+    </span>
+    <h4 class="preview-mode-document-title m-r-sm">
+        <%- user.username %>
+    </h4>
+</div>
+<div class="preview-mode-user-loading loading-spinner loading-spinner-lg">
+    <i class="fa fa-spinner fa-spin"></i> <%- i18n['app.loading'] %>
+</div>
+<div class="preview-mode-user-container hide">
+    <% _.each(displayFields, function (field) { %>
+        <div class="break-all">
+            <div class="font-bold"><%- field.name %></div>
+            <ul class="list-unstyled m-b-nil">
+                <li><%- field.value %></li>
+            </ul>
+        </div>
+    <% }); %>
+</div>

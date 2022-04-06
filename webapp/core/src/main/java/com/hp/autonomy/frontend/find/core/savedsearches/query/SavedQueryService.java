@@ -6,10 +6,7 @@
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
-import com.hp.autonomy.frontend.find.core.savedsearches.AbstractSavedSearchService;
-import com.hp.autonomy.frontend.find.core.savedsearches.SharedToEveryoneRepository;
-import com.hp.autonomy.frontend.find.core.savedsearches.SharedToUserRepository;
-import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
+import com.hp.autonomy.frontend.find.core.savedsearches.*;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -27,4 +24,10 @@ public class SavedQueryService extends AbstractSavedSearchService<SavedQuery, Sa
                              final TagNameFactory tagNameFactory) {
         super(savedQueryRepository, sharedToUserRepository, sharedToEveryoneRepository, userEntityAuditorAware, tagNameFactory, SavedQuery.class);
     }
+
+    @Override
+    public SavedQuery build(final SavedSearch<?, ?> search) {
+        return new SavedQuery.Builder(search).build();
+    }
+
 }

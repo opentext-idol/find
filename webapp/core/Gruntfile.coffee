@@ -33,7 +33,7 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON 'package.json'
     babel:
       options:
-        plugins: ['transform-es2015-block-scoping']
+        plugins: ['@babel/plugin-transform-block-scoping']
       transform:
         files: [{
           expand: true
@@ -62,6 +62,7 @@ module.exports = (grunt) ->
       test:
         src: sourcePath
         options:
+          version: '3.8.0' # https://github.com/gruntjs/grunt-contrib-jasmine/issues/339
           allowFileAccess: true
           outfile: jasmineSpecRunner
           specs: specs

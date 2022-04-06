@@ -1,23 +1,24 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016-2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
     'underscore',
     'backbone',
+    'find/app/configuration',
     'find/app/util/search-data-util'
-], function(_, Backbone, searchDataUtil) {
+], function(_, Backbone, config, searchDataUtil) {
     'use strict';
-
-    /**
-     * @readonly
-     * @enum {String}
-     */
-    const Sort = {
-        date: 'date',
-        relevance: 'relevance'
-    };
 
     const DEBOUNCE_WAIT_MILLISECONDS = 500;
 
@@ -40,9 +41,11 @@ define([
             minDate: undefined,
             maxDate: undefined,
             minScore: 0,
-            sort: Sort.relevance,
+            sort: null,
             stateMatchIds: [],
-            promotionsStateMatchIds: []
+            promotionsStateMatchIds: [],
+            editingDocumentSelection: false,
+            fieldTextWithoutDocumentSelection: null
         },
 
         /**
@@ -50,6 +53,8 @@ define([
          * @param {{queryState: QueryState, enableAutoCorrect: boolean}} options
          */
         initialize: function(attributes, options) {
+            this.set('sort', attributes.sort ||
+                config().search.sortOptions[config().search.defaultSortOption].sort);
             this.queryState = options.queryState;
 
             this.listenTo(this.queryState.conceptGroups, 'change:concepts update reset', function() {
@@ -72,7 +77,11 @@ define([
             });
 
             this.listenTo(this.queryState.geographyModel, 'change', function() {
-                this.set('fieldText', this.getMergedFieldText());
+                this.updateFieldText();
+            });
+
+            this.listenTo(this.queryState.documentSelectionModel, 'change', function() {
+                this.updateFieldText();
             });
 
             this.listenTo(this.queryState.minScoreModel, 'change', function() {
@@ -86,21 +95,31 @@ define([
             this.listenTo(this.queryState.selectedParametricValues,
                 'add remove reset change',
                 _.debounce(_.bind(function() {
-                    this.set('fieldText', this.getMergedFieldText());
+                    this.updateFieldText();
                 }, this), DEBOUNCE_WAIT_MILLISECONDS));
 
             this.set(_.extend({
                 queryText: makeQueryText(this.queryState),
                 minScore: this.queryState.minScoreModel.get('minScore'),
-                indexes: collectionBuildIndexes(this.queryState.selectedIndexes),
-                fieldText: this.getMergedFieldText()
+                indexes: collectionBuildIndexes(this.queryState.selectedIndexes)
             }, this.queryState.datesFilterModel.toQueryModelAttributes()));
+            this.updateFieldText();
         },
 
-        getMergedFieldText: function() {
-            const fieldTextNode = this.queryState.selectedParametricValues.toFieldTextNode();
-            const geographyModel = this.queryState.geographyModel;
-            return (geographyModel ? geographyModel.appendFieldText(fieldTextNode) : fieldTextNode) || null;
+        /**
+         * Update fieldText and fieldTextWithotDocumentSelection attributes from current queryState.
+         */
+        updateFieldText: function () {
+            this.set({
+                fieldText: searchDataUtil.buildMergedFieldText(
+                    this.queryState.selectedParametricValues.models,
+                    this.queryState.geographyModel,
+                    this.queryState.documentSelectionModel),
+                fieldTextWithoutDocumentSelection:
+                    searchDataUtil.buildMergedFieldTextWithoutDocumentSelection(
+                        this.queryState.selectedParametricValues,
+                        this.queryState.geographyModel)
+            });
         },
 
         getIsoDate: function(type) {
@@ -110,7 +129,5 @@ define([
                 ? date.toISOString()
                 : null;
         }
-    }, {
-        Sort: Sort
     });
 });

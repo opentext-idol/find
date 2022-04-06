@@ -1,12 +1,22 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2015 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 package com.hp.autonomy.frontend.find.idol.search;
 
 import com.hp.autonomy.frontend.find.core.search.AbstractRelatedConceptsServiceIT;
 import com.hp.autonomy.frontend.find.core.search.RelatedConceptsController;
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
@@ -41,7 +51,7 @@ public class IdolRelatedConceptsServiceIT extends AbstractRelatedConceptsService
                 .minScore(0)
                 .build();
 
-        final String stateToken = documentsService.getStateToken(queryRestrictions, Integer.MAX_VALUE, false);
+        final String stateToken = documentsService.getStateToken(queryRestrictions, Integer.MAX_VALUE, QueryRequest.QueryType.RAW, false);
 
         final MockHttpServletRequestBuilder request = get(RelatedConceptsController.RELATED_CONCEPTS_PATH)
                 .param(RelatedConceptsController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())

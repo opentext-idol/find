@@ -1,6 +1,15 @@
 /*
- * Copyright 2014-2016 Hewlett-Packard Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2014-2016 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
@@ -9,6 +18,7 @@ define([
     'find/app/page/settings/aci-widget',
     'find/app/page/settings/answer-server-widget',
     'find/app/page/settings/community-widget',
+    'find/app/page/settings/optional-aci-widget',
     'find/app/page/settings/map-widget',
     'find/app/page/settings/motd-widget',
     'find/app/page/settings/mmap-widget',
@@ -16,10 +26,12 @@ define([
     'find/app/page/settings/saved-search-widget',
     'find/app/page/settings/stats-server-widget',
     'find/app/page/settings/view-widget',
+    'find/app/page/settings/control-point-widget',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/settings/community-widget.html'
-], function (_, SettingsPage, AciWidget, AnswerServerWidget, CommunityWidget, MapWidget, MotdWidget, MmapWidget, QueryManipulationWidget,
-             SavedSearchWidget, StatsServerWidget, ViewWidget, i18n, dropdownTemplate) {
+], function (_, SettingsPage, AciWidget, AnswerServerWidget, CommunityWidget, OptionalAciWidget,
+             MapWidget, MotdWidget, MmapWidget, QueryManipulationWidget, SavedSearchWidget,
+             StatsServerWidget, ViewWidget, ControlPointWidget, i18n, dropdownTemplate) {
 
     return SettingsPage.extend({
         initializeWidgets: function () {
@@ -47,6 +59,19 @@ define([
                             validateFailed: i18n['settings.test.failed']
                         })
                     }),
+                    new OptionalAciWidget({
+                        configItem: 'communityAgentStore',
+                        description: i18n['settings.communityAgentStore.description'],
+                        isOpened: true,
+                        title: i18n['settings.communityAgentStore.title'],
+                        strings: _.extend(this.serverStrings(), {
+                            disable: i18n['settings.communityAgentStore.disable'],
+                            disabled: i18n['settings.communityAgentStore.disabled'],
+                            enable: i18n['settings.communityAgentStore.enable'],
+                            enabled: i18n['settings.communityAgentStore.enabled'],
+                            loading: i18n['settings.communityAgentStore.loading']
+                        })
+                    }),
                     new MotdWidget({
                         configItem: 'messageOfTheDay',
                         isOpened: true,
@@ -57,6 +82,19 @@ define([
                             status: i18n['settings.messageOfTheDay.status'],
                             statusInfo: i18n['settings.messageOfTheDay.status.info'],
                             statusWarning: i18n['settings.messageOfTheDay.status.warning']
+                        })
+                    }),
+                    new OptionalAciWidget({
+                        configItem: 'nifi',
+                        description: i18n['settings.nifi.description'],
+                        isOpened: true,
+                        title: i18n['settings.nifi.title'],
+                        strings: _.extend(this.serverStrings(), {
+                            enable: i18n['settings.nifi.enable'],
+                            enabled: i18n['settings.nifi.enabled'],
+                            disable: i18n['settings.nifi.disable'],
+                            disabled: i18n['settings.nifi.disabled'],
+                            loading: i18n['app.loading']
                         })
                     })
                 ], [
@@ -72,6 +110,7 @@ define([
                             dictionary: i18n['settings.queryManipulation.dictionary'],
                             expandQuery: i18n['settings.queryManipulation.expandQuery'],
                             synonymDatabaseMatch: i18n['settings.queryManipulation.synonymDatabaseMatch'],
+                            explicitProfiling: i18n['settings.queryManipulation.explicitProfiling'],
                             enable: i18n['settings.queryManipulation.enable'],
                             enabled: i18n['settings.queryManipulation.enabled'],
                             index: i18n['settings.queryManipulation.index'],
@@ -108,6 +147,19 @@ define([
                             conversationSystemDisabled: i18n['settings.answerServer.conversationSystemDisabled'],
                             systemNames: i18n['settings.answerServer.systemNames'],
                             systemNamesDisabled: i18n['settings.answerServer.systemNamesDisabled']
+                        })
+                    }),
+                    new ControlPointWidget({
+                        configItem: 'controlPoint',
+                        description: i18n['settings.controlPoint.description'],
+                        isOpened: true,
+                        title: i18n['settings.controlPoint.title'],
+                        strings: _.extend(this.serverStrings(), {
+                            enable: i18n['settings.controlPoint.enable'],
+                            enabled: i18n['settings.controlPoint.enabled'],
+                            disable: i18n['settings.controlPoint.disable'],
+                            disabled: i18n['settings.controlPoint.disabled'],
+                            CONNECTION_ERROR: i18n['settings.controlPoint.validation.CONNECTION_ERROR']
                         })
                     })
                 ], [

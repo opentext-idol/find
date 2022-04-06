@@ -16,7 +16,7 @@
   "content": {
     "protocol": "HTTP",
     "host": "localhost",
-    "port": 9000,
+    "port": 9100,
     "productType": [
       "AXE",
       "DAH",
@@ -38,6 +38,7 @@
     "typeAheadMode": "Index",
     "expandQuery": true,
     "synonymDatabaseMatch": true,
+    "explicitProfiling": true,
     "blacklist": "ISO_BLACKLIST",
     "enabled": false
   },
@@ -84,6 +85,15 @@
     },
     "enabled": false
   },
+  "communityAgentStore": {
+    "enabled": false,
+    "server": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 9050,
+      "productType": ["AXE"]
+    }
+  },
   "entitySearch": {
     "server": {
       "protocol": "HTTP",
@@ -115,6 +125,23 @@
     "answerServerTimeoutSecs": -1.0,
     "databaseChoices": null,
     "databaseChoicesVisible": true
+  },
+  "controlPoint": {
+    "enabled": false,
+    "server": {
+      "protocol": "HTTPS",
+      "host": "localhost",
+      "port": 80,
+      "basePath": "/WebApi/api"
+    }
+  },
+  "nifi": {
+    "enabled": false,
+    "server": {
+      "protocol": "HTTP",
+      "host": "localhost",
+      "port": 10000
+    }
   },
   "savedSearches": {
     "pollForUpdates": true,
@@ -189,6 +216,22 @@
         "user": false,
         "bi": true
       },
+      "enableIndexesFilter": {
+        "user": true,
+        "bi": true
+      },
+      "enableDatesFilter": {
+        "user": true,
+        "bi": true
+      },
+      "enableGeographyFilter": {
+        "user": true,
+        "bi": true
+      },
+      "enableDocumentSelectionFilter": {
+        "user": true,
+        "bi": true
+      },
       "enableRelatedConcepts": {
         "user": true,
         "bi": false
@@ -221,7 +264,7 @@
       }
     },
     "defaultDeselectedDatabases": [],
-    "filterOrder": ["metaFilter", "indexesFilter", "datesFilter", "geographyFilter", "-", "parametricFilter"],
+    "filterOrder": ["metaFilter", "indexesFilter", "datesFilter", "geographyFilter", "documentSelectionFilter", "-", "parametricFilter"],
     "listViewPagingSize": 30,
     "openSharedDashboardQueryAsNewSearch": false,
     "parametricNeverShow": [],
@@ -255,6 +298,29 @@
       "maxResultsPerProfile": 2,
       "maxTerms": 30,
       "updateProfileOnView": false
+    }
+  },
+  "search": {
+    "defaultSortOption": "relevance",
+    "sortOptions": {
+      "relevance": { "sort": "relevance", "label": null },
+      "date": { "sort": "date", "label": null },
+      "reverseDate": { "sort": "reversedate", "label": null }
+    }
+  },
+  "users": {
+    "relatedUsers": {
+      "enabled": false,
+      "interests": {
+        "agentStoreProfilesDatabase": "profile",
+        "namedArea": "default",
+        "userDetailsFields": []
+      },
+      "expertise": {
+        "agentStoreProfilesDatabase": "profile",
+        "namedArea": "experts",
+        "userDetailsFields": []
+      }
     }
   },
   "combineMethod": "Simple",

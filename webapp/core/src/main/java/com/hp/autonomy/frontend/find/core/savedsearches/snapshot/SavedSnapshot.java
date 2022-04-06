@@ -62,6 +62,13 @@ public class SavedSnapshot extends SavedSearch<SavedSnapshot, SavedSnapshot.Buil
         private Set<TypedStateToken> stateTokens;
         private Long resultCount;
 
+        /**
+         * Populate a builder with fields common to all {@link SavedSearch} types.
+         */
+        public Builder(final SavedSearch<?, ?> search) {
+            super(search);
+        }
+
         public Builder(final SavedSnapshot snapshot) {
             super(snapshot);
 

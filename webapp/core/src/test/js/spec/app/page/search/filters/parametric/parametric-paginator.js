@@ -1,6 +1,15 @@
 /*
- * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
@@ -320,6 +329,53 @@ define([
                         });
                     });
                 });
+
+                describe('then setSelected is called with true', function () {
+                    beforeEach(function() {
+                        this.paginator.setSelected('PLANTS', true);
+                        this.paginator.setSelected('ANIMALS', true); // already true
+                    });
+
+                    it('adds to the selectedValues collection', function () {
+                        expect(this.selectedValues.length).toBe(3);
+                        expect(this.selectedValues.findWhere(
+                            { field: 'CATEGORY', value: 'PLANTS' })
+                        ).toBeDefined();
+                        expect(this.selectedValues.findWhere(
+                            { field: 'CATEGORY', value: 'ANIMALS' })
+                        ).toBeDefined();
+                        expect(this.selectedValues.findWhere(
+                            { field: 'THINGS', value: 'ANIMALS' })
+                        ).toBeDefined();
+                    });
+
+                    it('updates the models in the values collection', checkModels([
+                        { value: 'PLANTS', displayValue: 'Plants', count: 5, selected: true },
+                        { value: 'ANIMALS', displayValue: 'Animals', count: 3, selected: true }
+                    ]));
+
+                });
+
+                describe('then setSelected is called with false', function() {
+                    beforeEach(function () {
+                        this.paginator.setSelected('PLANTS', false); // already false
+                        this.paginator.setSelected('ANIMALS', false);
+                    });
+
+                    it('removes from the selectedValues collection', function () {
+                        expect(this.selectedValues.length).toBe(1);
+                        expect(this.selectedValues.findWhere(
+                            { field: 'THINGS', value: 'ANIMALS' })
+                        ).toBeDefined();
+                    });
+
+                    it('updates the models in the values collection', checkModels([
+                        { value: 'PLANTS', displayValue: 'Plants', count: 5, selected: false },
+                        { value: 'ANIMALS', displayValue: 'Animals', count: 3, selected: false }
+                    ]));
+
+                });
+
             });
 
             describe('then the fetch fails', function() {

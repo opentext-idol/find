@@ -1,6 +1,15 @@
 /*
- * Copyright 2016 Hewlett-Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
@@ -75,12 +84,15 @@ define([
                 REQUIRED_FIELD_MISSING: i18n['settings.REQUIRED_FIELD_MISSING'],
                 REGULAR_EXPRESSION_MATCH_ERROR: i18n['settings.REGULAR_EXPRESSION_MATCH_ERROR'],
                 SERVICE_AND_INDEX_PORT_ERROR: i18n['settings.SERVICE_AND_INDEX_PORT_ERROR'],
-                SERVICE_PORT_ERROR: i18n['settings.SERVICE_PORT_ERROR']
+                SERVICE_PORT_ERROR: i18n['settings.SERVICE_PORT_ERROR'],
+                INVALID_CREDENTIALS: i18n['settings.INVALID_CREDENTIALS'],
+                UNKNOWN_ERROR: i18n['error.unknown']
             }
         },
 
         serverStrings: function() {
             return {
+                loading: i18n['app.loading'],
                 databaseLabel: i18n['settings.database'],
                 hostPlaceholder: i18n['placeholder.hostname'],
                 portPlaceholder: i18n['placeholder.port'],
@@ -92,6 +104,8 @@ define([
                 validatePortInvalid: i18n['settings.test.portInvalid'],
                 validateUsernameBlank: i18n['settings.test.usernameBlank'],
                 validateSuccess: i18n['settings.test.ok'],
+                passwordLabel: i18n['settings.password'],
+                passwordRedacted: i18n['settings.password.redacted'],
                 CONNECTION_ERROR: i18n['settings.CONNECTION_ERROR'],
                 DEFAULT_LOGIN: i18n['settings.DEFAULT_LOGIN'],
                 FETCH_PORT_ERROR: i18n['settings.FETCH_PORT_ERROR'],
@@ -103,7 +117,9 @@ define([
                 REQUIRED_FIELD_MISSING: i18n['settings.REQUIRED_FIELD_MISSING'],
                 REGULAR_EXPRESSION_MATCH_ERROR: i18n['settings.REGULAR_EXPRESSION_MATCH_ERROR'],
                 SERVICE_AND_INDEX_PORT_ERROR: i18n['settings.SERVICE_AND_INDEX_PORT_ERROR'],
-                SERVICE_PORT_ERROR: i18n['settings.SERVICE_PORT_ERROR']
+                SERVICE_PORT_ERROR: i18n['settings.SERVICE_PORT_ERROR'],
+                INVALID_CREDENTIALS: i18n['settings.INVALID_CREDENTIALS'],
+                UNKNOWN_ERROR: i18n['error.unknown']
             };
         },
 
@@ -124,6 +140,13 @@ define([
                     this.loadFromConfig();
                 }, this)
             });
+        },
+
+        onConfigSaved: function () {
+            // it should be possible to have config changes take effect without a reload, but there
+            // are lots of places that would need changes to re-render on change, so this makes it
+            // work for now
+            setTimeout(function () { location.reload(); }, 1000);
         }
     });
 });

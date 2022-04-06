@@ -1,6 +1,15 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016-2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
@@ -92,6 +101,17 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     @CollectionTable(name = GeographyFilterTable.NAME, joinColumns = @JoinColumn(name = GeographyFilterTable.Column.SEARCH_ID))
     private Set<GeographyFilter> geographyFilters;
 
+    /**
+     * Document whitelist or blacklist.
+     *
+     * @see documentSelectionIsWhitelist
+     */
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = DocumentSelectionTable.NAME,
+        joinColumns = @JoinColumn(name = DocumentSelectionTable.Column.SEARCH_ID))
+    private Set<DocumentSelection> documentSelection;
+
     @Column(name = Table.Column.START_DATE)
     private ZonedDateTime minDate;
 
@@ -119,6 +139,13 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
     @Transient
     private boolean canEdit = true;
 
+    /**
+     * If true, {@link documentSelection} is a whitelist; if false, {@link documentSelection} is a
+     * blacklist.
+     */
+    @Column(name = Table.Column.DOCUMENT_SELECTION_IS_WHITELIST, nullable = false)
+    private Boolean documentSelectionIsWhitelist = false;
+
     protected SavedSearch(final Builder<?, ?> builder) {
         id = builder.id;
         title = builder.title;
@@ -128,6 +155,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         dateRangeRestrictions = builder.dateRangeRestrictions;
         conceptClusterPhrases = builder.conceptClusterPhrases;
         geographyFilters = builder.geographyFilters;
+        documentSelection = builder.documentSelection;
         minDate = builder.minDate;
         maxDate = builder.maxDate;
         dateCreated = builder.dateCreated;
@@ -137,6 +165,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         minScore = builder.minScore;
         canEdit = builder.canEdit;
         user = builder.user;
+        documentSelectionIsWhitelist = builder.documentSelectionIsWhitelist;
     }
 
     /**
@@ -165,6 +194,8 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             parametricValues = other.getParametricValues() == null ? parametricValues : other.getParametricValues();
             numericRangeRestrictions = Optional.ofNullable(other.getNumericRangeRestrictions()).orElse(numericRangeRestrictions);
             dateRangeRestrictions = Optional.ofNullable(other.getDateRangeRestrictions()).orElse(dateRangeRestrictions);
+            documentSelectionIsWhitelist = other.getDocumentSelectionIsWhitelist() == null ?
+                documentSelectionIsWhitelist : other.getDocumentSelectionIsWhitelist();
 
             if (other.getConceptClusterPhrases() != null) {
                 conceptClusterPhrases.clear();
@@ -174,6 +205,11 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             if (other.getGeographyFilters() != null) {
                 geographyFilters.clear();
                 geographyFilters.addAll(other.getGeographyFilters());
+            }
+
+            if (other.getDocumentSelection() != null) {
+                documentSelection.clear();
+                documentSelection.addAll(other.getDocumentSelection());
             }
         }
     }
@@ -228,6 +264,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             String TOTAL_RESULTS = "total_results";
             String DATE_RANGE_TYPE = "date_range_type";
             String MIN_SCORE = "min_score";
+            String DOCUMENT_SELECTION_IS_WHITELIST = "document_selection_is_whitelist";
         }
     }
 
@@ -301,6 +338,17 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         }
     }
 
+    interface DocumentSelectionTable {
+        String NAME = "search_document_selection";
+
+        @SuppressWarnings("InnerClassTooDeeplyNested")
+        interface Column {
+            String ID = "search_document_selection_id";
+            String SEARCH_ID = "search_id";
+            String REFERENCE = "reference";
+        }
+    }
+
     @SuppressWarnings("WeakerAccess")
     @NoArgsConstructor
     @Getter
@@ -313,6 +361,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         private Set<DateRangeRestriction> dateRangeRestrictions;
         private Set<ConceptClusterPhrase> conceptClusterPhrases;
         private Set<GeographyFilter> geographyFilters;
+        private Set<DocumentSelection> documentSelection;
         private ZonedDateTime minDate;
         private ZonedDateTime maxDate;
         private ZonedDateTime dateCreated;
@@ -321,9 +370,13 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         private Boolean active = true;
         private Integer minScore;
         private boolean canEdit = true;
+        private Boolean documentSelectionIsWhitelist = false;
         private UserEntity user;
 
-        protected Builder(final SavedSearch<T, B> search) {
+        /**
+         * Populate a builder with fields common to all {@link SavedSearch} types.
+         */
+        protected Builder(final SavedSearch<?, ?> search) {
             id = search.id;
             title = search.title;
             indexes = search.indexes;
@@ -332,6 +385,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             dateRangeRestrictions = search.dateRangeRestrictions;
             conceptClusterPhrases = search.conceptClusterPhrases;
             geographyFilters = search.geographyFilters;
+            documentSelection = search.documentSelection;
             minDate = search.minDate;
             maxDate = search.maxDate;
             dateCreated = search.dateCreated;
@@ -340,6 +394,7 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             active = search.active;
             minScore = search.minScore;
             canEdit = search.canEdit;
+            documentSelectionIsWhitelist = search.documentSelectionIsWhitelist;
             user = search.user;
         }
 
@@ -385,6 +440,11 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             return this;
         }
 
+        public Builder<T, B> setDocumentSelection(final Set<DocumentSelection> documentSelection) {
+            this.documentSelection = new LinkedHashSet<>(documentSelection);
+            return this;
+        }
+
         public Builder<T, B> setMinDate(final ZonedDateTime minDate) {
             this.minDate = minDate;
             return this;
@@ -426,5 +486,13 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
             this.canEdit = canEdit;
             return this;
         }
+
+        public Builder<T, B> setDocumentSelectionIsWhitelist(
+            final boolean documentSelectionIsWhitelist
+        ) {
+            this.documentSelectionIsWhitelist = documentSelectionIsWhitelist;
+            return this;
+        }
+
     }
 }

@@ -7,10 +7,10 @@ define([
     'underscore',
     'jquery',
     'backbone',
-    'find/app/model/query-model',
+    'find/app/configuration',
     'text!find/templates/app/page/search/intent-based-ranking-view.html',
     'i18n!find/nls/bundle'
-], function(_, $, Backbone, QueryModel, template, i18n) {
+], function(_, $, Backbone, config, template, i18n) {
     'use strict';
 
     return Backbone.View.extend({
@@ -31,7 +31,7 @@ define([
         render: function() {
             this.$el.html(this.template({
                 i18n: i18n,
-                sortTypes: QueryModel.Sort
+                sortTypes: config().search.sortOptions
             }));
 
             this.$currentSort = this.$('.current-search-intent-based-ranking');

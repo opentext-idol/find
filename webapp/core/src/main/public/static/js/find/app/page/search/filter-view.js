@@ -1,6 +1,15 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016-2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
@@ -11,6 +20,7 @@ define([
     'find/app/page/search/abstract-section-view',
     'find/app/page/search/filters/date/dates-filter-view',
     'find/app/page/search/filters/geography/geography-view',
+    'find/app/page/search/filters/documentselection/document-selection-view',
     'find/app/page/search/filters/parametric/filtered-parametric-fields-collection',
     'find/app/page/search/filters/parametric/parametric-view',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
@@ -21,13 +31,14 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes',
     'text!find/templates/app/page/search/filters/filter-separator.html'
-], function(_, $, Backbone, GeographyModel, AbstractSectionView, DateView, GeographyView, FilteredParametricFieldsCollection,
+], function(_, $, Backbone, GeographyModel, AbstractSectionView, DateView, GeographyView, DocumentSelectionFilterView, FilteredParametricFieldsCollection,
             ParametricView, NumericParametricFieldView, TextInput, Collapsible, FilteringCollection,
             configuration, i18n, i18nIndexes, filterSeparator) {
     'use strict';
 
     const datesTitle = i18n['search.dates'];
     const geographyTitle = i18n['search.geography'];
+    const LIST_RESULTS_VIEW_ID = 'list';
 
     function searchMatches(text, search) {
         return text.toLowerCase().indexOf(search.toLowerCase()) > -1;
@@ -121,13 +132,15 @@ define([
                 render: function() {
                     this.indexesViewWrapper.render();
                 }.bind(this),
-                postRender: _.noop,
+                postRender: function() {
+                    this.updateIndexesVisibility();
+                }.bind(this),
                 remove: function() {
                     this.indexesViewWrapper.remove();
                 }.bind(this)
             }, {
                 id: 'datesFilter',
-                shown: true,
+                shown: config.enableDatesFilter,
                 initialize: function() {
                     this.collapsed.dates = true;
 
@@ -153,13 +166,15 @@ define([
                 render: function() {
                     this.dateViewWrapper.render();
                 }.bind(this),
-                postRender: _.noop,
+                postRender: function() {
+                    this.updateDatesVisibility();
+                }.bind(this),
                 remove: function() {
                     this.dateViewWrapper.remove();
                 }.bind(this)
             }, {
                 id: 'geographyFilter',
-                shown: showGeographyFilter,
+                shown: config.enableGeographyFilter && showGeographyFilter,
                 initialize: function() {
                     const geographyModel = options.queryState.geographyModel;
                     this.collapsed.geography = !_.find(_.map(geographyModel.attributes, function(v){ return v && v.length }));
@@ -185,10 +200,58 @@ define([
                 render: function() {
                     this.geographyViewWrapper.render();
                 }.bind(this),
-                postRender: _.noop,
+                postRender: function() {
+                    this.updateGeographyVisibility();
+                }.bind(this),
                 remove: function() {
                     this.geographyViewWrapper.remove();
                 }.bind(this)
+            }, {
+
+                id: 'documentSelectionFilter',
+                shown: config.enableDocumentSelectionFilter &&
+                    _.contains(config.resultViewOrder, LIST_RESULTS_VIEW_ID),
+                initialize: function() {
+                    const documentSelectionView = new DocumentSelectionFilterView({
+                        documentSelectionModel: options.queryState.documentSelectionModel,
+                        savedSearchModel: options.savedSearchModel
+                    });
+                    const viewWrapper = this.documentSelectionViewWrapper = new Collapsible({
+                        view: documentSelectionView,
+                        collapseModel: new Backbone.Model({ collapsed: true }),
+                        title: i18n['search.documentSelection.title']
+                    });
+
+                    // keep queryModel and wrapper toggled state synchronised
+                    this.listenTo(this.documentSelectionViewWrapper, 'toggle',
+                        function (collapsed) {
+                            if (collapsed) {
+                                options.queryModel.set('editingDocumentSelection', false);
+                            } else {
+                                options.queryModel.set('editingDocumentSelection', true);
+                            }
+                        });
+                    this.listenTo(options.queryModel, 'change:editingDocumentSelection',
+                        function () {
+                            if (options.queryModel.get('editingDocumentSelection')) {
+                                viewWrapper.show();
+                            } else {
+                                viewWrapper.hide();
+                            }
+                        });
+                }.bind(this),
+
+                get$els: function() {
+                    return [this.documentSelectionViewWrapper.$el];
+                }.bind(this),
+                render: function() {
+                    this.documentSelectionViewWrapper.render();
+                }.bind(this),
+                postRender: _.noop,
+                remove: function() {
+                    this.documentSelectionViewWrapper.remove();
+                }.bind(this)
+
             }, {
                 id: 'parametricFilter',
                 shown: true,
@@ -309,15 +372,19 @@ define([
 
         updateParametricVisibility: function() {
             this.parametricView.$el.toggleClass('hide',
-                this.parametricFieldsEmpty() && !!(this.filterModel.get('text')));
+                this.parametricFieldsEmpty() && !!(this.filterModel && this.filterModel.get('text')));
         },
 
         updateDatesVisibility: function() {
-            const search = this.filterModel.get('text');
+            if (!this.dateViewWrapper) {
+                return;
+            }
+
+            const search = this.filterModel && this.filterModel.get('text');
             this.hideDates = !(!search || searchMatches(datesTitle, search));
 
             this.dateViewWrapper.$el.toggleClass('hide', this.hideDates);
-            this.dateViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.dates);
+            this.dateViewWrapper.toggle(search || !this.collapsed.dates);
         },
 
         updateGeographyVisibility: function() {
@@ -325,16 +392,20 @@ define([
                 return;
             }
 
-            const search = this.filterModel.get('text');
+            const search = this.filterModel && this.filterModel.get('text');
             this.hideGeography = !(!search || searchMatches(geographyTitle, search));
 
             this.geographyViewWrapper.$el.toggleClass('hide', this.hideGeography);
-            this.geographyViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.geography);
+            this.geographyViewWrapper.toggle(search || !this.collapsed.geography);
         },
 
         updateIndexesVisibility: function() {
-            this.indexesViewWrapper.$el.toggleClass('hide', this.indexesEmpty);
-            this.indexesViewWrapper.toggle(this.filterModel.get('text') || !this.collapsed.indexes);
+            if (configuration().enableIndexesFilter) {
+                this.indexesViewWrapper.$el.toggleClass('hide', this.indexesEmpty);
+                this.indexesViewWrapper.toggle((this.filterModel && this.filterModel.get('text')) || !this.collapsed.indexes);
+            } else {
+                this.indexesViewWrapper.$el.toggleClass('hide', true);
+            }
         },
 
         parametricFieldsEmpty: function() {

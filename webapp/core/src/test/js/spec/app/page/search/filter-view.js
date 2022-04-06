@@ -1,6 +1,15 @@
 /*
- * Copyright 2016 Hewlett-Packard Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 define([
     'underscore',
@@ -8,8 +17,9 @@ define([
     'find/app/configuration',
     'backbone',
     'i18n!find/nls/bundle',
+    'find/app/model/document-selection-model',
     'js-testing/backbone-mock-factory'
-], function(_, FilterView, configuration, Backbone, i18n, backboneMockFactory) {
+], function(_, FilterView, configuration, Backbone, i18n, DocumentSelectionModel, backboneMockFactory) {
     'use strict';
 
     const MATCH_NOTHING = 'y54u65u4w5uy654u5eureuy654yht754wy54euy45';
@@ -24,28 +34,44 @@ define([
         beforeEach(function() {
             configuration.and.callFake(function() {
                 return {
-                    enableMetaFilter: true
+                    enableMetaFilter: true,
+                    enableIndexesFilter: true,
+                    enableDatesFilter: true,
+                    enableGeographyFilter: true,
+                    enableDocumentSelectionFilter: true,
+                    resultViewOrder: ["topic-map", "list"]
                 };
+            });
+
+            this.queryModel = new Backbone.Model({
+                editingDocumentSelection: false
             });
 
             const parametricFieldsCollection = new (backboneMockFactory.getCollection())();
             const parametricCollection = new (backboneMockFactory.getCollection())();
             this.view = new FilterView({
                 IndexesView: MockIndexesView,
+                queryModel: this.queryModel,
                 queryState: {
-                    geographyModel: new Backbone.Model({})
+                    geographyModel: new Backbone.Model({}),
+                    documentSelectionModel: new DocumentSelectionModel()
                 },
                 parametricFieldsCollection: parametricFieldsCollection,
                 parametricCollection: parametricCollection
             });
 
             this.view.render();
+            this.view.$el.appendTo($('body'));
 
             this.parametricInfo = {
                 description: 'parametric',
                 collection: parametricFieldsCollection,
                 view: this.view.parametricView
             };
+        });
+
+        afterEach(function() {
+            this.view.remove();
         });
 
         describe('dates filter', function() {
@@ -84,6 +110,72 @@ define([
 
                 expect(this.view.indexesViewWrapper.$el).toHaveClass('hide');
             });
+        });
+
+        describe('Document selection filter', function () {
+            // setTimeout calls are because collapsing has a transition state that takes time
+
+            beforeEach(function () {
+                this.collapse = this.view.documentSelectionViewWrapper;
+            });
+
+            it('should show the filter view collapsed', function () {
+                expect(this.collapse.$el.is(':visible')).toBe(true);
+                expect(this.collapse.$('.collapse')).not.toHaveClass('in');
+            });
+
+            describe('when editing the document selection starts', function () {
+
+                beforeEach(function (done) {
+                    this.queryModel.set('editingDocumentSelection', true);
+                    setTimeout(done, 500);
+                });
+
+                it('should expand the filter view', function () {
+                    expect(this.collapse.$('.collapse')).toHaveClass('in');
+                });
+
+                describe('then editing the document selection stops', function () {
+
+                    beforeEach(function (done) {
+                        this.queryModel.set('editingDocumentSelection', false);
+                        setTimeout(done, 500);
+                    });
+
+                    it('should collapse the filter view', function () {
+                        expect(this.collapse.$('.collapse')).not.toHaveClass('in');
+                    });
+
+                });
+
+            });
+
+            describe('when the view header is clicked', function () {
+
+                beforeEach(function (done) {
+                    this.collapse.$('.collapsible-header').click();
+                    setTimeout(done, 500);
+                });
+
+                it('should start editing the document selection', function () {
+                    expect(this.queryModel.get('editingDocumentSelection')).toBe(true);
+                });
+
+                describe('then the view header is clicked again', function () {
+
+                    beforeEach(function (done) {
+                        this.collapse.$('.collapsible-header').click();
+                        setTimeout(done, 500);
+                    });
+
+                    it('should stop editing the document selection', function () {
+                        expect(this.queryModel.get('editingDocumentSelection')).toBe(false);
+                    });
+
+                });
+
+            });
+
         });
 
         describe('Parametric values filter', function () {

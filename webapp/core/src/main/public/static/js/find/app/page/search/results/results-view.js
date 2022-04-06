@@ -1,6 +1,15 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016-2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
@@ -26,7 +35,7 @@ define([
     'i18n!find/nls/bundle',
     'i18n!find/nls/indexes'
 ], function(_, $, Backbone, addChangeListener, vent, DocumentModel, PromotionsCollection, IntentBasedRankingView, SortView, ResultsNumberView,
-            viewClient, events, addLinksToSummary, configuration, generateErrorHtml, resultTemplate, html,
+            viewClient, events, addLinksToSummary, configuration, generateErrorHtml, resultTemplate, template,
             loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
     'use strict';
 
@@ -61,6 +70,7 @@ define([
         getQuestionsViewConstructor: _.constant(null),
 
         loadingHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
+        template: _.template(template),
         messageTemplate: _.template('<div class="result-message span10"><%-message%></div>'),
         resultTemplate: _.template(resultTemplate),
 
@@ -73,26 +83,42 @@ define([
                 }
 
                 const $target = $(e.target);
+                const $result = $(e.currentTarget).closest('.main-results-container');
+                const isSelected = $result.hasClass('selected-document');
+                const cid = $result.data('cid');
+                const isPromotion = $result.closest('.main-results-list').hasClass('promotions');
 
-                if (!$target.is('a')) {
-                    const $result = $(e.currentTarget).closest('.main-results-container');
-
-                    if (this.previewModeModel.get('mode') === 'summary' &&
-                        $result.hasClass('selected-document')
-                    ) {
-                        // disable preview mode
-                        this.previewModeModel.set({mode: null});
-                    } else {
-                        // enable/choose another preview view
-                        const cid = $result.data('cid');
-                        const isPromotion = $result.closest('.main-results-list').hasClass('promotions');
-                        const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
-                        const model = collection.get(cid);
-                        this.previewModeModel.set({mode: 'summary', document: model});
-
-                        if (!isPromotion) {
-                            events().preview(collection.indexOf(model) + 1);
+                if (this.editingDocumentSelection()) {
+                    // this also disallows previewing promotions during document selection - would
+                    // get confusing
+                    if (!isPromotion) {
+                        // document selection reuses the selected-document class, just styled
+                        // differently, and possibly applied to multiple documents
+                        const reference = this.documentsCollection.get(cid).get('reference');
+                        if (isSelected) {
+                            this.queryState.documentSelectionModel.exclude(reference);
+                        } else {
+                            this.queryState.documentSelectionModel.select(reference);
                         }
+                    }
+
+                    e.preventDefault();
+
+                } else if ($target.is('a')) {
+                    return;
+
+                } else if (this.previewModeModel.get('mode') === 'summary' && isSelected) {
+                    // disable preview mode
+                    this.previewModeModel.set({mode: null});
+
+                } else {
+                    // enable/choose another preview view
+                    const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
+                    const model = collection.get(cid);
+                    this.previewModeModel.set({mode: 'summary', document: model});
+
+                    if (!isPromotion) {
+                        events().preview(collection.indexOf(model) + 1);
                     }
                 }
             },
@@ -108,6 +134,10 @@ define([
                 const collection = isPromotion ? this.promotionsCollection : this.documentsCollection;
                 const model = collection.get(cid);
                 vent.navigateToDetailRoute(model);
+            },
+
+            'click .end-document-selection-button': function () {
+                this.queryModel.set('editingDocumentSelection', false);
             }
         },
 
@@ -116,6 +146,8 @@ define([
             this.documentRenderer = options.documentRenderer;
 
             this.queryModel = options.queryModel;
+            // optional
+            this.queryState = options.queryState;
             this.showPromotions = this.fetchStrategy.promotions(this.queryModel) && !options.hidePromotions;
             this.documentsCollection = options.documentsCollection;
 
@@ -168,7 +200,8 @@ define([
 
             addChangeListener(this,
                 this.queryModel,
-                ['sort', 'autoCorrect', 'intentBasedRanking'].concat(this.fetchStrategy.queryModelAttributes),
+                ['sort', 'autoCorrect', 'intentBasedRanking', 'editingDocumentSelection']
+                    .concat(this.fetchStrategy.queryModelAttributes),
                 this.refreshResults);
 
             this.infiniteScroll = _.debounce(infiniteScroll, 500, true);
@@ -182,10 +215,15 @@ define([
             if (this.previewModeModel) {
                 this.listenTo(this.previewModeModel, 'change', this.updateSelectedDocument);
             }
+
+            if (this.queryState) {
+                this.listenTo(this.queryState.documentSelectionModel,
+                    'change', this.updateDocumentSelection);
+            }
         },
 
         render: function() {
-            this.$el.html(html);
+            this.$el.html(this.template({ i18n: i18n }));
 
             this.$loadingSpinner = this.$('.results-view-loading')
                 .html(this.loadingHtml);
@@ -233,10 +271,7 @@ define([
                 }
             });
 
-            this.listenTo(this.documentsCollection, 'sync reset', function() {
-                this.loadingTracker.resultsFinished = true;
-                this.clearLoadingSpinner();
-
+            const updateDocsDisplay = (function () {
                 this.endOfResults = this.maxResults >= this.documentsCollection.totalResults;
 
                 if (this.endOfResults && !this.documentsCollection.isEmpty()) {
@@ -246,6 +281,14 @@ define([
                     this.$('.main-results-content .results')
                         .append(this.messageTemplate({message: i18n["search.noResults"]}));
                 }
+            }).bind(this);
+
+            this.listenTo(this.documentsCollection, 'reset', updateDocsDisplay);
+
+            this.listenTo(this.documentsCollection, 'sync', function() {
+                this.loadingTracker.resultsFinished = true;
+                this.clearLoadingSpinner();
+                updateDocsDisplay();
             });
 
             this.listenTo(this.documentsCollection, 'error', function(collection, xhr) {
@@ -293,6 +336,20 @@ define([
         },
 
         refreshResults: function() {
+            const editingDocumentSelection = this.editingDocumentSelection();
+            if (editingDocumentSelection) {
+                // when editing, we don't want document selection changes to trigger a refresh, so
+                // ignore fieldText in favour of fieldTextWithoutDocumentSelection
+                if (_.isEqual(_.keys(this.queryModel.changedAttributes()), ['fieldText'])) {
+                    return;
+                }
+
+                this.previewModeModel.set({ mode: null });
+            }
+
+            this.$('.main-results-content')
+                .toggleClass('editing-document-selection', editingDocumentSelection);
+
             if (this.fetchStrategy.validateQuery(this.queryModel) && this.documentRenderer.loadPromise.state() !== 'rejected') {
                 if (this.fetchStrategy.waitForIndexes(this.queryModel)) {
                     this.$loadingSpinner.addClass('hide');
@@ -317,19 +374,53 @@ define([
         clearLoadingSpinner: function() {
             const notLoading = this.documentRenderer.loadPromise.state() !== 'pending' &&
                 this.loadingTracker.resultsFinished && this.loadingTracker.questionsFinished
-                && this.loadingTracker.promotionsFinished || !this.showPromotions;
+                && (this.loadingTracker.promotionsFinished || !this.showPromotions);
 
             if (notLoading) {
                 this.$loadingSpinner.addClass('hide');
             }
         },
 
-        updateSelectedDocument: function() {
-            this.$('.main-results-container').removeClass('selected-document');
+        /**
+         * Set selected state for a document.
+         */
+        setDocumentSelected: function (documentModel, selected) {
+            this.$('.main-results-container[data-cid="' + documentModel.cid + '"]')
+                .toggleClass('selected-document', selected);
+        },
 
+        /**
+         * If editing document selection, update the documents selected for the purposes of document
+         * selection.
+         */
+        updateDocumentSelection: function () {
+            if (!this.editingDocumentSelection()) {
+                return;
+            }
+
+            const docSelModel = this.queryState.documentSelectionModel;
+            this.documentsCollection.each(function (docModel) {
+                const reference = docModel.get('reference');
+                if (docSelModel.changedReferences === null ||
+                    docSelModel.changedReferences[reference]
+                ) {
+                    this.setDocumentSelected(docModel, docSelModel.isSelected(reference));
+                }
+            }.bind(this));
+        },
+
+        /**
+         * If not editing document selection, update the document selected for the purposes of
+         * document preview.
+         */
+        updateSelectedDocument: function() {
+            if (this.editingDocumentSelection()) {
+                return;
+            }
+
+            this.$('.main-results-container').removeClass('selected-document');
             if (this.previewModeModel.get('mode') === 'summary') {
-                const documentModel = this.previewModeModel.get('document');
-                this.$('.main-results-container[data-cid="' + documentModel.cid + '"]').addClass('selected-document');
+                this.setDocumentSelected(this.previewModeModel.get('document'), true);
             }
         },
 
@@ -342,10 +433,27 @@ define([
                 ? this.$('.main-results-content .promotions')
                 : this.$('.main-results-content .results');
 
-            $el.append(this.resultTemplate({
+            const $newDoc = $(this.resultTemplate({
                 cid: model.cid,
                 content: resultHtml
             }));
+
+            if (!isPromotion && this.editingDocumentSelection()) {
+                if (this.queryState.documentSelectionModel.isSelected(model.get('reference'))) {
+                    $newDoc.addClass('selected-document');
+                }
+            }
+
+            $el.append($newDoc);
+        },
+
+        /**
+         * Whether we are currently in document selection mode.
+         */
+        editingDocumentSelection: function () {
+            return (this.queryState &&
+                this.fetchStrategy.canEditDocumentSelection || false) &&
+                this.queryModel.get('editingDocumentSelection');
         },
 
         generateErrorMessage: function(xhr) {

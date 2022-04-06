@@ -94,16 +94,6 @@ define([
          */
         defaults: _.mapObject(locationFieldsById, function(){ return [] }),
 
-        appendFieldText: function(existingFieldText){
-            const toAppend = this.toFieldText();
-
-            if (toAppend) {
-                return existingFieldText ? existingFieldText.AND(toAppend) : toAppend;
-            }
-
-            return existingFieldText;
-        },
-
         /**
          * Convert this model to fieldtext queries
          */

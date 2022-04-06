@@ -1,6 +1,15 @@
 /*
- * Copyright 2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 package com.hp.autonomy.frontend.find.idol.answer;
@@ -140,7 +149,8 @@ class AnswerServerController {
         }
 
         // filter facts results to those extracted from visible documents
-        final List<SourcedFact> sourcedFacts = new ArrayList<>();
+        // the backend may return the same fact multiple times (eg. with different dates)
+        final Map<String, SourcedFact> sourcedFacts = new HashMap<>();
         if (!reportFacts.isEmpty()) {
             final FieldText fieldText = new MATCH(
                 "*/" + FACT_ID_FIELD,
@@ -188,13 +198,13 @@ class AnswerServerController {
 
             for (final ReportFact reportFact : reportFacts) {
                 if (docsByFactId.containsKey(reportFact.getSource())) {
-                    sourcedFacts.add(
+                    sourcedFacts.put(reportFact.getSource(),
                         new SourcedFact(reportFact, docsByFactId.get(reportFact.getSource())));
                 }
             }
         }
 
-        return sourcedFacts;
+        return new ArrayList<>(sourcedFacts.values());
     }
 
 
@@ -202,20 +212,20 @@ class AnswerServerController {
      * Reference to a document which is visible to the user and is a source for a fact.
      */
     public static class DocumentFact {
-        @JsonProperty
         /**
          * Database containing the document.
          */
-        public final String index;
         @JsonProperty
+        public final String index;
         /**
          * Value for the Find-configured reference field.
          */
-        public final String reference;
         @JsonProperty
+        public final String reference;
         /**
          * Excerpt from the content that the fact was extracted from.
          */
+        @JsonProperty
         public final String sentence;
 
         public DocumentFact(final String index, final String reference, final String sentence) {
@@ -231,15 +241,15 @@ class AnswerServerController {
      * A fact, along with its sources.
      */
     public static class SourcedFact {
-        @JsonProperty
         /**
          * The fact.
          */
-        public final ReportFact fact;
         @JsonProperty
+        public final ReportFact fact;
         /**
          * Non-empty list of documents which are sources for the fact.
          */
+        @JsonProperty
         public final List<DocumentFact> documents;
 
         public SourcedFact(final ReportFact fact, final List<DocumentFact> documents) {

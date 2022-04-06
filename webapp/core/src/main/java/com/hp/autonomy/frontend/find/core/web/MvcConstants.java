@@ -30,11 +30,15 @@ public enum MvcConstants {
     ENTITY_SEARCH_OPTIONS("entitySearchOptions"),
     ENTITY_SEARCH_ANSWER_SERVER_ENABLED("entitySearchAnswerServerEnabled"),
     PUBLIC_INDEXES_ENABLED("publicIndexesEnabled"),
+    CONTROL_POINT_ENABLED("controlPointEnabled"),
+    NIFI_ENABLED("nifiEnabled"),
     TEMPLATES_CONFIG("templatesConfig"),
     ASSETS_CONFIG("assetsConfig"),
     MESSAGE_OF_THE_DAY_CONFIG("messageOfTheDay"),
     TERM_HIGHLIGHT_COLOR("termHighlightColor"),
-    TERM_HIGHLIGHT_BACKGROUND("termHighlightBackground");
+    TERM_HIGHLIGHT_BACKGROUND("termHighlightBackground"),
+    SEARCH_CONFIG("search"),
+    RELATED_USERS_CONFIG("relatedUsers");
 
     private final String value;
 

@@ -1,6 +1,15 @@
 /*
- * Copyright 2015 Hewlett-Packard Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2015 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 package com.hp.autonomy.frontend.find.idol.view;
@@ -72,6 +81,7 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
         @RequestParam(REFERENCE_PARAM) final String reference,
         @RequestParam(DATABASE_PARAM) final String database,
         @RequestParam(value = HIGHLIGHT_PARAM, required = false) final String highlightExpression,
+        @RequestParam(ORIGINAL_PARAM) final boolean original,
         final HttpServletResponse response
     ) throws AciErrorException, IOException {
         if (updateProfileOnView) {
@@ -81,7 +91,7 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
             }
         }
 
-        super.viewDocument(reference, database, highlightExpression, response);
+        super.viewDocument(reference, database, highlightExpression, original, response);
     }
 
     @SuppressWarnings("TypeMayBeWeakened")

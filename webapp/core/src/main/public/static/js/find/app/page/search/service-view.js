@@ -1,6 +1,15 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016-2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
@@ -30,6 +39,7 @@ define([
     'find/app/page/search/results/table/table-view',
     'find/app/page/search/results/trending/trending-view',
     'find/app/page/search/results/facts-view',
+    'find/app/page/search/results/related-users-view',
     'find/app/page/search/time-bar-view',
     'find/app/configuration',
     'i18n!find/nls/bundle',
@@ -38,7 +48,8 @@ define([
             SavedSearchModel, ParametricCollection, ParametricFieldsCollection, RecommendDocumentsCollection, queryStrategy,
             recommendStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView,
             addChangeListener, SavedSearchControlView, TopicMapView, SunburstView, MapResultsView,
-            TableView, TrendingView, FactsView, TimeBarView, configuration, i18n, templateString) {
+            TableView, TrendingView, FactsView, RelatedUsersView,
+            TimeBarView, configuration, i18n, templateString) {
     'use strict';
 
     const $window = $(window);
@@ -148,6 +159,8 @@ define([
             this.previewModeModel = new Backbone.Model({ mode: null });
             const recommendationPreviewModel = new Backbone.Model({ mode: null });
             const factsPreviewModeModel = new Backbone.Model({ mode: null });
+            const relatedUsersPreviewModeModel = new Backbone.Model({ mode: null });
+            const expertsPreviewModeModel = new Backbone.Model({ mode: null });
 
             const subViewArguments = {
                 configuration: configuration(),
@@ -334,8 +347,7 @@ define([
                         resultsView: new FactsView(_.defaults({
                             previewModeModel: factsPreviewModeModel,
                         }, subViewArguments)),
-                        scrollModel: this.middleColumnScrollModel,
-                        mmapTab: options.mmapTab
+                        scrollModel: this.middleColumnScrollModel
                     }, subViewArguments),
                     shown: configuration().answerServerEnabled,
                     events: {
@@ -346,6 +358,26 @@ define([
                     selector: {
                         displayNameKey: 'facts',
                         icon: 'hp-aggregated'
+                    }
+                },
+                'related-users': {
+                    Constructor: this.ResultsViewAugmentation,
+                    constructorArguments: _.defaults({
+                        previewModeModel: relatedUsersPreviewModeModel,
+                        resultsView: new RelatedUsersView(_.defaults({
+                            previewModeModel: relatedUsersPreviewModeModel,
+                            config: configuration().relatedUsers
+                        }, subViewArguments)),
+                        scrollModel: this.middleColumnScrollModel
+                    }, subViewArguments),
+                    shown: configuration().relatedUsers.enabled,
+                    events: {
+                        'rightSideContainerHideToggle':
+                            _.bind(this.rightSideContainerHideToggle, this)
+                    },
+                    selector: {
+                        displayNameKey: 'related-users',
+                        icon: 'hp-group'
                     }
                 }
             };
@@ -371,7 +403,8 @@ define([
             if(this.resultsViews.length > 1) {
                 this.resultsViewSelection = new ResultsViewSelection({
                     views: this.resultsViews,
-                    model: this.resultsViewSelectionModel
+                    model: this.resultsViewSelectionModel,
+                    queryModel: this.queryModel
                 });
             }
 
@@ -534,15 +567,15 @@ define([
         },
 
         fetchParametricCollection: function() {
-            this.parametricCollection.reset();
-
             const fieldNames = _.pluck(this.parametricFieldsCollection.where({type: 'Parametric'}), 'id');
 
             if(fieldNames.length > 0 && this.queryModel.get('indexes').length > 0) {
                 this.parametricCollection.fetchFromQueryModel(this.queryModel, {
                     fieldNames: fieldNames,
                     maxValues: 5
-                });
+                }, { reset: true });
+            } else {
+                this.parametricCollection.reset();
             }
         },
 

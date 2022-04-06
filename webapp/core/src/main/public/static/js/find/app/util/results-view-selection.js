@@ -1,6 +1,15 @@
 /*
- * Copyright 2016-2017 Hewlett Packard Enterprise Development Company, L.P.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * (c) Copyright 2016-2017 Micro Focus or one of its affiliates.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Micro Focus and its affiliates
+ * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Micro Focus shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
@@ -11,6 +20,8 @@ define([
     'text!find/templates/app/util/selector.html'
 ], function(_, $, Backbone, i18n, selectorTemplate) {
     'use strict';
+
+    const LIST_RESULTS_VIEW_ID = 'list';
 
     return Backbone.View.extend({
         selectorTemplate: _.template(selectorTemplate, {variable: 'data'}),
@@ -24,6 +35,14 @@ define([
         initialize: function(options) {
             this.views = options.views;
             this.model = options.model;
+            this.queryModel = options.queryModel;
+
+            if (this.queryModel) {
+                this.listenTo(this.queryModel,
+                    'change:editingDocumentSelection', this.updateTabForDocumentSelection);
+                this.listenTo(this.model,
+                    'change:selectedTab', this.updateEditingDocumentSelection);
+            }
         },
 
         render: function() {
@@ -55,6 +74,21 @@ define([
                     }
                 }
             }
+        },
+
+        updateEditingDocumentSelection: function () {
+            // disable document selection mode on context switch to avoid confusion on what mode
+            // the user is in
+            if (this.model.get('selectedTab') !== LIST_RESULTS_VIEW_ID) {
+                this.queryModel.set('editingDocumentSelection', false);
+            }
+        },
+
+        updateTabForDocumentSelection: function () {
+            if (this.queryModel.get('editingDocumentSelection')) {
+                this.switchTab(LIST_RESULTS_VIEW_ID);
+            }
         }
+
     });
 });

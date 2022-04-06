@@ -7,20 +7,19 @@
     <parent>
         <groupId>com.hp.autonomy</groupId>
         <artifactId>foss-spring-boot-master-pom</artifactId>
-        <version>0.6.0</version>
+        <version>0.7.0</version>
     </parent>
 
     <inceptionYear>2014</inceptionYear>
 
     <groupId>com.hp.autonomy.frontend.find</groupId>
     <artifactId>find</artifactId>
-    <version>12.6.0-SNAPSHOT</version>
+    <version>12.12.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>core</module>
         <module>idol</module>
-        <module>hod</module>
         <module>on-prem-dist</module>
         <module>hsod-dist</module>
         <module>selenium-tests</module>
@@ -28,8 +27,8 @@
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
-        <haven.search.components.version>0.66.0-SNAPSHOT</haven.search.components.version>
-        <powerpoint.report.version>1.2.0-SNAPSHOT</powerpoint.report.version>
+        <haven.search.components.version>0.71.0</haven.search.components.version>
+        <powerpoint.report.version>1.1.8</powerpoint.report.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
         <!--
             h2 version 1.4.200 disallows '<value> IS <value>', which, while incorrect SQL, was used
@@ -72,11 +71,56 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.13.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.13.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.13.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-xml</artifactId>
+                <version>2.13.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-joda</artifactId>
+                <version>2.13.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>2.13.0</version>
+            </dependency>
             <!-- Adding dependency management section to ensure stable version of H2 used (flyway declares dependency without version) -->
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.21</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.13</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jasypt</groupId>
+                <artifactId>jasypt</artifactId>
+                <version>1.9.3</version>
             </dependency>
             <dependency>
                 <groupId>org.mariadb.jdbc</groupId>
@@ -87,6 +131,11 @@
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-java</artifactId>
                 <version>${selenium.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.29</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -102,7 +151,7 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend.configuration</groupId>
             <artifactId>configuration-impl</artifactId>
-            <version>2.2.0-SNAPSHOT</version>
+            <version>2.1.11</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

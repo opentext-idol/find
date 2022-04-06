@@ -1,0 +1,9 @@
+<div class="default-result-container" data-uid="<%- user.uid %>">
+    <span class="pull-left m-t-xs text-muted m-r-sm content-type">
+        <i class="hp-icon <% if (user.expert) { %>hp-user-expert<% } else { %>hp-user-m<% } %>"></i>
+    </span>
+    <div class="results-contents <% if (user.expert) { %>user-expert<% } %>">
+        <h4 class="pull-left m-b-nil m-t-xs result-header"><%- user.username %></h4>
+        <span class="document-reference shorten"><%- user.emailaddress || '' %></span>
+    </div>
+</div>

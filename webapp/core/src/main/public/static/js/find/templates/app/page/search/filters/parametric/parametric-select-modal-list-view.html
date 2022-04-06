@@ -1,4 +1,12 @@
-<ul class="list-unstyled"></ul>
+<ul class="list-unstyled">
+    <li>
+        <label class="i-check checkbox parametric-value-all-label field-label clickable shorten m-l-xs m-r-xs m-t-nil m-b-nil">
+            <input type="checkbox">
+            <span><%- i18n['search.parametricFilters.modal.all'] %></span>
+        </label>
+        <ul class="list-unstyled values-list"></ul>
+    </li>
+</ul>
 <div class="parametric-select-error"></div>
 <p class="text-center parametric-select-empty"><%-i18n['search.parametricFilters.modal.empty']%></p>
 <%=loadingHtml%>
