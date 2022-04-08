@@ -22,7 +22,8 @@ define([
     'find/app/util/filtering-collection',
     'i18n!find/nls/bundle',
     'js-whatever/js/list-view',
-    'text!find/templates/app/page/search/concept-view.html'
+    'text!find/templates/app/page/search/concept-view.html',
+    'iCheck'
 ], function(_, $, AbstractSectionView, ConceptClusterView, InputView, conceptStrategy, FilteringCollection,
             i18n, ListView, template) {
     'use strict';
@@ -38,12 +39,17 @@ define([
             'click .concept-remove-icon': function(event) {
                 const cid = $(event.currentTarget).closest('.selected-related-concept').attr('data-cluster-cid');
                 this.conceptGroups.remove(cid);
+            },
+
+            'ifChanged .concept-view-crosslingual': function (event) {
+                this.queryState.crosslingual.set({ enabled: event.target.checked });
             }
         },
 
         initialize: function(options) {
             AbstractSectionView.prototype.initialize.apply(this, arguments);
 
+            this.queryState = options.queryState;
             this.conceptGroups = options.queryState.conceptGroups;
 
             const optionalViews = [{
@@ -79,8 +85,10 @@ define([
                     concepts: 'updateConcepts'
                 }
             });
+            this.crosslingualView = null;
 
             this.listenTo(this.conceptGroups, 'update reset', this.updateEmpty);
+            this.listenTo(this.queryState.crosslingual, 'change', this.updateCrosslingual);
         },
 
         render: function() {
@@ -94,13 +102,22 @@ define([
             }, this);
 
             this.listView.setElement(this.$('.concept-view-concepts')).render();
+
+            this.$('.concept-view-crosslingual').iCheck({ checkboxClass: 'icheckbox-hp' });
+
             this.updateEmpty();
+            this.updateCrosslingual();
         },
 
         updateEmpty: function() {
             const empty = this.filteringCollection.isEmpty();
             this.listView.$el.toggleClass('hide', empty);
             this.$('.concept-view-empty-message').toggleClass('hide', !empty);
+        },
+
+        updateCrosslingual: function () {
+            this.$('.concept-view-crosslingual').iCheck(
+                this.queryState.crosslingual.get('enabled') ? 'check' : 'uncheck');
         },
 
         remove: function() {

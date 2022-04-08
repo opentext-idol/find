@@ -20,6 +20,8 @@ import com.hp.autonomy.frontend.configuration.ConfigResponse;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
+import com.hp.autonomy.searchcomponents.core.config.FieldValue;
 import com.hp.autonomy.searchcomponents.core.search.GetContentRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
@@ -42,12 +44,7 @@ import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import com.hp.autonomy.user.UserService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.ObjectFactory;
@@ -177,4 +174,28 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
     protected Integer getMaxSummaryCharacters() {
         return this.documentSummaryMaxLength;
     }
+
+    @Override
+    protected String getFieldValue(final IdolSearchResult doc, final String fieldName) {
+        final Map<String, FieldInfo<?>> fields = doc.getFieldMap();
+        FieldInfo<?> field = null;
+        for (final String name : fields.keySet()) {
+            if (name.equalsIgnoreCase(fieldName)) {
+                field = fields.get(name);
+                break;
+            }
+        }
+
+        if (field == null || field.getValues().isEmpty()) {
+            return null;
+        }
+
+        final Object value = field.getValues().get(0).getValue();
+        if (value instanceof String) {
+            return (String) value;
+        } else {
+            return null;
+        }
+    }
+
 }

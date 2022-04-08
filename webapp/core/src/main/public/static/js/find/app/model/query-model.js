@@ -45,7 +45,8 @@ define([
             stateMatchIds: [],
             promotionsStateMatchIds: [],
             editingDocumentSelection: false,
-            fieldTextWithoutDocumentSelection: null
+            fieldTextWithoutDocumentSelection: null,
+            crosslingual: false
         },
 
         /**
@@ -97,6 +98,10 @@ define([
                 _.debounce(_.bind(function() {
                     this.updateFieldText();
                 }, this), DEBOUNCE_WAIT_MILLISECONDS));
+
+            this.listenTo(this.queryState.crosslingual, 'change', _.bind(function() {
+                this.set('crosslingual', this.queryState.crosslingual.get('enabled'));
+            }, this));
 
             this.set(_.extend({
                 queryText: makeQueryText(this.queryState),

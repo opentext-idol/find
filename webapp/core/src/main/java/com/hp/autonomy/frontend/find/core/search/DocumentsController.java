@@ -14,6 +14,7 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
+import com.hp.autonomy.aci.content.fieldtext.MATCH;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
 import com.hp.autonomy.searchcomponents.core.search.GetContentRequestBuilder;
@@ -38,6 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -90,6 +92,8 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
 
     protected abstract void addParams(final GetContentRequestBuilder<RC, T, ?> request);
 
+    protected abstract String getFieldValue(final R doc, final String fieldName);
+
     protected Integer getMaxSummaryCharacters() {
         return 250;
     }
@@ -111,7 +115,8 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
         @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore,
         @RequestParam(value = AUTO_CORRECT_PARAM, defaultValue = "true") final boolean autoCorrect,
         @RequestParam(value = INTENT_BASED_RANKING_PARAM, defaultValue = "false") final boolean intentBasedRanking,
-        @RequestParam(value = QUERY_TYPE_PARAM, defaultValue = "MODIFIED") final String queryType
+        @RequestParam(value = QUERY_TYPE_PARAM, defaultValue = "MODIFIED") final String queryType,
+        @RequestParam(value = "crosslingual", defaultValue = "false") final boolean crosslingual
     ) throws E {
         final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
             .queryText(queryText)
@@ -124,18 +129,54 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
 
         final RQ queryRequest = queryRequestBuilderFactory.getObject()
             .queryRestrictions(queryRestrictions)
-            .start(resultsStart)
-            .maxResults(maxResults)
+            .start(crosslingual ? 1 : resultsStart)
+            .maxResults(crosslingual ? 1 : maxResults)
             .summaryCharacters(getMaxSummaryCharacters())
             .highlight(highlight)
             .autoCorrect(autoCorrect)
             .summary(summary)
-            .sort(sort)
+            .sort(crosslingual ? null : sort)
             .queryType(QueryRequest.QueryType.valueOf(queryType))
             .intentBasedRanking(intentBasedRanking)
             .build();
+        final Documents<R> docs = documentsService.queryTextIndex(queryRequest);
 
-        return documentsService.queryTextIndex(queryRequest);
+        if (crosslingual) {
+            final String pageFieldName = "wikipedia_eng";
+            if (docs.getDocuments().isEmpty()) {
+                return new Documents<>(
+                    Collections.emptyList(), docs.getTotalResults(), docs.getExpandedQuery(),
+                    docs.getSuggestion(), docs.getAutoCorrection(), docs.getWarnings(),
+                    docs.getExpansionOrder());
+            }
+            final String pageName = getFieldValue(docs.getDocuments().get(0), pageFieldName);
+            if (pageName == null) {
+                return docs;
+            }
+
+            final Q clRes = queryRestrictionsBuilderFactory.getObject()
+                .queryText("*")
+                .fieldText(new MATCH(pageFieldName, pageName).toString())
+                .databases(ListUtils.emptyIfNull(databases))
+                .minScore(minScore)
+                .build();
+
+            final RQ clReq = queryRequestBuilderFactory.getObject()
+                .queryRestrictions(clRes)
+                .start(resultsStart)
+                .maxResults(maxResults)
+                .summaryCharacters(getMaxSummaryCharacters())
+                .highlight(highlight)
+                .summary(summary)
+                .sort(sort)
+                .queryType(QueryRequest.QueryType.valueOf(queryType))
+                .intentBasedRanking(intentBasedRanking)
+                .build();
+
+            return documentsService.queryTextIndex(clReq);
+        } else {
+            return docs;
+        }
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")

@@ -558,7 +558,8 @@ define([
                                     : indexFilterFn(this.indexesCollection))
                                 : savedSelectedIndexes
                         ),
-                        selectedParametricValues: new SelectedParametricValuesCollection(savedSearchModel.toSelectedParametricValues())
+                        selectedParametricValues: new SelectedParametricValuesCollection(savedSearchModel.toSelectedParametricValues()),
+                        crosslingual: new Backbone.Model({ enabled: false })
                     };
 
                     this.queryStates.set(cid, queryState);

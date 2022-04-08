@@ -28,7 +28,8 @@ define(['underscore'], function(_) {
             'minScore',
             'queryText',
             'editingDocumentSelection',
-            'fieldTextWithoutDocumentSelection'
+            'fieldTextWithoutDocumentSelection',
+            'crosslingual'
         ],
 
         requestParams: function(queryModel) {
@@ -44,7 +45,8 @@ define(['underscore'], function(_) {
                 max_date: queryModel.getIsoDate('maxDate'),
                 min_score: queryModel.get('minScore'),
                 summary: 'context',
-                text: queryModel.get('queryText')
+                text: queryModel.get('queryText'),
+                crosslingual: queryModel.get('crosslingual')
             };
         },
 
