@@ -15,6 +15,7 @@
 package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.autonomy.aci.client.services.AciService;
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.configuration.ConfigResponse;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
@@ -24,6 +25,7 @@ import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldValue;
 import com.hp.autonomy.searchcomponents.core.search.GetContentRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
+import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestBuilder;
@@ -36,6 +38,7 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequestBuilder;
+import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.types.idol.responses.Profile;
 import com.hp.autonomy.types.idol.responses.Profiles;
 import com.hp.autonomy.types.idol.responses.Term;
@@ -66,7 +69,9 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
 
     @SuppressWarnings({"TypeMayBeWeakened", "ConstructorWithTooManyParameters"})
     @Autowired
-    public IdolDocumentsController(final IdolDocumentsService documentsService,
+    public IdolDocumentsController(final AciServiceRetriever aciServiceRetriever,
+                                   final ProcessorFactory processorFactory,
+                                   final IdolDocumentsService documentsService,
                                    final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
                                    final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory,
                                    final ObjectFactory<IdolSuggestRequestBuilder> suggestRequestBuilderFactory,
@@ -74,7 +79,7 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
                                    final ObjectFactory<IdolGetContentRequestIndexBuilder> getContentRequestIndexBuilderFactory,
                                    final ConfigFileService<IdolFindConfig> configService,
                                    final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever, UserService userService) {
-        super(documentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory);
+        super(aciServiceRetriever.getAciService(QueryRequest.QueryType.RAW), processorFactory, documentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory);
 
         this.documentSummaryMaxLength = Optional.ofNullable(configService.getConfigResponse())
                 .map(ConfigResponse::getConfig)

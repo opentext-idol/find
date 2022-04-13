@@ -41,8 +41,12 @@ define([
                 this.conceptGroups.remove(cid);
             },
 
-            'ifChanged .concept-view-crosslingual': function (event) {
-                this.queryState.crosslingual.set({ enabled: event.target.checked });
+            'ifChanged .concept-view-crosslingual-ontology': function (event) {
+                this.queryState.crosslingualOntology.set({ enabled: event.target.checked });
+            },
+
+            'ifChanged .concept-view-crosslingual-index': function (event) {
+                this.queryState.crosslingualIndex.set({ enabled: event.target.checked });
             }
         },
 
@@ -88,7 +92,10 @@ define([
             this.crosslingualView = null;
 
             this.listenTo(this.conceptGroups, 'update reset', this.updateEmpty);
-            this.listenTo(this.queryState.crosslingual, 'change', this.updateCrosslingual);
+            this.listenTo(this.queryState.crosslingualOntology, 'change',
+                this.updateCrosslingualOntology);
+            this.listenTo(this.queryState.crosslingualIndex, 'change',
+                this.updateCrosslingualIndex);
         },
 
         render: function() {
@@ -103,10 +110,12 @@ define([
 
             this.listView.setElement(this.$('.concept-view-concepts')).render();
 
-            this.$('.concept-view-crosslingual').iCheck({ checkboxClass: 'icheckbox-hp' });
+            this.$('.concept-view-crosslingual-ontology').iCheck({ checkboxClass: 'icheckbox-hp' });
+            this.$('.concept-view-crosslingual-index').iCheck({ checkboxClass: 'icheckbox-hp' });
 
             this.updateEmpty();
-            this.updateCrosslingual();
+            this.updateCrosslingualOntology();
+            this.updateCrosslingualIndex();
         },
 
         updateEmpty: function() {
@@ -115,9 +124,14 @@ define([
             this.$('.concept-view-empty-message').toggleClass('hide', !empty);
         },
 
-        updateCrosslingual: function () {
-            this.$('.concept-view-crosslingual').iCheck(
-                this.queryState.crosslingual.get('enabled') ? 'check' : 'uncheck');
+        updateCrosslingualOntology: function () {
+            this.$('.concept-view-crosslingual-ontology').iCheck(
+                this.queryState.crosslingualOntology.get('enabled') ? 'check' : 'uncheck');
+        },
+
+        updateCrosslingualIndex: function () {
+            this.$('.concept-view-crosslingual-index').iCheck(
+                this.queryState.crosslingualIndex.get('enabled') ? 'check' : 'uncheck');
         },
 
         remove: function() {

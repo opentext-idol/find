@@ -46,7 +46,8 @@ define([
             promotionsStateMatchIds: [],
             editingDocumentSelection: false,
             fieldTextWithoutDocumentSelection: null,
-            crosslingual: false
+            crosslingualOntology: false,
+            crosslingualIndex: false
         },
 
         /**
@@ -99,8 +100,13 @@ define([
                     this.updateFieldText();
                 }, this), DEBOUNCE_WAIT_MILLISECONDS));
 
-            this.listenTo(this.queryState.crosslingual, 'change', _.bind(function() {
-                this.set('crosslingual', this.queryState.crosslingual.get('enabled'));
+            this.listenTo(this.queryState.crosslingualOntology, 'change', _.bind(function() {
+                this.set('crosslingualOntology',
+                    this.queryState.crosslingualOntology.get('enabled'));
+            }, this));
+
+            this.listenTo(this.queryState.crosslingualIndex, 'change', _.bind(function() {
+                this.set('crosslingualIndex', this.queryState.crosslingualIndex.get('enabled'));
             }, this));
 
             this.set(_.extend({

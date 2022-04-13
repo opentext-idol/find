@@ -29,7 +29,8 @@ define(['underscore'], function(_) {
             'queryText',
             'editingDocumentSelection',
             'fieldTextWithoutDocumentSelection',
-            'crosslingual'
+            'crosslingualOntology',
+            'crosslingualIndex'
         ],
 
         requestParams: function(queryModel) {
@@ -46,7 +47,8 @@ define(['underscore'], function(_) {
                 min_score: queryModel.get('minScore'),
                 summary: 'context',
                 text: queryModel.get('queryText'),
-                crosslingual: queryModel.get('crosslingual')
+                crosslingualOntology: queryModel.get('crosslingualOntology'),
+                crosslingualIndex: queryModel.get('crosslingualIndex')
             };
         },
 

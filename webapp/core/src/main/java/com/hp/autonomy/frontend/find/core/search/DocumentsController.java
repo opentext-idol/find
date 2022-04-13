@@ -14,6 +14,9 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
+import com.autonomy.aci.client.services.AciService;
+import com.autonomy.aci.client.services.Processor;
+import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.aci.content.fieldtext.MATCH;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
@@ -27,7 +30,12 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
 import com.hp.autonomy.searchcomponents.core.search.SuggestRequestBuilder;
+import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
+import com.hp.autonomy.types.idol.responses.TermGetBestResponseData;
+import com.hp.autonomy.types.idol.responses.answer.ReportResponsedata;
 import com.hp.autonomy.types.requests.Documents;
+import com.hp.autonomy.types.requests.idol.actions.term.TermActions;
+import com.hp.autonomy.types.requests.idol.actions.term.params.TermGetBestParams;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -38,9 +46,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(DocumentsController.SEARCH_PATH)
@@ -66,26 +78,33 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
     protected static final String HIGHLIGHT_PARAM = "highlight";
     protected static final String MIN_SCORE_PARAM = "min_score";
 
+    protected final AciService aciService;
     protected final DocumentsService<RQ, RS, RC, Q, R, E> documentsService;
     protected final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory;
     protected final ObjectFactory<? extends QueryRequestBuilder<RQ, Q, ?>> queryRequestBuilderFactory;
     private final ObjectFactory<? extends SuggestRequestBuilder<RS, Q, ?>> suggestRequestBuilderFactory;
     private final ObjectFactory<? extends GetContentRequestBuilder<RC, T, ?>> getContentRequestBuilderFactory;
     private final ObjectFactory<? extends GetContentRequestIndexBuilder<T, S, ?>> getContentRequestIndexBuilderFactory;
+    private final Processor<TermGetBestResponseData> termGetBestProcessor;
 
     @SuppressWarnings("ConstructorWithTooManyParameters")
-    protected DocumentsController(final DocumentsService<RQ, RS, RC, Q, R, E> documentsService,
+    protected DocumentsController(final AciService aciService,
+                                  final ProcessorFactory processorFactory,
+                                  final DocumentsService<RQ, RS, RC, Q, R, E> documentsService,
                                   final ObjectFactory<? extends QueryRestrictionsBuilder<Q, S, ?>> queryRestrictionsBuilderFactory,
                                   final ObjectFactory<? extends QueryRequestBuilder<RQ, Q, ?>> queryRequestBuilderFactory,
                                   final ObjectFactory<? extends SuggestRequestBuilder<RS, Q, ?>> suggestRequestBuilderFactory,
                                   final ObjectFactory<? extends GetContentRequestBuilder<RC, T, ?>> getContentRequestBuilderFactory,
                                   final ObjectFactory<? extends GetContentRequestIndexBuilder<T, S, ?>> getContentRequestIndexBuilderFactory) {
+        this.aciService = aciService;
         this.documentsService = documentsService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
         this.queryRequestBuilderFactory = queryRequestBuilderFactory;
         this.suggestRequestBuilderFactory = suggestRequestBuilderFactory;
         this.getContentRequestBuilderFactory = getContentRequestBuilderFactory;
         this.getContentRequestIndexBuilderFactory = getContentRequestIndexBuilderFactory;
+        termGetBestProcessor =
+            processorFactory.getResponseDataProcessor(TermGetBestResponseData.class);
     }
 
     protected abstract <EX> EX throwException(final String message) throws E;
@@ -116,7 +135,8 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
         @RequestParam(value = AUTO_CORRECT_PARAM, defaultValue = "true") final boolean autoCorrect,
         @RequestParam(value = INTENT_BASED_RANKING_PARAM, defaultValue = "false") final boolean intentBasedRanking,
         @RequestParam(value = QUERY_TYPE_PARAM, defaultValue = "MODIFIED") final String queryType,
-        @RequestParam(value = "crosslingual", defaultValue = "false") final boolean crosslingual
+        @RequestParam(value = "crosslingualOntology", defaultValue = "false") final boolean crosslingualOntology,
+        @RequestParam(value = "crosslingualIndex", defaultValue = "false") final boolean crosslingualIndex
     ) throws E {
         final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
             .queryText(queryText)
@@ -129,26 +149,27 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
 
         final RQ queryRequest = queryRequestBuilderFactory.getObject()
             .queryRestrictions(queryRestrictions)
-            .start(crosslingual ? 1 : resultsStart)
-            .maxResults(crosslingual ? 1 : maxResults)
+            .start((crosslingualOntology || crosslingualIndex) ? 1 : resultsStart)
+            .maxResults(crosslingualOntology ? 1 : (crosslingualIndex ? 6 : maxResults))
             .summaryCharacters(getMaxSummaryCharacters())
             .highlight(highlight)
             .autoCorrect(autoCorrect)
             .summary(summary)
-            .sort(crosslingual ? null : sort)
+            .sort((crosslingualOntology || crosslingualIndex) ? null : sort)
             .queryType(QueryRequest.QueryType.valueOf(queryType))
             .intentBasedRanking(intentBasedRanking)
             .build();
         final Documents<R> docs = documentsService.queryTextIndex(queryRequest);
 
-        if (crosslingual) {
+        if ((crosslingualOntology || crosslingualIndex) && docs.getDocuments().isEmpty()) {
+            return new Documents<>(
+                Collections.emptyList(), docs.getTotalResults(), docs.getExpandedQuery(),
+                docs.getSuggestion(), docs.getAutoCorrection(), docs.getWarnings(),
+                docs.getExpansionOrder());
+        }
+
+        if (crosslingualOntology) {
             final String pageFieldName = "wikipedia_eng";
-            if (docs.getDocuments().isEmpty()) {
-                return new Documents<>(
-                    Collections.emptyList(), docs.getTotalResults(), docs.getExpandedQuery(),
-                    docs.getSuggestion(), docs.getAutoCorrection(), docs.getWarnings(),
-                    docs.getExpansionOrder());
-            }
             final String pageName = getFieldValue(docs.getDocuments().get(0), pageFieldName);
             if (pageName == null) {
                 return docs;
@@ -158,7 +179,6 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
                 .queryText("*")
                 .fieldText(new MATCH(pageFieldName, pageName).toString())
                 .databases(ListUtils.emptyIfNull(databases))
-                .minScore(minScore)
                 .build();
 
             final RQ clReq = queryRequestBuilderFactory.getObject()
@@ -174,6 +194,51 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
                 .build();
 
             return documentsService.queryTextIndex(clReq);
+
+        } else if (crosslingualIndex) {
+            final AciParameters params = new AciParameters(TermActions.TermGetBest.name());
+            params.put(TermGetBestParams.Reference.name(),
+                docs.getDocuments().stream()
+                    .map(doc -> {
+                        try {
+                            return URLEncoder.encode(
+                                doc.getReference(), StandardCharsets.UTF_8.name());
+                        } catch (final UnsupportedEncodingException e) {
+                            return null;
+                        }
+                    })
+                    .filter(term -> term != null)
+                    .collect(Collectors.joining("+")));
+
+            final StringBuilder clText = new StringBuilder();
+            for (final TermGetBestResponseData.Term term :
+                aciService.executeAction(params, termGetBestProcessor).getTerm()
+            ) {
+                clText.append(term.getValue());
+                clText.append("~[");
+                clText.append(term.getApcmWeight());
+                clText.append("] ");
+            }
+
+            final Q clRes = queryRestrictionsBuilderFactory.getObject()
+                .queryText(clText.toString())
+                .databases(ListUtils.emptyIfNull(databases))
+                .build();
+
+            final RQ clReq = queryRequestBuilderFactory.getObject()
+                .queryRestrictions(clRes)
+                .start(resultsStart)
+                .maxResults(maxResults)
+                .summaryCharacters(getMaxSummaryCharacters())
+                .highlight(highlight)
+                .summary(summary)
+                .sort(sort)
+                .queryType(QueryRequest.QueryType.valueOf(queryType))
+                .intentBasedRanking(intentBasedRanking)
+                .build();
+
+            return documentsService.queryTextIndex(clReq);
+
         } else {
             return docs;
         }

@@ -559,7 +559,8 @@ define([
                                 : savedSelectedIndexes
                         ),
                         selectedParametricValues: new SelectedParametricValuesCollection(savedSearchModel.toSelectedParametricValues()),
-                        crosslingual: new Backbone.Model({ enabled: false })
+                        crosslingualOntology: new Backbone.Model({ enabled: false }),
+                        crosslingualIndex: new Backbone.Model({ enabled: false })
                     };
 
                     this.queryStates.set(cid, queryState);
