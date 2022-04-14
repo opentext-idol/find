@@ -125,6 +125,7 @@ define([
             similarDocumentsUrl: vent.suggestUrlForDocument(model),
             summary: addLinksToSummary(model.get('summary')),
             url: url ? urlManipulator.addSpecialUrlPrefix(model.get('contentType'), url) : null,
+            showFlag: !!langMatch,
             icon: lang,
             intentRankedHit: model.get('intentRankedHit'),
             thumbnailSrc: thumbnailSrc,
