@@ -40,6 +40,14 @@ define([
         vent: vent,
         validateUrl: urlRoot + 'config-validation',
         widgetGroupParent: 'form .row',
+        options: {
+            refreshOnSave: true
+        },
+
+        initialize: function (options) {
+            SettingsPage.prototype.initialize.call(this);
+            this.options = _.extend(this.options, options);
+        },
 
         strings: {
             cancelButton: i18n['settings.cancel'],
@@ -146,7 +154,9 @@ define([
             // it should be possible to have config changes take effect without a reload, but there
             // are lots of places that would need changes to re-render on change, so this makes it
             // work for now
-            setTimeout(function () { location.reload(); }, 1000);
+            if (this.options.refreshOnSave) {
+                setTimeout(function () { location.reload(); }, 1000);
+            }
         }
     });
 });

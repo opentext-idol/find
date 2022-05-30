@@ -31,7 +31,8 @@ define([
 
         $page.html(_.template(template));
 
-        this.settingsPage = new SettingsPage({});
+        // refreshOnSave interferes with the hasSavedSettings check below
+        this.settingsPage = new SettingsPage({ refreshOnSave: false });
         this.settingsPage.render();
 
         this.navigation = new (EmptyNavbar.extend({
