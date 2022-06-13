@@ -135,7 +135,7 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
             search.setCanEdit(isUnownedSearchEditable(search, userId));
         }
 
-        return search;
+        return augmentOutputWithDisplayNames(search);
     }
 
     protected boolean isUnownedSearchEditable(final T search, final Long userId) {
