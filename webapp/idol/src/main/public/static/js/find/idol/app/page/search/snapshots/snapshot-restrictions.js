@@ -77,7 +77,7 @@ define([
             });
 
             const numericRestrictions = _.map(attributes.parametricRanges, function (range) {
-                const formatFunction = range.type === 'Date' ? formatEpoch : rounder().round;
+                const formatFunction = range.type === 'NumericDate' ? formatEpoch : rounder().round;
 
                 return {
                     title: range.displayName,
