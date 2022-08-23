@@ -84,6 +84,7 @@ public class NifiServiceTest {
 
         final Set<ActionParameter<?>> params = new HashSet<>();
         params.add(new AciParameter("action", "get_actions"));
+        params.add(new AciParameter("userRoles", ""));
         Mockito.verify(aciService)
             .executeAction(eq(serverConfig.toAciServerDetails()), eq(params), any());
     }
@@ -96,11 +97,13 @@ public class NifiServiceTest {
 
     @Test
     public void testGetActions() {
-        final List<NifiAction> actions =
-            new NifiService(processorFactory, aciService, validConfig).getActions();
+        final List<NifiAction> actions = new NifiService(processorFactory, aciService, validConfig)
+            .getActions("the_user", Arrays.asList("role1", "role2"));
 
         final Set<ActionParameter<?>> params = new HashSet<>();
         params.add(new AciParameter("action", "get_actions"));
+        params.add(new AciParameter("username", "the_user"));
+        params.add(new AciParameter("userRoles", "role1,role2"));
         Mockito.verify(aciService)
             .executeAction(eq(serverConfig.toAciServerDetails()), eq(params), any());
 
@@ -113,13 +116,14 @@ public class NifiServiceTest {
     @Test
     public void testExecuteAction() {
         Mockito.doReturn("").when(request).apply("the_action");
-        new NifiService(processorFactory, aciService, validConfig)
-            .executeAction("the_action", "token", "secInfo", null, null, null);
+        new NifiService(processorFactory, aciService, validConfig).executeAction(
+            "the_action", "token", "secInfo", null, Arrays.asList("role1", "role2"), null, null);
 
         final Set<ActionParameter<?>> params = new HashSet<>();
         params.add(new AciParameter("action", "the_action"));
         params.add(new AciParameter("stateMatchId", "token"));
         params.add(new AciParameter("securityInfo", "secInfo"));
+        params.add(new AciParameter("userRoles", "role1,role2"));
         Mockito.verify(aciService)
             .executeAction(eq(serverConfig.toAciServerDetails()), eq(params), any());
     }
@@ -127,14 +131,16 @@ public class NifiServiceTest {
     @Test
     public void testExecuteAction_allParams() {
         Mockito.doReturn("").when(request).apply("the_action");
-        new NifiService(processorFactory, aciService, validConfig)
-            .executeAction("the_action", "token", "secInfo", "the_user", "search 123", "reason");
+        new NifiService(processorFactory, aciService, validConfig).executeAction(
+            "the_action", "token", "secInfo", "the_user", Arrays.asList("role1", "role2"),
+            "search 123", "reason");
 
         final Set<ActionParameter<?>> params = new HashSet<>();
         params.add(new AciParameter("action", "the_action"));
         params.add(new AciParameter("stateMatchId", "token"));
         params.add(new AciParameter("securityInfo", "secInfo"));
         params.add(new AciParameter("username", "the_user"));
+        params.add(new AciParameter("userRoles", "role1,role2"));
         params.add(new AciParameter("searchName", "search 123"));
         params.add(new AciParameter("label", "reason"));
         Mockito.verify(aciService)

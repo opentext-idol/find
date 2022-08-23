@@ -7,6 +7,7 @@ package com.hp.autonomy.frontend.find.idol.nifi;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
+import com.hp.autonomy.frontend.find.idol.beanconfiguration.UserConfiguration;
 import com.hp.autonomy.frontend.find.idol.controlpoint.ControlPointApiException;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
@@ -21,10 +22,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NifiActionsControllerTest {
@@ -33,6 +31,7 @@ public class NifiActionsControllerTest {
     @Mock private HavenSearchAciParameterHandler aciParameterHandler;
     @Mock private AuthenticationInformationRetriever<?, ? extends Principal>
         authenticationInformationRetriever;
+    @Mock private UserConfiguration userConfiguration;
     private NifiActionsController controller;
 
     @Before
@@ -46,10 +45,12 @@ public class NifiActionsControllerTest {
         Mockito.doReturn("sec info").when(aciParameterHandler).getSecurityInfo();
         Mockito.doReturn(new BasicUserPrincipal("the user"))
             .when(authenticationInformationRetriever).getPrincipal();
+        Mockito.doReturn(Arrays.asList("role1", "role2"))
+            .when(userConfiguration).getCommunityRoles(authenticationInformationRetriever);
 
         controller = new NifiActionsController(
             nifiService, savedSnapshotService, aciParameterHandler,
-            authenticationInformationRetriever);
+            authenticationInformationRetriever, userConfiguration);
     }
 
     @Test
@@ -60,7 +61,8 @@ public class NifiActionsControllerTest {
             new NifiAction("id3", "Name 3")
         );
 
-        Mockito.when(nifiService.getActions()).thenReturn(actions);
+        Mockito.when(nifiService.getActions("the user", Arrays.asList("role1", "role2")))
+            .thenReturn(actions);
         Assert.assertEquals(actions, controller.getActions());
     }
 
@@ -69,7 +71,8 @@ public class NifiActionsControllerTest {
         controller.executeAction("the action", 123L, null, "the search", "the label");
         Mockito.verify(savedSnapshotService).getDashboardSearch(123L);
         Mockito.verify(nifiService).executeAction(
-            "the action", "token", "sec info", "the user", "the search", "the label");
+            "the action", "token", "sec info", "the user", Arrays.asList("role1", "role2"),
+            "the search", "the label");
     }
 
 }
