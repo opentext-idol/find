@@ -8,6 +8,10 @@ define([
     'typeahead',
     'bootstrap'
 ], function (Backbone, $, _, databaseNameResolver, stringBlank, template) {
+    // don't send typeahead query unless search string is at least this long
+    const QUERY_MIN_CHARS = 2;
+    // don't send typeahead query unless user hasn't typed anything for this long
+    const QUERY_DEBOUNCE_MS = 400;
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -40,6 +44,8 @@ define([
             this.strategy = options.strategy;
             this.strategy.initialize(this);
             this.enableTypeAhead = options.enableTypeAhead;
+            // XHR for ongoing typeahead query
+            this.queryXhr = null;
         },
 
         render: function () {
@@ -62,22 +68,11 @@ define([
                 this.$input.typeahead({
                     hint: false,
                     highlight: true,
-                    minLength: 1
+                    minLength: QUERY_MIN_CHARS
                 }, {
                     async: true,
                     limit: 7,
-                    source: function (query, sync, async) {
-                        // Don't look for suggestions if the query is blank
-                        if (stringBlank(query)) {
-                            sync([]);
-                        } else {
-                            $.get('api/public/typeahead', {
-                                text: query
-                            }, function (results) {
-                                async(results);
-                            });
-                        }
-                    }
+                    source: _.debounce(this.query.bind(this), QUERY_DEBOUNCE_MS)
                 });
 
             }
@@ -95,6 +90,25 @@ define([
             _.defer(function () {
                 this.$input.blur();
             }.bind(this));
+        },
+
+        query: function (query, sync, async) {
+            // Don't look for suggestions if the query is blank
+            if (stringBlank(query)) {
+                sync([]);
+            } else {
+                if (this.queryXhr) {
+                    this.queryXhr.abort();
+                }
+                const queryXhr = this.queryXhr = $.get('api/public/typeahead', {
+                    text: query
+                }, function (results) {
+                    if (this.queryXhr === queryXhr) {
+                        this.queryXhr = null;
+                    }
+                    async(results);
+                });
+            }
         },
 
         search: function (query) {
