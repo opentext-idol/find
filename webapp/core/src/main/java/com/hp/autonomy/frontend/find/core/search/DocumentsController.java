@@ -14,6 +14,7 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
 import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
 import com.hp.autonomy.searchcomponents.core.search.GetContentRequestBuilder;
@@ -94,6 +95,8 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
         return 250;
     }
 
+    protected abstract String getReferenceField();
+
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(value = QUERY_PATH, method = RequestMethod.GET)
     @ResponseBody
@@ -133,6 +136,7 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
             .sort(sort)
             .queryType(QueryRequest.QueryType.valueOf(queryType))
             .intentBasedRanking(intentBasedRanking)
+            .referenceField(getReferenceField())
             .build();
 
         return documentsService.queryTextIndex(queryRequest);
@@ -171,6 +175,7 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
             .highlight(highlight)
             .summary(summary)
             .sort(sort)
+            .referenceField(getReferenceField())
             .build();
 
         return documentsService.findSimilar(suggestRequest);
@@ -187,7 +192,8 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
             .reference(reference)
             .build();
         final GetContentRequestBuilder<RC, T, ?> requestBuilder = getContentRequestBuilderFactory.getObject()
-            .indexAndReferences(getContentRequestIndex);
+            .indexAndReferences(getContentRequestIndex)
+            .referenceField(getReferenceField());
         addParams(requestBuilder);
         final RC getContentRequest = requestBuilder.build();
 

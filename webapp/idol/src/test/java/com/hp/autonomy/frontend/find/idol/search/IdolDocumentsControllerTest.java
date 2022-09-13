@@ -36,6 +36,7 @@ import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationR
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.ObjectFactory;
 
 import static junit.framework.TestCase.fail;
@@ -109,12 +110,14 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
         when(queryRequestBuilder.summary(anyString())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.sort(anyString())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.intentBasedRanking(anyBoolean())).thenReturn(queryRequestBuilder);
+        when(queryRequestBuilder.referenceField(any())).thenReturn(queryRequestBuilder);
 
         when(suggestRequestBuilderFactory.getObject()).thenReturn(suggestRequestBuilder);
         when(suggestRequestBuilder.reference(any())).thenReturn(suggestRequestBuilder);
         mockSearchRequestBuilder(suggestRequestBuilder);
         when(suggestRequestBuilder.summary(anyString())).thenReturn(suggestRequestBuilder);
         when(suggestRequestBuilder.sort(anyString())).thenReturn(suggestRequestBuilder);
+        when(suggestRequestBuilder.referenceField(any())).thenReturn(suggestRequestBuilder);
 
         when(getContentRequestBuilderFactory.getObject()).thenReturn(getContentRequestBuilder);
         when(getContentRequestIndexBuilderFactory.getObject()).thenReturn(getContentRequestIndexBuilder);
@@ -122,6 +125,9 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
         when(getContentRequestIndexBuilder.reference(any())).thenReturn(getContentRequestIndexBuilder);
         when(getContentRequestBuilder.indexAndReferences(any())).thenReturn(getContentRequestBuilder);
         when(getContentRequestBuilder.print(any())).thenReturn(getContentRequestBuilder);
+        when(getContentRequestBuilder.referenceField(any())).thenReturn(getContentRequestBuilder);
+
+        when(configFileService.getConfig()).thenReturn(Mockito.mock(IdolFindConfig.class));
 
         documentsController = new IdolDocumentsController(idolDocumentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory, configFileService, authenticationInformationRetriever, userService);
         documentsService = idolDocumentsService;

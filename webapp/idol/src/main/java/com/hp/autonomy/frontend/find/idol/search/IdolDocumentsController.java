@@ -17,6 +17,7 @@ package com.hp.autonomy.frontend.find.idol.search;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.configuration.ConfigResponse;
+import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
@@ -63,6 +64,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(DocumentsController.SEARCH_PATH)
 class IdolDocumentsController extends DocumentsController<IdolQueryRequest, IdolSuggestRequest, IdolGetContentRequest, String, IdolQueryRestrictions, IdolGetContentRequestIndex, IdolSearchResult, AciErrorException> {
 
+    private final ConfigService<IdolFindConfig> configService;
     private final Integer documentSummaryMaxLength;
     private final UserService userService;
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
@@ -78,6 +80,7 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
                                    final ConfigFileService<IdolFindConfig> configService,
                                    final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever, UserService userService) {
         super(documentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory);
+        this.configService = configService;
 
         this.documentSummaryMaxLength = Optional.ofNullable(configService.getConfigResponse())
                 .map(ConfigResponse::getConfig)
@@ -146,6 +149,7 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
                     .sort("relevance")
                     .queryType(QueryRequest.QueryType.RAW)
                     .intentBasedRanking(false)
+                    .referenceField(getReferenceField())
                     .build();
 
             final Documents<IdolSearchResult> profileDocs = documentsService.queryTextIndex(queryRequest);
@@ -176,5 +180,9 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
     @Override
     protected Integer getMaxSummaryCharacters() {
         return this.documentSummaryMaxLength;
+    }
+
+    protected String getReferenceField() {
+        return configService.getConfig().getReferenceField();
     }
 }
