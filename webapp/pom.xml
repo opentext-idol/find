@@ -27,7 +27,7 @@
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
-        <haven.search.components.version>0.72.0-SNAPSHOT</haven.search.components.version>
+        <haven.search.components.version>0.72.0</haven.search.components.version>
         <powerpoint.report.version>1.1.8</powerpoint.report.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
         <!--
@@ -79,7 +79,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.13.0</version>
+                <version>2.13.4</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -140,7 +140,7 @@
             <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
-                <version>1.29</version>
+                <version>1.33</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
