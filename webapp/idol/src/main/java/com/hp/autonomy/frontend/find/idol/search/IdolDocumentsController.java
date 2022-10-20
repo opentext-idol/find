@@ -15,25 +15,22 @@
 package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
+import com.autonomy.aci.client.services.AciService;
+import com.autonomy.aci.client.services.impl.AciServiceImpl;
+import com.autonomy.aci.client.transport.AciServerDetails;
+import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
+import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.configuration.ConfigResponse;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
+import com.hp.autonomy.searchcomponents.core.config.FieldValue;
 import com.hp.autonomy.searchcomponents.core.search.GetContentRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
-import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestIndex;
-import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestIndexBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequestBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.search.*;
+import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.types.idol.responses.Profile;
 import com.hp.autonomy.types.idol.responses.Profiles;
 import com.hp.autonomy.types.idol.responses.Term;
@@ -42,14 +39,10 @@ import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import com.hp.autonomy.user.UserService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -66,18 +59,31 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
     private final Integer documentSummaryMaxLength;
     private final UserService userService;
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
+    private final HavenSearchAciParameterHandler paramHandler;
 
     @SuppressWarnings({"TypeMayBeWeakened", "ConstructorWithTooManyParameters"})
     @Autowired
-    public IdolDocumentsController(final IdolDocumentsService documentsService,
+    public IdolDocumentsController(final ProcessorFactory processorFactory,
+                                   final IdolDocumentsService documentsService,
                                    final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory,
                                    final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory,
                                    final ObjectFactory<IdolSuggestRequestBuilder> suggestRequestBuilderFactory,
                                    final ObjectFactory<IdolGetContentRequestBuilder> getContentRequestBuilderFactory,
                                    final ObjectFactory<IdolGetContentRequestIndexBuilder> getContentRequestIndexBuilderFactory,
                                    final ConfigFileService<IdolFindConfig> configService,
-                                   final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever, UserService userService) {
-        super(documentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory);
+                                   final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever, UserService userService,
+                                   final HavenSearchAciParameterHandler paramHandler) {
+        super(
+            new AciServiceImpl(
+                new AciHttpClientImpl(HttpClients.createDefault()),
+                new AciServerDetails("10.2.1.90", 9172)),
+            processorFactory,
+            documentsService,
+            queryRestrictionsBuilderFactory,
+            queryRequestBuilderFactory,
+            suggestRequestBuilderFactory,
+            getContentRequestBuilderFactory,
+            getContentRequestIndexBuilderFactory);
 
         this.documentSummaryMaxLength = Optional.ofNullable(configService.getConfigResponse())
                 .map(ConfigResponse::getConfig)
@@ -86,6 +92,7 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
 
         this.userService = userService;
         this.authenticationInformationRetriever = authenticationInformationRetriever;
+        this.paramHandler = paramHandler;
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
@@ -177,4 +184,37 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
     protected Integer getMaxSummaryCharacters() {
         return this.documentSummaryMaxLength;
     }
+
+    @Override
+    protected String getFieldValue(final IdolSearchResult doc, final String fieldName) {
+        final Map<String, FieldInfo<?>> fields = doc.getFieldMap();
+        FieldInfo<?> field = null;
+        for (final String name : fields.keySet()) {
+            if (name.equalsIgnoreCase(fieldName)) {
+                field = fields.get(name);
+                break;
+            }
+        }
+
+        if (field == null || field.getValues().isEmpty()) {
+            return null;
+        }
+
+        final Object value = field.getValues().get(0).getValue();
+        if (value instanceof String) {
+            return (String) value;
+        } else {
+            return null;
+        }
+    }
+
+    protected void addClIndexParams(final AciParameters params, final IdolQueryRestrictions queryRestrictions) {
+        paramHandler.addSearchRestrictions(params, queryRestrictions);
+        paramHandler.addSecurityInfo(params);
+    }
+
+    protected String getClDbName() {
+        return "XEnSp";
+    }
+
 }
