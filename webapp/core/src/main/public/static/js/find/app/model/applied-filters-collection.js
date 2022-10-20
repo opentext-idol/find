@@ -327,7 +327,7 @@ define([
             }
         },
 
-        updatethaoeunsthaoetnshutnsaoehueographyFilters: function() {
+        updateGeographyFilters: function() {
             _.each(GeographyModel.LocationFields, function(locationField){
                 const id = locationField.id;
 

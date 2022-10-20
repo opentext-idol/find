@@ -168,6 +168,7 @@ class AnswerServerController {
                 .print(PrintParam.Fields.name())
                 .printField(FACT_ID_FIELD)
                 .printField(FACT_SENTENCE_FIELD)
+                .referenceField(configService.getConfig().getReferenceField())
                 .build();
 
             final Documents<IdolSearchResult> docs = documentsService.queryTextIndex(queryRequest);

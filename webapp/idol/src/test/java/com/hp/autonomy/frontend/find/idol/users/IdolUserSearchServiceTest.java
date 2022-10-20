@@ -16,6 +16,7 @@ import com.hp.autonomy.types.idol.responses.Hit;
 import com.hp.autonomy.types.idol.responses.QueryResponseData;
 import com.hp.autonomy.types.idol.responses.User;
 import com.hp.autonomy.user.UserService;
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,7 +57,8 @@ public class IdolUserSearchServiceTest {
         final FieldInfo<String> fieldValue = FieldInfo.<String>builder()
             .value(new FieldValue<>(value, value))
             .build();
-        final Map<String, FieldInfo<String>> fields = Collections.singletonMap(name, fieldValue);
+        final CaseInsensitiveMap<String, FieldInfo<?>> fields = new CaseInsensitiveMap<>();
+        fields.put(name, fieldValue);
         final IdolSearchResult searchResult = IdolSearchResult.builder()
             .fieldMap(fields)
             .weight(weight)
@@ -95,7 +97,7 @@ public class IdolUserSearchServiceTest {
             eq("db-e"), eq("area-e"), any(), anyInt(), anyInt())
         ).thenAnswer(getProfilesAnswer(expertiseProfileHits));
 
-        Mockito.when(queryResponseParser.parseQueryHits(any())).thenAnswer(inv -> {
+        Mockito.when(queryResponseParser.parseQueryHits(any(), any())).thenAnswer(inv -> {
             final List<Hit> hits = (List<Hit>) inv.getArguments()[0];
             return hits.stream()
                 .map(hit -> (IdolSearchResult) hit.getContent().getContent().get(0))

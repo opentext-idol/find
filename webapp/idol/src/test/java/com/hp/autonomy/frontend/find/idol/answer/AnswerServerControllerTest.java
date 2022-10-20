@@ -31,6 +31,7 @@ import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.types.idol.responses.answer.*;
 import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.idol.actions.answer.params.ReportParams;
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -115,15 +116,17 @@ public class AnswerServerControllerTest {
     private IdolSearchResult createDoc(
         final String reference, final List<Serializable> factFields
     ) {
+        final CaseInsensitiveMap<String, FieldInfo<?>> fieldMap = new CaseInsensitiveMap<>();
+        fieldMap.put("facts", FieldInfo.builder()
+            .value(new FieldValue<Serializable>(new HashMap<>(Collections.singletonMap(
+                "fact_extract_",
+                new ArrayList<>(factFields))), "a load of facts"
+            ))
+            .build());
         return IdolSearchResult.builder()
             .index("db")
             .reference(reference)
-            .fieldEntry("facts", FieldInfo.builder()
-                .value(new FieldValue<Serializable>(new HashMap<>(Collections.singletonMap(
-                    "fact_extract_",
-                    new ArrayList<>(factFields))), "a load of facts"
-                ))
-                .build())
+            .fieldMap(fieldMap)
             .build();
     }
 
@@ -155,6 +158,7 @@ public class AnswerServerControllerTest {
         when(queryRequestBuilder.queryType(any())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.print(any())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.printField(any())).thenReturn(queryRequestBuilder);
+        when(queryRequestBuilder.referenceField(any())).thenReturn(queryRequestBuilder);
 
         mockReportResponse(Collections.singletonList(
             createReport(Arrays.asList(createFact("1"), createFact("2"), createFact("3")))

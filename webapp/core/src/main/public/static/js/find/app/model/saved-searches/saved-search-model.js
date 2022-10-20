@@ -93,9 +93,9 @@ define([
                 parametricRanges.push({
                     field: model.get('field'),
                     displayName: model.get('displayName'),
-                    min: model.get('range')[0],
-                    max: model.get('range')[1],
-                    type: model.get('type') === 'Numeric' ? 'Numeric' : 'Date'
+                    min: model.get('type') === 'Numeric' ? model.get('range')[0] : moment(model.get('range')[0]),
+                    max: model.get('type') === 'Numeric' ? model.get('range')[1] : moment(model.get('range')[1]),
+                    type: model.get('type') === 'Numeric' ? 'Numeric' : 'NumericDate'
                 });
             }
         });
@@ -134,6 +134,17 @@ define([
 
     function compareWithoutDisplayNames(x, y) {
         return _.isEqual(_.omit(x, ['displayName', 'displayValue']), _.omit(y, 'displayName', 'displayValue'));
+    }
+
+    function compareParametricRanges(x, y) {
+        if (x.type === 'NumericDate' && y.type === 'NumericDate') {
+            return compareWithoutDisplayNames(
+                _.defaults({ min: x.min.valueOf(), max: x.max.valueOf() }, x),
+                _.defaults({ min: y.min.valueOf(), max: y.max.valueOf() }, y)
+            );
+        } else {
+            return compareWithoutDisplayNames(x, y);
+        }
     }
 
     function nullOrUndefined(input) {
@@ -219,13 +230,36 @@ define([
                 })
                 .value();
 
-            return _.defaults(dateAttributes, {queryStateTokens: tokensByType.QUERY}, {promotionsStateTokens: tokensByType.PROMOTIONS}, {relatedConcepts: relatedConcepts}, response);
+            const parametricRanges = _.flatten(_.map([
+                { type: 'Numeric', values: response.numericRangeRestrictions },
+                { type: 'NumericDate', values: response.dateRangeRestrictions }
+            ], restrictions =>
+                _.map(restrictions.values, restriction =>
+                    _.defaults({
+                        type: restrictions.type,
+                        min: restrictions.type === 'NumericDate' ? moment(restriction.min) : restriction.min,
+                        max: restrictions.type === 'NumericDate' ? moment(restriction.max) : restriction.max
+                    }, restriction)
+                )
+            ));
+
+            return _.defaults(dateAttributes, {
+                queryStateTokens: tokensByType.QUERY,
+                promotionsStateTokens: tokensByType.PROMOTIONS,
+                relatedConcepts: relatedConcepts,
+                parametricRanges: parametricRanges
+            }, response);
         },
 
         toJSON: function() {
             return _.defaults({
-                conceptClusterPhrases: _.flatten(this.get('relatedConcepts').map(relatedConceptsToClusterModel))
-            }, Backbone.Model.prototype.toJSON.call(this));
+                conceptClusterPhrases: _.flatten(this.get('relatedConcepts').map(relatedConceptsToClusterModel)),
+                numericRangeRestrictions: _.filter(this.get('parametricRanges'), { type: 'Numeric' }),
+                dateRangeRestrictions: _.filter(this.get('parametricRanges'), { type: 'NumericDate' })
+            }, _.omit(Backbone.Model.prototype.toJSON.call(this), [
+                'relatedConcepts',
+                'parametricRanges'
+            ]));
         },
 
         destroy: function(options) {
@@ -262,7 +296,7 @@ define([
                 && arraysEqual(this.get('indexes'), selectedIndexes, _.isEqual)
                 && this.get('minScore') === queryState.minScoreModel.get('minScore')
                 && arraysEqual(this.get('parametricValues'), parametricRestrictions.parametricValues, compareWithoutDisplayNames)
-                && arraysEqual(this.get('parametricRanges'), parametricRestrictions.parametricRanges, compareWithoutDisplayNames)
+                && arraysEqual(this.get('parametricRanges'), parametricRestrictions.parametricRanges, compareParametricRanges)
                 && arraysEqual(this.get('geographyFilters'), geographyFilters, _.isEqual)
                 && this.get('documentSelectionIsWhitelist') === documentSelection.documentSelectionIsWhitelist
                 && arraysEqual(this.get('documentSelection'), documentSelection.documentSelection, _.isEqual);
@@ -333,7 +367,10 @@ define([
                 return {
                     field: range.field,
                     displayName: range.displayName,
-                    range: [range.min, range.max],
+                    range: [
+                        range.type === 'Numeric' ? range.min : range.min.valueOf(),
+                        range.type === 'Numeric' ? range.max : range.max.valueOf()
+                    ],
                     type: range.type === 'Numeric' ? 'Numeric' : 'NumericDate'
                 };
             });

@@ -32,7 +32,7 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
     private final IdolDocumentsService documentsService;
     private final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
     private final ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory;
-
+    private final ConfigFileService<IdolFindConfig> configService;
     private final int stateTokenMaxResults;
     private final Integer documentSummaryMaxLength;
 
@@ -46,6 +46,7 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
         this.documentsService = documentsService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
         this.queryRequestBuilderFactory = queryRequestBuilderFactory;
+        this.configService = configService;
         this.stateTokenMaxResults = Optional.ofNullable(configService.getConfigResponse())
                 .map(ConfigResponse::getConfig)
                 .map(IdolFindConfig::getComparisonStoreStateMaxResults)
@@ -112,6 +113,7 @@ public class ComparisonServiceImpl implements ComparisonService<IdolSearchResult
                 .highlight(highlight)
                 .autoCorrect(false)
                 .queryType(QueryRequest.QueryType.MODIFIED)
+                .referenceField(configService.getConfig().getReferenceField())
                 .build();
 
         return documentsService.queryTextIndex(queryRequest);

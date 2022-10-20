@@ -11,12 +11,9 @@ import com.autonomy.aci.client.transport.AciParameter;
 import com.autonomy.aci.client.transport.AciResponseInputStream;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.transport.ActionParameter;
-import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.NifiConfig;
-import com.hp.autonomy.frontend.find.idol.controlpoint.ControlPointApiException;
-import com.hp.autonomy.frontend.find.idol.controlpoint.ControlPointPolicy;
 import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +21,7 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
 
 import javax.xml.transform.stream.StreamSource;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -97,16 +92,27 @@ public class NifiService {
      * Check the API is accessible.
      */
     public void checkStatus() {
-        getActions();
+        getActions(null, new ArrayList<>());
     }
 
     /**
      * Retrieve available actions.
+     *
+     * @param username Name of the user performing the action
+     * @param roles Roles of the user performing the action
      */
-    public List<NifiAction> getActions() {
+    public List<NifiAction> getActions(
+        final String username,
+        final Collection<String> roles
+    ) {
         final String listAction = getConfig().getListAction();
         final Set<ActionParameter<?>> params = new HashSet<>();
         params.add(new AciParameter("action", listAction));
+        if (username != null) {
+            params.add(new AciParameter("username", username));
+        }
+        params.add(new AciParameter("userRoles", String.join(",", roles)));
+
         return aciService
             .executeAction(getAciServerDetails(), params, listActionsProcessor)
             .getActions()
@@ -122,6 +128,7 @@ public class NifiService {
      * @param documentsStateToken Defines the document set
      * @param documentsSecurityInfo Used to access the documents, to ensure they're all visible
      * @param username Name of the user performing the action
+     * @param roles Roles of the user performing the action
      * @param searchName Name of the search containing the documents - saved with the execution as
      *                   metadata
      * @param label Optional label to save with the execution as metadata
@@ -131,6 +138,7 @@ public class NifiService {
         final String documentsStateToken,
         final String documentsSecurityInfo,
         final String username,
+        final Collection<String> roles,
         final String searchName,
         final String label
     ) {
@@ -141,6 +149,7 @@ public class NifiService {
         if (username != null) {
             params.add(new AciParameter("username", username));
         }
+        params.add(new AciParameter("userRoles", String.join(",", roles)));
         if (searchName != null) {
             params.add(new AciParameter("searchName", searchName));
         }

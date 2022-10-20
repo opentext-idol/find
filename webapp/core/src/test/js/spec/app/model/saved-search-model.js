@@ -109,14 +109,14 @@ define([
         {field: 'CATEGORY', displayName: 'Category', value: 'film', displayValue: 'Film'}
     ];
 
-    const PARAMETRIC_RANGES_CLIENT = [
+    const PARAMETRIC_RANGES_QUERYSTATE = [
         {field: 'YEAR', displayName: 'Year', range: [1066, 1485], type: 'Numeric'},
         {field: 'DATE', displayName: 'Date', range: [123456789000, 123456791000], type: 'NumericDate'}
     ];
 
-    const PARAMETRIC_RANGES_SERVER = [
+    const PARAMETRIC_RANGES_MODEL = [
         {field: 'YEAR', displayName: 'Year', min: 1066, max: 1485, type: 'Numeric'},
-        {field: 'DATE', displayName: 'Date', min: 123456789000, max: 123456791000, type: 'Date'}
+        {field: 'DATE', displayName: 'Date', min: moment(123456789000), max: moment(123456791000), type: 'NumericDate'}
     ];
 
     describe('SavedSearchModel', function() {
@@ -139,7 +139,7 @@ define([
                 relatedConcepts: RELATED_CONCEPTS,
                 indexes: BASE_INDEXES,
                 parametricValues: PARAMETRIC_VALUES,
-                parametricRanges: PARAMETRIC_RANGES_SERVER
+                parametricRanges: PARAMETRIC_RANGES_MODEL
             });
 
             this.conceptGroups = new Backbone.Collection(RELATED_CONCEPTS.map(function(concepts) {
@@ -177,7 +177,7 @@ define([
             });
 
             // The real selected parametric values collection also contains display names
-            this.selectedParametricValues = new Backbone.Collection(PARAMETRIC_VALUES.concat(PARAMETRIC_RANGES_CLIENT));
+            this.selectedParametricValues = new Backbone.Collection(PARAMETRIC_VALUES.concat(PARAMETRIC_RANGES_QUERYSTATE));
 
             this.queryState = {
                 conceptGroups: this.conceptGroups,
@@ -288,7 +288,7 @@ define([
             });
 
             it('returns the selected parametric ranges', function() {
-                expect(this.attributes.parametricRanges).toEqual(PARAMETRIC_RANGES_SERVER);
+                expect(this.attributes.parametricRanges).toEqual(PARAMETRIC_RANGES_MODEL);
             });
 
             it('returns the min score from the min score model', function() {

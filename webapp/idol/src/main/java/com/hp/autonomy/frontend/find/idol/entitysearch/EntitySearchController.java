@@ -92,6 +92,6 @@ class EntitySearchController {
         this.parameterHandler.addSecurityInfo(aciParameters);
 
         final QueryResponseData resp = this.entitySearchAciService.executeAction(aciParameters, this.queryResponseProcessor);
-        return this.queryResponseParser.parseQueryHits(resp.getHits());
+        return this.queryResponseParser.parseQueryHits(resp.getHits(), null);
     }
 }

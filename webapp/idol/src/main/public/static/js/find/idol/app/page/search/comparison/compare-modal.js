@@ -33,12 +33,10 @@ define([
 
             const queryState = queryStates.get(cid);
             if (search.isNew() || queryState && !search.equalsQueryState(queryState)) {
-                search = new SavedSearchModel(
-                    _.extend(
-                        {title: search.get('title')},
-                        SavedSearchModel.attributesFromQueryState(queryState)
-                    )
-                );
+                search = new SavedSearchModel(_.extend({},
+                    search.pick('type', 'title', 'queryStateTokens', 'promotionsStateTokens'),
+                    SavedSearchModel.attributesFromQueryState(queryState)
+                ));
             }
 
             return search;

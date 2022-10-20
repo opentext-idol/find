@@ -90,7 +90,7 @@ public class IdolUserSearchServiceImpl implements IdolUserSearchService {
                 config.getAgentStoreProfilesDatabase(), config.getNamedArea(),
                 searchText, pageStart, maxResults);
             final List<IdolSearchResult> profiles =
-                queryResponseParser.parseQueryHits(responseData.getHits());
+                queryResponseParser.parseQueryHits(responseData.getHits(), null);
 
             for (final IdolSearchResult profile : profiles) {
                 final FieldInfo<String> usernameField =

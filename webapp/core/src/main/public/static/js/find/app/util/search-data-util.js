@@ -102,7 +102,7 @@ define([
      */
     function buildQuery(model) {
         const fieldTextNode = buildMergedFieldText(
-            new SelectedParametricValuesCollection(model.toSelectedParametricValues().models),
+            new SelectedParametricValuesCollection(model.toSelectedParametricValues()).models,
             new GeographyModel(model.toGeographyModelAttributes()),
             new DocumentSelectionModel(model.toDocumentSelectionModelAttributes())
         );

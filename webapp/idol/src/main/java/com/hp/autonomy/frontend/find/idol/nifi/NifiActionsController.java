@@ -8,6 +8,7 @@ package com.hp.autonomy.frontend.find.idol.nifi;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
+import com.hp.autonomy.frontend.find.idol.beanconfiguration.UserConfiguration;
 import com.hp.autonomy.frontend.find.idol.savedsearches.snapshot.SavedSnapshotService;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
@@ -36,6 +37,7 @@ class NifiActionsController {
     private final HavenSearchAciParameterHandler aciParameterHandler;
     private final AuthenticationInformationRetriever<?, ? extends Principal>
         authenticationInformationRetriever;
+    private final UserConfiguration userConfiguration;
 
     @Autowired
     NifiActionsController(
@@ -43,12 +45,14 @@ class NifiActionsController {
         final SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> savedSnapshotService,
         final HavenSearchAciParameterHandler aciParameterHandler,
         final AuthenticationInformationRetriever<?, ? extends Principal>
-            authenticationInformationRetriever
+            authenticationInformationRetriever,
+        final UserConfiguration userConfiguration
     ) {
         this.nifiService = nifiService;
         this.savedSnapshotService = savedSnapshotService;
         this.aciParameterHandler = aciParameterHandler;
         this.authenticationInformationRetriever = authenticationInformationRetriever;
+        this.userConfiguration = userConfiguration;
     }
 
     /**
@@ -56,7 +60,10 @@ class NifiActionsController {
      */
     @RequestMapping(method = RequestMethod.GET)
     public List<NifiAction> getActions() {
-        return nifiService.getActions();
+        final String username = authenticationInformationRetriever.getPrincipal().getName();
+        final List<String> roles =
+            userConfiguration.getCommunityRoles(authenticationInformationRetriever);
+        return nifiService.getActions(username, roles);
     }
 
     /**
@@ -82,8 +89,11 @@ class NifiActionsController {
             .toSnapshotToken(savedSnapshotService, snapshotId, query)
             .getStateToken();
         final String username = authenticationInformationRetriever.getPrincipal().getName();
+        final List<String> roles =
+            userConfiguration.getCommunityRoles(authenticationInformationRetriever);
         nifiService.executeAction(
-            action, stateToken, aciParameterHandler.getSecurityInfo(), username, searchName, label);
+            action, stateToken, aciParameterHandler.getSecurityInfo(), username, roles,
+            searchName, label);
     }
 
 }
