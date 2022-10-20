@@ -45,9 +45,7 @@ define([
             stateMatchIds: [],
             promotionsStateMatchIds: [],
             editingDocumentSelection: false,
-            fieldTextWithoutDocumentSelection: null,
-            crosslingualOntology: false,
-            crosslingualIndex: false
+            fieldTextWithoutDocumentSelection: null
         },
 
         /**
@@ -99,15 +97,6 @@ define([
                 _.debounce(_.bind(function() {
                     this.updateFieldText();
                 }, this), DEBOUNCE_WAIT_MILLISECONDS));
-
-            this.listenTo(this.queryState.crosslingualOntology, 'change', _.bind(function() {
-                this.set('crosslingualOntology',
-                    this.queryState.crosslingualOntology.get('enabled'));
-            }, this));
-
-            this.listenTo(this.queryState.crosslingualIndex, 'change', _.bind(function() {
-                this.set('crosslingualIndex', this.queryState.crosslingualIndex.get('enabled'));
-            }, this));
 
             this.set(_.extend({
                 queryText: makeQueryText(this.queryState),

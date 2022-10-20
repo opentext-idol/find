@@ -123,7 +123,7 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
         when(getContentRequestBuilder.indexAndReferences(any())).thenReturn(getContentRequestBuilder);
         when(getContentRequestBuilder.print(any())).thenReturn(getContentRequestBuilder);
 
-        documentsController = new IdolDocumentsController(null, idolDocumentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory, configFileService, authenticationInformationRetriever, userService, null);
+        documentsController = new IdolDocumentsController(idolDocumentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory, configFileService, authenticationInformationRetriever, userService);
         documentsService = idolDocumentsService;
         databaseType = String.class;
     }
