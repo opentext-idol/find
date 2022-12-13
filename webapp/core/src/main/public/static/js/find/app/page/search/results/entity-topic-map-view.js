@@ -16,6 +16,7 @@ define([
     'underscore',
     'jquery',
     'backbone',
+    'find/app/configuration',
     'find/app/util/topic-map-view',
     'find/app/util/range-input',
     'find/app/model/entity-collection',
@@ -24,9 +25,12 @@ define([
     'text!find/templates/app/page/search/results/entity-topic-map-view.html',
     'text!find/templates/app/page/loading-spinner.html',
     'iCheck'
-], function(_, $, Backbone, TopicMapView, RangeInput, EntityCollection, i18n, generateErrorHtml,
-            template, loadingTemplate) {
+], function(_, $, Backbone, configuration, TopicMapView, RangeInput, EntityCollection,
+            i18n, generateErrorHtml, template, loadingTemplate) {
     'use strict';
+
+    const config = configuration();
+    const FETCH_ON_DEMAND = config.uiCustomization && config.uiCustomization.fetchOnDemand || false;
 
     const loadingHtml = _.template(loadingTemplate)({i18n: i18n, large: true});
 
@@ -59,12 +63,16 @@ define([
                 }.bind(this)
             });
 
-            this.debouncedFetchRelatedConcepts = _.debounce(this.entityCollection.fetchRelatedConcepts.bind(this.entityCollection), 500);
-
             this.queryModel = options.queryModel;
             this.type = options.type;
             this.showSlider = _.isUndefined(options.showSlider) || options.showSlider;
             this.fixedHeight = _.isUndefined(options.fixedHeight) || options.fixedHeight;
+            this.fetchPending = false;
+
+            this.fetch = _.debounce((function () {
+                this.entityCollection.fetchRelatedConcepts(
+                    this.queryModel, this.type, this.model.get('value'));
+            }).bind(this), 500);
 
             this.topicMap = new TopicMapView({
                 clickHandler: options.clickHandler
@@ -103,11 +111,11 @@ define([
             }
 
             this.listenTo(this.model, 'change:value', function() {
-                this.debouncedFetchRelatedConcepts(this.queryModel, this.type, this.model.get('value'));
+                this.requestFetch();
             });
 
             this.listenTo(this.queryModel, 'change', function() {
-                this.entityCollection.fetchRelatedConcepts(this.queryModel, this.type, this.model.get('value'));
+                this.requestFetch();
             });
 
             this.listenTo(this.entityCollection, 'sync', function() {
@@ -131,7 +139,15 @@ define([
             });
 
             this.listenTo(this.viewModel, 'change', this.updateViewState);
-            this.entityCollection.fetchRelatedConcepts(this.queryModel, this.type, this.model.get('value'));
+            this.requestFetch();
+        },
+
+        requestFetch: function () {
+            if (FETCH_ON_DEMAND && !this.$el.is(':visible')) {
+                this.fetchPending = true;
+            } else {
+                this.fetch();
+            }
         },
 
         render: function() {
@@ -167,6 +183,11 @@ define([
 
         update: function() {
             this.topicMap.draw();
+            if (this.fetchPending) {
+                this.viewModel.set('state', ViewState.LOADING);
+                this.fetch();
+                this.fetchPending = false;
+            }
         },
 
         updateTopicMapData: function() {

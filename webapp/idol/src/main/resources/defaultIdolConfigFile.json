@@ -298,7 +298,8 @@
       "maxResultsPerProfile": 2,
       "maxTerms": 30,
       "updateProfileOnView": false
-    }
+    },
+    "fetchOnDemand": false
   },
   "search": {
     "defaultSortOption": "relevance",
