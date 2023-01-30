@@ -336,6 +336,10 @@ define([
         },
 
         refreshResults: function() {
+            if (!this.$loadingSpinner) { // not rendered yet
+                return;
+            }
+
             const editingDocumentSelection = this.editingDocumentSelection();
             if (editingDocumentSelection) {
                 // when editing, we don't want document selection changes to trigger a refresh, so

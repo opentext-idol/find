@@ -14,8 +14,10 @@
 
 define([
     'jquery',
-    'backbone'
-], function($, Backbone) {
+    'underscore',
+    'backbone',
+    'qs',
+], function($, _, Backbone, qs) {
     'use strict';
 
     return Backbone.Router.extend({
@@ -23,7 +25,7 @@ define([
         parseEncodedDatabases: undefined,
 
         routes: {
-            'search(/databases/:searchDatabase)/query(/:text)': 'search',
+            'search(/databases/:searchDatabase)/query(/:text)(?*querystring)': 'search',
             ':page': 'page',
             'search/splash': 'searchSplash'
         },
@@ -34,7 +36,7 @@ define([
             return Backbone.Router.prototype.navigate.apply(this, arguments);
         },
 
-        search: function(optionalEncodedDatabases, optionalEncodedQuery) {
+        search: function(optionalEncodedDatabases, optionalEncodedQuery, querystring) {
             let query = optionalEncodedQuery;
             if (query) {
                 try {
@@ -51,7 +53,27 @@ define([
                 databases = this.parseEncodedDatabases(optionalEncodedDatabases);
             }
 
-            this.trigger('route:page', 'search', query, databases);
+            let options = {};
+            if (querystring) {
+                _.each(qs.parse(querystring), (value, name) => {
+                    let group;
+                    let propName;
+                    const i = name.search(/:/);
+                    if (i === -1) {
+                        group = options;
+                        propName = name;
+                    } else {
+                        const groupName = name.slice(0, i);
+                        propName = name.slice(i + 1);
+                        group = options[groupName] = options[groupName] || {};
+                    }
+
+                    group[propName] = (group[propName] || [])
+                        .concat(Array.isArray(value) ? value : [value]);
+                });
+            }
+
+            this.trigger('route:page', 'search', query, databases, options);
         },
 
         documentDetail: function() {

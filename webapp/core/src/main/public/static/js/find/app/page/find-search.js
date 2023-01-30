@@ -12,6 +12,8 @@ define([
     'find/app/model/dates-filter-model',
     'find/app/model/geography-model',
     'find/app/model/document-selection-model',
+    'find/app/model/parametric-collection',
+    'find/app/model/query-model',
     './search/document-renderer',
     'parametric-refinement/selected-values-collection',
     'find/app/model/documents-collection',
@@ -35,7 +37,8 @@ define([
     'find/app/vent',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/find-search.html'
-], function(_, $, Backbone, BasePage, config, DatesFilterModel, GeographyModel, DocumentSelectionModel, DocumentRenderer, SelectedParametricValuesCollection,
+], function(_, $, Backbone, BasePage, config, DatesFilterModel, GeographyModel,
+            DocumentSelectionModel, ParametricCollection, QueryModel, DocumentRenderer, SelectedParametricValuesCollection,
             DocumentsCollection, InputView, queryTextStrategy, TabbedSearchView, MergeCollection,
             SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel, QueryTextModel, DocumentModel,
             DocumentContentView, DocumentDetailContentView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver,
@@ -69,13 +72,46 @@ define([
         });
     }
 
-    function selectFilteredInitialIndexes(indexesCollection) {
-        const active = selectInitialIndexes(indexesCollection);
-
-        return defaultDeselectedDatabases.length ? _.filter(active, function(index){
+    function filterInitialIndexes(indexes) {
+        return defaultDeselectedDatabases.length ? _.filter(indexes, function(index){
             return !_.has(dbSelectMap, index.name.toLowerCase());
-        }) : active;
+        }) : indexes;
     }
+
+    const navFilterToSelectedParametricValues = (parametricCollection, navFilter) => {
+        const filters = [];
+        const fieldsById = _.groupBy(
+            parametricCollection.where({ type: 'Parametric' }),
+            attrs => attrs.id.toLowerCase());
+
+        _.each(navFilter, (filterValues, filterName) => {
+            const field = (fieldsById[filterName.toLowerCase()] || [])[0];
+            if (!field) {
+                console.error('navigated parametric field not found ' +
+                    '(numeric fields are not supported): ' + filterName);
+                return;
+            }
+            const fieldValues = _.groupBy(field.get('values'),
+                details => details.value.toLowerCase());
+
+            _.each(filterValues, value => {
+                const fieldValue = (fieldValues[value.toLowerCase()] || [])[0];
+                if (fieldValue) {
+                    filters.push({
+                        type: 'Parametric',
+                        field: field.get('id'),
+                        displayName: field.get('displayName'),
+                        value: fieldValue.value,
+                        displayValue: fieldValue.displayValue
+                    });
+                } else {
+                    console.error('navigated parametric value not found: ' +
+                        filterName + '=' + value);
+                }
+            })
+        });
+        return filters;
+    };
 
     return BasePage.extend({
         className: 'search-page',
@@ -112,12 +148,11 @@ define([
                         vent.navigate(this.generateURL(), {trigger: false});
 
                         if(this.searchModel.get('inputText')) {
-                            this.toggleExpandedState(true);
-
                             // Create a tab if the user has run a search but has no open tabs
                             if(this.selectedTabModel.get('selectedSearchCid') === null) {
-                                this.createNewTab(this.searchModel.get('inputText'));
+                                this.createNewTab();
                             }
+                            this.toggleExpandedState(true);
                         }
                     });
 
@@ -249,15 +284,9 @@ define([
             }, this);
 
             // Bind routing to search model
-            this.listenTo(router, 'route:search', function(databases, text) {
+            this.listenTo(router, 'route:search', function() {
                 this.removeDocumentDetailView();
                 this.removeSuggestView();
-
-                if(this.searchModel) {
-                    this.searchModel.set({
-                        inputText: text || ''
-                    });
-                }
 
                 if(this.isExpanded()) {
                     this.$('.service-view-container').addClass('hide');
@@ -415,8 +444,8 @@ define([
                 data.view.render();
             }, this);
 
-            if (config().hasBiRole && this.selectedTabModel.get('selectedSearchCid') === null) {
-                this.createNewTab(this.lastNavigatedQueryText, this.lastNavigatedDatabases);
+            if (this.selectedTabModel.get('selectedSearchCid') === null) {
+                this.createNewTab();
             } else {
                 this.selectContentView();
             }
@@ -453,7 +482,7 @@ define([
                     },
                     createSearchModelAttributes: function (conceptGroups) {
                         return {
-                            inputString: conceptGroups.length > 0
+                            inputText: conceptGroups.length > 0
                                 ? conceptGroups.first().get('concepts')[0]
                                 : '*'
                         };
@@ -472,20 +501,65 @@ define([
             };
         },
 
-        createNewTab: function (queryText, databases) {
-            const opts = {
+        updateQueryStateFromNav: function (queryState, parametricFieldsCollection) {
+            if (this.lastNavigatedQueryText) {
+                queryState.conceptGroups.set([
+                    { concepts: this.lastNavigatedQueryText.split('\n') }
+                ]);
+                this.lastNavigatedQueryText = undefined;
+            }
+
+            if (this.lastNavigatedDatabases) {
+                queryState.selectedIndexes.set(_.filter(
+                    selectInitialIndexes(this.indexesCollection),
+                    index => _.findWhere(this.lastNavigatedDatabases, { name: index.name })
+                ));
+                this.lastNavigatedDatabases = undefined;
+            }
+
+            if (this.lastNavigatedOptions && this.lastNavigatedOptions.filter) {
+                const withFields = () => {
+                    const parametricCollection =
+                        new ParametricCollection([], { url: 'api/public/parametric/values' });
+                    const queryModel = new SavedSearchModel({
+                        indexes: selectInitialIndexes(this.indexesCollection)
+                    }).toQueryModel(this.IndexesCollection, false);
+
+                    const allFieldNames = _.pluck(
+                        parametricFieldsCollection.where({ type: 'Parametric' }), 'id');
+                    if (allFieldNames.length > 0 && queryModel.get('indexes').length > 0) {
+                        parametricCollection.fetchFromQueryModel(queryModel, {
+                            fieldNames: allFieldNames,
+                            maxValues: 100
+                        }, { reset: true });
+                    } else {
+                        parametricCollection.reset();
+                    }
+
+                    this.listenToOnce(parametricCollection, 'sync', () => {
+                        const selected = navFilterToSelectedParametricValues(
+                            parametricCollection, this.lastNavigatedOptions.filter);
+                        queryState.selectedParametricValues.set(selected);
+                        this.lastNavigatedOptions.filter = undefined;
+                    });
+                }
+
+                if (parametricFieldsCollection.isEmpty()) {
+                    this.listenToOnce(parametricFieldsCollection, 'sync', withFields);
+                } else {
+                    withFields();
+                }
+            }
+        },
+
+        createNewTab: function () {
+            const queryText = this.searchModel && this.searchModel.get('inputText');
+            const newSearch = new SavedSearchModel({
                 relatedConcepts: queryText ? [queryText.split('\n')] : [],
                 title: i18n['search.newSearch'],
                 type: SavedSearchModel.Type.QUERY,
                 minScore: config().minScore
-            };
-
-            if (databases) {
-                opts.indexes = databases;
-            }
-
-            const newSearch = new SavedSearchModel(opts);
-
+            });
             this.savedQueryCollection.add(newSearch);
             this.selectedTabModel.set('selectedSearchCid', newSearch.cid);
         },
@@ -523,51 +597,19 @@ define([
                     creating = false;
                 } else {
                     const documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
-                    const savedSelectedIndexes = savedSearchModel.toSelectedIndexes();
-                    const isExistingSavedSearch = savedSearchModel.id;
-                    const lastNavigatedDatabases = this.lastNavigatedDatabases;
 
-                    const indexFilterFn = isExistingSavedSearch ? selectInitialIndexes
-                        : lastNavigatedDatabases ? function(indexesCollection){
-                            const active = selectInitialIndexes(indexesCollection);
-                            return _.filter(active, function(index){
-                                return _.findWhere(lastNavigatedDatabases, {
-                                    name: index.name
-                                })
-                            });
-                        }
-                        : selectFilteredInitialIndexes;
-
-                    this.lastNavigatedDatabases = undefined;
-
-                    /**
-                     * @type {QueryState}
-                     */
-                    // also constructed in model/saved-searches/saved-search-model:toQueryModel
-                    const queryState = {
-                        conceptGroups: new Backbone.Collection(savedSearchModel.toConceptGroups()),
-                        minScoreModel: new MinScoreModel({minScore: 0}),
-                        datesFilterModel: new DatesFilterModel(savedSearchModel.toDatesFilterModelAttributes()),
-                        geographyModel: new GeographyModel(savedSearchModel.toGeographyModelAttributes()),
-                        documentSelectionModel: new DocumentSelectionModel(
-                            savedSearchModel.toDocumentSelectionModelAttributes()),
-                        selectedIndexes: new this.IndexesCollection(
-                            savedSelectedIndexes.length === 0
-                                ? (this.indexesCollection.isEmpty()
-                                    ? []
-                                    : indexFilterFn(this.indexesCollection))
-                                : savedSelectedIndexes
-                        ),
-                        selectedParametricValues: new SelectedParametricValuesCollection(savedSearchModel.toSelectedParametricValues())
-                    };
-
+                    const allIndexes = selectInitialIndexes(this.indexesCollection);
+                    const indexes = savedSearchModel.id ? allIndexes :
+                        filterInitialIndexes(allIndexes);
+                    savedSearchModel.set('indexes', indexes);
+                    const queryState = savedSearchModel
+                        .toQueryModel(this.IndexesCollection, false).queryState;
                     this.queryStates.set(cid, queryState);
 
                     viewData = {
                         queryState: queryState,
                         documentsCollection: documentsCollection,
                         view: new this.ServiceView(_.extend({
-                            delayedIndexesSelection: indexFilterFn,
                             documentsCollection: documentsCollection,
                             documentRenderer: this.documentRenderer,
                             indexesCollection: this.indexesCollection,
@@ -581,6 +623,9 @@ define([
                         }, this.serviceViewOptions(cid)))
                     };
                     this.serviceViews[cid] = viewData;
+
+                    this.updateQueryStateFromNav(queryState,
+                        viewData.view.parametricFieldsCollection);
 
                     this.$('.query-service-view-container').append(viewData.view.$el);
                     viewData.view.render();
@@ -712,9 +757,10 @@ define([
             return this.currentRoute;
         },
 
-        setLastNavigationOpts: function(queryText, databases) {
+        setLastNavigationOpts: function(queryText, databases, options) {
             this.lastNavigatedQueryText = queryText || false;
             this.lastNavigatedDatabases = databases || undefined;
+            this.lastNavigatedOptions = options;
         }
     });
 });

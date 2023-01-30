@@ -103,7 +103,6 @@ define([
                     this.collapsed.indexes = true;
 
                     const indexesView = new IndexesView({
-                        delayedSelection: options.delayedIndexesSelection,
                         filterModel: this.filterModel,
                         indexesCollection: options.indexesCollection,
                         queryModel: options.queryModel,

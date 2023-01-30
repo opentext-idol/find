@@ -382,7 +382,6 @@ define([
         },
 
         toQueryModel: function(IndexesCollection, autoCorrect) {
-            // also constructed in find-search:selectContentView
             const queryState = {
                 conceptGroups: new Backbone.Collection(this.toConceptGroups()),
                 minScoreModel: new Backbone.Model({minScore: 0}),

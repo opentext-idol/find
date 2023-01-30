@@ -10,6 +10,12 @@ define([
             spyOn(Backbone.history, 'getFragment').and.returnValue('');
 
             configuration.and.returnValue({
+                search: {
+                    "defaultSortOption": "relevance",
+                    "sortOptions": {
+                        "relevance": { "sort": "relevance", "label": null },
+                    }
+                },
                 savedSearchConfig: {
                     pollForUpdates: false
                 }

@@ -30,6 +30,7 @@ require.config({
         'parametric-refinement': '../bower_components/hp-autonomy-js-parametric-refinement/src',
         iCheck: '../bower_components/iCheck/icheck',
         chosen: '../bower_components/chosen/chosen.jquery',
+        qs: '../bower_components/ljharb-qs/dist/qs',
         metisMenu: '../bower_components/metisMenu/dist/metisMenu',
         jquery: '../bower_components/jquery/jquery',
         'js-whatever': '../bower_components/hp-autonomy-js-whatever/src',
