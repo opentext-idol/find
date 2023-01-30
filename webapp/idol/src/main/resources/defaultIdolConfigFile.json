@@ -299,7 +299,8 @@
       "maxTerms": 30,
       "updateProfileOnView": false
     },
-    "fetchOnDemand": false
+    "fetchOnDemand": false,
+    "urlFilterParametricMaxValues": 100
   },
   "search": {
     "defaultSortOption": "relevance",

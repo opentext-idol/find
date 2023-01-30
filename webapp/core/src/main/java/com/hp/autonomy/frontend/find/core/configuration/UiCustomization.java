@@ -57,6 +57,7 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
     private final ProfileOptions profile;
     private final Integer listViewPagingSize;
     private final Boolean fetchOnDemand;
+    private final Integer urlFilterParametricMaxValues;
 
     @Override
     public UiCustomization merge(final UiCustomization uiCustomization) {
@@ -96,6 +97,8 @@ public class UiCustomization implements ConfigurationComponent<UiCustomization> 
                                             : uiCustomization.profile)
                 .listViewPagingSize(listViewPagingSize != null ? listViewPagingSize : uiCustomization.listViewPagingSize)
                 .fetchOnDemand(fetchOnDemand != null ? fetchOnDemand : uiCustomization.fetchOnDemand)
+                .urlFilterParametricMaxValues(urlFilterParametricMaxValues != null ?
+                    urlFilterParametricMaxValues : uiCustomization.urlFilterParametricMaxValues)
                 .build();
         }
     }

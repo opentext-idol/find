@@ -55,6 +55,8 @@ define([
     const configuration = config();
     const defaultDeselectedDatabases = _.map(configuration && configuration.uiCustomization &&
         configuration.uiCustomization.defaultDeselectedDatabases || []);
+    const URL_FILTER_PARAMETRIC_MAX_VALUES = configuration.uiCustomization &&
+        configuration.uiCustomization.urlFilterParametricMaxValues || 100
 
     const dbSelectMap = _.reduce(defaultDeselectedDatabases, function(acc, val){
         acc[val.toLowerCase()] = false;
@@ -530,7 +532,7 @@ define([
                     if (allFieldNames.length > 0 && queryModel.get('indexes').length > 0) {
                         parametricCollection.fetchFromQueryModel(queryModel, {
                             fieldNames: allFieldNames,
-                            maxValues: 100
+                            maxValues: URL_FILTER_PARAMETRIC_MAX_VALUES
                         }, { reset: true });
                     } else {
                         parametricCollection.reset();
