@@ -164,6 +164,7 @@ define([
 
             const subViewArguments = {
                 configuration: configuration(),
+                delayedIndexesSelection: options.delayedIndexesSelection,
                 documentsCollection: this.documentsCollection,
                 documentRenderer: options.documentRenderer,
                 indexesCollection: this.indexesCollection,

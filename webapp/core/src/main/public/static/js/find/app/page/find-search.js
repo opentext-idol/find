@@ -512,10 +512,16 @@ define([
             }
 
             if (this.lastNavigatedDatabases) {
-                queryState.selectedIndexes.set(_.filter(
-                    selectInitialIndexes(this.indexesCollection),
-                    index => _.findWhere(this.lastNavigatedDatabases, { name: index.name })
-                ));
+                const navDbs = this.lastNavigatedDatabases;
+                this.delayedGetIndexes = collection => {
+                    return _.filter(
+                        selectInitialIndexes(collection),
+                        index => _.find(navDbs, navDb => {
+                            return navDb.name.toLowerCase() === index.name.toLowerCase();
+                        })
+                    );
+                };
+                queryState.selectedIndexes.set(this.delayedGetIndexes(this.indexesCollection));
                 this.lastNavigatedDatabases = undefined;
             }
 
@@ -601,9 +607,9 @@ define([
                     const documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
 
                     const allIndexes = selectInitialIndexes(this.indexesCollection);
-                    const indexes = savedSearchModel.id ? allIndexes :
-                        filterInitialIndexes(allIndexes);
-                    savedSearchModel.set('indexes', indexes);
+                    this.delayedGetIndexes = savedSearchModel.id ? selectInitialIndexes :
+                            collection => filterInitialIndexes(selectInitialIndexes(collection));
+                    savedSearchModel.set('indexes', this.delayedGetIndexes(this.indexesCollection));
                     const queryState = savedSearchModel
                         .toQueryModel(this.IndexesCollection, false).queryState;
                     this.queryStates.set(cid, queryState);
@@ -612,6 +618,7 @@ define([
                         queryState: queryState,
                         documentsCollection: documentsCollection,
                         view: new this.ServiceView(_.extend({
+                            delayedIndexesSelection: collection => this.delayedGetIndexes(collection),
                             documentsCollection: documentsCollection,
                             documentRenderer: this.documentRenderer,
                             indexesCollection: this.indexesCollection,
