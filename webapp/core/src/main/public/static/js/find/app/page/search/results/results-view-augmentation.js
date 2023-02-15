@@ -78,6 +78,10 @@ define([
             });
 
             this.listenTo(this.scrollModel, 'change', this.scrollFollow);
+
+            this.listenTo(this.queryModel, 'change', () => {
+                this.previewModeModel.set({ mode: null });
+            });
         },
 
         render: function() {
