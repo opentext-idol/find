@@ -12,7 +12,6 @@ define([
     'find/app/model/dates-filter-model',
     'find/app/model/geography-model',
     'find/app/model/document-selection-model',
-    'find/app/model/parametric-collection',
     'find/app/model/query-model',
     './search/document-renderer',
     'parametric-refinement/selected-values-collection',
@@ -38,7 +37,7 @@ define([
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/find-search.html'
 ], function(_, $, Backbone, BasePage, config, DatesFilterModel, GeographyModel,
-            DocumentSelectionModel, ParametricCollection, QueryModel, DocumentRenderer, SelectedParametricValuesCollection,
+            DocumentSelectionModel, QueryModel, DocumentRenderer, SelectedParametricValuesCollection,
             DocumentsCollection, InputView, queryTextStrategy, TabbedSearchView, MergeCollection,
             SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel, QueryTextModel, DocumentModel,
             DocumentContentView, DocumentDetailContentView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver,
@@ -55,8 +54,6 @@ define([
     const configuration = config();
     const defaultDeselectedDatabases = _.map(configuration && configuration.uiCustomization &&
         configuration.uiCustomization.defaultDeselectedDatabases || []);
-    const URL_FILTER_PARAMETRIC_MAX_VALUES = configuration.uiCustomization &&
-        configuration.uiCustomization.urlFilterParametricMaxValues || 100
 
     const dbSelectMap = _.reduce(defaultDeselectedDatabases, function(acc, val){
         acc[val.toLowerCase()] = false;
@@ -80,10 +77,10 @@ define([
         }) : indexes;
     }
 
-    const navFilterToSelectedParametricValues = (parametricCollection, navFilter) => {
+    const navFilterToSelectedParametricValues = (parametricFieldsCollection, navFilter) => {
         const filters = [];
         const fieldsById = _.groupBy(
-            parametricCollection.where({ type: 'Parametric' }),
+            parametricFieldsCollection.where({ type: 'Parametric' }),
             attrs => attrs.id.toLowerCase());
 
         _.each(navFilter, (filterValues, filterName) => {
@@ -93,23 +90,15 @@ define([
                     '(numeric fields are not supported): ' + filterName);
                 return;
             }
-            const fieldValues = _.groupBy(field.get('values'),
-                details => details.value.toLowerCase());
 
             _.each(filterValues, value => {
-                const fieldValue = (fieldValues[value.toLowerCase()] || [])[0];
-                if (fieldValue) {
-                    filters.push({
-                        type: 'Parametric',
-                        field: field.get('id'),
-                        displayName: field.get('displayName'),
-                        value: fieldValue.value,
-                        displayValue: fieldValue.displayValue
-                    });
-                } else {
-                    console.error('navigated parametric value not found: ' +
-                        filterName + '=' + value);
-                }
+                filters.push({
+                    type: 'Parametric',
+                    field: field.get('id'),
+                    displayName: field.get('displayName'),
+                    value: value.toUpperCase(),
+                    displayValue: value.toUpperCase()
+                });
             })
         });
         return filters;
@@ -527,29 +516,10 @@ define([
 
             if (this.lastNavigatedOptions && this.lastNavigatedOptions.filter) {
                 const withFields = () => {
-                    const parametricCollection =
-                        new ParametricCollection([], { url: 'api/public/parametric/values' });
-                    const queryModel = new SavedSearchModel({
-                        indexes: selectInitialIndexes(this.indexesCollection)
-                    }).toQueryModel(this.IndexesCollection, false);
-
-                    const allFieldNames = _.pluck(
-                        parametricFieldsCollection.where({ type: 'Parametric' }), 'id');
-                    if (allFieldNames.length > 0 && queryModel.get('indexes').length > 0) {
-                        parametricCollection.fetchFromQueryModel(queryModel, {
-                            fieldNames: allFieldNames,
-                            maxValues: URL_FILTER_PARAMETRIC_MAX_VALUES
-                        }, { reset: true });
-                    } else {
-                        parametricCollection.reset();
-                    }
-
-                    this.listenToOnce(parametricCollection, 'sync', () => {
-                        const selected = navFilterToSelectedParametricValues(
-                            parametricCollection, this.lastNavigatedOptions.filter);
-                        queryState.selectedParametricValues.set(selected);
-                        this.lastNavigatedOptions.filter = undefined;
-                    });
+                    const selected = navFilterToSelectedParametricValues(
+                        parametricFieldsCollection, this.lastNavigatedOptions.filter);
+                    queryState.selectedParametricValues.set(selected);
+                    this.lastNavigatedOptions.filter = undefined;
                 }
 
                 if (parametricFieldsCollection.isEmpty()) {

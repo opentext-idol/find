@@ -49,7 +49,7 @@ define([
                 const $target = $(e.currentTarget);
                 const $field = $target.closest('[data-field]');
 
-                const attributes = {
+                const newAttrs = {
                     field: $field.attr('data-field'),
                     displayName: $field.attr('data-field-display-name'),
                     value: $target.attr('data-value'),
@@ -57,10 +57,14 @@ define([
                     type: 'Parametric'
                 };
 
-                if(this.selectedParametricValues.get(attributes)) {
-                    this.selectedParametricValues.remove(attributes);
+                const model = this.selectedParametricValues.find(model => {
+                    return model.get('field') === newAttrs.field &&
+                        model.get('value').toLowerCase() === newAttrs.value.toLowerCase();
+                })
+                if (model) {
+                    this.selectedParametricValues.remove(model);
                 } else {
-                    this.selectedParametricValues.add(attributes);
+                    this.selectedParametricValues.add(newAttrs);
                 }
             }
         },
