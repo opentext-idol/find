@@ -482,7 +482,7 @@ define([
                         return function () {
                             const inputText = options.searchModel.get('inputText');
                             if (inputText && inputText !== '*') {
-                                options.queryState.conceptGroups.set([{concepts: [inputText], hidden: true}]);
+                                options.queryState.conceptGroups.set([{concepts: [inputText]}]);
                             } else {
                                 options.queryState.conceptGroups.reset();
                             }
