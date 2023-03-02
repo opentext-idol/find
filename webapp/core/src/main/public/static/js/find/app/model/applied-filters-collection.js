@@ -26,8 +26,8 @@ define([
             i18n, i18nIndexes) {
     'use strict';
 
-    const DATE_FORMAT = 'YYYY-MM-DD HH:mm';
-    const SHORT_DATE_FORMAT = 'YYYY-MM-DD';
+    const DATE_FORMAT = 'L LT';
+    const SHORT_DATE_FORMAT = 'L';
     const DATE_SHORTEN_CUTOFF = 7 * 24 * 3600 * 1000; // interval in millseconds at which date format changes to short
 
     const FilterType = {

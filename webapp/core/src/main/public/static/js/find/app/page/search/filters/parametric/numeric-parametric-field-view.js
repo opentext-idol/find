@@ -44,6 +44,7 @@ define([
     const ZOOM_IN_RATIO = 1.4;
     const ZOOM_OUT_RATIO = 1.96;
     const PAN_RATIO = 0.3;
+    const DEFAULTS_DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
     function sum(a, b) {
         return a + b;
@@ -165,10 +166,7 @@ define([
             const formatting = this.type === 'NumericDate'
                 ? NumericParametricFieldView.dateFormatting
                 : NumericParametricFieldView.defaultFormatting;
-            this.formatValue = function(value) {
-                const range = this.model.getRange();
-                return formatting.format(value, range.min, range.max);
-            }.bind(this);
+            this.formatValue = formatting.format;
             this.parseValue = formatting.parse;
             this.renderCustomFormatting = formatting.render;
             this.parseBoundarySelection = formatting.parseBoundarySelection;
@@ -466,8 +464,8 @@ define([
             const defaultsModel = this.fieldDetailsModel.has('min') ?
                 this.fieldDetailsModel : this.model;
             const defaultRange = {
-                min: this.parseValue(defaultsModel.get('min')),
-                max: this.parseValue(defaultsModel.get('max'))
+                min: moment(defaultsModel.get('min'), DEFAULTS_DATE_FORMAT).valueOf(),
+                max: moment(defaultsModel.get('max'), DEFAULTS_DATE_FORMAT).valueOf()
             };
 
             let range;

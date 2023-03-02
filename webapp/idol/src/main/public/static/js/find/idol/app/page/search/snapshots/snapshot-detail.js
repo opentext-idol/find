@@ -19,7 +19,7 @@ define([
     'moment'
 ], function(i18n, snapshotsI18n, configuration, moment) {
 
-    var DATE_FORMAT = 'YYYY/MM/DD HH:mm';
+    var DATE_FORMAT = 'L LT';
 
     /**
      * Target attributes and an attributes processor for the "Snapshot" {@link DataPanelView}.

@@ -1,5 +1,5 @@
-define([], function () {
-    const DATE_WIDGET_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+define(['moment'], function (moment) {
+    const DATE_WIDGET_FORMAT = moment.localeData().longDateFormat('L') + ' ' + moment.localeData().longDateFormat('LTS');
     const render = function ($el, onSubmit) {
         $el.datetimepicker({
             format: DATE_WIDGET_FORMAT,

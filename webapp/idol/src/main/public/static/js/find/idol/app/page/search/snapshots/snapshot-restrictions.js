@@ -21,7 +21,7 @@ define([
     'find/app/model/document-selection-model'
 ], function(rounder, i18n, indexesI18n, snapshotsI18n, _, moment, DocumentSelectionModel) {
 
-    const DATE_FORMAT = 'YYYY/MM/DD HH:mm';
+    const DATE_FORMAT = 'L LT';
 
     function dateRestriction(title, date) {
         return date ? {title: title, content: date.format(DATE_FORMAT)} : null;

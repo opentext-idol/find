@@ -14,7 +14,7 @@ define([
             return value;
         }
 
-        const format = options.hash.dateFormat || 'DD-MM-YYYY';
+        const format = options.hash.dateFormat || 'L';
         const hideSuffix = options.hash.hideSuffix;
 
         const roundFn = roundFunctions(options.hash.round);
