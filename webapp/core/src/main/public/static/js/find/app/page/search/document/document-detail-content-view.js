@@ -40,6 +40,14 @@ define([
             'shown.bs.tab a[data-toggle=tab]': function(event) {
                 const tab = this.tabs[$(event.target).parent().index()];
                 tab.view.render();
+            },
+            'click .tabs-container-toggle': function(event) {
+                const $toggle = $(event.currentTarget);
+                const $tabs = this.$('.document-detail-tabs-container');
+                const hide = !$tabs.hasClass('hide');
+                $tabs.toggleClass('hide', hide);
+                $tabs.toggleClass('small-container', hide);
+                $toggle.toggleClass('fa-rotate-180', hide);
             }
         },
 
