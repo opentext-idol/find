@@ -32,9 +32,9 @@ define([
         },
         smallLogo: {
             defaultImage: '/img/Find_Logo_sml.png',
-            height: 20,
+            height: 22,
             type: 'SMALL_LOGO',
-            width: 100
+            width: 153
         }
     };
 

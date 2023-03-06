@@ -3,11 +3,11 @@ Upstream-Name: find-ansible
 Source: https://github.com/microfocus-idol/find
 
 Files: *
-Copyright: 2014-2020 Micro Focus or one of its affiliates <microfocus-idol-oss@groups.ext.hpe.com>
+Copyright: 2014-2023 Open Text or one of its affiliates
 License: MIT
 The MIT License (MIT)
 .
-Copyright (c) 2014-2020 Micro Focus or one of its affiliates.
+Copyright (c) 2014-2023 Open Text or one of its affiliates.
 .
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

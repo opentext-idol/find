@@ -10,7 +10,7 @@ define([
 
     return substitution({
         'about.app.version': 'Version',
-        'about.copyright': "Find © Copyright 2014-2020 Micro Focus or one of its affiliates.",
+        'about.copyright': "Find © Copyright 2014-2023 Open Text or one of its affiliates.",
         'about.foss': 'FOSS Acknowledgements',
         'about.lib.name': 'Library Name',
         'about.lib.version': 'Version',
@@ -37,7 +37,7 @@ define([
         'app.logout': 'Logout',
         'app.less': "less",
         'app.more': "more",
-        'app.name': "Micro Focus Find",
+        'app.name': "Open Text Find",
         'app.ok': 'OK',
         'app.rename': 'Rename',
         'app.reset': 'Reset',
@@ -563,7 +563,7 @@ define([
         'settings.statsserver.enabled': 'Statistics Collection is enabled',
         'settings.statsserver.title': 'StatsServer',
         'settings.statsserver.validation.CONNECTION_ERROR': 'An error occurred while contacting the StatsServer',
-        'settings.statsserver.validation.INVALID_CONFIGURATION': 'The StatsServer is not configured correctly for Micro Focus Find',
+        'settings.statsserver.validation.INVALID_CONFIGURATION': 'The StatsServer is not configured correctly for Open Text Find',
         'settings.test': 'Test Connection',
         'settings.test.ok': 'Connection OK',
         'settings.test.databaseBlank': 'Database must not be blank!',
