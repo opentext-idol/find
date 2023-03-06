@@ -112,14 +112,14 @@ define([
             }
 
             response.thumbnail = getFieldValue(response.fieldMap.thumbnail);
-            response.thumbnailUrl = getFieldValue(response.fieldMap.thumbnailUrl);
-            response.contentType = getFieldValue(response.fieldMap.contentType);            
+            response.thumbnailUrl = getFieldValue(response.fieldMap.thumbnailurl);
+            response.contentType = getFieldValue(response.fieldMap.contenttype);
             response.offset = getFieldValue(response.fieldMap.offset);
-            response.mmapEventSourceType = getFieldValue(response.fieldMap.mmapEventSourceType);
-            response.mmapEventSourceName = getFieldValue(response.fieldMap.mmapEventSourceName);
-            response.mmapEventTime = getFieldValue(response.fieldMap.mmapEventTime);
-            response.mmapUrl = getFieldValue(response.fieldMap.mmapUrl);
-            response.sourceType = getFieldValue(response.fieldMap.sourceType);
+            response.mmapEventSourceType = getFieldValue(response.fieldMap.mmapeventsourcetype);
+            response.mmapEventSourceName = getFieldValue(response.fieldMap.mmapeventsourcename);
+            response.mmapEventTime = getFieldValue(response.fieldMap.mmapeventtime);
+            response.mmapUrl = getFieldValue(response.fieldMap.mmapurl);
+            response.sourceType = getFieldValue(response.fieldMap.sourcetype);
             response.transcript = getFieldValue(response.fieldMap.transcript);
 
             response.url = getFieldValue(response.fieldMap.url) || (isURL(response.reference) ? response.reference : '');
@@ -130,7 +130,7 @@ define([
                         let locations = [];
 
                         if (field.geoindexField) {
-                            const wellKnownText = getFieldValues(response.fieldMap[field.geoindexField]);
+                            const wellKnownText = getFieldValues(response.fieldMap[field.geoindexField.toLowerCase()]);
 
                             _.each(wellKnownText, function(text){
                                 try {
@@ -152,8 +152,8 @@ define([
                             });
                         }
                         else {
-                            const latitudes = getFieldValues(response.fieldMap[field.latitudeField]);
-                            const longitudes = getFieldValues(response.fieldMap[field.longitudeField]);
+                            const latitudes = getFieldValues(response.fieldMap[field.latitudeField.toLowerCase()]);
+                            const longitudes = getFieldValues(response.fieldMap[field.longitudeField.toLowerCase()]);
 
                             _.each(_.zip(latitudes, longitudes), function(coordinates){
                                 locations.push({

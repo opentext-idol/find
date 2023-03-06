@@ -34,15 +34,15 @@ define([
                     displayName: 'Author',
                     values: [{value: 'Humbert', displayValue: 'Humbert'}, {value: 'Gereon', displayValue: 'Gereon'}]
                 },
-                LONGITUDE: {type: 'NUMBER', displayName: 'Longitude', values: [{value: 52.5, displayValue: '52.5'}]},
-                LATITUDE: {type: 'NUMBER', displayName: 'Latitude', values: [{value: 42.2, displayValue: '42.2'}]},
+                longitude: {type: 'NUMBER', displayName: 'Longitude', values: [{value: 52.5, displayValue: '52.5'}]},
+                latitude: {type: 'NUMBER', displayName: 'Latitude', values: [{value: 42.2, displayValue: '42.2'}]},
                 thumbnail: {
                     type: 'STRING',
                     displayName: 'thumbnail',
                     values: [{value: THUMBNAIL, displayValue: THUMBNAIL}]
                 },
-                datePublished: {type: 'DATE', displayName: 'Date Published', values: [{value: DATE_PUBLISHED_SECONDS}]},
-                sourceType: {
+                datepublished: {type: 'DATE', displayName: 'Date Published', values: [{value: DATE_PUBLISHED_SECONDS}]},
+                sourcetype: {
                     type: 'STRING',
                     displayName: 'sourceType',
                     values: [{value: SOURCETYPE, displayValue: SOURCETYPE}]
@@ -52,7 +52,7 @@ define([
                     displayName: 'transcript',
                     values: [{value: TRANSCRIPT, displayValue: TRANSCRIPT}]
                 },
-                aRecord: {
+                arecord: {
                     type: 'RECORD',
                     displayName: 'a record',
                     values: [{ value: { record: 'value' }, displayValue: 'the record' }]
