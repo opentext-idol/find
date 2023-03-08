@@ -63,14 +63,14 @@
         <repository>
             <id>cmbg-maven-releases</id>
             <url>
-                http://cbgmaven.hpeswlab.net/nexus/content/repositories/releases
+                http://cmbg-maven.swinfra.net/nexus/content/repositories/releases
             </url>
             <uniqueVersion>false</uniqueVersion>
         </repository>
         <snapshotRepository>
             <id>cmbg-maven-snapshots</id>
             <url>
-                http://cbgmaven.hpeswlab.net/nexus/content/repositories/snapshots
+                http://cmbg-maven.swinfra.net/nexus/content/repositories/snapshots
             </url>
             <uniqueVersion>true</uniqueVersion>
         </snapshotRepository>
