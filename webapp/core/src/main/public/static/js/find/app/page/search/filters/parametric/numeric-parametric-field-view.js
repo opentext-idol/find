@@ -166,7 +166,10 @@ define([
             const formatting = this.type === 'NumericDate'
                 ? NumericParametricFieldView.dateFormatting
                 : NumericParametricFieldView.defaultFormatting;
-            this.formatValue = formatting.format;
+            this.formatValue = function(value) {
+                const range = this.model.getRange();
+                return formatting.format(value, range.min, range.max);
+            }.bind(this);
             this.parseValue = formatting.parse;
             this.renderCustomFormatting = formatting.render;
             this.parseBoundarySelection = formatting.parseBoundarySelection;
