@@ -22,7 +22,8 @@ define([
     'find/app/util/filtering-collection',
     'i18n!find/nls/bundle',
     'js-whatever/js/list-view',
-    'text!find/templates/app/page/search/concept-view.html'
+    'text!find/templates/app/page/search/concept-view.html',
+    'iCheck'
 ], function(_, $, AbstractSectionView, ConceptClusterView, InputView, conceptStrategy, FilteringCollection,
             i18n, ListView, template) {
     'use strict';
@@ -38,12 +39,21 @@ define([
             'click .concept-remove-icon': function(event) {
                 const cid = $(event.currentTarget).closest('.selected-related-concept').attr('data-cluster-cid');
                 this.conceptGroups.remove(cid);
+            },
+
+            'ifChanged .concept-view-crosslingual-ontology': function (event) {
+                this.queryState.crosslingualOntology.set({ enabled: event.target.checked });
+            },
+
+            'ifChanged .concept-view-crosslingual-index': function (event) {
+                this.queryState.crosslingualIndex.set({ enabled: event.target.checked });
             }
         },
 
         initialize: function(options) {
             AbstractSectionView.prototype.initialize.apply(this, arguments);
 
+            this.queryState = options.queryState;
             this.conceptGroups = options.queryState.conceptGroups;
 
             const optionalViews = [{
@@ -79,8 +89,13 @@ define([
                     concepts: 'updateConcepts'
                 }
             });
+            this.crosslingualView = null;
 
             this.listenTo(this.conceptGroups, 'update reset', this.updateEmpty);
+            this.listenTo(this.queryState.crosslingualOntology, 'change',
+                this.updateCrosslingualOntology);
+            this.listenTo(this.queryState.crosslingualIndex, 'change',
+                this.updateCrosslingualIndex);
         },
 
         render: function() {
@@ -94,13 +109,29 @@ define([
             }, this);
 
             this.listView.setElement(this.$('.concept-view-concepts')).render();
+
+            this.$('.concept-view-crosslingual-ontology').iCheck({ checkboxClass: 'icheckbox-hp' });
+            this.$('.concept-view-crosslingual-index').iCheck({ checkboxClass: 'icheckbox-hp' });
+
             this.updateEmpty();
+            this.updateCrosslingualOntology();
+            this.updateCrosslingualIndex();
         },
 
         updateEmpty: function() {
             const empty = this.filteringCollection.isEmpty();
             this.listView.$el.toggleClass('hide', empty);
             this.$('.concept-view-empty-message').toggleClass('hide', !empty);
+        },
+
+        updateCrosslingualOntology: function () {
+            this.$('.concept-view-crosslingual-ontology').iCheck(
+                this.queryState.crosslingualOntology.get('enabled') ? 'check' : 'uncheck');
+        },
+
+        updateCrosslingualIndex: function () {
+            this.$('.concept-view-crosslingual-index').iCheck(
+                this.queryState.crosslingualIndex.get('enabled') ? 'check' : 'uncheck');
         },
 
         remove: function() {

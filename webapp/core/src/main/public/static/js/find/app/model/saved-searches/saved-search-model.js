@@ -390,7 +390,9 @@ define([
                 documentSelectionModel:
                     new DocumentSelectionModel(this.toDocumentSelectionModelAttributes()),
                 selectedIndexes: new IndexesCollection(this.get('indexes')),
-                selectedParametricValues: new SelectedParametricValuesCollection(this.toSelectedParametricValues())
+                selectedParametricValues: new SelectedParametricValuesCollection(this.toSelectedParametricValues()),
+                crosslingualOntology: new Backbone.Model({ enabled: false }),
+                crosslingualIndex: new Backbone.Model({ enabled: false })
             };
 
             return new QueryModel({

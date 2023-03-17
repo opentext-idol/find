@@ -49,19 +49,19 @@ public abstract class AbstractDocumentsControllerTest<RQ extends QueryRequest<Q>
 
     @Test
     public void query() throws E {
-        documentsController.query("Some query text", 1, 30, null, Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.MODIFIED.name());
+        documentsController.query("Some query text", 1, 30, null, Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.MODIFIED.name(), false, false);
         verify(documentsService).queryTextIndex(any());
     }
 
     @Test
     public void queryForPromotions() throws E {
-        documentsController.query("Some query text", 1, 30, null, Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.PROMOTIONS.name());
+        documentsController.query("Some query text", 1, 30, null, Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.PROMOTIONS.name(), false, false);
         verify(documentsService).queryTextIndex(any());
     }
 
     @Test
     public void queryPaginationTest() throws E {
-        documentsController.query("Some query text", 30, 60, null, Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.MODIFIED.name());
+        documentsController.query("Some query text", 30, 60, null, Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.MODIFIED.name(), false, false);
         verify(documentsService).queryTextIndex(any());
     }
 
