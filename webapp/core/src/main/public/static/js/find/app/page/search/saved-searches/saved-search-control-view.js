@@ -290,7 +290,8 @@ define([
                 searchTypes: saveAsSearchTypes,
                 showOpenAsQuery: !isMutable,
                 showApplyPolicy: configuration().nifiEnabled || configuration().controlPointEnabled,
-                readOnly: this.savedSearchModel.get('type').indexOf('READ_ONLY') !== -1
+                readOnly: this.savedSearchModel.get('type').indexOf('READ_ONLY') !== -1,
+                sharingEnabled: configuration().savedSearchConfig.sharingEnabled
             }));
 
             this.renderTitleInput();

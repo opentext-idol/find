@@ -14,9 +14,15 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
+import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
+import com.hp.autonomy.frontend.find.core.test.MockConfig;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
@@ -49,9 +55,19 @@ public class SharedToUserControllerTest {
 
     @MockBean
     private UserEntityService userEntityService;
+    @MockBean
+    private ConfigService<FindConfig<?, ?>> configService;
+    @MockBean
+    private FindConfig<?, ?> config;
 
     @Autowired
     private SharedToUserController controller;
+
+    @Before
+    public void setUp() {
+        Mockito.doReturn(config).when(configService).getConfig();
+        Mockito.doReturn(new SavedSearchConfig.Builder().build()).when(config).getSavedSearchConfig();
+    }
 
     @Test
     public void getPermittedUsersForSearch() {

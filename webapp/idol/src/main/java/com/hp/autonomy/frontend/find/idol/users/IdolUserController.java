@@ -52,6 +52,10 @@ public class IdolUserController {
     @RequestMapping(value = SEARCH_PATH, method= RequestMethod.GET)
     @ResponseBody
     public List<String> searchUsers(@RequestParam(PARAMETER_SEARCH_TEXT) final String searchText, @RequestParam(PARAMETER_START_USER) final int startUser, @RequestParam(PARAMETER_MAX_USERS) final int maxUsers) {
+        // this is an important check for security reasons
+        if (!configService.getConfig().getSavedSearchConfig().getSharingEnabled()) {
+            throw new IllegalArgumentException("Saved search sharing is disabled");
+        }
         final UserDetails details =
             idolUserSearchService.searchUser(searchText, startUser, maxUsers);
         return details.getUser().stream()

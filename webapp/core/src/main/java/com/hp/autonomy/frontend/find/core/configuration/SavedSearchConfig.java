@@ -28,10 +28,17 @@ import lombok.experimental.Accessors;
 public class SavedSearchConfig implements OptionalConfigurationComponent<SavedSearchConfig> {
     private final Boolean pollForUpdates;
     private final Integer pollingInterval;
+    private final Boolean sharingEnabled;
 
     private SavedSearchConfig(final Builder builder) {
         pollForUpdates = builder.pollForUpdates;
         pollingInterval = builder.pollingInterval;
+        sharingEnabled = builder.sharingEnabled;
+    }
+
+    public Boolean getSharingEnabled() {
+        // backwards compatibility: default to true
+        return sharingEnabled == null ? true : sharingEnabled;
     }
 
     @Override
@@ -40,6 +47,7 @@ public class SavedSearchConfig implements OptionalConfigurationComponent<SavedSe
                 new SavedSearchConfig.Builder()
                         .setPollForUpdates(pollForUpdates == null ? savedSearchConfig.pollForUpdates : pollForUpdates)
                         .setPollingInterval(pollingInterval == null ? savedSearchConfig.pollingInterval : pollingInterval)
+                        .setSharingEnabled(sharingEnabled == null ? savedSearchConfig.sharingEnabled : sharingEnabled)
                         .build()
                 : this;
     }
@@ -61,6 +69,7 @@ public class SavedSearchConfig implements OptionalConfigurationComponent<SavedSe
     @Accessors(chain = true)
     @JsonPOJOBuilder(withPrefix = "set")
     public static class Builder {
+        private Boolean sharingEnabled;
         private Boolean pollForUpdates;
         private Integer pollingInterval;
 

@@ -145,7 +145,8 @@
   },
   "savedSearches": {
     "pollForUpdates": true,
-    "pollingInterval": 5
+    "pollingInterval": 5,
+    "sharingEnabled": true
   },
   "sunburst": {
     "allowMultipleDatabases": true

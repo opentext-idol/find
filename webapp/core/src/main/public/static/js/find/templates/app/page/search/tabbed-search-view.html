@@ -1,5 +1,6 @@
 <ul class="nav nav-tabs search-tabs-list p-t-xs" role="tablist"></ul>
 
+<% if (searchSharingEnabled) { %>
 <div class="btn-group btn-group-sm js-shared-by-others-dropdown shared-by-others m-r-xs m-l-sm clickable">
     <div class="dropdown-toggle" data-toggle="dropdown">
         <span class="shorten"><%-i18n['search.savedSearchControl.sharedByOthers']%></span>
@@ -8,3 +9,4 @@
     </div>
     <ul class="dropdown-menu js-shared-by-others-dropdown-list"></ul>
 </div>
+<% } %>

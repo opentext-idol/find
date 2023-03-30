@@ -5,7 +5,10 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
+import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
@@ -25,13 +28,13 @@ import static com.hp.autonomy.frontend.find.core.savedsearches.SharedToUserContr
 class SharedToEveryoneController {
     static final String PERMISSIONS_PATH = "/everyone/permissions";
 
-    private final SharedToEveryoneRepository sharedToEveryoneRepository;
+    @Autowired private ConfigService<? extends FindConfig<?, ?>> configService;
+    @Autowired private SharedToEveryoneRepository sharedToEveryoneRepository;
 
-    @Autowired
-    public SharedToEveryoneController(
-            final SharedToEveryoneRepository sharedToEveryoneRepository
-    ) {
-        this.sharedToEveryoneRepository = sharedToEveryoneRepository;
+    private void checkEnabled() {
+        if (!configService.getConfig().getSavedSearchConfig().getSharingEnabled()) {
+            throw new IllegalArgumentException("Saved search sharing is disabled");
+        }
     }
 
     @RequestMapping(value = PERMISSIONS_PATH + "/{"+SEARCH_ID_PARAM+"}", method = RequestMethod.GET)
@@ -39,6 +42,7 @@ class SharedToEveryoneController {
     public SharedToEveryone getPermissionsForSearch(
             @PathVariable(SEARCH_ID_PARAM) final Long searchId
     ) {
+        checkEnabled();
         return sharedToEveryoneRepository.findOneBySavedSearch_Id(searchId);
     }
 
@@ -48,6 +52,7 @@ class SharedToEveryoneController {
             @RequestBody final SharedToEveryone sharedToEveryone,
             @PathVariable(SEARCH_ID_PARAM) final long searchId
     ) {
+        checkEnabled();
         sharedToEveryone.setId(new SharedToEveryonePK(searchId));
 
         final SharedToEveryone existing = sharedToEveryoneRepository.findOne(sharedToEveryone.getId());
@@ -62,6 +67,7 @@ class SharedToEveryoneController {
     public void delete(
             @PathVariable(SEARCH_ID_PARAM) final long searchId
     ) {
+        checkEnabled();
         sharedToEveryoneRepository.delete(new SharedToEveryonePK(searchId));
     }
 
