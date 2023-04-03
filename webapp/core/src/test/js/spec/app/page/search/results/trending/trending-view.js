@@ -374,7 +374,7 @@ define([
                                 expect(this.view.model.get('currentMin')).toBe(tempTestMin);
                                 expect(this.view.model.get('currentMax')).not.toBe(tempTestMax);
                                 // Expect currentMax to be within two seconds of reference tempTestNow
-                                expect(args.currentMax - tempTestNow <= 2).toBe(true);
+                                expect(args.currentMax - tempTestNow <= 2000).toBe(true);
                             });
                         });
                     });

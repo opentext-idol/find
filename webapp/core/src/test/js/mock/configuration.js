@@ -23,6 +23,9 @@ define([], function() {
                 sortOptions: {
                     default: { sort: 'relevance', label: null }
                 }
+            },
+            savedSearchConfig: {
+                sharingEnabled: true
             }
         });
     };

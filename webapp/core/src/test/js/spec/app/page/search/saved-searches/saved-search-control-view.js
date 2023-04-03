@@ -189,7 +189,8 @@ define([
             configuration.and.returnValue({
                 enableSavedSearch: true,
                 nifiEnabled: true,
-                controlPointEnabled: false
+                controlPointEnabled: false,
+                savedSearchConfig: { sharingEnabled: true }
             });
 
             this.queryModel = new Backbone.Model({
@@ -961,7 +962,8 @@ define([
                 configuration.and.returnValue({
                     enableSavedSearch: true,
                     nifiEnabled: false,
-                    controlPointEnabled: true
+                    controlPointEnabled: true,
+                    savedSearchConfig: { sharingEnabled: true }
                 });
 
                 this.savedQueryCollection.add(this.savedSearchModel);
@@ -985,7 +987,8 @@ define([
                 configuration.and.returnValue({
                     enableSavedSearch: true,
                     nifiEnabled: false,
-                    controlPointEnabled: false
+                    controlPointEnabled: false,
+                    savedSearchConfig: { sharingEnabled: true }
                 });
 
                 this.savedQueryCollection.add(this.savedSearchModel);
