@@ -308,6 +308,9 @@
       "relevance": { "sort": "relevance", "label": null },
       "date": { "sort": "date", "label": null },
       "reverseDate": { "sort": "reversedate", "label": null }
+    },
+    "spellCheck": {
+      "enabled": true
     }
   },
   "users": {

@@ -457,7 +457,7 @@ define([
             return {
                 QUERY: {
                     cssClass: 'query',
-                    autoCorrect: !config().hasBiRole,
+                    autoCorrect: !config().hasBiRole && config().search.spellCheck.enabled,
                     collection: 'savedQueryCollection',
                     fetchStrategy: queryStrategy,
                     icon: 'hp-search',

@@ -14,6 +14,9 @@ define([
                     "defaultSortOption": "relevance",
                     "sortOptions": {
                         "relevance": { "sort": "relevance", "label": null },
+                    },
+                    spellCheck: {
+                        enabled: true
                     }
                 },
                 savedSearchConfig: {
