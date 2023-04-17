@@ -45,7 +45,7 @@ require.config({
         'leaflet.markercluster': '../bower_components/leaflet.markercluster/dist/leaflet.markercluster-src',
         'leaflet.markercluster.layersupport': '../bower_components/leaflet.markercluster.layersupport/src/layersupport',
         'leaflet.notransform': 'leaflet.notransform/leaflet.notransform',
-        moment: '../bower_components/moment/moment',
+        moment: '../bower_components/moment/min/moment-with-locales',
         'moment-timezone-with-data': '../bower_components/moment-timezone/builds/moment-timezone-with-data',
         Raphael: '../bower_components/raphael/raphael',
         settings: '../bower_components/hp-autonomy-settings-page/src',

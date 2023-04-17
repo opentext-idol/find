@@ -1,5 +1,6 @@
-define(['moment'], function (moment) {
-    const DATE_WIDGET_FORMAT = moment.localeData().longDateFormat('L') + ' ' + moment.localeData().longDateFormat('LTS');
+define(['underscore', 'moment'], function (_, moment) {
+    let DATE_WIDGET_FORMAT;
+
     const render = function ($el, onSubmit) {
         $el.datetimepicker({
             format: DATE_WIDGET_FORMAT,
@@ -25,7 +26,21 @@ define(['moment'], function (moment) {
             }
         });
     };
-    
+
+    const configureLocale = function () {
+        _.find(window.navigator.languages, function (lang) {
+            moment.locale(lang);
+            if (moment.locale().toLowerCase() === lang.toLowerCase()) {
+                return true;
+            }
+        });
+
+        DATE_WIDGET_FORMAT = moment.localeData().longDateFormat('L') + ' ' +
+            moment.localeData().longDateFormat('LTS');
+    }
+
+    configureLocale();
+
     return {
         DATE_WIDGET_FORMAT: DATE_WIDGET_FORMAT,
         render: render
