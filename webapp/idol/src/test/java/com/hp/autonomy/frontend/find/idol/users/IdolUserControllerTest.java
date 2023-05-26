@@ -120,4 +120,26 @@ public class IdolUserControllerTest {
         Assert.assertNull("should not include unconfigured field", user2.getFields().get("hidden"));
     }
 
+    @Test
+    public void testGetRelatedToSearch_usersWithNoFields() {
+        final User expUser = new User();
+        expUser.setUid(123);
+        expUser.setUsername("user1");
+        expUser.setLastloggedin(new Date());
+
+        final User intUser = new User();
+        intUser.setUid(7);
+        intUser.setUsername("user2");
+        intUser.setEmailaddress("user2@example.com");
+        intUser.setLastloggedin(new Date());
+
+        final List<RelatedUser> mockUsers =
+                Arrays.asList(new RelatedUser(expUser, true), new RelatedUser(intUser, false));
+        Mockito.doReturn(mockUsers).when(idolUserSearchService)
+                .getRelatedToSearch(relatedUsersConfig, "term1 term2", 33);
+
+        final List<RelatedUser> users = controller.getRelatedToSearch("term1 term2", 33);
+        Assert.assertEquals(2, users.size());
+    }
+
 }

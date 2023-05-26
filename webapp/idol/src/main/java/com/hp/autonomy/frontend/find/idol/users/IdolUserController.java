@@ -88,7 +88,7 @@ public class IdolUserController {
             sourceConfig.getUserDetailsFields()
         ) {
             final String name = allowedField.getName();
-            if (fields.containsKey(name)) {
+            if (fields != null && fields.containsKey(name)) {
                 restrictedFields.put(name, fields.get(name));
             }
         }
