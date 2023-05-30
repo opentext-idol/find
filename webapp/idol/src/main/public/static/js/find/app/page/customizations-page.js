@@ -34,7 +34,7 @@ define([
             defaultImage: '/img/Find_Logo_sml.png',
             height: 22,
             type: 'SMALL_LOGO',
-            width: 153
+            width: 144
         }
     };
 

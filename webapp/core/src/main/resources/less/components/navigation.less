@@ -17,6 +17,7 @@
 .dropdown-menu > .active > a:focus {
   background-color: @hpeNavBarColour;
   background-image: none;
+  font-color: #fff;
 }
 
 .drop-list {
@@ -40,6 +41,7 @@
   .m-b-nil;
 
   -webkit-transition: @transitAllFast;
+  background-image: linear-gradient(90deg, rgb(25, 34, 74) 0px, rgb(34, 46, 97) 25%, rgb(35, 52, 106) 65%, rgb(20, 102, 147) 90%, rgb(8, 140, 178));
   background-color: @hpeNavBarColour;
   color: @white;
   height: @navBarHeight;
@@ -103,11 +105,14 @@
   left: 160px;
 }
 
-.find-navbar .dropdown-toggle:hover,
 .find-navbar .nav li.open a.dropdown-toggle,
-.find-navbar .settings-logout a:focus,
+.find-navbar .settings-logout a:focus {
+  background-color: rgba(0, 0, 0, 0.35);
+}
+
+.find-navbar .dropdown-toggle:hover,
 .find-navbar .settings-logout a:hover {
-  background-color: @grey4;
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .hide-navbar .nav-menu-btn-container a.nav-menu-toggle-btn {
