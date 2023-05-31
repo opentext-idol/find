@@ -1,6 +1,6 @@
 {
   "name": "hp-find-core",
-  "repository": "https://github.com/microfocus-idol/find",
+  "repository": "https://github.com/opentext-idol/find",
   "private": true,
   "license": "MIT",
   "devDependencies": {

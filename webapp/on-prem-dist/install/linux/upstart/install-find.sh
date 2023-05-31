@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2023 Open Text
+# Copyright 2017 Open Text
 # Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
 
 ## INSTALLATION SETTINGS ##

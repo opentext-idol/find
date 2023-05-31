@@ -1,6 +1,15 @@
 /*
- * Copyright 2018 Micro Focus International plc.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * Copyright 2018 Open Text.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Open Text and its affiliates
+ * and licensors ("Open Text") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Open Text shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 define([
@@ -10,13 +19,12 @@ define([
 
     return substitution({
         'about.app.version': 'Version',
-        'about.copyright': "Find © Copyright 2014-2023 Open Text or one of its affiliates.",
+        'about.copyright': "Copyright 2014-2023 Open Text.",
         'about.foss': 'FOSS Acknowledgements',
         'about.lib.name': 'Library Name',
         'about.lib.version': 'Version',
         'about.lib.licence': 'License',
         'about.search': 'Search',
-        'about.tagLine': 'Handcrafted in Cambridge.',
         'about.versionString': '{0} commit {1}',
         'applications': 'Applications',
         'app.about': 'About',
@@ -37,7 +45,7 @@ define([
         'app.logout': 'Logout',
         'app.less': "less",
         'app.more': "more",
-        'app.name': "Open Text Find",
+        'app.name': "OpenText Find",
         'app.ok': 'OK',
         'app.rename': 'Rename',
         'app.reset': 'Reset',
@@ -563,7 +571,7 @@ define([
         'settings.statsserver.enabled': 'Statistics Collection is enabled',
         'settings.statsserver.title': 'StatsServer',
         'settings.statsserver.validation.CONNECTION_ERROR': 'An error occurred while contacting the StatsServer',
-        'settings.statsserver.validation.INVALID_CONFIGURATION': 'The StatsServer is not configured correctly for Open Text Find',
+        'settings.statsserver.validation.INVALID_CONFIGURATION': 'The StatsServer is not configured correctly for OpenText Find',
         'settings.test': 'Test Connection',
         'settings.test.ok': 'Connection OK',
         'settings.test.databaseBlank': 'Database must not be blank!',
