@@ -52,7 +52,7 @@ define([
         });
 
         it('displays the date created', function() {
-            expect(this.view.$el).toContainText('02/05/2016');
+            expect(this.view.$el).toContainText('05/02/2016');
         });
     });
 

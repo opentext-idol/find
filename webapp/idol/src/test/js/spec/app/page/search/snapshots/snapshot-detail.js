@@ -37,7 +37,7 @@ define([
 
             expect(output).toHaveLength(2);
             expect(output[0].title).toBe(snapshotsI18n['detail.dateCreated']);
-            expect(output[0].content).toContain('02/09/2016');
+            expect(output[0].content).toContain('09/02/2016');
             expect(output[1].title).toBe(snapshotsI18n['detail.resultCount']);
             expect(output[1].content).toEqual(25);
         });

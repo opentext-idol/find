@@ -82,7 +82,7 @@ define([
 
             expect(output).toHaveLength(2);
             expect(output[1].title).toBe(snapshotsI18n['restrictions.minDate']);
-            expect(output[1].content).toContain('02/09/2016');
+            expect(output[1].content).toContain('09/02/2016');
         });
 
         it('formats and returns a maximum date if present in the attributes', function() {
@@ -98,7 +98,7 @@ define([
 
             expect(output).toHaveLength(2);
             expect(output[1].title).toBe(snapshotsI18n['restrictions.maxDate']);
-            expect(output[1].content).toContain('02/09/2016');
+            expect(output[1].content).toContain('09/02/2016');
         });
 
         it('groups, prettifies and returns parametric values present in the attributes', function() {
