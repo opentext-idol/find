@@ -1,5 +1,4 @@
 # OpenText Find
-[![Build Status](https://travis-ci.org/microfocus-idol/find.svg?branch=master)](https://travis-ci.org/microfocus-idol/find)
 
 OpenText Find is an end user search interface for [OpenText IDOL](https://software.microfocus.com/en-us/products/information-data-analytics-idol/overview)
 
@@ -8,7 +7,7 @@ If you are an OpenText IDOL customer, Find is available to you in the OpenText B
 
 ## Documentation is on the Wiki
 
-Questions about building, running, and configuring Find, plus many more subjects, are all covered on the [GitHub Wiki](https://github.com/microfocus-idol/find/wiki)
+Questions about building, running, and configuring Find, plus many more subjects, are all covered on the [GitHub Wiki](https://github.com/opentext-idol/find/wiki)
 
 ## Is it any good?
 Yes.
