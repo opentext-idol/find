@@ -1,13 +1,13 @@
 /*
- * (c) Copyright 2015-2017 Micro Focus or one of its affiliates.
+ * Copyright 2015-2017 Open Text.
  *
  * Licensed under the MIT License (the "License"); you may not use this file
  * except in compliance with the License.
  *
- * The only warranties for products and services of Micro Focus and its affiliates
- * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * The only warranties for products and services of Open Text and its affiliates
+ * and licensors ("Open Text") are as may be set forth in the express warranty
  * statements accompanying such products and services. Nothing herein should be
- * construed as constituting an additional warranty. Micro Focus shall not be
+ * construed as constituting an additional warranty. Open Text shall not be
  * liable for technical or editorial errors or omissions contained herein. The
  * information contained herein is subject to change without notice.
  */
@@ -28,10 +28,17 @@ import lombok.experimental.Accessors;
 public class SavedSearchConfig implements OptionalConfigurationComponent<SavedSearchConfig> {
     private final Boolean pollForUpdates;
     private final Integer pollingInterval;
+    private final Boolean sharingEnabled;
 
     private SavedSearchConfig(final Builder builder) {
         pollForUpdates = builder.pollForUpdates;
         pollingInterval = builder.pollingInterval;
+        sharingEnabled = builder.sharingEnabled;
+    }
+
+    public Boolean getSharingEnabled() {
+        // backwards compatibility: default to true
+        return sharingEnabled == null ? true : sharingEnabled;
     }
 
     @Override
@@ -40,6 +47,7 @@ public class SavedSearchConfig implements OptionalConfigurationComponent<SavedSe
                 new SavedSearchConfig.Builder()
                         .setPollForUpdates(pollForUpdates == null ? savedSearchConfig.pollForUpdates : pollForUpdates)
                         .setPollingInterval(pollingInterval == null ? savedSearchConfig.pollingInterval : pollingInterval)
+                        .setSharingEnabled(sharingEnabled == null ? savedSearchConfig.sharingEnabled : sharingEnabled)
                         .build()
                 : this;
     }
@@ -61,6 +69,7 @@ public class SavedSearchConfig implements OptionalConfigurationComponent<SavedSe
     @Accessors(chain = true)
     @JsonPOJOBuilder(withPrefix = "set")
     public static class Builder {
+        private Boolean sharingEnabled;
         private Boolean pollForUpdates;
         private Integer pollingInterval;
 

@@ -1,13 +1,13 @@
 /*
- * (c) Copyright 2016-2017 Micro Focus or one of its affiliates.
+ * Copyright 2016-2017 Open Text.
  *
  * Licensed under the MIT License (the "License"); you may not use this file
  * except in compliance with the License.
  *
- * The only warranties for products and services of Micro Focus and its affiliates
- * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * The only warranties for products and services of Open Text and its affiliates
+ * and licensors ("Open Text") are as may be set forth in the express warranty
  * statements accompanying such products and services. Nothing herein should be
- * construed as constituting an additional warranty. Micro Focus shall not be
+ * construed as constituting an additional warranty. Open Text shall not be
  * liable for technical or editorial errors or omissions contained herein. The
  * information contained herein is subject to change without notice.
  */
@@ -37,7 +37,7 @@ define([
 
             expect(output).toHaveLength(2);
             expect(output[0].title).toBe(snapshotsI18n['detail.dateCreated']);
-            expect(output[0].content).toContain('02/09/2016');
+            expect(output[0].content).toContain('09/02/2016');
             expect(output[1].title).toBe(snapshotsI18n['detail.resultCount']);
             expect(output[1].content).toEqual(25);
         });

@@ -1,13 +1,13 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: find-ansible
-Source: https://github.com/microfocus-idol/find
+Source: https://github.com/opentext-idol/find
 
 Files: *
-Copyright: 2014-2023 Open Text or one of its affiliates
+Copyright: 2014-2023 Open Text
 License: MIT
 The MIT License (MIT)
 .
-Copyright (c) 2014-2023 Open Text or one of its affiliates.
+Copyright 2014-2023 Open Text.
 .
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

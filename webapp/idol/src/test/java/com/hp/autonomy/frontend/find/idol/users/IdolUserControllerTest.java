@@ -1,6 +1,15 @@
 /*
- * Copyright 2020 Micro Focus International plc.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * Copyright 2020 Open Text.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Open Text and its affiliates
+ * and licensors ("Open Text") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Open Text shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 package com.hp.autonomy.frontend.find.idol.users;
@@ -118,6 +127,28 @@ public class IdolUserControllerTest {
         Assert.assertNull("should not include configured expertise field for interested user",
             user2.getFields().get("exp_display_1"));
         Assert.assertNull("should not include unconfigured field", user2.getFields().get("hidden"));
+    }
+
+    @Test
+    public void testGetRelatedToSearch_usersWithNoFields() {
+        final User expUser = new User();
+        expUser.setUid(123);
+        expUser.setUsername("user1");
+        expUser.setLastloggedin(new Date());
+
+        final User intUser = new User();
+        intUser.setUid(7);
+        intUser.setUsername("user2");
+        intUser.setEmailaddress("user2@example.com");
+        intUser.setLastloggedin(new Date());
+
+        final List<RelatedUser> mockUsers =
+                Arrays.asList(new RelatedUser(expUser, true), new RelatedUser(intUser, false));
+        Mockito.doReturn(mockUsers).when(idolUserSearchService)
+                .getRelatedToSearch(relatedUsersConfig, "term1 term2", 33);
+
+        final List<RelatedUser> users = controller.getRelatedToSearch("term1 term2", 33);
+        Assert.assertEquals(2, users.size());
     }
 
 }

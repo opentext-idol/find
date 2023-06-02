@@ -1,13 +1,13 @@
 /*
- * (c) Copyright 2017 Micro Focus or one of its affiliates.
+ * Copyright 2017 Open Text.
  *
  * Licensed under the MIT License (the "License"); you may not use this file
  * except in compliance with the License.
  *
- * The only warranties for products and services of Micro Focus and its affiliates
- * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * The only warranties for products and services of Open Text and its affiliates
+ * and licensors ("Open Text") are as may be set forth in the express warranty
  * statements accompanying such products and services. Nothing herein should be
- * construed as constituting an additional warranty. Micro Focus shall not be
+ * construed as constituting an additional warranty. Open Text shall not be
  * liable for technical or editorial errors or omissions contained herein. The
  * information contained herein is subject to change without notice.
  */
@@ -374,7 +374,7 @@ define([
                                 expect(this.view.model.get('currentMin')).toBe(tempTestMin);
                                 expect(this.view.model.get('currentMax')).not.toBe(tempTestMax);
                                 // Expect currentMax to be within two seconds of reference tempTestNow
-                                expect(args.currentMax - tempTestNow <= 2).toBe(true);
+                                expect(args.currentMax - tempTestNow <= 2000).toBe(true);
                             });
                         });
                     });

@@ -1,13 +1,13 @@
 /*
- * (c) Copyright 2016-2017 Micro Focus or one of its affiliates.
+ * Copyright 2016-2017 Open Text.
  *
  * Licensed under the MIT License (the "License"); you may not use this file
  * except in compliance with the License.
  *
- * The only warranties for products and services of Micro Focus and its affiliates
- * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * The only warranties for products and services of Open Text and its affiliates
+ * and licensors ("Open Text") are as may be set forth in the express warranty
  * statements accompanying such products and services. Nothing herein should be
- * construed as constituting an additional warranty. Micro Focus shall not be
+ * construed as constituting an additional warranty. Open Text shall not be
  * liable for technical or editorial errors or omissions contained herein. The
  * information contained herein is subject to change without notice.
  */
@@ -16,16 +16,20 @@ define([
     'underscore',
     'jquery',
     'backbone',
+    'find/app/configuration',
     'find/app/page/search/search-tab-item-view',
     'find/app/vent',
     'js-whatever/js/list-view',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/tabbed-search-view.html',
     'text!find/templates/app/page/search/saved-search-dropdown.html'
-], function(_, $, Backbone, TabItemView, vent, ListView, i18n, template, savedSearchDropdownTemplate) {
+], function(_, $, Backbone, configuration, TabItemView, vent, ListView, i18n, template, savedSearchDropdownTemplate) {
     'use strict';
 
-    const html = _.template(template)({i18n: i18n});
+    const html = _.template(template)({
+        i18n: i18n,
+        searchSharingEnabled: configuration().savedSearchConfig.sharingEnabled
+    });
     const startNewSearchHtml = _.template('<li class="start-new-search m-t-xs m-l-sm m-r-sm" data-toggle="tooltip" data-placement="bottom" title="<%-i18n[\'search.newTab.tooltip\']%>"><a><i class="hp-icon hp-add"></i></a></li>')({i18n: i18n});
     const shownTabsSelector = '.nav-tabs > li';
     const menuTabsSelector = '.js-saved-searches-tabs-dropdown .dropdown-menu > li';

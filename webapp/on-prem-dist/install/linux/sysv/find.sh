@@ -1,7 +1,16 @@
 #!/bin/bash
 #
-# © Copyright 2017 Micro Focus International plc.
-# Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+# Copyright 2017 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
 #
 # find		Start up the Find server daemon
 #
@@ -22,7 +31,7 @@ EXECUTABLE="${FIND_INSTALL_DIR}/${NAME}.war"
 JAVA_BIN="/usr/bin/java"
 
 ## Don't change these
-PRODUCT_NAME="Open Text Find"
+PRODUCT_NAME="OpenText Find"
 LOCKFILE="/var/lock/${NAME}.pid"
 STARTUP_LOG="${FIND_INSTALL_DIR}/console.log"
 ARGS=("-Didol.find.home=${FIND_HOME_DIR}" "-Dlogging.path=${FIND_LOGGING_DIR}" "-Dserver.port=${FIND_PORT}" "-jar" "${EXECUTABLE}")

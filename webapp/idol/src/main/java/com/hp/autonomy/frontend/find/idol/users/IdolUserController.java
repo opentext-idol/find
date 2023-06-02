@@ -1,6 +1,15 @@
 /*
- * Copyright 2017, 2020 Micro Focus International plc.
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License.
+ * Copyright 2017, 2020 Open Text.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file
+ * except in compliance with the License.
+ *
+ * The only warranties for products and services of Open Text and its affiliates
+ * and licensors ("Open Text") are as may be set forth in the express warranty
+ * statements accompanying such products and services. Nothing herein should be
+ * construed as constituting an additional warranty. Open Text shall not be
+ * liable for technical or editorial errors or omissions contained herein. The
+ * information contained herein is subject to change without notice.
  */
 
 package com.hp.autonomy.frontend.find.idol.users;
@@ -52,6 +61,10 @@ public class IdolUserController {
     @RequestMapping(value = SEARCH_PATH, method= RequestMethod.GET)
     @ResponseBody
     public List<String> searchUsers(@RequestParam(PARAMETER_SEARCH_TEXT) final String searchText, @RequestParam(PARAMETER_START_USER) final int startUser, @RequestParam(PARAMETER_MAX_USERS) final int maxUsers) {
+        // this is an important check for security reasons
+        if (!configService.getConfig().getSavedSearchConfig().getSharingEnabled()) {
+            throw new IllegalArgumentException("Saved search sharing is disabled");
+        }
         final UserDetails details =
             idolUserSearchService.searchUser(searchText, startUser, maxUsers);
         return details.getUser().stream()
@@ -84,7 +97,7 @@ public class IdolUserController {
             sourceConfig.getUserDetailsFields()
         ) {
             final String name = allowedField.getName();
-            if (fields.containsKey(name)) {
+            if (fields != null && fields.containsKey(name)) {
                 restrictedFields.put(name, fields.get(name));
             }
         }

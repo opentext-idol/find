@@ -1,5 +1,5 @@
 [Unit]
-Description=Open Text Find
+Description=OpenText Find
 Requires=network.target
 After=network.target
 

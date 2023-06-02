@@ -1,13 +1,13 @@
 /*
- * (c) Copyright 2014-2017 Micro Focus or one of its affiliates.
+ * Copyright 2014-2017 Open Text.
  *
  * Licensed under the MIT License (the "License"); you may not use this file
  * except in compliance with the License.
  *
- * The only warranties for products and services of Micro Focus and its affiliates
- * and licensors ("Micro Focus") are as may be set forth in the express warranty
+ * The only warranties for products and services of Open Text and its affiliates
+ * and licensors ("Open Text") are as may be set forth in the express warranty
  * statements accompanying such products and services. Nothing herein should be
- * construed as constituting an additional warranty. Micro Focus shall not be
+ * construed as constituting an additional warranty. Open Text shall not be
  * liable for technical or editorial errors or omissions contained herein. The
  * information contained herein is subject to change without notice.
  */
@@ -36,7 +36,6 @@ define([
                     library: i18n['about.lib.name'],
                     license: i18n['about.lib.licence'],
                     search: i18n['about.search'],
-                    tagLine: i18n['about.tagLine'],
                     title: i18n['app.about'],
                     version: i18n['about.app.version'],
                     versionString: i18n['about.versionString'](config.version, config.commit)

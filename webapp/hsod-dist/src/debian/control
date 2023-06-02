@@ -4,9 +4,9 @@ Priority: extra
 Maintainer: Matthew Gordon <matthew.gordon2@hpe.com>
 Build-Depends: debhelper (>= 9)
 Standards-Version: 3.9.6
-Homepage: https://github.com/microfocus-idol/find
-Vcs-Git: https://github.com/microfocus-idol/find.git
-Vcs-Browser: https://github.com/microfocus-idol/find
+Homepage: https://github.com/opentext-idol/find
+Vcs-Git: https://github.com/opentext-idol/find.git
+Vcs-Browser: https://github.com/opentext-idol/find
 
 Package: find-ansible
 Architecture: any

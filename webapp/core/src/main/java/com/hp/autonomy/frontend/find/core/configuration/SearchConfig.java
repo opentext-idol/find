@@ -25,6 +25,10 @@ public class SearchConfig {
      * The available options for sorting search results.
      */
     private final Map<String, SearchSortOption> sortOptions;
+    /**
+     * Options related to spellcheck.
+     */
+    private final SpellCheckConfig spellCheck;
 
     public void basicValidate(final String configSection) throws ConfigException {
         if (!sortOptions.containsKey(defaultSortOption)) {
@@ -45,6 +49,7 @@ public class SearchConfig {
                 .put("relevance", new SearchSortOption("relevance", null))
                 .put("date", new SearchSortOption("date", null))
                 .put("reverseDate", new SearchSortOption("reversedate", null)).build();
+        private SpellCheckConfig spellCheck = SpellCheckConfig.builder().build();
     }
 
 }

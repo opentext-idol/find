@@ -145,7 +145,8 @@
   },
   "savedSearches": {
     "pollForUpdates": true,
-    "pollingInterval": 5
+    "pollingInterval": 5,
+    "sharingEnabled": true
   },
   "sunburst": {
     "allowMultipleDatabases": true
@@ -307,6 +308,9 @@
       "relevance": { "sort": "relevance", "label": null },
       "date": { "sort": "date", "label": null },
       "reverseDate": { "sort": "reversedate", "label": null }
+    },
+    "spellCheck": {
+      "enabled": true
     }
   },
   "users": {
