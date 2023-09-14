@@ -20,9 +20,14 @@ define([
 ], function(_, Backbone, ParametricCollection, FilteringCollection) {
     'use strict';
 
-    function filterPredicate(model, filterModel) {
-        const searchText = filterModel && filterModel.get('text');
-        return !searchText || searchMatches(model.get('displayName'), filterModel.get('text'));
+    function filterPredicate(fieldPredicate) {
+        return (model, filterModel) => {
+            if (!fieldPredicate(model)) {
+                return false;
+            }
+            const searchText = filterModel && filterModel.get('text');
+            return !searchText || searchMatches(model.get('displayName'), filterModel.get('text'));
+        }
     }
 
     function searchMatches(text, search) {
@@ -35,19 +40,23 @@ define([
             this.parametricCollection = options.parametricCollection;
             this.filteredParametricCollection = options.filteredParametricCollection;
             this.valueRestrictedParametricCollection = new ParametricCollection([], {url: 'api/public/parametric/values'});
+            this.fieldPredicate = options.fieldPredicate || (name => true);
 
             this.listenTo(this.parametricCollection, 'sync', this.onParametricSync);
             this.listenTo(this.valueRestrictedParametricCollection, 'request', this.onFilteredParametricRequest);
             this.listenTo(this.valueRestrictedParametricCollection, 'error', this.onFilteredParametricError);
             this.listenTo(this.valueRestrictedParametricCollection, 'sync', this.onFilteredParametricSync);
 
-            FilteringCollection.prototype.initialize.apply(this, [models, _.defaults({predicate: filterPredicate}, options)]);
+            FilteringCollection.prototype.initialize.apply(this,
+                [models, _.defaults({predicate: filterPredicate(this.fieldPredicate)}, options)]);
         },
 
         filterModels: function() {
             const filterText = this.filterModel.get('text');
             this.matchingFieldIds = _.pluck(this.collection.filter(this.predicate), 'id');
-            const fieldIds = _.difference(_.pluck(this.collection.where({type: 'Parametric'}), 'id'), this.matchingFieldIds);
+            const fieldIds = _.difference(
+                _.pluck(this.collection.where({type: 'Parametric'}).filter(this.fieldPredicate), 'id'),
+                this.matchingFieldIds);
             if(fieldIds.length > 0) {
                 this.valueRestrictedParametricCollection.fetchFromQueryModel(this.queryModel, {
                     fieldNames: fieldIds,

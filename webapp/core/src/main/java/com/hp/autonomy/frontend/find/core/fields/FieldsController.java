@@ -33,13 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -81,15 +75,23 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
         final Predicate<TagName> predicate = alwaysAndNeverShowFilter();
         final Map<FieldTypeParam, Set<TagName>> response = fieldsService.getFields(request).entrySet().stream()
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream().filter(predicate).collect(Collectors.toSet())));
-        final TagName autnDateField;
-        if(request.getFieldTypes().contains(FieldTypeParam.NumericDate) && predicate.test(autnDateField = tagNameFactory.buildTagName(ParametricValuesService.AUTN_DATE_FIELD))) {
-            response.compute(FieldTypeParam.NumericDate, (key, maybeValue) -> Optional.ofNullable(maybeValue)
-                .map(value -> {
-                    value.add(autnDateField);
-                    return value;
-                })
-                .orElse(Collections.singleton(autnDateField))
-            );
+
+        final TagName autnDateField = tagNameFactory.buildTagName(ParametricValuesService.AUTN_DATE_FIELD);
+        if(request.getFieldTypes().contains(FieldTypeParam.NumericDate) && predicate.test(autnDateField)) {
+            response.compute(FieldTypeParam.NumericDate, (type, maybeTags) -> {
+                    final Set<TagName> tags = maybeTags == null ? new HashSet<>() : maybeTags;
+                    tags.add(autnDateField);
+                    return tags;
+            });
+        }
+
+        final TagName dbField = tagNameFactory.buildTagName(ParametricValuesService.AUTN_DATABASE_FIELD);
+        if(request.getFieldTypes().contains(FieldTypeParam.Parametric) && predicate.test(dbField)) {
+            response.compute(FieldTypeParam.Parametric, (type, maybeTags) -> {
+                final Set<TagName> tags = maybeTags == null ? new HashSet<>() : maybeTags;
+                tags.add(dbField);
+                return tags;
+            });
         }
 
         final List<FieldAndValueDetails<?>> output = new ArrayList<>();

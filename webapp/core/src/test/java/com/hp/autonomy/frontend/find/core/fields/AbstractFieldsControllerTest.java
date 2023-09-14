@@ -117,13 +117,14 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         when(service.getFields(any())).thenReturn(response);
 
         final List<FieldAndValueDetails<?>> fields = getParametricFields(FieldTypeParam.Parametric, FieldTypeParam.Numeric, FieldTypeParam.NumericDate);
-        assertThat(fields, hasSize(6));
+        assertThat(fields, hasSize(7));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("parametric_field").getNormalisedPath()))));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("numeric_field").getNormalisedPath()))));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("parametric_numeric_field").getNormalisedPath()))));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("date_field").getNormalisedPath()))));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("parametric_date_field").getNormalisedPath()))));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATE_FIELD).getNormalisedPath()))));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATABASE_FIELD).getNormalisedPath()))));
     }
 
     @Test
@@ -253,8 +254,9 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
                 .build());
 
         final List<FieldAndValueDetails<?>> fields = getParametricFields(FieldTypeParam.Parametric);
-        assertThat(fields, hasSize(1));
+        assertThat(fields, hasSize(2));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField3").getNormalisedPath()))));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATABASE_FIELD).getNormalisedPath()))));
     }
 
     @Test
