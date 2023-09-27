@@ -15,18 +15,8 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
 
 /**
  * Single entity that defines multiple types of user for our various implementations.

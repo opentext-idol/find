@@ -23,33 +23,14 @@ import com.hp.autonomy.frontend.find.core.search.DocumentsController;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.search.GetContentRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
-import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestIndex;
-import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestIndexBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequestBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequestBuilder;
-import com.hp.autonomy.types.idol.responses.Profile;
-import com.hp.autonomy.types.idol.responses.Profiles;
-import com.hp.autonomy.types.idol.responses.Term;
+import com.hp.autonomy.searchcomponents.idol.search.*;
 import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import com.hp.autonomy.user.UserService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.opentext.idol.types.responses.Profile;
+import com.opentext.idol.types.responses.Profiles;
+import com.opentext.idol.types.responses.Term;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +40,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(DocumentsController.SEARCH_PATH)

@@ -18,21 +18,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-import javax.persistence.Table;
 import java.time.ZonedDateTime;
 
 import static com.hp.autonomy.frontend.find.core.savedsearches.SharedToUser.Table.NAME;
@@ -43,6 +37,7 @@ import static com.hp.autonomy.frontend.find.core.savedsearches.SharedToUser.Tabl
 @Data
 @Builder
 @EntityListeners(AuditingEntityListener.class)
+@AllArgsConstructor
 @NoArgsConstructor
 @JsonDeserialize(builder = SharedToUser.SharedToUserBuilder.class)
 public class SharedToUser {
@@ -71,12 +66,12 @@ public class SharedToUser {
     @Column(name = Table.Column.CAN_EDIT)
     private Boolean canEdit;
 
-    @CreatedDate
-    @Column(name = Table.Column.SHARED_DATE)
+    @CreationTimestamp
+    @Column(name = Table.Column.SHARED_DATE, columnDefinition = "DATETIME")
     private ZonedDateTime sharedDate;
 
-    @LastModifiedDate
-    @Column(name = Table.Column.MODIFIED_DATE)
+    @UpdateTimestamp
+    @Column(name = Table.Column.MODIFIED_DATE, columnDefinition = "DATETIME")
     private ZonedDateTime modifiedDate;
 
     @SuppressWarnings({"WeakerAccess", "unused"})

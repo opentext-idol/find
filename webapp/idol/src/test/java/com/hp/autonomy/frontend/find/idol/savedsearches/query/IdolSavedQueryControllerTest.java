@@ -25,15 +25,11 @@ import com.hp.autonomy.frontend.find.idol.dashboards.widgets.ResultsListWidget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearch;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchConfig;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequestBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
+import com.hp.autonomy.searchcomponents.idol.search.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.ObjectFactory;
 
 import java.util.Collections;
@@ -42,7 +38,7 @@ import java.util.List;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -73,15 +69,17 @@ public class IdolSavedQueryControllerTest extends SavedQueryControllerTest<IdolQ
 
     @Override
     protected IdolSavedQueryController constructController() {
+        when(fieldTextParser.toFieldText(any(), anyBoolean())).thenReturn("field text");
+
         when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.fieldText(anyString())).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.minDate(any())).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.maxDate(any())).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.minScore(anyInt())).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.stateMatchIds(any())).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.stateDontMatchIds(any())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.fieldText(anyString())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.minDate(any())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.maxDate(any())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.minScore(any())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.stateMatchIds(any())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.stateDontMatchIds(any())).thenReturn(queryRestrictionsBuilder);
 
         when(queryRequestBuilderFactory.getObject()).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.queryRestrictions(any())).thenReturn(queryRequestBuilder);

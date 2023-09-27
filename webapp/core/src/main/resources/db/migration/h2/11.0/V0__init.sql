@@ -38,7 +38,9 @@ CREATE TABLE search_parametric_values
   search_parametric_values_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   search_id BIGINT NOT NULL,
   field NVARCHAR(21844) NOT NULL,
-  value NVARCHAR(21844) NOT NULL
+  /* Must be quoted because 'value' is a keyword.  Must be uppercase because quoted identifiers are case-sensitive in
+     h2, and past Find versions have always created the column in uppercase. */
+  "VALUE" NVARCHAR(21844) NOT NULL
 );
 
 CREATE INDEX ix__search_parametric_values__search_id ON search_parametric_values (search_id);

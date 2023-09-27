@@ -23,16 +23,12 @@ import com.hp.autonomy.frontend.configuration.validation.ConfigValidationExcepti
 import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
 import com.hp.autonomy.frontend.configuration.validation.ValidationResults;
 import com.hp.autonomy.frontend.logging.Markers;
-import com.hp.autonomy.types.idol.responses.SecurityType;
+import com.opentext.idol.types.responses.SecurityType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;

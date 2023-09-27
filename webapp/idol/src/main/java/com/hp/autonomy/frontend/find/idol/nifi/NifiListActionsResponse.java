@@ -14,9 +14,9 @@
 
 package com.hp.autonomy.frontend.find.idol.nifi;
 
+import jakarta.xml.bind.annotation.*;
 import lombok.Getter;
 
-import javax.xml.bind.annotation.*;
 import java.util.List;
 
 /**

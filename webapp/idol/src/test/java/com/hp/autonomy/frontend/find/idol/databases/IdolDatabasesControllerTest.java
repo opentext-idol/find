@@ -19,7 +19,7 @@ import com.hp.autonomy.frontend.find.core.databases.AbstractDatabasesControllerT
 import com.hp.autonomy.searchcomponents.idol.databases.IdolDatabasesRequest;
 import com.hp.autonomy.searchcomponents.idol.databases.IdolDatabasesRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.databases.IdolDatabasesService;
-import com.hp.autonomy.types.idol.responses.Database;
+import com.opentext.idol.types.responses.Database;
 import org.mockito.Mock;
 import org.springframework.beans.factory.ObjectFactory;
 

@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @ConditionalOnExpression(BiConfiguration.BI_PROPERTY_SPEL)
 public class SharedToUserServiceImpl implements SharedToUserService {
@@ -32,8 +34,8 @@ public class SharedToUserServiceImpl implements SharedToUserService {
     @Override
     public SharedToUser save(final SharedToUser sharedToUser) {
         // merge in the created date if it exists
-        final SharedToUser existingSharedToUser = sharedToUserRepository.findOne(sharedToUser.getId());
-        sharedToUser.merge(existingSharedToUser);
+        final Optional<SharedToUser> existingSharedToUser = sharedToUserRepository.findById(sharedToUser.getId());
+        sharedToUser.merge(existingSharedToUser.orElse(null));
 
         return sharedToUserRepository.save(sharedToUser);
     }

@@ -14,25 +14,17 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
-import com.hp.autonomy.searchcomponents.core.search.GetContentRequestIndex;
-import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequest;
-import com.hp.autonomy.searchcomponents.core.search.SearchRequestBuilder;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
-import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
+import com.hp.autonomy.searchcomponents.core.search.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -49,19 +41,19 @@ public abstract class AbstractDocumentsControllerTest<RQ extends QueryRequest<Q>
 
     @Test
     public void query() throws E {
-        documentsController.query("Some query text", 1, 30, null, Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.MODIFIED.name());
+        documentsController.query("Some query text", 1, 30, "context", Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.MODIFIED.name());
         verify(documentsService).queryTextIndex(any());
     }
 
     @Test
     public void queryForPromotions() throws E {
-        documentsController.query("Some query text", 1, 30, null, Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.PROMOTIONS.name());
+        documentsController.query("Some query text", 1, 30, "context", Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.PROMOTIONS.name());
         verify(documentsService).queryTextIndex(any());
     }
 
     @Test
     public void queryPaginationTest() throws E {
-        documentsController.query("Some query text", 30, 60, null, Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.MODIFIED.name());
+        documentsController.query("Some query text", 30, 60, "context", Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.MODIFIED.name());
         verify(documentsService).queryTextIndex(any());
     }
 
@@ -83,7 +75,7 @@ public abstract class AbstractDocumentsControllerTest<RQ extends QueryRequest<Q>
         when(builder.queryRestrictions(any())).thenReturn(builder);
         when(builder.start(anyInt())).thenReturn(builder);
         when(builder.maxResults(anyInt())).thenReturn(builder);
-        when(builder.summaryCharacters(anyInt())).thenReturn(builder);
+        when(builder.summaryCharacters(any())).thenReturn(builder);
         when(builder.highlight(anyBoolean())).thenReturn(builder);
     }
 }

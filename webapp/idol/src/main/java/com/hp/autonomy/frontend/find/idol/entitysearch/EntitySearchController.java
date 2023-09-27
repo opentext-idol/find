@@ -25,12 +25,10 @@ import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.searchcomponents.idol.search.QueryResponseParser;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
-import com.hp.autonomy.types.idol.responses.QueryResponseData;
 import com.hp.autonomy.types.requests.idol.actions.query.QueryActions;
 import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
-import java.util.Collection;
-import java.util.List;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
+import com.opentext.idol.types.responses.QueryResponseData;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +37,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping(EntitySearchController.BASE_PATH)

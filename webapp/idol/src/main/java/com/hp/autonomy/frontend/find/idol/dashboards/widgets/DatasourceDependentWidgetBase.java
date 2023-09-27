@@ -3,11 +3,11 @@ package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.find.idol.dashboards.WidgetNameSetting;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 
-@Data
+@Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public abstract class DatasourceDependentWidgetBase<W extends DatasourceDependentWidgetBase<W, WS>, WS extends WidgetSettings<WS>> extends Widget<W, WS> implements DatasourceDependentWidget {

@@ -26,14 +26,13 @@ import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.NifiConfig;
 import com.hp.autonomy.frontend.find.idol.nifi.NifiAction;
 import com.hp.autonomy.frontend.find.idol.nifi.NifiService;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
-import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,8 +44,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class NifiServiceTest {
     private static final ServerConfig serverConfig = ServerConfig.builder()
@@ -77,9 +76,9 @@ public class NifiServiceTest {
 
         aciService = Mockito.mock(AciService.class);
         Mockito.doAnswer(inv -> {
-            final String action = ((Set<ActionParameter<String>>) inv.getArgumentAt(1, Set.class))
+            final String action = ((Set<ActionParameter<String>>) inv.getArgument(1, Set.class))
                 .stream().filter(p -> p.getName().equals("action")).findFirst().get().getValue();
-            return inv.getArgumentAt(2, Processor.class)
+            return inv.getArgument(2, Processor.class)
                 .process(buildResponse(request.apply(action)));
         }).when(aciService).executeAction(any(), any(), any());
 

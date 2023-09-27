@@ -28,9 +28,9 @@ import com.hp.autonomy.frontend.logging.Markers;
 import com.hp.autonomy.searchcomponents.idol.view.*;
 import com.hp.autonomy.user.UserService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
-import java.io.IOException;
-import java.util.Optional;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +42,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.Optional;
 
 @Controller
 @RequestMapping(IdolViewController.VIEW_PATH)

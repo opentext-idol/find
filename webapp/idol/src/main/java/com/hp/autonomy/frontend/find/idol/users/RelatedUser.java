@@ -14,7 +14,7 @@
 
 package com.hp.autonomy.frontend.find.idol.users;
 
-import com.hp.autonomy.types.idol.responses.User;
+import com.opentext.idol.types.responses.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

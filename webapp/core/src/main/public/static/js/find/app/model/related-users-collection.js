@@ -13,9 +13,10 @@
  */
 
 define([
+    'underscore',
     'backbone',
     'find/app/model/find-base-collection'
-], function (Backbone, FindBaseCollection) {
+], function (_, Backbone, FindBaseCollection) {
     'use strict';
 
     /**

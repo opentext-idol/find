@@ -340,15 +340,7 @@ public class IdolFindConfig extends AbstractConfig<IdolFindConfig> implements Us
         });
     }
 
-    @SuppressWarnings("WeakerAccess")
     @JsonPOJOBuilder(withPrefix = "")
     public static class IdolFindConfigBuilder implements FindConfigBuilder<IdolFindConfig, IdolFindConfigBuilder> {
-        @SuppressWarnings("unused")
-        @JsonProperty("savedSearches")
-        private SavedSearchConfig savedSearchConfig;
-
-        @SuppressWarnings("unused")
-        @JsonProperty("idolFieldPathNormalizerXMLPrefixes")
-        private Collection<String> idolFieldPathNormalizerXMLPrefixes;
     }
 }

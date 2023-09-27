@@ -15,12 +15,11 @@
 package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 public class IdolLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
     private final String configUrl;

@@ -11,8 +11,7 @@ import com.hp.autonomy.searchcomponents.idol.beanconfiguration.HavenSearchIdolCo
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
-import org.springframework.boot.test.autoconfigure.json.JsonTest;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.core.ResolvableType;
@@ -21,8 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
-@JsonTest
-@AutoConfigureJsonTesters(enabled = false)
+@AutoConfigureJson
 @SpringBootTest(classes = HavenSearchIdolConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @DirtiesContext
 public abstract class ComplexWidgetTest<W extends Widget<W, WS> & DatasourceDependentWidget, WS extends WidgetSettings<WS>> extends DatasourceDependentWidgetTest<W, WS> {

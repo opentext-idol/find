@@ -27,10 +27,10 @@ import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequestBu
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerService;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
 import com.hp.autonomy.searchcomponents.idol.search.*;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
-import com.hp.autonomy.types.idol.responses.answer.*;
 import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.idol.actions.answer.params.ReportParams;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
+import com.opentext.idol.types.responses.answer.*;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.ObjectFactory;
 
 import java.io.Serializable;
@@ -48,8 +48,8 @@ import java.util.*;
 import static com.hp.autonomy.frontend.find.idol.answer.AnswerServerController.DocumentFact;
 import static com.hp.autonomy.frontend.find.idol.answer.AnswerServerController.SourcedFact;
 import static com.hp.autonomy.types.requests.idol.actions.answer.AnswerServerActions.Report;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 

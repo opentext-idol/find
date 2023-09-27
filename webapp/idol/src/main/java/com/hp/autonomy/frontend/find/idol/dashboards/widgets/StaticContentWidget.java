@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.find.idol.dashboards.WidgetNameSetting;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 
 @SuppressWarnings("WeakerAccess")
-@Data
+@Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @JsonDeserialize(builder = StaticContentWidget.StaticContentWidgetBuilder.class)

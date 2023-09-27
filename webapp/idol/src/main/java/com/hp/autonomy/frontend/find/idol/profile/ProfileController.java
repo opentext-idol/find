@@ -15,9 +15,9 @@
 package com.hp.autonomy.frontend.find.idol.profile;
 
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
-import com.hp.autonomy.types.idol.responses.Profiles;
 import com.hp.autonomy.user.UserService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
+import com.opentext.idol.types.responses.Profiles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

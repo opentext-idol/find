@@ -23,7 +23,6 @@ public enum MvcConstants {
     SUNBURST("sunburst"),
     MAP("map"),
     RELEASE_VERSION("version"),
-    METRICS_ENABLED("metricsEnabled"),
     ROLES("roles"),
     SAVED_SEARCH_CONFIG("savedSearchConfig"),
     USERNAME("username"),

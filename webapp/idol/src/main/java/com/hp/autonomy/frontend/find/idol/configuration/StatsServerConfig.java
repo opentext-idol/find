@@ -27,7 +27,7 @@ import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationCo
 import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
 import com.hp.autonomy.searchcomponents.idol.statsserver.Statistic;
 import com.hp.autonomy.searchcomponents.idol.statsserver.StatisticProcessor;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;

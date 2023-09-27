@@ -16,22 +16,18 @@ package com.hp.autonomy.frontend.find.idol.test;
 
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.hp.autonomy.frontend.configuration.BaseConfigFileService;
-import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.Authentication;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.find.core.configuration.MapConfiguration;
+import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UsersConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.EntitySearchConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
-import com.hp.autonomy.searchcomponents.idol.configuration.IdolSearchCapable;
-import db.migration.AbstractMigrateUsersToIncludeUsernames;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -84,35 +80,17 @@ public class IdolFindMockConfigConfiguration {
         when(entitySearchConfig.getAnswerServer()).thenReturn(entitySearchAnswerServerConfig);
         when(config.getEntitySearch()).thenReturn(entitySearchConfig);
         when(config.getUsers()).thenReturn(UsersConfig.builder().build());
+        when(config.getSavedSearchConfig()).thenReturn(new SavedSearchConfig.Builder().build());
         return config;
     }
 
     @SuppressWarnings({"CastToConcreteClass", "unchecked"})
     @Primary
     @Bean
-    public BaseConfigFileService<IdolFindConfig> configService(
-            @Qualifier("testConfigService") final ConfigService<IdolSearchCapable> testConfigService) {
+    public BaseConfigFileService<IdolFindConfig> configService(final IdolFindConfig config) {
         final BaseConfigFileService<IdolFindConfig> configService = mock(BaseConfigFileService.class);
-        final IdolFindConfig config = (IdolFindConfig) testConfigService.getConfig();
         when(configService.getConfig()).thenReturn(config);
         return configService;
-    }
-
-    @Bean
-    @Primary
-    public FlywayMigrationStrategy flywayMigrationStrategy() {
-        return flyway -> {
-            // terrible hack - using system properties to pass data to migration
-            System.setProperty(AbstractMigrateUsersToIncludeUsernames.COMMUNITY_PROTOCOL, "HTTP");
-            System.setProperty(AbstractMigrateUsersToIncludeUsernames.COMMUNITY_HOST, getProperty(COMMUNITY_HOST_PROPERTY, COMMUNITY_HOST));
-            System.setProperty(AbstractMigrateUsersToIncludeUsernames.COMMUNITY_PORT, getProperty(COMMUNITY_PORT_PROPERTY, String.valueOf(COMMUNITY_PORT)));
-
-            flyway.migrate();
-
-            System.clearProperty(AbstractMigrateUsersToIncludeUsernames.COMMUNITY_PROTOCOL);
-            System.clearProperty(AbstractMigrateUsersToIncludeUsernames.COMMUNITY_HOST);
-            System.clearProperty(AbstractMigrateUsersToIncludeUsernames.COMMUNITY_PORT);
-        };
     }
 
     private String getProperty(final String property, final String defaultValue) {

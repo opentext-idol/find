@@ -17,7 +17,7 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 import com.hp.autonomy.frontend.configuration.authentication.IdolPreAuthenticatedAuthenticationProvider;
 import com.hp.autonomy.frontend.find.idol.authentication.FindCommunityRole;
 import com.hp.autonomy.user.UserService;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

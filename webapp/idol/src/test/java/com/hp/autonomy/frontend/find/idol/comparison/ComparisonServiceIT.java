@@ -71,7 +71,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .setSecondQueryStateToken(sixDocStateToken)
                 .build();
 
-        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH)
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(userAuth()));
@@ -87,14 +87,14 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .setSecondQueryStateToken(sixDocStateToken)
                 .build();
 
-        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH)
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", is(EMPTY_RESULT_SET_TOKEN)))
                 .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", not(isEmptyOrNullString())));
     }
@@ -106,14 +106,14 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .setSecondQueryStateToken(sixDocStateToken)
                 .build();
 
-        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH)
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", not(isEmptyOrNullString())))
                 .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", is(EMPTY_RESULT_SET_TOKEN)));
     }
@@ -125,14 +125,14 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .setSecondRestrictions(queryRestrictions)
                 .build();
 
-        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH)
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", is(EMPTY_RESULT_SET_TOKEN)))
                 .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", not(isEmptyOrNullString())));
     }
@@ -144,14 +144,14 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .setSecondRestrictions(queryRestrictions)
                 .build();
 
-        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH)
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.documentsOnlyInFirstStateToken", is(EMPTY_RESULT_SET_TOKEN)))
                 .andExpect(jsonPath("$.documentsOnlyInSecondStateToken", is(EMPTY_RESULT_SET_TOKEN)));
     }
@@ -161,7 +161,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
         final String[] stateMatchIds = {sixDocStateToken};
         final String[] stateDontMatchIds = {twoDocStateToken};
 
-        final MockHttpServletRequestBuilder requestBuilder = get(ComparisonController.BASE_PATH + '/' + ComparisonController.RESULTS_PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = get(ComparisonController.BASE_PATH + '/' + ComparisonController.RESULTS_PATH)
                 .param(ComparisonController.STATE_MATCH_PARAM, stateMatchIds)
                 .param(ComparisonController.STATE_DONT_MATCH_PARAM, stateDontMatchIds)
                 .param(ComparisonController.RESULTS_START_PARAM, "1")
@@ -174,7 +174,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.documents", hasSize(4)));
     }
 }

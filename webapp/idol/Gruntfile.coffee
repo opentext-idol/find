@@ -107,6 +107,7 @@ module.exports = (grunt) ->
       copyResources:
         files: [
           '../core/src/main/public/static/**/*'
+          '../core/frontend/node_modules/**/*'
           '../core/src/main/resources/less/**/*.less'
           'src/main/public/static/**/*'
         ]
@@ -114,7 +115,7 @@ module.exports = (grunt) ->
         tasks: ['sync:devResources']
       fieldtext:
         files: [
-          '../core/src/main/public/static/bower_components/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
+          '../core/frontend/node_modules/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
         ],
         tasks: ['peg:fieldtext']
       wellknowntext:
@@ -136,6 +137,11 @@ module.exports = (grunt) ->
             dest: 'target/classes/static'
           }
           {
+            cwd: '../core/frontend/node_modules'
+            src: '**/*'
+            dest: 'target/classes/static/bower_components'
+          }
+          {
             cwd: 'src/main/public/static/'
             src: '**/*'
             dest: 'target/classes/static'
@@ -144,7 +150,7 @@ module.exports = (grunt) ->
         verbose: true
     peg:
       fieldtext:
-        src: '../core/src/main/public/static/bower_components/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
+        src: '../core/frontend/node_modules/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
         dest: 'target/classes/static/js/pegjs/fieldtext/parser.js'
         options:
           format: 'amd'

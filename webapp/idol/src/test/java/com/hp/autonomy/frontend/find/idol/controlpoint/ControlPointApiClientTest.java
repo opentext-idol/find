@@ -88,7 +88,7 @@ public class ControlPointApiClientTest {
     private List<HttpUriRequest> getRequests(final int expectedCalls)
         throws IOException
     {
-        final ArgumentCaptor<HttpUriRequest> captor = new ArgumentCaptor<>();
+        final ArgumentCaptor<HttpUriRequest> captor = ArgumentCaptor.forClass(HttpUriRequest.class);
         Mockito.verify(defaultHttpClient, Mockito.times(expectedCalls)).execute(captor.capture());
         return captor.getAllValues();
     }
@@ -285,6 +285,7 @@ public class ControlPointApiClientTest {
         Assert.assertNull("should return null", res);
     }
 
+    @Test
     public void testResponseInvalidJson() throws ControlPointApiException, IOException {
         final String resJson = "{";
         Mockito.when(defaultHttpClient.execute(Mockito.any()))

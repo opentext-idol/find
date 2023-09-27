@@ -19,13 +19,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.SimpleWidget;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.SimpleWidgetSettings;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.SunburstWidget;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.SunburstWidgetSettings;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.TagNameSerializer;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.Widget;
-import com.hp.autonomy.frontend.find.idol.dashboards.widgets.WidgetMixins;
+import com.hp.autonomy.frontend.find.idol.dashboards.widgets.*;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearch;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchConfig;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
@@ -37,8 +31,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
-import org.springframework.boot.test.autoconfigure.json.JsonTest;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
@@ -56,8 +49,7 @@ import static org.hamcrest.core.AllOf.allOf;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
-@JsonTest
-@AutoConfigureJsonTesters(enabled = false)
+@AutoConfigureJson
 @SpringBootTest(classes = HavenSearchIdolConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @DirtiesContext
 public class DashboardTest extends ConfigurationComponentTest<Dashboard> {

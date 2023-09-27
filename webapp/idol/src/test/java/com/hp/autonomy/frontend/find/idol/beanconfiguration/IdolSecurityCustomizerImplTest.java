@@ -16,7 +16,6 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
-import com.hp.autonomy.frontend.find.core.savedsearches.UserEntityRepository;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.user.UserRoles;
 import com.hp.autonomy.user.UserService;
@@ -42,7 +41,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
@@ -83,7 +82,7 @@ public class IdolSecurityCustomizerImplTest {
 
     @Before
     public void setUp() {
-        when(foreignAuthentication.getPrincipal()).thenReturn("Some Guy");
+        when(foreignAuthentication.getName()).thenReturn("Some Guy");
         when(foreignAuthentication.getCredentials()).thenReturn("password");
         when(foreignAuthentication.isAuthenticated()).thenReturn(false);
 
@@ -91,7 +90,7 @@ public class IdolSecurityCustomizerImplTest {
         //noinspection unchecked
         when(authoritiesMapper.mapAuthorities(anyCollection())).then(returnsFirstArg());
 
-        when(userService.authenticateUser(anyString(), anyString(), anyString())).thenReturn(true);
+        when(userService.authenticateUser(any(), anyString(), anyString())).thenReturn(true);
         when(userService.getUser(anyString(), anyBoolean(), anyString())).thenReturn(new UserRoles("Some Guy"));
 
         when(communityAuthentication.getMethod()).thenReturn("LDAP");

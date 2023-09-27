@@ -19,7 +19,7 @@ import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.AbstractFindSpringSecurityAuditorAware;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
-import com.hp.autonomy.frontend.find.core.savedsearches.UserEntityRepository;
+import com.hp.autonomy.frontend.find.core.savedsearches.UserEntityService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -31,9 +31,9 @@ public class IdolFindSpringSecurityAuditorAware extends AbstractFindSpringSecuri
     @Autowired
     public IdolFindSpringSecurityAuditorAware(
             final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
-            final UserEntityRepository userRepository
+            final UserEntityService userEntityService
     ) {
-        super(authenticationInformationRetriever, userRepository);
+        super(authenticationInformationRetriever, userEntityService);
     }
 
     @Override

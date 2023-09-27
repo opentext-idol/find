@@ -30,17 +30,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collection;
 
-import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizer.PRE_AUTHENTICATED_ROLES_PROPERTY_KEY;
-import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizer.PRE_AUTHENTICATED_USERNAME_PROPERTY_KEY;
-import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizer.REVERSE_PROXY_PROPERTY_KEY;
 import static com.hp.autonomy.frontend.find.idol.beanconfiguration.GrantedAuthorityMatcher.authority;
+import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizer.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyCollection;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")

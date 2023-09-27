@@ -19,17 +19,13 @@ import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.find.core.export.ExportControllerTest;
 import com.hp.autonomy.searchcomponents.core.search.StateTokenAndResultCount;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
-import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequestBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
+import com.hp.autonomy.searchcomponents.idol.search.*;
 import org.mockito.Mock;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.io.IOException;
 
-import static org.mockito.Matchers.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 abstract class IdolExportControllerTest extends ExportControllerTest<IdolQueryRequest, AciErrorException> {
@@ -64,6 +60,9 @@ abstract class IdolExportControllerTest extends ExportControllerTest<IdolQueryRe
 
     @Override
     protected void mockNumberOfResults(final int numberOfResults) throws AciErrorException {
-        when(documentsService.getStateTokenAndResultCount(any(), anyInt(), any(), anyBoolean())).thenReturn(new StateTokenAndResultCount(new TypedStateToken(), numberOfResults));
+        when(documentsService.getStateTokenAndResultCount(any(), anyInt(), any(), anyBoolean()))
+                .thenReturn(new StateTokenAndResultCount(
+                        new TypedStateToken("token", TypedStateToken.StateTokenType.QUERY),
+                        numberOfResults));
     }
 }

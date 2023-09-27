@@ -18,9 +18,7 @@ public enum ViewNames {
     APP("app"),
     CONFIG("config"),
     ERROR("error"),
-    LOGIN("login"),
-    SSO("sso"),
-    SSO_LOGOUT("sso-logout");
+    LOGIN("login");
 
     private final String viewName;
 

@@ -18,8 +18,8 @@ import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.webresources.StandardRoot;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -38,8 +38,8 @@ public class TomcatConfig {
     private int connectorMaxPostSize;
 
     @Bean
-    public EmbeddedServletContainerFactory servletContainer() {
-        final TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
+    public WebServerFactory servletContainer() {
+        final TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
 
         if(useReverseProxy) {
             tomcat.addAdditionalTomcatConnectors(createAjpConnector());
@@ -62,7 +62,7 @@ public class TomcatConfig {
     private Connector createAjpConnector() {
         final Connector connector = new Connector("AJP/1.3");
         connector.setPort(ajpPort);
-        connector.setAttribute("tomcatAuthentication", false);
+        connector.setProperty("tomcatAuthentication", "false");
         return connector;
     }
 }

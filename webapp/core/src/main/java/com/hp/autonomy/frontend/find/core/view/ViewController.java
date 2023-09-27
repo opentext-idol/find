@@ -19,6 +19,7 @@ import com.hp.autonomy.searchcomponents.core.view.ViewContentSecurityPolicy;
 import com.hp.autonomy.searchcomponents.core.view.ViewRequest;
 import com.hp.autonomy.searchcomponents.core.view.ViewRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;

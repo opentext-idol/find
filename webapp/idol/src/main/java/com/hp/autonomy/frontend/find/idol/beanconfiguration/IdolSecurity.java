@@ -21,13 +21,16 @@ import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.web.FindController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -41,7 +44,7 @@ import static com.hp.autonomy.frontend.find.core.beanconfiguration.SecurityConfi
 
 @Configuration
 @Order(99)
-public class IdolSecurity extends WebSecurityConfigurerAdapter {
+public class IdolSecurity {
     @Value("${server.reverseProxy}")
     private boolean reverseProxy;
 
@@ -51,58 +54,60 @@ public class IdolSecurity extends WebSecurityConfigurerAdapter {
     @Autowired
     private IdolSecurityCustomizer idolSecurityCustomizer;
 
-    @Override
-    public void configure(final WebSecurity web) {
-        web.httpFirewall(firewallAllowingUrlEncodedCharacters())
+    @Bean
+    public WebSecurityCustomizer idolWebSecurityCustomizer() throws Exception {
+        return web -> web.httpFirewall(firewallAllowingUrlEncodedCharacters())
             .ignoring()
-            .antMatchers("/static-*/**")
-            .antMatchers("/customization/**");
+            .requestMatchers("/static-*/**")
+            .requestMatchers("/customization/**");
     }
 
-    @SuppressWarnings("ProhibitedExceptionDeclared")
-    @Override
-    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+    @Bean
+    protected AuthenticationManager authenticationManager() throws Exception {
+        final AuthenticationManagerBuilder auth = new AuthenticationManagerBuilder(new ObjectPostProcessor<Object>() {
+            @Override public <O> O postProcess(final O o) { return o; }
+        });
         auth.authenticationProvider(new DefaultLoginAuthenticationProvider(configService, FindRole.CONFIG.toString()));
-
         idolSecurityCustomizer.getAuthenticationProviders().forEach(auth::authenticationProvider);
+        return auth.build();
     }
 
-    @SuppressWarnings("ProhibitedExceptionDeclared")
-    @Override
-    protected void configure(final HttpSecurity http) throws Exception {
+    @Bean
+    protected SecurityFilterChain idolFilterChain(final HttpSecurity http) throws Exception {
         final LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> entryPoints = new LinkedHashMap<>();
         entryPoints.put(new AntPathRequestMatcher("/api/**"), new Http403ForbiddenEntryPoint());
         entryPoints.put(AnyRequestMatcher.INSTANCE, new LoginUrlAuthenticationEntryPoint(FindController.DEFAULT_LOGIN_PAGE));
         final AuthenticationEntryPoint authenticationEntryPoint = new DelegatingAuthenticationEntryPoint(entryPoints);
 
         http
-            .csrf()
-                .disable()
-            .exceptionHandling()
+            .csrf(c -> c.disable())
+            .exceptionHandling(e -> e
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .accessDeniedPage("/authentication-error")
-                .and()
-            .logout()
+            )
+            .logout(l -> l
                 .logoutUrl("/logout")
                 .logoutSuccessUrl(FindController.DEFAULT_LOGIN_PAGE)
-                .and()
+            )
             .authorizeRequests()
-                .antMatchers(FindController.APP_PATH + "/**").hasAnyRole(FindRole.USER.name())
-                .antMatchers(FindController.CONFIG_PATH).hasRole(FindRole.CONFIG.name())
-                .antMatchers("/api/public/**").hasRole(FindRole.USER.name())
-                .antMatchers("/api/bi/**").hasRole(FindRole.BI.name())
-                .antMatchers("/api/config/**").hasRole(FindRole.CONFIG.name())
-                .antMatchers("/api/admin/**").hasRole(FindRole.ADMIN.name())
-                .antMatchers(FindController.DEFAULT_LOGIN_PAGE).permitAll()
-                .antMatchers(FindController.LOGIN_PATH).permitAll()
-                .antMatchers("/").permitAll()
+                .requestMatchers(FindController.APP_PATH + "/**").hasAnyRole(FindRole.USER.name())
+                .requestMatchers(FindController.CONFIG_PATH).hasRole(FindRole.CONFIG.name())
+                .requestMatchers("/api/public/**").hasRole(FindRole.USER.name())
+                .requestMatchers("/api/bi/**").hasRole(FindRole.BI.name())
+                .requestMatchers("/api/config/**").hasRole(FindRole.CONFIG.name())
+                .requestMatchers("/api/admin/**").hasRole(FindRole.ADMIN.name())
+                .requestMatchers(FindController.DEFAULT_LOGIN_PAGE).permitAll()
+                .requestMatchers(FindController.LOGIN_PATH).permitAll()
+                .requestMatchers("/").permitAll()
                 .anyRequest().denyAll()
                 .and()
-            .headers()
+            .headers(h -> h
                 .defaultsDisabled()
-                .frameOptions().sameOrigin()
-                .contentSecurityPolicy("frame-ancestors 'self'");
+                .frameOptions(f -> f.sameOrigin())
+                .contentSecurityPolicy(c -> c.policyDirectives("frame-ancestors 'self'"))
+            );
 
         idolSecurityCustomizer.customize(http, authenticationManager());
+        return http.build();
     }
 }

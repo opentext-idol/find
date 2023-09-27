@@ -19,10 +19,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-@Data
+@Getter
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeName(PageEvent.TYPE)
 @JsonDeserialize()

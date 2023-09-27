@@ -14,8 +14,13 @@
 
 package db.migration.h2;
 
-import db.migration.AbstractDeduplicateUsers;
+import org.flywaydb.core.api.migration.BaseJavaMigration;
+import org.flywaydb.core.api.migration.Context;
 
 @SuppressWarnings("unused")
-public class V11_4_0_5__Deduplicate_Users extends AbstractDeduplicateUsers {
+public class V11_4_0_5__Deduplicate_Users extends BaseJavaMigration {
+
+    @Override
+    public void migrate(final Context context) throws Exception {}
+
 }

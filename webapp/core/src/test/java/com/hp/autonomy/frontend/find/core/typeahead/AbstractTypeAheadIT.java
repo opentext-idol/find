@@ -51,7 +51,7 @@ public abstract class AbstractTypeAheadIT extends AbstractFindIT {
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> {
                     final List<String> output = objectMapper.readValue(result.getResponse().getContentAsString(), RESPONSE_TYPE);
                     assertThat(output, hasItem(expectedSuggestion));

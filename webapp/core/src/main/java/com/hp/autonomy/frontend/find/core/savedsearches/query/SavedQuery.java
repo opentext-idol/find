@@ -18,15 +18,15 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearch;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -37,10 +37,10 @@ import java.time.ZonedDateTime;
 @JsonDeserialize(builder = SavedQuery.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SavedQuery extends SavedSearch<SavedQuery, SavedQuery.Builder> {
-    @Column(name = "last_fetched_new_date")
+    @Column(name = "last_fetched_new_date", columnDefinition = "DATETIME")
     private ZonedDateTime dateNewDocsLastFetched;
 
-    @Column(name = "last_fetched_date")
+    @Column(name = "last_fetched_date", columnDefinition = "DATETIME")
     private ZonedDateTime dateDocsLastFetched;
 
     private SavedQuery(final Builder builder) {

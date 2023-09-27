@@ -16,13 +16,13 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Transient;
 import java.time.ZonedDateTime;
 
 @SuppressWarnings("WeakerAccess")

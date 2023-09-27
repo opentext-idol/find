@@ -37,11 +37,11 @@ ALTER TABLE search_date_ranges ADD CONSTRAINT fk__search_date_ranges__searches F
 INSERT INTO search_numeric_ranges (search_id, field, min, max)
 SELECT search_id, field, min, max
 FROM search_parametric_ranges
-WHERE type IS 1;
+WHERE type = 1;
 
 INSERT INTO search_date_ranges (search_id, field, min, max)
 SELECT search_id, field, DATEADD('SECOND', FLOOR(min), DATE '1970-01-01'), DATEADD('SECOND', CEILING(max), DATE '1970-01-01')
 FROM search_parametric_ranges
-WHERE type IS 0 AND min >= 0 AND min <= 2147483647 AND max >= 0 AND max <= 2147483647;
+WHERE type = 0 AND min >= 0 AND min <= 2147483647 AND max >= 0 AND max <= 2147483647;
 
 DROP TABLE search_parametric_ranges;

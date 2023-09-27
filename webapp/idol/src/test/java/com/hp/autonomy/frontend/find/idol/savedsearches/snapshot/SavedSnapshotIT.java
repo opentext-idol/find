@@ -44,7 +44,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
     public void create() throws Exception {
         createSnapshot(getBaseSavedSnapshot())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", not(nullValue())))
                 .andExpect(jsonPath("$.resultCount", not(nullValue())))
                 .andExpect(jsonPath("$.stateTokens", not(empty())));
@@ -67,7 +67,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(createdEntity.getId().intValue())))
                 .andExpect(jsonPath("$.title", is(updatedTitle)));
     }
@@ -78,7 +78,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
 
         listSnapshots()
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].id", is(createdEntity.getId().intValue())))
                 .andExpect(jsonPath("$[0].resultCount", not(nullValue())))
                 .andExpect(jsonPath("$[0].stateTokens", not(empty())));

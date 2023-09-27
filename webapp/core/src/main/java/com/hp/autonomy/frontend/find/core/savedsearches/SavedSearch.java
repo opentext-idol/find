@@ -16,39 +16,18 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.time.ZonedDateTime;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.joining;
@@ -112,18 +91,18 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         joinColumns = @JoinColumn(name = DocumentSelectionTable.Column.SEARCH_ID))
     private Set<DocumentSelection> documentSelection;
 
-    @Column(name = Table.Column.START_DATE)
+    @Column(name = Table.Column.START_DATE, columnDefinition = "DATETIME")
     private ZonedDateTime minDate;
 
-    @Column(name = Table.Column.END_DATE)
+    @Column(name = Table.Column.END_DATE, columnDefinition = "DATETIME")
     private ZonedDateTime maxDate;
 
-    @CreatedDate
-    @Column(name = Table.Column.CREATED_DATE)
+    @CreationTimestamp
+    @Column(name = Table.Column.CREATED_DATE, columnDefinition = "DATETIME")
     private ZonedDateTime dateCreated;
 
-    @LastModifiedDate
-    @Column(name = Table.Column.MODIFIED_DATE)
+    @UpdateTimestamp
+    @Column(name = Table.Column.MODIFIED_DATE, columnDefinition = "DATETIME")
     private ZonedDateTime dateModified;
 
     @Transient

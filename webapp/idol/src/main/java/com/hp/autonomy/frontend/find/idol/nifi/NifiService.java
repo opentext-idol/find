@@ -23,7 +23,7 @@ import com.autonomy.aci.client.transport.ActionParameter;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.NifiConfig;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;

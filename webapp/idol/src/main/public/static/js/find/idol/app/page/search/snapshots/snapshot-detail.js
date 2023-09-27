@@ -13,11 +13,12 @@
  */
 
 define([
+    'underscore',
     'i18n!find/nls/bundle',
     'i18n!find/idol/nls/snapshots',
     'find/app/configuration',
     'moment'
-], function(i18n, snapshotsI18n, configuration, moment) {
+], function(_, i18n, snapshotsI18n, configuration, moment) {
 
     var DATE_FORMAT = 'L LT';
 

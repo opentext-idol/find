@@ -18,14 +18,14 @@ import com.autonomy.aci.client.services.AciService;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CommunityAgentStoreConfigValidatorTest {

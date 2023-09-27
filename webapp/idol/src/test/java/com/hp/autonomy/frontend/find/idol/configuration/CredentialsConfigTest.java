@@ -28,9 +28,9 @@ public class CredentialsConfigTest {
     public void setUp() {
         encryptor = Mockito.mock(TextEncryptor.class);
         Mockito.when(encryptor.encrypt(Mockito.any()))
-            .then(invocation -> "encrypted:" + invocation.getArgumentAt(0, String.class));
+            .then(invocation -> "encrypted:" + invocation.getArgument(0, String.class));
         Mockito.when(encryptor.decrypt(Mockito.any()))
-            .then(invocation -> invocation.getArgumentAt(0, String.class).substring(10));
+            .then(invocation -> invocation.getArgument(0, String.class).substring(10));
     }
 
     @Test

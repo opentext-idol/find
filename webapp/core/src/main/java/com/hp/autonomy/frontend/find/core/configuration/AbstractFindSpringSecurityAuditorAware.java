@@ -15,11 +15,12 @@
 package com.hp.autonomy.frontend.find.core.configuration;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
-import com.hp.autonomy.frontend.find.core.savedsearches.UserEntityRepository;
+import com.hp.autonomy.frontend.find.core.savedsearches.UserEntityService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.data.domain.AuditorAware;
 
 import java.security.Principal;
+import java.util.Optional;
 
 /**
  * Implements {@link AuditorAware<UserEntity>} which means it will automatically be picked up by
@@ -31,14 +32,14 @@ import java.security.Principal;
  */
 public abstract class AbstractFindSpringSecurityAuditorAware<P extends Principal> implements AuditorAware<UserEntity> {
     private final AuthenticationInformationRetriever<?, P> authenticationInformationRetriever;
-    private final UserEntityRepository userRepository;
+    private final UserEntityService userEntityService;
 
     protected AbstractFindSpringSecurityAuditorAware(
             final AuthenticationInformationRetriever<?, P> authenticationInformationRetriever,
-            final UserEntityRepository userRepository
+            final UserEntityService userEntityService
     ) {
         this.authenticationInformationRetriever = authenticationInformationRetriever;
-        this.userRepository = userRepository;
+        this.userEntityService = userEntityService;
     }
 
     /**
@@ -50,17 +51,15 @@ public abstract class AbstractFindSpringSecurityAuditorAware<P extends Principal
      * Return the current user as a {@link UserEntity} to be inserted into a {@link org.springframework.data.annotation.CreatedBy} field.
      */
     @Override
-    public UserEntity getCurrentAuditor() {
+    public Optional<UserEntity> getCurrentAuditor() {
         final P principal = authenticationInformationRetriever.getPrincipal();
 
         if(principal == null) {
-            return null;
+            return Optional.empty();
         }
 
         final UserEntity currentUser = principalToUser(principal);
 
-        return userRepository.findByUsername(
-                currentUser.getUsername()
-        );
+        return Optional.of(userEntityService.getOrCreate(currentUser.getUsername()));
     }
 }

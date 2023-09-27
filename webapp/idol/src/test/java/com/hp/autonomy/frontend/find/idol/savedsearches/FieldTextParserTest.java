@@ -22,7 +22,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -170,7 +171,7 @@ public class FieldTextParserTest {
 
     @Test
     public void toFieldTextWithIgnoredDocumentBlacklist() {
-        when(savedSearch.getDocumentSelection()).thenReturn(new HashSet<>(Arrays.asList(
+        Mockito.lenient().when(savedSearch.getDocumentSelection()).thenReturn(new HashSet<>(Arrays.asList(
             new DocumentSelection("ref1"),
             new DocumentSelection("ref,2")
         )));

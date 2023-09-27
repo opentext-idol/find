@@ -1,4 +1,4 @@
-package com.hp.autonomy.frontend.find.core.savedsearches;
+package com.hp.autonomy.frontend.find.core;
 
 import com.github.springtestdbunit.bean.DatabaseConfigBean;
 import com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean;
@@ -10,10 +10,21 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 @Configuration
-public class SavedSearchTestConfiguration {
+public class DbTestConfiguration {
     @SuppressWarnings("ProhibitedExceptionDeclared")
     @Bean
-    public DatabaseDataSourceConnection testConnection(final DataSource dataSource) throws Exception {
+    public DatabaseDataSourceConnection integrationTestConn(final DataSource dataSource) throws Exception {
+        return connWithSchema(dataSource, "FIND");
+    }
+
+    @Bean
+    public DatabaseDataSourceConnection unitTestConn(final DataSource dataSource) throws Exception {
+        return connWithSchema(dataSource, "PUBLIC");
+    }
+
+    private DatabaseDataSourceConnection connWithSchema(final DataSource dataSource, final String schema)
+            throws Exception
+    {
         final DatabaseConfigBean databaseConfigBean = new DatabaseConfigBean();
         databaseConfigBean.setDatatypeFactory(new H2DataTypeFactory());
         databaseConfigBean.setCaseSensitiveTableNames(false);
@@ -21,7 +32,7 @@ public class SavedSearchTestConfiguration {
         final DatabaseDataSourceConnectionFactoryBean databaseDataSourceConnectionFactoryBean = new DatabaseDataSourceConnectionFactoryBean();
         databaseDataSourceConnectionFactoryBean.setDataSource(dataSource);
         databaseDataSourceConnectionFactoryBean.setDatabaseConfig(databaseConfigBean);
-        databaseDataSourceConnectionFactoryBean.setSchema("FIND");
+        databaseDataSourceConnectionFactoryBean.setSchema(schema);
 
         return databaseDataSourceConnectionFactoryBean.getObject();
     }

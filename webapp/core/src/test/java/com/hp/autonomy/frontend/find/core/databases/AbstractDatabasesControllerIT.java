@@ -22,16 +22,14 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public abstract class AbstractDatabasesControllerIT extends AbstractFindIT {
     @Test
     public void noExcludedIndexes() throws Exception {
         mockMvc.perform(get(DatabasesController.GET_DATABASES_PATH).with(authentication(userAuth())))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", not(empty())));
     }
 }

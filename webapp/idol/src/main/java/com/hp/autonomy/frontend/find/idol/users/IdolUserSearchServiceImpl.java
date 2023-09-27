@@ -19,10 +19,10 @@ import com.hp.autonomy.frontend.find.core.configuration.RelatedUsersSourceConfig
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.searchcomponents.idol.search.QueryResponseParser;
-import com.hp.autonomy.types.idol.responses.QueryResponseData;
-import com.hp.autonomy.types.idol.responses.User;
-import com.hp.autonomy.types.idol.responses.UserDetails;
 import com.hp.autonomy.user.UserService;
+import com.opentext.idol.types.responses.QueryResponseData;
+import com.opentext.idol.types.responses.User;
+import com.opentext.idol.types.responses.UserDetails;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;

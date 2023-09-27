@@ -27,6 +27,8 @@ import com.hp.autonomy.frontend.find.core.export.service.MetadataNode;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -35,22 +37,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-
-import static com.hp.autonomy.frontend.find.core.metrics.MetricsConfiguration.FIND_METRICS_ENABLED_PROPERTY;
 
 public abstract class FindController<C extends FindConfig<C, B>, B extends FindConfigBuilder<C, B>> {
     public static final String APP_PATH = "/public";
@@ -69,9 +61,6 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
 
     @Value(AppConfiguration.APPLICATION_RELEASE_VERSION_PROPERTY)
     private String releaseVersion;
-
-    @Value(FIND_METRICS_ENABLED_PROPERTY)
-    private boolean metricsEnabled;
 
     @Value("${find.community.username.field:}")
     private String usernameField;
@@ -137,7 +126,6 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
         config.put(MvcConstants.ROLES.value(), roles);
         config.put(MvcConstants.GIT_COMMIT.value(), gitCommit);
         config.put(MvcConstants.RELEASE_VERSION.value(), releaseVersion);
-        config.put(MvcConstants.METRICS_ENABLED.value(), metricsEnabled);
         config.put(MvcConstants.SUNBURST.value(), findConfig.getSunburst());
         config.put(MvcConstants.MAP.value(), findConfig.getMap());
         config.put(MvcConstants.UI_CUSTOMIZATION.value(), findConfig.getUiCustomization());

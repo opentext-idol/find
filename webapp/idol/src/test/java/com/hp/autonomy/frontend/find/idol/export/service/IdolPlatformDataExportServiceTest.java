@@ -27,13 +27,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 
-import static org.mockito.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -58,6 +60,7 @@ public class IdolPlatformDataExportServiceTest {
 
     @Before
     public void setUp() {
+        when(queryRequest.getQueryType()).thenReturn(QueryRequest.QueryType.RAW);
         when(exportStrategy.getExportFormat()).thenReturn(ExportFormat.CSV);
         when(aciServiceRetriever.getAciService(any(QueryRequest.QueryType.class))).thenReturn(aciService);
         when(queryRequest.toBuilder()).thenReturn(idolQueryRequestBuilder);
@@ -71,6 +74,6 @@ public class IdolPlatformDataExportServiceTest {
     @Test
     public void export() throws IOException {
         idolExportService.exportQueryResults(outputStream, queryRequest, ExportFormat.CSV, Collections.emptyList(), 10L);
-        verify(aciService).executeAction(anySetOf(AciParameter.class), any());
+        verify(aciService).executeAction(Mockito.<AciParameter>anySet(), any());
     }
 }

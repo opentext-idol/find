@@ -28,7 +28,7 @@ define([
             defaultImage: '/img/Find_Logo_lge.png',
             height: 45,
             type: 'BIG_LOGO',
-            width: 240
+            width: 135
         },
         smallLogo: {
             defaultImage: '/img/Find_Logo_sml.png',

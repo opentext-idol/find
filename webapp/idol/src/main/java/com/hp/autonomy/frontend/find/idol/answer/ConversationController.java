@@ -18,22 +18,19 @@ import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.ConversationAnswerServerService;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.ConversationRequest;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.ConversationRequestBuilder;
-import com.hp.autonomy.types.idol.responses.conversation.ConversePrompt;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.opentext.idol.types.responses.conversation.ConversePrompt;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController

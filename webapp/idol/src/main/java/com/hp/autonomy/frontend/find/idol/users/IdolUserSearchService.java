@@ -1,8 +1,8 @@
 package com.hp.autonomy.frontend.find.idol.users;
 
 import com.hp.autonomy.frontend.find.core.configuration.RelatedUsersConfig;
-import com.hp.autonomy.types.idol.responses.User;
-import com.hp.autonomy.types.idol.responses.UserDetails;
+import com.opentext.idol.types.responses.User;
+import com.opentext.idol.types.responses.UserDetails;
 
 import java.util.List;
 

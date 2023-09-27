@@ -18,18 +18,18 @@ import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.util.AciParameters;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest.QueryType;
 import com.hp.autonomy.searchcomponents.idol.search.QueryExecutor;
-import com.hp.autonomy.types.idol.responses.GetQueryTagValuesResponseData;
-import com.hp.autonomy.types.idol.responses.QueryResponseData;
+import com.opentext.idol.types.responses.GetQueryTagValuesResponseData;
+import com.opentext.idol.types.responses.QueryResponseData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
