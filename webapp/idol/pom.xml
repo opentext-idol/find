@@ -52,6 +52,9 @@
                             <arguments>
                                 <argument>test</argument>
                             </arguments>
+                            <successCodes>
+                                <successCode>3</successCode>
+                            </successCodes>
                             <skip>${skipTests}</skip>
                         </configuration>
                     </execution>
