@@ -10,7 +10,10 @@ define(['underscore', 'moment'], function (_, moment) {
                 up: 'hp-icon hp-fw hp-chevron-up',
                 down: 'hp-icon hp-fw hp-chevron-down',
                 next: 'hp-icon hp-fw hp-chevron-right',
-                previous: 'hp-icon hp-fw hp-chevron-left'
+                previous: 'hp-icon hp-fw hp-chevron-left',
+                today: 'hp-icon hp-fw hp-icon-vulnerability',
+                clear: 'hp-icon hp-fw hp-icon-trash',
+                close: 'hp-icon hp-fw hp-icon-close'
             },
             keyBinds: {
                 // We customise 'enter' so we can trigger manual updates on 'enter' which the datetimepicker does not do by default

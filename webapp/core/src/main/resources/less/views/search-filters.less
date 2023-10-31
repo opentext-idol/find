@@ -18,8 +18,19 @@
   font-size: (@font-size-base - 1px);
 
   .timepicker {
-    td {
-      border: none;
+    table {
+      td {
+        border: none;
+        height: @nil;
+        line-height: @custom5;
+        width: @nil;
+
+        span {
+          height: @nil;
+          line-height: @nil;
+          width: @custom9;
+        }
+      }
     }
 
     .btn {
@@ -33,16 +44,18 @@
     color: @text-color;
   }
 
-  table {
-    td {
-      height: @nil;
-      line-height: @custom5;
-      width: @nil;
+  .datepicker-months, .datepicker-years, .datepicker-decades {
+    table {
+      td {
+        height: 45px;
+        line-height: 45px;
+        width: 45px;
 
-      span {
-        height: @nil;
-        line-height: @nil;
-        width: @custom9;
+        span {
+          height: 45px;
+          line-height: 45px;
+          width: 45px;
+        }
       }
     }
   }
