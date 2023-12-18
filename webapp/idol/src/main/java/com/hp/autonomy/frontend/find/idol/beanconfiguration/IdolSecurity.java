@@ -83,7 +83,6 @@ public class IdolSecurity {
             .csrf(c -> c.disable())
             .exceptionHandling(e -> e
                 .authenticationEntryPoint(authenticationEntryPoint)
-                .accessDeniedPage("/authentication-error")
             )
             .logout(l -> l
                 .logoutUrl("/logout")
