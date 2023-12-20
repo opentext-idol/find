@@ -466,10 +466,14 @@ define([
                 .find(this.isTargetModel.bind(this));
             const defaultsModel = this.fieldDetailsModel.has('min') ?
                 this.fieldDetailsModel : this.model;
-            const defaultRange = {
-                min: moment(defaultsModel.get('min'), DEFAULTS_DATE_FORMAT).valueOf(),
-                max: moment(defaultsModel.get('max'), DEFAULTS_DATE_FORMAT).valueOf()
-            };
+            const defaultRange = this.type === 'NumericDate' ?
+                {
+                    min: moment(defaultsModel.get('min'), DEFAULTS_DATE_FORMAT).valueOf(),
+                    max: moment(defaultsModel.get('max'), DEFAULTS_DATE_FORMAT).valueOf()
+                } : {
+                    min: defaultsModel.get('min'),
+                    max: defaultsModel.get('max')
+                };
 
             let range;
             if (selectionModel) {
