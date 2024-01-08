@@ -343,6 +343,8 @@ define([
                             selectedResultsViewRouteParams: extraRouteParams
                         });
                     } else {
+                        // case where the search is only visible because it's used in a dashboard (all
+                        // dashboard-referenced searches are visible to all users; see IdolSavedQueryController#get)
                         const newModel = getModel();
                         newModel.fetch().done(function () {
                             collection = options.readOnlySearchCollection;
@@ -360,9 +362,9 @@ define([
                 }, this);
 
                 if (collection.fetching) {
-                    collection.currentRequest.done(function() {
-                        setSelectedTab();
-                    }.bind(this));
+                    collection.currentRequest.done(setSelectedTab);
+                } else if (!collection.synced) {
+                    this.listenToOnce(collection, 'sync', setSelectedTab);
                 } else {
                     setSelectedTab();
                 }

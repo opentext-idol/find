@@ -92,8 +92,9 @@ define([
             this.trigger('route:page', 'dashboards/' + encodeURIComponent(dashboardName));
         },
 
-        savedSearch: function() {
+        savedSearch: function(tab, resultsView, others) {
             this.trigger('route:page', 'search');
+            this.trigger('route:savedSearch', tab, resultsView, others);
         }
     });
 });
