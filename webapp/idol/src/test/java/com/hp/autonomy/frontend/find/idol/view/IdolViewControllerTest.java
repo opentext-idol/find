@@ -34,7 +34,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -59,7 +58,9 @@ public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewC
         when(viewRequestBuilder.documentReference(any())).thenReturn(viewRequestBuilder);
         when(viewRequestBuilder.database(any())).thenReturn(viewRequestBuilder);
         when(viewRequestBuilder.highlightExpression(any())).thenReturn(viewRequestBuilder);
-        when(viewRequestBuilder.original(anyBoolean())).thenReturn(viewRequestBuilder);
+        when(viewRequestBuilder.part(any())).thenReturn(viewRequestBuilder);
+        when(viewRequestBuilder.urlPrefix(any())).thenReturn(viewRequestBuilder);
+        when(viewRequestBuilder.subDocRef(any())).thenReturn(viewRequestBuilder);
 
         viewController = new IdolViewController(idolViewServerService, viewRequestBuilderFactory, controllerUtils, userService, authenticationInformationRetriever, configService);
         viewServerService = idolViewServerService;

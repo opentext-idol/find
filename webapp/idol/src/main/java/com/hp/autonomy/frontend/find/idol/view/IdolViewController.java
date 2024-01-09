@@ -25,6 +25,7 @@ import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.logging.Markers;
+import com.hp.autonomy.searchcomponents.core.view.ViewingPart;
 import com.hp.autonomy.searchcomponents.idol.view.*;
 import com.hp.autonomy.user.UserService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
@@ -78,10 +79,12 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
 
     @Override
     public void viewDocument(
-        @RequestParam(REFERENCE_PARAM) final String reference,
+        @RequestParam(value = REFERENCE_PARAM, required = false) final String reference,
         @RequestParam(DATABASE_PARAM) final String database,
         @RequestParam(value = HIGHLIGHT_PARAM, required = false) final String highlightExpression,
-        @RequestParam(ORIGINAL_PARAM) final boolean original,
+        @RequestParam(PART_PARAM) final ViewingPart part,
+        @RequestParam(value = URL_PREFIX_PARAM, required = false) final String urlPrefix,
+        @RequestParam(value = SUB_DOC_REF_PARAM, required = false) final String subDocRef,
         final HttpServletResponse response
     ) throws AciErrorException, IOException {
         if (updateProfileOnView) {
@@ -91,7 +94,7 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
             }
         }
 
-        super.viewDocument(reference, database, highlightExpression, original, response);
+        super.viewDocument(reference, database, highlightExpression, part, urlPrefix, subDocRef, response);
     }
 
     @SuppressWarnings("TypeMayBeWeakened")

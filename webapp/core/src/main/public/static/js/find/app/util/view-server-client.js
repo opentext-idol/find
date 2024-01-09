@@ -1,7 +1,8 @@
 define([
     'jquery',
+    'underscore',
     'find/app/util/database-name-resolver'
-], function($, databaseNameResolver) {
+], function($, _, databaseNameResolver) {
 
     return {
         /**
@@ -12,14 +13,19 @@ define([
          * @return {String}
          */
         getHref: function(model, highlightExpressions, original) {
-            var database = databaseNameResolver.resolveDatabaseNameForDocumentModel(model);
-            
-            return 'api/public/view/viewDocument?' + $.param({
+            const commonParams = {
+                index: databaseNameResolver.resolveDatabaseNameForDocumentModel(model),
+                highlightExpressions: highlightExpressions || null
+            };
+
+            return 'api/public/view/viewDocument?' + $.param(_.defaults({
                 reference: model.get('reference'),
-                index: database,
-                highlightExpressions: highlightExpressions || null,
-                original: original
-            }, true);
+                part: 'DOCUMENT',
+                // relative to DOCUMENT API call
+                urlPrefix: 'viewDocument?' + $.param(_.defaults({
+                    part: 'SUBDOCUMENT'
+                }, commonParams))
+            }, commonParams), true);
         },
 
         /**
