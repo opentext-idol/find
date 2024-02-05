@@ -29,7 +29,7 @@ define([
                     ] },
                     { id: 'AUTN_DATABASE', values: [
                         { value: 'Other', count: 456 },
-                        { value: 'Wikipedia', count: 789 }
+                        { value: 'wikipedia', count: 789 }
                     ] }
                 ]);
 

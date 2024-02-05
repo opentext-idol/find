@@ -59,7 +59,9 @@ define([
         updateCount: function() {
             const dbName = this.model.get('name');
             const model = this.parametricCollection.findWhere({ id: 'AUTN_DATABASE' });
-            const db = model ? _.findWhere(model.get('values'), { value: dbName }) : null;
+            const db = model ? _.find(model.get('values'),
+                db => db.value.toLowerCase() === dbName.toLowerCase()
+            ) : null;
             this.$('.database-doc-count').text(' (' + (db ? db.count : 0 ) + ')');
         }
     });
