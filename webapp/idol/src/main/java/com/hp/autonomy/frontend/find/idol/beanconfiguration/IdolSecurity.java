@@ -101,7 +101,6 @@ public class IdolSecurity {
                 .anyRequest().denyAll()
                 .and()
             .headers(h -> h
-                .defaultsDisabled()
                 .frameOptions(f -> f.sameOrigin())
                 .contentSecurityPolicy(c -> c.policyDirectives("frame-ancestors 'self'"))
             );

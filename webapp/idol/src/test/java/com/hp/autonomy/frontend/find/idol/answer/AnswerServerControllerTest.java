@@ -172,7 +172,7 @@ public class AnswerServerControllerTest {
         controller = new AnswerServerController(
             aciService, askAnswerServerService, requestBuilderFactory, configService,
             processorFactory, documentsService, queryRestrictionsBuilderFactory,
-            queryRequestBuilderFactory);
+            queryRequestBuilderFactory, null);
     }
 
     @Test

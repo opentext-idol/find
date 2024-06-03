@@ -19,6 +19,9 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.AciParameters;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.hp.autonomy.aci.content.fieldtext.FieldText;
 import com.hp.autonomy.aci.content.fieldtext.MATCH;
 import com.hp.autonomy.frontend.configuration.ConfigService;
@@ -31,6 +34,7 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequest;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerService;
+import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
@@ -72,6 +76,7 @@ class AnswerServerController {
     private static final int DEFAULT_MAX_FACTS = 10;
     private static final String FACT_ID_FIELD = "FACTS/FACT_EXTRACT_/ID";
     private static final String FACT_SENTENCE_FIELD = "FACTS/FACT_EXTRACT_/SENTENCE";
+    private static final ObjectMapper customizationDataObjectMapper = JsonMapper.builder().build();
 
     private final AciService aciService;
     private final AskAnswerServerService askAnswerServerService;
@@ -81,6 +86,7 @@ class AnswerServerController {
     private final DocumentsService<IdolQueryRequest, ?, ?, IdolQueryRestrictions, IdolSearchResult, AciErrorException> documentsService;
     private final ObjectFactory<? extends QueryRestrictionsBuilder<IdolQueryRestrictions, String, ?>> queryRestrictionsBuilderFactory;
     private final ObjectFactory<? extends QueryRequestBuilder<IdolQueryRequest, IdolQueryRestrictions, ?>> queryRequestBuilderFactory;
+    private final HavenSearchAciParameterHandler aciParameterHandler;
 
     @Autowired
     AnswerServerController(
@@ -91,7 +97,8 @@ class AnswerServerController {
         final ProcessorFactory processorFactory,
         final DocumentsService<IdolQueryRequest, ?, ?, IdolQueryRestrictions, IdolSearchResult, AciErrorException> documentsService,
         final org.springframework.beans.factory.ObjectFactory<? extends QueryRestrictionsBuilder<IdolQueryRestrictions, String, ?>> queryRestrictionsBuilderFactory,
-        final ObjectFactory<? extends QueryRequestBuilder<IdolQueryRequest, IdolQueryRestrictions, ?>> queryRequestBuilderFactory
+        final ObjectFactory<? extends QueryRequestBuilder<IdolQueryRequest, IdolQueryRestrictions, ?>> queryRequestBuilderFactory,
+        final HavenSearchAciParameterHandler aciParameterHandler
     ) {
         this.aciService = aciService;
         this.askAnswerServerService = askAnswerServerService;
@@ -101,6 +108,7 @@ class AnswerServerController {
         this.documentsService = documentsService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
         this.queryRequestBuilderFactory = queryRequestBuilderFactory;
+        this.aciParameterHandler = aciParameterHandler;
     }
 
     @RequestMapping(value = ASK_PATH, method = RequestMethod.GET)
@@ -110,11 +118,24 @@ class AnswerServerController {
                                final String fieldText,
                                @RequestParam(value = MAX_RESULTS_PARAM, required = false)
                                final Integer maxResults) {
+        final String customizationData;
+        try {
+            customizationData = customizationDataObjectMapper.writeValueAsString(List.of(
+                    Map.of(
+                            "system_name", "MyPassageExtractorLLM",
+                            "security_info", aciParameterHandler.getSecurityInfo()
+                    )
+            ));
+        } catch (final JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
         final AskAnswerServerRequest request = requestBuilderFactory.getObject()
                 .text(text)
                 .maxResults(maxResults)
                 .proxiedParams(StringUtils.isBlank(fieldText) ? Collections.emptyMap() : Collections.singletonMap("fieldtext", fieldText))
                 .systemNames(configService.getConfig().getAnswerServer().getSystemNames())
+                .customizationData(customizationData)
                 .build();
 
         return askAnswerServerService.ask(request);
