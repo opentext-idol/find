@@ -21,7 +21,7 @@ import com.hp.autonomy.frontend.find.idol.controlpoint.ControlPointApiException;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
-import org.apache.http.auth.BasicUserPrincipal;
+import org.apache.hc.client5.http.auth.BasicUserPrincipal;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

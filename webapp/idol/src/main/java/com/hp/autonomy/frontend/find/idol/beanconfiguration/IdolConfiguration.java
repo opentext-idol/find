@@ -43,7 +43,7 @@ import com.hp.autonomy.user.UserService;
 import com.hp.autonomy.user.UserServiceImpl;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import com.opentext.idol.types.marshalling.ProcessorFactory;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;

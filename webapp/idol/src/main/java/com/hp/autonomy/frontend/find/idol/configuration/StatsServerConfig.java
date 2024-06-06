@@ -18,7 +18,7 @@ import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.AciServiceException;
 import com.autonomy.aci.client.services.ProcessorException;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
@@ -73,7 +73,7 @@ public class StatsServerConfig implements OptionalConfigurationComponent<StatsSe
         final Set<Statistic> statistics;
 
         try {
-            statistics = aciService.executeAction(server.toAciServerDetails(), new AciParameters("GetStatus"), new StatisticProcessor(annotationsProcessorFactory));
+            statistics = aciService.executeAction(server.toAciServerDetails(), new ActionParameters("GetStatus"), new StatisticProcessor(annotationsProcessorFactory));
         } catch (final ProcessorException | AciServiceException ignored) {
             return new ValidationResult<>(false, ValidationKey.CONNECTION_ERROR);
         }

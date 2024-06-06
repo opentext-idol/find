@@ -19,17 +19,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.hc.core5.net.URLEncodedUtils;
 
 import java.io.IOException;
 import java.net.URI;
@@ -91,7 +91,7 @@ public class ControlPointApiClient {
                 .setHost(serverDetails.getHost())
                 .setPort(serverDetails.getPort())
                 .setPath("/" + buildPath(Arrays.asList(serverDetails.getBasePath(), path)))
-                .setQuery(URLEncodedUtils.format(queryParams, StandardCharsets.UTF_8))
+                .setParameters(queryParams)
                 .build();
         } catch (final URISyntaxException e) {
             throw new IllegalArgumentException("Failed to construct request URL");
@@ -138,34 +138,33 @@ public class ControlPointApiClient {
     private <R> R performRequest(final HttpUriRequest request, final Class<R> resultType)
         throws ControlPointApiException
     {
-        final HttpResponse response;
-        final int statusCode;
         // read the entire response before parsing, so that if parsing fails, it can be included in
         // the error
-        final String resBody;
+        final ResponseStatusAndBody res;
         try {
-            response = httpClient.execute(request);
-            statusCode = response.getStatusLine().getStatusCode();
-            resBody = IOUtils.toString(response.getEntity().getContent());
+            res = httpClient.execute(request, response -> new ResponseStatusAndBody(
+                response.getCode(),
+                IOUtils.toString(response.getEntity().getContent())
+            ));
         } catch (final IOException e) {
             throw new ControlPointServiceException(e);
         }
 
         try {
-            if (statusCode >= 200 && statusCode < 300) {
+            if (res.code >= 200 && res.code < 300) {
                 if (resultType == null) {
                     return null;
                 } else {
-                    return objectMapper.readValue(resBody, resultType);
+                    return objectMapper.readValue(res.body, resultType);
                 }
             } else {
                 final ControlPointErrorResponse error =
-                    objectMapper.readValue(resBody, ControlPointErrorResponse.class);
-                throw new ControlPointApiException(response.getStatusLine().getStatusCode(), error);
+                    objectMapper.readValue(res.body, ControlPointErrorResponse.class);
+                throw new ControlPointApiException(res.code, error);
             }
         } catch (final IOException e) {
             throw new ControlPointServiceException(
-                "Unexpected response from ControlPoint API: " + resBody);
+                "Unexpected response from ControlPoint API: " + res.body);
         }
     }
 
@@ -237,5 +236,7 @@ public class ControlPointApiClient {
             buildUrlencodedPostRequest(path, queryParams, bodyParams),
             resultType);
     }
+
+    private record ResponseStatusAndBody(int code, String body) {}
 
 }

@@ -17,7 +17,7 @@ package com.hp.autonomy.frontend.find.idol.answer;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hp.autonomy.aci.content.fieldtext.FieldText;
 import com.hp.autonomy.aci.content.fieldtext.MATCH;
@@ -129,7 +129,7 @@ class AnswerServerController {
         @RequestParam(value = MAX_RESULTS_PARAM, required = false) final Integer maxResults,
         @RequestParam(INDEXES_PARAM) final Collection<String> databases
     ) {
-        final AciParameters params = new AciParameters(AnswerServerActions.Report.name());
+        final ActionParameters params = new ActionParameters(AnswerServerActions.Report.name());
         params.add(ReportParams.Entity.name(), entity);
         if (maxResults != null) {
             params.add(ReportParams.MaxResults.name(), maxResults);

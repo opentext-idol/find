@@ -17,7 +17,7 @@ package com.hp.autonomy.frontend.find.idol.answer;
 import com.autonomy.aci.client.services.AciConstants;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
@@ -191,8 +191,8 @@ public class AnswerServerControllerTest {
         final List<SourcedFact> response =
             controller.getEntityFacts("space", 7, Collections.singletonList("db"));
 
-        final ArgumentCaptor<AciParameters> paramsCaptor =
-            ArgumentCaptor.forClass(AciParameters.class);
+        final ArgumentCaptor<ActionParameters> paramsCaptor =
+            ArgumentCaptor.forClass(ActionParameters.class);
         Mockito.verify(aciService).executeAction(any(), paramsCaptor.capture(), any());
         Assert.assertEquals("should send report action to answerserver", Report.name(),
             paramsCaptor.getValue().get(AciConstants.PARAM_ACTION));
@@ -381,8 +381,8 @@ public class AnswerServerControllerTest {
         final List<SourcedFact> response =
             controller.getEntityFacts("space", null, Collections.singletonList("db"));
 
-        final ArgumentCaptor<AciParameters> paramsCaptor =
-            ArgumentCaptor.forClass(AciParameters.class);
+        final ArgumentCaptor<ActionParameters> paramsCaptor =
+            ArgumentCaptor.forClass(ActionParameters.class);
         Mockito.verify(aciService).executeAction(any(), paramsCaptor.capture(), any());
         Assert.assertNull("should not send max results to answerserver",
             paramsCaptor.getValue().get(ReportParams.MaxResults.name()));

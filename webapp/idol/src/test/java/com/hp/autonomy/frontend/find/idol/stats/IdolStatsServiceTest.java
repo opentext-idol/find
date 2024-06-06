@@ -15,7 +15,7 @@
 package com.hp.autonomy.frontend.find.idol.stats;
 
 import com.autonomy.aci.client.services.AciService;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.hp.autonomy.frontend.configuration.ConfigService;
@@ -157,11 +157,11 @@ public class IdolStatsServiceTest {
 
         statsService.drainQueue();
 
-        final ArgumentCaptor<AciParameters> captor = ArgumentCaptor.forClass(AciParameters.class);
+        final ArgumentCaptor<ActionParameters> captor = ArgumentCaptor.forClass(ActionParameters.class);
 
         verify(aciService).executeAction(captor.capture(), any());
 
-        return captor.getValue().get("data");
+        return (String) captor.getValue().get("data");
     }
 
     private static class TestPrincipal implements Principal {

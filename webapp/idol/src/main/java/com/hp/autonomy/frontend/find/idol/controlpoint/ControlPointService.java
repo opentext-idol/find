@@ -18,13 +18,14 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.idol.configuration.ControlPointConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.http.client.HttpClient;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Interact with ControlPoint.  Methods also throw {@link ControlPointServiceException}.
@@ -127,7 +128,7 @@ public class ControlPointService {
                 new BasicNameValuePair("stateMatchId", documentsStateToken),
                 new BasicNameValuePair("securityInfo", documentsSecurityInfo)
             ),
-            Collections.emptyList(),
+            List.of(),
             ControlPointApplyPolicyResponse.class);
     }
 

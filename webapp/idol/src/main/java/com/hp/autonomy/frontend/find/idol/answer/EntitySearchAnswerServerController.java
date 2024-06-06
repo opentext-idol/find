@@ -17,7 +17,7 @@ package com.hp.autonomy.frontend.find.idol.answer;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciServerDetails;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.hp.autonomy.aci.content.fieldtext.Specifier;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.idol.configuration.EntitySearchConfig;
@@ -91,7 +91,7 @@ class EntitySearchAnswerServerController {
         // We deliberately do each systemName in sequence since FactBank is faster than PassageExtraction.
         // If the systemNames aren't listed, we'll use null, which means we'll try all configured answer server systems.
         for(String systemName : CollectionUtils.isEmpty(systemNames) ? Collections.<String>singletonList(null) : systemNames) {
-            final AciParameters params = new AciParameters("ask");
+            final ActionParameters params = new ActionParameters("ask");
 
             params.add(AskParams.Sort.name(), AskSortParam.CONFIDENCE);
             params.add(AskParams.Text.name(), text);

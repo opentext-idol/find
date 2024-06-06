@@ -16,7 +16,7 @@ package com.hp.autonomy.frontend.find.idol.entitysearch;
 
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.hp.autonomy.aci.content.database.Databases;
 import com.hp.autonomy.aci.content.printfields.PrintFields;
 import com.hp.autonomy.frontend.configuration.ConfigService;
@@ -74,7 +74,7 @@ class EntitySearchController {
             @RequestParam(TEXT_PARAM) final String text,
             @RequestParam(value = DATABASE_GROUP_PARAM, required = false) final String databaseGroup
     ) {
-        AciParameters aciParameters = new AciParameters(QueryActions.Query.name());
+        ActionParameters aciParameters = new ActionParameters(QueryActions.Query.name());
 
         final EntitySearchConfig entitySearch = configService.getConfig().getEntitySearch();
 

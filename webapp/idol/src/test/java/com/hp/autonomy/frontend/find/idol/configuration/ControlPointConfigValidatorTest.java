@@ -17,7 +17,8 @@ package com.hp.autonomy.frontend.find.idol.configuration;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
 import com.hp.autonomy.frontend.find.idol.controlpoint.ControlPointApiClientTest;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,9 +40,9 @@ public class ControlPointConfigValidatorTest {
         Mockito.when(configService.getConfig()).thenReturn(IdolFindConfig.builder()
             .controlPoint(new ControlPointConfig(true, ControlPointServerConfigTest.validConfig))
             .build());
-        Mockito.when(httpClient.execute(Mockito.any()))
-            .thenReturn(ControlPointApiClientTest.buildLoginResponse())
-            .thenReturn(ControlPointApiClientTest.buildResponse(200, "OK", "[]"));
+        Mockito.doAnswer(ControlPointApiClientTest.buildLoginAnswer())
+            .doAnswer(ControlPointApiClientTest.buildAnswer(200, "[]"))
+            .when(httpClient).execute(Mockito.any(), Mockito.<HttpClientResponseHandler<?>>any());
         validator = new ControlPointConfigValidator(configService, httpClient);
     }
 
@@ -57,8 +58,8 @@ public class ControlPointConfigValidatorTest {
         final String resJson = "{" +
             "\"error\": \"Invalid Grant\"," +
             "\"error_description\":\"Wrong credentials\"}";
-        Mockito.when(httpClient.execute(Mockito.any()))
-            .thenReturn(ControlPointApiClientTest.buildResponse(401, "Unauthorized", resJson));
+        Mockito.doAnswer(ControlPointApiClientTest.buildAnswer(401, resJson))
+                .when(httpClient).execute(Mockito.any(), Mockito.<HttpClientResponseHandler<?>>any());
 
         final ValidationResult<String> res = validator.validate(
             new ControlPointConfig(true, ControlPointServerConfigTest.validConfig));
@@ -71,8 +72,8 @@ public class ControlPointConfigValidatorTest {
         final String resJson = "{" +
             "\"error\": \"Unknown\"," +
             "\"error_description\":\"Bad things\"}";
-        Mockito.when(httpClient.execute(Mockito.any()))
-            .thenReturn(ControlPointApiClientTest.buildResponse(400, "Bad Request", resJson));
+        Mockito.doAnswer(ControlPointApiClientTest.buildAnswer(400, resJson))
+                .when(httpClient).execute(Mockito.any(), Mockito.<HttpClientResponseHandler<?>>any());
 
         final ValidationResult<String> res = validator.validate(
             new ControlPointConfig(true, ControlPointServerConfigTest.validConfig));
@@ -82,7 +83,8 @@ public class ControlPointConfigValidatorTest {
 
     @Test
     public void testValidate_connectionError() throws IOException {
-        Mockito.when(httpClient.execute(Mockito.any())).thenThrow(new IOException());
+        Mockito.doThrow(new IOException())
+                .when(httpClient).execute(Mockito.any(), Mockito.<HttpClientResponseHandler<?>>any());
 
         final ValidationResult<String> res = validator.validate(
             new ControlPointConfig(true, ControlPointServerConfigTest.validConfig));

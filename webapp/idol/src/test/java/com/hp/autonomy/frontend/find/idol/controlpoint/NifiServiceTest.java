@@ -27,12 +27,10 @@ import com.hp.autonomy.frontend.find.idol.configuration.NifiConfig;
 import com.hp.autonomy.frontend.find.idol.nifi.NifiAction;
 import com.hp.autonomy.frontend.find.idol.nifi.NifiService;
 import com.opentext.idol.types.marshalling.ProcessorFactory;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.message.BasicStatusLine;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,8 +61,7 @@ public class NifiServiceTest {
     private Function<String, String> request;
 
     public static AciResponseInputStream buildResponse(final String body) throws Exception {
-        final HttpResponse res = new BasicHttpResponse(
-            new BasicStatusLine(HttpVersion.HTTP_1_1, 200, "OK"));
+        final ClassicHttpResponse res = new BasicClassicHttpResponse(200);
         res.setEntity(new StringEntity(body, ContentType.APPLICATION_XML));
         return new AciResponseInputStreamImpl(res);
     }

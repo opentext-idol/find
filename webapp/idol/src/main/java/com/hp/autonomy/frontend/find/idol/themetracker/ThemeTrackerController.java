@@ -18,7 +18,7 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.AciServiceException;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.services.ProcessorException;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import jakarta.servlet.ServletOutputStream;
@@ -67,7 +67,7 @@ class ThemeTrackerController {
             @RequestParam(value = "jobName", required = false) final String jobName) throws AciServiceException {
         final String effectiveJobName = getJobName(jobName);
 
-        final AciParameters params = new AciParameters("ClusterSGDataServe");
+        final ActionParameters params = new ActionParameters("ClusterSGDataServe");
         params.add("startdate", startDate);
         params.add("enddate", startDate + interval);
         params.add("sourcejobname", effectiveJobName);
@@ -82,7 +82,7 @@ class ThemeTrackerController {
     @ResponseBody
     public List<String> terms(
             @RequestBody final Cluster cluster) throws AciServiceException {
-        final AciParameters params = new AciParameters("ClusterSGDocsServe");
+        final ActionParameters params = new ActionParameters("ClusterSGDocsServe");
         params.add("startdate", cluster.fromDate);
         params.add("enddate", cluster.toDate-1);
         params.add("sourcejobname", cluster.jobName);
@@ -98,7 +98,7 @@ class ThemeTrackerController {
             @RequestParam(value="interval", defaultValue = INTERVAL) final long interval,
             @RequestParam(value = "jobName", required = false) final String jobName,
             final HttpServletResponse response) throws AciServiceException, IOException {
-        final AciParameters params = new AciParameters("clustersgpicserve");
+        final ActionParameters params = new ActionParameters("clustersgpicserve");
         params.add("startdate", startDate);
         params.add("enddate", startDate + interval);
         params.add("sourcejobname", getJobName(jobName));

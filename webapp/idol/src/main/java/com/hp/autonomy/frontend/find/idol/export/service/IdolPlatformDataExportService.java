@@ -16,7 +16,7 @@ package com.hp.autonomy.frontend.find.idol.export.service;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.Processor;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.hp.autonomy.frontend.find.core.export.service.ExportFormat;
 import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportService;
 import com.hp.autonomy.frontend.find.core.export.service.PlatformDataExportStrategy;
@@ -69,7 +69,7 @@ class IdolPlatformDataExportService implements PlatformDataExportService<IdolQue
                     .start(i + 1)
                     .maxResults(i + PAGINATION_SIZE)
                     .build();
-            final AciParameters aciParameters = getAciParameters(paginatedQueryRequest);
+            final ActionParameters aciParameters = getAciParameters(paginatedQueryRequest);
 
             executeQueryDiscardingBlacklist(
                 aciParameters,
@@ -79,8 +79,8 @@ class IdolPlatformDataExportService implements PlatformDataExportService<IdolQue
         }
     }
 
-    private AciParameters getAciParameters(final IdolQueryRequest queryRequest) {
-        final AciParameters aciParameters = new AciParameters(QueryActions.Query.name());
+    private ActionParameters getAciParameters(final IdolQueryRequest queryRequest) {
+        final ActionParameters aciParameters = new ActionParameters(QueryActions.Query.name());
 
         parameterHandler.addSearchRestrictions(aciParameters, queryRequest.getQueryRestrictions());
         parameterHandler.addSearchOutputParameters(aciParameters, queryRequest);
