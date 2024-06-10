@@ -338,11 +338,6 @@
             <version>1.3.0</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <repositories>
