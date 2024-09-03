@@ -130,6 +130,11 @@ define([
                 const containerTop = this.scrollModel.get('top');
                 const containerBottom = this.scrollModel.get('bottom');
 
+                if (containerTop === undefined || containerBottom === undefined) {
+                    console.log(augmentationRect, containerTop, containerBottom);
+                    return;
+                }
+
                 // Ensure that the top of the preview is at least PREVIEW_MARGIN_PIXELS from the top of the container
                 // but not above the augmentation view top
                 const targetTop = Math.max(containerTop + PREVIEW_MARGIN_PIXELS, augmentationRect.top);
@@ -138,6 +143,8 @@ define([
                 // Ensure that the bottom of the preview is at most PREVIEW_MARGIN_PIXELS from the bottom of the container
                 const targetBottom = containerBottom - PREVIEW_MARGIN_PIXELS;
                 const height = targetBottom - augmentationRect.top - margin;
+
+                console.log(augmentationRect, containerTop, containerBottom, targetTop, margin, targetBottom, height);
 
                 this.$previewModeContainer.css({
                     height: height,

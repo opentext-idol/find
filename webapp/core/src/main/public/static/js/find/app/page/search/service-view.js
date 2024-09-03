@@ -477,6 +477,7 @@ define([
 
         update: function() {
             this.resultsViewContainer.updateTab();
+            this.updateScrollParameters();
         },
 
         renderTimeBar: function() {
@@ -509,6 +510,8 @@ define([
 
                 this.renderTimeBar();
             }
+
+            this.updateScrollParameters();
         },
 
         fetchData: function() {
