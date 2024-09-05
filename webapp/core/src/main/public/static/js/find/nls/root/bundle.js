@@ -478,7 +478,7 @@ define([
         'settings.answerServer.conversationSystemDisabled': '(chat disabled)',
         'settings.answerServer.systemNames': 'System Names',
         'settings.answerServer.systemNamesDisabled': '(all systems)',
-        'settings.community.description': "Community handles authentication for Find. We recommend using a dedicated Community server for Find and not using it for any other parts of your IDOL installation.  Your Community server will need an Agentstore server for data storage.",
+        'settings.community.description': "Community handles authentication for Find. We recommend using a dedicated Community server for Find and not using it for any other parts of your Knowledge Discovery installation.  Your Community server will need an Agentstore server for data storage.",
         'settings.community.login.type': 'Login Type',
         'settings.community.login.fetchTypes': 'Test connection to retrieve available login types.',
         'settings.community.login.invalidType': 'You must test connection and choose a valid login type.',
