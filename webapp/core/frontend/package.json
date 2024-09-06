@@ -19,12 +19,12 @@
     "font-awesome": "4.5.0",
     "handlebars": "4.7.8",
     "hp-autonomy-about-page": "opentext-idol/js-about-page#0.4.0",
-    "hp-autonomy-js-databases-view": "opentext-idol/js-databases-view#0.12.0",
-    "hp-autonomy-js-parametric-refinement": "opentext-idol/js-parametric-refinement#2.1.0",
-    "hp-autonomy-fieldtext-js": "opentext-idol/fieldtext-js#1.7.0",
-    "hp-autonomy-js-whatever": "opentext-idol/jsWhatever#2.13.0",
+    "hp-autonomy-js-databases-view": "opentext-idol/js-databases-view#0.13.0",
+    "hp-autonomy-js-parametric-refinement": "opentext-idol/js-parametric-refinement#2.2.0",
+    "hp-autonomy-fieldtext-js": "opentext-idol/fieldtext-js#1.8.0",
+    "hp-autonomy-js-whatever": "opentext-idol/jsWhatever#2.14.0",
     "hp-autonomy-login-page": "opentext-idol/login-page#1.4.0",
-    "hp-autonomy-settings-page": "opentext-idol/settings-page#0.14.0",
+    "hp-autonomy-settings-page": "opentext-idol/settings-page#0.15.0",
     "hp-autonomy-sunburst": "opentext-idol/sunburst#2.2.0",
     "hp-autonomy-topic-map": "opentext-idol/topic-map#1.6.0",
     "html2canvas": "niklasvh/html2canvas#0.4.1",
@@ -39,7 +39,7 @@
     "metismenu": "2.5.2",
     "moment": "2.29.4",
     "moment-timezone": "0.5.43",
-    "requirejs": "2.3.3",
+    "requirejs": "2.3.7",
     "requirejs-text": "2.0.15",
     "requirejs-i18n": "requirejs/i18n#2.0.6",
     "bootstrap-slider": "6.1.7",
@@ -47,7 +47,7 @@
     "uuidjs": "4.2.6"
   },
   "devDependencies": {
-    "hp-autonomy-js-testing-utils": "opentext-idol/js-testing-utils#2.4.0",
+    "hp-autonomy-js-testing-utils": "opentext-idol/js-testing-utils#2.5.0",
     "jasmine-jquery": "2.1.0",
     "jasmine-ajax": "3.2.0"
   }
