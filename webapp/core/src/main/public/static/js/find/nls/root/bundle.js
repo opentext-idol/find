@@ -19,7 +19,7 @@ define([
 
     return substitution({
         'about.app.version': 'Version',
-        'about.copyright': "Copyright 2014-2023 Open Text.",
+        'about.copyright': "Copyright 2014-2024 Open Text.",
         'about.foss': 'FOSS Acknowledgements',
         'about.lib.name': 'Library Name',
         'about.lib.version': 'Version',
