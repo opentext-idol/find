@@ -20,7 +20,7 @@ define([
 
             return 'api/public/view/viewDocument?' + $.param(_.defaults({
                 reference: model.get('reference'),
-                part: 'DOCUMENT',
+                part: original ? 'ORIGINAL' : 'DOCUMENT',
                 // relative to DOCUMENT API call
                 urlPrefix: 'viewDocument?' + $.param(_.defaults({
                     part: 'SUBDOCUMENT'
