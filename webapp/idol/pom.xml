@@ -37,6 +37,7 @@
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
                                 <argument>ci</argument>
+                                <argument>--skip-audit</argument>
                             </arguments>
                         </configuration>
                     </execution>

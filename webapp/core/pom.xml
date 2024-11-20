@@ -19,6 +19,24 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${project.basedir}/src/main/public/static/bower_components</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
@@ -99,6 +117,7 @@
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
                                 <argument>ci</argument>
+                                <argument>--skip-audit</argument>
                             </arguments>
                         </configuration>
                     </execution>
