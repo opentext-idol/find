@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,15 +46,15 @@ public class SavedSnapshotServiceTest extends AbstractSavedSearchServiceTest<Sav
         new TypedStateToken("promotions", TypedStateToken.StateTokenType.PROMOTIONS);
 
     @SuppressWarnings("unused")
-    @MockBean
+    @MockitoBean
     private SavedSnapshotRepository crudRepository;
-    @MockBean
+    @MockitoBean
     private IdolDocumentsService documentsService;
-    @MockBean
+    @MockitoBean
     private FieldTextParser fieldTextParser;
-    @MockBean
+    @MockitoBean
     private ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
-    @MockBean
+    @MockitoBean
     private IdolQueryRestrictionsBuilder queryRestrictionsBuilder;
 
     private SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> savedSnapshotService;

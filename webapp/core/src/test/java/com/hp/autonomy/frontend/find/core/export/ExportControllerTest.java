@@ -26,9 +26,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -43,11 +43,11 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
 public abstract class ExportControllerTest<R extends QueryRequest<?>, E extends Exception> {
-    @MockBean
+    @MockitoBean
     protected RequestMapper<R> requestMapper;
-    @MockBean
+    @MockitoBean
     private ControllerUtils controllerUtils;
-    @MockBean
+    @MockitoBean
     private ExportServiceFactory<R, E> exportServiceFactory;
     @Mock
     private PlatformDataExportService<R, E> platformDataExportService;

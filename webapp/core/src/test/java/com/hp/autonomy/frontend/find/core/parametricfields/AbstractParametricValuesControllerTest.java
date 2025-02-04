@@ -36,7 +36,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
@@ -81,7 +81,7 @@ public abstract class AbstractParametricValuesControllerTest<
     private final Function<ControllerArguments<PS, R, RB, Q, QB, S, E>, C> constructController;
     private final Supplier<PS> mockService;
 
-    @MockBean
+    @MockitoBean
     private FieldComparatorFactory fieldComparatorFactory;
 
     @SuppressWarnings("SpringJavaAutowiringInspection")

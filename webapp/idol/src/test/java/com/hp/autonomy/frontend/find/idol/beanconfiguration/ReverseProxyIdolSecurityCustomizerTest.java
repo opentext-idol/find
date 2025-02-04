@@ -22,10 +22,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collection;
@@ -54,10 +54,10 @@ public class ReverseProxyIdolSecurityCustomizerTest {
     @Autowired
     private ReverseProxyIdolSecurityCustomizer reverseProxyIdolSecurityCustomizer;
 
-    @MockBean
+    @MockitoBean
     private UserService userService;
 
-    @MockBean
+    @MockitoBean
     private GrantedAuthoritiesMapper authoritiesMapper;
 
     @Mock

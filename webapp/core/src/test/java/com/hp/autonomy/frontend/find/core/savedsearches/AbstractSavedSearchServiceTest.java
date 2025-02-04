@@ -5,8 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.ZonedDateTime;
@@ -26,15 +26,15 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 public abstract class AbstractSavedSearchServiceTest<T extends SavedSearch<T, B>, B extends SavedSearch.Builder<T, B>> {
     private final Supplier<B> builderConstructor;
-    @MockBean
+    @MockitoBean
     private SharedToUserRepository sharedToUserRepository;
-    @MockBean
+    @MockitoBean
     private SharedToEveryoneRepository sharedToEveryoneRepository;
     @SuppressWarnings("unused")
-    @MockBean
+    @MockitoBean
     private AuditorAware<UserEntity> userEntityAuditorAware;
     @SuppressWarnings("unused")
-    @MockBean
+    @MockitoBean
     private TagNameFactory tagNameFactory;
     @Autowired
     protected SavedSearchService<T, B> service;

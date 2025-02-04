@@ -25,9 +25,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.ObjectPostProcessor;
+import org.springframework.security.config.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
@@ -44,6 +45,7 @@ import static com.hp.autonomy.frontend.find.core.beanconfiguration.SecurityConfi
 
 @Configuration
 @Order(99)
+@EnableWebSecurity
 public class IdolSecurity {
     @Value("${server.reverseProxy}")
     private boolean reverseProxy;
@@ -83,12 +85,10 @@ public class IdolSecurity {
             .csrf(c -> c.disable())
             .exceptionHandling(e -> e
                 .authenticationEntryPoint(authenticationEntryPoint)
-            )
-            .logout(l -> l
+            ).logout(l -> l
                 .logoutUrl("/logout")
                 .logoutSuccessUrl(FindController.DEFAULT_LOGIN_PAGE)
-            )
-            .authorizeRequests()
+            ).authorizeHttpRequests(a -> a
                 .requestMatchers(FindController.APP_PATH + "/**").hasAnyRole(FindRole.USER.name())
                 .requestMatchers(FindController.CONFIG_PATH).hasRole(FindRole.CONFIG.name())
                 .requestMatchers("/api/public/**").hasRole(FindRole.USER.name())
@@ -99,8 +99,7 @@ public class IdolSecurity {
                 .requestMatchers(FindController.LOGIN_PATH).permitAll()
                 .requestMatchers("/").permitAll()
                 .anyRequest().denyAll()
-                .and()
-            .headers(h -> h
+            ).headers(h -> h
                 .defaultsDisabled()
                 .frameOptions(f -> f.sameOrigin())
                 .contentSecurityPolicy(c -> c.policyDirectives("frame-ancestors 'self'"))

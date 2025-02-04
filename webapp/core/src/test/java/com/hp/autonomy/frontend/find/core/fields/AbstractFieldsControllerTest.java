@@ -39,7 +39,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
@@ -66,7 +66,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
     @Mock
     protected ConfigFileService<F> configService;
 
-    @MockBean
+    @MockitoBean
     protected FieldComparatorFactory fieldComparatorFactory;
 
     @SuppressWarnings("SpringJavaAutowiringInspection")

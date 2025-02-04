@@ -14,11 +14,11 @@
 
 package com.hp.autonomy.frontend.find.idol.themetracker;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class Cluster {
     public String title;
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public String jobName;
     public long fromDate, toDate;
     public int numDocs, x1, x2, y1, y2, id;

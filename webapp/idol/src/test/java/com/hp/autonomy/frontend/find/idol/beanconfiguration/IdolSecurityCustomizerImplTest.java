@@ -27,10 +27,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collection;
@@ -57,18 +57,18 @@ public class IdolSecurityCustomizerImplTest {
     @Autowired
     private IdolSecurityCustomizerImpl idolSecurityCustomizer;
 
-    @MockBean
+    @MockitoBean
     private ConfigService<IdolFindConfig> configService;
 
-    @MockBean
+    @MockitoBean
     private UserService userService;
 
-    @MockBean
+    @MockitoBean
     private GrantedAuthoritiesMapper authoritiesMapper;
 
     // required for wiring but not used in test
     @SuppressWarnings("unused")
-    @MockBean
+    @MockitoBean
     private AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever;
 
     @Mock

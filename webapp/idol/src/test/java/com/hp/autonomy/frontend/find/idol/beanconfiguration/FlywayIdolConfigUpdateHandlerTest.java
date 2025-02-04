@@ -7,12 +7,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 public class FlywayIdolConfigUpdateHandlerTest {
-    @MockBean private Flyway flyway;
+    @MockitoBean
+    private Flyway flyway;
     @Mock private IdolFindConfig config;
     private FlywayIdolConfigUpdateHandler flywayIdolConfigUpdateHandler;
 

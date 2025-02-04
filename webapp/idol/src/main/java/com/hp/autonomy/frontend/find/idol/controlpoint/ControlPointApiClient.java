@@ -24,12 +24,11 @@ import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
-import org.apache.hc.core5.net.URLEncodedUtils;
+import org.apache.hc.core5.net.WWWFormCodec;
 
 import java.io.IOException;
 import java.net.URI;
@@ -126,7 +125,7 @@ public class ControlPointApiClient {
         final List<NameValuePair> bodyParams
     ) {
         final HttpPost request = new HttpPost(buildUrl(path, queryParams));
-        final String body = URLEncodedUtils.format(bodyParams, StandardCharsets.UTF_8);
+        final String body = WWWFormCodec.format(bodyParams, StandardCharsets.UTF_8);
         request.setEntity(new StringEntity(body, StandardCharsets.UTF_8));
         return request;
     }
@@ -144,7 +143,7 @@ public class ControlPointApiClient {
         try {
             res = httpClient.execute(request, response -> new ResponseStatusAndBody(
                 response.getCode(),
-                IOUtils.toString(response.getEntity().getContent())
+                IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8)
             ));
         } catch (final IOException e) {
             throw new ControlPointServiceException(e);

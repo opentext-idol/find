@@ -20,7 +20,7 @@ import com.hp.autonomy.frontend.find.idol.beanconfiguration.IdolConfigUpdateHand
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldPathNormaliserImpl;
 import org.junit.Before;
 import org.mockito.Mock;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
@@ -30,10 +30,10 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 public class IdolFindConfigFileServiceTest extends FindConfigFileServiceTest<IdolFindConfig, IdolFindConfig.IdolFindConfigBuilder> {
 
-    @MockBean
+    @MockitoBean
     private IdolConfigUpdateHandler configUpdateHandler;
 
-    @MockBean
+    @MockitoBean
     private IdolFieldPathNormaliserImpl idolFieldPathNormaliser;
 
     @Mock

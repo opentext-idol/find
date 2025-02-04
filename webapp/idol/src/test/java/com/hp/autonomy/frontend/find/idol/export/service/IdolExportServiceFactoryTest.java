@@ -12,19 +12,19 @@ import com.hp.autonomy.searchcomponents.idol.configuration.AciServiceRetriever;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SuppressWarnings("unused")
 @SpringBootTest(classes = {IdolExportServiceFactory.class, PowerPointExportService.class, IdolPlatformDataExportService.class, CsvExportStrategy.class}, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class IdolExportServiceFactoryTest extends ExportServiceFactoryTest<IdolQueryRequest, AciErrorException> {
-    @MockBean
+    @MockitoBean
     private HavenSearchAciParameterHandler parameterHandler;
-    @MockBean
+    @MockitoBean
     private AciServiceRetriever aciServiceRetriever;
-    @MockBean
+    @MockitoBean
     private ConfigService<HavenSearchCapable> configService;
-    @MockBean
+    @MockitoBean
     private FieldPathNormaliser fieldPathNormaliser;
-    @MockBean
+    @MockitoBean
     private FieldDisplayNameGenerator fieldDisplayNameGenerator;
 }

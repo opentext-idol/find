@@ -25,7 +25,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -41,20 +41,20 @@ import static org.mockito.Mockito.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SharedToUserController.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class SharedToUserControllerTest {
-    @MockBean
+    @MockitoBean
     private SharedToUserRepository sharedToUserRepository;
 
-    @MockBean
+    @MockitoBean
     private SharedToEveryoneRepository sharedToEveryoneRepository;
 
-    @MockBean
+    @MockitoBean
     private SharedToUserService sharedToUserService;
 
-    @MockBean
+    @MockitoBean
     private UserEntityService userEntityService;
-    @MockBean
+    @MockitoBean
     private ConfigService<FindConfig<?, ?>> configService;
-    @MockBean
+    @MockitoBean
     private FindConfig<?, ?> config;
 
     @Autowired
