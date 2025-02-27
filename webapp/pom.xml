@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.hp.autonomy</groupId>
         <artifactId>foss-spring-boot-master-pom</artifactId>
-        <version>3.5.0-SNAPSHOT</version>
+        <version>3.5.0</version>
     </parent>
 
     <inceptionYear>2014</inceptionYear>
@@ -130,7 +130,7 @@
             <dependency>
                 <groupId>com.hp.autonomy.frontend</groupId>
                 <artifactId>idol-types</artifactId>
-                <version>2.5.0-SNAPSHOT</version>
+                <version>25.2.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.hp.autonomy.frontend.configuration</groupId>
@@ -256,17 +256,12 @@
             <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
-                <version>3.24.3</version>
+                <version>3.25.5</version>
             </dependency>
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>1.9.4</version>
-            </dependency>
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>2.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
