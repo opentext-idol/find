@@ -46,6 +46,9 @@
     "underscore": "1.13.6",
     "uuidjs": "4.2.6"
   },
+  "overrides": {
+    "moment-timezone": "0.5.43"
+  },
   "devDependencies": {
     "hp-autonomy-js-testing-utils": "opentext-idol/js-testing-utils#2.5.0",
     "jasmine-jquery": "2.1.0",
