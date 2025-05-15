@@ -31,6 +31,7 @@ import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.idol.actions.answer.params.ReportParams;
 import com.opentext.idol.types.marshalling.ProcessorFactory;
 import com.opentext.idol.types.responses.answer.*;
+import com.opentext.idol.types.responses.answer.System;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -81,6 +82,8 @@ public class AnswerServerControllerTest {
     private ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory;
     @Mock
     private IdolQueryRequestBuilder queryRequestBuilder;
+    @Mock
+    private HavenSearchAciParameterHandler aciParameterHandler;
 
     private AnswerServerController controller;
 
@@ -138,11 +141,14 @@ public class AnswerServerControllerTest {
 
     @Before
     public void setUp() {
+        Mockito.doReturn(buildGetStatus(List.of())).when(askAnswerServerService).getStatus();
+
         when(requestBuilderFactory.getObject()).thenReturn(requestBuilder);
         when(requestBuilder.text(any())).thenReturn(requestBuilder);
         when(requestBuilder.maxResults(anyInt())).thenReturn(requestBuilder);
         when(requestBuilder.proxiedParams(any())).thenReturn(requestBuilder);
         when(requestBuilder.systemNames(any())).thenReturn(requestBuilder);
+        when(requestBuilder.customizationData(any())).thenReturn(requestBuilder);
 
         when(configService.getConfig()).thenReturn(idolFindConfig);
         when(idolFindConfig.getAnswerServer()).thenReturn(answerServerConfig);
@@ -172,7 +178,7 @@ public class AnswerServerControllerTest {
         controller = new AnswerServerController(
             aciService, askAnswerServerService, requestBuilderFactory, configService,
             processorFactory, documentsService, queryRestrictionsBuilderFactory,
-            queryRequestBuilderFactory);
+            queryRequestBuilderFactory, aciParameterHandler);
     }
 
     @Test
@@ -398,6 +404,17 @@ public class AnswerServerControllerTest {
             response.get(0).fact.getSource());
         Assert.assertEquals("should return second fact", "2",
             response.get(1).fact.getSource());
+    }
+
+    private GetStatusResponsedata buildGetStatus(final List<System> systems) {
+        final var res = new GetStatusResponsedata();
+
+        final Systems systemsRes = Mockito.mock(Systems.class);
+        res.setSystems(systemsRes);
+
+        Mockito.doReturn(systems).when(systemsRes).getSystem();
+
+        return res;
     }
 
 }
