@@ -78,7 +78,7 @@ class AnswerServerController {
     private static final String FACT_ID_FIELD = "FACTS/FACT_EXTRACT_/ID";
     private static final String FACT_SENTENCE_FIELD = "FACTS/FACT_EXTRACT_/SENTENCE";
     private static final ObjectMapper customizationDataObjectMapper = JsonMapper.builder().build();
-    private static final Set<String> SECURED_SYSTEMS = Set.of("factbank", "passageextractor");
+    private static final Set<String> SECURED_SYSTEMS = Set.of("factbank", "passageextractor", "rag");
 
     private final AciService aciService;
     private final AskAnswerServerService askAnswerServerService;
