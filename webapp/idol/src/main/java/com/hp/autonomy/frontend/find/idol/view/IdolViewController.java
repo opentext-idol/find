@@ -87,7 +87,7 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
         @RequestParam(value = SUB_DOC_REF_PARAM, required = false) final String subDocRef,
         final HttpServletResponse response
     ) throws AciErrorException, IOException {
-        if (updateProfileOnView) {
+        if (updateProfileOnView && part == ViewingPart.DOCUMENT) {
             final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
             if (principal != null) {
                 userService.profileUser(principal.getName(), reference);
