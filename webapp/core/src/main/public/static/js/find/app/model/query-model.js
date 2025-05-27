@@ -32,10 +32,15 @@ define([
         return searchDataUtil.makeQueryText(queryState.conceptGroups.pluck('concepts'));
     }
 
+    function makeQuestionText(queryState) {
+        return searchDataUtil.makeQuestionText(queryState.conceptGroups.pluck('concepts'));
+    }
+
     return Backbone.Model.extend({
         defaults: {
             autoCorrect: true,
             queryText: '',
+            questionText: null,
             indexes: [],
             fieldText: null,
             minDate: undefined,
@@ -58,18 +63,20 @@ define([
             this.queryState = options.queryState;
 
             this.listenTo(this.queryState.conceptGroups, 'change:concepts update reset', function() {
-                const queryText = makeQueryText(this.queryState);
+                const newAttributes = { questionText: makeQuestionText(this.queryState) };
 
-                if(queryText) {
-                    const newAttributes = {correctedQuery: '', queryText: queryText};
+                const queryText = makeQueryText(this.queryState);
+                if (queryText) {
+                    newAttributes.queryText = queryText;
+                    newAttributes.correctedQuery = '';
 
                     if(options.enableAutoCorrect) {
                         // Reset auto-correct whenever the search text changes
                         newAttributes.autoCorrect = true;
                     }
-
-                    this.set(newAttributes);
                 }
+
+                this.set(newAttributes);
             });
 
             this.listenTo(this.queryState.datesFilterModel, 'change', function() {
@@ -100,6 +107,7 @@ define([
 
             this.set(_.extend({
                 queryText: makeQueryText(this.queryState),
+                questionText: makeQuestionText(this.queryState),
                 minScore: this.queryState.minScoreModel.get('minScore'),
                 indexes: collectionBuildIndexes(this.queryState.selectedIndexes)
             }, this.queryState.datesFilterModel.toQueryModelAttributes()));

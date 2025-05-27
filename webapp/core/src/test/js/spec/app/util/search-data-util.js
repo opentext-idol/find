@@ -40,6 +40,27 @@ define([
             });
         });
 
+        describe('makeQuestionText', function () {
+
+            it('empty concepts', function () {
+                expect(searchDataUtil.makeQuestionText([])).toBeNull();
+            });
+
+            it('one concept', function () {
+                expect(searchDataUtil.makeQuestionText([['"chlorine fluoride"']])).toEqual('"chlorine fluoride"');
+            });
+
+            it('multiple concept groups', function () {
+                expect(searchDataUtil.makeQuestionText([['chlorine fluoride'], ['activated carbon']])).toBeNull();
+            });
+
+            it('multiple concept terms', function () {
+                expect(searchDataUtil.makeQuestionText([['chlorine fluoride', 'activated carbon']]))
+                    .toEqual('chlorine fluoride');
+            });
+
+        });
+
         describe('buildIndexes', function() {
             it('called with indexes without domains returns an array of the index names as strings', function() {
                 expect(searchDataUtil.buildIndexes([

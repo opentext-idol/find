@@ -46,6 +46,16 @@ define([
     }
 
     /**
+     * Build question text from the concept groups.
+     *
+     * @param {Array.<Array.<string>>} concepts
+     * @return {string | null}
+     */
+    function makeQuestionText(concepts) {
+        return concepts.length === 1 ? concepts[0][0] : null;
+    }
+
+    /**
      * Create an array of strings representing the given selected indexes suitable for sending to the server.
      * @param {Array} selectedIndexesArray
      * @return {string[]}
@@ -119,6 +129,7 @@ define([
 
     return {
         makeQueryText: makeQueryText,
+        makeQuestionText,
         buildIndexes: buildIndexes,
         buildQuery: buildQuery,
         mergeFieldText: mergeFieldText,
