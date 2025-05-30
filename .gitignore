@@ -46,3 +46,6 @@ webapp/selenium-tests/integration-tests/target/
 webapp/selenium-tests/mockui/target/
 webapp/hsod-dist/target/
 webapp/on-prem-dist/target/
+
+maven.debricked.lock
+debricked.fingerprints.txt

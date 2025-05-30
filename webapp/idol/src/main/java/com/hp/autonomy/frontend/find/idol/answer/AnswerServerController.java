@@ -244,8 +244,12 @@ class AnswerServerController {
     }
 
     private Map<String, System> getAllSystems() {
-        return askAnswerServerService.getStatus().getSystems().getSystem().stream()
-                .collect(Collectors.toMap(System::getName, s -> s));
+        if (configService.getConfig().getAnswerServer().getEnabled()) {
+            return askAnswerServerService.getStatus().getSystems().getSystem().stream()
+                    .collect(Collectors.toMap(System::getName, s -> s));
+        } else {
+            return Map.of();
+        }
     }
 
 

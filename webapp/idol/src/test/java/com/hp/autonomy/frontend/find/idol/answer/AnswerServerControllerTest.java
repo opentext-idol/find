@@ -153,6 +153,7 @@ public class AnswerServerControllerTest {
         when(configService.getConfig()).thenReturn(idolFindConfig);
         when(idolFindConfig.getAnswerServer()).thenReturn(answerServerConfig);
         when(idolFindConfig.getReferenceField()).thenReturn("docref");
+        when(answerServerConfig.getEnabled()).thenReturn(true);
 
         when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
         when(queryRestrictionsBuilder.fieldText(any())).thenReturn(queryRestrictionsBuilder);
