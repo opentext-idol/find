@@ -137,7 +137,8 @@ define([
                     data: {
                         text: questionText,
                         fieldText: this.queryModel.get('fieldText'),
-                        maxResults: MAX_SIZE
+                        maxResults: MAX_SIZE,
+                        indexes: this.queryModel.get('indexes')
                     },
                     reset: true,
                     success: _.bind(function() {

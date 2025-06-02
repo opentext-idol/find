@@ -184,7 +184,7 @@ public class AnswerServerControllerTest {
 
     @Test
     public void ask() {
-        controller.ask("GPU", null,5);
+        controller.ask("GPU", null, 5, null);
         verify(askAnswerServerService).ask(any());
     }
 

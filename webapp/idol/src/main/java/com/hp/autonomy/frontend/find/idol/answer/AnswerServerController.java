@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.hp.autonomy.aci.content.database.Databases;
 import com.hp.autonomy.aci.content.fieldtext.FieldText;
 import com.hp.autonomy.aci.content.fieldtext.MATCH;
 import com.hp.autonomy.frontend.configuration.ConfigService;
@@ -42,6 +43,7 @@ import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.idol.actions.answer.AnswerServerActions;
 import com.hp.autonomy.types.requests.idol.actions.answer.params.ReportParams;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
+import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
 import com.opentext.idol.types.marshalling.ProcessorFactory;
 import com.opentext.idol.types.responses.answer.AskAnswer;
 import com.opentext.idol.types.responses.answer.ReportFact;
@@ -117,12 +119,12 @@ class AnswerServerController {
     }
 
     @RequestMapping(value = ASK_PATH, method = RequestMethod.GET)
-    public List<AskAnswer> ask(@RequestParam(TEXT_PARAM)
-                               final String text,
-                               @RequestParam(value = FIELDTEXT_PARAM, required = false)
-                               final String fieldText,
-                               @RequestParam(value = MAX_RESULTS_PARAM, required = false)
-                               final Integer maxResults) {
+    public List<AskAnswer> ask(
+            @RequestParam(TEXT_PARAM) final String text,
+            @RequestParam(value = FIELDTEXT_PARAM, required = false) final String fieldText,
+            @RequestParam(value = MAX_RESULTS_PARAM, required = false) final Integer maxResults,
+            @RequestParam(INDEXES_PARAM) final Collection<String> databases
+    ) {
         final String customizationData;
         try {
             final List<Map<String, String>> systems = configService.getConfig().getAnswerServer().getSystemNames().stream()
@@ -144,10 +146,18 @@ class AnswerServerController {
             throw new RuntimeException(e);
         }
 
+        final Map<String, String> proxiedParams = new HashMap<>();
+        if (!StringUtils.isBlank(fieldText)) {
+            proxiedParams.put(QueryParams.FieldText.name(), fieldText);
+        }
+        if (databases != null) {
+            proxiedParams.put(QueryParams.DatabaseMatch.name(), new Databases(databases).toString());
+        }
+
         final AskAnswerServerRequest request = requestBuilderFactory.getObject()
                 .text(text)
                 .maxResults(maxResults)
-                .proxiedParams(StringUtils.isBlank(fieldText) ? Collections.emptyMap() : Collections.singletonMap("fieldtext", fieldText))
+                .proxiedParams(proxiedParams)
                 .systemNames(configService.getConfig().getAnswerServer().getSystemNames())
                 .customizationData(customizationData)
                 .build();
