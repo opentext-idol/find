@@ -26,27 +26,6 @@ define([
 
     let contextId, lastQuery;
 
-    function autoLink(value) {
-        // Automatically convert plain HTTP/HTTPS links to <a> tags.
-        // We use lookahead to ignore the trailing 'dot' if present, since that's placed as punctuation in an
-        //  answer server response.
-        const regex = /(https?:\/\/\S+(?=\.?(\s|$)))/gi;
-
-        let lastIndex = 0, match, escaped = '';
-        while (match = regex.exec(value)) {
-            escaped += _.escape(value.slice(lastIndex, match.index));
-
-            const url = match[1];
-            escaped += '<a href="' + _.escape(url) + '" target="_blank">' + _.escape(url) + '</a>'
-
-            lastIndex = match.index + match[0].length
-        }
-
-        escaped += _.escape(value.slice(lastIndex));
-
-        return escaped;
-    }
-
     function escapeNonImages(value) {
         if (!value) {
             return value;
@@ -54,25 +33,13 @@ define([
 
         let escaped = '';
 
-        const regex = /(<(img|chart|suggest|cite|help) )([^<>]+>)|(<(table|a|sup|span)[^<>]*>[\s\S]*?<\/\5>)/g;
+        const regex = /(<(suggest|cite) )([^<>]+>)/g;
 
         let lastIndex = 0, match;
         while (match = regex.exec(value)) {
-            escaped += autoLink(value.slice(lastIndex, match.index));
+            escaped += value.slice(lastIndex, match.index);
 
-            if (match[4]) {
-                // <table> and <a> are placed verbatim, without any escaping.
-                let toAdd = match[4];
-
-                if (match[5] === 'a') {
-                    // we want to add a target=blank to the href if it doesn't already have an
-                    if (!/\btarget=/.exec(toAdd)) {
-                        toAdd = toAdd.slice(0, 2) + ' target="_blank" ' + toAdd.slice(2);
-                    }
-                }
-                escaped += toAdd;
-            }
-            else if (match[2] === 'suggest') {
+            if (match[2] === 'suggest') {
                 const $tmp = $(match[0]);
                 const opts = ($tmp.attr('options') || '').trim();
                 if (opts) {
@@ -95,9 +62,9 @@ define([
             lastIndex = match.index + match[0].length
         }
 
-        escaped += autoLink(value.slice(lastIndex));
+        escaped += value.slice(lastIndex);
 
-        return escaped.replace(/\n/g, '<br>').trim()
+        return escaped;
     }
 
     return function(target) {
