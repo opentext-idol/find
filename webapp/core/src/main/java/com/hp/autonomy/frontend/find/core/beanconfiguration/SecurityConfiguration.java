@@ -28,6 +28,9 @@ public class SecurityConfiguration {
         firewall.setAllowUrlEncodedPeriod(true);
         firewall.setAllowUrlEncodedSlash(true);
 
+        // for themetracker
+        firewall.setAllowUrlEncodedLineFeed(true);
+
         return firewall;
     }
 
