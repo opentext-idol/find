@@ -172,16 +172,14 @@ define([
                                 this.model.set({error: i18n['search.savedSearches.deleteFailed'], loading: false});
                             }, this),
                             success: _.bind(function() {
-                                this.model.set({error: null, loading: false});
+                                this.close();
                             }, this)
                         });
                     }, this)
                 });
             },
             'click .saved-search-close-option': function() {
-                this.model.set({error: null, loading: true});
-
-                this.savedSearchModel.collection.remove(this.savedSearchModel);
+                this.close();
             },
             'click .search-reset-option': function() {
                 this.model.set('error', null);
@@ -219,6 +217,7 @@ define([
             this.searchTypes = options.searchTypes;
             this.comparisonModalCallback = options.comparisonModalCallback;
             this.resultsViewSelectionModel = options.resultsViewSelectionModel;
+            this.findSearch = options.findSearch;
 
             this.model = new Backbone.Model({
                 // Is the saved search new, modified or up to date with the server?
@@ -290,7 +289,7 @@ define([
                 searchTypes: saveAsSearchTypes,
                 showOpenAsQuery: !isMutable,
                 showApplyPolicy: configuration().nifiEnabled || configuration().controlPointEnabled,
-                readOnly: this.savedSearchModel.get('type').indexOf('READ_ONLY') !== -1,
+                readOnly: this.savedSearchModel.get('type').indexOf('SHARED') !== -1,
                 sharingEnabled: configuration().savedSearchConfig.sharingEnabled
             }));
 
@@ -478,6 +477,11 @@ define([
                 this.$('.search-title-input-container').append(this.titleInput.$el);
                 this.titleInput.render();
             }
+        },
+
+        close: function () {
+            this.model.set({error: null, loading: false});
+            this.findSearch.closeCurrentSearch();
         }
     });
 });

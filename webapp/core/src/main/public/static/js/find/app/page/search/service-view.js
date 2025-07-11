@@ -96,6 +96,7 @@ define([
             this.documentsCollection = options.documentsCollection;
             this.searchTypes = options.searchTypes;
             this.searchCollections = options.searchCollections;
+            this.findSearch = options.findSearch;
 
             const searchType = this.savedSearchModel.get('type');
 
@@ -177,7 +178,8 @@ define([
                 savedSearchModel: this.savedSearchModel,
                 searchCollections: this.searchCollections,
                 searchTypes: this.searchTypes,
-                selectedTabModel: this.selectedTabModel
+                selectedTabModel: this.selectedTabModel,
+                findSearch: this.findSearch
             };
 
             const clickHandlerArguments = {

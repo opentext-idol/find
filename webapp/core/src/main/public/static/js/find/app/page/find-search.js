@@ -228,16 +228,7 @@ define([
                 events(cid).abandon();
 
                 if(this.selectedTabModel.get('selectedSearchCid') === cid) {
-                    const lastModel = this.savedQueryCollection.last();
-
-                    if(lastModel) {
-                        const route = lastModel.get('id') ? 'search/tab/' + lastModel.get('type') + ':' + lastModel.get('id') : 'search/query';
-                        vent.navigate(route, {trigger: false});
-                        this.selectedTabModel.set('selectedSearchCid', lastModel.cid);
-                    } else {
-                        // If the user closes their last tab, run a search for *
-                        this.createNewTab();
-                    }
+                    this.closeCurrentSearch();
                 }
             });
 
@@ -609,7 +600,8 @@ define([
                             searchCollections: this.searchCollections,
                             searchTypes: this.searchTypes,
                             selectedTabModel: this.selectedTabModel,
-                            mmapTab: this.mmapTab
+                            mmapTab: this.mmapTab,
+                            findSearch: this
                         }, this.serviceViewOptions(cid)))
                     };
                     this.serviceViews[cid] = viewData;
@@ -751,6 +743,19 @@ define([
             this.lastNavigatedQueryText = queryText || false;
             this.lastNavigatedDatabases = databases || undefined;
             this.lastNavigatedOptions = options;
+        },
+
+        closeCurrentSearch: function () {
+            const lastModel = this.savedQueryCollection.last();
+
+            if(lastModel) {
+                const route = lastModel.get('id') ? 'search/tab/' + lastModel.get('type') + ':' + lastModel.get('id') : 'search/query';
+                vent.navigate(route, {trigger: false});
+                this.selectedTabModel.set('selectedSearchCid', lastModel.cid);
+            } else {
+                // If the user closes their last tab, run a search for *
+                this.createNewTab();
+            }
         }
     });
 });

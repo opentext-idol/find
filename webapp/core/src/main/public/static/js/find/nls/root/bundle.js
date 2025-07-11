@@ -425,7 +425,7 @@ define([
         'search.savedSearchControl.sharingOptions.notSharedWith': 'Users this search not shared with...',
         'search.savedSearchControl.sharingOptions.searchForMoreUsers': 'Search for more users',
         'search.savedSearchControl.sharingOptions.sharedWithEveryone': 'Make this search publicly visible to all users',
-        'search.savedSearchControl.sharingOptions.sharedWith': 'Users this search shared with...',
+        'search.savedSearchControl.sharingOptions.sharedWith': 'Users this search is shared with...',
         'search.savedSearchControl.sharingOptions.shareWithThisUser': 'Share with this user',
         'search.savedSearchControl.sharingOptions.success': 'Success: ',
         'search.savedSearchControl.sharingOptions.success.canEdit': 'search {0} can be edited by {1}',
