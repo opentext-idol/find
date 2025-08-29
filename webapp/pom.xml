@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.hp.autonomy</groupId>
         <artifactId>foss-spring-boot-master-pom</artifactId>
-        <version>3.6.0</version>
+        <version>3.7.0</version>
     </parent>
 
     <inceptionYear>2014</inceptionYear>
@@ -25,7 +25,7 @@
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
-        <haven.search.components.version>1.6.0</haven.search.components.version>
+        <haven.search.components.version>1.7.0</haven.search.components.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
         <npm.binExtension/>
         <skipITs>false</skipITs>
@@ -71,6 +71,11 @@
                 <version>2.6</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.18.0</version>
+            </dependency>
+            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>32.1.2-jre</version>
@@ -83,27 +88,27 @@
             <dependency>
                 <groupId>com.hp.autonomy.aci.client</groupId>
                 <artifactId>aci-annotations-processor</artifactId>
-                <version>25.3.0</version>
+                <version>25.4.0</version>
             </dependency>
             <dependency>
                 <groupId>com.hp.autonomy.aci.client</groupId>
                 <artifactId>aci-api</artifactId>
-                <version>25.3.0</version>
+                <version>25.4.0</version>
             </dependency>
             <dependency>
                 <groupId>com.hp.autonomy.aci.content</groupId>
                 <artifactId>content-parameter-api</artifactId>
-                <version>25.3.0</version>
+                <version>25.4.0</version>
             </dependency>
             <dependency>
                 <groupId>com.hp.autonomy.frontend</groupId>
                 <artifactId>aci-types</artifactId>
-                <version>1.2.0</version>
+                <version>1.4.0</version>
             </dependency>
             <dependency>
                 <groupId>com.hp.autonomy.frontend</groupId>
                 <artifactId>logging</artifactId>
-                <version>2.5.0</version>
+                <version>2.6.0</version>
             </dependency>
             <dependency>
                 <groupId>com.hp.autonomy.frontend</groupId>
@@ -130,27 +135,27 @@
             <dependency>
                 <groupId>com.hp.autonomy.frontend</groupId>
                 <artifactId>idol-types</artifactId>
-                <version>25.3.0</version>
+                <version>25.4.0</version>
             </dependency>
             <dependency>
                 <groupId>com.hp.autonomy.frontend.configuration</groupId>
                 <artifactId>configuration-api</artifactId>
-                <version>2.1.0</version>
+                <version>2.2.0</version>
             </dependency>
             <dependency>
                 <groupId>com.hp.autonomy.frontend.configuration</groupId>
                 <artifactId>configuration-authentication</artifactId>
-                <version>1.6.0</version>
+                <version>1.7.0</version>
             </dependency>
             <dependency>
                 <groupId>com.hp.autonomy.frontend.configuration</groupId>
                 <artifactId>configuration-impl</artifactId>
-                <version>3.5.0</version>
+                <version>3.6.0</version>
             </dependency>
             <dependency>
                 <groupId>com.hp.autonomy.frontend.configuration</groupId>
                 <artifactId>configuration-idol</artifactId>
-                <version>6.6.0</version>
+                <version>6.7.0</version>
             </dependency>
             <dependency>
                 <groupId>com.hp.autonomy.frontend.find</groupId>
@@ -172,17 +177,17 @@
             <dependency>
                 <groupId>com.hp.autonomy.frontend.reports.powerpoint</groupId>
                 <artifactId>powerpoint-report</artifactId>
-                <version>2.5.0</version>
+                <version>2.6.0</version>
             </dependency>
             <dependency>
                 <groupId>com.hp.autonomy.frontend.user</groupId>
                 <artifactId>idol-user-service</artifactId>
-                <version>4.6.0</version>
+                <version>4.7.0</version>
             </dependency>
             <dependency>
                 <groupId>com.hp.autonomy.idol</groupId>
                 <artifactId>indexing-api</artifactId>
-                <version>4.2.0</version>
+                <version>4.3.0</version>
             </dependency>
             <dependency>
                 <groupId>com.hp.bigdata.frontend</groupId>
@@ -266,7 +271,7 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.9.4</version>
+                <version>1.11.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
