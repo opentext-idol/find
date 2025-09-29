@@ -15,21 +15,21 @@
 package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest.QueryType;
 import com.hp.autonomy.searchcomponents.idol.search.QueryExecutor;
-import com.hp.autonomy.types.idol.responses.GetQueryTagValuesResponseData;
-import com.hp.autonomy.types.idol.responses.QueryResponseData;
+import com.opentext.idol.types.responses.GetQueryTagValuesResponseData;
+import com.opentext.idol.types.responses.QueryResponseData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -52,13 +52,13 @@ public class FindQueryExecutorTest {
         blacklistError.setErrorString(FindQueryExecutor.MISSING_RULE_ERROR);
         when(queryExecutor.executeQuery(any(), any())).thenThrow(blacklistError).thenReturn(responseData);
 
-        assertNotNull(findQueryExecutor.executeQuery(new AciParameters(), QueryType.MODIFIED));
+        assertNotNull(findQueryExecutor.executeQuery(new ActionParameters(), QueryType.MODIFIED));
     }
 
     @Test(expected = AciErrorException.class)
     public void queryQmsButUnexpectedError() {
         when(queryExecutor.executeQuery(any(), any())).thenThrow(new AciErrorException());
-        findQueryExecutor.executeQuery(new AciParameters(), QueryType.MODIFIED);
+        findQueryExecutor.executeQuery(new ActionParameters(), QueryType.MODIFIED);
     }
 
     @Test
@@ -70,7 +70,7 @@ public class FindQueryExecutorTest {
 
     @Test
     public void executeSuggest() {
-        final AciParameters parameters = new AciParameters();
+        final ActionParameters parameters = new ActionParameters();
         final QueryType queryType = QueryType.RAW;
         findQueryExecutor.executeSuggest(parameters, queryType);
         verify(queryExecutor).executeSuggest(parameters, queryType);
@@ -85,12 +85,12 @@ public class FindQueryExecutorTest {
 
         when(queryExecutor.executeGetQueryTagValues(any(), any())).thenThrow(blacklistError).thenReturn(responseData);
 
-        assertThat(findQueryExecutor.executeGetQueryTagValues(new AciParameters(), QueryType.MODIFIED), is(responseData));
+        assertThat(findQueryExecutor.executeGetQueryTagValues(new ActionParameters(), QueryType.MODIFIED), is(responseData));
     }
 
     @Test(expected = AciErrorException.class)
     public void testParametricValuesWithUnexpectedError() {
         when(queryExecutor.executeGetQueryTagValues(any(), any())).thenThrow(new AciErrorException());
-        findQueryExecutor.executeGetQueryTagValues(new AciParameters(), QueryType.MODIFIED);
+        findQueryExecutor.executeGetQueryTagValues(new ActionParameters(), QueryType.MODIFIED);
     }
 }

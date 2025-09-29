@@ -13,10 +13,11 @@
  */
 
 define([
+    'underscore',
     'find/app/model/geography-model',
     'find/app/configuration',
     'fieldtext/js/field-text-parser'
-], function(GeographyModel, configuration, parser) {
+], function(_, GeographyModel, configuration, parser) {
     'use strict';
 
     const configWithThreeFields = {

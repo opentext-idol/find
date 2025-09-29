@@ -17,17 +17,15 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.SavedSearchConfig;
-import com.hp.autonomy.frontend.find.core.test.MockConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
-import org.springframework.boot.test.autoconfigure.json.JsonTest;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -36,28 +34,27 @@ import java.util.Collections;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-@JsonTest
-@AutoConfigureJsonTesters(enabled = false)
+@AutoConfigureJson
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SharedToUserController.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class SharedToUserControllerTest {
-    @MockBean
+    @MockitoBean
     private SharedToUserRepository sharedToUserRepository;
 
-    @MockBean
+    @MockitoBean
     private SharedToEveryoneRepository sharedToEveryoneRepository;
 
-    @MockBean
+    @MockitoBean
     private SharedToUserService sharedToUserService;
 
-    @MockBean
+    @MockitoBean
     private UserEntityService userEntityService;
-    @MockBean
+    @MockitoBean
     private ConfigService<FindConfig<?, ?>> configService;
-    @MockBean
+    @MockitoBean
     private FindConfig<?, ?> config;
 
     @Autowired
@@ -85,12 +82,12 @@ public class SharedToUserControllerTest {
         join.setUser(user);
 
         controller.save(join, 3);
-        verify(sharedToUserService).save(Matchers.<SharedToUser>any());
+        verify(sharedToUserService).save(ArgumentMatchers.<SharedToUser>any());
     }
 
     @Test
     public void delete() throws IOException {
         controller.delete(2L, 3L);
-        verify(sharedToUserRepository).delete(Matchers.<SharedToUserPK>any());
+        verify(sharedToUserRepository).deleteById(ArgumentMatchers.<SharedToUserPK>any());
     }
 }

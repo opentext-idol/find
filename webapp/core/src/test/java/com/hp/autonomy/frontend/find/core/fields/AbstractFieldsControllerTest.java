@@ -36,11 +36,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
-import org.springframework.boot.test.autoconfigure.json.JsonTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
@@ -48,22 +47,16 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-@JsonTest
-@AutoConfigureJsonTesters(enabled = false)
+@AutoConfigureJson
 public abstract class AbstractFieldsControllerTest<C extends FieldsController<R, E, Q, P>, R extends FieldsRequest, E extends Exception, S extends Serializable, Q extends QueryRestrictions<S>, P extends ParametricRequest<Q>, F extends FindConfig<?, ?>> {
     @ClassRule
     public static final SpringClassRule SCR = new SpringClassRule();
@@ -73,7 +66,7 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
     @Mock
     protected ConfigFileService<F> configService;
 
-    @MockBean
+    @MockitoBean
     protected FieldComparatorFactory fieldComparatorFactory;
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
@@ -117,13 +110,14 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
         when(service.getFields(any())).thenReturn(response);
 
         final List<FieldAndValueDetails<?>> fields = getParametricFields(FieldTypeParam.Parametric, FieldTypeParam.Numeric, FieldTypeParam.NumericDate);
-        assertThat(fields, hasSize(6));
+        assertThat(fields, hasSize(7));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("parametric_field").getNormalisedPath()))));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("numeric_field").getNormalisedPath()))));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("parametric_numeric_field").getNormalisedPath()))));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("date_field").getNormalisedPath()))));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("parametric_date_field").getNormalisedPath()))));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATE_FIELD).getNormalisedPath()))));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATABASE_FIELD).getNormalisedPath()))));
     }
 
     @Test
@@ -253,8 +247,9 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
                 .build());
 
         final List<FieldAndValueDetails<?>> fields = getParametricFields(FieldTypeParam.Parametric);
-        assertThat(fields, hasSize(1));
+        assertThat(fields, hasSize(2));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField3").getNormalisedPath()))));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath(ParametricValuesService.AUTN_DATABASE_FIELD).getNormalisedPath()))));
     }
 
     @Test

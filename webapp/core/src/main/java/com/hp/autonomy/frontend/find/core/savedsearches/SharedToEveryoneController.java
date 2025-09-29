@@ -15,19 +15,15 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 import static com.hp.autonomy.frontend.find.core.savedsearches.SharedToUserController.SEARCH_ID_PARAM;
 
@@ -64,8 +60,8 @@ class SharedToEveryoneController {
         checkEnabled();
         sharedToEveryone.setId(new SharedToEveryonePK(searchId));
 
-        final SharedToEveryone existing = sharedToEveryoneRepository.findOne(sharedToEveryone.getId());
-        sharedToEveryone.merge(existing);
+        final Optional<SharedToEveryone> existing = sharedToEveryoneRepository.findById(sharedToEveryone.getId());
+        sharedToEveryone.merge(existing.orElse(null));
 
         return sharedToEveryoneRepository.save(sharedToEveryone);
     }
@@ -77,7 +73,7 @@ class SharedToEveryoneController {
             @PathVariable(SEARCH_ID_PARAM) final long searchId
     ) {
         checkEnabled();
-        sharedToEveryoneRepository.delete(new SharedToEveryonePK(searchId));
+        sharedToEveryoneRepository.deleteById(new SharedToEveryonePK(searchId));
     }
 
 }

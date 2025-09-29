@@ -15,27 +15,22 @@
 package com.hp.autonomy.frontend.find.idol.stats;
 
 import com.autonomy.aci.client.services.AciService;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.frontend.find.core.stats.AbandonmentEvent;
-import com.hp.autonomy.frontend.find.core.stats.ClickThroughEvent;
-import com.hp.autonomy.frontend.find.core.stats.ClickType;
-import com.hp.autonomy.frontend.find.core.stats.Event;
-import com.hp.autonomy.frontend.find.core.stats.PageEvent;
+import com.hp.autonomy.frontend.find.core.stats.*;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.StatsServerConfig;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
 import lombok.Data;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.xmlunit.builder.Input;
 import org.xmlunit.input.WhitespaceStrippedSource;
 import org.xmlunit.matchers.HasXPathMatcher;
@@ -49,6 +44,7 @@ import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.xmlunit.matchers.CompareMatcher.isIdenticalTo;
@@ -161,11 +157,11 @@ public class IdolStatsServiceTest {
 
         statsService.drainQueue();
 
-        final ArgumentCaptor<AciParameters> captor = ArgumentCaptor.forClass(AciParameters.class);
+        final ArgumentCaptor<ActionParameters> captor = ArgumentCaptor.forClass(ActionParameters.class);
 
-        verify(aciService).executeAction(captor.capture(), Matchers.anyObject());
+        verify(aciService).executeAction(captor.capture(), any());
 
-        return captor.getValue().get("data");
+        return (String) captor.getValue().get("data");
     }
 
     private static class TestPrincipal implements Principal {

@@ -17,19 +17,10 @@ package com.hp.autonomy.frontend.find.core.parametricfields;
 import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.find.core.fields.FieldComparatorFactory;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.BucketingParams;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.DependentParametricField;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequestBuilder;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.*;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
-import com.hp.autonomy.types.requests.idol.actions.tags.DateRangeInfo;
-import com.hp.autonomy.types.requests.idol.actions.tags.DateValueDetails;
-import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
-import com.hp.autonomy.types.requests.idol.actions.tags.NumericRangeInfo;
-import com.hp.autonomy.types.requests.idol.actions.tags.NumericValueDetails;
-import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
+import com.hp.autonomy.types.requests.idol.actions.tags.*;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
 import lombok.Data;
 import org.hamcrest.BaseMatcher;
@@ -39,13 +30,13 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.ArgumentMatchers;
+import org.mockito.hamcrest.MockitoHamcrest;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
-import org.springframework.boot.test.autoconfigure.json.JsonTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
@@ -67,13 +58,11 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.argThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-@JsonTest
-@AutoConfigureJsonTesters(enabled = false)
+@AutoConfigureJson
 public abstract class AbstractParametricValuesControllerTest<
         C extends ParametricValuesController<Q, R, S, E>,
         PS extends ParametricValuesService<R, Q, E>,
@@ -92,7 +81,7 @@ public abstract class AbstractParametricValuesControllerTest<
     private final Function<ControllerArguments<PS, R, RB, Q, QB, S, E>, C> constructController;
     private final Supplier<PS> mockService;
 
-    @MockBean
+    @MockitoBean
     private FieldComparatorFactory fieldComparatorFactory;
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
@@ -125,7 +114,7 @@ public abstract class AbstractParametricValuesControllerTest<
     public void getParametricValues() throws E {
         final List<FieldPath> fieldNames = Stream.of("CATEGORY", "AUTHOR").map(tagNameFactory::getFieldPath).collect(Collectors.toList());
 
-        when(parametricValuesService.getParametricValues(argThat(matchesParametricRequest(fieldNames, "cat", "MATCH{ANIMAL}:CATEGORY"))))
+        when(parametricValuesService.getParametricValues(MockitoHamcrest.argThat(matchesParametricRequest(fieldNames, "cat", "MATCH{ANIMAL}:CATEGORY"))))
                 .thenReturn(Collections.singleton(QueryTagInfo.builder().build()));
         assertThat(parametricValuesController.getParametricValues(
                 fieldNames,
@@ -145,7 +134,7 @@ public abstract class AbstractParametricValuesControllerTest<
 
     @Test
     public void getDependentParametricValues() throws E {
-        when(parametricValuesService.getDependentParametricValues(Matchers.any())).thenReturn(Collections.singletonList(DependentParametricField.builder().build()));
+        when(parametricValuesService.getDependentParametricValues(ArgumentMatchers.any())).thenReturn(Collections.singletonList(DependentParametricField.builder().build()));
         assertThat(parametricValuesController.getDependentParametricValues(
                 Collections.singletonList(tagNameFactory.getFieldPath("SomeParametricField")),
                 "Some query text",
@@ -161,7 +150,7 @@ public abstract class AbstractParametricValuesControllerTest<
     @Test
     public void getNumericValueDetails() throws E {
         final FieldPath field = tagNameFactory.getFieldPath("SomeNumericField");
-        when(parametricValuesService.getNumericValueDetails(Matchers.any())).thenReturn(ImmutableMap.of(field, NumericValueDetails.builder().build()));
+        when(parametricValuesService.getNumericValueDetails(ArgumentMatchers.any())).thenReturn(ImmutableMap.of(field, NumericValueDetails.builder().build()));
         assertNotNull(parametricValuesController.getNumericValueDetails(
                 field,
                 "Some query text",
@@ -175,7 +164,7 @@ public abstract class AbstractParametricValuesControllerTest<
     @Test(expected = IllegalArgumentException.class)
     public void getNumericValueDetails_missingField() throws E {
         final FieldPath field = tagNameFactory.getFieldPath("SomeNumericField");
-        when(parametricValuesService.getNumericValueDetails(Matchers.any()))
+        when(parametricValuesService.getNumericValueDetails(ArgumentMatchers.any()))
             .thenReturn(Collections.emptyMap());
         parametricValuesController.getNumericValueDetails(
             field, "Some query text", null, Collections.emptyList(), null, null, 0, null);
@@ -184,7 +173,7 @@ public abstract class AbstractParametricValuesControllerTest<
     @Test
     public void getDateValueDetails() throws E {
         final FieldPath field = tagNameFactory.getFieldPath("SomeDateField");
-        when(parametricValuesService.getDateValueDetails(Matchers.any())).thenReturn(ImmutableMap.of(field, DateValueDetails.builder().build()));
+        when(parametricValuesService.getDateValueDetails(ArgumentMatchers.any())).thenReturn(ImmutableMap.of(field, DateValueDetails.builder().build()));
         assertNotNull(parametricValuesController.getDateValueDetails(
                 field,
                 "Some query text",
@@ -198,7 +187,7 @@ public abstract class AbstractParametricValuesControllerTest<
     @Test(expected = IllegalArgumentException.class)
     public void getDateValueDetails_missingField() throws E {
         final FieldPath field = tagNameFactory.getFieldPath("SomeDateField");
-        when(parametricValuesService.getDateValueDetails(Matchers.any()))
+        when(parametricValuesService.getDateValueDetails(ArgumentMatchers.any()))
             .thenReturn(Collections.emptyMap());
         parametricValuesController.getDateValueDetails(
             field, "Some query text", null, Collections.emptyList(), null, null, 0, null);
@@ -211,8 +200,8 @@ public abstract class AbstractParametricValuesControllerTest<
         final NumericRangeInfo rangeInfo = NumericRangeInfo.builder().build();
         final BucketingParams<Double> expectedBucketingParams = new BucketingParams<>(5, -0.5, 0.5);
 
-        when(parametricValuesService.getNumericParametricValuesInBuckets(Matchers.any(), Matchers.any())).thenAnswer(invocation -> {
-            @SuppressWarnings("unchecked") final Map<FieldPath, BucketingParams<Double>> bucketingParamsPerField = invocation.getArgumentAt(1, Map.class);
+        when(parametricValuesService.getNumericParametricValuesInBuckets(ArgumentMatchers.any(), ArgumentMatchers.any())).thenAnswer(invocation -> {
+            @SuppressWarnings("unchecked") final Map<FieldPath, BucketingParams<Double>> bucketingParamsPerField = invocation.getArgument(1, Map.class);
 
             final BucketingParams<Double> bucketingParams = bucketingParamsPerField.get(tagNameFactory.getFieldPath(fieldName));
             return expectedBucketingParams.equals(bucketingParams)
@@ -243,8 +232,8 @@ public abstract class AbstractParametricValuesControllerTest<
         final DateRangeInfo rangeInfo = DateRangeInfo.builder().build();
         final BucketingParams<ZonedDateTime> expectedBucketingParams = new BucketingParams<>(5, ZonedDateTime.now().minusMinutes(5), ZonedDateTime.now());
 
-        when(parametricValuesService.getDateParametricValuesInBuckets(Matchers.any(), Matchers.any())).thenAnswer(invocation -> {
-            @SuppressWarnings("unchecked") final Map<FieldPath, BucketingParams<ZonedDateTime>> bucketingParamsPerField = invocation.getArgumentAt(1, Map.class);
+        when(parametricValuesService.getDateParametricValuesInBuckets(ArgumentMatchers.any(), ArgumentMatchers.any())).thenAnswer(invocation -> {
+            @SuppressWarnings("unchecked") final Map<FieldPath, BucketingParams<ZonedDateTime>> bucketingParamsPerField = invocation.getArgument(1, Map.class);
 
             final BucketingParams<ZonedDateTime> bucketingParams = bucketingParamsPerField.get(tagNameFactory.getFieldPath(fieldName));
             return expectedBucketingParams.equals(bucketingParams)

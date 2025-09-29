@@ -19,7 +19,7 @@ import com.autonomy.aci.client.services.AciService;
 import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
 import com.hp.autonomy.frontend.configuration.validation.Validator;
 import com.hp.autonomy.searchcomponents.idol.statsserver.Statistic;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

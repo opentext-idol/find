@@ -1,39 +1,40 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
-import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 public abstract class AbstractSavedSearchServiceTest<T extends SavedSearch<T, B>, B extends SavedSearch.Builder<T, B>> {
     private final Supplier<B> builderConstructor;
-    @MockBean
+    @MockitoBean
     private SharedToUserRepository sharedToUserRepository;
-    @MockBean
+    @MockitoBean
     private SharedToEveryoneRepository sharedToEveryoneRepository;
     @SuppressWarnings("unused")
-    @MockBean
+    @MockitoBean
     private AuditorAware<UserEntity> userEntityAuditorAware;
     @SuppressWarnings("unused")
-    @MockBean
+    @MockitoBean
     private TagNameFactory tagNameFactory;
     @Autowired
     protected SavedSearchService<T, B> service;
@@ -48,7 +49,7 @@ public abstract class AbstractSavedSearchServiceTest<T extends SavedSearch<T, B>
     public void setUp() {
         final UserEntity userEntity = new UserEntity();
         userEntity.setUserId(1L);
-        when(userEntityAuditorAware.getCurrentAuditor()).thenReturn(userEntity);
+        when(userEntityAuditorAware.getCurrentAuditor()).thenReturn(Optional.of(userEntity));
 
         final Set<T> ownedQueries = new HashSet<>();
         ownedQueries.add(mockSavedSearchResult(1L, true));

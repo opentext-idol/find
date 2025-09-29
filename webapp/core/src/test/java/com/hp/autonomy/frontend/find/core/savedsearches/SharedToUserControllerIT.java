@@ -26,8 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         TransactionalTestExecutionListener.class,
         DbUnitTestExecutionListener.class,
         SqlScriptsTestExecutionListener.class})
-@DatabaseSetup(value = "classpath:shared-to-user.xml", connection = "testConnection")
-@DbUnitConfiguration(databaseConnection = "testConnection")
+@DatabaseSetup(value = "classpath:shared-to-user.xml", connection = "integrationTestConn")
+@DbUnitConfiguration(databaseConnection = "integrationTestConn")
 public abstract class SharedToUserControllerIT extends AbstractFindIT {
     private static String saveJson;
     private static String deleteJson;
@@ -63,7 +63,7 @@ public abstract class SharedToUserControllerIT extends AbstractFindIT {
         final MockHttpServletRequestBuilder saveRequestBuilder = post(url)
                 .with(authentication(biAuth()))
                 .content(saveJson)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .param(SharedToUserController.SEARCH_ID_PARAM, "3");
 
         mockMvc.perform(saveRequestBuilder)
@@ -79,7 +79,7 @@ public abstract class SharedToUserControllerIT extends AbstractFindIT {
         final MockHttpServletRequestBuilder saveRequestBuilder = post(url)
                 .with(authentication(biAuth()))
                 .content(saveJson)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
                 .param(SharedToUserController.SEARCH_ID_PARAM, "3");
 
         mockMvc.perform(saveRequestBuilder)

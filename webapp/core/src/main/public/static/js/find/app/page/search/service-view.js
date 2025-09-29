@@ -17,7 +17,6 @@ define([
     'jquery',
     'backbone',
     'moment',
-    'find/app/metrics',
     'find/app/model/dates-filter-model',
     'find/app/model/entity-collection',
     'find/app/model/query-model',
@@ -44,7 +43,7 @@ define([
     'find/app/configuration',
     'i18n!find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
-], function(_, $, Backbone, moment, metrics, DatesFilterModel, EntityCollection, QueryModel,
+], function(_, $, Backbone, moment, DatesFilterModel, EntityCollection, QueryModel,
             SavedSearchModel, ParametricCollection, ParametricFieldsCollection, RecommendDocumentsCollection, queryStrategy,
             recommendStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView,
             addChangeListener, SavedSearchControlView, TopicMapView, SunburstView, MapResultsView,
@@ -97,6 +96,7 @@ define([
             this.documentsCollection = options.documentsCollection;
             this.searchTypes = options.searchTypes;
             this.searchCollections = options.searchCollections;
+            this.findSearch = options.findSearch;
 
             const searchType = this.savedSearchModel.get('type');
 
@@ -178,7 +178,8 @@ define([
                 savedSearchModel: this.savedSearchModel,
                 searchCollections: this.searchCollections,
                 searchTypes: this.searchTypes,
-                selectedTabModel: this.selectedTabModel
+                selectedTabModel: this.selectedTabModel,
+                findSearch: this.findSearch
             };
 
             const clickHandlerArguments = {
@@ -425,8 +426,6 @@ define([
                 }
             }.bind(this));
 
-            this.listenForParametricFieldMetrics();
-
             this.fetchParametricFields();
             this.fetchEntities();
 
@@ -480,6 +479,7 @@ define([
 
         update: function() {
             this.resultsViewContainer.updateTab();
+            this.updateScrollParameters();
         },
 
         renderTimeBar: function() {
@@ -512,6 +512,8 @@ define([
 
                 this.renderTimeBar();
             }
+
+            this.updateScrollParameters();
         },
 
         fetchData: function() {
@@ -546,24 +548,6 @@ define([
             $sideContainer.toggleClass('small-container', hide);
             $containerToggle.toggleClass('fa-rotate-180', hide);
             this.resultsViewContainer.updateTab();
-        },
-
-        listenForParametricFieldMetrics: function() {
-            if(metrics.enabled()) {
-                this.listenTo(this.parametricFieldsCollection, 'sync', function() {
-                    if(!(this.parametricFieldsCollection.isEmpty() || this.parametricFieldsLoaded)) {
-                        this.parametricFieldsLoaded = true;
-                        metrics.addTimeSincePageLoad('parametric-fields-first-loaded');
-                    }
-                });
-
-                this.listenTo(this.parametricCollection, 'sync', function() {
-                    if(!(this.parametricCollection.isEmpty() || this.parametricValuesLoaded)) {
-                        this.parametricValuesLoaded = true;
-                        metrics.addTimeSincePageLoad('parametric-values-first-loaded');
-                    }
-                });
-            }
         },
 
         fetchParametricCollection: function() {

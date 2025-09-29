@@ -19,18 +19,7 @@ import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.search.AbstractDocumentsControllerTest;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
-import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
-import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestIndex;
-import com.hp.autonomy.searchcomponents.idol.search.IdolGetContentRequestIndexBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequestBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSuggestRequestBuilder;
+import com.hp.autonomy.searchcomponents.idol.search.*;
 import com.hp.autonomy.user.UserService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.junit.Before;
@@ -42,10 +31,7 @@ import org.springframework.beans.factory.ObjectFactory;
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest<IdolQueryRequest, IdolSuggestRequest, IdolGetContentRequest, String, IdolQueryRestrictions, IdolGetContentRequestIndex, IdolSearchResult, AciErrorException> {
@@ -91,24 +77,27 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
     @Mock
     private AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
 
+    @Mock
+    private IdolFindConfig config;
+
     @Before
     public void setUp() {
         when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
         when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.fieldText(anyString())).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.minDate(any())).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.maxDate(any())).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.minScore(anyInt())).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.stateMatchIds(any())).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.stateDontMatchIds(any())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.fieldText(any())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.minDate(any())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.maxDate(any())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.minScore(any())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.stateMatchIds(any())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.stateDontMatchIds(any())).thenReturn(queryRestrictionsBuilder);
 
         when(queryRequestBuilderFactory.getObject()).thenReturn(queryRequestBuilder);
         mockSearchRequestBuilder(queryRequestBuilder);
         when(queryRequestBuilder.autoCorrect(anyBoolean())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.queryType(any())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.summary(anyString())).thenReturn(queryRequestBuilder);
-        when(queryRequestBuilder.sort(anyString())).thenReturn(queryRequestBuilder);
+        when(queryRequestBuilder.sort(any())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.intentBasedRanking(anyBoolean())).thenReturn(queryRequestBuilder);
         when(queryRequestBuilder.referenceField(any())).thenReturn(queryRequestBuilder);
 
@@ -127,7 +116,9 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
         when(getContentRequestBuilder.print(any())).thenReturn(getContentRequestBuilder);
         when(getContentRequestBuilder.referenceField(any())).thenReturn(getContentRequestBuilder);
 
-        when(configFileService.getConfig()).thenReturn(Mockito.mock(IdolFindConfig.class));
+        when(configFileService.getConfig()).thenReturn(config);
+
+        when(config.getReferenceField()).thenReturn("refField");
 
         documentsController = new IdolDocumentsController(null, idolDocumentsService, queryRestrictionsBuilderFactory, queryRequestBuilderFactory, suggestRequestBuilderFactory, getContentRequestBuilderFactory, getContentRequestIndexBuilderFactory, configFileService, authenticationInformationRetriever, userService, null);
         documentsService = idolDocumentsService;

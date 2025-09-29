@@ -197,6 +197,7 @@ define([
                     new CompareModal({
                         cid: cid,
                         savedSearchCollection: this.savedSearchCollection,
+                        sharedSavedSearchCollection: this.sharedSavedSearchCollection,
                         queryStates: this.queryStates,
                         comparisonSuccessCallback: function(model, searchModels) {
                             this.removeComparisonView();

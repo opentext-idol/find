@@ -25,7 +25,6 @@ define([
     './model-registry',
     'find/app/navigation',
     'find/app/configuration',
-    'find/app/metrics',
     'find/app/pages',
     'find/app/util/logout',
     'find/app/vent',
@@ -34,7 +33,7 @@ define([
     'js-whatever/js/escape-regex',
     'text!find/templates/app/app.html'
 ], function(_, $, Backbone, Dropzone, testBrowser, WindowScrollModel, SavedQueryCollection, SharedSavedQueryCollection, parseUrl, ModelRegistry,
-            Navigation, configuration, metrics, Pages, logout, vent, router, conversation, escapeRegex, template) {
+            Navigation, configuration, Pages, logout, vent, router, conversation, escapeRegex, template) {
     'use strict';
 
     function removeTrailingSlash(string) {
@@ -133,8 +132,6 @@ define([
                         ? 'search/query'
                         : 'search/splash');
                 }
-
-                metrics.addTimeSincePageLoad('page-responsive-after-reload');
             }.bind(this));
         },
 

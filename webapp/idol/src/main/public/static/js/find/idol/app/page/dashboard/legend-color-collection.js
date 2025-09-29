@@ -193,7 +193,7 @@ define([
                             const newChildren = _.map(children, function(datum) {
                                 const colorDatum = _.findWhere(this.tier2.legendData, {text: datum.text});
                                 return colorDatum
-                                    ? _.extend(datum, colorDatum)
+                                    ? _.extend(datum, { color: colorDatum.color })
                                     : datum;
                             }.bind(this));
 

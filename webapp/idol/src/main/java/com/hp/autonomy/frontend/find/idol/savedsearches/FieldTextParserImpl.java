@@ -14,7 +14,10 @@
 
 package com.hp.autonomy.frontend.find.idol.savedsearches;
 
-import com.hp.autonomy.aci.content.fieldtext.*;
+import com.hp.autonomy.aci.content.fieldtext.FieldText;
+import com.hp.autonomy.aci.content.fieldtext.MATCH;
+import com.hp.autonomy.aci.content.fieldtext.NRANGE;
+import com.hp.autonomy.aci.content.fieldtext.RANGE;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.savedsearches.*;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
@@ -38,7 +41,7 @@ public class FieldTextParserImpl implements FieldTextParser {
     // WARNING: This logic is duplicated in the client side SelectedValuesCollection
     @Override
     public String toFieldText(
-        final SavedSearch<?, ?> savedSearch, final Boolean applyDocumentSelection
+            final SavedSearch<?, ?> savedSearch, final Boolean applyDocumentSelection
     ) {
         final Set<FieldAndValue> parametricValues = savedSearch.getParametricValues();
         final Set<NumericRangeRestriction> numericRangeRestrictions = savedSearch.getNumericRangeRestrictions();

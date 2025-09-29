@@ -25,9 +25,9 @@ import com.hp.autonomy.frontend.logging.UserLoggingFilter;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
-import org.springframework.boot.web.servlet.ErrorPage;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.ErrorPage;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,7 +51,7 @@ import java.util.Set;
 public class AppConfiguration<C extends FindConfig<C, ?>> {
     public static final String APPLICATION_RELEASE_VERSION_PROPERTY = "${application.releaseVersion}";
     public static final String GIT_COMMIT_PROPERTY = "${application.commit}";
-    public static final String SERVER_CONTEXT_PATH = "${server.context-path}";
+    public static final String SERVER_CONTEXT_PATH = "${server.servlet.context-path}";
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
@@ -63,7 +63,7 @@ public class AppConfiguration<C extends FindConfig<C, ?>> {
 
     @SuppressWarnings("ReturnOfInnerClass")
     @Bean
-    public EmbeddedServletContainerCustomizer containerCustomizer(
+    public WebServerFactoryCustomizer<TomcatServletWebServerFactory> containerCustomizer(
         @Value("${server.tomcat.accesslog.pattern:combined}") final String pattern
     ) {
 
@@ -75,10 +75,10 @@ public class AppConfiguration<C extends FindConfig<C, ?>> {
 
             container.addErrorPages(error401Page, error403Page, error404Page, error500Page);
 
-            if (StringUtils.isNotEmpty(pattern) && container instanceof TomcatEmbeddedServletContainerFactory) {
+            if (StringUtils.isNotEmpty(pattern) && container instanceof TomcatServletWebServerFactory) {
                 final TomcatAccessLogValve accessLogValve = new TomcatAccessLogValve();
                 accessLogValve.setPattern(pattern);
-                ((TomcatEmbeddedServletContainerFactory) container).addEngineValves(accessLogValve);
+                container.addEngineValves(accessLogValve);
             }
         };
     }
@@ -93,7 +93,7 @@ public class AppConfiguration<C extends FindConfig<C, ?>> {
      */
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public FilterRegistrationBean characterEncodingFilter() {
+    public FilterRegistrationBean findCharacterEncodingFilter() {
         final CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
         characterEncodingFilter.setEncoding("UTF-8");
 

@@ -18,13 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.format.datetime.joda.JodaDateTimeFormatAnnotationFormatterFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Component
-public class DispatcherServletConfiguration extends WebMvcConfigurerAdapter {
+public class DispatcherServletConfiguration implements WebMvcConfigurer {
     public static final String AUTHENTICATION_ERROR_PATH = "/authentication-error";
     public static final String CLIENT_AUTHENTICATION_ERROR_PATH = "/client-authentication-error";
     public static final String NOT_FOUND_ERROR_PATH = "/not-found-error";
@@ -44,8 +43,6 @@ public class DispatcherServletConfiguration extends WebMvcConfigurerAdapter {
                 registry.addConverter(converter);
             }
         }
-
-        registry.addFormatterForFieldAnnotation(new JodaDateTimeFormatAnnotationFormatterFactory());
     }
 
     @Override

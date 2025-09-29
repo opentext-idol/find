@@ -29,7 +29,7 @@ public class AnswerServerControllerIT extends AbstractFindIT {
     public void ask() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = get(
                 AnswerServerController.BASE_PATH +
-                        '/' + AnswerServerController.ASK_PATH + '/')
+                        '/' + AnswerServerController.ASK_PATH)
                 .param(AnswerServerController.TEXT_PARAM, "GPU")
                 .param(AnswerServerController.MAX_RESULTS_PARAM, "5")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -37,6 +37,6 @@ public class AnswerServerControllerIT extends AbstractFindIT {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 }

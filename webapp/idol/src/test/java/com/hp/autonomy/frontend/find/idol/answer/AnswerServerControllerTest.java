@@ -17,7 +17,7 @@ package com.hp.autonomy.frontend.find.idol.answer;
 import com.autonomy.aci.client.services.AciConstants;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
@@ -27,10 +27,11 @@ import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequestBu
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerService;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
 import com.hp.autonomy.searchcomponents.idol.search.*;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
-import com.hp.autonomy.types.idol.responses.answer.*;
 import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.idol.actions.answer.params.ReportParams;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
+import com.opentext.idol.types.responses.answer.*;
+import com.opentext.idol.types.responses.answer.System;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,7 +40,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.ObjectFactory;
 
 import java.io.Serializable;
@@ -48,8 +49,8 @@ import java.util.*;
 import static com.hp.autonomy.frontend.find.idol.answer.AnswerServerController.DocumentFact;
 import static com.hp.autonomy.frontend.find.idol.answer.AnswerServerController.SourcedFact;
 import static com.hp.autonomy.types.requests.idol.actions.answer.AnswerServerActions.Report;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -81,6 +82,8 @@ public class AnswerServerControllerTest {
     private ObjectFactory<IdolQueryRequestBuilder> queryRequestBuilderFactory;
     @Mock
     private IdolQueryRequestBuilder queryRequestBuilder;
+    @Mock
+    private HavenSearchAciParameterHandler aciParameterHandler;
 
     private AnswerServerController controller;
 
@@ -138,15 +141,19 @@ public class AnswerServerControllerTest {
 
     @Before
     public void setUp() {
+        Mockito.doReturn(buildGetStatus(List.of())).when(askAnswerServerService).getStatus();
+
         when(requestBuilderFactory.getObject()).thenReturn(requestBuilder);
         when(requestBuilder.text(any())).thenReturn(requestBuilder);
         when(requestBuilder.maxResults(anyInt())).thenReturn(requestBuilder);
         when(requestBuilder.proxiedParams(any())).thenReturn(requestBuilder);
         when(requestBuilder.systemNames(any())).thenReturn(requestBuilder);
+        when(requestBuilder.customizationData(any())).thenReturn(requestBuilder);
 
         when(configService.getConfig()).thenReturn(idolFindConfig);
         when(idolFindConfig.getAnswerServer()).thenReturn(answerServerConfig);
         when(idolFindConfig.getReferenceField()).thenReturn("docref");
+        when(answerServerConfig.getEnabled()).thenReturn(true);
 
         when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
         when(queryRestrictionsBuilder.fieldText(any())).thenReturn(queryRestrictionsBuilder);
@@ -172,12 +179,12 @@ public class AnswerServerControllerTest {
         controller = new AnswerServerController(
             aciService, askAnswerServerService, requestBuilderFactory, configService,
             processorFactory, documentsService, queryRestrictionsBuilderFactory,
-            queryRequestBuilderFactory);
+            queryRequestBuilderFactory, aciParameterHandler);
     }
 
     @Test
     public void ask() {
-        controller.ask("GPU", null,5);
+        controller.ask("GPU", null, 5, null);
         verify(askAnswerServerService).ask(any());
     }
 
@@ -191,8 +198,8 @@ public class AnswerServerControllerTest {
         final List<SourcedFact> response =
             controller.getEntityFacts("space", 7, Collections.singletonList("db"));
 
-        final ArgumentCaptor<AciParameters> paramsCaptor =
-            ArgumentCaptor.forClass(AciParameters.class);
+        final ArgumentCaptor<ActionParameters> paramsCaptor =
+            ArgumentCaptor.forClass(ActionParameters.class);
         Mockito.verify(aciService).executeAction(any(), paramsCaptor.capture(), any());
         Assert.assertEquals("should send report action to answerserver", Report.name(),
             paramsCaptor.getValue().get(AciConstants.PARAM_ACTION));
@@ -381,8 +388,8 @@ public class AnswerServerControllerTest {
         final List<SourcedFact> response =
             controller.getEntityFacts("space", null, Collections.singletonList("db"));
 
-        final ArgumentCaptor<AciParameters> paramsCaptor =
-            ArgumentCaptor.forClass(AciParameters.class);
+        final ArgumentCaptor<ActionParameters> paramsCaptor =
+            ArgumentCaptor.forClass(ActionParameters.class);
         Mockito.verify(aciService).executeAction(any(), paramsCaptor.capture(), any());
         Assert.assertNull("should not send max results to answerserver",
             paramsCaptor.getValue().get(ReportParams.MaxResults.name()));
@@ -398,6 +405,17 @@ public class AnswerServerControllerTest {
             response.get(0).fact.getSource());
         Assert.assertEquals("should return second fact", "2",
             response.get(1).fact.getSource());
+    }
+
+    private GetStatusResponsedata buildGetStatus(final List<System> systems) {
+        final var res = new GetStatusResponsedata();
+
+        final Systems systemsRes = Mockito.mock(Systems.class);
+        res.setSystems(systemsRes);
+
+        Mockito.doReturn(systems).when(systemsRes).getSystem();
+
+        return res;
     }
 
 }

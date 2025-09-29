@@ -16,13 +16,13 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Embeddable;
-import javax.persistence.Transient;
 
 @SuppressWarnings("WeakerAccess")
 @Embeddable
@@ -36,6 +36,9 @@ public class FieldAndValue {
     private String field;
     @Transient
     private String displayName;
+    // Must be quoted because 'value' is a keyword.  Must be uppercase because quoted identifiers are case-sensitive in
+    // h2, and past Find versions have always created the column in uppercase.
+    @Column(name = "`VALUE`")
     private String value;
     @Transient
     private String displayValue;

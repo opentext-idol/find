@@ -17,9 +17,10 @@ package com.hp.autonomy.frontend.find.core.beanconfiguration;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.webresources.StandardRoot;
+import org.apache.coyote.ajp.AbstractAjpProtocol;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -38,31 +39,32 @@ public class TomcatConfig {
     private int connectorMaxPostSize;
 
     @Bean
-    public EmbeddedServletContainerFactory servletContainer() {
-        final TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
+    public WebServerFactoryCustomizer<TomcatServletWebServerFactory> connectorCustomizer() {
+        return (tomcat) -> {
+            if(useReverseProxy) {
+                tomcat.addAdditionalTomcatConnectors(createAjpConnector());
+            }
 
-        if(useReverseProxy) {
-            tomcat.addAdditionalTomcatConnectors(createAjpConnector());
-        }
+            // Set the web resources cache size (this defaults to 10MB but that is too small for Find)
+            tomcat.addContextCustomizers(context -> {
+                final WebResourceRoot resources = new StandardRoot(context);
+                resources.setCacheMaxSize(webResourcesCacheSize);
+                context.setResources(resources);
+            });
 
-        // Set the web resources cache size (this defaults to 10MB but that is too small for Find)
-        tomcat.addContextCustomizers(context -> {
-            final WebResourceRoot resources = new StandardRoot(context);
-            resources.setCacheMaxSize(webResourcesCacheSize);
-            context.setResources(resources);
-        });
-
-        tomcat.addConnectorCustomizers(connector -> {
-            connector.setMaxPostSize(connectorMaxPostSize);
-        });
-
-        return tomcat;
+            tomcat.addConnectorCustomizers(connector -> {
+                connector.setMaxPostSize(connectorMaxPostSize);
+            });
+        };
     }
 
     private Connector createAjpConnector() {
         final Connector connector = new Connector("AJP/1.3");
+        connector.setProperty("address", "0.0.0.0");
         connector.setPort(ajpPort);
-        connector.setAttribute("tomcatAuthentication", false);
+        connector.setProperty("tomcatAuthentication", "false");
+        connector.setProperty("allowedRequestAttributesPattern", ".*");
+        ((AbstractAjpProtocol<?>) connector.getProtocolHandler()).setSecretRequired(false);
         return connector;
     }
 }

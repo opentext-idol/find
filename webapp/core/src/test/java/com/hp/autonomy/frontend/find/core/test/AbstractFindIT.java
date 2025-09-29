@@ -40,15 +40,13 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 @AutoConfigureJsonTesters(enabled = false)
 @SpringBootTest(properties = {
         "application.buildNumber=test",
-        "idol.find.persistentState = INMEMORY",
         "idol.find.home = ./target/test",
         "find.https.proxyHost = web-proxy.sdc.hpecorp.net",
         "find.https.proxyPort: 8080",
         "find.https.proxyHost = web-proxy.sdc.hpecorp.net",
         "find.https.proxyPort: 8080",
-        "spring.datasource.url = jdbc:h2:mem:find-db;DB_CLOSE_ON_EXIT=FALSE",
-        "mock.authenticationRetriever=false",
-        "find.metrics.enabled=true"
+        "spring.datasource.url = jdbc:h2:mem:find-db-v2;DB_CLOSE_ON_EXIT=FALSE",
+        "mock.authenticationRetriever=false"
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @SqlGroup({
         @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "/add-user.sql"),

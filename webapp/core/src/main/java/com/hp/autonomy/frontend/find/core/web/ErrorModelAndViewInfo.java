@@ -14,12 +14,12 @@
 
 package com.hp.autonomy.frontend.find.core.web;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 
 @Data

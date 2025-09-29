@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,28 +46,30 @@ public class SavedSnapshotServiceTest extends AbstractSavedSearchServiceTest<Sav
         new TypedStateToken("promotions", TypedStateToken.StateTokenType.PROMOTIONS);
 
     @SuppressWarnings("unused")
-    @MockBean
+    @MockitoBean
     private SavedSnapshotRepository crudRepository;
-    @MockBean
+    @MockitoBean
     private IdolDocumentsService documentsService;
-    @MockBean
+    @MockitoBean
     private FieldTextParser fieldTextParser;
-    @MockBean
+    @MockitoBean
     private ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
-    @MockBean
+    @MockitoBean
     private IdolQueryRestrictionsBuilder queryRestrictionsBuilder;
 
     private SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> savedSnapshotService;
 
     @Before
     public void setUpSnapshot() {
+        Mockito.when(fieldTextParser.toFieldText(Mockito.any(), Mockito.anyBoolean())).thenReturn("field text");
+
         Mockito.when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
         Mockito.when(queryRestrictionsBuilder.queryText(Mockito.anyString())).thenReturn(queryRestrictionsBuilder);
         Mockito.when(queryRestrictionsBuilder.fieldText(Mockito.anyString())).thenReturn(queryRestrictionsBuilder);
         Mockito.when(queryRestrictionsBuilder.databases(Mockito.any())).thenReturn(queryRestrictionsBuilder);
         Mockito.when(queryRestrictionsBuilder.minDate(Mockito.any())).thenReturn(queryRestrictionsBuilder);
         Mockito.when(queryRestrictionsBuilder.maxDate(Mockito.any())).thenReturn(queryRestrictionsBuilder);
-        Mockito.when(queryRestrictionsBuilder.minScore(Mockito.anyInt())).thenReturn(queryRestrictionsBuilder);
+        Mockito.when(queryRestrictionsBuilder.minScore(Mockito.any())).thenReturn(queryRestrictionsBuilder);
         Mockito.when(queryRestrictionsBuilder.stateMatchIds(Mockito.any())).thenReturn(queryRestrictionsBuilder);
         Mockito.when(queryRestrictionsBuilder.stateDontMatchIds(Mockito.any())).thenReturn(queryRestrictionsBuilder);
 

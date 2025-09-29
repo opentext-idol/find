@@ -27,7 +27,7 @@ public class IdolTemplatesControllerIT extends AbstractFindIT {
     public void getTemplates() throws Exception {
         mockMvc.perform(get(TemplatesController.TEMPLATES_PATH))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isMap());
     }
 }

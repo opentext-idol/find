@@ -104,7 +104,7 @@ module.exports = (grunt) ->
         tasks: ['babel:transform', 'jasmine:test']
     peg:
       fieldtext:
-        src: 'src/main/public/static/bower_components/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
+        src: 'frontend/node_modules/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
         dest: 'target/classes/static/js/pegjs/fieldtext/parser.js'
         options:
           format: 'amd'

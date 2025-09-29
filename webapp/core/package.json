@@ -6,8 +6,6 @@
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/plugin-transform-block-scoping": "^7.12.1",
-    "auditjs": "latest",
-    "bower": "^1.8.8",
     "coffeescript": "^2.5.1",
     "grunt": "^1.3.0",
     "grunt-babel": "^8.0.0",

@@ -13,6 +13,7 @@
  */
 
 define([
+    'underscore',
     'jquery',
     'backbone',
     'find/app/configuration',
@@ -28,7 +29,7 @@ define([
     'i18n!find/nls/bundle',
     'mock/util/modal',
     'mock/util/policy-selection-view'
-], function($, Backbone, configuration, SavedSearchControlView, SavedSearchModel, DatesFilterModel, GeographyModel, DocumentSelectionModel, MinScoreModel,
+], function(_, $, Backbone, configuration, SavedSearchControlView, SavedSearchModel, DatesFilterModel, GeographyModel, DocumentSelectionModel, MinScoreModel,
             MockConfirmView, databaseNameResolver, moment, i18n, MockModal, MockPolicySelectionView) {
     'use strict';
 

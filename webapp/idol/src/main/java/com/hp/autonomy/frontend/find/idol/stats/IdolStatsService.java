@@ -15,16 +15,16 @@
 package com.hp.autonomy.frontend.find.idol.stats;
 
 import com.autonomy.aci.client.services.AciService;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.stats.Event;
 import com.hp.autonomy.frontend.find.core.stats.StatsService;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.types.requests.idol.actions.stats.StatsServerActions;
 import com.hp.autonomy.types.requests.idol.actions.stats.params.EventParams;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +83,7 @@ class IdolStatsService implements StatsService {
             try {
                 final String xml = xmlMapper.writeValueAsString(events);
 
-                final AciParameters parameters = new AciParameters(StatsServerActions.Event.name());
+                final ActionParameters parameters = new ActionParameters(StatsServerActions.Event.name());
                 parameters.put(EventParams.Data.name(), xml);
 
                 statsServerAciService.executeAction(parameters, processorFactory.getVoidProcessor());

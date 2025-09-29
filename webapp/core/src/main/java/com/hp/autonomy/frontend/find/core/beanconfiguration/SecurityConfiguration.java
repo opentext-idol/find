@@ -14,26 +14,9 @@
 
 package com.hp.autonomy.frontend.find.core.beanconfiguration;
 
-import com.hp.autonomy.frontend.find.core.web.FindController;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-@Configuration
-@EnableWebSecurity
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    @Override
-    public void configure(final WebSecurity web) {
-        web.httpFirewall(firewallAllowingUrlEncodedCharacters())
-            .ignoring()
-            .antMatchers("/static-*/**")
-            .antMatchers("/customization/**");
-    }
+public class SecurityConfiguration {
 
     public static StrictHttpFirewall firewallAllowingUrlEncodedCharacters() {
         final StrictHttpFirewall firewall = new StrictHttpFirewall();
@@ -45,30 +28,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         firewall.setAllowUrlEncodedPeriod(true);
         firewall.setAllowUrlEncodedSlash(true);
 
+        // for themetracker
+        firewall.setAllowUrlEncodedLineFeed(true);
+
         return firewall;
     }
 
-    @SuppressWarnings("ProhibitedExceptionDeclared")
-    @Override
-    protected void configure(final HttpSecurity http) throws Exception {
-        final HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
-        requestCache.setRequestMatcher(new AntPathRequestMatcher(FindController.APP_PATH + "/**"));
-
-        http
-            .authorizeRequests()
-                .antMatchers("/api/public/**").hasRole(FindRole.USER.name())
-                .antMatchers("/api/admin/**").hasRole(FindRole.ADMIN.name())
-                .antMatchers("/api/config/**").hasRole(FindRole.CONFIG.name())
-                .antMatchers("/api/bi/**").hasRole(FindRole.BI.name())
-                .and()
-            .requestCache()
-                .requestCache(requestCache)
-                .and()
-            .csrf()
-                .disable()
-            .headers()
-                .defaultsDisabled()
-                .frameOptions().sameOrigin()
-                .contentSecurityPolicy("frame-ancestors 'self'");
-    }
 }

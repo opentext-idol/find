@@ -37,7 +37,7 @@ public abstract class FieldsControllerIT extends AbstractFindIT {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", not(empty())));
     }
 }

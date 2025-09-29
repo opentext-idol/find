@@ -31,13 +31,8 @@ import java.nio.file.Paths;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DirtiesContext
 @SuppressWarnings("ProhibitedExceptionDeclared")
@@ -56,13 +51,13 @@ public class CustomizationAdminControllerIT extends AbstractFindIT {
     public void postLogo() throws Exception {
         final MockMultipartFile multipartFile = new MockMultipartFile("file", "logo.png", "image/png", "foo".getBytes());
 
-        final RequestBuilder requestBuilder = fileUpload(CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH + CustomizationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
+        final RequestBuilder requestBuilder = multipart(CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH + CustomizationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
             .file(multipartFile)
             .with(authentication(adminAuth()));
 
         mockMvc.perform(requestBuilder)
             .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", is("SUCCESS")));
     }
 
@@ -70,24 +65,24 @@ public class CustomizationAdminControllerIT extends AbstractFindIT {
     public void cannotUploadNonImageFiles() throws Exception {
         final MockMultipartFile multipartFile = new MockMultipartFile("file", "logo.png", "text/plain", "foo".getBytes());
 
-        final RequestBuilder requestBuilder = fileUpload(CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH + CustomizationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
+        final RequestBuilder requestBuilder = multipart(CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH + CustomizationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
             .file(multipartFile)
             .with(authentication(adminAuth()));
 
         mockMvc.perform(requestBuilder)
             .andExpect(status().isUnsupportedMediaType())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", is("INVALID_FILE")));
     }
 
     @Test
     public void errorWithNoFile() throws Exception {
-        final RequestBuilder requestBuilder = fileUpload(CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH + CustomizationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
+        final RequestBuilder requestBuilder = multipart(CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH + CustomizationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
             .with(authentication(adminAuth()));
 
         mockMvc.perform(requestBuilder)
             .andExpect(status().isInternalServerError())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
@@ -97,7 +92,7 @@ public class CustomizationAdminControllerIT extends AbstractFindIT {
 
         mockMvc.perform(requestBuilder)
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", empty()));
     }
 
@@ -106,14 +101,14 @@ public class CustomizationAdminControllerIT extends AbstractFindIT {
         final byte[] fileContent = "foo".getBytes();
         final MockMultipartFile multipartFile = new MockMultipartFile("file", "logo.png", "image/png", fileContent);
 
-        final RequestBuilder postRequest = fileUpload(CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH + CustomizationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
+        final RequestBuilder postRequest = multipart(CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH + CustomizationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
             .file(multipartFile)
             .with(authentication(adminAuth()));
 
         mockMvc.perform(postRequest)
             .andExpect(status().isCreated());
 
-        final RequestBuilder getRequest = get(CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH + CustomizationAdminController.ASSETS_PATH + '/' + ASSET_TYPE + '/' + "/logo.png")
+        final RequestBuilder getRequest = get(CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH + CustomizationAdminController.ASSETS_PATH + '/' + ASSET_TYPE + "/logo.png")
             .with(authentication(adminAuth()));
 
         mockMvc.perform(getRequest)
@@ -126,7 +121,7 @@ public class CustomizationAdminControllerIT extends AbstractFindIT {
     public void deleteLogo() throws Exception {
         final MockMultipartFile multipartFile = new MockMultipartFile("file", "logo.png", "image/png", "foo".getBytes());
 
-        final RequestBuilder postRequest = fileUpload(CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH + CustomizationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
+        final RequestBuilder postRequest = multipart(CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH + CustomizationAdminController.ASSETS_PATH + '/' + ASSET_TYPE)
             .file(multipartFile)
             .with(authentication(adminAuth()));
 

@@ -26,7 +26,7 @@ define([
             }, RouterConstructor.prototype.routes);
 
             if (configuration().enableSavedSearch) {
-                routes['search/tab/:id(/view/:view(/*splat))'] = 'savedSearch';
+                routes['search/tab/:id(/view/:view)(/*splat)'] = 'savedSearch';
             }
 
             if (configuration().enableDashboards) {

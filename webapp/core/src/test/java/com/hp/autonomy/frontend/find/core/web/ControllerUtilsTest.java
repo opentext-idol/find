@@ -19,12 +19,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,8 +34,8 @@ import java.util.Locale;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -58,7 +58,7 @@ public class ControllerUtilsTest<C extends FindConfig<?, ?>> {
     public void setUp() {
         controllerUtils = new ControllerUtilsImpl(new ObjectMapper(), messageSource, "dev", configService);
 
-        when(messageSource.getMessage(anyString(), any(Object[].class), any(Locale.class))).thenReturn("Some Message");
+        when(messageSource.getMessage(anyString(), any(), any(Locale.class))).thenReturn("Some Message");
 
         when(configService.getConfig()).thenReturn(config);
         when(config.getUiCustomization()).thenReturn(uiCustomization);

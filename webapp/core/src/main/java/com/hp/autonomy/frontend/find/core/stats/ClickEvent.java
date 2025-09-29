@@ -16,10 +16,10 @@ package com.hp.autonomy.frontend.find.core.stats;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-@Data
+@Getter
 @EqualsAndHashCode(callSuper = true)
 public abstract class ClickEvent extends FindEvent {
 

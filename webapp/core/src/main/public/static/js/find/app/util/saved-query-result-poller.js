@@ -38,7 +38,7 @@ define([
     SavedQueryResultPoller.prototype.pollSingleForUpdates = function(savedQueryModel) {
         if(isPollable(savedQueryModel, this.queryStates)) {
             $.get('api/bi/saved-query/new-results/' + savedQueryModel.id)
-                .success(_.partial(this.onSuccess, savedQueryModel.id));
+                .done(_.partial(this.onSuccess, savedQueryModel.id));
         }
     };
 

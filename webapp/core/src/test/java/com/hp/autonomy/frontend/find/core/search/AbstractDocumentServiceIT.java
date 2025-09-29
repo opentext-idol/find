@@ -41,7 +41,7 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.documents", not(empty())));
     }
 
@@ -59,7 +59,7 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.documents", not(empty())));
     }
 
@@ -76,7 +76,7 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.documents", empty()));
     }
 
@@ -93,7 +93,7 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.documents", not(empty())));
     }
 
@@ -108,7 +108,7 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", not(nullValue())));
     }
 }

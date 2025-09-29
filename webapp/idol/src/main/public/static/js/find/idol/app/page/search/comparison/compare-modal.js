@@ -27,9 +27,9 @@ define([
             loadingSpinnerTemplate, comparisonsI18n, i18n) {
     'use strict';
 
-    function getSearchModelWithDefault(savedSearchCollection, queryStates) {
+    function getSearchModelWithDefault(savedSearchCollection, sharedSavedSearchCollection, queryStates) {
         return function(cid) {
-            let search = savedSearchCollection.get(cid);
+            let search = savedSearchCollection.get(cid) || sharedSavedSearchCollection.get(cid);
 
             const queryState = queryStates.get(cid);
             if (search.isNew() || queryState && !search.equalsQueryState(queryState)) {
@@ -51,7 +51,8 @@ define([
             this.comparisonSuccessCallback = options.comparisonSuccessCallback;
             const savedSearchCollection = options.savedSearchCollection;
             const queryStates = options.queryStates;
-            const getSearchModel = getSearchModelWithDefault(savedSearchCollection, queryStates);
+            const getSearchModel = getSearchModelWithDefault(
+                savedSearchCollection, options.sharedSavedSearchCollection, queryStates);
 
             this.selectedId = null;
 

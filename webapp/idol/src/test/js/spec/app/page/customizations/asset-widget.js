@@ -93,7 +93,7 @@ define([
             this.view.dropzone.accept(file, spy);
             this.view.dropzone.emit('thumbnail', file, DATA_URI);
 
-            expect(spy.calls.argsFor(0)[0]).toBe(i18n['customizations.fileDimensionsInvalid']);
+            expect(spy.calls.argsFor(0)[0]).toBe(i18n['customizations.error.FILE_DIMENSIONS_INVALID']);
         });
 
         it('should not allow files of other types', function() {

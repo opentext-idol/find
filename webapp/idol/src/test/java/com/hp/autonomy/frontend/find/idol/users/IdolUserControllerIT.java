@@ -28,7 +28,7 @@ public class IdolUserControllerIT extends AbstractFindIT {
     @Test
     public void searchUsers() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = get(IdolUserController.BASE_PATH +
-                '/' + IdolUserController.SEARCH_PATH + '/')
+                '/' + IdolUserController.SEARCH_PATH)
                 .param(IdolUserController.PARAMETER_SEARCH_TEXT, "*")
                 .param(IdolUserController.PARAMETER_START_USER, "0")
                 .param(IdolUserController.PARAMETER_MAX_USERS, "5")
@@ -37,6 +37,6 @@ public class IdolUserControllerIT extends AbstractFindIT {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 }

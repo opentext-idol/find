@@ -13,9 +13,10 @@
  */
 
 define([
+    'underscore',
     'js-testing/backbone-mock-factory',
     'test-util/promise-spy',
-], function(backboneMockFactory, promiseSpy) {
+], function(_, backboneMockFactory, promiseSpy) {
 
     const Model = backboneMockFactory.getModel([], {
         fetch: promiseSpy('fetch'),

@@ -16,10 +16,10 @@ package com.hp.autonomy.frontend.find.core.stats;
 
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import lombok.AccessLevel;
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
 @RequiredArgsConstructor(access = AccessLevel.NONE)
 public abstract class FindEvent implements Event {
 

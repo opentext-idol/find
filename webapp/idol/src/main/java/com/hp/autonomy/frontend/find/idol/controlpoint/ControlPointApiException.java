@@ -15,7 +15,7 @@
 package com.hp.autonomy.frontend.find.idol.controlpoint;
 
 import lombok.Getter;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 
 import java.util.Arrays;
 import java.util.Map;

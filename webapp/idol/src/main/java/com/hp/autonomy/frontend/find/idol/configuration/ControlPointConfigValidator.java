@@ -20,8 +20,8 @@ import com.hp.autonomy.frontend.configuration.validation.Validator;
 import com.hp.autonomy.frontend.find.idol.controlpoint.ControlPointApiException;
 import com.hp.autonomy.frontend.find.idol.controlpoint.ControlPointService;
 import com.hp.autonomy.frontend.find.idol.controlpoint.ControlPointServiceException;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

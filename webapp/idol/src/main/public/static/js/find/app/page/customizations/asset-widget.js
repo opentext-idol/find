@@ -92,7 +92,7 @@ define([
                 accept: function(file, done) {
                     file.acceptDimensions = done;
                     file.rejectDimensions = function() {
-                        done(i18n['customizations.fileDimensionsInvalid']);
+                        done('FILE_DIMENSIONS_INVALID');
                     };
                 },
                 init: function() {

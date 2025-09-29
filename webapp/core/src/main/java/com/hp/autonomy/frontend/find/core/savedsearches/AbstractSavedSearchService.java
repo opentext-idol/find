@@ -15,15 +15,9 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Objects;
 import org.springframework.data.domain.AuditorAware;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -51,14 +45,14 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
 
     @Override
     public Set<T> getOwned() {
-        final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
+        final Long userId = userEntityAuditorAware.getCurrentAuditor().map(u -> u.getUserId()).orElse(null);
 
         return augmentOutputWithDisplayNames(crudRepository.findByActiveTrueAndUser_UserId(userId));
     }
 
     @Override
     public Set<T> getShared() {
-        final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
+        final Long userId = userEntityAuditorAware.getCurrentAuditor().map(u -> u.getUserId()).orElse(null);
         final Set<SharedToUser> permissions = sharedToUserRepository.findByUserId(userId, type);
 
         final Set<Long> uniqueSavedSearchIds = new HashSet<Long>();
@@ -129,7 +123,7 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
     public T getDashboardSearch(final long id) {
         final T search = crudRepository.findByActiveTrueAndId(id);
 
-        final Long userId = userEntityAuditorAware.getCurrentAuditor().getUserId();
+        final Long userId = userEntityAuditorAware.getCurrentAuditor().map(u -> u.getUserId()).orElse(null);
 
         if (!Objects.equals(search.getUser().getUserId(), userId)) {
             search.setCanEdit(isUnownedSearchEditable(search, userId));
@@ -139,18 +133,18 @@ public abstract class AbstractSavedSearchService<T extends SavedSearch<T, B>, B 
     }
 
     protected boolean isUnownedSearchEditable(final T search, final Long userId) {
-        final SharedToUser share = sharedToUserRepository.findOne(new SharedToUserPK(search.getId(), userId));
-        return share != null && Boolean.TRUE.equals(share.getCanEdit());
+        final Optional<SharedToUser> share = sharedToUserRepository.findById(new SharedToUserPK(search.getId(), userId));
+        return share.map(s -> Boolean.TRUE.equals(s.getCanEdit())).orElse(false);
     }
 
     private T getSearch(final long id) throws IllegalArgumentException {
-        final Long currentUserId = userEntityAuditorAware.getCurrentAuditor().getUserId();
+        final Long currentUserId = userEntityAuditorAware.getCurrentAuditor().map(u -> u.getUserId()).orElse(null);
         final T savedSearch = crudRepository.findByActiveTrueAndId(id);
 
         if(null != savedSearch) {
             if (savedSearch.getUser().getUserId().equals(currentUserId)
-                || sharedToUserRepository.findOne(new SharedToUserPK(id, currentUserId)) != null
-                || sharedToEveryoneRepository.findOne(new SharedToEveryonePK(id)) != null
+                || sharedToUserRepository.findById(new SharedToUserPK(id, currentUserId)).isPresent()
+                || sharedToEveryoneRepository.findById(new SharedToEveryonePK(id)).isPresent()
             ) {
                 return savedSearch;
             } else {

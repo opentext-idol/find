@@ -13,8 +13,9 @@
  */
 
 define([
+    'underscore',
     'find/idol/app/page/dashboard/widgets/widget'
-], function(Widget) {
+], function(_, Widget) {
     'use strict';
 
     const settings = {

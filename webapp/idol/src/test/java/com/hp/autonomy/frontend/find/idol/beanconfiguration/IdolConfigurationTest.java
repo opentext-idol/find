@@ -16,7 +16,6 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.ConfigFileConfiguration;
-import com.hp.autonomy.frontend.find.core.beanconfiguration.InMemoryConfiguration;
 import com.hp.autonomy.frontend.find.core.test.TestConfiguration;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigFileService;
 import com.hp.autonomy.searchcomponents.idol.beanconfiguration.HavenSearchIdolConfiguration;
@@ -25,8 +24,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
-import org.springframework.boot.test.autoconfigure.json.JsonTest;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -36,18 +34,15 @@ import java.io.IOException;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
-@JsonTest
-@AutoConfigureJsonTesters(enabled = false)
+@AutoConfigureJson
 @SpringBootTest(classes = {
         ConfigFileConfiguration.class,
-        InMemoryConfiguration.class,
         IdolConfiguration.class,
         TestConfiguration.class,
         HavenSearchIdolConfiguration.class,
         IdolFindConfigFileService.class,
         IdolConfigUpdateHandlerImpl.class
 }, value = {
-        "idol.find.persistentState = INMEMORY",
         "mock.configuration=false",
         BiConfiguration.BI_PROPERTY + "=false"
 }, webEnvironment = SpringBootTest.WebEnvironment.NONE)

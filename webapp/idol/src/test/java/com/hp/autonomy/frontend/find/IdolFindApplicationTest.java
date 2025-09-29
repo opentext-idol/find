@@ -28,10 +28,9 @@ import java.io.IOException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = {
-        "idol.find.persistentState = INMEMORY",
         "application.buildNumber=test",
         "mock.configuration=false",
-        "spring.datasource.url = jdbc:h2:mem:find-db;DB_CLOSE_ON_EXIT=FALSE"
+        "spring.datasource.url = jdbc:h2:mem:find-db-v2;DB_CLOSE_ON_EXIT=FALSE"
 }, webEnvironment = WebEnvironment.RANDOM_PORT)
 public class IdolFindApplicationTest {
     private static final String TEST_DIR = "./target/test";

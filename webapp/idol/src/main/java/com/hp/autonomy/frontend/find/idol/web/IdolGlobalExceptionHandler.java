@@ -18,6 +18,7 @@ import com.hp.autonomy.frontend.find.core.web.ErrorResponse;
 import com.hp.autonomy.frontend.find.core.web.GlobalExceptionHandler;
 import com.hp.autonomy.searchcomponents.core.search.AutoCorrectException;
 import com.hp.autonomy.types.requests.Spelling;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;

@@ -14,33 +14,20 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
-import com.autonomy.aci.client.util.AciParameters;
-import com.hp.autonomy.aci.content.database.Databases;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.hp.autonomy.aci.content.fieldtext.MATCH;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
-import com.hp.autonomy.searchcomponents.core.search.GetContentRequestBuilder;
-import com.hp.autonomy.searchcomponents.core.search.GetContentRequestIndex;
-import com.hp.autonomy.searchcomponents.core.search.GetContentRequestIndexBuilder;
-import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
-import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
-import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
-import com.hp.autonomy.searchcomponents.core.search.SuggestRequestBuilder;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
-import com.hp.autonomy.types.idol.responses.Hit;
-import com.hp.autonomy.types.idol.responses.QueryResponseData;
-import com.hp.autonomy.types.idol.responses.TermGetBestResponseData;
+import com.hp.autonomy.searchcomponents.core.search.*;
 import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.idol.actions.query.QueryActions;
 import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
 import com.hp.autonomy.types.requests.idol.actions.term.TermActions;
 import com.hp.autonomy.types.requests.idol.actions.term.params.TermGetBestParams;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
+import com.opentext.idol.types.responses.Hit;
+import com.opentext.idol.types.responses.QueryResponseData;
+import com.opentext.idol.types.responses.TermGetBestResponseData;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -120,7 +107,7 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
 
     protected abstract String getFieldValue(final R doc, final String fieldName);
 
-    protected abstract void addClIndexParams(final AciParameters params, final Q queryRestrictions);
+    protected abstract void addClIndexParams(final ActionParameters params, final Q queryRestrictions);
 
     protected abstract S getClDbName();
 
@@ -160,7 +147,7 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
                 .maxDate(maxDate)
                 .minScore(minScore)
                 .build();
-            final AciParameters qParams = new AciParameters(QueryActions.Query.name());
+            final ActionParameters qParams = new ActionParameters(QueryActions.Query.name());
             addClIndexParams(qParams, queryRestrictions);
             qParams.add(QueryParams.MaxResults.name(), 6);
             final List<Hit> docs =
@@ -169,7 +156,7 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
                 return new Documents<>(Collections.emptyList(), 0, queryText, null, null, null, null);
             }
 
-            final AciParameters tgbParams = new AciParameters(TermActions.TermGetBest.name());
+            final ActionParameters tgbParams = new ActionParameters(TermActions.TermGetBest.name());
             tgbParams.put(TermGetBestParams.Reference.name(),
                 docs.stream()
                     .map(doc -> {

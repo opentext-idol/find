@@ -1,6 +1,6 @@
 define([
-    'leaflet', 'leaflet.draw', 'i18n!find/nls/bundle', 'leaflet.draw.polygonSpatial', 'leaflet.draw.negate'
-], function(leaflet, leafletDraw, i18n){
+    'underscore', 'leaflet', 'leaflet.draw', 'i18n!find/nls/bundle', 'leaflet.draw.polygonSpatial', 'leaflet.draw.negate'
+], function(_, leaflet, leafletDraw, i18n){
 
     function updateTranslations(prefix, mappedPrefix, obj) {
         _.each(obj, function(val, key){

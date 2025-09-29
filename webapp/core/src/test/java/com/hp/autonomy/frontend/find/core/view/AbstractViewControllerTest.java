@@ -18,13 +18,13 @@ import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.searchcomponents.core.view.ViewRequest;
 import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
+import com.hp.autonomy.searchcomponents.core.view.ViewingPart;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -56,7 +56,7 @@ public abstract class AbstractViewControllerTest<C extends ViewController<R, S, 
     public void viewDocument() throws E, IOException {
         final String reference = "SomeReference";
         final S sampleDatabase = getSampleDatabase();
-        viewController.viewDocument(reference, sampleDatabase, null, false, response);
+        viewController.viewDocument(reference, sampleDatabase, null, ViewingPart.DOCUMENT, null, null, response);
 
         verify(viewServerService).viewDocument(any(), any(OutputStream.class));
         Assert.assertEquals("text/html", response.getContentType());
@@ -64,7 +64,7 @@ public abstract class AbstractViewControllerTest<C extends ViewController<R, S, 
 
     @Test
     public void viewDocument_original() throws E, IOException {
-        viewController.viewDocument("SomeReference", getSampleDatabase(), null, true, response);
+        viewController.viewDocument("SomeReference", getSampleDatabase(), null, ViewingPart.ORIGINAL, null, null, response);
         Assert.assertEquals("application/octet-stream", response.getContentType());
     }
 

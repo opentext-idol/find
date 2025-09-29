@@ -46,6 +46,7 @@ define([
                     this.currentRequest = null;
                     this.error = false;
                     this.fetching = false;
+                    this.synced = true;
 
                     if(success) {
                         success.apply(options, arguments);

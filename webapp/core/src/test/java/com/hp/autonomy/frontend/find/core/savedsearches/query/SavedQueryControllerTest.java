@@ -24,9 +24,9 @@ import com.hp.autonomy.types.requests.Documents;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -34,11 +34,9 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public abstract class SavedQueryControllerTest<RQ extends QueryRequest<Q>, S extends Serializable, Q extends QueryRestrictions<S>, D extends SearchResult, E extends Exception, C extends SavedQueryController<RQ, S, Q, D, E>> {
@@ -68,7 +66,7 @@ public abstract class SavedQueryControllerTest<RQ extends QueryRequest<Q>, S ext
     @Test
     public void create() {
         savedQueryController.create(savedQuery);
-        verify(savedQueryService).create(Matchers.same(savedQuery));
+        verify(savedQueryService).create(ArgumentMatchers.same(savedQuery));
     }
 
     @Test
@@ -76,7 +74,7 @@ public abstract class SavedQueryControllerTest<RQ extends QueryRequest<Q>, S ext
         when(savedQueryService.update(any(SavedQuery.class))).then(returnsFirstArg());
 
         final SavedQuery updatedQuery = savedQueryController.update(42, savedQuery);
-        verify(savedQueryService).update(Matchers.isA(SavedQuery.class));
+        verify(savedQueryService).update(ArgumentMatchers.isA(SavedQuery.class));
         assertEquals(42L, (long)updatedQuery.getId());
     }
 

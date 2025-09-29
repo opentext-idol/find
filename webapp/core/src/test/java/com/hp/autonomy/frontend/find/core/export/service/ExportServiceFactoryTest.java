@@ -5,7 +5,7 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertFalse;
@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 @SuppressWarnings({"SpringJavaAutowiredMembersInspection", "unused"})
 @RunWith(SpringRunner.class)
 public abstract class ExportServiceFactoryTest<R extends QueryRequest<?>, E extends Exception> {
-    @MockBean
+    @MockitoBean
     private PowerPointService powerPointService;
     @Autowired
     private ExportServiceFactory<R, E> exportServiceFactory;

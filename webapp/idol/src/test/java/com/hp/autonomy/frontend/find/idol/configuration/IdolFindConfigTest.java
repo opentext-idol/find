@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -112,15 +112,15 @@ public class IdolFindConfigTest {
 
     @Test
     public void merge() {
-        when(serverConfig.merge(any(ServerConfig.class))).thenReturn(serverConfig);
-        when(communityAuthentication.merge(any(CommunityAuthentication.class))).thenReturn(communityAuthentication);
-        when(queryManipulation.merge(any(QueryManipulation.class))).thenReturn(queryManipulation);
-        when(savedSearchConfig.merge(any(SavedSearchConfig.class))).thenReturn(savedSearchConfig);
-        when(viewConfig.merge(any(ViewConfig.class))).thenReturn(viewConfig);
+        when(serverConfig.merge(any())).thenReturn(serverConfig);
+        when(communityAuthentication.merge(any())).thenReturn(communityAuthentication);
+        when(queryManipulation.merge(any())).thenReturn(queryManipulation);
+        when(savedSearchConfig.merge(any())).thenReturn(savedSearchConfig);
+        when(viewConfig.merge(any())).thenReturn(viewConfig);
         when(communityAgentStore.merge(any())).thenReturn(communityAgentStore);
-        when(export.merge(any(ExportConfig.class))).thenReturn(export);
-        when(trending.merge(any(TrendingConfiguration.class))).thenReturn(trending);
-        when(themeTracker.merge(any(ThemeTrackerConfig.class))).thenReturn(themeTracker);
+        when(export.merge(any())).thenReturn(export);
+        when(trending.merge(any())).thenReturn(trending);
+        when(themeTracker.merge(any())).thenReturn(themeTracker);
 
 
         final IdolFindConfig defaults = IdolFindConfig.builder().content(mock(ServerConfig.class)).build();

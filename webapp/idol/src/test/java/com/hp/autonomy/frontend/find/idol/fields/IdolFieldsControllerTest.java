@@ -29,14 +29,15 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
@@ -74,8 +75,8 @@ public class IdolFieldsControllerTest extends AbstractFieldsControllerTest<IdolF
         when(fieldsRequestBuilder.build()).thenReturn(fieldsRequest);
 
         when(queryRestrictionsBuilderFactory.getObject()).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
-        when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.queryText(anyString())).thenReturn(queryRestrictionsBuilder);
+        Mockito.lenient().when(queryRestrictionsBuilder.databases(any())).thenReturn(queryRestrictionsBuilder);
 
         return new IdolFieldsController(idolFieldsService, idolParametricValuesService, parametricRequestBuilderFactory, fieldComparatorFactory, tagNameFactory, configService, fieldsRequestBuilderFactory, queryRestrictionsBuilderFactory);
     }

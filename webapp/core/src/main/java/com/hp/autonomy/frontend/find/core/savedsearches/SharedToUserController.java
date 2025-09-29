@@ -99,7 +99,7 @@ class SharedToUserController {
             @PathVariable("userId") final long userId
     ) {
         checkEnabled();
-        sharedToUserRepository.delete(new SharedToUserPK(searchId, userId));
+        sharedToUserRepository.deleteById(new SharedToUserPK(searchId, userId));
     }
 
 }

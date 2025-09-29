@@ -13,6 +13,7 @@
  */
 
 define([
+    'underscore',
     'jquery',
     'backbone',
     'find/app/configuration',
@@ -22,7 +23,7 @@ define([
     'find/app/util/policy-selection-view',
     'jasmine-ajax'
 ], function (
-    $, Backbone, configuration, i18n, SavedSearchModel, DocumentSelectionModel, PolicySelectionView
+    _, $, Backbone, configuration, i18n, SavedSearchModel, DocumentSelectionModel, PolicySelectionView
 ) {
     'use strict';
 

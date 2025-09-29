@@ -57,12 +57,37 @@ define([
 
         describe('defaults', function () {
 
-            it('uses default sort option from config', function () {
-                const queryModel = new QueryModel({}, {
+            beforeEach(function () {
+                this.queryState = makeDefaultQueryState();
+                this.queryModel = new QueryModel({}, {
                     enableAutoCorrect: true,
-                    queryState: makeDefaultQueryState()
+                    queryState: this.queryState
                 });
-                expect(queryModel.get('sort')).toBe('labeled');
+            });
+
+            it('uses default sort option from config', function () {
+                expect(this.queryModel.get('sort')).toBe('labeled');
+                expect(this.queryModel.get('questionText')).toBe('cat');
+            });
+
+            it('updates questionText when concepts change', function () {
+                this.queryState.conceptGroups.reset([{ concepts: ['dog'] }]);
+                expect(this.queryModel.get('questionText')).toBe('dog');
+            });
+
+            it('sets null questionText with empty concepts list', function () {
+                this.queryState.conceptGroups.reset([]);
+                expect(this.queryModel.get('questionText')).toBeNull();
+            });
+
+            it('sets null questionText with multiple concept groups', function () {
+                this.queryState.conceptGroups.reset([{ concepts: ['cat'] }, { concepts: ['dog'] }]);
+                expect(this.queryModel.get('questionText')).toBeNull();
+            });
+
+            it('sets questionText to first concept term in group', function () {
+                this.queryState.conceptGroups.reset([{ concepts: ['cat', 'dog'] }]);
+                expect(this.queryModel.get('questionText')).toBe('cat');
             });
 
         });

@@ -17,8 +17,12 @@ package com.hp.autonomy.frontend.find.idol.answer;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.hp.autonomy.aci.content.database.Databases;
 import com.hp.autonomy.aci.content.fieldtext.FieldText;
 import com.hp.autonomy.aci.content.fieldtext.MATCH;
 import com.hp.autonomy.frontend.configuration.ConfigService;
@@ -31,17 +35,20 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequest;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerRequestBuilder;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.AskAnswerServerService;
+import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
-import com.hp.autonomy.types.idol.responses.answer.AskAnswer;
-import com.hp.autonomy.types.idol.responses.answer.ReportFact;
-import com.hp.autonomy.types.idol.responses.answer.ReportResponsedata;
 import com.hp.autonomy.types.requests.Documents;
 import com.hp.autonomy.types.requests.idol.actions.answer.AnswerServerActions;
 import com.hp.autonomy.types.requests.idol.actions.answer.params.ReportParams;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
+import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
+import com.opentext.idol.types.responses.answer.AskAnswer;
+import com.opentext.idol.types.responses.answer.ReportFact;
+import com.opentext.idol.types.responses.answer.ReportResponsedata;
+import com.opentext.idol.types.responses.answer.System;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +79,8 @@ class AnswerServerController {
     private static final int DEFAULT_MAX_FACTS = 10;
     private static final String FACT_ID_FIELD = "FACTS/FACT_EXTRACT_/ID";
     private static final String FACT_SENTENCE_FIELD = "FACTS/FACT_EXTRACT_/SENTENCE";
+    private static final ObjectMapper customizationDataObjectMapper = JsonMapper.builder().build();
+    private static final Set<String> SECURED_SYSTEMS = Set.of("factbank", "passageextractor", "rag");
 
     private final AciService aciService;
     private final AskAnswerServerService askAnswerServerService;
@@ -81,6 +90,8 @@ class AnswerServerController {
     private final DocumentsService<IdolQueryRequest, ?, ?, IdolQueryRestrictions, IdolSearchResult, AciErrorException> documentsService;
     private final ObjectFactory<? extends QueryRestrictionsBuilder<IdolQueryRestrictions, String, ?>> queryRestrictionsBuilderFactory;
     private final ObjectFactory<? extends QueryRequestBuilder<IdolQueryRequest, IdolQueryRestrictions, ?>> queryRequestBuilderFactory;
+    private final HavenSearchAciParameterHandler aciParameterHandler;
+    private final Map<String, System> allSystems;
 
     @Autowired
     AnswerServerController(
@@ -91,7 +102,8 @@ class AnswerServerController {
         final ProcessorFactory processorFactory,
         final DocumentsService<IdolQueryRequest, ?, ?, IdolQueryRestrictions, IdolSearchResult, AciErrorException> documentsService,
         final org.springframework.beans.factory.ObjectFactory<? extends QueryRestrictionsBuilder<IdolQueryRestrictions, String, ?>> queryRestrictionsBuilderFactory,
-        final ObjectFactory<? extends QueryRequestBuilder<IdolQueryRequest, IdolQueryRestrictions, ?>> queryRequestBuilderFactory
+        final ObjectFactory<? extends QueryRequestBuilder<IdolQueryRequest, IdolQueryRestrictions, ?>> queryRequestBuilderFactory,
+        final HavenSearchAciParameterHandler aciParameterHandler
     ) {
         this.aciService = aciService;
         this.askAnswerServerService = askAnswerServerService;
@@ -101,20 +113,53 @@ class AnswerServerController {
         this.documentsService = documentsService;
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
         this.queryRequestBuilderFactory = queryRequestBuilderFactory;
+        this.aciParameterHandler = aciParameterHandler;
+
+        allSystems = getAllSystems();
     }
 
     @RequestMapping(value = ASK_PATH, method = RequestMethod.GET)
-    public List<AskAnswer> ask(@RequestParam(TEXT_PARAM)
-                               final String text,
-                               @RequestParam(value = FIELDTEXT_PARAM, required = false)
-                               final String fieldText,
-                               @RequestParam(value = MAX_RESULTS_PARAM, required = false)
-                               final Integer maxResults) {
+    public List<AskAnswer> ask(
+            @RequestParam(TEXT_PARAM) final String text,
+            @RequestParam(value = FIELDTEXT_PARAM, required = false) final String fieldText,
+            @RequestParam(value = MAX_RESULTS_PARAM, required = false) final Integer maxResults,
+            @RequestParam(INDEXES_PARAM) final Collection<String> databases
+    ) {
+        final String customizationData;
+        try {
+            final List<Map<String, String>> systems = configService.getConfig().getAnswerServer().getSystemNames().stream()
+                    .map(name -> {
+                        final System system = allSystems.get(name);
+                        if (system == null || !SECURED_SYSTEMS.contains(system.getType())) {
+                            return null;
+                        }
+                        return Map.of(
+                                "system_name", name,
+                                "security_info", aciParameterHandler.getSecurityInfo()
+                        );
+                    })
+                    .filter(s -> s != null)
+                    .toList();
+
+            customizationData = customizationDataObjectMapper.writeValueAsString(systems);
+        } catch (final JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        final Map<String, String> proxiedParams = new HashMap<>();
+        if (!StringUtils.isBlank(fieldText)) {
+            proxiedParams.put(QueryParams.FieldText.name(), fieldText);
+        }
+        if (databases != null) {
+            proxiedParams.put(QueryParams.DatabaseMatch.name(), new Databases(databases).toString());
+        }
+
         final AskAnswerServerRequest request = requestBuilderFactory.getObject()
                 .text(text)
                 .maxResults(maxResults)
-                .proxiedParams(StringUtils.isBlank(fieldText) ? Collections.emptyMap() : Collections.singletonMap("fieldtext", fieldText))
+                .proxiedParams(proxiedParams)
                 .systemNames(configService.getConfig().getAnswerServer().getSystemNames())
+                .customizationData(customizationData)
                 .build();
 
         return askAnswerServerService.ask(request);
@@ -129,7 +174,7 @@ class AnswerServerController {
         @RequestParam(value = MAX_RESULTS_PARAM, required = false) final Integer maxResults,
         @RequestParam(INDEXES_PARAM) final Collection<String> databases
     ) {
-        final AciParameters params = new AciParameters(AnswerServerActions.Report.name());
+        final ActionParameters params = new ActionParameters(AnswerServerActions.Report.name());
         params.add(ReportParams.Entity.name(), entity);
         if (maxResults != null) {
             params.add(ReportParams.MaxResults.name(), maxResults);
@@ -206,6 +251,15 @@ class AnswerServerController {
         }
 
         return new ArrayList<>(sourcedFacts.values());
+    }
+
+    private Map<String, System> getAllSystems() {
+        if (configService.getConfig().getAnswerServer().getEnabled()) {
+            return askAnswerServerService.getStatus().getSystems().getSystem().stream()
+                    .collect(Collectors.toMap(System::getName, s -> s));
+        } else {
+            return Map.of();
+        }
     }
 
 

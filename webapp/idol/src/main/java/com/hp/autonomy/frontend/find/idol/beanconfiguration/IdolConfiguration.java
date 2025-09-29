@@ -39,13 +39,11 @@ import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetD
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.requests.IdolQueryRestrictionsMixin;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
 import com.hp.autonomy.user.UserService;
 import com.hp.autonomy.user.UserServiceImpl;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
-import java.util.Set;
-import org.apache.http.client.HttpClient;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,7 +56,6 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 public class IdolConfiguration {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
-    @Autowired
     @Primary
     public ObjectMapper jacksonObjectMapper(
             final Jackson2ObjectMapperBuilder builder,
@@ -90,7 +87,6 @@ public class IdolConfiguration {
     }
 
     @Bean
-    @Autowired
     public CommunityService communityService(final AciService aciService, final ProcessorFactory processorFactory) {
         final CommunityServiceImpl communityService = new CommunityServiceImpl();
         communityService.setAciService(aciService);

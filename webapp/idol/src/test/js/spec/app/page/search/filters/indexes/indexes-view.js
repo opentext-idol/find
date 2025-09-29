@@ -43,6 +43,7 @@ define([
             this.indexesView = new IndexesView({
                 queryModel: this.queryModel,
                 indexesCollection: this.indexesCollection,
+                parametricCollection: new Backbone.Collection(),
                 selectedDatabasesCollection: this.selectedIndexesCollection
             });
 

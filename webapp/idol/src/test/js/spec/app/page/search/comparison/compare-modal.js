@@ -56,6 +56,11 @@ define([
                 title: 'Unicorns'
             });
 
+            var sharedSavedSearchModel = new Backbone.Model({
+                id: 3,
+                title: 'Dwarves'
+            });
+
             var queryState = {
                 conceptGroups: new Backbone.Collection([{concepts: ['Unicorns']}]),
                 selectedIndexes: [],
@@ -65,6 +70,7 @@ define([
             };
 
             this.savedSearchCollection = new Backbone.Collection([savedSearchModel, secondSavedSearchModel]);
+            this.sharedSavedSearchCollection = new Backbone.Collection([sharedSavedSearchModel]);
             this.queryStates = new Backbone.Model({2: queryState});
 
             this.comparisonSuccessCallback = jasmine.createSpy('comparisonSuccessCallback');
@@ -72,6 +78,7 @@ define([
             this.view = new CompareModal({
                 cid: 1,
                 savedSearchCollection: this.savedSearchCollection,
+                sharedSavedSearchCollection: this.sharedSavedSearchCollection,
                 queryStates: this.queryStates,
                 comparisonSuccessCallback: this.comparisonSuccessCallback
             });

@@ -21,6 +21,14 @@ define([
 
     const Animal = {CAT: 'CAT', DOG: 'DOG', TIGER: 'TIGER', UNICORN: 'UNICORN'};
 
+    const MODEL_MAISEY = {
+        id: 'Maisey',
+        displayName: 'Maisey',
+        totalValues: 1,
+        values: [{value: Animal.DOG, displayValue: Animal.DOG}],
+        type: 'Parametric'
+    };
+
     const MockCollection = Backbone.Collection.extend({
         spy1: function() {
         },
@@ -60,13 +68,7 @@ define([
                     values: [{value: Animal.CAT, displayValue: Animal.CAT}],
                     type: 'Parametric'
                 },
-                {
-                    id: 'Maisey',
-                    displayName: 'Maisey',
-                    totalValues: 1,
-                    values: [{value: Animal.DOG, displayValue: Animal.DOG}],
-                    type: 'Parametric'
-                },
+                MODEL_MAISEY,
                 {
                     id: 'Hobbes',
                     displayName: 'Hobbes',
@@ -125,13 +127,7 @@ define([
             beforeEach(function() {
                 this.filterModel.set({text: 'o'});
                 this.filteredParametricFieldsCollection.valueRestrictedParametricCollection.set([
-                    {
-                        id: 'Maisey',
-                        displayName: 'Maisey',
-                        totalValues: 1,
-                        values: [{value: Animal.DOG, displayValue: Animal.DOG}],
-                        type: 'Parametric'
-                    }
+                    MODEL_MAISEY
                 ]);
                 this.filteredParametricFieldsCollection.valueRestrictedParametricCollection.trigger('sync');
             });
@@ -204,6 +200,49 @@ define([
             it('should set 1 parametric model', function() {
                 expect(this.filteredParametricCollection.length).toEqual(1);
             });
+        });
+
+        describe('with fieldPredicate', function () {
+
+            beforeEach(function() {
+                const queryModel = new Backbone.Model();
+                queryModel.getIsoDate = _.noop;
+                this.filteredParametricFieldsCollection = new FilteredParametricFieldsCollection([], {
+                    queryModel: queryModel,
+                    parametricCollection: this.parametricCollection,
+                    filteredParametricCollection: this.filteredParametricCollection,
+                    collection: this.parametricFieldsCollection,
+                    filterModel: this.filterModel,
+                    fieldPredicate: model => model.get('id')[0] === 'M'
+                });
+            });
+
+            it('should exclude non-matching models', function() {
+                expect(this.filteredParametricFieldsCollection.length).toEqual(2);
+                expect(this.filteredParametricFieldsCollection.at(0))
+                    .toBe(this.parametricFieldsCollection.at(1));
+                expect(this.filteredParametricFieldsCollection.at(1))
+                    .toBe(this.parametricFieldsCollection.at(2));
+            });
+
+            describe('after filtering by the letter "A"', function() {
+
+                beforeEach(function() {
+                    this.filterModel.set({text: 'a'});
+                    this.filteredParametricFieldsCollection.valueRestrictedParametricCollection.set([
+                        MODEL_MAISEY
+                    ]);
+                    this.filteredParametricFieldsCollection.valueRestrictedParametricCollection.trigger('sync');
+                });
+
+                it('should exclude non-matching models', function() {
+                    expect(this.filteredParametricFieldsCollection.length).toEqual(1);
+                    expect(this.filteredParametricFieldsCollection.at(0))
+                        .toBe(this.parametricFieldsCollection.at(2));
+                });
+
+            });
+
         });
 
         describe('When calling the collection functions', function() {

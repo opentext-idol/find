@@ -29,7 +29,7 @@ public class IdolViewControllerIT extends AbstractViewControllerIT {
         final MockHttpServletRequestBuilder requestBuilder = get(ViewController.VIEW_PATH + ViewController.VIEW_DOCUMENT_PATH)
                 .param(ViewController.REFERENCE_PARAM, "bad document")
                 .param(ViewController.DATABASE_PARAM, mvcIntegrationTestUtils.getDatabases()[0])
-                .param(ViewController.ORIGINAL_PARAM, "false")
+                .param(ViewController.PART_PARAM, "DOCUMENT")
                 .with(authentication(userAuth()));
 
         mockMvc.perform(

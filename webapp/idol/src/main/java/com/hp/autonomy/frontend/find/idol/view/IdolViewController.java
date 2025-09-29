@@ -25,12 +25,13 @@ import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.logging.Markers;
+import com.hp.autonomy.searchcomponents.core.view.ViewingPart;
 import com.hp.autonomy.searchcomponents.idol.view.*;
 import com.hp.autonomy.user.UserService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
-import java.io.IOException;
-import java.util.Optional;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +43,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.Optional;
 
 @Controller
 @RequestMapping(IdolViewController.VIEW_PATH)
@@ -78,20 +79,22 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
 
     @Override
     public void viewDocument(
-        @RequestParam(REFERENCE_PARAM) final String reference,
+        @RequestParam(value = REFERENCE_PARAM, required = false) final String reference,
         @RequestParam(DATABASE_PARAM) final String database,
         @RequestParam(value = HIGHLIGHT_PARAM, required = false) final String highlightExpression,
-        @RequestParam(ORIGINAL_PARAM) final boolean original,
+        @RequestParam(PART_PARAM) final ViewingPart part,
+        @RequestParam(value = URL_PREFIX_PARAM, required = false) final String urlPrefix,
+        @RequestParam(value = SUB_DOC_REF_PARAM, required = false) final String subDocRef,
         final HttpServletResponse response
     ) throws AciErrorException, IOException {
-        if (updateProfileOnView) {
+        if (updateProfileOnView && part == ViewingPart.DOCUMENT) {
             final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
             if (principal != null) {
                 userService.profileUser(principal.getName(), reference);
             }
         }
 
-        super.viewDocument(reference, database, highlightExpression, original, response);
+        super.viewDocument(reference, database, highlightExpression, part, urlPrefix, subDocRef, response);
     }
 
     @SuppressWarnings("TypeMayBeWeakened")

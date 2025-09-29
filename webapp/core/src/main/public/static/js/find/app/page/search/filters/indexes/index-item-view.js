@@ -24,13 +24,15 @@ define([
     const templateFunction = _.template(template);
 
     return ListItemView.extend({
-        initialize: function() {
+        initialize: function(options) {
+            this.parametricCollection = options.parametricCollection;
             ListItemView.prototype.initialize.call(this, {template: templateFunction});
         },
 
         render: function() {
             ListItemView.prototype.render.call(this);
             this.updateDeleted();
+            this.updateCount();
         },
 
         remove: function() {
@@ -52,6 +54,15 @@ define([
             } else {
                 this.$el.tooltip('destroy');
             }
+        },
+
+        updateCount: function() {
+            const dbName = this.model.get('name');
+            const model = this.parametricCollection.findWhere({ id: 'AUTN_DATABASE' });
+            const db = model ? _.find(model.get('values'),
+                db => db.value.toLowerCase() === dbName.toLowerCase()
+            ) : null;
+            this.$('.database-doc-count').text(' (' + (db ? db.count : 0 ) + ')');
         }
     });
 });

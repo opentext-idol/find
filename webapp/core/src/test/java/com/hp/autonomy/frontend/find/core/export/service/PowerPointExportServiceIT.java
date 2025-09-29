@@ -4,20 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.ExportConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
-import com.hp.autonomy.frontend.reports.powerpoint.dto.DategraphData;
-import com.hp.autonomy.frontend.reports.powerpoint.dto.ListData;
-import com.hp.autonomy.frontend.reports.powerpoint.dto.MapData;
-import com.hp.autonomy.frontend.reports.powerpoint.dto.ReportData;
-import com.hp.autonomy.frontend.reports.powerpoint.dto.SunburstData;
-import com.hp.autonomy.frontend.reports.powerpoint.dto.TableData;
-import com.hp.autonomy.frontend.reports.powerpoint.dto.TopicMapData;
+import com.hp.autonomy.frontend.reports.powerpoint.dto.*;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.ByteArrayOutputStream;
@@ -40,7 +34,7 @@ public class PowerPointExportServiceIT {
     private static final String REPORT_DATA = "/com/hp/autonomy/frontend/find/core/export/report-data.json";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    @MockBean
+    @MockitoBean
     private ConfigService<? extends FindConfig<?, ?>> configService;
     @Autowired
     private VisualDataExportService powerPointExportService;

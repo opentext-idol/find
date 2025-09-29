@@ -21,67 +21,91 @@ define([
 ], function(_, Backbone, i18n, IdolQuestionsView, IdolAnsweredQuestionsCollection) {
     'use strict';
 
-    describe('Idol Questions View', function() {
-        beforeEach(function() {
-            this.view = new IdolQuestionsView({
-                queryModel: new Backbone.Model({
-                    queryText: 'This is some query text',
-                    fieldText: ''
-                }),
-                loadingTracker: {
-                    questionsFinished: true
-                },
-                clearLoadingSpinner: _.noop
-            });
-            this.collection = IdolAnsweredQuestionsCollection.instances[0];
+    const createView = function (questionText) {
+        return new IdolQuestionsView({
+            queryModel: new Backbone.Model({
+                questionText,
+                fieldText: ''
+            }),
+            loadingTracker: {
+                questionsFinished: true
+            },
+            clearLoadingSpinner: _.noop
         });
+    }
 
+    describe('Idol Questions View', function() {
         afterEach(function() {
             IdolAnsweredQuestionsCollection.reset();
         });
 
-        it('should initialize a document collection', function() {
-            expect(IdolAnsweredQuestionsCollection.instances.length).toBeGreaterThan(0);
-            expect(this.collection.fetch).not.toHaveBeenCalled();
+        describe('with questionText', function () {
+            beforeEach(function() {
+                this.view = createView('This is some query text');
+                this.collection = IdolAnsweredQuestionsCollection.instances[0];
+            });
+
+            it('should initialize a document collection', function() {
+                expect(IdolAnsweredQuestionsCollection.instances.length).toBeGreaterThan(0);
+                expect(this.collection.fetch).not.toHaveBeenCalled();
+            });
+
+            describe('and when prompted to fetch', function() {
+                beforeEach(function() {
+                    this.view.fetchData();
+                });
+
+                it('should call fetch on the answered questions collection', function() {
+                    expect(this.collection.fetch).toHaveBeenCalled();
+                    expect(this.collection.fetch.calls.mostRecent().args[0].data).toEqual(
+                        {
+                            maxResults: 1,
+                            text: 'This is some query text',
+                            fieldText: ''
+                        }
+                    )
+                });
+
+                describe('and the fetch returns successfully', function() {
+                    beforeEach(function() {
+                        this.collection.add(new Backbone.Model({
+                            question: 'Is this the question?',
+                            answer: 'Yes it is',
+                            systemName: 'answerbank0'
+                        }));
+                        this.collection.fetch.calls.mostRecent().args[0].success();
+                    });
+
+                    it('should have displayed the answered question', function() {
+                        expect(this.view.$('.result-header').text().trim())
+                            .toEqual(i18n['search.answeredQuestion.question'] + 'Is this the question?');
+                        expect(this.view.$('.summary-text').text().trim())
+                            .toEqual(i18n['search.answeredQuestion.answer'] + 'Yes it is');
+                    });
+
+                    it('the title attribute should contain the system name', function() {
+                        expect(this.view.$('.answered-question').attr('data-original-title'))
+                            .toEqual(i18n['search.answeredQuestion.systemName']('answerbank0'));
+                    });
+                });
+            });
         });
 
-        describe('and when prompted to fetch', function() {
+        describe('fetch with null questionText', function() {
             beforeEach(function() {
+                this.view = createView(null);
+                this.collection = IdolAnsweredQuestionsCollection.instances[0];
                 this.view.fetchData();
             });
 
-            it('should call fetch on the answered questions collection', function() {
-                expect(this.collection.fetch).toHaveBeenCalled();
-                expect(this.collection.fetch.calls.mostRecent().args[0].data).toEqual(
-                    {
-                        maxResults: 1,
-                        text: 'This is some query text',
-                        fieldText: ''
-                    }
-                )
+            it('should not call fetch on the answered questions collection', function() {
+                expect(this.collection.fetch).toHaveBeenCalledTimes(0);
             });
 
-            describe('and the fetch returns successfully', function() {
-                beforeEach(function() {
-                    this.collection.add(new Backbone.Model({
-                        question: 'Is this the question?',
-                        answer: 'Yes it is',
-                        systemName: 'answerbank0'
-                    }));
-                    this.collection.fetch.calls.mostRecent().args[0].success();
-                });
-
-                it('should have displayed the answered question', function() {
-                    expect(this.view.$('.result-header').text().trim())
-                        .toEqual(i18n['search.answeredQuestion.question'] + 'Is this the question?');
-                    expect(this.view.$('.summary-text').text().trim())
-                        .toEqual(i18n['search.answeredQuestion.answer'] + 'Yes it is');
-                });
-
-                it('the title attribute should contain the system name', function() {
-                    expect(this.view.$('.answered-question').attr('data-original-title'))
-                        .toEqual(i18n['search.answeredQuestion.systemName']('answerbank0'));
-                });
+            it('should hide the answer box', function() {
+                expect(this.view.$('.results-contents').length).toEqual(0);
+                expect(this.view.$('.result-header').length).toEqual(0);
+                expect(this.view.$('.summary-text').length).toEqual(0);
             });
         });
     });

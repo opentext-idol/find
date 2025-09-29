@@ -17,12 +17,10 @@ filter-dev.properties
 # Libraries
 webapp/core/src/main/public/static/bower_components/
 webapp/core/node_modules/
-webapp/hod/node_modules/
+webapp/core/frontend/node_modules/
 webapp/idol/node_modules/
 webapp/core/.grunt/
 webapp/core/spec-runner.html
-webapp/hod/.grunt/
-webapp/hod/spec-runner.html
 webapp/idol/.grunt/
 webapp/idol/spec-runner.html
 
@@ -43,9 +41,11 @@ webapp/.output/
 # Maven
 log/ #webapp?
 webapp/core/target/
-webapp/hod/target/
 webapp/idol/target/
 webapp/selenium-tests/integration-tests/target/
 webapp/selenium-tests/mockui/target/
 webapp/hsod-dist/target/
 webapp/on-prem-dist/target/
+
+maven.debricked.lock
+debricked.fingerprints.txt

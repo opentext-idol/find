@@ -14,11 +14,12 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
-import java.io.Serializable;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * Primary key for the {@link SharedToEveryone} table.

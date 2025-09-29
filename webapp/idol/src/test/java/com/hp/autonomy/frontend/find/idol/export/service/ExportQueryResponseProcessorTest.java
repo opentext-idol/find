@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -43,14 +44,8 @@ import static com.hp.autonomy.searchcomponents.core.test.CoreTestContext.CORE_CL
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.anyListOf;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
@@ -83,13 +78,13 @@ public class ExportQueryResponseProcessorTest {
     @Test
     public void export() throws IOException {
         processor.process(new MockAciResponseInputStream(IdolPlatformDataExportServiceTest.class.getResourceAsStream("/com/hp/autonomy/frontend/find/idol/export/query-response.xml")));
-        verify(exportStrategy, times(6)).exportRecord(eq(outputStream), anyListOf(String.class));
+        verify(exportStrategy, times(6)).exportRecord(eq(outputStream), Mockito.<String>anyList());
     }
 
     @Test
     public void exportEmptyResultSetWithoutHeader() throws IOException {
         processor.process(new MockAciResponseInputStream(IOUtils.toInputStream("<?xml version='1.0' encoding='UTF-8' ?>\n<autnresponse><response/></autnresponse>")));
-        verify(exportStrategy, never()).exportRecord(eq(outputStream), anyListOf(String.class));
+        verify(exportStrategy, never()).exportRecord(eq(outputStream), Mockito.<String>anyList());
     }
 
     @Test

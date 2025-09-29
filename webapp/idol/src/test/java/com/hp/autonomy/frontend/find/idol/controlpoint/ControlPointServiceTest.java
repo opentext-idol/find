@@ -3,7 +3,8 @@ package com.hp.autonomy.frontend.find.idol.controlpoint;
 import com.hp.autonomy.frontend.find.idol.configuration.ControlPointConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.ControlPointServerConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.CredentialsConfig;
-import org.apache.http.client.HttpClient;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -35,30 +36,30 @@ public class ControlPointServiceTest {
 
     @Test
     public void testApplyPolicy() throws IOException, ControlPointApiException {
-        Mockito.when(httpClient.execute(Mockito.any()))
-            .thenReturn(ControlPointApiClientTest.buildLoginResponse())
-            .thenReturn(ControlPointApiClientTest.buildResponse(200, "OK",
-                "{\"Success\":true,\"ItemsWillBeIgnored\":false}"));
+        Mockito.doAnswer(ControlPointApiClientTest.buildLoginAnswer())
+                .doAnswer(ControlPointApiClientTest.buildAnswer(200,
+                        "{\"Success\":true,\"ItemsWillBeIgnored\":false}"))
+                .when(httpClient).execute(Mockito.any(), Mockito.<HttpClientResponseHandler<?>>any());
         // expect no exception thrown
         service.applyPolicy("the policy", "state token", null);
     }
 
     @Test
     public void testApplyPolicy_returnsFailure() throws IOException, ControlPointApiException {
-        Mockito.when(httpClient.execute(Mockito.any()))
-            .thenReturn(ControlPointApiClientTest.buildLoginResponse())
-            .thenReturn(ControlPointApiClientTest.buildResponse(200, "OK",
-                "{\"Success\":false,\"ItemsWillBeIgnored\":false}"));
+        Mockito.doAnswer(ControlPointApiClientTest.buildLoginAnswer())
+                .doAnswer(ControlPointApiClientTest.buildAnswer(200,
+                        "{\"Success\":false,\"ItemsWillBeIgnored\":false}"))
+                .when(httpClient).execute(Mockito.any(), Mockito.<HttpClientResponseHandler<?>>any());
         // expect no exception thrown
         service.applyPolicy("the policy", "state token", null);
     }
 
     @Test
     public void testApplyPolicy_partialSuccess() throws IOException, ControlPointApiException {
-        Mockito.when(httpClient.execute(Mockito.any()))
-            .thenReturn(ControlPointApiClientTest.buildLoginResponse())
-            .thenReturn(ControlPointApiClientTest.buildResponse(200, "OK",
-                "{\"Success\":true,\"ItemsWillBeIgnored\":true}"));
+        Mockito.doAnswer(ControlPointApiClientTest.buildLoginAnswer())
+                .doAnswer(ControlPointApiClientTest.buildAnswer(200,
+                        "{\"Success\":true,\"ItemsWillBeIgnored\":true}"))
+                .when(httpClient).execute(Mockito.any(), Mockito.<HttpClientResponseHandler<?>>any());
         // expect no exception thrown
         service.applyPolicy("the policy", "state token", null);
     }

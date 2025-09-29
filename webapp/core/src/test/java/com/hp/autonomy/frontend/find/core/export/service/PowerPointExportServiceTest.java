@@ -16,19 +16,13 @@ package com.hp.autonomy.frontend.find.core.export.service;
 
 import com.hp.autonomy.frontend.reports.powerpoint.PowerPointService;
 import com.hp.autonomy.frontend.reports.powerpoint.TemplateLoadException;
-import com.hp.autonomy.frontend.reports.powerpoint.dto.DategraphData;
-import com.hp.autonomy.frontend.reports.powerpoint.dto.ListData;
-import com.hp.autonomy.frontend.reports.powerpoint.dto.MapData;
-import com.hp.autonomy.frontend.reports.powerpoint.dto.ReportData;
-import com.hp.autonomy.frontend.reports.powerpoint.dto.SunburstData;
-import com.hp.autonomy.frontend.reports.powerpoint.dto.TableData;
-import com.hp.autonomy.frontend.reports.powerpoint.dto.TopicMapData;
+import com.hp.autonomy.frontend.reports.powerpoint.dto.*;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.ByteArrayOutputStream;
@@ -40,7 +34,7 @@ import static org.mockito.Mockito.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PowerPointExportService.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class PowerPointExportServiceTest {
-    @MockBean
+    @MockitoBean
     private PowerPointService powerPointService;
     @Autowired
     private PowerPointExportService powerPointExportService;

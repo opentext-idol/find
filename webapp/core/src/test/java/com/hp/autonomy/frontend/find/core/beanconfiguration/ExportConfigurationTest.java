@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertNotNull;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ExportConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class ExportConfigurationTest {
-    @MockBean
+    @MockitoBean
     private ConfigService<MockConfig> configService;
     @Autowired
     private PowerPointService powerPointService;

@@ -299,7 +299,7 @@ define([
                 }
             });
 
-            if (this.indexesCollection) {
+            if (this.indexesCollection && this.indexesCollection.currentRequest) {
                 this.indexesCollection.currentRequest
                     .always(function() {
                         this.refreshResults();

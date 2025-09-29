@@ -128,26 +128,33 @@ define([
         },
 
         fetchData: function() {
-            this.loadingTracker.questionsFinished = false;
             this.$el.empty();
+            const questionText = this.queryModel.get('questionText');
 
-            this.answeredQuestionsCollection.fetch({
-                data: {
-                    text: this.queryModel.get('queryText'),
-                    fieldText: this.queryModel.get('fieldText'),
-                    maxResults: MAX_SIZE
-                },
-                reset: true,
-                success: _.bind(function() {
-                    this.render();
-                    this.loadingTracker.questionsFinished = true;
-                    this.clearLoadingSpinner();
-                }, this),
-                error: _.bind(function() {
-                    this.loadingTracker.questionsFinished = true;
-                    this.clearLoadingSpinner();
-                }, this)
-            }, this);
+            if (questionText) {
+                this.loadingTracker.questionsFinished = false;
+                this.answeredQuestionsCollection.fetch({
+                    data: {
+                        text: questionText,
+                        fieldText: this.queryModel.get('fieldText'),
+                        maxResults: MAX_SIZE,
+                        indexes: this.queryModel.get('indexes')
+                    },
+                    reset: true,
+                    success: _.bind(function() {
+                        this.render();
+                        this.loadingTracker.questionsFinished = true;
+                        this.clearLoadingSpinner();
+                    }, this),
+                    error: _.bind(function() {
+                        this.loadingTracker.questionsFinished = true;
+                        this.clearLoadingSpinner();
+                    }, this)
+                }, this);
+
+            } else {
+                this.answeredQuestionsCollection.reset();
+            }
         },
 
         remove: function() {

@@ -18,7 +18,7 @@ import com.autonomy.aci.client.annotations.IdolAnnotationsProcessorFactory;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.AciServiceException;
 import com.autonomy.aci.client.services.ProcessorException;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
@@ -27,7 +27,7 @@ import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationCo
 import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
 import com.hp.autonomy.searchcomponents.idol.statsserver.Statistic;
 import com.hp.autonomy.searchcomponents.idol.statsserver.StatisticProcessor;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -73,7 +73,7 @@ public class StatsServerConfig implements OptionalConfigurationComponent<StatsSe
         final Set<Statistic> statistics;
 
         try {
-            statistics = aciService.executeAction(server.toAciServerDetails(), new AciParameters("GetStatus"), new StatisticProcessor(annotationsProcessorFactory));
+            statistics = aciService.executeAction(server.toAciServerDetails(), new ActionParameters("GetStatus"), new StatisticProcessor(annotationsProcessorFactory));
         } catch (final ProcessorException | AciServiceException ignored) {
             return new ValidationResult<>(false, ValidationKey.CONNECTION_ERROR);
         }

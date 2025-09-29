@@ -26,9 +26,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
@@ -36,21 +36,18 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
 public abstract class ExportControllerTest<R extends QueryRequest<?>, E extends Exception> {
-    @MockBean
+    @MockitoBean
     protected RequestMapper<R> requestMapper;
-    @MockBean
+    @MockitoBean
     private ControllerUtils controllerUtils;
-    @MockBean
+    @MockitoBean
     private ExportServiceFactory<R, E> exportServiceFactory;
     @Mock
     private PlatformDataExportService<R, E> platformDataExportService;
@@ -75,21 +72,21 @@ public abstract class ExportControllerTest<R extends QueryRequest<?>, E extends 
     public void exportQueryResults() throws IOException, E {
         mockNumberOfResults(PlatformDataExportService.PAGINATION_SIZE);
         controller.exportQueryResults("{}", Collections.emptyList());
-        verify(platformDataExportService).exportQueryResults(any(OutputStream.class), any(), any(), eq(Collections.emptyList()), anyInt());
+        verify(platformDataExportService).exportQueryResults(any(OutputStream.class), any(), any(), eq(Collections.emptyList()), anyLong());
     }
 
     @Test
     public void exportQueryResultsNoResults() throws IOException, E {
         mockNumberOfResults(0);
         controller.exportQueryResults("{}", Collections.emptyList());
-        verify(platformDataExportService, times(1)).exportQueryResults(any(), any(), any(), any(), anyInt());
+        verify(platformDataExportService, times(1)).exportQueryResults(any(), any(), any(), any(), anyLong());
     }
 
     @Test
     public void exportQueryResultsMultipleResults() throws IOException, E {
         mockNumberOfResults(2 * PlatformDataExportService.PAGINATION_SIZE + 1);
         controller.exportQueryResults("{}", Collections.emptyList());
-        verify(platformDataExportService, times(1)).exportQueryResults(any(OutputStream.class), any(), any(), eq(Collections.emptyList()), anyInt());
+        verify(platformDataExportService, times(1)).exportQueryResults(any(OutputStream.class), any(), any(), eq(Collections.emptyList()), anyLong());
     }
 
     @Test

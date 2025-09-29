@@ -13,6 +13,7 @@
  */
 
 define([
+    'underscore',
     'settings/js/widgets/aci-widget',
     'find/app/page/settings/enable-view',
     'settings/js/controls/password-view',
@@ -21,7 +22,7 @@ define([
     'text!find/templates/app/page/settings/aci-widget.html',
     'text!find/templates/app/page/settings/control-point-widget.html',
 ], function (
-    AciWidget, EnableView, PasswordView,
+    _, AciWidget, EnableView, PasswordView,
     widgetTemplate, serverTemplate, aciTemplate, controlPointTemplate
 ) {
 

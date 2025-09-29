@@ -17,7 +17,7 @@ package com.hp.autonomy.frontend.find.core.savedsearches;
 /**
  * Enumerate the different subclasses of {@link SavedSearch}
  * so that we have a definition of the  possible values of the
- * {@link javax.persistence.DiscriminatorColumn} in the searches table.
+ * {@link jakarta.persistence.DiscriminatorColumn} in the searches table.
  *
  * Ids are explicitly defined to try and make it more obvious these shouldn't be renamed
  * or reordered without a database migration.

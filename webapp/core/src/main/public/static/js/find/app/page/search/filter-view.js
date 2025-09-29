@@ -107,6 +107,7 @@ define([
                         filterModel: this.filterModel,
                         indexesCollection: options.indexesCollection,
                         queryModel: options.queryModel,
+                        parametricCollection: options.parametricCollection,
                         selectedDatabasesCollection: options.queryState.selectedIndexes,
                         visibleIndexesCallback: _.bind(function(indexes) {
                             this.indexesEmpty = indexes.length === 0;
@@ -266,7 +267,8 @@ define([
                         filterModel: this.filterModel,
                         queryModel: options.queryModel,
                         parametricCollection: options.parametricCollection,
-                        filteredParametricCollection: filteredParametricCollection
+                        filteredParametricCollection: filteredParametricCollection,
+                        fieldPredicate: model => model.get('id') !== 'AUTN_DATABASE'
                     });
 
                     if(this.filterModel) {

@@ -19,18 +19,18 @@ import com.autonomy.aci.client.services.AciServiceException;
 import com.autonomy.aci.client.services.Processor;
 import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
 import com.hp.autonomy.frontend.find.idol.controlpoint.NifiServiceTest;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NifiConfigValidatorTest {
@@ -41,7 +41,7 @@ public class NifiConfigValidatorTest {
     @Before
     public void setUp() throws IOException {
         Mockito.doAnswer(inv -> {
-            return inv.getArgumentAt(2, Processor.class)
+            return inv.getArgument(2, Processor.class)
                 .process(NifiServiceTest.buildResponse(NifiServiceTest.listActionsResponse));
         }).when(aciService).executeAction(any(), any(), any());
         validator = new NifiConfigValidator(processorFactory, aciService);

@@ -22,25 +22,21 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collection;
 
-import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizer.PRE_AUTHENTICATED_ROLES_PROPERTY_KEY;
-import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizer.PRE_AUTHENTICATED_USERNAME_PROPERTY_KEY;
-import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizer.REVERSE_PROXY_PROPERTY_KEY;
 import static com.hp.autonomy.frontend.find.idol.beanconfiguration.GrantedAuthorityMatcher.authority;
+import static com.hp.autonomy.frontend.find.idol.beanconfiguration.ReverseProxyIdolSecurityCustomizer.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyCollection;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
@@ -58,10 +54,10 @@ public class ReverseProxyIdolSecurityCustomizerTest {
     @Autowired
     private ReverseProxyIdolSecurityCustomizer reverseProxyIdolSecurityCustomizer;
 
-    @MockBean
+    @MockitoBean
     private UserService userService;
 
-    @MockBean
+    @MockitoBean
     private GrantedAuthoritiesMapper authoritiesMapper;
 
     @Mock

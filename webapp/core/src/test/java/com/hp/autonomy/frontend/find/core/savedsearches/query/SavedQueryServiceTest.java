@@ -16,12 +16,12 @@ package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.AbstractSavedSearchServiceTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest(classes = SavedQueryService.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class SavedQueryServiceTest extends AbstractSavedSearchServiceTest<SavedQuery, SavedQuery.Builder> {
     @SuppressWarnings("unused")
-    @MockBean
+    @MockitoBean
     private SavedQueryRepository crudRepository;
 
     public SavedQueryServiceTest() {

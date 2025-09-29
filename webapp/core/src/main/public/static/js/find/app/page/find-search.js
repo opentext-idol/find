@@ -228,16 +228,7 @@ define([
                 events(cid).abandon();
 
                 if(this.selectedTabModel.get('selectedSearchCid') === cid) {
-                    const lastModel = this.savedQueryCollection.last();
-
-                    if(lastModel) {
-                        const route = lastModel.get('id') ? 'search/tab/' + lastModel.get('type') + ':' + lastModel.get('id') : 'search/query';
-                        vent.navigate(route, {trigger: false});
-                        this.selectedTabModel.set('selectedSearchCid', lastModel.cid);
-                    } else {
-                        // If the user closes their last tab, run a search for *
-                        this.createNewTab();
-                    }
+                    this.closeCurrentSearch();
                 }
             });
 
@@ -343,6 +334,8 @@ define([
                             selectedResultsViewRouteParams: extraRouteParams
                         });
                     } else {
+                        // case where the search is only visible because it's used in a dashboard (all
+                        // dashboard-referenced searches are visible to all users; see IdolSavedQueryController#get)
                         const newModel = getModel();
                         newModel.fetch().done(function () {
                             collection = options.readOnlySearchCollection;
@@ -360,9 +353,9 @@ define([
                 }, this);
 
                 if (collection.fetching) {
-                    collection.currentRequest.done(function() {
-                        setSelectedTab();
-                    }.bind(this));
+                    collection.currentRequest.done(setSelectedTab);
+                } else if (!collection.synced) {
+                    this.listenToOnce(collection, 'sync', setSelectedTab);
                 } else {
                     setSelectedTab();
                 }
@@ -607,7 +600,8 @@ define([
                             searchCollections: this.searchCollections,
                             searchTypes: this.searchTypes,
                             selectedTabModel: this.selectedTabModel,
-                            mmapTab: this.mmapTab
+                            mmapTab: this.mmapTab,
+                            findSearch: this
                         }, this.serviceViewOptions(cid)))
                     };
                     this.serviceViews[cid] = viewData;
@@ -749,6 +743,19 @@ define([
             this.lastNavigatedQueryText = queryText || false;
             this.lastNavigatedDatabases = databases || undefined;
             this.lastNavigatedOptions = options;
+        },
+
+        closeCurrentSearch: function () {
+            const lastModel = this.savedQueryCollection.last();
+
+            if(lastModel) {
+                const route = lastModel.get('id') ? 'search/tab/' + lastModel.get('type') + ':' + lastModel.get('id') : 'search/query';
+                vent.navigate(route, {trigger: false});
+                this.selectedTabModel.set('selectedSearchCid', lastModel.cid);
+            } else {
+                // If the user closes their last tab, run a search for *
+                this.createNewTab();
+            }
         }
     });
 });

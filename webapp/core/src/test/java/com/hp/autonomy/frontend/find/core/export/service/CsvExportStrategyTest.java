@@ -16,11 +16,7 @@ package com.hp.autonomy.frontend.find.core.export.service;
 
 import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
-import com.hp.autonomy.searchcomponents.core.config.FieldType;
-import com.hp.autonomy.searchcomponents.core.config.FieldValue;
-import com.hp.autonomy.searchcomponents.core.config.FieldsInfo;
-import com.hp.autonomy.searchcomponents.core.config.HavenSearchCapable;
+import com.hp.autonomy.searchcomponents.core.config.*;
 import com.hp.autonomy.searchcomponents.core.fields.FieldDisplayNameGenerator;
 import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import com.hp.autonomy.searchcomponents.core.test.CoreTestContext;
@@ -30,7 +26,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.ByteArrayOutputStream;
@@ -59,7 +55,7 @@ public class CsvExportStrategyTest {
     private FieldPathNormaliser fieldPathNormaliser;
     @Autowired
     private FieldDisplayNameGenerator fieldDisplayNameGenerator;
-    @MockBean
+    @MockitoBean
     private ConfigService<HavenSearchCapable> configService;
     @Mock
     private HavenSearchCapable config;

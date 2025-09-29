@@ -16,12 +16,8 @@ package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.find.core.search.RelatedConceptsController;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolRelatedConceptsRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolRelatedConceptsRequestBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolRelatedConceptsService;
-import com.hp.autonomy.types.idol.responses.QsElement;
+import com.hp.autonomy.searchcomponents.idol.search.*;
+import com.opentext.idol.types.responses.QsElement;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

@@ -17,33 +17,30 @@ package com.hp.autonomy.frontend.find.idol.answer;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.transport.AciServerDetails;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.hp.autonomy.aci.content.fieldtext.Specifier;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.idol.configuration.EntitySearchConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
-import com.hp.autonomy.types.idol.marshalling.ProcessorFactory;
-import com.hp.autonomy.types.idol.responses.answer.AskAnswer;
-import com.hp.autonomy.types.idol.responses.answer.AskAnswers;
-import com.hp.autonomy.types.idol.responses.answer.AskResponsedata;
 import com.hp.autonomy.types.requests.idol.actions.answer.params.AskParams;
 import com.hp.autonomy.types.requests.idol.actions.answer.params.AskSortParam;
 import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import javax.xml.xpath.XPathExpressionException;
-import org.apache.commons.collections.CollectionUtils;
+import com.opentext.idol.types.marshalling.ProcessorFactory;
+import com.opentext.idol.types.responses.answer.AskAnswer;
+import com.opentext.idol.types.responses.answer.AskAnswers;
+import com.opentext.idol.types.responses.answer.AskResponsedata;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.xml.xpath.XPathExpressionException;
+import java.util.*;
 
 import static com.hp.autonomy.frontend.find.idol.answer.AnswerServerController.MAX_RESULTS_PARAM;
 import static com.hp.autonomy.frontend.find.idol.answer.AnswerServerController.TEXT_PARAM;
@@ -94,7 +91,7 @@ class EntitySearchAnswerServerController {
         // We deliberately do each systemName in sequence since FactBank is faster than PassageExtraction.
         // If the systemNames aren't listed, we'll use null, which means we'll try all configured answer server systems.
         for(String systemName : CollectionUtils.isEmpty(systemNames) ? Collections.<String>singletonList(null) : systemNames) {
-            final AciParameters params = new AciParameters("ask");
+            final ActionParameters params = new ActionParameters("ask");
 
             params.add(AskParams.Sort.name(), AskSortParam.CONFIDENCE);
             params.add(AskParams.Text.name(), text);

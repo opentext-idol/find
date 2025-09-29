@@ -15,10 +15,8 @@
 package com.hp.autonomy.frontend.find.core.view;
 
 import com.hp.autonomy.frontend.find.core.web.RequestUtils;
-import com.hp.autonomy.searchcomponents.core.view.ViewContentSecurityPolicy;
-import com.hp.autonomy.searchcomponents.core.view.ViewRequest;
-import com.hp.autonomy.searchcomponents.core.view.ViewRequestBuilder;
-import com.hp.autonomy.searchcomponents.core.view.ViewServerService;
+import com.hp.autonomy.searchcomponents.core.view.*;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -26,11 +24,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 
 @Controller
@@ -42,7 +41,9 @@ public abstract class ViewController<R extends ViewRequest<S>, S extends Seriali
     public static final String DATABASE_PARAM = "index";
     private static final String VIEW_STATIC_CONTENT_PROMOTION_PATH = "/viewStaticContentPromotion";
     protected static final String HIGHLIGHT_PARAM = "highlightExpressions";
-    public static final String ORIGINAL_PARAM = "original";
+    public static final String PART_PARAM = "part";
+    public static final String URL_PREFIX_PARAM = "urlPrefix";
+    public static final String SUB_DOC_REF_PARAM = "subDocRef";
 
     private final ViewServerService<R, S, E> viewServerService;
     private final ObjectFactory<? extends ViewRequestBuilder<R, S, ?>> viewRequestBuilderFactory;
@@ -71,13 +72,15 @@ public abstract class ViewController<R extends ViewRequest<S>, S extends Seriali
 
     @RequestMapping(value = VIEW_DOCUMENT_PATH, method = RequestMethod.GET)
     public void viewDocument(
-            @RequestParam(REFERENCE_PARAM) final String reference,
+            @RequestParam(value = REFERENCE_PARAM, required = false) final String reference,
             @RequestParam(DATABASE_PARAM) final S database,
             @RequestParam(value = HIGHLIGHT_PARAM, required = false) final String highlightExpression,
-            @RequestParam(ORIGINAL_PARAM) final boolean original,
+            @RequestParam(PART_PARAM) final ViewingPart part,
+            @RequestParam(value = URL_PREFIX_PARAM, required = false) final String urlPrefix,
+            @RequestParam(value = SUB_DOC_REF_PARAM, required = false) final String subDocRef,
             final HttpServletResponse response
     ) throws E, IOException {
-        if (original) {
+        if (part == ViewingPart.ORIGINAL) {
             // if View fails, this will still get overridden by text/html in the error handler
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
             RequestUtils.setFilenameHeader(response, extractFilename(reference));
@@ -90,7 +93,11 @@ public abstract class ViewController<R extends ViewRequest<S>, S extends Seriali
                 .documentReference(reference)
                 .database(database)
                 .highlightExpression(highlightExpression)
-                .original(original)
+                .part(part)
+                .urlPrefix(urlPrefix == null ? null : urlPrefix +
+                        // viewserver doesn't propagate urlprefix to sub-sub-documents
+                        "&urlPrefix=" + URLEncoder.encode(urlPrefix, StandardCharsets.UTF_8) + "&subDocRef=")
+                .subDocRef(subDocRef)
                 .build();
         viewServerService.viewDocument(request, response.getOutputStream());
     }

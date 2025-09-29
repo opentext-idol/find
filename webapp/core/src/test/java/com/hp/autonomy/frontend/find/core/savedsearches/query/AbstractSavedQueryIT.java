@@ -39,6 +39,7 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -89,7 +90,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     public void create() throws Exception {
         createSavedQuery(getBaseSavedQuery())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", not(nullValue())))
                 .andExpect(jsonPath("$.title", equalTo(TITLE)))
                 .andExpect(jsonPath("$.minScore", equalTo(MIN_SCORE)))
@@ -122,7 +123,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(createdEntity.getId().intValue())))
                 .andExpect(jsonPath("$.minScore", equalTo(updatedMinScore)))
                 .andExpect(jsonPath("$.conceptClusterPhrases", hasSize(1)))
@@ -135,7 +136,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     public void createAndFetch() throws Exception {
         final byte[] requestBytes = IOUtils.toByteArray(saveQueryRequestResource.getInputStream());
 
-        final MockHttpServletRequestBuilder requestBuilder = post(SavedQueryController.PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = post(SavedQueryController.PATH)
                 .content(requestBytes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
@@ -148,7 +149,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
 
         listSavedQueries()
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].id", is(id)))
                 .andExpect(jsonPath("$[0].title", is("\u30e2\u30f3\u30ad\u30fc")))
                 .andExpect(jsonPath("$[0].minDate", new ZonedDateTimeMatcher("2017-05-17T15:51:20Z")))
@@ -215,7 +216,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         assertNotNull(savedQuery.getId());
         assertThat(savedQuery.getDateCreated(), isA(ZonedDateTime.class));
         assertThat(savedQuery.getDateModified(), isA(ZonedDateTime.class));
-        assertTrue(savedQuery.getDateCreated().isEqual(savedQuery.getDateModified()));
+        assertTrue(Math.abs(ChronoUnit.MILLIS.between(savedQuery.getDateCreated(), savedQuery.getDateModified())) < 500);
 
         // Safe to assume completed in an hour
         // TODO: mock out the datetime service used by spring auditing to check this properly
@@ -282,17 +283,17 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
 
         mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + '/' + id1).with(authentication(biAuth())))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", greaterThan(0)));
 
         mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + '/' + id2).with(authentication(biAuth())))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", is(0))); // likely to work though not foolproof
     }
 
     private ResultActions createSavedQuery(final SavedQuery savedQuery) throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = post(SavedQueryController.PATH + '/')
+        final MockHttpServletRequestBuilder requestBuilder = post(SavedQueryController.PATH)
                 .content(objectMapper.writeValueAsString(savedQuery))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));

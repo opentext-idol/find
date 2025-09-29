@@ -16,7 +16,6 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityAuthentication;
-import com.hp.autonomy.frontend.find.core.savedsearches.UserEntityRepository;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.user.UserRoles;
 import com.hp.autonomy.user.UserService;
@@ -28,10 +27,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collection;
@@ -42,7 +41,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.Matchers.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
@@ -58,18 +57,18 @@ public class IdolSecurityCustomizerImplTest {
     @Autowired
     private IdolSecurityCustomizerImpl idolSecurityCustomizer;
 
-    @MockBean
+    @MockitoBean
     private ConfigService<IdolFindConfig> configService;
 
-    @MockBean
+    @MockitoBean
     private UserService userService;
 
-    @MockBean
+    @MockitoBean
     private GrantedAuthoritiesMapper authoritiesMapper;
 
     // required for wiring but not used in test
     @SuppressWarnings("unused")
-    @MockBean
+    @MockitoBean
     private AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever;
 
     @Mock
@@ -83,7 +82,7 @@ public class IdolSecurityCustomizerImplTest {
 
     @Before
     public void setUp() {
-        when(foreignAuthentication.getPrincipal()).thenReturn("Some Guy");
+        when(foreignAuthentication.getName()).thenReturn("Some Guy");
         when(foreignAuthentication.getCredentials()).thenReturn("password");
         when(foreignAuthentication.isAuthenticated()).thenReturn(false);
 
@@ -91,7 +90,7 @@ public class IdolSecurityCustomizerImplTest {
         //noinspection unchecked
         when(authoritiesMapper.mapAuthorities(anyCollection())).then(returnsFirstArg());
 
-        when(userService.authenticateUser(anyString(), anyString(), anyString())).thenReturn(true);
+        when(userService.authenticateUser(any(), anyString(), anyString())).thenReturn(true);
         when(userService.getUser(anyString(), anyBoolean(), anyString())).thenReturn(new UserRoles("Some Guy"));
 
         when(communityAuthentication.getMethod()).thenReturn("LDAP");

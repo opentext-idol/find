@@ -130,6 +130,10 @@ define([
                 const containerTop = this.scrollModel.get('top');
                 const containerBottom = this.scrollModel.get('bottom');
 
+                if (containerTop === undefined || containerBottom === undefined) {
+                    return;
+                }
+
                 // Ensure that the top of the preview is at least PREVIEW_MARGIN_PIXELS from the top of the container
                 // but not above the augmentation view top
                 const targetTop = Math.max(containerTop + PREVIEW_MARGIN_PIXELS, augmentationRect.top);

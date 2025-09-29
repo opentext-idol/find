@@ -15,13 +15,13 @@
 package com.hp.autonomy.frontend.find.idol.search;
 
 import com.autonomy.aci.client.services.AciErrorException;
-import com.autonomy.aci.client.util.AciParameters;
+import com.autonomy.aci.client.util.ActionParameters;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest.QueryType;
 import com.hp.autonomy.searchcomponents.idol.search.QueryExecutor;
-import com.hp.autonomy.types.idol.responses.GetQueryTagValuesResponseData;
-import com.hp.autonomy.types.idol.responses.QueryResponseData;
-import com.hp.autonomy.types.idol.responses.SuggestResponseData;
 import com.hp.autonomy.types.requests.qms.actions.query.params.QmsQueryParams;
+import com.opentext.idol.types.responses.GetQueryTagValuesResponseData;
+import com.opentext.idol.types.responses.QueryResponseData;
+import com.opentext.idol.types.responses.SuggestResponseData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
@@ -52,7 +52,7 @@ public class FindQueryExecutor implements QueryExecutor {
 
     @Override
     public QueryResponseData executeQuery(
-            final AciParameters aciParameters,
+            final ActionParameters aciParameters,
             final QueryType queryType
     ) throws AciErrorException {
         return executeQueryDiscardingBlacklist(aciParameters, queryType, queryExecutor::executeQuery);
@@ -60,7 +60,7 @@ public class FindQueryExecutor implements QueryExecutor {
 
     @Override
     public SuggestResponseData executeSuggest(
-            final AciParameters aciParameters,
+            final ActionParameters aciParameters,
             final QueryType queryType
     ) throws AciErrorException {
         return queryExecutor.executeSuggest(aciParameters, queryType);
@@ -68,16 +68,16 @@ public class FindQueryExecutor implements QueryExecutor {
 
     @Override
     public GetQueryTagValuesResponseData executeGetQueryTagValues(
-            final AciParameters aciParameters,
+            final ActionParameters aciParameters,
             final QueryType queryType
     ) throws AciErrorException {
         return executeQueryDiscardingBlacklist(aciParameters, queryType, queryExecutor::executeGetQueryTagValues);
     }
 
     public static <R> R executeQueryDiscardingBlacklist(
-            final AciParameters aciParameters,
+            final ActionParameters aciParameters,
             final QueryType queryType,
-            final BiFunction<AciParameters, QueryType, R> function
+            final BiFunction<ActionParameters, QueryType, R> function
     ) {
         try {
             return function.apply(aciParameters, queryType);

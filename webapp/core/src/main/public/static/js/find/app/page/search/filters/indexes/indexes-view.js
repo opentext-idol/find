@@ -101,11 +101,18 @@ define([
                 databaseHelper: this.databaseHelper,
                 listViewOptions: {
                     ItemView: IndexItemView,
+                    itemOptions: {
+                        parametricCollection: options.parametricCollection
+                    },
                     useCollectionChange: {
                         deleted: 'updateDeleted'
                     }
                 }
             }, options));
+
+            this.listenTo(options.parametricCollection, 'update reset', function() {
+                this.render();
+            });
 
             this.pendingSelection = _.clone(this.currentSelection);
 

@@ -33,7 +33,7 @@ public abstract class AbstractViewControllerIT extends AbstractFindIT {
         final MockHttpServletRequestBuilder requestBuilder = get(ViewController.VIEW_PATH + ViewController.VIEW_DOCUMENT_PATH)
                 .param(ViewController.REFERENCE_PARAM, reference)
                 .param(ViewController.DATABASE_PARAM, mvcIntegrationTestUtils.getDatabases()[0])
-                .param(ViewController.ORIGINAL_PARAM, "false")
+                .param(ViewController.PART_PARAM, "DOCUMENT")
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)
