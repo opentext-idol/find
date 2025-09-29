@@ -77,7 +77,7 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
         super(
             new AciServiceImpl(
                 new AciHttpClientImpl(HttpClients.createDefault()),
-                new AciServerDetails("10.2.1.90", 9172)),
+                new AciServerDetails("100.127.3.15", 9172)),
             processorFactory,
             documentsService,
             queryRestrictionsBuilderFactory,
