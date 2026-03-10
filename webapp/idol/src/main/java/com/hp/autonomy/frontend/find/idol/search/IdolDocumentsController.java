@@ -31,6 +31,7 @@ import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationR
 import com.opentext.idol.types.responses.Profile;
 import com.opentext.idol.types.responses.Profiles;
 import com.opentext.idol.types.responses.Term;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +85,7 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
             @RequestParam(value = "maxTerms", defaultValue = "30") final int maxTerms,
             @RequestParam(value = "maxProfiles", defaultValue = "3") final int maxProfiles,
             @RequestParam(SUMMARY_PARAM) final String summary,
-            @RequestParam(value = INDEXES_PARAM, required = false) final List<String> databases,
+            @RequestParam(value = INDEXES_PARAM, required = false) final List<@NotNull String> databases,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime maxDate,

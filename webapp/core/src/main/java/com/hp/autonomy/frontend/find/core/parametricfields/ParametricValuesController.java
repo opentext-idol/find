@@ -15,29 +15,17 @@
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
 import com.hp.autonomy.frontend.find.core.fields.FieldComparatorFactory;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.BucketingParams;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.DependentParametricField;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequestBuilder;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.*;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
-import com.hp.autonomy.types.requests.idol.actions.tags.DateRangeInfo;
-import com.hp.autonomy.types.requests.idol.actions.tags.DateValueDetails;
-import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
-import com.hp.autonomy.types.requests.idol.actions.tags.NumericRangeInfo;
-import com.hp.autonomy.types.requests.idol.actions.tags.NumericValueDetails;
-import com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo;
+import com.hp.autonomy.types.requests.idol.actions.tags.*;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -94,17 +82,17 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     @RequestMapping(method = RequestMethod.GET, path = VALUES_PATH)
     @ResponseBody
     public List<QueryTagInfo> getParametricValues(
-        @RequestParam(FIELD_NAMES_PARAM) final List<FieldPath> fieldNames,
+        @RequestParam(FIELD_NAMES_PARAM) final List<@NotNull FieldPath> fieldNames,
         @RequestParam(value = START_PARAM, required = false) final Integer start,
         @RequestParam(value = MAX_VALUES_PARAM, required = false) final Integer maxValues,
-        @RequestParam(value = VALUE_RESTRICTIONS_PARAM, required = false) final Collection<String> valueRestrictions,
+        @RequestParam(value = VALUE_RESTRICTIONS_PARAM, required = false) final Collection<@NotNull String> valueRestrictions,
         @RequestParam(value = QUERY_TEXT_PARAM, defaultValue = "*") final String queryText,
         @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-        @RequestParam(DATABASES_PARAM) final Collection<S> databases,
+        @RequestParam(DATABASES_PARAM) final Collection<@NotNull S> databases,
         @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
         @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime maxDate,
         @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
-        @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens,
+        @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<@NotNull String> stateTokens,
         @RequestParam(value = SORT_PARAM, defaultValue = "DocumentCount") final SortParam sort
     ) throws E {
         final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
@@ -149,7 +137,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             @RequestParam(BUCKET_MAX_PARAM) final Double bucketMax,
             @RequestParam(QUERY_TEXT_PARAM) final String queryText,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-            @RequestParam(DATABASES_PARAM) final Collection<S> databases,
+            @RequestParam(DATABASES_PARAM) final Collection<@NotNull S> databases,
             @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
             @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime maxDate,
             @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore
@@ -183,7 +171,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
               @RequestParam(BUCKET_MAX_PARAM) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime bucketMax,
               @RequestParam(QUERY_TEXT_PARAM) final String queryText,
               @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-              @RequestParam(DATABASES_PARAM) final Collection<S> databases,
+              @RequestParam(DATABASES_PARAM) final Collection<@NotNull S> databases,
               @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
               @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime maxDate,
               @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore
@@ -214,11 +202,11 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         @RequestParam(FIELD_NAME_PARAM) final FieldPath fieldName,
         @RequestParam(QUERY_TEXT_PARAM) final String queryText,
         @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-        @RequestParam(DATABASES_PARAM) final Collection<S> databases,
+        @RequestParam(DATABASES_PARAM) final Collection<@NotNull S> databases,
         @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
         @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime maxDate,
         @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
-        @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
+        @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<@NotNull String> stateTokens
     ) throws E {
         final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
             .queryText(queryText)
@@ -251,11 +239,11 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
         @RequestParam(FIELD_NAME_PARAM) final FieldPath fieldName,
         @RequestParam(QUERY_TEXT_PARAM) final String queryText,
         @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-        @RequestParam(DATABASES_PARAM) final Collection<S> databases,
+        @RequestParam(DATABASES_PARAM) final Collection<@NotNull S> databases,
         @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
         @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime maxDate,
         @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
-        @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
+        @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<@NotNull String> stateTokens
     ) throws E {
         final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
             .queryText(queryText)
@@ -285,14 +273,14 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
     @RequestMapping(method = RequestMethod.GET, value = DEPENDENT_VALUES_PATH)
     @ResponseBody
     public List<DependentParametricField> getDependentParametricValues(
-        @RequestParam(FIELD_NAMES_PARAM) final List<FieldPath> fieldNames,
+        @RequestParam(FIELD_NAMES_PARAM) final List<@NotNull FieldPath> fieldNames,
         @RequestParam(QUERY_TEXT_PARAM) final String queryText,
         @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-        @RequestParam(DATABASES_PARAM) final Collection<S> databases,
+        @RequestParam(DATABASES_PARAM) final Collection<@NotNull S> databases,
         @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
         @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime maxDate,
         @RequestParam(value = MIN_SCORE, defaultValue = "0") final Integer minScore,
-        @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<String> stateTokens
+        @RequestParam(value = STATE_TOKEN_PARAM, required = false) final List<@NotNull String> stateTokens
     ) throws E {
         final Q queryRestrictions = queryRestrictionsBuilderFactory.getObject()
             .queryText(queryText)

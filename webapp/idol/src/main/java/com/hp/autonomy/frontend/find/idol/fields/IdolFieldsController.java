@@ -30,6 +30,7 @@ import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricValu
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -66,7 +67,7 @@ class IdolFieldsController extends FieldsController<IdolFieldsRequest, AciErrorE
     @RequestMapping(value = GET_PARAMETRIC_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
     public List<FieldAndValueDetails<?>> getParametricFields(
-        @RequestParam(FIELD_TYPES_PARAM) final Collection<FieldTypeParam> fieldTypes)
+        @RequestParam(FIELD_TYPES_PARAM) final Collection<@NotNull FieldTypeParam> fieldTypes)
         throws AciErrorException
     {
         return getParametricFields(fieldsRequestBuilderFactory.getObject()

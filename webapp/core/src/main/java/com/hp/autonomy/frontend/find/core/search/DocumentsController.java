@@ -14,20 +14,9 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
-import com.hp.autonomy.frontend.configuration.ConfigService;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.GetContentRequest;
-import com.hp.autonomy.searchcomponents.core.search.GetContentRequestBuilder;
-import com.hp.autonomy.searchcomponents.core.search.GetContentRequestIndex;
-import com.hp.autonomy.searchcomponents.core.search.GetContentRequestIndexBuilder;
-import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
-import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
-import com.hp.autonomy.searchcomponents.core.search.SuggestRequest;
-import com.hp.autonomy.searchcomponents.core.search.SuggestRequestBuilder;
+import com.hp.autonomy.searchcomponents.core.search.*;
 import com.hp.autonomy.types.requests.Documents;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -105,7 +94,7 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
         @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
         @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
         @RequestParam(SUMMARY_PARAM) final String summary,
-        @RequestParam(value = INDEXES_PARAM, required = false) final List<S> databases,
+        @RequestParam(value = INDEXES_PARAM, required = false) final List<@NotNull S> databases,
         @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
         @RequestParam(value = SORT_PARAM, required = false) final String sort,
         @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
@@ -150,7 +139,7 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
         @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
         @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
         @RequestParam(SUMMARY_PARAM) final String summary,
-        @RequestParam(value = INDEXES_PARAM, required = false) final List<S> databases,
+        @RequestParam(value = INDEXES_PARAM, required = false) final List<@NotNull S> databases,
         @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
         @RequestParam(value = SORT_PARAM, required = false) final String sort,
         @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,

@@ -16,6 +16,7 @@ package com.hp.autonomy.frontend.find.core.search;
 
 import com.hp.autonomy.searchcomponents.core.search.*;
 import com.hp.autonomy.types.requests.idol.actions.query.QuerySummaryElement;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -67,12 +68,12 @@ public abstract class RelatedConceptsController<T extends QuerySummaryElement, Q
     public List<T> findRelatedConcepts(
         @RequestParam(QUERY_TEXT_PARAM) final String queryText,
         @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-        @RequestParam(DATABASES_PARAM) final Collection<S> databases,
+        @RequestParam(DATABASES_PARAM) final Collection<@NotNull S> databases,
         @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
         @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime maxDate,
         @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final Integer minScore,
-        @RequestParam(value = STATE_MATCH_TOKEN_PARAM, required = false) final List<String> stateMatchTokens,
-        @RequestParam(value = STATE_DONT_MATCH_TOKEN_PARAM, required = false) final List<String> stateDontMatchTokens,
+        @RequestParam(value = STATE_MATCH_TOKEN_PARAM, required = false) final List<@NotNull String> stateMatchTokens,
+        @RequestParam(value = STATE_DONT_MATCH_TOKEN_PARAM, required = false) final List<@NotNull String> stateDontMatchTokens,
         @RequestParam(value = MAX_RESULTS, required = false) final Integer maxResults,
         @RequestParam(value = QUERY_TYPE_PARAM, defaultValue = "MODIFIED") final String queryType
     ) throws E {

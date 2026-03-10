@@ -49,6 +49,7 @@ import com.opentext.idol.types.responses.answer.AskAnswer;
 import com.opentext.idol.types.responses.answer.ReportFact;
 import com.opentext.idol.types.responses.answer.ReportResponsedata;
 import com.opentext.idol.types.responses.answer.System;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,7 +124,7 @@ class AnswerServerController {
             @RequestParam(TEXT_PARAM) final String text,
             @RequestParam(value = FIELDTEXT_PARAM, required = false) final String fieldText,
             @RequestParam(value = MAX_RESULTS_PARAM, required = false) final Integer maxResults,
-            @RequestParam(INDEXES_PARAM) final Collection<String> databases
+            @RequestParam(INDEXES_PARAM) final Collection<@NotNull String> databases
     ) {
         final String customizationData;
         try {
@@ -172,7 +173,7 @@ class AnswerServerController {
     public List<SourcedFact> getEntityFacts(
         @RequestParam(ENTITY_PARAM) final String entity,
         @RequestParam(value = MAX_RESULTS_PARAM, required = false) final Integer maxResults,
-        @RequestParam(INDEXES_PARAM) final Collection<String> databases
+        @RequestParam(INDEXES_PARAM) final Collection<@NotNull String> databases
     ) {
         final ActionParameters params = new ActionParameters(AnswerServerActions.Report.name());
         params.add(ReportParams.Entity.name(), entity);

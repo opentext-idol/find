@@ -23,6 +23,7 @@ import com.hp.autonomy.frontend.find.core.web.RequestMapper;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,7 +59,7 @@ public class IdolCsvExportController extends IdolExportController {
             @RequestParam(QUERY_REQUEST_PARAM) final String queryRequestJSON,
             // required = false to prevent Spring errors if the user asks for a CSV with no fields marked for exportQueryResults.
             // The UI should not allow the User to send a request for a CSV with nothing in it.
-            @RequestParam(value = SELECTED_EXPORT_FIELDS_PARAM, required = false) final Collection<String> selectedFieldNames
+            @RequestParam(value = SELECTED_EXPORT_FIELDS_PARAM, required = false) final Collection<@NotNull String> selectedFieldNames
     ) throws IOException, AciErrorException {
         return super.exportQueryResults(queryRequestJSON, selectedFieldNames);
     }
