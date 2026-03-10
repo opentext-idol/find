@@ -49,7 +49,7 @@ import com.opentext.idol.types.responses.answer.AskAnswer;
 import com.opentext.idol.types.responses.answer.ReportFact;
 import com.opentext.idol.types.responses.answer.ReportResponsedata;
 import com.opentext.idol.types.responses.answer.System;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
