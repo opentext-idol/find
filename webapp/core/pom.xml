@@ -103,6 +103,7 @@
                             <workingDirectory>${basedir}/frontend</workingDirectory>
                             <arguments>
                                 <argument>ci</argument>
+                                <argument>--no-audit</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -117,7 +118,7 @@
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
                                 <argument>ci</argument>
-                                <argument>--skip-audit</argument>
+                                <argument>--no-audit</argument>
                             </arguments>
                         </configuration>
                     </execution>
