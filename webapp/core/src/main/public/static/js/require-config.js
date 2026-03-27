@@ -21,7 +21,7 @@ require.config({
         bowser: '../bower_components/bowser/bowser',
         'bootstrap-datetimepicker': '../bower_components/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker',
         'databases-view': '../bower_components/hp-autonomy-js-databases-view/src',
-        'datatables.net': '../bower_components/datatables.net/js/jquery.dataTables',
+        'datatables.net': '../bower_components/datatables.net/js/dataTables',
         'datatables.net-bs': '../bower_components/datatables.net-bs/js/dataTables.bootstrap',
         'datatables.net-fixedColumns': '../bower_components/datatables.net-fixedcolumns/js/dataTables.fixedColumns',
         'dropzone': '../bower_components/dropzone/dist/dropzone-amd-module',
