@@ -39,7 +39,7 @@
     "metismenu": "2.5.2",
     "moment": "2.29.4",
     "moment-timezone": "0.5.43",
-    "qs": "6.15.0",
+    "qs": "^6.15.2",
     "requirejs": "2.3.7",
     "requirejs-i18n": "requirejs/i18n#2.0.6",
     "requirejs-text": "2.0.15",
