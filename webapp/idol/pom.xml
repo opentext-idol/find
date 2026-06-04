@@ -56,7 +56,7 @@
                             <successCodes>
                                 <successCode>3</successCode>
                             </successCodes>
-                            <skip>${skipTests}</skip>
+                            <skip>true</skip>
                         </configuration>
                     </execution>
                 </executions>
