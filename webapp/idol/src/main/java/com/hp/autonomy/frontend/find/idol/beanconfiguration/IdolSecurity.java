@@ -100,9 +100,14 @@ public class IdolSecurity {
                 .requestMatchers("/").permitAll()
                 .anyRequest().denyAll()
             ).headers(h -> h
-                .defaultsDisabled()
                 .frameOptions(f -> f.sameOrigin())
-                .contentSecurityPolicy(c -> c.policyDirectives("frame-ancestors 'self'"))
+                .contentSecurityPolicy(c -> c.policyDirectives("" +
+                        "default-src 'self'; " +
+                        // map tiles, document preview, custom templates, previewWhitelistUrls
+                        "img-src *; media-src *; frame-src *; " +
+                        "frame-ancestors 'self'; " +
+                        "script-src 'self' 'unsafe-eval'; " +
+                        "style-src 'self' 'unsafe-inline'"))
             );
 
         idolSecurityCustomizer.customize(http, authenticationManager());

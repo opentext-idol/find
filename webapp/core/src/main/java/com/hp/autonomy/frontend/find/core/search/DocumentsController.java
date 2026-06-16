@@ -28,6 +28,7 @@ import com.opentext.idol.types.marshalling.ProcessorFactory;
 import com.opentext.idol.types.responses.Hit;
 import com.opentext.idol.types.responses.QueryResponseData;
 import com.opentext.idol.types.responses.TermGetBestResponseData;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -125,7 +126,7 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
         @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
         @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
         @RequestParam(SUMMARY_PARAM) final String summary,
-        @RequestParam(value = INDEXES_PARAM, required = false) final List<S> databases,
+        @RequestParam(value = INDEXES_PARAM, required = false) final List<@NotNull S> databases,
         @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
         @RequestParam(value = SORT_PARAM, required = false) final String sort,
         @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
@@ -270,7 +271,7 @@ public abstract class DocumentsController<RQ extends QueryRequest<Q>, RS extends
         @RequestParam(value = RESULTS_START_PARAM, defaultValue = "1") final int resultsStart,
         @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
         @RequestParam(SUMMARY_PARAM) final String summary,
-        @RequestParam(value = INDEXES_PARAM, required = false) final List<S> databases,
+        @RequestParam(value = INDEXES_PARAM, required = false) final List<@NotNull S> databases,
         @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
         @RequestParam(value = SORT_PARAM, required = false) final String sort,
         @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,

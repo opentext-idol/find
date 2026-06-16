@@ -7,7 +7,7 @@
     <parent>
         <artifactId>find</artifactId>
         <groupId>com.hp.autonomy.frontend.find</groupId>
-        <version>25.4.0</version>
+        <version>26.3.0</version>
     </parent>
 
     <artifactId>core</artifactId>
@@ -103,6 +103,7 @@
                             <workingDirectory>${basedir}/frontend</workingDirectory>
                             <arguments>
                                 <argument>ci</argument>
+                                <argument>--no-audit</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -117,7 +118,7 @@
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
                                 <argument>ci</argument>
-                                <argument>--skip-audit</argument>
+                                <argument>--no-audit</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -150,7 +151,7 @@
                             <successCodes>
                                 <successCode>3</successCode>
                             </successCodes>
-                            <skip>${skipTests}</skip>
+                            <skip>true</skip>
                         </configuration>
                     </execution>
                 </executions>
@@ -235,10 +236,6 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

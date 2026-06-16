@@ -26,7 +26,7 @@ import com.hp.autonomy.types.requests.idol.actions.stats.StatsServerActions;
 import com.hp.autonomy.types.requests.idol.actions.stats.params.EventParams;
 import com.opentext.idol.types.marshalling.ProcessorFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

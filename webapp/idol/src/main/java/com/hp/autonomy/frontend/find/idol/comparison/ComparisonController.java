@@ -19,13 +19,10 @@ import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -69,8 +66,8 @@ class ComparisonController<Q extends QueryRestrictions<?>, R extends SearchResul
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(value = RESULTS_PATH, method = RequestMethod.GET)
     public Documents<R> getResults(
-            @RequestParam(STATE_MATCH_PARAM) final List<String> stateMatchIds,
-            @RequestParam(value = STATE_DONT_MATCH_PARAM, required = false) final List<String> stateDontMatchIds,
+            @RequestParam(STATE_MATCH_PARAM) final List<@NotNull String> stateMatchIds,
+            @RequestParam(value = STATE_DONT_MATCH_PARAM, required = false) final List<@NotNull String> stateDontMatchIds,
             @RequestParam(value = TEXT_PARAM, required = false, defaultValue = "*") final String text,
             @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
             @RequestParam(value = RESULTS_START_PARAM, required = false, defaultValue = "1") final int resultsStart,

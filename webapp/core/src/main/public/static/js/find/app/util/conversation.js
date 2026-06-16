@@ -16,89 +16,16 @@ define([
     'jquery',
     'underscore',
     'i18n!find/nls/bundle',
+    'find/idol/app/util/html',
     'find/app/util/chart',
     'find/app/util/url-manipulator',
     'text!find/templates/app/util/conversation-button.html',
     'text!find/templates/app/util/conversation-dialog.html'
-], function($, _, i18n, chart, urlManipulator, buttonTemplate, dialogTemplate) {
+], function($, _, i18n, HtmlUtil, chart, urlManipulator, buttonTemplate, dialogTemplate) {
 
     const chatUrl = 'api/public/answer/converse';
 
     let contextId, lastQuery;
-
-    function autoLink(value) {
-        // Automatically convert plain HTTP/HTTPS links to <a> tags.
-        // We use lookahead to ignore the trailing 'dot' if present, since that's placed as punctuation in an
-        //  answer server response.
-        const regex = /(https?:\/\/\S+(?=\.?(\s|$)))/gi;
-
-        let lastIndex = 0, match, escaped = '';
-        while (match = regex.exec(value)) {
-            escaped += _.escape(value.slice(lastIndex, match.index));
-
-            const url = match[1];
-            escaped += '<a href="' + _.escape(url) + '" target="_blank">' + _.escape(url) + '</a>'
-
-            lastIndex = match.index + match[0].length
-        }
-
-        escaped += _.escape(value.slice(lastIndex));
-
-        return escaped;
-    }
-
-    function escapeNonImages(value) {
-        if (!value) {
-            return value;
-        }
-
-        let escaped = '';
-
-        const regex = /(<(img|chart|suggest|cite|help) )([^<>]+>)|(<(table|a|sup|span)[^<>]*>[\s\S]*?<\/\5>)/g;
-
-        let lastIndex = 0, match;
-        while (match = regex.exec(value)) {
-            escaped += autoLink(value.slice(lastIndex, match.index));
-
-            if (match[4]) {
-                // <table> and <a> are placed verbatim, without any escaping.
-                let toAdd = match[4];
-
-                if (match[5] === 'a') {
-                    // we want to add a target=blank to the href if it doesn't already have an
-                    if (!/\btarget=/.exec(toAdd)) {
-                        toAdd = toAdd.slice(0, 2) + ' target="_blank" ' + toAdd.slice(2);
-                    }
-                }
-                escaped += toAdd;
-            }
-            else if (match[2] === 'suggest') {
-                const $tmp = $(match[0]);
-                const opts = ($tmp.attr('options') || '').trim();
-                if (opts) {
-                    escaped += '<br>' + _.map(opts.split('|'), function(str){
-                        return '<span class="btn btn-primary btn-sm question-answer-suggestion">'+ _.escape(str)+'</span>';
-                    }).join(' ')
-                }
-                else {
-                    const query = ($tmp.attr('query') || '').trim();
-                    if (query) {
-                        const label = ($tmp.attr('label') || '').trim() || query;
-                        escaped += '<span class="btn btn-primary btn-sm question-answer-suggestion" data-query="'+_.escape(query)+'">'+ _.escape(label)+'</span>'
-                    }
-                }
-            }
-            else if (match[2] !== 'cite') {
-                escaped += match[1] + ' class="safe-image" ' + match[3];
-            }
-
-            lastIndex = match.index + match[0].length
-        }
-
-        escaped += autoLink(value.slice(lastIndex));
-
-        return escaped.replace(/\n/g, '<br>').trim()
-    }
 
     return function(target) {
         const $button = $(buttonTemplate);
@@ -147,7 +74,7 @@ define([
                 }).join('\n');
                 contextId = resp.sessionId;
 
-                const parsedResponse = escapeNonImages(response);
+                const parsedResponse = HtmlUtil.sanitiseHTML(response);
                 const $newEl = $('<div class="conversation-dialog-server">' + parsedResponse + ' </div>');
 
                 if (parsedResponse && $.trim(parsedResponse)) {
