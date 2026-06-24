@@ -41,10 +41,6 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 @SpringBootTest(properties = {
         "application.buildNumber=test",
         "idol.find.home = ./target/test",
-        "find.https.proxyHost = web-proxy.sdc.hpecorp.net",
-        "find.https.proxyPort: 8080",
-        "find.https.proxyHost = web-proxy.sdc.hpecorp.net",
-        "find.https.proxyPort: 8080",
         "spring.datasource.url = jdbc:h2:mem:find-db-v2;DB_CLOSE_ON_EXIT=FALSE",
         "mock.authenticationRetriever=false"
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
