@@ -14,8 +14,6 @@
 
 package com.hp.autonomy.frontend.find.idol.dashboards;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
@@ -39,6 +37,8 @@ import org.springframework.boot.test.json.ObjectContent;
 import org.springframework.core.ResolvableType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 import java.io.IOException;
 
@@ -56,15 +56,17 @@ public class DashboardTest extends ConfigurationComponentTest<Dashboard> {
     @Autowired
     private TagNameFactory tagNameFactory;
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper objectMapper;
 
     @Override
     public void setUp() {
         final SimpleModule simpleModule = new SimpleModule();
         simpleModule.addSerializer(TagName.class, new TagNameSerializer());
-        objectMapper.registerModule(simpleModule);
-        objectMapper.addMixIn(Widget.class, WidgetMixins.class);
-        objectMapper.addMixIn(WidgetDatasource.class, WidgetDatasourceMixins.class);
+        objectMapper = objectMapper.rebuild()
+                .addModule(simpleModule)
+                .addMixIn(Widget.class, WidgetMixins.class)
+                .addMixIn(WidgetDatasource.class, WidgetDatasourceMixins.class)
+                .build();
         json = new JacksonTester<>(getClass(), ResolvableType.forClass(getType()), objectMapper);
     }
 

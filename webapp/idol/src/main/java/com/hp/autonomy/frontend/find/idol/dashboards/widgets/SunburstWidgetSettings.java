@@ -16,14 +16,14 @@ package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.SimpleComponent;
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 import java.util.Collections;
 import java.util.HashMap;

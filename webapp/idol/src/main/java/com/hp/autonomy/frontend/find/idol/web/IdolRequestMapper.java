@@ -15,7 +15,6 @@
 package com.hp.autonomy.frontend.find.idol.web;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.web.AbstractRequestMapper;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
@@ -28,6 +27,7 @@ import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -46,11 +46,12 @@ class IdolRequestMapper extends AbstractRequestMapper<IdolQueryRequest> {
     }
 
     @Override
-    protected void addCustomMixins(final ObjectMapper objectMapper, final QueryRestrictionsBuilder<?, ?, ?> queryRestrictionsBuilder, final QueryRequestBuilder<?, ?, ?> queryRequestBuilder) {
-        objectMapper.addMixIn(IdolQueryRequest.class, IdolQueryRequestMixin.class);
-        objectMapper.addMixIn(queryRequestBuilder.getClass(), IdolQueryRequestBuilderMixins.class);
-        objectMapper.addMixIn(IdolQueryRestrictions.class, IdolQueryRestrictionsMixin.class);
-        objectMapper.addMixIn(queryRestrictionsBuilder.getClass(), IdolQueryRestrictionsBuilderMixins.class);
+    protected JsonMapper.Builder withCustomMixins(final JsonMapper.Builder builder, final QueryRestrictionsBuilder<?, ?, ?> queryRestrictionsBuilder, final QueryRequestBuilder<?, ?, ?> queryRequestBuilder) {
+        return builder
+                .addMixIn(IdolQueryRequest.class, IdolQueryRequestMixin.class)
+                .addMixIn(queryRequestBuilder.getClass(), IdolQueryRequestBuilderMixins.class)
+                .addMixIn(IdolQueryRestrictions.class, IdolQueryRestrictionsMixin.class)
+                .addMixIn(queryRestrictionsBuilder.getClass(), IdolQueryRestrictionsBuilderMixins.class);
     }
 
     @Override

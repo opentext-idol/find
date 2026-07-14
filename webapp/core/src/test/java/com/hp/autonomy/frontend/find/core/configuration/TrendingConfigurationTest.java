@@ -14,7 +14,6 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
 import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
@@ -31,6 +30,7 @@ import org.springframework.boot.test.json.JsonContent;
 import org.springframework.boot.test.json.ObjectContent;
 import org.springframework.core.ResolvableType;
 import org.springframework.test.context.junit4.SpringRunner;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 
@@ -47,7 +47,7 @@ public class TrendingConfigurationTest extends ConfigurationComponentTest<Trendi
     @Autowired
     private FieldPathNormaliser fieldPathNormaliser;
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper objectMapper;
 
     @Override
     public void setUp() {

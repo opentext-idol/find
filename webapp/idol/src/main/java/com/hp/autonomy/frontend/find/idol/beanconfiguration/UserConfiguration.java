@@ -17,13 +17,9 @@ package com.hp.autonomy.frontend.find.idol.beanconfiguration;
 import com.hp.autonomy.frontend.configuration.authentication.OneToOneOrZeroSimpleAuthorityMapper;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.hp.autonomy.frontend.find.idol.authentication.FindCommunityRole;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
+import jakarta.annotation.PostConstruct;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
@@ -32,7 +28,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 
-import javax.annotation.PostConstruct;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 public class UserConfiguration {

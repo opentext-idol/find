@@ -14,7 +14,6 @@
 
 package com.hp.autonomy.frontend.find.core.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.LoginTypes;
 import com.hp.autonomy.frontend.configuration.authentication.AuthenticationConfig;
@@ -95,7 +94,7 @@ public abstract class FindController<C extends FindConfig<C, B>, B extends FindC
     }
 
     @RequestMapping(value = APP_PATH + "/**", method = RequestMethod.GET)
-    public ModelAndView mainPage(final HttpServletRequest request) throws JsonProcessingException {
+    public ModelAndView mainPage(final HttpServletRequest request) {
         final Authentication auth = authenticationInformationRetriever.getAuthentication();
         final String username = auth.getName();
         String userLabel = username;

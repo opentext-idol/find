@@ -15,13 +15,13 @@
 package com.hp.autonomy.frontend.find.core.configuration;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigurationUtils;
 import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
 import lombok.Builder;
 import lombok.Data;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 @JsonDeserialize(builder = MessageOfTheDayConfig.MessageOfTheDayConfigBuilder.class)
 @Builder(toBuilder = true)

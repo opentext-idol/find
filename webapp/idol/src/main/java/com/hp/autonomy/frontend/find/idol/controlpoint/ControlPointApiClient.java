@@ -14,8 +14,6 @@
 
 package com.hp.autonomy.frontend.find.idol.controlpoint;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.io.IOUtils;
@@ -29,6 +27,10 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
 import org.apache.hc.core5.net.WWWFormCodec;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.net.URI;
@@ -53,8 +55,9 @@ public class ControlPointApiClient {
      */
     private static final int TOKEN_EXPIRY_LEEWAY_SECONDS = 10;
     // used to deserialised responses
-    private static final ObjectMapper objectMapper = new ObjectMapper()
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    private static final ObjectMapper objectMapper = JsonMapper.builder()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .build();
 
     private final HttpClient httpClient;
     private final ControlPointServerDetails serverDetails;
@@ -161,7 +164,7 @@ public class ControlPointApiClient {
                     objectMapper.readValue(res.body, ControlPointErrorResponse.class);
                 throw new ControlPointApiException(res.code, error);
             }
-        } catch (final IOException e) {
+        } catch (final JacksonException e) {
             throw new ControlPointServiceException(
                 "Unexpected response from ControlPoint API: " + res.body);
         }

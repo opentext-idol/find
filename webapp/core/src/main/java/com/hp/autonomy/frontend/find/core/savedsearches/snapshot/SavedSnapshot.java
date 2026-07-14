@@ -1,8 +1,6 @@
 package com.hp.autonomy.frontend.find.core.savedsearches.snapshot;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearch;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
@@ -12,6 +10,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 import java.util.Set;
 

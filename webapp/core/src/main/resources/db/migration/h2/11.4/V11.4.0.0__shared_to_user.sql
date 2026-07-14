@@ -14,8 +14,8 @@ CREATE TABLE shared_to_users
 (
   search_id     BIGINT NOT NULL,
   user_id       BIGINT NOT NULL,
-  shared_date   DATETIME,
-  modified_date DATETIME,
+  shared_date   TIMESTAMP,
+  modified_date TIMESTAMP,
   can_edit      BIT    NOT NULL
 );
 

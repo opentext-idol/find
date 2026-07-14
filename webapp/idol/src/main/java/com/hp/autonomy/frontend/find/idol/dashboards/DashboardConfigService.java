@@ -14,10 +14,6 @@
 
 package com.hp.autonomy.frontend.find.idol.dashboards;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.find.core.configuration.CustomizationConfigService;
 import com.hp.autonomy.frontend.find.core.customization.ReloadableCustomizationComponent;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.TagNameSerializer;
@@ -27,25 +23,29 @@ import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetD
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasourceMixins;
 import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 @Service
 public class DashboardConfigService extends CustomizationConfigService<DashboardConfig> implements ReloadableCustomizationComponent {
     @Autowired
-    public DashboardConfigService(final JsonDeserializer<TagName> tagNameDeserializer) {
+    public DashboardConfigService(final ValueDeserializer<TagName> tagNameDeserializer) {
         super(
             "dashboards.json",
             "defaultDashboardsConfigFile.json",
             DashboardConfig.class,
             DashboardConfig.builder().build(),
-            new Jackson2ObjectMapperBuilder()
-                .mixIn(Widget.class, WidgetMixins.class)
-                .mixIn(WidgetDatasource.class, WidgetDatasourceMixins.class)
-                .deserializersByType(ImmutableMap.of(TagName.class, tagNameDeserializer))
-                .serializersByType(ImmutableMap.of(TagName.class, new TagNameSerializer()))
-                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
-                                   DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+            JsonMapper.builder()
+                .addMixIn(Widget.class, WidgetMixins.class)
+                .addMixIn(WidgetDatasource.class, WidgetDatasourceMixins.class)
+                .addModule(new SimpleModule()
+                        .addDeserializer(TagName.class, tagNameDeserializer)
+                        .addSerializer(TagName.class, new TagNameSerializer()))
+                .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS,
+                         DateTimeFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
         );
     }
 

@@ -8,4 +8,4 @@
 
 SET SCHEMA find;
 
-ALTER TABLE users ADD username NVARCHAR(1000);
+ALTER TABLE users ADD username VARCHAR(1000);

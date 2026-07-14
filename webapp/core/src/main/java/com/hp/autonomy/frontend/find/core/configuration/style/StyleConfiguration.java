@@ -14,14 +14,14 @@
 
 package com.hp.autonomy.frontend.find.core.configuration.style;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.AbstractConfig;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigurationUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 import java.util.Map;
 

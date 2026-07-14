@@ -19,9 +19,6 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.ActionParameters;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.hp.autonomy.aci.content.database.Databases;
 import com.hp.autonomy.aci.content.fieldtext.FieldText;
 import com.hp.autonomy.aci.content.fieldtext.MATCH;
@@ -57,6 +54,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.Serializable;
 import java.util.*;
@@ -124,7 +124,7 @@ class AnswerServerController {
             @RequestParam(TEXT_PARAM) final String text,
             @RequestParam(value = FIELDTEXT_PARAM, required = false) final String fieldText,
             @RequestParam(value = MAX_RESULTS_PARAM, required = false) final Integer maxResults,
-            @RequestParam(INDEXES_PARAM) final Collection<@NotNull String> databases
+            @RequestParam(value = INDEXES_PARAM, required = false) final Collection<@NotNull String> databases
     ) {
         final String customizationData;
         try {
@@ -143,7 +143,7 @@ class AnswerServerController {
                     .toList();
 
             customizationData = customizationDataObjectMapper.writeValueAsString(systems);
-        } catch (final JsonProcessingException e) {
+        } catch (final JacksonException e) {
             throw new RuntimeException(e);
         }
 

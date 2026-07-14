@@ -18,10 +18,6 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.impl.AciServiceImpl;
 import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.transport.impl.AciHttpClientImpl;
-import com.fasterxml.jackson.databind.InjectableValues;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.aci.AbstractConfigurableAciService;
 import com.hp.autonomy.frontend.configuration.aci.CommunityService;
@@ -49,7 +45,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import tools.jackson.databind.InjectableValues;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 @Configuration
 @ImportResource("classpath:required-statistics.xml")
@@ -57,23 +56,19 @@ public class IdolConfiguration {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Bean
     @Primary
-    public ObjectMapper jacksonObjectMapper(
-            final Jackson2ObjectMapperBuilder builder,
+    public JsonMapper jacksonObjectMapper(
+            final JsonMapper.Builder builder,
             final AuthenticationInformationRetriever<?, ?> authenticationInformationRetriever
     ) {
-        final ObjectMapper mapper = builder
-                .createXmlMapper(false)
-                .mixIn(Authentication.class, IdolAuthenticationMixins.class)
-                .mixIn(Widget.class, WidgetMixins.class)
-                .mixIn(WidgetDatasource.class, WidgetDatasourceMixins.class)
-                .mixIn(QueryRestrictions.class, IdolQueryRestrictionsMixin.class)
-                .mixIn(IdolQueryRestrictions.class, IdolQueryRestrictionsMixin.class)
-                .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
+        return builder
+                .addMixIn(Authentication.class, IdolAuthenticationMixins.class)
+                .addMixIn(Widget.class, WidgetMixins.class)
+                .addMixIn(WidgetDatasource.class, WidgetDatasourceMixins.class)
+                .addMixIn(QueryRestrictions.class, IdolQueryRestrictionsMixin.class)
+                .addMixIn(IdolQueryRestrictions.class, IdolQueryRestrictionsMixin.class)
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .injectableValues(new InjectableValues.Std().addValue(AuthenticationInformationRetriever.class, authenticationInformationRetriever))
                 .build();
-
-        mapper.setInjectableValues(new InjectableValues.Std().addValue(AuthenticationInformationRetriever.class, authenticationInformationRetriever));
-
-        return mapper;
     }
 
     @Bean

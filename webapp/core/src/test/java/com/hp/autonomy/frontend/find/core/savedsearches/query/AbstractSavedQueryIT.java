@@ -13,14 +13,12 @@
  */
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
+import jakarta.annotation.PostConstruct;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -34,8 +32,10 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoZonedDateTime;

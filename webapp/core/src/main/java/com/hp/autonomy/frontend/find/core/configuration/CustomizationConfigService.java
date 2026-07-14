@@ -14,15 +14,14 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.hp.autonomy.frontend.configuration.BaseConfigFileService;
 import com.hp.autonomy.frontend.configuration.Config;
-import java.util.Collections;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 
 import static com.hp.autonomy.frontend.find.core.configuration.FindConfigFileService.CONFIG_FILE_LOCATION_HP;
 
@@ -37,14 +36,13 @@ public abstract class CustomizationConfigService<T extends Config<T>> extends Ba
         final String defaultFileName,
         final Class<T> configClass,
         final T emptyConfig,
-        final Jackson2ObjectMapperBuilder objectMapperBuilder
+        final JsonMapper.Builder objectMapperBuilder
     ) {
         this.configClass = configClass;
         this.emptyConfig = emptyConfig;
 
-        final ObjectMapper objectMapper = objectMapperBuilder
-            .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
-            .createXmlMapper(false)
+        final JsonMapper objectMapper = objectMapperBuilder
+            .enable(SerializationFeature.INDENT_OUTPUT)
             .build();
 
         setMapper(objectMapper);
@@ -60,7 +58,7 @@ public abstract class CustomizationConfigService<T extends Config<T>> extends Ba
         final Class<T> configClass,
         final T emptyConfig
     ) {
-        this(configFileName, defaultFileName, configClass, emptyConfig, new Jackson2ObjectMapperBuilder());
+        this(configFileName, defaultFileName, configClass, emptyConfig, JsonMapper.builder());
     }
 
     @SuppressWarnings("ProhibitedExceptionDeclared")

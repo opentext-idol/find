@@ -14,7 +14,6 @@
 
 package com.hp.autonomy.frontend.find.core.export;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.export.service.ExportFormat;
 import com.hp.autonomy.frontend.find.core.export.service.ExportServiceFactory;
 import com.hp.autonomy.frontend.find.core.export.service.VisualDataExportService;
@@ -37,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
     protected static final String SELECTED_EXPORT_FIELDS_PARAM = "selectedFieldIds";
     protected static final String QUERY_REQUEST_PARAM = "queryRequest";
     protected static final String DATA_PARAM = "data";
-    protected static final String TITLE_PARAM = "data";
+    protected static final String TITLE_PARAM = "title";
     protected static final String RESULTS_PARAM = "results";
     protected static final String SORT_BY_PARAM = "sortBy";
     protected static final String MULTI_PAGE_PARAM = "multiPage";

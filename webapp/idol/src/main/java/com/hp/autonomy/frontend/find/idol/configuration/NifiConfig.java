@@ -14,8 +14,6 @@
 
 package com.hp.autonomy.frontend.find.idol.configuration;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.SimpleComponent;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
@@ -25,6 +23,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.lang3.BooleanUtils;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 /**
  * Top-level configuration section for NiFi.

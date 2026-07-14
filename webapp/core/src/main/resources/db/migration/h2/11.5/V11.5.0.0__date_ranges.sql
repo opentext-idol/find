@@ -12,7 +12,7 @@ CREATE TABLE search_numeric_ranges
 (
   search_numeric_ranges_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   search_id BIGINT NOT NULL,
-  field NVARCHAR(21844) NOT NULL,
+  field VARCHAR(21844) NOT NULL,
   min DOUBLE NOT NULL,
   max DOUBLE NOT NULL
 );
@@ -25,9 +25,9 @@ CREATE TABLE search_date_ranges
 (
   search_date_ranges_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   search_id BIGINT NOT NULL,
-  field NVARCHAR(21844) NOT NULL,
-  min DATETIME NOT NULL,
-  max DATETIME NOT NULL
+  field VARCHAR(21844) NOT NULL,
+  min TIMESTAMP NOT NULL,
+  max TIMESTAMP NOT NULL
 );
 
 CREATE INDEX ix__search_date_ranges__search_id ON search_date_ranges (search_id);

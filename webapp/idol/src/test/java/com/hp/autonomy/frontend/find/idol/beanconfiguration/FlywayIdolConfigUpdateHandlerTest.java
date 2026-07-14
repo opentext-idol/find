@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -19,6 +20,7 @@ public class FlywayIdolConfigUpdateHandlerTest {
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this); // to be removed in favour of MockitoExtension with junit 5
         flywayIdolConfigUpdateHandler = new FlywayIdolConfigUpdateHandler(flyway);
     }
 

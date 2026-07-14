@@ -14,9 +14,9 @@
 
 package com.hp.autonomy.frontend.find.core.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.web.servlet.ModelAndView;
+import tools.jackson.core.JacksonException;
 
 /**
  * Common logic within controller classes
@@ -24,7 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 public interface ControllerUtils {
     String SPRING_CSRF_ATTRIBUTE = "_csrf";
 
-    String convertToJson(final Object object) throws JsonProcessingException;
+    String convertToJson(final Object object) throws JacksonException;
 
     String getMessage(String code, Object[] args) throws NoSuchMessageException;
 

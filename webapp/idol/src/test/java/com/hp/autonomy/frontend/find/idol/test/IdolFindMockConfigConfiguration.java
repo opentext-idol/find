@@ -26,8 +26,10 @@ import com.hp.autonomy.frontend.find.idol.configuration.EntitySearchConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.flyway.autoconfigure.FlywayMigrationInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -92,6 +94,12 @@ public class IdolFindMockConfigConfiguration {
         final BaseConfigFileService<IdolFindConfig> configService = mock(BaseConfigFileService.class);
         when(configService.getConfig()).thenReturn(config);
         return configService;
+    }
+
+    @Primary
+    @Bean
+    public FlywayMigrationInitializer flywayMigrationInitializer(final Flyway flyway) {
+        return new FlywayMigrationInitializer(flyway);
     }
 
     private String getProperty(final String property, final String defaultValue) {

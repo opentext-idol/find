@@ -12,8 +12,8 @@ SET SCHEMA find;
 CREATE TABLE shared_to_everyone
 (
   search_id     BIGINT NOT NULL,
-  shared_date   DATETIME,
-  modified_date DATETIME
+  shared_date   TIMESTAMP,
+  modified_date TIMESTAMP
 );
 
 CREATE INDEX ix__shared_to_everyone__search_id ON shared_to_everyone (search_id);

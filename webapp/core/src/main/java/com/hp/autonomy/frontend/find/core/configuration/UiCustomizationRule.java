@@ -16,13 +16,13 @@ package com.hp.autonomy.frontend.find.core.configuration;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponent;
 import com.hp.autonomy.frontend.configuration.SimpleComponent;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 import java.util.Collections;
 import java.util.HashMap;

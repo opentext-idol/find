@@ -14,7 +14,6 @@
 
 package com.hp.autonomy.frontend.find.core.test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
@@ -26,6 +25,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import tools.jackson.core.JacksonException;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -41,7 +41,7 @@ public abstract class MvcIntegrationTestUtils {
 
     public abstract String[] getDatabases();
 
-    public abstract String getDatabasesAsJson() throws JsonProcessingException;
+    public abstract String getDatabasesAsJson() throws JacksonException;
 
     public abstract EmbeddableIndex getEmbeddableIndex();
 

@@ -8,6 +8,6 @@
 
 SET SCHEMA find;
 
-ALTER TABLE searches ADD last_fetched_date DATETIME;
+ALTER TABLE searches ADD last_fetched_date TIMESTAMP;
 
 UPDATE searches SET last_fetched_date = CURRENT_TIMESTAMP();

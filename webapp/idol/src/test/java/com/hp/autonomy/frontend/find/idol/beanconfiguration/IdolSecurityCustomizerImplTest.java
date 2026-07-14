@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -82,6 +83,7 @@ public class IdolSecurityCustomizerImplTest {
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this); // to be removed in favour of MockitoExtension with junit 5
         when(foreignAuthentication.getName()).thenReturn("Some Guy");
         when(foreignAuthentication.getCredentials()).thenReturn("password");
         when(foreignAuthentication.isAuthenticated()).thenReturn(false);
