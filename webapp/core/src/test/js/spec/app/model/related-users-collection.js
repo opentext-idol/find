@@ -22,11 +22,13 @@ define([
         describe('parse', function () {
 
             it('should parse response correctly', function () {
-                const collection = new RelatedUsersCollection([
-                    { expert: true, user: { uid: 123, username: 'user A' } },
-                    { expert: false, user: { uid: 7, username: 'user B' } },
-                    { expert: true, user: { uid: 13, username: 'user C' } }
-                ], { parse: true });
+                const collection = new RelatedUsersCollection({
+                    users: [
+                        { expert: true, user: { uid: 123, username: 'user A' } },
+                        { expert: false, user: { uid: 7, username: 'user B' } },
+                        { expert: true, user: { uid: 13, username: 'user C' } }
+                    ]
+                }, { parse: true });
 
                 expect(collection.size()).toBe(3);
                 expect(collection.models[0].get('expert')).toBe(true);

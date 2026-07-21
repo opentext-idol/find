@@ -79,9 +79,9 @@ public class SavedSnapshotIT extends AbstractFindIT {
         listSnapshots()
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id", is(createdEntity.getId().intValue())))
-                .andExpect(jsonPath("$[0].resultCount", not(nullValue())))
-                .andExpect(jsonPath("$[0].stateTokens", not(empty())));
+                .andExpect(jsonPath("$.savedSnapshots[0].id", is(createdEntity.getId().intValue())))
+                .andExpect(jsonPath("$.savedSnapshots[0].resultCount", not(nullValue())))
+                .andExpect(jsonPath("$.savedSnapshots[0].stateTokens", not(empty())));
     }
 
     @Test

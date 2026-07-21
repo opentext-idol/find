@@ -65,7 +65,7 @@ public abstract class RelatedConceptsController<T extends QuerySummaryElement, Q
     @SuppressWarnings("MethodWithTooManyParameters")
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<T> findRelatedConcepts(
+    public RelatedConceptsResponse<T> findRelatedConcepts(
         @RequestParam(QUERY_TEXT_PARAM) final String queryText,
         @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
         @RequestParam(DATABASES_PARAM) final Collection<@NotNull S> databases,
@@ -95,6 +95,6 @@ public abstract class RelatedConceptsController<T extends QuerySummaryElement, Q
             .queryType(QueryRequest.QueryType.valueOf(queryType))
             .build();
 
-        return relatedConceptsService.findRelatedConcepts(relatedConceptsRequest);
+        return new RelatedConceptsResponse<>(relatedConceptsService.findRelatedConcepts(relatedConceptsRequest));
     }
 }

@@ -22,6 +22,10 @@ define([
     'use strict';
 
     return FindBaseCollection.extend({
-        url: 'api/public/controlpoint/policy'
+        url: 'api/public/controlpoint/policy',
+
+        parse: function(response) {
+            return response.policies;
+        }
     });
 });

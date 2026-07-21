@@ -18,6 +18,10 @@ define([
     'use strict';
 
     return FindBaseCollection.extend({
-        url: 'api/public/answer/entity-facts'
+        url: 'api/public/answer/entity-facts',
+
+        parse: function(response) {
+            return response.facts;
+        }
     });
 });

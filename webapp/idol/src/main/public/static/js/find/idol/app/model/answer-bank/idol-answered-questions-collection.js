@@ -22,7 +22,7 @@ define([
         url: 'api/public/answer/ask',
 
         parse: function(response) {
-            return response.map(function(response) {
+            return response.answers.map(function(response) {
                 return _.extend({
                     question: response.interpretation,
                     answer: response.text,

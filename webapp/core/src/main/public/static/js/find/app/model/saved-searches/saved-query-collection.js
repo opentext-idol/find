@@ -23,6 +23,10 @@ define([
     return FindBaseCollection.extend({
         url: 'api/bi/saved-query',
 
+        parse: function(response) {
+            return response.savedQueries;
+        },
+
         model: SavedSearchModel.extend({
             defaults: _.defaults({
                 type: SavedSearchModel.Type.QUERY

@@ -42,7 +42,7 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
         mockMvc.perform(parametricValuesRequest())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", not(empty())));
+                .andExpect(jsonPath("$.parametricValues", not(empty())));
     }
 
     @Test
@@ -91,7 +91,7 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
         final List<String> fields = new LinkedList<>();
 
         // Only ask for dependent parametric values in fields which have values
-        for (final JsonNode fieldNode : contentTree) {
+        for (final JsonNode fieldNode : contentTree.get("values")) {
             if (fieldNode.get("totalValues").asInt() > 0) {
                 fields.add(fieldNode.get("id").asText());
             }
@@ -111,7 +111,7 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", not(empty())));
+                .andExpect(jsonPath("$.fields", not(empty())));
     }
 
     @Test

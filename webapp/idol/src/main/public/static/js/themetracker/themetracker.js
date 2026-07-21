@@ -362,7 +362,8 @@
                 }),
                 type: 'POST',
                 dataType: 'json',
-            }).done(function(terms){
+            }).done(function(response){
+                var terms = response.terms;
                 // If there's more than 40 terms, we throw the rest away.
                 // When clustering, extra terms are useful, but we don't need them for querying, and if there's too ]
                 //   many then we'd get a too-many-terms error.

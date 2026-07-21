@@ -19,13 +19,15 @@ define([
 
     describe('Entity collection', function() {
         beforeEach(function() {
-            this.collection = new EntityCollection([
-                {cluster: 1, text: 'gnome'},
-                {cluster: 1, text: 'garden'},
-                {cluster: 1, text: 'watering can'},
-                {cluster: 2, text: 'plant'},
-                {cluster: 2, text: 'slugs'}
-            ], {
+            this.collection = new EntityCollection({
+                concepts: [
+                    {cluster: 1, text: 'gnome'},
+                    {cluster: 1, text: 'garden'},
+                    {cluster: 1, text: 'watering can'},
+                    {cluster: 2, text: 'plant'},
+                    {cluster: 2, text: 'slugs'}
+                ]
+            }, {
                 getSelectedRelatedConcepts: function() {
                     return ['watering can', 'slugs']
                 },

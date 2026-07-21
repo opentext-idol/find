@@ -39,7 +39,7 @@ define([
         },
 
         parse: function(response) {
-            return _.chain(response)
+            return _.chain(response.concepts)
                 .reject(function(model) {
                     // A negative cluster indicates that the associated documents did not fall into a cluster
                     return model.cluster < 0;

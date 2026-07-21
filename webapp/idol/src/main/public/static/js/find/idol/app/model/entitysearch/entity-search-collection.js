@@ -21,6 +21,10 @@ define([
 
     return FindBaseCollection.extend({
         model: DocumentModel,
-        url: 'api/public/entitysearch/search'
+        url: 'api/public/entitysearch/search',
+
+        parse: function(response) {
+            return response.results;
+        }
     });
 });

@@ -70,6 +70,10 @@ define([
     return FindBaseCollection.extend({
         url: 'api/public/fields/parametric',
 
+        parse: function(response) {
+            return response.fields;
+        },
+
         model: FindBaseCollection.Model.extend({
             defaults: {
                 totalValues: 0,

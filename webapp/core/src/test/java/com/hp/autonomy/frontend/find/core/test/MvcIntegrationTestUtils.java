@@ -77,7 +77,7 @@ public abstract class MvcIntegrationTestUtils {
 
         final MvcResult mvcResult = mockMvc.perform(requestBuilder)
                 .andReturn();
-        final Collection<Map<String, String>> tagNames = JsonPath.compile("$").read(mvcResult.getResponse().getContentAsString());
+        final Collection<Map<String, String>> tagNames = JsonPath.compile("$.fields").read(mvcResult.getResponse().getContentAsString());
         return tagNames.stream().map(tagName -> tagName.get("id")).toArray(String[]::new);
     }
 

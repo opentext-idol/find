@@ -9,6 +9,10 @@ define([
     return FindBaseCollection.extend({
         url: 'api/bi/saved-query/shared',
 
+        parse: function(response) {
+            return response.savedQueries;
+        },
+
         model: SavedSearchModel.extend({
             parse: function(response) {
                 const parsedResponse = SavedSearchModel.prototype.parse.call(this, response);

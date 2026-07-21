@@ -93,7 +93,7 @@ public class CustomizationAdminControllerIT extends AbstractFindIT {
         mockMvc.perform(requestBuilder)
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$", empty()));
+            .andExpect(jsonPath("$.assetNames", empty()));
     }
 
     @Test

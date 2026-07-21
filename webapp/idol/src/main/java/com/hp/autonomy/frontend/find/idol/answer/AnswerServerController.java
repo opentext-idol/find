@@ -42,7 +42,6 @@ import com.hp.autonomy.types.requests.idol.actions.answer.params.ReportParams;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
 import com.opentext.idol.types.marshalling.ProcessorFactory;
-import com.opentext.idol.types.responses.answer.AskAnswer;
 import com.opentext.idol.types.responses.answer.ReportFact;
 import com.opentext.idol.types.responses.answer.ReportResponsedata;
 import com.opentext.idol.types.responses.answer.System;
@@ -120,7 +119,7 @@ class AnswerServerController {
     }
 
     @RequestMapping(value = ASK_PATH, method = RequestMethod.GET)
-    public List<AskAnswer> ask(
+    public AskAnswersResponse ask(
             @RequestParam(TEXT_PARAM) final String text,
             @RequestParam(value = FIELDTEXT_PARAM, required = false) final String fieldText,
             @RequestParam(value = MAX_RESULTS_PARAM, required = false) final Integer maxResults,
@@ -163,14 +162,14 @@ class AnswerServerController {
                 .customizationData(customizationData)
                 .build();
 
-        return askAnswerServerService.ask(request);
+        return new AskAnswersResponse(askAnswerServerService.ask(request));
     }
 
     /**
      * Retrieve facts involving a specific entity from AnswerServer.
      */
     @RequestMapping(value = "entity-facts", method = RequestMethod.GET)
-    public List<SourcedFact> getEntityFacts(
+    public EntityFactsResponse getEntityFacts(
         @RequestParam(ENTITY_PARAM) final String entity,
         @RequestParam(value = MAX_RESULTS_PARAM, required = false) final Integer maxResults,
         @RequestParam(INDEXES_PARAM) final Collection<@NotNull String> databases
@@ -251,7 +250,7 @@ class AnswerServerController {
             }
         }
 
-        return new ArrayList<>(sourcedFacts.values());
+        return new EntityFactsResponse(new ArrayList<>(sourcedFacts.values()));
     }
 
     private Map<String, System> getAllSystems() {

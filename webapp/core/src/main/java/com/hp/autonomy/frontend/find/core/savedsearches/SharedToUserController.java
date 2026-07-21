@@ -23,8 +23,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
-
 @Controller
 @ConditionalOnExpression(BiConfiguration.BI_PROPERTY_SPEL)
 @RequestMapping(SharedToUserController.SHARED_SEARCHES_PATH)
@@ -47,14 +45,14 @@ class SharedToUserController {
 
     @RequestMapping(value = PERMISSIONS_PATH + "/{searchId}", method = RequestMethod.GET)
     @ResponseBody
-    public Set<SharedToUser> getPermissionsForSearch(
+    public SharedToUsersResponse getPermissionsForSearch(
             @PathVariable(SEARCH_ID_PARAM) final Long searchId,
             @RequestParam(value = USERNAME_PARAM, required = false) final String username
     ) {
         checkEnabled();
-        return username != null
+        return new SharedToUsersResponse(username != null
                 ? sharedToUserRepository.findByUsernameAndSearchId(username, searchId)
-                : sharedToUserRepository.findBySavedSearch_Id(searchId);
+                : sharedToUserRepository.findBySavedSearch_Id(searchId));
     }
 
     @RequestMapping(value = PERMISSIONS_PATH + "/{searchId}", method = {RequestMethod.PUT, RequestMethod.POST})

@@ -22,18 +22,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
-import java.util.List;
 
 @RestController
 @Slf4j
@@ -76,10 +68,10 @@ class CustomizationAdminController extends AbstractCustomizationController {
     }
 
     @RequestMapping(value = TYPED_ASSETS_PATH, method = RequestMethod.GET)
-    public List<String> logos(
+    public AssetsResponse logos(
         @PathVariable("type") final AssetType assetType
     ) throws CustomizationException {
-        return customizationService.getAssets(assetType);
+        return new AssetsResponse(customizationService.getAssets(assetType));
     }
 
     @Override

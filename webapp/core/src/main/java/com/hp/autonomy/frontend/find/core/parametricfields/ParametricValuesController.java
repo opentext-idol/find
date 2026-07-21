@@ -15,7 +15,10 @@
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
 import com.hp.autonomy.frontend.find.core.fields.FieldComparatorFactory;
-import com.hp.autonomy.searchcomponents.core.parametricvalues.*;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.BucketingParams;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequest;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricRequestBuilder;
+import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
 import com.hp.autonomy.types.requests.idol.actions.tags.*;
@@ -81,7 +84,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
 
     @RequestMapping(method = RequestMethod.GET, path = VALUES_PATH)
     @ResponseBody
-    public List<QueryTagInfo> getParametricValues(
+    public QueryTagInfoResponse getParametricValues(
         @RequestParam(FIELD_NAMES_PARAM) final List<@NotNull FieldPath> fieldNames,
         @RequestParam(value = START_PARAM, required = false) final Integer start,
         @RequestParam(value = MAX_VALUES_PARAM, required = false) final Integer maxValues,
@@ -123,9 +126,9 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             builder.valueRestrictions(valueRestrictions);
         }
 
-        return parametricValuesService.getParametricValues(builder.build()).stream()
+        return new QueryTagInfoResponse(parametricValuesService.getParametricValues(builder.build()).stream()
             .sorted(fieldComparatorFactory.parametricFieldAndValuesComparator())
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()));
     }
 
     @RequestMapping(value = NUMERIC_PATH + BUCKET_PARAMETRIC_PATH + "/{encodedField}", method = RequestMethod.GET)
@@ -272,7 +275,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
 
     @RequestMapping(method = RequestMethod.GET, value = DEPENDENT_VALUES_PATH)
     @ResponseBody
-    public List<DependentParametricField> getDependentParametricValues(
+    public DependentParametricFieldsResponse getDependentParametricValues(
         @RequestParam(FIELD_NAMES_PARAM) final List<@NotNull FieldPath> fieldNames,
         @RequestParam(QUERY_TEXT_PARAM) final String queryText,
         @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
@@ -298,6 +301,7 @@ public abstract class ParametricValuesController<Q extends QueryRestrictions<S>,
             .maxValues(null)
             .build();
 
-        return parametricValuesService.getDependentParametricValues(parametricRequest);
+        return new DependentParametricFieldsResponse(
+            parametricValuesService.getDependentParametricValues(parametricRequest));
     }
 }

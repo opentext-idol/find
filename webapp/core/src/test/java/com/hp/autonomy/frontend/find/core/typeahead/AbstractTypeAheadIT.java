@@ -18,10 +18,7 @@ import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.RequestBuilder;
-import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
-
-import java.util.List;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
@@ -31,9 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public abstract class AbstractTypeAheadIT extends AbstractFindIT {
-    private static final TypeReference<List<String>> RESPONSE_TYPE = new TypeReference<List<String>>() {
-    };
-
     private final String inputText;
     private final String expectedSuggestion;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -53,8 +47,8 @@ public abstract class AbstractTypeAheadIT extends AbstractFindIT {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> {
-                    final List<String> output = objectMapper.readValue(result.getResponse().getContentAsString(), RESPONSE_TYPE);
-                    assertThat(output, hasItem(expectedSuggestion));
+                    final SuggestionsResponse output = objectMapper.readValue(result.getResponse().getContentAsString(), SuggestionsResponse.class);
+                    assertThat(output.suggestions(), hasItem(expectedSuggestion));
                 });
     }
 }

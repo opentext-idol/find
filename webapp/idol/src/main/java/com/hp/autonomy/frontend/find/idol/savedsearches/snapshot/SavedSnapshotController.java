@@ -25,14 +25,12 @@ import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot.B
 import com.hp.autonomy.frontend.find.idol.dashboards.DashboardConfig;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.DatasourceDependentWidget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchDatasource;
-import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -66,13 +64,13 @@ class SavedSnapshotController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public Set<SavedSnapshot> getAll() {
-        return service.getOwned();
+    public SavedSnapshotsResponse getAll() {
+        return new SavedSnapshotsResponse(service.getOwned());
     }
 
     @RequestMapping(value = GET_SHARED, method = RequestMethod.GET)
-    public Set<SavedSnapshot> getShared() {
-        return service.getShared();
+    public SavedSnapshotsResponse getShared() {
+        return new SavedSnapshotsResponse(service.getShared());
     }
 
     @RequestMapping(method = RequestMethod.POST)

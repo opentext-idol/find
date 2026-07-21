@@ -61,8 +61,8 @@ define([
                     ? _.pluck(options.values, 'name')
                     : null
             }
-        }).then(function(fieldList) {
-            const field = fieldList.filter(function(fieldData) {
+        }).then(function(response) {
+            const field = response.parametricValues.filter(function(fieldData) {
                 return fieldData.id === options.field;
             }, this);
 

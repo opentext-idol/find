@@ -64,6 +64,6 @@ public class IdolRelatedConceptsServiceIT extends AbstractRelatedConceptsService
                 .perform(request)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", not(empty())));
+                .andExpect(jsonPath("$.concepts", not(empty())));
     }
 }
