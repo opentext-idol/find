@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.Collections;
@@ -27,8 +26,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class SavedSnapshotIT extends AbstractFindIT {
-    private static final TypeReference<Set<SavedSnapshot>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedSnapshot>>() {
-    };
     private static final String QUERY_TEXT = "orange";
 
     @Autowired
@@ -127,7 +124,8 @@ public class SavedSnapshotIT extends AbstractFindIT {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        return mapper.readValue(listResult.getResponse().getContentAsString(), LIST_TYPE_REFERENCE);
+        return mapper.readValue(listResult.getResponse().getContentAsString(), SavedSnapshotsResponse.class)
+                .savedSnapshots();
     }
 
     private SavedSnapshot getBaseSavedSnapshot() {

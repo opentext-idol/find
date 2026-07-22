@@ -14,9 +14,12 @@
 
 package com.hp.autonomy.frontend.find.idol.customization;
 
+import jakarta.activation.MimetypesFileTypeMap;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 abstract class AbstractCustomizationController {
@@ -37,6 +40,11 @@ abstract class AbstractCustomizationController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(fileSystemResource, HttpStatus.OK);
+        final String mimeType = new MimetypesFileTypeMap().getContentType(name);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(mimeType));
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(fileSystemResource);
     }
 }

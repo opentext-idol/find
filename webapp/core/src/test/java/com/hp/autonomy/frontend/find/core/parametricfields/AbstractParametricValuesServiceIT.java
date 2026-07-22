@@ -91,7 +91,7 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
         final List<String> fields = new LinkedList<>();
 
         // Only ask for dependent parametric values in fields which have values
-        for (final JsonNode fieldNode : contentTree.get("values")) {
+        for (final JsonNode fieldNode : contentTree.get("parametricValues")) {
             if (fieldNode.get("totalValues").asInt() > 0) {
                 fields.add(fieldNode.get("id").asText());
             }

@@ -32,7 +32,6 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
@@ -59,9 +58,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SuppressWarnings("SpringJavaAutowiringInspection")
 public abstract class AbstractSavedQueryIT extends AbstractFindIT {
-    private static final TypeReference<Set<SavedQuery>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedQuery>>() {
-    };
-
     private static final String TITLE = "Any old saved search";
     private static final String PRIMARY_PHRASE = "manhattan";
     private static final String OTHER_PHRASE = "mid-town";
@@ -323,11 +319,12 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     }
 
     private Set<SavedQuery> listAndParseSavedQueries() throws Exception {
-        final MvcResult listResult = listSavedQueries()
+        final MvcResult response = listSavedQueries()
                 .andExpect(status().isOk())
                 .andReturn();
 
-        return objectMapper.readValue(listResult.getResponse().getContentAsString(), LIST_TYPE_REFERENCE);
+        return objectMapper.readValue(response.getResponse().getContentAsString(), SavedQueriesResponse.class)
+                .savedQueries();
     }
 
     private Set<ConceptClusterPhrase> getBaseConceptClusterPhrases() {
