@@ -104,6 +104,7 @@
                             <arguments>
                                 <argument>ci</argument>
                                 <argument>--no-audit</argument>
+                                <argument>--allow-git=all</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -119,6 +120,7 @@
                             <arguments>
                                 <argument>ci</argument>
                                 <argument>--no-audit</argument>
+                                <argument>--allow-git=all</argument>
                             </arguments>
                         </configuration>
                     </execution>

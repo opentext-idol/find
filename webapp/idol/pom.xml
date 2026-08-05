@@ -38,6 +38,7 @@
                             <arguments>
                                 <argument>ci</argument>
                                 <argument>--no-audit</argument>
+                                <argument>--allow-git=all</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -232,6 +233,10 @@
         <dependency>
             <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>jakarta.annotation</groupId>

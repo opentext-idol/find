@@ -76,6 +76,7 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
         final Map<FieldTypeParam, Set<TagName>> response = fieldsService.getFields(request).entrySet().stream()
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().stream().filter(predicate).collect(Collectors.toSet())));
 
+        // AUTN_DATE won't get returned but should be included if not filtered out
         final TagName autnDateField = tagNameFactory.buildTagName(ParametricValuesService.AUTN_DATE_FIELD);
         if(request.getFieldTypes().contains(FieldTypeParam.NumericDate) && predicate.test(autnDateField)) {
             response.compute(FieldTypeParam.NumericDate, (type, maybeTags) -> {
@@ -85,8 +86,10 @@ public abstract class FieldsController<R extends FieldsRequest, E extends Except
             });
         }
 
+        // AUTN_DATABASE won't get returned and is handled specially by the frontend,
+        // so should be included regardless of filtering
         final TagName dbField = tagNameFactory.buildTagName(ParametricValuesService.AUTN_DATABASE_FIELD);
-        if(request.getFieldTypes().contains(FieldTypeParam.Parametric) && predicate.test(dbField)) {
+        if(request.getFieldTypes().contains(FieldTypeParam.Parametric)) {
             response.compute(FieldTypeParam.Parametric, (type, maybeTags) -> {
                 final Set<TagName> tags = maybeTags == null ? new HashSet<>() : maybeTags;
                 tags.add(dbField);
