@@ -3,6 +3,10 @@
   "repository": "https://github.com/opentext-idol/find",
   "private": true,
   "license": "MIT",
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  },
   "dependencies": {
     "backbone": "1.2.3",
     "bootstrap": "3.4.1",

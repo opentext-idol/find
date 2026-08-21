@@ -113,16 +113,6 @@ module.exports = (grunt) ->
         ]
         spawn: false
         tasks: ['sync:devResources']
-      fieldtext:
-        files: [
-          '../core/frontend/node_modules/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
-        ],
-        tasks: ['peg:fieldtext']
-      wellknowntext:
-        files: [
-          '../core/src/main/public/static/js/find/app/util/geoindex/idol-wkt.pegjs'
-        ],
-        tasks: ['peg:wellknowntext']
     sync:
       devResources:
         files: [
@@ -148,19 +138,6 @@ module.exports = (grunt) ->
           }
         ]
         verbose: true
-    peg:
-      fieldtext:
-        src: '../core/frontend/node_modules/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
-        dest: 'target/classes/static/js/pegjs/fieldtext/parser.js'
-        options:
-          format: 'amd'
-          trackLineAndColumn: true
-      wellknowntext:
-        src: '../core/src/main/public/static/js/find/app/util/geoindex/idol-wkt.pegjs'
-        dest: 'target/classes/static/js/pegjs/idol-wkt/parser.js'
-        options:
-          format: 'amd'
-          trackLineAndColumn: true
     requirejs:
       options:
         appDir: 'target/webapp'
@@ -216,7 +193,6 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-terser'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-sync'
-  grunt.loadNpmTasks 'grunt-peg'
 
   grunt.registerTask 'default', ['test']
   grunt.registerTask 'test', ['babel:transform', 'jasmine:test']

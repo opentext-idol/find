@@ -102,26 +102,12 @@ module.exports = (grunt) ->
       test:
         files: watchFiles
         tasks: ['babel:transform', 'jasmine:test']
-    peg:
-      fieldtext:
-        src: 'frontend/node_modules/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'
-        dest: 'target/classes/static/js/pegjs/fieldtext/parser.js'
-        options:
-          format: 'amd'
-          trackLineAndColumn: true
-      wellknowntext:
-        src: 'src/main/public/static/js/find/app/util/geoindex/idol-wkt.pegjs'
-        dest: 'target/classes/static/js/pegjs/idol-wkt/parser.js'
-        options:
-          format: 'amd'
-          trackLineAndColumn: true
 
   grunt.loadNpmTasks 'grunt-babel'
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-connect'
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-watch'
-  grunt.loadNpmTasks 'grunt-peg'
 
   grunt.registerTask 'default', ['test']
   grunt.registerTask 'test', ['babel:transform', 'jasmine:test']

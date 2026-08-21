@@ -127,10 +127,10 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>${project.basedir}/node_modules/.bin/grunt${npm.binExtension}</executable>
+                            <executable>node</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-                                <argument>peg</argument>
+                                <argument>build/peg.js</argument>
                             </arguments>
                         </configuration>
                     </execution>
