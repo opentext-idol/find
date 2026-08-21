@@ -498,6 +498,29 @@
                                     </arguments>
                                 </configuration>
                             </execution>
+                            <!--
+                                Phase 4 of amd-to-cjs-find.md: run webpack alongside grunt/r.js
+                                so its config/aliases/shims get validated on every production
+                                build. It writes to a temporary, distinctly-named output
+                                (js/bundle/*.webpack.js) that nothing serves yet, so it cannot
+                                affect the real app. Removed once webpack replaces grunt/r.js
+                                entirely in Phase 5.
+                            -->
+                            <execution>
+                                <id>webpack-build-temporary</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${project.basedir}/node_modules/.bin/webpack${npm.binExtension}</executable>
+                                    <workingDirectory>${basedir}</workingDirectory>
+                                    <arguments>
+                                        <argument>--mode</argument>
+                                        <argument>production</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
