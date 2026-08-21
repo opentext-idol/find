@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.hp.autonomy</groupId>
-        <artifactId>foss-spring-boot-master-pom</artifactId>
-        <version>3.13.0-SNAPSHOT</version>
+        <groupId>com.hp.autonomy.frontend</groupId>
+        <artifactId>haven-search-components</artifactId>
+        <version>1.12.0-SNAPSHOT</version>
     </parent>
 
     <inceptionYear>2014</inceptionYear>
@@ -25,11 +25,8 @@
 
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
-        <haven.search.components.version>1.11.0-SNAPSHOT</haven.search.components.version>
+        <haven.search.components.version>1.12.0-SNAPSHOT</haven.search.components.version>
         <static-resources-dir>${project.build.outputDirectory}</static-resources-dir>
-        <skipITs>false</skipITs>
-        <skipTests>false</skipTests>
-        <selenium.version>2.46.0</selenium.version>
         <maven.javadoc.skip>true</maven.javadoc.skip>
     </properties>
 

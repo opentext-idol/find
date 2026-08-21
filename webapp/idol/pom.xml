@@ -16,12 +16,27 @@
 
     <properties>
         <artifactName>${project.parent.artifactId}</artifactName>
-        <jenkins.jasmine.reportsDirectory>target/jasmine-reports</jenkins.jasmine.reportsDirectory>
+
+        <frontend.docker.content.skip>false</frontend.docker.content.skip>
+        <frontend.docker.community.skip>false</frontend.docker.community.skip>
+        <frontend.docker.agentstore.skip>false</frontend.docker.agentstore.skip>
     </properties>
 
     <build>
         <finalName>${artifactName}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>

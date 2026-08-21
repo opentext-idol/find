@@ -42,9 +42,9 @@ import static org.mockito.Mockito.when;
 @ConditionalOnProperty(value = "mock.configuration", matchIfMissing = true)
 public class IdolFindMockConfigConfiguration {
     private static final String COMMUNITY_HOST_PROPERTY = "test.community.host";
-    private static final String COMMUNITY_HOST = "ida-backend";
+    private static final String COMMUNITY_HOST = "localhost";
     private static final String COMMUNITY_PORT_PROPERTY = "test.community.port";
-    private static final int COMMUNITY_PORT = 9030;
+    private static final int COMMUNITY_PORT = 20030;
 
     @Autowired
     private Environment environment;
