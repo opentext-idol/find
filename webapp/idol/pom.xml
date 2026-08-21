@@ -23,6 +23,12 @@
         <frontend.docker.community.skip>false</frontend.docker.community.skip>
         <frontend.docker.agentstore.skip>false</frontend.docker.agentstore.skip>
         <frontend.docker.answerbankAgentstore.skip>false</frontend.docker.answerbankAgentstore.skip>
+
+        <!-- Terser is the bulk of webpack's cost; default to the much faster development
+             mode for everyday `mvn install`, and pass -Dwebpack.mode=production for a real,
+             minified deployable build. -->
+        <webpack.mode>development</webpack.mode>
+        <skip.webpack>false</skip.webpack>
     </properties>
 
     <build>
@@ -76,6 +82,32 @@
                                 <successCode>3</successCode>
                             </successCodes>
                             <skip>true</skip>
+                        </configuration>
+                    </execution>
+                    <!--
+                        webpack must always run here, not just under some "production" mode:
+                        under a bundler there is no unbundled mode the browser can consume, so
+                        skipping it would leave a white screen. Kept at phase `compile` (not
+                        e.g. prepare-package) because `spring-boot:run` is
+                        @Execute(phase = "test-compile") and so forks through `compile` -
+                        binding later would break `mvn spring-boot:run`. Defaults to the much
+                        faster development mode; pass -Dwebpack.mode=production for a minified
+                        build, or -Dskip.webpack=true to skip entirely.
+                    -->
+                    <execution>
+                        <id>webpack-build</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${project.basedir}/node_modules/.bin/webpack${npm.binExtension}</executable>
+                            <workingDirectory>${basedir}</workingDirectory>
+                            <arguments>
+                                <argument>--mode</argument>
+                                <argument>${webpack.mode}</argument>
+                            </arguments>
+                            <skip>${skip.webpack}</skip>
                         </configuration>
                     </execution>
                 </executions>
@@ -463,68 +495,6 @@
     <profiles>
         <profile>
             <id>production</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>static-resources</id>
-                                <goals>
-                                    <goal>resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${static-resources-dir}</outputDirectory>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>combine-javascript</id>
-                                <phase>compile</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>${project.basedir}/node_modules/.bin/grunt${npm.binExtension}</executable>
-                                    <workingDirectory>${basedir}</workingDirectory>
-                                    <arguments>
-                                        <argument>compile</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                            <!--
-                                Phase 4 of amd-to-cjs-find.md: run webpack alongside grunt/r.js
-                                so its config/aliases/shims get validated on every production
-                                build. It writes to a temporary, distinctly-named output
-                                (js/bundle/*.webpack.js) that nothing serves yet, so it cannot
-                                affect the real app. Removed once webpack replaces grunt/r.js
-                                entirely in Phase 5.
-                            -->
-                            <execution>
-                                <id>webpack-build-temporary</id>
-                                <phase>compile</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>${project.basedir}/node_modules/.bin/webpack${npm.binExtension}</executable>
-                                    <workingDirectory>${basedir}</workingDirectory>
-                                    <arguments>
-                                        <argument>--mode</argument>
-                                        <argument>production</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
 </project>

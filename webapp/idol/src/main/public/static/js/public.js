@@ -12,12 +12,8 @@
  * information contained herein is subject to change without notice.
  */
 
-require(['require-config'], function() {
+'use strict';
 
-    'use strict';
+const App = require('find/idol/app/idol-app');
 
-    require(['find/idol/app/idol-app'], function(App) {
-        new App();
-    });
-
-});
+new App();

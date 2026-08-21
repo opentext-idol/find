@@ -38,8 +38,6 @@ module.exports = (grunt) ->
     'src/test/**/*.js'
   ]
 
-  jsSourceMap = grunt.option('jsSourceMap') || false
-
   grunt.initConfig
     pkg: grunt.file.readJSON 'package.json'
     babel:
@@ -138,59 +136,11 @@ module.exports = (grunt) ->
           }
         ]
         verbose: true
-    requirejs:
-      options:
-        appDir: 'target/webapp'
-        baseUrl: 'static/js'
-        dir: 'target/classes'
-        keepBuildDir: true
-        mainConfigFile: 'target/webapp/static/js/require-config.js'
-        optimize: 'none'
-        generateSourceMaps: jsSourceMap
-      public:
-        options:
-          name: 'public',
-          include: [
-            'require-config'
-            'find/idol/app/idol-app'
-          ]
-      config:
-        options:
-          name: 'config',
-          include: [
-            'require-config',
-            'find/config/config-app'
-          ]
-      login:
-        options:
-          name: 'login',
-          include: [
-            'require-config',
-            'login-page/js/login',
-            'find/nls/bundle'
-          ]
-    terser:
-      js:
-        files: [{
-          expand: true
-          cwd: 'target/classes/static/js'
-          src: ['public.js', 'config.js', 'login.js']
-          dest: 'target/classes/static/js'
-        }]
-      languages:
-        files: [{
-          expand: true
-          cwd: 'target/classes/static/js'
-          src: ['find/**/nls/**/*.js']
-          dest: 'target/classes/static/js'
-        }]
 
   grunt.loadNpmTasks 'grunt-babel'
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-connect'
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
-  grunt.loadNpmTasks 'grunt-contrib-requirejs'
-  grunt.loadNpmTasks 'grunt-terser'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-sync'
 
@@ -199,6 +149,3 @@ module.exports = (grunt) ->
   grunt.registerTask 'browser-test', ['jasmine:browser-test:build', 'connect:server', 'watch:buildBrowserTest']
   grunt.registerTask 'watch-test', ['babel:transform', 'jasmine:test', 'watch:test']
   grunt.registerTask 'copy-resources', ['sync:devResources', 'watch:copyResources']
-  grunt.registerTask 'concatenate', ['requirejs']
-  grunt.registerTask 'minify', ['terser:js', 'terser:languages']
-  grunt.registerTask 'compile', ['concatenate', 'minify']

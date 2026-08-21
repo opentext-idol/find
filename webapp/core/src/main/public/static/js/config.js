@@ -12,10 +12,8 @@
  * information contained herein is subject to change without notice.
  */
 
-require(['require-config'], function() {
-    'use strict';
+'use strict';
 
-    require(['find/config/config-app'], function(App) {
-        new App();
-    });
-});
+const App = require('find/config/config-app');
+
+new App();

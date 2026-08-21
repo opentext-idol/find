@@ -1,9 +1,5 @@
-require(['require-config'], function() {
+'use strict';
 
-    'use strict';
+const App = require('themetracker/app');
 
-    require(['themetracker/app'], function(App) {
-        new App();
-    });
-
-});
+new App();

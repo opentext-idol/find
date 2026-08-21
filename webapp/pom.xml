@@ -325,9 +325,6 @@
     <profiles>
         <profile>
             <id>production</id>
-            <properties>
-                <static-resources-dir>${project.build.directory}/webapp</static-resources-dir>
-            </properties>
         </profile>
     </profiles>
 </project>

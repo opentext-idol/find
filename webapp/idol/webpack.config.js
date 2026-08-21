@@ -1,11 +1,10 @@
 'use strict';
 
 /*
- * Phase 4 (amd-to-cjs-find.md) - temporary webpack config that builds the same 4 entry
- * points that r.js currently builds, from the still-AMD sources, without touching the
- * existing Grunt/r.js pipeline. This file is deleted/replaced wholesale in Phase 5 once
- * webpack becomes the only build tool and the temporary build/entry/* stubs are removed
- * in favour of rewriting the real entry files.
+ * webpack config for the idol module's 4 browser bundles (public, config, login,
+ * themetracker) - see amd-to-cjs-find.md. Sources are still AMD (`define()`/`require()`
+ * with callback factories); webpack understands that natively, so nothing here needs to
+ * wait for the Phase 7 codemod that converts them to CommonJS.
  *
  * It runs against the *merged* static/js tree that Maven's unpack-dependencies execution
  * produces at target/classes/static/js (core's config.js/login.js copied in alongside
@@ -25,14 +24,14 @@ module.exports = (env, argv) => ({
     mode: argv.mode === 'production' ? 'production' : 'development',
     devtool: argv.mode === 'production' ? 'source-map' : 'eval-source-map',
     entry: {
-        public: path.resolve(__dirname, 'build/entry/public.js'),
-        config: path.resolve(__dirname, 'build/entry/config.js'),
-        login: path.resolve(__dirname, 'build/entry/login.js'),
-        themetracker: path.resolve(__dirname, 'build/entry/themetracker.js')
+        public: path.resolve(MERGED_JS, 'public.js'),
+        config: path.resolve(MERGED_JS, 'config.js'),
+        login: path.resolve(MERGED_JS, 'login.js'),
+        themetracker: path.resolve(MERGED_JS, 'themetracker.js')
     },
     output: {
         path: path.resolve(MERGED_JS, 'bundle'),
-        filename: '[name].webpack.js',
+        filename: '[name].js',
         clean: true
     },
     resolve: {
