@@ -20,7 +20,7 @@ define([
     'find/app/page/search/filters/parametric/parametric-field-view',
     'find/app/page/search/filters/parametric/proxy-view',
     'find/app/page/search/filters/parametric/numeric-parametric-field-collapsible-view',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/search/filters/parametric/parametric-view.html'
 ], function(_, $, Backbone, ListView, FieldView, ProxyView, CollapsibleNumericFieldView, i18n, template) {
     'use strict';

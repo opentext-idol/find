@@ -13,9 +13,9 @@
  */
 define([
     'find/app/page/search/filters/parametric/numeric-range-rounder',
-    'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes',
-    'i18n!find/idol/nls/snapshots',
+    'find/nls/bundle',
+    'find/nls/indexes',
+    'find/idol/nls/snapshots',
     'underscore',
     'moment',
     'find/app/model/document-selection-model'

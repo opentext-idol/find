@@ -14,7 +14,7 @@
 
 define([
     'underscore',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/model/documents-collection',
     'find/app/page/search/document/similar-abstract-tab',
     'text!find/templates/app/page/search/document/similar-dates-tab.html',

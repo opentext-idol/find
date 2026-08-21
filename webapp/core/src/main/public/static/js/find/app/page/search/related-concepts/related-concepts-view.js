@@ -16,7 +16,7 @@ define([
     'backbone',
     'jquery',
     'underscore',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/model/documents-collection',
     'find/app/util/popover',
     'find/app/util/search-data-util',

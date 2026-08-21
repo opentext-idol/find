@@ -19,7 +19,7 @@ define([
     'find/app/configuration',
     'find/app/page/search/results/add-links-to-summary',
     'find/app/page/search/results/map-view',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'leaflet'
 ], function(_, $, Backbone, configuration, addLinksToSummary, MapView, i18n, leaflet) {
     'use strict';

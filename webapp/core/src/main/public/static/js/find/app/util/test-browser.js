@@ -13,7 +13,7 @@
  */
 
 define([
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/old-browser-modal.html',
     'underscore',
     'bowser',

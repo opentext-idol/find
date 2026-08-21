@@ -30,7 +30,6 @@ require.config({
         'idol-wkt/js/parser': 'pegjs/idol-wkt/parser',
         handlebars: '../bower_components/handlebars/dist/handlebars',
         'html2canvas': '../bower_components/html2canvas/build/html2canvas',
-        i18n: '../bower_components/requirejs-i18n/i18n',
         'flot': '../bower_components/flot/jquery.flot',
         'flot.time': '../bower_components/flot/jquery.flot.time',
         'flot.stack': '../bower_components/flot/jquery.flot.stack',

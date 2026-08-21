@@ -15,7 +15,7 @@
 define([
     'underscore',
     'jquery',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/loading-spinner.html',
     'bootstrap'
 ], function(_, $, i18n, loadingTemplate) {

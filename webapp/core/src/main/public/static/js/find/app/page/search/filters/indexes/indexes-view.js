@@ -18,8 +18,8 @@ define([
     'backbone',
     'databases-view/js/databases-view',
     './index-item-view',
-    'i18n!find/nls/indexes',
-    'i18n!find/nls/bundle',
+    'find/nls/indexes',
+    'find/nls/bundle',
     'text!find/templates/app/page/search/filters/indexes/index-list.html'
 ], function(_, $, Backbone, DatabasesView, IndexItemView, i18nIndexes, i18n, listTemplate) {
     'use strict';

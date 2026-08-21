@@ -15,7 +15,7 @@
 define([
     'underscore',
     'backbone',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'js-whatever/js/list-view',
     'find/app/util/collapsible',
     'find/app/page/search/filters/parametric/parametric-select-modal',

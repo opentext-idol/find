@@ -16,7 +16,7 @@ define([
     'underscore',
     'find/app/page/search/results/parametric-results-view',
     'find/app/page/search/results/table/table-collection',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/search/results/table/table-view.html',
     'datatables.net-bs',
     'datatables.net-fixedColumns'

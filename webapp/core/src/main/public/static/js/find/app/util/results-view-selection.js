@@ -16,7 +16,7 @@ define([
     'underscore',
     'jquery',
     'backbone',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/util/selector.html'
 ], function(_, $, Backbone, i18n, selectorTemplate) {
     'use strict';

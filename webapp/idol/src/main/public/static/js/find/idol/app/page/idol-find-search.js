@@ -15,7 +15,7 @@
 define([
     'underscore',
     'find/app/page/find-search',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/idol/nls/root/snapshots',
     'find/app/model/saved-searches/saved-search-model',
     'find/idol/app/model/idol-indexes-collection',

@@ -30,7 +30,7 @@ define([
     'underscore',
     'backbone',
     'jquery',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/search/results/users-view.html',
     'text!find/templates/app/page/search/results/users-view-user.html'

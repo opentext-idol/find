@@ -18,7 +18,7 @@ define([
     'find/app/page/find-settings-page',
     'js-whatever/js/empty-navbar',
     'find/app/util/test-browser',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/config/config.html',
     'text!find/templates/config/empty-navbar.html'
 ], function(_, $, SettingsPage, EmptyNavbar, testBrowser, i18n, template, emptyNavbar) {

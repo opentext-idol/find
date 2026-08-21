@@ -16,7 +16,7 @@ define([
     'underscore',
     'backbone',
     'find/app/model/dependent-parametric-collection',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/page/search/results/field-selection-view',
     'text!find/templates/app/page/search/results/parametric-results-view.html',
     'find/app/util/generate-error-support-message',

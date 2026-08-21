@@ -24,7 +24,7 @@
 define([
     'underscore',
     'backbone',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/search/document/preview-mode-fact-view.html'
 ], function(_, Backbone, i18n, template) {
     'use strict';

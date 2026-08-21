@@ -15,7 +15,7 @@
 define([
     'underscore',
     'backbone',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'text!find/templates/app/page/search/time-bar-view.html'
 ], function(_, Backbone, i18n, NumericParametricFieldView, timeBarTemplate) {

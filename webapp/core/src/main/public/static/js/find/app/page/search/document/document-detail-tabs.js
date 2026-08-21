@@ -15,7 +15,7 @@
 define([
     'underscore',
     'backbone',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/configuration',
     'find/app/page/search/document/tab-content-view',
     'find/app/page/search/document/authors-tab',

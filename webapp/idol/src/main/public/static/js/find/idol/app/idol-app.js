@@ -28,7 +28,7 @@ define([
     'find/idol/app/page/dashboard-page',
     'find/app/page/find-settings-page',
     'find/app/page/customizations-page',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(_, Backbone, BaseApp, logout, configuration, IndexesCollection, SavedSnapshotCollection,
             SharedSavedSnapshotCollection, AssetCollection, Navigation, FindSearch, AboutPage, DashboardPage,
             SettingsPage, CustomizationsPage, i18n) {

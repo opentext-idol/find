@@ -21,8 +21,8 @@ define([
     'find/app/page/search/results/state-token-strategy',
     'text!find/idol/templates/comparison/comparison-list-container.html',
     'find/app/util/search-data-util',
-    'i18n!find/nls/bundle',
-    'i18n!find/idol/nls/comparisons'
+    'find/nls/bundle',
+    'find/idol/nls/comparisons'
 ], function(_, $, Backbone, ComparisonDocumentsCollection, ResultsView, stateTokenStrategy,
             comparisonListContainer, searchDataUtil, i18n, comparisonsI18n) {
     'use strict';

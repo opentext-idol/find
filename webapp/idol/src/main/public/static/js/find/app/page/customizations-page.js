@@ -17,7 +17,7 @@ define([
     'jquery',
     'js-whatever/js/base-page',
     'find/app/page/customizations/asset-widget',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/customizations-page.html'
 ], function(_, $, BasePage, AssetWidget, i18n, template) {
     'use strict';

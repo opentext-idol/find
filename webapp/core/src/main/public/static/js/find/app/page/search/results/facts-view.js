@@ -33,7 +33,7 @@ define([
     'backbone',
     'jquery',
     'find/app/configuration',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/model/document-model',
     'find/app/model/parametric-collection',
     'find/app/model/entity-fact-collection',

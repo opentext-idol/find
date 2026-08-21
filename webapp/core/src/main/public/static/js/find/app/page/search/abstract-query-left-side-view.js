@@ -19,7 +19,7 @@ define([
     './selected-concepts/concept-view',
     'find/app/model/applied-filters-collection',
     'find/app/page/search/filter-display/applied-filters-view',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(_, Backbone, FilterView, ConceptView, AppliedFiltersCollection, AppliedFiltersView,
             i18n) {
     'use strict';

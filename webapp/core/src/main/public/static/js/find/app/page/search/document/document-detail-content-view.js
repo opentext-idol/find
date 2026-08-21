@@ -20,7 +20,7 @@ define([
     'find/app/util/url-manipulator',
     'find/app/util/view-server-client',
     'find/app/page/search/document/document-preview-helper',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/search/document/document-detail-content-view.html'
 ], function(_, Backbone, tabs, events, urlManipulator, viewClient, DocumentPreviewHelper, i18n,
             template) {

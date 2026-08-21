@@ -25,7 +25,7 @@ define([
     'jquery',
     'backbone',
     'find/app/configuration',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/loading-spinner.html',
     'find/app/util/generate-error-support-message',
     'find/app/page/search/results/field-selection-view',

@@ -13,7 +13,7 @@
  */
 
 define([
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(i18n) {
 
     return function(key) {

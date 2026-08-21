@@ -167,7 +167,7 @@ module.exports = (grunt) ->
           include: [
             'require-config',
             'login-page/js/login',
-            'i18n!find/nls/bundle'
+            'find/nls/bundle'
           ]
     terser:
       js:

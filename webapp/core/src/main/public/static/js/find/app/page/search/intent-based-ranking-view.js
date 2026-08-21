@@ -18,7 +18,7 @@ define([
     'backbone',
     'find/app/configuration',
     'text!find/templates/app/page/search/intent-based-ranking-view.html',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(_, $, Backbone, config, template, i18n) {
     'use strict';
 

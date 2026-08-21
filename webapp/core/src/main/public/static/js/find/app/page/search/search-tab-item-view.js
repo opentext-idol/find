@@ -15,7 +15,7 @@
 define([
     'underscore',
     'js-whatever/js/list-item-view',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/model/saved-searches/saved-search-model',
     'text!find/templates/app/page/search/search-tab-item-view.html',
     'bootstrap'

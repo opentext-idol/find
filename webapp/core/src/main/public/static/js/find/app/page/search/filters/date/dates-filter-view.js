@@ -17,7 +17,7 @@ define([
     'jquery',
     'backbone',
     'moment',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/model/dates-filter-model',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/util/date-picker',

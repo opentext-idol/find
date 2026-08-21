@@ -15,7 +15,7 @@
 define([
     'underscore',
     'backbone',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/search/filters/documentselection/document-selection-view.html'
 ], function (_, Backbone, i18n, template) {
 

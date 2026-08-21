@@ -16,7 +16,7 @@ define([
     'underscore',
     'backbone',
     'uuidjs',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/configuration',
     'fieldtext/js/field-text-parser'
 ], function (_, Backbone, UUID, i18n, configuration, fieldTextParser) {

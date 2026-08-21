@@ -16,7 +16,7 @@ define([
     'underscore',
     'jquery',
     'backbone',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/vent',
     'find/app/page/search/results/add-links-to-summary',
     'text!find/templates/app/page/search/document/similar-documents-tab.html'

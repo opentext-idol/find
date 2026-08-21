@@ -21,8 +21,8 @@ define([
     'find/app/model/saved-searches/saved-search-model',
     'text!find/idol/templates/comparison/compare-modal-footer.html',
     'text!find/templates/app/page/loading-spinner.html',
-    'i18n!find/idol/nls/comparisons',
-    'i18n!find/nls/bundle'
+    'find/idol/nls/comparisons',
+    'find/nls/bundle'
 ], function(_, $, Modal, SearchToCompare, ComparisonModel, SavedSearchModel, compareModalFooter,
             loadingSpinnerTemplate, comparisonsI18n, i18n) {
     'use strict';

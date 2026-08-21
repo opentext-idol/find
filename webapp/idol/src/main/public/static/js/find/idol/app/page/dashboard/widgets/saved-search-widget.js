@@ -21,7 +21,7 @@ define([
     'find/app/model/saved-searches/saved-search-model',
     'find/app/vent',
     'text!find/idol/templates/page/dashboards/saved-search-widget-error.html',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(_, $, UpdatingWidget, IdolIndexesCollection, configuration, SavedSearchModel, vent, errorTemplate, i18n) {
     'use strict';
 

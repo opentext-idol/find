@@ -16,7 +16,7 @@ define([
     'underscore',
     'jquery',
     'backbone',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/model/geography-model',
     'find/app/model/saved-searches/saved-search-model',
     'find/app/page/search/filters/geography/geography-modal',

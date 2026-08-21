@@ -18,7 +18,7 @@ define([
     './saved-search-widget',
     'find/app/configuration',
     'find/app/model/documents-collection',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(_, $, SavedSearchWidget, configuration, DocumentsCollection, i18n) {
     'use strict';
 

@@ -24,7 +24,7 @@ define([
     'find/app/util/sharing-options',
     'find/app/util/modal',
     'text!find/templates/app/page/search/saved-searches/saved-search-control-view.html',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/configuration',
     'find/app/util/popover',
     'underscore'

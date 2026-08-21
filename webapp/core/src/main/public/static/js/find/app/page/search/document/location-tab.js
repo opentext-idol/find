@@ -20,7 +20,7 @@ define([
     'find/app/page/search/results/add-links-to-summary',
     'text!find/templates/app/page/search/document/location-tab.html',
     'text!find/templates/app/page/search/results/map-popover.html',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/vent'
 ], function(Backbone, _, configuration, MapView, addLinksToSummary, templateString, popoverTemplate, i18n, vent) {
 

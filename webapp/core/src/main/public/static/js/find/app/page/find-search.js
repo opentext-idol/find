@@ -43,7 +43,7 @@ define([
     'find/app/util/events',
     'find/app/router',
     'find/app/vent',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/find-search.html'
 ], function(_, $, Backbone, BasePage, config, DatesFilterModel, GeographyModel,
             DocumentSelectionModel, QueryModel, DocumentRenderer, SelectedParametricValuesCollection,

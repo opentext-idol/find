@@ -4,7 +4,7 @@ define([
     'underscore',
     'js-whatever/js/list-view',
     'find/app/vent',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/page/search/filters/parametric/parametric-select-modal-item-view',
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/loading-spinner.html',

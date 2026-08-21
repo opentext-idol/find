@@ -15,8 +15,8 @@
 define([
     'underscore',
     'backbone',
-    'i18n!find/nls/bundle',
-    'i18n!find/idol/nls/snapshots',
+    'find/nls/bundle',
+    'find/idol/nls/snapshots',
     'find/app/util/collapsible',
     './data-panel-view',
     './snapshot-detail',

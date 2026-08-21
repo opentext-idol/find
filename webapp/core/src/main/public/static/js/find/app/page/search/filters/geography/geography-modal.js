@@ -16,7 +16,7 @@ define([
     'backbone',
     'find/app/util/modal',
     'find/app/page/search/filters/geography/geography-editor-view',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'underscore'
 ], function(Backbone, Modal, GeographyEditorView, i18n, _) {
     'use strict';

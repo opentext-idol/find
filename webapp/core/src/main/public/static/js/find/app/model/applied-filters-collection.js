@@ -20,8 +20,8 @@ define([
     'find/app/model/geography-model',
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/util/database-name-resolver',
-    'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes'
+    'find/nls/bundle',
+    'find/nls/indexes'
 ], function(_, Backbone, moment, DatesFilterModel, GeographyModel, rounder, databaseNameResolver,
             i18n, i18nIndexes) {
     'use strict';

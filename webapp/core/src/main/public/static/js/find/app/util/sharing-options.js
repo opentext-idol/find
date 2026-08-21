@@ -16,7 +16,7 @@ define([
     'backbone',
     'underscore',
     'jquery',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'js-whatever/js/list-view',
     'find/app/util/modal',
     'find/app/model/saved-searches/shared-with-everyone-model',

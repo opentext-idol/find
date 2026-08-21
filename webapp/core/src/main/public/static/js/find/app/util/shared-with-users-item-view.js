@@ -16,7 +16,7 @@ define([
     'backbone',
     'underscore',
     'jquery',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/util/shared-with-users-item-view.html',
     'iCheck'
 ], function(Backbone, _, $, i18n, sharedWithUsersTemplate) {

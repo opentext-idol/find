@@ -18,7 +18,7 @@ define([
     'backbone',
     'find/app/vent',
     'find/app/configuration',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/navigation.html',
     'chosen',
     'metisMenu'

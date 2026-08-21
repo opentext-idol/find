@@ -20,7 +20,7 @@ define([
     'find/app/util/topic-map-view',
     'find/app/util/range-input',
     'find/app/model/entity-collection',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/util/generate-error-support-message',
     'text!find/templates/app/page/search/results/entity-topic-map-view.html',
     'text!find/templates/app/page/loading-spinner.html',

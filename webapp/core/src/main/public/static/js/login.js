@@ -19,7 +19,7 @@ require(['require-config'], function() {
         'underscore',
         'login-page/js/login',
         'text!find/templates/app/page/login/login.html',
-        'i18n!find/nls/bundle'
+        'find/nls/bundle'
     ], function(_, Login, template, i18n) {
         const FindLogin = Login.extend({
             template: _.template(template),

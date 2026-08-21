@@ -16,8 +16,8 @@ define([
     'underscore',
     'backbone',
     'find/app/util/database-name-resolver',
-    'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes',
+    'find/nls/bundle',
+    'find/nls/indexes',
     'find/app/model/document-model',
     'text!find/templates/app/page/search/document/metadata-tab.html'
 ], function(_, Backbone, databaseNameResolver, i18n, i18nIndexes, DocumentModel, template) {

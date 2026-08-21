@@ -18,7 +18,7 @@ define([
     'backbone',
     'find/app/page/search/results/map-results-view-strategy',
     'find/app/page/search/results/map-view',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/model/documents-collection',
     'text!find/templates/app/page/search/results/map-results-view.html',
     'text!find/templates/app/page/search/results/map-popover.html',

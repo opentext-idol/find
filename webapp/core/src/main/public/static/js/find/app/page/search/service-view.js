@@ -41,7 +41,7 @@ define([
     'find/app/page/search/results/related-users-view',
     'find/app/page/search/time-bar-view',
     'find/app/configuration',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/search/service-view.html'
 ], function(_, $, Backbone, moment, DatesFilterModel, EntityCollection, QueryModel,
             SavedSearchModel, ParametricCollection, ParametricFieldsCollection, RecommendDocumentsCollection, queryStrategy,

@@ -15,7 +15,7 @@
 define([
     'underscore',
     'js-whatever/js/list-item-view',
-    'i18n!find/nls/indexes',
+    'find/nls/indexes',
     'text!find/templates/app/page/search/filters/indexes/index-item-view.html',
     'bootstrap'
 ], function(_, ListItemView, i18n, template) {

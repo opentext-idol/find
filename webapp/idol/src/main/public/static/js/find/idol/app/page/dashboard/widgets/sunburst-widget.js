@@ -22,7 +22,7 @@ define([
     'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend.html',
     'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend-entry.html',
     'text!find/idol/templates/page/dashboards/widgets/sunburst-legend-other-entry.html',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(_, $, d3, Sunburst, SavedSearchWidget, LegendColorCollection, legendTemplate,
             legendEntryTemplate, legendOtherEntryTemplate, i18n) {
     'use strict';

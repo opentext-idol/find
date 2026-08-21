@@ -17,7 +17,7 @@ define([
     'jquery',
     'moment',
     'backbone',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     './saved-search-widget',
     'find/app/page/search/results/trending/trending-strategy',
     'find/app/page/search/results/trending/trending'

@@ -16,7 +16,7 @@ define([
     'underscore',
     'jquery',
     'backbone',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/util/content-container.html'
 ], function(_, $, Backbone, i18n, contentContainerTemplate) {
     'use strict';

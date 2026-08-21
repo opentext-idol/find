@@ -18,7 +18,7 @@ define([
     'find/app/page/search/filters/parametric/parametric-select-modal-view',
     'parametric-refinement/selected-values-collection',
     'text!find/templates/app/page/loading-spinner.html',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'underscore'
 ], function(Backbone, Modal, ParametricSelectView, SelectedValuesCollection, loadingSpinnerTemplate, i18n, _) {
     'use strict';

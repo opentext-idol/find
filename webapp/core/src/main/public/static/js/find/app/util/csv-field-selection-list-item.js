@@ -16,7 +16,7 @@ define([
     'js-whatever/js/list-item-view',
     'underscore',
     'text!find/templates/app/util/csv-field-selection-list-item.html',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'iCheck'
 ], function(ListItemView, _, template, i18n) {
     'use strict';

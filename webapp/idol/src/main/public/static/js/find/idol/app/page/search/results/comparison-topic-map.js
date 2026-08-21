@@ -15,8 +15,8 @@
 define([
     'underscore',
     'backbone',
-    'i18n!find/nls/bundle',
-    'i18n!find/idol/nls/comparisons',
+    'find/nls/bundle',
+    'find/idol/nls/comparisons',
     'find/app/page/search/results/state-token-strategy',
     'find/app/util/search-data-util',
     'find/app/model/entity-collection',

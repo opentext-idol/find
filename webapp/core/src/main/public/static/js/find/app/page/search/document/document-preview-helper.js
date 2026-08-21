@@ -14,7 +14,7 @@
 
 define([
     'underscore',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/util/url-manipulator',
     'find/app/util/view-server-client',
     'text!find/templates/app/page/search/document/view-mode-document.html',

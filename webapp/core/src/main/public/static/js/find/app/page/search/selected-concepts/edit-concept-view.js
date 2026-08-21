@@ -18,7 +18,7 @@ define([
     'jquery',
     'find/app/util/global-key-listener',
     'text!find/templates/app/page/search/selected-concepts/edit-concept-view.html',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(Backbone, _, $, globalKeyListener, template, i18n) {
     'use strict';
 

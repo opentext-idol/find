@@ -16,7 +16,7 @@ define([
     'underscore',
     'jquery',
     'backbone',
-    'i18n!find/idol/nls/comparisons',
+    'find/idol/nls/comparisons',
     'text!find/idol/templates/comparison/search-to-compare-view.html'
 ], function(_, $, Backbone, comparisonsI18n, template) {
     'use strict';

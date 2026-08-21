@@ -16,7 +16,7 @@ define([
     'backbone',
     'underscore',
     'find/app/vent',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/model/document-model',
     'find/app/configuration',
     'find/app/util/generate-error-support-message',

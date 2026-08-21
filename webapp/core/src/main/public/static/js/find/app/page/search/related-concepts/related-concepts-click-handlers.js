@@ -13,7 +13,7 @@
  */
 define([
     'find/app/model/saved-searches/saved-search-model',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'underscore'
 ], function(SavedSearchModel, i18n, _) {
 

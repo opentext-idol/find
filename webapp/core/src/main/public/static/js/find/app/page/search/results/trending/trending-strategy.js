@@ -19,7 +19,7 @@ define([
     'd3',
     'backbone',
     'fieldtext/js/field-text-parser',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/configuration',
     'find/app/vent',
     'find/app/page/search/results/parametric-results-view',

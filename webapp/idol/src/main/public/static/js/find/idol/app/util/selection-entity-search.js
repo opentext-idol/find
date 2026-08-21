@@ -22,7 +22,7 @@ define([
     'find/app/page/search/template-helpers/pretty-print-number-helper',
     'js-whatever/js/escape-regex',
     'text!find/templates/app/page/loading-spinner.html',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(_, $, d3, globalKeyListener, AnsweredQuestionsCollection, EntitySearchCollection, prettyPrintNumberHelper,
             escapeRegex, loadingSpinnerTemplate, i18n) {
     'use strict';

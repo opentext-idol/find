@@ -24,7 +24,7 @@ define([
     'find/app/util/results-view-selection',
     'find/app/configuration',
     'text!find/idol/templates/comparison/comparison-view.html',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(_, Backbone, ComparisonDocumentsCollection, ResultsLists, ComparisonMap,
             ComparisonTopicMap, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
             configuration, template, i18n) {

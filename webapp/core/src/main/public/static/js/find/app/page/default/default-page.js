@@ -15,7 +15,7 @@
 define([
     'js-whatever/js/base-page',
     'text!find/templates/app/page/default/default-page.html',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'underscore'
 ], function(BasePage, template, i18n, _) {
     'use strict';

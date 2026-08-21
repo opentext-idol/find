@@ -20,7 +20,7 @@ define([
     'find/idol/app/model/answer-bank/idol-answered-questions-collection',
     'js-whatever/js/list-view',
     'text!find/templates/app/page/search/results/questions-container.html',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(_, $, Backbone, HtmlUtil, AnsweredQuestionsCollection, ListView, questionsTemplate, i18n) {
     'use strict';
 

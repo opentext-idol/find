@@ -15,8 +15,8 @@
 define([
     'underscore',
     'find/app/configuration',
-    'i18n!find/nls/bundle',
-    'i18n!find/nls/errors',
+    'find/nls/bundle',
+    'find/nls/errors',
     'text!find/templates/app/util/error-custom-contact-support.html'
 ], function(_, configuration, i18n, i18nErrors, errorCustomContactSupportTemplate) {
     'use strict';

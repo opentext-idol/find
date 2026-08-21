@@ -16,7 +16,7 @@ define([
     'about-page/js/about-page',
     'find/idol/app/page/about/lib-list',
     'find/app/configuration',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(AboutPage, libList, configuration, i18n) {
     'use strict';
 

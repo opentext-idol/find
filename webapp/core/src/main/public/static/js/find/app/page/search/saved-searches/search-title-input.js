@@ -18,7 +18,7 @@ define([
     'jquery',
     'text!find/templates/app/page/search/saved-searches/search-title-input.html',
     'find/app/model/saved-searches/saved-search-model',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(Backbone, _, $, template, SavedSearchModel, i18n) {
     'use strict';
 

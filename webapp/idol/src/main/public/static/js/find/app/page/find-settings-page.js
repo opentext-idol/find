@@ -27,7 +27,7 @@ define([
     'find/app/page/settings/stats-server-widget',
     'find/app/page/settings/view-widget',
     'find/app/page/settings/control-point-widget',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/settings/community-widget.html'
 ], function (_, SettingsPage, AciWidget, AnswerServerWidget, CommunityWidget, OptionalAciWidget,
              MapWidget, MotdWidget, MmapWidget, QueryManipulationWidget, SavedSearchWidget,

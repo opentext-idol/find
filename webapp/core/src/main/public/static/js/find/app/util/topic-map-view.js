@@ -16,7 +16,7 @@ define([
     'underscore',
     'backbone',
     'find/app/vent',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'topicmap/js/topicmap'
 ], function(_, Backbone, vent, i18n) {
     'use strict';

@@ -19,7 +19,7 @@ define([
     'find/app/util/confirm-view',
     'js-whatever/js/list-view',
     'find/app/configuration',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/customizations/asset-viewer.html',
     'text!find/templates/app/page/customizations/asset.html'
 ], function(_, $, Backbone, Confirm, ListView, configuration, i18n, template, assetTemplate) {

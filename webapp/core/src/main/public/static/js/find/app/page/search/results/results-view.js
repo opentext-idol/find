@@ -32,8 +32,8 @@ define([
     'text!find/templates/app/page/search/results/results-view.html',
     'text!find/templates/app/page/loading-spinner.html',
     'moment',
-    'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes'
+    'find/nls/bundle',
+    'find/nls/indexes'
 ], function(_, $, Backbone, addChangeListener, vent, DocumentModel, PromotionsCollection, IntentBasedRankingView, SortView, ResultsNumberView,
             viewClient, events, addLinksToSummary, configuration, generateErrorHtml, resultTemplate, template,
             loadingSpinnerTemplate, moment, i18n, i18n_indexes) {

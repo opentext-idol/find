@@ -15,7 +15,7 @@
 define([
     'underscore',
     'backbone',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/page/search/filters/parametric/numeric-parametric-field-view',
     'find/app/page/search/filters/parametric/numeric-range-rounder',
     'find/app/util/collapsible',

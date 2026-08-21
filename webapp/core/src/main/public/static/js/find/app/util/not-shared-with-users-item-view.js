@@ -16,7 +16,7 @@ define([
     'backbone',
     'underscore',
     'jquery',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(Backbone, _, $, i18n) {
     'use strict';
 

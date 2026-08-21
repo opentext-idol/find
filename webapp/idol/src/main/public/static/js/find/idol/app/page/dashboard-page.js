@@ -22,7 +22,7 @@ define([
     './dashboard/update-tracker-model',
     'text!find/idol/templates/page/dashboards/dashboard-page.html',
     'text!find/idol/templates/page/dashboards/powerpoint-export-form.html',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(_, $, BasePage, vent, widgetRegistry, WidgetNotFoundWidget, UpdateTrackerModel,
             template, exportFormTemplate, i18n) {
     'use strict';

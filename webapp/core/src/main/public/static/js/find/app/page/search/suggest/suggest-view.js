@@ -18,7 +18,7 @@ define([
     'find/app/vent',
     'find/app/page/search/results/suggest-strategy',
     'find/app/model/similar-documents-collection',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/search/suggest/suggest-view.html'
 ], function(_, Backbone, vent, suggestStrategy, SimilarDocumentsCollection, i18n, template) {
     'use strict';

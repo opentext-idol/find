@@ -18,7 +18,7 @@ define([
     'find/app/page/search/abstract-section-view',
     'js-whatever/js/list-view',
     'js-whatever/js/list-item-view',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/search/filter-display/applied-filters-view.html',
     'text!find/templates/app/page/search/filter-display/applied-filters-view-item.html',
     'bootstrap'

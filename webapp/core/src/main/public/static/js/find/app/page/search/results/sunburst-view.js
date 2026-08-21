@@ -19,7 +19,7 @@ define([
     'find/app/configuration',
     'sunburst/js/sunburst',
     'find/app/page/search/results/parametric-results-view',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/search/results/sunburst/sunburst-label.html',
     'find/app/vent'
 ], function(_, $, d3, configuration, Sunburst, ParametricResultsView, i18n, labelTemplate, vent) {

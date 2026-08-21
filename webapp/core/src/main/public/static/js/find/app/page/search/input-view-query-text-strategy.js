@@ -13,7 +13,7 @@
  */
 
 define([
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'jquery'
 ], function(i18n, $) {
     'use strict';

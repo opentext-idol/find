@@ -18,7 +18,7 @@ define([
     'moment',
     'd3',
     'backbone',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/app/configuration',
     'find/app/vent',
     'find/app/util/range-input',

@@ -28,8 +28,8 @@ define([
     'find/app/util/collapsible',
     'find/app/util/filtering-collection',
     'find/app/configuration',
-    'i18n!find/nls/bundle',
-    'i18n!find/nls/indexes',
+    'find/nls/bundle',
+    'find/nls/indexes',
     'text!find/templates/app/page/search/filters/filter-separator.html'
 ], function(_, $, Backbone, GeographyModel, AbstractSectionView, DateView, GeographyView, DocumentSelectionFilterView, FilteredParametricFieldsCollection,
             ParametricView, NumericParametricFieldView, TextInput, Collapsible, FilteringCollection,

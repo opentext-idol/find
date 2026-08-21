@@ -16,7 +16,7 @@ define([
     'underscore',
     'find/app/page/settings/aci-widget',
     'find/app/page/settings/enable-view',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(_, AciWidget, EnableView, i18n) {
     'use strict';
 

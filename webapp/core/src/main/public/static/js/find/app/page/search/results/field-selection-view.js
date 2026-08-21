@@ -16,7 +16,7 @@ define([
     'backbone',
     'underscore',
     'text!find/templates/app/page/search/results/sunburst/field-selection-view.html',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'chosen'
 ], function(Backbone, _, template, i18n) {
     'use strict';

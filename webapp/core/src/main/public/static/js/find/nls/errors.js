@@ -12,7 +12,16 @@
  * information contained herein is subject to change without notice.
  */
 
-define(['js-whatever/js/substitution'], {
-    root: true,
-    'en-gb': true
+// Locales resolve at BUILD time. To add one, create the directory and add a line here.
+define([
+    'find/nls/select-locale',
+    'find/nls/root/errors',
+    'find/nls/en-gb/errors'
+], function(selectLocale, root, enGb) {
+    'use strict';
+
+    return selectLocale({
+        root: root,
+        'en-gb': enGb
+    });
 });

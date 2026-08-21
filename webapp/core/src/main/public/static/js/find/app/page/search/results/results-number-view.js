@@ -16,7 +16,7 @@ define([
     'jquery',
     'backbone',
     'text!find/templates/app/page/search/results/results-number-view.html',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'underscore'
 ], function($, Backbone, template, i18n, _) {
     'use strict';

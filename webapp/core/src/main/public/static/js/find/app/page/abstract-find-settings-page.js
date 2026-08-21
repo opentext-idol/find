@@ -19,7 +19,7 @@ define([
     'find/app/model/config',
     'find/app/vent',
     'find/app/router',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/settings-page.html',
     'underscore'
 ], function(SettingsPage, ValidateOnSaveModal, Confirm, configModel, vent, router, i18n, template, _) {

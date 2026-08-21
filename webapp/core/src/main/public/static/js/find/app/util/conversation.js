@@ -15,7 +15,7 @@
 define([
     'jquery',
     'underscore',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'find/idol/app/util/html',
     'find/app/util/chart',
     'find/app/util/url-manipulator',

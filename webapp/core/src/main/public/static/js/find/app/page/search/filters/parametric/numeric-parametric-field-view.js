@@ -33,7 +33,7 @@ define([
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-numeric-input.html',
     'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-date-input.html',
     'text!find/templates/app/page/loading-spinner.html',
-    'i18n!find/nls/bundle'
+    'find/nls/bundle'
 ], function(_, $, Backbone, moment, vent, FindBaseCollection, NumericFieldDetailsModel,
             DateFieldDetailsModel, calibrateBuckets, rounder, numericWidget,
             BucketedNumericParametricCollection, BucketedDateParametricCollection, datePicker,

@@ -20,7 +20,7 @@ define([
     'find/app/page/search/search-tab-item-view',
     'find/app/vent',
     'js-whatever/js/list-view',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/search/tabbed-search-view.html',
     'text!find/templates/app/page/search/saved-search-dropdown.html'
 ], function(_, $, Backbone, configuration, TabItemView, vent, ListView, i18n, template, savedSearchDropdownTemplate) {

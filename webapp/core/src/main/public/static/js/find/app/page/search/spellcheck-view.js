@@ -15,7 +15,7 @@
 define([
     'jquery',
     'backbone',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/search/spellcheck-view.html',
     'underscore'
 ], function($, Backbone, i18n, template, _) {

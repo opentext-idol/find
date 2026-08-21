@@ -20,7 +20,7 @@ define([
     'find/app/page/search/input-view',
     'find/app/page/search/input-view-concept-strategy',
     'find/app/util/filtering-collection',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'js-whatever/js/list-view',
     'text!find/templates/app/page/search/concept-view.html'
 ], function(_, $, AbstractSectionView, ConceptClusterView, InputView, conceptStrategy, FilteringCollection,

@@ -18,7 +18,7 @@ define([
     'backbone',
     'dropzone',
     'find/app/page/customizations/asset-viewer',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/templates/app/page/customizations/asset-widget.html'
 ], function(_, $, Backbone, Dropzone, AssetViewer, i18n, template) {
     'use strict';

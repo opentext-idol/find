@@ -15,7 +15,7 @@
 define([
     'underscore',
     './updating-widget',
-    'i18n!find/nls/bundle',
+    'find/nls/bundle',
     'text!find/idol/templates/page/dashboards/widgets/time-last-refreshed-widget.html',
     'moment-timezone-with-data'
 ], function(_, UpdatingWidget, i18n, template, moment) {
