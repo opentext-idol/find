@@ -12,31 +12,27 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    './saved-search-widget',
-    'find/app/model/documents-collection',
-    'js-whatever/js/list-view',
-    'js-whatever/js/list-item-view',
-    'text!find/idol/templates/page/dashboards/widgets/results-list-widget-item-view.html'
-], function(_, $, SavedSearchWidget, DocumentsCollection, ListView,
-            ListItemView, resultsListTemplateItemView) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const SavedSearchWidget = require('./saved-search-widget');
+const DocumentsCollection = require('find/app/model/documents-collection');
+const ListView = require('js-whatever/js/list-view');
+const ListItemView = require('js-whatever/js/list-item-view');
+const resultsListTemplateItemView = require('find/idol/templates/page/dashboards/widgets/results-list-widget-item-view.html');
 
-    function hideOverflow() {
-        const containerBounds = this.listView.el.getBoundingClientRect();
+function hideOverflow() {
+    const containerBounds = this.listView.el.getBoundingClientRect();
 
-        this.$('.search-result').each(function(index, element) {
-            const boundingClientRect = element.getBoundingClientRect();
-            $(element).toggleClass('in-view',
-                this.columnLayout
-                    ? boundingClientRect.right < containerBounds.right
-                    : boundingClientRect.bottom < containerBounds.bottom);
-        }.bind(this));
-    }
+    this.$('.search-result').each(function(index, element) {
+        const boundingClientRect = element.getBoundingClientRect();
+        $(element).toggleClass('in-view',
+            this.columnLayout
+                ? boundingClientRect.right < containerBounds.right
+                : boundingClientRect.bottom < containerBounds.bottom);
+    }.bind(this));
+}
 
-    return SavedSearchWidget.extend({
+module.exports = SavedSearchWidget.extend({
         viewType: 'list',
 
         initialize: function(options) {
@@ -113,4 +109,4 @@ define([
             }
         }
     });
-});
+

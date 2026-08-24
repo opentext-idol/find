@@ -12,14 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/page/search/suggest/suggest-view',
-    'find/idol/app/page/search/results/idol-results-view',
-    'find/idol/app/page/search/results/idol-results-view-augmentation'
-], function(SuggestView, ResultsView, ResultsViewAugmentation) {
-    'use strict';
+const SuggestView = require('find/app/page/search/suggest/suggest-view');
+const ResultsView = require('find/idol/app/page/search/results/idol-results-view');
+const ResultsViewAugmentation = require('find/idol/app/page/search/results/idol-results-view-augmentation');
 
-    return SuggestView.extend({
+module.exports = SuggestView.extend({
         ResultsView: ResultsView,
         ResultsViewAugmentation: ResultsViewAugmentation,
 
@@ -27,4 +24,4 @@ define([
             return indexesCollection.pluck('id')
         }
     });
-});
+

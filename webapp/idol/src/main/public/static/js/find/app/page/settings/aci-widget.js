@@ -12,16 +12,13 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'settings/js/widgets/aci-widget',
-    'text!find/templates/app/page/settings/widget.html',
-    'text!find/templates/app/page/settings/server-widget.html',
-    'text!find/templates/app/page/settings/aci-widget.html',
-    'underscore'
-], function(AciWidget, widgetTemplate, serverTemplate, aciTemplate, _) {
-    'use strict';
+const AciWidget = require('settings/js/widgets/aci-widget');
+const widgetTemplate = require('find/templates/app/page/settings/widget.html');
+const serverTemplate = require('find/templates/app/page/settings/server-widget.html');
+const aciTemplate = require('find/templates/app/page/settings/aci-widget.html');
+const _ = require('underscore');
 
-    return AciWidget.extend({
+module.exports = AciWidget.extend({
         className: 'panel-group',
         controlGroupClass: 'form-group',
         formControlClass: 'form-control',
@@ -32,4 +29,4 @@ define([
         serverTemplate: _.template(serverTemplate),
         widgetTemplate: _.template(widgetTemplate)
     });
-});
+

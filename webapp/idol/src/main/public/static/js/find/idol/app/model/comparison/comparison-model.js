@@ -12,61 +12,58 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'find/app/util/search-data-util',
-    'find/app/model/saved-searches/saved-search-model',
-    'underscore'
-], function(Backbone, searchDataUtil, SavedSearchModel, _) {
-    'use strict';
+const Backbone = require('backbone');
+const searchDataUtil = require('find/app/util/search-data-util');
+const SavedSearchModel = require('find/app/model/saved-searches/saved-search-model');
+const _ = require('underscore');
 
-    var getComparisonAttributesFromSavedSearch = function(savedSearchModel, prefix) {
-        var data = {};
+var getComparisonAttributesFromSavedSearch = function(savedSearchModel, prefix) {
+    var data = {};
 
-        data[prefix + 'Text'] = searchDataUtil.makeQueryText(savedSearchModel.get('relatedConcepts'));
+    data[prefix + 'Text'] = searchDataUtil.makeQueryText(savedSearchModel.get('relatedConcepts'));
 
-        if(savedSearchModel.get('type') === SavedSearchModel.Type.SNAPSHOT) {
-            data[prefix + 'QueryStateToken'] = _.first(savedSearchModel.get('queryStateTokens'));
-        } else {
-            data[prefix + 'Restrictions'] = searchDataUtil.buildQuery(savedSearchModel);
-        }
+    if(savedSearchModel.get('type') === SavedSearchModel.Type.SNAPSHOT) {
+        data[prefix + 'QueryStateToken'] = _.first(savedSearchModel.get('queryStateTokens'));
+    } else {
+        data[prefix + 'Restrictions'] = searchDataUtil.buildQuery(savedSearchModel);
+    }
 
-        return data;
-    };
+    return data;
+};
 
-    var ComparisonModel = Backbone.Model.extend({
-        url: 'api/bi/comparison/compare',
+var ComparisonModel = Backbone.Model.extend({
+    url: 'api/bi/comparison/compare',
 
-        parse: function(response) {
-            return {
-                bothText: '(' + this.get('firstText') + ') OR (' + this.get('secondText') + ')',
+    parse: function(response) {
+        return {
+            bothText: '(' + this.get('firstText') + ') OR (' + this.get('secondText') + ')',
 
-                inBoth: {
-                    stateMatchIds: _.compact([response.firstQueryStateToken, response.secondQueryStateToken]),
-                    stateDontMatchIds: _.compact([response.documentsOnlyInFirstStateToken, response.documentsOnlyInSecondStateToken])
-                },
+            inBoth: {
+                stateMatchIds: _.compact([response.firstQueryStateToken, response.secondQueryStateToken]),
+                stateDontMatchIds: _.compact([response.documentsOnlyInFirstStateToken, response.documentsOnlyInSecondStateToken])
+            },
 
-                onlyInFirst: {
-                    stateMatchIds: _.compact([response.firstQueryStateToken]),
-                    stateDontMatchIds: _.compact([response.secondQueryStateToken])
-                },
+            onlyInFirst: {
+                stateMatchIds: _.compact([response.firstQueryStateToken]),
+                stateDontMatchIds: _.compact([response.secondQueryStateToken])
+            },
 
-                onlyInSecond: {
-                    stateMatchIds: _.compact([response.secondQueryStateToken]),
-                    stateDontMatchIds: _.compact([response.firstQueryStateToken])
-                }
-            };
-        }
-    }, {
-        fromModels: function(primaryModel, secondaryModel) {
-            var comparisonModelAttributes = {};
+            onlyInSecond: {
+                stateMatchIds: _.compact([response.secondQueryStateToken]),
+                stateDontMatchIds: _.compact([response.firstQueryStateToken])
+            }
+        };
+    }
+}, {
+    fromModels: function(primaryModel, secondaryModel) {
+        var comparisonModelAttributes = {};
 
-            _.extend(comparisonModelAttributes, getComparisonAttributesFromSavedSearch(primaryModel, 'first'));
-            _.extend(comparisonModelAttributes, getComparisonAttributesFromSavedSearch(secondaryModel, 'second'));
+        _.extend(comparisonModelAttributes, getComparisonAttributesFromSavedSearch(primaryModel, 'first'));
+        _.extend(comparisonModelAttributes, getComparisonAttributesFromSavedSearch(secondaryModel, 'second'));
 
-            return new ComparisonModel(comparisonModelAttributes);
-        }
-    });
-
-    return ComparisonModel;
+        return new ComparisonModel(comparisonModelAttributes);
+    }
 });
+
+module.exports = ComparisonModel;
+

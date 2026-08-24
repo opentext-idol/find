@@ -12,11 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore'
-], function(_) {
+const _ = require('underscore');
 
-    return function(fieldId, value, options) {
+module.exports = function(fieldId, value, options) {
         const hasField = !!_.find(this.fields, function(field) {
             return field.id === fieldId && _.contains(field.values, value);
         });
@@ -24,5 +22,4 @@ define([
         return hasField ? options.fn(this) : options.inverse(this);
     };
 
-});
 

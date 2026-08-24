@@ -12,62 +12,60 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'moment',
-    'find/app/model/find-base-collection'
-], function(_, moment, FindBaseCollection) {
-    'use strict';
+const _ = require('underscore');
+const moment = require('moment');
+const FindBaseCollection = require('find/app/model/find-base-collection');
 
-    function numericRangeForQuery(absoluteRange) {
-        if(!absoluteRange.min) {
-            absoluteRange.min = 0;
-        }
-
-        if(!absoluteRange.max) {
-            absoluteRange.max = 0;
-        }
-
-        return absoluteRange.max === absoluteRange.min
-            // The current max must always be greater than the current min for bars to be visible
-            // on the widgets. If there is only one value for the field, the absolute max will equal
-            // the absolute min. In this case, default to a range spanning 1 around this value.
-            ? {
-                min: absoluteRange.min - 0.5,
-                max: absoluteRange.min + 0.5
-            }
-            // It is not possible to specify inclusive upper ranges when fetching parametric values from IDOL.
-            : {
-                min: absoluteRange.min,
-                // To display the extreme values, default to a range 1% larger than the data.
-                max: absoluteRange.max + 0.01 * (absoluteRange.max - absoluteRange.min)
-            };
+function numericRangeForQuery(absoluteRange) {
+    if(!absoluteRange.min) {
+        absoluteRange.min = 0;
     }
 
-    function dateRangeForQuery(absoluteRange) {
-        return absoluteRange.max.isSame && absoluteRange.max.isSame(absoluteRange.min)
-            // The current max must always be greater than the current min for bars to be visible
-            // on the widgets. If there is only one value for the field, the absolute max will equal
-            // the absolute min. In this case, default to a range spanning 1 day around this value.
-            ? {
-                min: absoluteRange.min.subtract(12, 'hour').utc().milliseconds(0),
-                max: absoluteRange.max.add(12, 'hour').utc().milliseconds(0)
-            }
-            // It is not possible to specify inclusive upper ranges when fetching parametric values from IDOL.
-            : {
-                min: absoluteRange.min,
-                // To display the extreme values, default to a range 1% larger than the data.
-                max: absoluteRange.max.add(0.01 * absoluteRange.max.diff(absoluteRange.min, 'second'), 'second')
-            };
+    if(!absoluteRange.max) {
+        absoluteRange.max = 0;
     }
 
-    /**
-     * Attributes:
-     * @property currentMin, currentMax The current range displayed on numeric/date widgets; null if
-     *                                  they haven't been modified since min and max were last
-     *                                  updated
-     */
-    return FindBaseCollection.extend({
+    return absoluteRange.max === absoluteRange.min
+        // The current max must always be greater than the current min for bars to be visible
+        // on the widgets. If there is only one value for the field, the absolute max will equal
+        // the absolute min. In this case, default to a range spanning 1 around this value.
+        ? {
+            min: absoluteRange.min - 0.5,
+            max: absoluteRange.min + 0.5
+        }
+        // It is not possible to specify inclusive upper ranges when fetching parametric values from IDOL.
+        : {
+            min: absoluteRange.min,
+            // To display the extreme values, default to a range 1% larger than the data.
+            max: absoluteRange.max + 0.01 * (absoluteRange.max - absoluteRange.min)
+        };
+}
+
+function dateRangeForQuery(absoluteRange) {
+    return absoluteRange.max.isSame && absoluteRange.max.isSame(absoluteRange.min)
+        // The current max must always be greater than the current min for bars to be visible
+        // on the widgets. If there is only one value for the field, the absolute max will equal
+        // the absolute min. In this case, default to a range spanning 1 day around this value.
+        ? {
+            min: absoluteRange.min.subtract(12, 'hour').utc().milliseconds(0),
+            max: absoluteRange.max.add(12, 'hour').utc().milliseconds(0)
+        }
+        // It is not possible to specify inclusive upper ranges when fetching parametric values from IDOL.
+        : {
+            min: absoluteRange.min,
+            // To display the extreme values, default to a range 1% larger than the data.
+            max: absoluteRange.max.add(0.01 * absoluteRange.max.diff(absoluteRange.min, 'second'), 'second')
+        };
+}
+
+/**
+ * Attributes:
+ * @property currentMin, currentMax The current range displayed on numeric/date widgets; null if
+ *                                  they haven't been modified since min and max were last
+ *                                  updated
+ */
+
+module.exports = FindBaseCollection.extend({
         url: 'api/public/fields/parametric',
 
         parse: function(response) {
@@ -139,4 +137,4 @@ define([
             }
         })
     });
-});
+

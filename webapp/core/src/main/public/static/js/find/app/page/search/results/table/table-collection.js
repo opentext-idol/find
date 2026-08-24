@@ -12,16 +12,13 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'find/app/model/dependent-parametric-collection'
-], function (_, DependentParametricCollection) {
-    'use strict';
+const _ = require('underscore');
+const DependentParametricCollection = require('find/app/model/dependent-parametric-collection');
 
-    // As this is mixed case, it can't match an IDOL field or a HOD field
-    const NONE_COLUMN = 'defaultColumn';
+// As this is mixed case, it can't match an IDOL field or a HOD field
+const NONE_COLUMN = 'defaultColumn';
 
-    return DependentParametricCollection.extend({
+module.exports = DependentParametricCollection.extend({
         parse: function (data) {
             this.columnNames = _.chain(data)
                 // take all the field arrays
@@ -71,4 +68,4 @@ define([
     }, {
         noneColumn: NONE_COLUMN
     });
-});
+

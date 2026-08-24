@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/nls/bundle',
-    'text!find/idol/templates/page/dashboards/widget.html'
-], function(_, Backbone, i18n, template) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const template = require('find/idol/templates/page/dashboards/widget.html');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         clickable: false,
         template: _.template(template),
 
@@ -62,4 +59,4 @@ define([
             return this.$content.width();
         }
     });
-});
+

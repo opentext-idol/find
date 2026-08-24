@@ -12,12 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone'
-], function(Backbone) {
-    'use strict';
+const Backbone = require('backbone');
 
-    return Backbone.Model.extend({
+module.exports = Backbone.Model.extend({
         defaults: {
             count: 0,
             complete: false,
@@ -28,4 +25,4 @@ define([
             this.set('count', this.get('count') + 1);
         }
     });
-});
+

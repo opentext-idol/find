@@ -12,29 +12,26 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/app/model/parametric-collection',
-    'find/app/util/filtering-collection',
-], function(_, Backbone, ParametricCollection, FilteringCollection) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const ParametricCollection = require('find/app/model/parametric-collection');
+const FilteringCollection = require('find/app/util/filtering-collection');
 
-    function filterPredicate(fieldPredicate) {
-        return (model, filterModel) => {
-            if (!fieldPredicate(model)) {
-                return false;
-            }
-            const searchText = filterModel && filterModel.get('text');
-            return !searchText || searchMatches(model.get('displayName'), searchText);
+function filterPredicate(fieldPredicate) {
+    return (model, filterModel) => {
+        if (!fieldPredicate(model)) {
+            return false;
         }
+        const searchText = filterModel && filterModel.get('text');
+        return !searchText || searchMatches(model.get('displayName'), searchText);
     }
+}
 
-    function searchMatches(text, search) {
-        return text.toLowerCase().indexOf(search.toLowerCase()) > -1;
-    }
+function searchMatches(text, search) {
+    return text.toLowerCase().indexOf(search.toLowerCase()) > -1;
+}
 
-    return FilteringCollection.extend({
+module.exports = FilteringCollection.extend({
         initialize: function(models, options) {
             this.queryModel = options.queryModel;
             this.parametricCollection = options.parametricCollection;
@@ -105,4 +102,4 @@ define([
             this.trigger('sync');
         }
     });
-});
+

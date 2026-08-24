@@ -11,14 +11,11 @@
  * liable for technical or editorial errors or omissions contained herein. The
  * information contained herein is subject to change without notice.
  */
-define([
-    'js-whatever/js/substitution'
-], function(substitution) {
-    'use strict';
+const substitution = require('js-whatever/js/substitution');
 
-    return substitution({
+module.exports = substitution({
         // en-GB translation goes here
         'app.customizations': 'Customisations',
         'customizations.error.DIRECTORY_ERROR': 'An error occurred creating the customisations directory',
     });
-});
+

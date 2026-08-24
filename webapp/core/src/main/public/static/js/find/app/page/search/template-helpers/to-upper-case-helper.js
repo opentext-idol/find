@@ -12,12 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore'
-], function(_) {
+const _ = require('underscore');
 
-    return function(value) {
+module.exports = function(value) {
         return value && String(value).toUpperCase();
     };
 
-});

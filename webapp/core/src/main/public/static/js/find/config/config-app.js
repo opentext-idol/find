@@ -12,19 +12,16 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'find/app/page/find-settings-page',
-    'js-whatever/js/empty-navbar',
-    'find/app/util/test-browser',
-    'find/nls/bundle',
-    'text!find/templates/config/config.html',
-    'text!find/templates/config/empty-navbar.html'
-], function(_, $, SettingsPage, EmptyNavbar, testBrowser, i18n, template, emptyNavbar) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const SettingsPage = require('find/app/page/find-settings-page');
+const EmptyNavbar = require('js-whatever/js/empty-navbar');
+const testBrowser = require('find/app/util/test-browser');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/config/config.html');
+const emptyNavbar = require('find/templates/config/empty-navbar.html');
 
-    return function() {
+module.exports = function() {
         $.ajaxSetup({cache: false});
 
         const $page = $('.page');
@@ -64,4 +61,4 @@ define([
 
         testBrowser();
     };
-});
+

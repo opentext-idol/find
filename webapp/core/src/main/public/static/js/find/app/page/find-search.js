@@ -12,108 +12,100 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'js-whatever/js/base-page',
-    'find/app/configuration',
-    'find/app/model/dates-filter-model',
-    'find/app/model/geography-model',
-    'find/app/model/document-selection-model',
-    'find/app/model/query-model',
-    './search/document-renderer',
-    'parametric-refinement/selected-values-collection',
-    'find/app/model/documents-collection',
-    'find/app/page/search/input-view',
-    'find/app/page/search/input-view-query-text-strategy',
-    'find/app/page/search/tabbed-search-view',
-    'find/app/util/merge-collection',
-    'find/app/model/saved-searches/saved-search-model',
-    'find/app/page/search/query-middle-column-header-view',
-    'find/app/model/min-score-model',
-    'find/app/model/query-text-model',
-    'find/app/model/document-model',
-    'find/app/page/search/document-content-view',
-    'find/app/page/search/document/document-detail-content-view',
-    'find/app/page/search/results/query-strategy',
-    'find/app/page/search/related-concepts/related-concepts-click-handlers',
-    'find/app/util/database-name-resolver',
-    'find/app/util/saved-query-result-poller',
-    'find/app/util/events',
-    'find/app/router',
-    'find/app/vent',
-    'find/nls/bundle',
-    'text!find/templates/app/page/find-search.html'
-], function(_, $, Backbone, BasePage, config, DatesFilterModel, GeographyModel,
-            DocumentSelectionModel, QueryModel, DocumentRenderer, SelectedParametricValuesCollection,
-            DocumentsCollection, InputView, queryTextStrategy, TabbedSearchView, MergeCollection,
-            SavedSearchModel, QueryMiddleColumnHeaderView, MinScoreModel, QueryTextModel, DocumentModel,
-            DocumentContentView, DocumentDetailContentView, queryStrategy, relatedConceptsClickHandlers, databaseNameResolver,
-            SavedQueryResultPoller, events, router, vent, i18n, template) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const BasePage = require('js-whatever/js/base-page');
+const config = require('find/app/configuration');
+const DatesFilterModel = require('find/app/model/dates-filter-model');
+const GeographyModel = require('find/app/model/geography-model');
+const DocumentSelectionModel = require('find/app/model/document-selection-model');
+const QueryModel = require('find/app/model/query-model');
+const DocumentRenderer = require('./search/document-renderer');
+const SelectedParametricValuesCollection = require('parametric-refinement/selected-values-collection');
+const DocumentsCollection = require('find/app/model/documents-collection');
+const InputView = require('find/app/page/search/input-view');
+const queryTextStrategy = require('find/app/page/search/input-view-query-text-strategy');
+const TabbedSearchView = require('find/app/page/search/tabbed-search-view');
+const MergeCollection = require('find/app/util/merge-collection');
+const SavedSearchModel = require('find/app/model/saved-searches/saved-search-model');
+const QueryMiddleColumnHeaderView = require('find/app/page/search/query-middle-column-header-view');
+const MinScoreModel = require('find/app/model/min-score-model');
+const QueryTextModel = require('find/app/model/query-text-model');
+const DocumentModel = require('find/app/model/document-model');
+const DocumentContentView = require('find/app/page/search/document-content-view');
+const DocumentDetailContentView = require('find/app/page/search/document/document-detail-content-view');
+const queryStrategy = require('find/app/page/search/results/query-strategy');
+const relatedConceptsClickHandlers = require('find/app/page/search/related-concepts/related-concepts-click-handlers');
+const databaseNameResolver = require('find/app/util/database-name-resolver');
+const SavedQueryResultPoller = require('find/app/util/saved-query-result-poller');
+const events = require('find/app/util/events');
+const router = require('find/app/router');
+const vent = require('find/app/vent');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/find-search.html');
 
-    const reducedClasses = 'reverse-animated-container col-md-offset-1 ' +
-        'col-lg-offset-2 col-xs-12 col-sm-12 col-md-10 col-lg-8';
-    const expandedClasses = 'animated-container col-sm-offset-0 col-md-offset-3 ' +
-        'col-lg-offset-3 col-md-6 col-lg-6 col-xs-9 col-sm-9';
+const reducedClasses = 'reverse-animated-container col-md-offset-1 ' +
+    'col-lg-offset-2 col-xs-12 col-sm-12 col-md-10 col-lg-8';
+const expandedClasses = 'animated-container col-sm-offset-0 col-md-offset-3 ' +
+    'col-lg-offset-3 col-md-6 col-lg-6 col-xs-9 col-sm-9';
 
-    const html = _.template(template)({i18n: i18n});
+const html = _.template(template)({i18n: i18n});
 
-    const configuration = config();
-    const defaultDeselectedDatabases = _.map(configuration && configuration.uiCustomization &&
-        configuration.uiCustomization.defaultDeselectedDatabases || []);
+const configuration = config();
+const defaultDeselectedDatabases = _.map(configuration && configuration.uiCustomization &&
+    configuration.uiCustomization.defaultDeselectedDatabases || []);
 
-    const dbSelectMap = _.reduce(defaultDeselectedDatabases, function(acc, val){
-        acc[val.toLowerCase()] = false;
-        return acc;
-    }, {})
+const dbSelectMap = _.reduce(defaultDeselectedDatabases, function(acc, val){
+    acc[val.toLowerCase()] = false;
+    return acc;
+}, {})
 
-    function selectInitialIndexes(indexesCollection) {
-        const privateIndexes = indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
-        const selectedIndexes = privateIndexes.length > 0
-            ? privateIndexes
-            : indexesCollection.models;
+function selectInitialIndexes(indexesCollection) {
+    const privateIndexes = indexesCollection.reject({domain: 'PUBLIC_INDEXES'});
+    const selectedIndexes = privateIndexes.length > 0
+        ? privateIndexes
+        : indexesCollection.models;
 
-        return _.map(selectedIndexes, function(indexModel) {
-            return indexModel.pick('domain', 'name');
-        });
-    }
+    return _.map(selectedIndexes, function(indexModel) {
+        return indexModel.pick('domain', 'name');
+    });
+}
 
-    function filterInitialIndexes(indexes) {
-        return defaultDeselectedDatabases.length ? _.filter(indexes, function(index){
-            return !_.has(dbSelectMap, index.name.toLowerCase());
-        }) : indexes;
-    }
+function filterInitialIndexes(indexes) {
+    return defaultDeselectedDatabases.length ? _.filter(indexes, function(index){
+        return !_.has(dbSelectMap, index.name.toLowerCase());
+    }) : indexes;
+}
 
-    const navFilterToSelectedParametricValues = (parametricFieldsCollection, navFilter) => {
-        const filters = [];
-        const fieldsById = _.groupBy(
-            parametricFieldsCollection.where({ type: 'Parametric' }),
-            attrs => attrs.id.toLowerCase());
+const navFilterToSelectedParametricValues = (parametricFieldsCollection, navFilter) => {
+    const filters = [];
+    const fieldsById = _.groupBy(
+        parametricFieldsCollection.where({ type: 'Parametric' }),
+        attrs => attrs.id.toLowerCase());
 
-        _.each(navFilter, (filterValues, filterName) => {
-            const field = (fieldsById[filterName.toLowerCase()] || [])[0];
-            if (!field) {
-                console.error('navigated parametric field not found ' +
-                    '(numeric fields are not supported): ' + filterName);
-                return;
-            }
+    _.each(navFilter, (filterValues, filterName) => {
+        const field = (fieldsById[filterName.toLowerCase()] || [])[0];
+        if (!field) {
+            console.error('navigated parametric field not found ' +
+                '(numeric fields are not supported): ' + filterName);
+            return;
+        }
 
-            _.each(filterValues, value => {
-                filters.push({
-                    type: 'Parametric',
-                    field: field.get('id'),
-                    displayName: field.get('displayName'),
-                    value: value.toUpperCase(),
-                    displayValue: value.toUpperCase()
-                });
-            })
-        });
-        return filters;
-    };
+        _.each(filterValues, value => {
+            filters.push({
+                type: 'Parametric',
+                field: field.get('id'),
+                displayName: field.get('displayName'),
+                value: value.toUpperCase(),
+                displayValue: value.toUpperCase()
+            });
+        })
+    });
+    return filters;
+};
 
-    return BasePage.extend({
+module.exports = BasePage.extend({
         className: 'search-page',
         template: _.template(template),
 
@@ -762,4 +754,4 @@ define([
             }
         }
     });
-});
+

@@ -12,18 +12,15 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/app/vent',
-    'find/app/page/search/results/suggest-strategy',
-    'find/app/model/similar-documents-collection',
-    'find/nls/bundle',
-    'text!find/templates/app/page/search/suggest/suggest-view.html'
-], function(_, Backbone, vent, suggestStrategy, SimilarDocumentsCollection, i18n, template) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const vent = require('find/app/vent');
+const suggestStrategy = require('find/app/page/search/results/suggest-strategy');
+const SimilarDocumentsCollection = require('find/app/model/similar-documents-collection');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/search/suggest/suggest-view.html');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         // Abstract
@@ -91,4 +88,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

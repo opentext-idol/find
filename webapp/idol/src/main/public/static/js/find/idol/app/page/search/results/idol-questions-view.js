@@ -12,26 +12,23 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/idol/app/util/html',
-    'find/idol/app/model/answer-bank/idol-answered-questions-collection',
-    'js-whatever/js/list-view',
-    'text!find/templates/app/page/search/results/questions-container.html',
-    'find/nls/bundle'
-], function(_, $, Backbone, HtmlUtil, AnsweredQuestionsCollection, ListView, questionsTemplate, i18n) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const HtmlUtil = require('find/idol/app/util/html');
+const AnsweredQuestionsCollection = require('find/idol/app/model/answer-bank/idol-answered-questions-collection');
+const ListView = require('js-whatever/js/list-view');
+const questionsTemplate = require('find/templates/app/page/search/results/questions-container.html');
+const i18n = require('find/nls/bundle');
 
-    const MAX_SIZE = 1;
-    const CROPPED_SUMMARY_CHAR_LENGTH = 300;
+const MAX_SIZE = 1;
+const CROPPED_SUMMARY_CHAR_LENGTH = 300;
 
-    function isLink(value) {
-        return value && /^\s*https?:\/\/.+/.exec(value);
-    }
+function isLink(value) {
+    return value && /^\s*https?:\/\/.+/.exec(value);
+}
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         events: {
             'click .read-more': function(e) {
                 const $target = $(e.currentTarget);
@@ -119,4 +116,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

@@ -12,24 +12,21 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    './filter-view',
-    './selected-concepts/concept-view',
-    'find/app/model/applied-filters-collection',
-    'find/app/page/search/filter-display/applied-filters-view',
-    'find/nls/bundle'
-], function(_, Backbone, FilterView, ConceptView, AppliedFiltersCollection, AppliedFiltersView,
-            i18n) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const FilterView = require('./filter-view');
+const ConceptView = require('./selected-concepts/concept-view');
+const AppliedFiltersCollection = require('find/app/model/applied-filters-collection');
+const AppliedFiltersView = require('find/app/page/search/filter-display/applied-filters-view');
+const i18n = require('find/nls/bundle');
 
-    /**
-     * View for displaying the filters currently applied to the search.
-     *
-     * Expected constructor arguments: queryState, indexesCollection
-     */
-    return Backbone.View.extend({
+/**
+ * View for displaying the filters currently applied to the search.
+ *
+ * Expected constructor arguments: queryState, indexesCollection
+ */
+
+module.exports = Backbone.View.extend({
         // Abstract
         IndexesView: null,
 
@@ -76,4 +73,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

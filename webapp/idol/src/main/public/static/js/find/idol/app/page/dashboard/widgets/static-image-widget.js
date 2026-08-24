@@ -12,14 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'jquery',
-    './widget',
-    'html2canvas'
-], function($, Widget, html2canvas) {
-    'use strict';
+const $ = require('jquery');
+const Widget = require('./widget');
+const html2canvas = require('html2canvas');
 
-    return Widget.extend({
+module.exports = Widget.extend({
         initialize: function(options) {
             Widget.prototype.initialize.apply(this, arguments);
             this.url = this.widgetSettings.url;
@@ -64,4 +61,4 @@ define([
             });
         }
     });
-});
+

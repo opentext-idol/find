@@ -12,33 +12,30 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'js-whatever/js/base-page',
-    'find/app/page/customizations/asset-widget',
-    'find/nls/bundle',
-    'text!find/templates/app/page/customizations-page.html'
-], function(_, $, BasePage, AssetWidget, i18n, template) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const BasePage = require('js-whatever/js/base-page');
+const AssetWidget = require('find/app/page/customizations/asset-widget');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/customizations-page.html');
 
-    // matches the AssetType enum on the server
-    const ASSET_TYPES = {
-        bigLogo: {
-            defaultImage: '/img/Find_Logo_lge.png',
-            height: 45,
-            type: 'BIG_LOGO',
-            width: 135
-        },
-        smallLogo: {
-            defaultImage: '/img/Find_Logo_sml.png',
-            height: 22,
-            type: 'SMALL_LOGO',
-            width: 144
-        }
-    };
+// matches the AssetType enum on the server
+const ASSET_TYPES = {
+    bigLogo: {
+        defaultImage: '/img/Find_Logo_lge.png',
+        height: 45,
+        type: 'BIG_LOGO',
+        width: 135
+    },
+    smallLogo: {
+        defaultImage: '/img/Find_Logo_sml.png',
+        height: 22,
+        type: 'SMALL_LOGO',
+        width: 144
+    }
+};
 
-    return BasePage.extend({
+module.exports = BasePage.extend({
         template: _.template(template),
 
         className: 'container-fluid',
@@ -91,4 +88,4 @@ define([
     }, {
         AssetTypes: ASSET_TYPES
     });
-});
+

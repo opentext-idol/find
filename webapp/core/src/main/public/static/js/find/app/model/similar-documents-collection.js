@@ -12,14 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'find/app/model/find-base-collection',
-    'find/app/model/document-model'
-], function(_, BaseCollection, DocumentModel) {
-    'use strict';
+const _ = require('underscore');
+const BaseCollection = require('find/app/model/find-base-collection');
+const DocumentModel = require('find/app/model/document-model');
 
-    return BaseCollection.extend({
+module.exports = BaseCollection.extend({
         url: 'api/public/search/similar-documents',
         model: DocumentModel,
 
@@ -28,4 +25,4 @@ define([
             return response.documents;
         }
     });
-});
+

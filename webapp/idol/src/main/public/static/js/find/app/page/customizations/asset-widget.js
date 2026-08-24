@@ -12,22 +12,19 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'dropzone',
-    'find/app/page/customizations/asset-viewer',
-    'find/nls/bundle',
-    'text!find/templates/app/page/customizations/asset-widget.html'
-], function(_, $, Backbone, Dropzone, AssetViewer, i18n, template) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const Dropzone = require('dropzone');
+const AssetViewer = require('find/app/page/customizations/asset-viewer');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/customizations/asset-widget.html');
 
-    const DEFAULT_MESSAGE = _.template('<i class="hp-icon hp-3x hp-document-upload"></i><p><%-message%></p>')({
-        message: i18n['dropzone.dictDefaultMessage']
-    });
+const DEFAULT_MESSAGE = _.template('<i class="hp-icon hp-3x hp-document-upload"></i><p><%-message%></p>')({
+    message: i18n['dropzone.dictDefaultMessage']
+});
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
 
         className: 'col-md-12 col-lg-4',
 
@@ -125,4 +122,4 @@ define([
             Backbone.View.prototype.remove.apply(this, arguments);
         }
     });
-});
+

@@ -12,24 +12,20 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/nls/bundle',
-    'find/idol/nls/comparisons',
-    'find/app/page/search/results/state-token-strategy',
-    'find/app/util/search-data-util',
-    'find/app/model/entity-collection',
-    'find/app/page/search/results/entity-topic-map-view',
-    'find/app/util/results-view-container',
-    'find/app/util/results-view-selection',
-    'find/app/configuration',
-    'text!find/idol/templates/comparison/topic-map-comparison-view.html'
-], function(_, Backbone, i18n, comparisonsI18n, stateTokenStrategy, searchDataUtil, EntityCollection,
-            TopicMapView, ResultsViewContainer, ResultsViewSelection, configuration, html) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const comparisonsI18n = require('find/idol/nls/comparisons');
+const stateTokenStrategy = require('find/app/page/search/results/state-token-strategy');
+const searchDataUtil = require('find/app/util/search-data-util');
+const EntityCollection = require('find/app/model/entity-collection');
+const TopicMapView = require('find/app/page/search/results/entity-topic-map-view');
+const ResultsViewContainer = require('find/app/util/results-view-container');
+const ResultsViewSelection = require('find/app/util/results-view-selection');
+const configuration = require('find/app/configuration');
+const html = require('find/idol/templates/comparison/topic-map-comparison-view.html');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         className: 'service-view-container',
 
         initialize: function(options) {
@@ -120,5 +116,5 @@ define([
                     .value()
             }, stateTokens));
         }
-    })
-});
+    });
+

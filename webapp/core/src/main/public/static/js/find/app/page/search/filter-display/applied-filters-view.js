@@ -12,45 +12,45 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'find/app/page/search/abstract-section-view',
-    'js-whatever/js/list-view',
-    'js-whatever/js/list-item-view',
-    'find/nls/bundle',
-    'text!find/templates/app/page/search/filter-display/applied-filters-view.html',
-    'text!find/templates/app/page/search/filter-display/applied-filters-view-item.html',
-    'bootstrap'
-], function(_, $, AbstractSectionView, ListView, ListItemView, i18n, template, itemTemplate) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const AbstractSectionView = require('find/app/page/search/abstract-section-view');
+const ListView = require('js-whatever/js/list-view');
+const ListItemView = require('js-whatever/js/list-item-view');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/search/filter-display/applied-filters-view.html');
+const itemTemplate = require('find/templates/app/page/search/filter-display/applied-filters-view-item.html');
 
-    const html = _.template(template)({i18n: i18n});
+// Loaded for side effects only - do not remove.
+require('bootstrap');
 
-    const removeAllButton = '<span class="inline clickable hyperlink text-muted remove-all-filters">' +
-        i18n["search.filters.removeAll"] + '</span>';
+const html = _.template(template)({i18n: i18n});
 
-    const FilterListItemView = ListItemView.extend({
-        render: function() {
-            ListItemView.prototype.render.apply(this);
+const removeAllButton = '<span class="inline clickable hyperlink text-muted remove-all-filters">' +
+    i18n["search.filters.removeAll"] + '</span>';
 
-            this.$tooltip = this.$('[data-toggle="tooltip"]');
+const FilterListItemView = ListItemView.extend({
+    render: function() {
+        ListItemView.prototype.render.apply(this);
 
-            this.$tooltip.tooltip({
-                container: 'body',
-                placement: 'bottom'
-            });
-        },
+        this.$tooltip = this.$('[data-toggle="tooltip"]');
 
-        remove: function() {
-            this.$tooltip.tooltip('destroy');
+        this.$tooltip.tooltip({
+            container: 'body',
+            placement: 'bottom'
+        });
+    },
 
-            ListItemView.prototype.remove.apply(this, arguments);
-        }
-    });
+    remove: function() {
+        this.$tooltip.tooltip('destroy');
 
-    // Each of the collection's models should have an id and a text attribute
-    return AbstractSectionView.extend({
+        ListItemView.prototype.remove.apply(this, arguments);
+    }
+});
+
+// Each of the collection's models should have an id and a text attribute
+
+module.exports = AbstractSectionView.extend({
         itemTemplate: _.template(itemTemplate),
 
         events: {
@@ -115,4 +115,4 @@ define([
             this.updateHeaderCounter();
         }
     });
-});
+

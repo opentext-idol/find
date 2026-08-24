@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'underscore',
-    'find/nls/bundle',
-    'text!find/templates/app/page/search/document/authors-tab.html'
-], function(Backbone, _, i18n, template) {
-    'use strict';
+const Backbone = require('backbone');
+const _ = require('underscore');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/search/document/authors-tab.html');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         render: function() {
@@ -30,4 +27,4 @@ define([
             }));
         }
     });
-});
+

@@ -12,19 +12,18 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/app/util/search-data-util',
-    'find/app/page/search/filters/parametric/parametric-select-modal-list-view',
-    './parametric-paginator',
-    'text!find/templates/app/page/search/filters/parametric/parametric-select-modal-view.html',
-    'iCheck'
-], function(_, $, Backbone, searchDataUtil, ParametricSelectModalListView, ParametricPaginator, template) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const searchDataUtil = require('find/app/util/search-data-util');
+const ParametricSelectModalListView = require('find/app/page/search/filters/parametric/parametric-select-modal-list-view');
+const ParametricPaginator = require('./parametric-paginator');
+const template = require('find/templates/app/page/search/filters/parametric/parametric-select-modal-view.html');
 
-    return Backbone.View.extend({
+// Loaded for side effects only - do not remove.
+require('iCheck');
+
+module.exports = Backbone.View.extend({
         template: _.template(template),
         className: 'full-height',
 
@@ -138,4 +137,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

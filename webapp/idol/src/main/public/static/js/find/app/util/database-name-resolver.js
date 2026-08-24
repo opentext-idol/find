@@ -12,11 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define(function() {
-    'use strict';
+//noinspection JSUnusedGlobalSymbols
 
-    //noinspection JSUnusedGlobalSymbols
-    return {
+module.exports = {
         resolveDatabaseNameForModel: function (model) {
             return encodeURIComponent(model.get('name'));
         },
@@ -39,5 +37,4 @@ define(function() {
             return databaseModel.get('name');
         }
     };
-    
-});
+

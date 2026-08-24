@@ -12,31 +12,28 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/app/configuration',
-    'find/app/page/search/search-tab-item-view',
-    'find/app/vent',
-    'js-whatever/js/list-view',
-    'find/nls/bundle',
-    'text!find/templates/app/page/search/tabbed-search-view.html',
-    'text!find/templates/app/page/search/saved-search-dropdown.html'
-], function(_, $, Backbone, configuration, TabItemView, vent, ListView, i18n, template, savedSearchDropdownTemplate) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const configuration = require('find/app/configuration');
+const TabItemView = require('find/app/page/search/search-tab-item-view');
+const vent = require('find/app/vent');
+const ListView = require('js-whatever/js/list-view');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/search/tabbed-search-view.html');
+const savedSearchDropdownTemplate = require('find/templates/app/page/search/saved-search-dropdown.html');
 
-    const html = _.template(template)({
-        i18n: i18n,
-        searchSharingEnabled: configuration().savedSearchConfig.sharingEnabled
-    });
-    const startNewSearchHtml = _.template('<li class="start-new-search m-t-xs m-l-sm m-r-sm" data-toggle="tooltip" data-placement="bottom" title="<%-i18n[\'search.newTab.tooltip\']%>"><a><i class="hp-icon hp-add"></i></a></li>')({i18n: i18n});
-    const shownTabsSelector = '.nav-tabs > li';
-    const menuTabsSelector = '.js-saved-searches-tabs-dropdown .dropdown-menu > li';
-    const savedSearchDropdown = _.template(savedSearchDropdownTemplate)({i18n:i18n});
-    const emptySharedSearchDropdown = _.template('<li class="js-no-shared-searches"><a class="no-shared-searches-message"><%-i18n["search.savedSearchControl.sharedByOthers.empty"]%></a></li>')({i18n:i18n});
+const html = _.template(template)({
+    i18n: i18n,
+    searchSharingEnabled: configuration().savedSearchConfig.sharingEnabled
+});
+const startNewSearchHtml = _.template('<li class="start-new-search m-t-xs m-l-sm m-r-sm" data-toggle="tooltip" data-placement="bottom" title="<%-i18n[\'search.newTab.tooltip\']%>"><a><i class="hp-icon hp-add"></i></a></li>')({i18n: i18n});
+const shownTabsSelector = '.nav-tabs > li';
+const menuTabsSelector = '.js-saved-searches-tabs-dropdown .dropdown-menu > li';
+const savedSearchDropdown = _.template(savedSearchDropdownTemplate)({i18n:i18n});
+const emptySharedSearchDropdown = _.template('<li class="js-no-shared-searches"><a class="no-shared-searches-message"><%-i18n["search.savedSearchControl.sharedByOthers.empty"]%></a></li>')({i18n:i18n});
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         events: {
             'click .search-tab': function(event) {
                 const $currentTarget = $(event.currentTarget);
@@ -211,4 +208,4 @@ define([
             }
         }
     });
-});
+

@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'underscore',
-    'jquery',
-    'find/nls/bundle'
-], function(Backbone, _, $, i18n) {
-    'use strict';
+const Backbone = require('backbone');
+const _ = require('underscore');
+const $ = require('jquery');
+const i18n = require('find/nls/bundle');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template('<i class="fa fa-share-alt m-r-sm js-share-with-button clickable" data-toggle="tooltip" data-username="<%-user%>"></i><span><%-user%></span>'),
         tagName: 'li',
 
@@ -36,4 +33,4 @@ define([
             });
         }
     });
-});
+

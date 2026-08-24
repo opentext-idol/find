@@ -12,12 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/nls/bundle'
-], function(i18n) {
+const i18n = require('find/nls/bundle');
 
-    return function(key) {
+module.exports = function(key) {
         return i18n[key];
     };
 
-});

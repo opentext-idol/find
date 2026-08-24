@@ -15,8 +15,7 @@
 /**
  * Return the type of a value (as a string, using JavaScript's `typeof`).
  */
-define(function () {
-    return function (obj) {
+module.exports = function (obj) {
         return typeof obj;
     };
-});
+

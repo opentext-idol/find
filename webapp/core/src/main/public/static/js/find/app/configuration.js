@@ -12,22 +12,19 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery'
-], function(_, $) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
 
-    let config;
+let config;
 
-    function parseBooleanOption(config, uiCustomization, option, defaultValue) {
-        const optionRules = uiCustomization.options[option] || defaultValue;
+function parseBooleanOption(config, uiCustomization, option, defaultValue) {
+    const optionRules = uiCustomization.options[option] || defaultValue;
 
-        return optionRules.user && !(config.hasBiRole && optionRules.bi === false) ||
-            optionRules.bi && config.hasBiRole;
-    }
+    return optionRules.user && !(config.hasBiRole && optionRules.bi === false) ||
+        optionRules.bi && config.hasBiRole;
+}
 
-    return function() {
+module.exports = function() {
         if(!config) {
             const configString = $('#config-json').text();
 
@@ -64,5 +61,5 @@ define([
         }
 
         return config;
-    }
-});
+    };
+

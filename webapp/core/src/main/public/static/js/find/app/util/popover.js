@@ -12,25 +12,26 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'find/nls/bundle',
-    'text!find/templates/app/page/loading-spinner.html',
-    'bootstrap'
-], function(_, $, i18n, loadingTemplate) {
+const _ = require('underscore');
+const $ = require('jquery');
+const i18n = require('find/nls/bundle');
+const loadingTemplate = require('find/templates/app/page/loading-spinner.html');
 
-    var smallLoadingTemplate = _.template(loadingTemplate)({i18n: i18n, large: false});
-    var initialContent = '<div class="popover-content-inner">' + smallLoadingTemplate + '</div>';
+// Loaded for side effects only - do not remove.
+require('bootstrap');
 
-    /**
-     * Add popovers to the given element(s). When the popover is inserted into the DOM, the callback will be called with
-     * the popover content element and the trigger element. A load indicator will be displayed in the content element
-     * until it is overwritten by the callback.
-     * @param {Jquery} $el
-     * @param {Function} callback
-     */
-    return function($el, trigger, callback, hideCallback) {
+var smallLoadingTemplate = _.template(loadingTemplate)({i18n: i18n, large: false});
+var initialContent = '<div class="popover-content-inner">' + smallLoadingTemplate + '</div>';
+
+/**
+ * Add popovers to the given element(s). When the popover is inserted into the DOM, the callback will be called with
+ * the popover content element and the trigger element. A load indicator will be displayed in the content element
+ * until it is overwritten by the callback.
+ * @param {Jquery} $el
+ * @param {Function} callback
+ */
+
+module.exports = function($el, trigger, callback, hideCallback) {
         $el.popover({
             content: initialContent,
             html: true,
@@ -60,4 +61,3 @@ define([
         });
     };
 
-});

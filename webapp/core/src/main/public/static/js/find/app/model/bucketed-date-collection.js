@@ -12,54 +12,51 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'moment',
-    'find/app/model/find-base-collection'
-], function(_, moment, FindBaseCollection) {
-    'use strict';
+const _ = require('underscore');
+const moment = require('moment');
+const FindBaseCollection = require('find/app/model/find-base-collection');
 
-    const URL_ROOT = 'api/public/parametric/date/buckets';
+const URL_ROOT = 'api/public/parametric/date/buckets';
 
-    const Model = FindBaseCollection.Model.extend({
-        urlRoot: URL_ROOT,
+const Model = FindBaseCollection.Model.extend({
+    urlRoot: URL_ROOT,
 
-        url: function() {
-            const base = this.collection
-                ? this.collection.url()
-                : URL_ROOT;
-            // Double encode since Spring doesn't like %2F in URLs
-            return this.isNew()
-                ? base
-                : base.replace(/[^\/]$/, '$&/') + encodeURIComponent(encodeURIComponent(this.id));
-        },
+    url: function() {
+        const base = this.collection
+            ? this.collection.url()
+            : URL_ROOT;
+        // Double encode since Spring doesn't like %2F in URLs
+        return this.isNew()
+            ? base
+            : base.replace(/[^\/]$/, '$&/') + encodeURIComponent(encodeURIComponent(this.id));
+    },
 
-        set: function() {
-            FindBaseCollection.Model.prototype.set.apply(this, arguments);
-        },
+    set: function() {
+        FindBaseCollection.Model.prototype.set.apply(this, arguments);
+    },
 
-        parse: function(response) {
-            return _.extend(response, {
-                min: moment(response.min),
-                max: moment(response.max),
-                values: _.map(response.values, function(value) {
-                    return _.extend(value, {
-                        min: moment(value.min),
-                        max: moment(value.max)
-                    });
-                })
-            });
-        },
+    parse: function(response) {
+        return _.extend(response, {
+            min: moment(response.min),
+            max: moment(response.max),
+            values: _.map(response.values, function(value) {
+                return _.extend(value, {
+                    min: moment(value.min),
+                    max: moment(value.max)
+                });
+            })
+        });
+    },
 
-        defaults: {
-            values: []
-        }
-    });
+    defaults: {
+        values: []
+    }
+});
 
-    return FindBaseCollection.extend({
+module.exports = FindBaseCollection.extend({
         url: URL_ROOT,
         model: Model
     }, {
         Model: Model
     });
-});
+

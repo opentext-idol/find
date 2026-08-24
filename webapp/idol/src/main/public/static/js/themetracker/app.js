@@ -12,17 +12,16 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'moment',
-    'themetracker/themetracker',
-    'bootstrap'
-], function(_, $, Backbone, moment, ThemeTracker) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const moment = require('moment');
+const ThemeTracker = require('themetracker/themetracker');
 
-    return Backbone.View.extend({
+// Loaded for side effects only - do not remove.
+require('bootstrap');
+
+module.exports = Backbone.View.extend({
         el: '.page',
 
         initialize: function(){
@@ -97,4 +96,4 @@ define([
             this.$date.text(now.format('ddd MMM Do YYYY'));
         }
     });
-});
+

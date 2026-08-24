@@ -12,74 +12,71 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone'
-], function(_, Backbone) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
 
-    function createFetch(prototype) {
-        // Fetch tracks in-flight requests and cancels them when a new one is run
-        return function(options) {
-            if(this.currentRequest) {
-                this.currentRequest.abort();
-            }
-
-            this.fetching = true;
-            this.error = false;
-
-            const error = options.error;
-            const success = options.success;
-
-            this.currentRequest = prototype.fetch.call(this, _.extend(options || {}, {
-                reset: _.isUndefined(options.reset) || options.reset,
-                error: _.bind(function() {
-                    this.currentRequest = null;
-                    this.error = true;
-                    this.fetching = false;
-
-                    if(error) {
-                        error.apply(options, arguments);
-                    }
-                }, this),
-                success: _.bind(function() {
-                    this.currentRequest = null;
-                    this.error = false;
-                    this.fetching = false;
-                    this.synced = true;
-
-                    if(success) {
-                        success.apply(options, arguments);
-                    }
-                }, this)
-            }));
-
-            return this.currentRequest;
-        };
-    }
-
-    const baseProperties = {
-        currentRequest: null,
-        error: false,
-        fetching: false,
-
-        sync: function(method, model, options) {
-            // Force "traditional" serialization of query parameters, e.g.
-            // index=foo&index=bar, for IOD multi-index support.
-            return Backbone.sync.call(this, method, model, _.extend(options, {
-                traditional: true
-            }));
+function createFetch(prototype) {
+    // Fetch tracks in-flight requests and cancels them when a new one is run
+    return function(options) {
+        if(this.currentRequest) {
+            this.currentRequest.abort();
         }
+
+        this.fetching = true;
+        this.error = false;
+
+        const error = options.error;
+        const success = options.success;
+
+        this.currentRequest = prototype.fetch.call(this, _.extend(options || {}, {
+            reset: _.isUndefined(options.reset) || options.reset,
+            error: _.bind(function() {
+                this.currentRequest = null;
+                this.error = true;
+                this.fetching = false;
+
+                if(error) {
+                    error.apply(options, arguments);
+                }
+            }, this),
+            success: _.bind(function() {
+                this.currentRequest = null;
+                this.error = false;
+                this.fetching = false;
+                this.synced = true;
+
+                if(success) {
+                    success.apply(options, arguments);
+                }
+            }, this)
+        }));
+
+        return this.currentRequest;
     };
+}
 
-    const Model = Backbone.Model.extend(_.extend({
-        fetch: createFetch(Backbone.Model.prototype)
-    }, baseProperties));
+const baseProperties = {
+    currentRequest: null,
+    error: false,
+    fetching: false,
 
-    return Backbone.Collection.extend(_.extend({
+    sync: function(method, model, options) {
+        // Force "traditional" serialization of query parameters, e.g.
+        // index=foo&index=bar, for IOD multi-index support.
+        return Backbone.sync.call(this, method, model, _.extend(options, {
+            traditional: true
+        }));
+    }
+};
+
+const Model = Backbone.Model.extend(_.extend({
+    fetch: createFetch(Backbone.Model.prototype)
+}, baseProperties));
+
+module.exports = Backbone.Collection.extend(_.extend({
         fetch: createFetch(Backbone.Collection.prototype),
         model: Model
     }, baseProperties), {
         Model: Model
     });
-});
+

@@ -12,12 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/nls/bundle'
-], function(i18n) {
-    'use strict';
+const i18n = require('find/nls/bundle');
 
-    return function(collection) {
+module.exports = function(collection) {
         return {
             inputClass: 'concepts-controls',
             placeholder: i18n['app.conceptBoxPlaceholder'],
@@ -40,5 +37,5 @@ define([
                 $button.removeClass('in-focus');
             }
         }
-    }
-});
+    };
+

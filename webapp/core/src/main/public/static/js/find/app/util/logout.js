@@ -12,14 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'jquery',
-    'underscore'
-], function($, _) {
-    'use strict';
+const $ = require('jquery');
+const _ = require('underscore');
 
-    // Logout is a POST request. This cannot be done with an href, so append a magic form to the body and submit it.
-    return function(url) {
+// Logout is a POST request. This cannot be done with an href, so append a magic form to the body and submit it.
+
+module.exports = function(url) {
         var $form = $(_.template('<form action="<%=url%>" method="post"></form>')({
             url: url
         }));
@@ -27,4 +25,4 @@ define([
         $('body').append($form);
         $form.submit();
     };
-});
+

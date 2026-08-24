@@ -12,19 +12,18 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'js-whatever/js/autoload'
-], function(Autoload) {
-    var Config = Autoload.extend({
+const Autoload = require('js-whatever/js/autoload');
 
-        autoload: false,
+var Config = Autoload.extend({
 
-        url: function(){
-            return /\bconfig$/.test(window.location.pathname)
-                ? 'api/config/config/config'
-                : 'api/admin/config/config';
-        }
-    });
+    autoload: false,
 
-    return new Config();
+    url: function(){
+        return /\bconfig$/.test(window.location.pathname)
+            ? 'api/config/config/config'
+            : 'api/admin/config/config';
+    }
 });
+
+module.exports = new Config();
+

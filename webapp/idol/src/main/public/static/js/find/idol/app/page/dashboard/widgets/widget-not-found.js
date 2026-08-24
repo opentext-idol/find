@@ -12,14 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    './static-content-widget',
-    'find/nls/bundle'
-], function(_, StaticContentWidget, i18n) {
-    'use strict';
+const _ = require('underscore');
+const StaticContentWidget = require('./static-content-widget');
+const i18n = require('find/nls/bundle');
 
-    return StaticContentWidget.extend({
+module.exports = StaticContentWidget.extend({
         initialize: function(options) {
             StaticContentWidget.prototype.initialize.call(this, _.defaults({
                 widgetSettings: {
@@ -28,4 +25,4 @@ define([
             }, options))
         }
     });
-});
+

@@ -12,31 +12,26 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    './core-vent',
-    'find/app/configuration',
-    'find/app/router'
-], function(_, CoreVent, configuration, router) {
+const _ = require('underscore');
+const CoreVent = require('./core-vent');
+const configuration = require('find/app/configuration');
+const router = require('find/app/router');
 
-    'use strict';
+function IdolVent(router) {
+    CoreVent.call(this, router);
+}
 
-    function IdolVent(router) {
-        CoreVent.call(this, router);
+IdolVent.prototype = Object.create(CoreVent.prototype);
+
+_.extend(IdolVent.prototype, {
+    constructor: IdolVent,
+
+    addSuffixForDocument: function(model) {
+        return [model.get('index'), model.get('reference')]
+            .map(encodeURIComponent)
+            .join('/');
     }
-
-    IdolVent.prototype = Object.create(CoreVent.prototype);
-
-    _.extend(IdolVent.prototype, {
-        constructor: IdolVent,
-
-        addSuffixForDocument: function(model) {
-            return [model.get('index'), model.get('reference')]
-                .map(encodeURIComponent)
-                .join('/');
-        }
-    });
-
-    return new IdolVent(router);
-
 });
+
+module.exports = new IdolVent(router);
+

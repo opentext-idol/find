@@ -12,14 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'jquery',
-    'backbone',
-    'text!find/templates/app/page/search/filters/parametric/parametric-value-view.html'
-], function($, Backbone, template) {
-    'use strict';
+const $ = require('jquery');
+const Backbone = require('backbone');
+const template = require('find/templates/app/page/search/filters/parametric/parametric-value-view.html');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         className: 'parametric-value-element selectable-table-item clickable',
         tagName: 'tr',
 
@@ -78,4 +75,4 @@ define([
             Backbone.View.prototype.remove.apply(this);
         }
     });
-});
+

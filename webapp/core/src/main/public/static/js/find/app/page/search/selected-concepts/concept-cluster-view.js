@@ -12,23 +12,23 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/app/util/popover',
-    './edit-concept-view',
-    'text!find/templates/app/page/search/selected-concepts/selected-concept.html',
-    'bootstrap'
-], function(_, $, Backbone, popover, EditConceptView, template) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const popover = require('find/app/util/popover');
+const EditConceptView = require('./edit-concept-view');
+const template = require('find/templates/app/page/search/selected-concepts/selected-concept.html');
 
-    /**
-     * Attributes of a concept group model.
-     * @typedef {Object} ConceptGroupModelAttributes
-     * @property {string[]} concepts
-     */
-    return Backbone.View.extend({
+// Loaded for side effects only - do not remove.
+require('bootstrap');
+
+/**
+ * Attributes of a concept group model.
+ * @typedef {Object} ConceptGroupModelAttributes
+ * @property {string[]} concepts
+ */
+
+module.exports = Backbone.View.extend({
         template: _.template(template),
         className: 'selected-concept-container',
 
@@ -102,4 +102,4 @@ define([
             });
         }
     });
-});
+

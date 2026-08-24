@@ -12,25 +12,23 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/app/model/find-base-collection'
-], function (_, Backbone, FindBaseCollection) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const FindBaseCollection = require('find/app/model/find-base-collection');
 
-    /**
-     * Users with interest or expertise in a specific document search.
-     *
-     * Model attributes:
-     *  - expert: Whether the user is explicitly tagged as a relevant 'expert', rather than just
-     *            having an interest in the topic
-     *  - uid
-     *  - username
-     *  - emailaddress:
-     *  - fields: The user's fields as `{ name: value }`
-     */
-    return FindBaseCollection.extend({
+/**
+ * Users with interest or expertise in a specific document search.
+ *
+ * Model attributes:
+ *  - expert: Whether the user is explicitly tagged as a relevant 'expert', rather than just
+ *            having an interest in the topic
+ *  - uid
+ *  - username
+ *  - emailaddress:
+ *  - fields: The user's fields as `{ name: value }`
+ */
+
+module.exports = FindBaseCollection.extend({
         url: 'api/public/user/related-to-search',
 
         parse: function (res) {
@@ -45,4 +43,4 @@ define([
         })
 
     });
-});
+

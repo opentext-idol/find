@@ -12,13 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'js-whatever/js/modal',
-    'find/app/util/global-key-listener'
-], function(Modal, globalKeyListener) {
-    'use strict';
+const Modal = require('js-whatever/js/modal');
+const globalKeyListener = require('find/app/util/global-key-listener');
 
-    return Modal.extend({
+module.exports = Modal.extend({
         initialize: function(){
             Modal.prototype.initialize.apply(this, arguments);
 
@@ -27,4 +24,4 @@ define([
             })
         }
     });
-});
+

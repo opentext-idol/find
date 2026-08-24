@@ -12,18 +12,16 @@
  * information contained herein is subject to change without notice.
  */
 
-define(['underscore'], function(_) {
+const _ = require('underscore');
 
-    'use strict';
-
-    const baseParams = function(queryModel) {
-        return {
-            text: queryModel.get('queryText'),
-            summary: 'context'
-        }
-    };
-
+const baseParams = function(queryModel) {
     return {
+        text: queryModel.get('queryText'),
+        summary: 'context'
+    }
+};
+
+module.exports = {
         waitForIndexes: _.constant(false),
         answers: _.constant(false),
 
@@ -61,4 +59,3 @@ define(['underscore'], function(_) {
         }
     };
 
-});

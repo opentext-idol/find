@@ -1,10 +1,7 @@
-define([
-    'backbone'
-], function(Backbone) {
+const Backbone = require('backbone');
 
-    return Backbone.Model.extend({
+module.exports = Backbone.Model.extend({
         defaults: {
             minScore: 0
         }
     });
-});

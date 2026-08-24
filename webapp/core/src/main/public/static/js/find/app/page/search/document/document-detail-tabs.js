@@ -12,33 +12,28 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/nls/bundle',
-    'find/app/configuration',
-    'find/app/page/search/document/tab-content-view',
-    'find/app/page/search/document/authors-tab',
-    'find/app/page/search/document/facts-tab',
-    'find/app/page/search/document/location-tab',
-    'find/app/page/search/document/similar-documents-tab',
-    'find/app/page/search/document/similar-dates-tab',
-    'find/app/page/search/document/metadata-tab',
-    'find/app/page/search/document/similar-sources-tab',
-    'find/app/page/search/document/transcript-tab'
-], function(_, Backbone, i18n, configuration, TabContentView, AuthorsTab, FactsTab, LocationTab,
-            SimilarDocumentsTab, SimilarDatesTab, MetadataTab, SimilarSourcesTab,
-            TranscriptTab) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const configuration = require('find/app/configuration');
+const TabContentView = require('find/app/page/search/document/tab-content-view');
+const AuthorsTab = require('find/app/page/search/document/authors-tab');
+const FactsTab = require('find/app/page/search/document/facts-tab');
+const LocationTab = require('find/app/page/search/document/location-tab');
+const SimilarDocumentsTab = require('find/app/page/search/document/similar-documents-tab');
+const SimilarDatesTab = require('find/app/page/search/document/similar-dates-tab');
+const MetadataTab = require('find/app/page/search/document/metadata-tab');
+const SimilarSourcesTab = require('find/app/page/search/document/similar-sources-tab');
+const TranscriptTab = require('find/app/page/search/document/transcript-tab');
 
-    const always = _.constant(true);
+const always = _.constant(true);
 
-    // Function rather than constant so tests can mock configuration
-    const hasBiRole = function() {
-        return configuration().hasBiRole;
-    };
+// Function rather than constant so tests can mock configuration
+const hasBiRole = function() {
+    return configuration().hasBiRole;
+};
 
-    return [
+module.exports = [
         {
             TabContentConstructor: TabContentView.extend({TabSubContentConstructor: MetadataTab}),
             title: i18n['search.document.detail.tabs.metadata'],
@@ -93,4 +88,4 @@ define([
             }
         }
     ];
-});
+

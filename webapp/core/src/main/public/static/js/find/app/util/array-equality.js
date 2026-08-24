@@ -1,28 +1,27 @@
-define([
-    'underscore'
-], function(_) {
-    function bagEquality(a, b, predicate) {
-        // for every item in a...
-        return _.all(a, function(ai) {
-            // create a version of predicate which checks equality to ai
-            var boundPredicate = _.partial(predicate, ai);
+const _ = require('underscore');
 
-            // find everything in a which is the same as ai
-            var as = _.filter(a, boundPredicate);
+function bagEquality(a, b, predicate) {
+    // for every item in a...
+    return _.all(a, function(ai) {
+        // create a version of predicate which checks equality to ai
+        var boundPredicate = _.partial(predicate, ai);
 
-            // find everything in b which is the same as ai
-            var bs = _.filter(b, boundPredicate);
+        // find everything in a which is the same as ai
+        var as = _.filter(a, boundPredicate);
 
-            // if ai occurs the same number of times in a and b, they are equal
-            return as.length === bs.length;
-        });
-    }
+        // find everything in b which is the same as ai
+        var bs = _.filter(b, boundPredicate);
 
-    function referenceEquality(aItem, bItem) {
-        return aItem === bItem
-    }
+        // if ai occurs the same number of times in a and b, they are equal
+        return as.length === bs.length;
+    });
+}
 
-    return function(a, b, predicate) {
+function referenceEquality(aItem, bItem) {
+    return aItem === bItem
+}
+
+module.exports = function(a, b, predicate) {
         if (!a && !b) return true;
         if (!a || !b) return false;
 
@@ -32,4 +31,3 @@ define([
 
         return bagEquality(a, b, predicate)
     };
-});

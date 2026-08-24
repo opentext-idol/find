@@ -21,16 +21,13 @@
  *  - config: RelatedUsersConfig
  */
 
-define([
-    'underscore',
-    'find/app/model/related-users-collection',
-    'find/app/page/search/results/users-view'
-], function(_, RelatedUsersCollection, UsersView) {
-    'use strict';
+const _ = require('underscore');
+const RelatedUsersCollection = require('find/app/model/related-users-collection');
+const UsersView = require('find/app/page/search/results/users-view');
 
-    const MAX_USERS = 30;
+const MAX_USERS = 30;
 
-    return UsersView.extend({
+module.exports = UsersView.extend({
         initialize: function (options) {
             this.relatedUsersCollection = new RelatedUsersCollection();
             this.queryModel = options.queryModel;
@@ -79,4 +76,3 @@ define([
 
     });
 
-});

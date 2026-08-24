@@ -11,11 +11,9 @@
  * liable for technical or editorial errors or omissions contained herein. The
  * information contained herein is subject to change without notice.
  */
-define([
-    'js-whatever/js/substitution'
-], function(substitution) {
+const substitution = require('js-whatever/js/substitution');
 
-    return substitution({
+module.exports = substitution({
         'snapshot': 'Snapshot',
         'detail.dateCreated': 'Date Created',
         'detail.resultCount': 'Result Count',
@@ -31,4 +29,3 @@ define([
         'openEdit.edit': 'Save as snapshot'
     });
 
-});

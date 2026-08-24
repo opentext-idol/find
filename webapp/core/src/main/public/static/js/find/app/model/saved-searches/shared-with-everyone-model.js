@@ -12,13 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone'
-], function(_, Backbone) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
 
-    return Backbone.Model.extend({
+module.exports = Backbone.Model.extend({
 
         initialize: function(models, options) {
             this.searchId = options.searchId;
@@ -38,4 +35,4 @@ define([
             }
         }
     });
-});
+

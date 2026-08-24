@@ -12,10 +12,7 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'js-whatever/js/substitution'
-], function(substitution) {
+const substitution = require('js-whatever/js/substitution');
 
-    return substitution({});
+module.exports = substitution({});
 
-});

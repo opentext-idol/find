@@ -12,13 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/model/find-base-collection',
-    'find/app/model/document-model'
-], function(FindBaseCollection, DocumentModel) {
-    'use strict';
+const FindBaseCollection = require('find/app/model/find-base-collection');
+const DocumentModel = require('find/app/model/document-model');
 
-    return FindBaseCollection.extend({
+module.exports = FindBaseCollection.extend({
         model: DocumentModel,
         url: 'api/public/search/query-text-index/results',
 
@@ -26,4 +23,4 @@ define([
             return response.documents;
         }
     });
-});
+

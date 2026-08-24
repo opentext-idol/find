@@ -12,16 +12,15 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'js-whatever/js/list-item-view',
-    'underscore',
-    'text!find/templates/app/util/csv-field-selection-list-item.html',
-    'find/nls/bundle',
-    'iCheck'
-], function(ListItemView, _, template, i18n) {
-    'use strict';
+const ListItemView = require('js-whatever/js/list-item-view');
+const _ = require('underscore');
+const template = require('find/templates/app/util/csv-field-selection-list-item.html');
+const i18n = require('find/nls/bundle');
 
-    return ListItemView.extend({
+// Loaded for side effects only - do not remove.
+require('iCheck');
+
+module.exports = ListItemView.extend({
         template: _.template(template),
 
         initialize: function(options) {
@@ -45,4 +44,4 @@ define([
             this.$el.iCheck(this.model.get('selected') ? 'check' : 'uncheck');
         }
     });
-});
+

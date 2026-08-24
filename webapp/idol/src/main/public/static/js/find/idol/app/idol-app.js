@@ -12,29 +12,24 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/app/app',
-    'find/app/util/logout',
-    'find/app/configuration',
-    'find/idol/app/model/idol-indexes-collection',
-    'find/idol/app/model/saved-searches/saved-snapshot-collection',
-    'find/idol/app/model/saved-searches/shared-saved-snapshot-collection',
-    'find/app/model/asset-collection',
-    'find/idol/app/idol-navigation',
-    'find/idol/app/page/idol-find-search',
-    'find/idol/app/page/find-about-page',
-    'find/idol/app/page/dashboard-page',
-    'find/app/page/find-settings-page',
-    'find/app/page/customizations-page',
-    'find/nls/bundle'
-], function(_, Backbone, BaseApp, logout, configuration, IndexesCollection, SavedSnapshotCollection,
-            SharedSavedSnapshotCollection, AssetCollection, Navigation, FindSearch, AboutPage, DashboardPage,
-            SettingsPage, CustomizationsPage, i18n) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const BaseApp = require('find/app/app');
+const logout = require('find/app/util/logout');
+const configuration = require('find/app/configuration');
+const IndexesCollection = require('find/idol/app/model/idol-indexes-collection');
+const SavedSnapshotCollection = require('find/idol/app/model/saved-searches/saved-snapshot-collection');
+const SharedSavedSnapshotCollection = require('find/idol/app/model/saved-searches/shared-saved-snapshot-collection');
+const AssetCollection = require('find/app/model/asset-collection');
+const Navigation = require('find/idol/app/idol-navigation');
+const FindSearch = require('find/idol/app/page/idol-find-search');
+const AboutPage = require('find/idol/app/page/find-about-page');
+const DashboardPage = require('find/idol/app/page/dashboard-page');
+const SettingsPage = require('find/app/page/find-settings-page');
+const CustomizationsPage = require('find/app/page/customizations-page');
+const i18n = require('find/nls/bundle');
 
-    return BaseApp.extend({
+module.exports = BaseApp.extend({
         Navigation: Navigation,
         IndexesCollection: IndexesCollection,
 
@@ -168,4 +163,4 @@ define([
             }
         }
     });
-});
+

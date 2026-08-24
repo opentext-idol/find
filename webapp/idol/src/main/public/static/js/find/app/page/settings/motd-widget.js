@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'settings/js/widget',
-    'text!find/templates/app/page/settings/widget.html',
-    'text!find/templates/app/page/settings/motd-widget.html'
-], function(_, Widget, widgetTemplate, template) {
-    'use strict';
+const _ = require('underscore');
+const Widget = require('settings/js/widget');
+const widgetTemplate = require('find/templates/app/page/settings/widget.html');
+const template = require('find/templates/app/page/settings/motd-widget.html');
 
-    return Widget.extend({
+module.exports = Widget.extend({
         widgetTemplate: _.template(widgetTemplate),
         template: _.template(template),
 
@@ -67,4 +64,4 @@ define([
             this.onStatusChange();
         }
     });
-});
+

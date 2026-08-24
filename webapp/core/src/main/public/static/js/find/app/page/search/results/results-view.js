@@ -12,60 +12,55 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'js-whatever/js/model-any-changed-attribute-listener',
-    'find/app/vent',
-    'find/app/model/document-model',
-    'find/app/model/promotions-collection',
-    'find/app/page/search/intent-based-ranking-view',
-    'find/app/page/search/sort-view',
-    'find/app/page/search/results/results-number-view',
-    'find/app/util/view-server-client',
-    'find/app/util/events',
-    'find/app/page/search/results/add-links-to-summary',
-    'find/app/configuration',
-    'find/app/util/generate-error-support-message',
-    'text!find/templates/app/page/search/results/search-result-container.html',
-    'text!find/templates/app/page/search/results/results-view.html',
-    'text!find/templates/app/page/loading-spinner.html',
-    'moment',
-    'find/nls/bundle',
-    'find/nls/indexes'
-], function(_, $, Backbone, addChangeListener, vent, DocumentModel, PromotionsCollection, IntentBasedRankingView, SortView, ResultsNumberView,
-            viewClient, events, addLinksToSummary, configuration, generateErrorHtml, resultTemplate, template,
-            loadingSpinnerTemplate, moment, i18n, i18n_indexes) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const addChangeListener = require('js-whatever/js/model-any-changed-attribute-listener');
+const vent = require('find/app/vent');
+const DocumentModel = require('find/app/model/document-model');
+const PromotionsCollection = require('find/app/model/promotions-collection');
+const IntentBasedRankingView = require('find/app/page/search/intent-based-ranking-view');
+const SortView = require('find/app/page/search/sort-view');
+const ResultsNumberView = require('find/app/page/search/results/results-number-view');
+const viewClient = require('find/app/util/view-server-client');
+const events = require('find/app/util/events');
+const addLinksToSummary = require('find/app/page/search/results/add-links-to-summary');
+const configuration = require('find/app/configuration');
+const generateErrorHtml = require('find/app/util/generate-error-support-message');
+const resultTemplate = require('find/templates/app/page/search/results/search-result-container.html');
+const template = require('find/templates/app/page/search/results/results-view.html');
+const loadingSpinnerTemplate = require('find/templates/app/page/loading-spinner.html');
+const moment = require('moment');
+const i18n = require('find/nls/bundle');
+const i18n_indexes = require('find/nls/indexes');
 
-    let SCROLL_INCREMENT;
-    const INFINITE_SCROLL_POSITION_PIXELS = 500;
+let SCROLL_INCREMENT;
+const INFINITE_SCROLL_POSITION_PIXELS = 500;
 
-    function getScrollIncrement() {
-        if (SCROLL_INCREMENT) {
-            return SCROLL_INCREMENT;
-        }
-
-        const config = configuration();
-        return SCROLL_INCREMENT = config && config.uiCustomization && config.uiCustomization.listViewPagingSize || 30;
+function getScrollIncrement() {
+    if (SCROLL_INCREMENT) {
+        return SCROLL_INCREMENT;
     }
 
-    function infiniteScroll() {
-        const resultsPresent = this.documentsCollection.size() > 0 && this.fetchStrategy.validateQuery(this.queryModel);
+    const config = configuration();
+    return SCROLL_INCREMENT = config && config.uiCustomization && config.uiCustomization.listViewPagingSize || 30;
+}
 
-        if (resultsPresent && this.loadingTracker.resultsFinished && !this.endOfResults) {
-            const SCROLL_INCREMENT = getScrollIncrement();
-            this.start = this.maxResults + 1;
-            this.maxResults += SCROLL_INCREMENT;
+function infiniteScroll() {
+    const resultsPresent = this.documentsCollection.size() > 0 && this.fetchStrategy.validateQuery(this.queryModel);
 
-            this.loadData(true);
+    if (resultsPresent && this.loadingTracker.resultsFinished && !this.endOfResults) {
+        const SCROLL_INCREMENT = getScrollIncrement();
+        this.start = this.maxResults + 1;
+        this.maxResults += SCROLL_INCREMENT;
 
-            events().page(this.maxResults / SCROLL_INCREMENT);
-        }
+        this.loadData(true);
+
+        events().page(this.maxResults / SCROLL_INCREMENT);
     }
+}
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         // Overridden for HoD and IDOL implementations
         getQuestionsViewConstructor: _.constant(null),
 
@@ -571,4 +566,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

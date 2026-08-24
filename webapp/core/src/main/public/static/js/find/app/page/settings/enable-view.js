@@ -12,14 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'settings/js/controls/enable-view',
-    'text!find/templates/app/page/settings/enable-view.html',
-    'underscore'
-], function(EnableView, template, _) {
-    'use strict';
+const EnableView = require('settings/js/controls/enable-view');
+const template = require('find/templates/app/page/settings/enable-view.html');
+const _ = require('underscore');
 
-    return EnableView.extend({
+module.exports = EnableView.extend({
         className: 'm-t-sm',
         template: _.template(template),
 
@@ -33,4 +30,4 @@ define([
                     : this.strings.disabled);
         }
     });
-});
+

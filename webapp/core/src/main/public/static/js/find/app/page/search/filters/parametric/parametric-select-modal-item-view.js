@@ -12,15 +12,14 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'underscore',
-    'text!find/templates/app/page/search/filters/parametric/parametric-select-modal-item-view.html',
-    'iCheck'
-], function(Backbone, _, template) {
-    'use strict';
+const Backbone = require('backbone');
+const _ = require('underscore');
+const template = require('find/templates/app/page/search/filters/parametric/parametric-select-modal-item-view.html');
 
-    return Backbone.View.extend({
+// Loaded for side effects only - do not remove.
+require('iCheck');
+
+module.exports = Backbone.View.extend({
         tagName: 'li',
         template: _.template(template),
 
@@ -40,4 +39,4 @@ define([
             this.$('input').iCheck(this.model.get('selected') ? 'check' : 'uncheck');
         }
     });
-});
+

@@ -12,17 +12,13 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/page/search/document/preview-mode-summary-view'
-], function (PreviewViewMode) {
-    'use strict';
+const PreviewViewMode = require('find/app/page/search/document/preview-mode-summary-view');
 
-
-    return PreviewViewMode.extend({
+module.exports = PreviewViewMode.extend({
         generateDetailRoute: function () {
             var database = encodeURIComponent(this.model.get('index'));
             var reference = encodeURIComponent(this.model.get('reference'));
             return 'search/document/' + database + '/' + reference;
         }
     });
-});
+

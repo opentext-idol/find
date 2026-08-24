@@ -12,19 +12,18 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'underscore',
-    'text!find/templates/app/page/search/results/sunburst/field-selection-view.html',
-    'find/nls/bundle',
-    'chosen'
-], function(Backbone, _, template, i18n) {
-    'use strict';
+const Backbone = require('backbone');
+const _ = require('underscore');
+const template = require('find/templates/app/page/search/results/sunburst/field-selection-view.html');
+const i18n = require('find/nls/bundle');
 
-    const optionTemplate = _.template('<option value="<%-field%>" <%- selected ? "selected" : ""%>><%-displayValue%></option>');
-    const emptyOptionHtml = '<option value=""></option>';
+// Loaded for side effects only - do not remove.
+require('chosen');
 
-    return Backbone.View.extend({
+const optionTemplate = _.template('<option value="<%-field%>" <%- selected ? "selected" : ""%>><%-displayValue%></option>');
+const emptyOptionHtml = '<option value=""></option>';
+
+module.exports = Backbone.View.extend({
         className: 'field-selection-view',
         tagName: 'span',
         template: _.template(template),
@@ -75,4 +74,4 @@ define([
             return this;
         }
     });
-});
+

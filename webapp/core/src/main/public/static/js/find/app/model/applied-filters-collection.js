@@ -12,106 +12,103 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'moment',
-    'find/app/model/dates-filter-model',
-    'find/app/model/geography-model',
-    'find/app/page/search/filters/parametric/numeric-range-rounder',
-    'find/app/util/database-name-resolver',
-    'find/nls/bundle',
-    'find/nls/indexes'
-], function(_, Backbone, moment, DatesFilterModel, GeographyModel, rounder, databaseNameResolver,
-            i18n, i18nIndexes) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const moment = require('moment');
+const DatesFilterModel = require('find/app/model/dates-filter-model');
+const GeographyModel = require('find/app/model/geography-model');
+const rounder = require('find/app/page/search/filters/parametric/numeric-range-rounder');
+const databaseNameResolver = require('find/app/util/database-name-resolver');
+const i18n = require('find/nls/bundle');
+const i18nIndexes = require('find/nls/indexes');
 
-    const DATE_FORMAT = 'L LT';
-    const SHORT_DATE_FORMAT = 'L';
-    const DATE_SHORTEN_CUTOFF = 7 * 24 * 3600 * 1000; // interval in millseconds at which date format changes to short
+const DATE_FORMAT = 'L LT';
+const SHORT_DATE_FORMAT = 'L';
+const DATE_SHORTEN_CUTOFF = 7 * 24 * 3600 * 1000; // interval in millseconds at which date format changes to short
 
-    const FilterType = {
-        INDEXES: 'INDEXES',
-        MAX_DATE: 'MAX_DATE',
-        MIN_DATE: 'MIN_DATE',
-        DATE_RANGE: 'DATE_RANGE',
-        PARAMETRIC: 'PARAMETRIC',
-        GEOGRAPHY: 'GEOGRAPHY',
-        DOCUMENT_SELECTION: 'DOCUMENT_SELECTION'
-    };
+const FilterType = {
+    INDEXES: 'INDEXES',
+    MAX_DATE: 'MAX_DATE',
+    MIN_DATE: 'MIN_DATE',
+    DATE_RANGE: 'DATE_RANGE',
+    PARAMETRIC: 'PARAMETRIC',
+    GEOGRAPHY: 'GEOGRAPHY',
+    DOCUMENT_SELECTION: 'DOCUMENT_SELECTION'
+};
 
-    const customDatesFilters = [
-        {attribute: 'customMinDate', type: FilterType.MIN_DATE},
-        {attribute: 'customMaxDate', type: FilterType.MAX_DATE}
-    ];
+const customDatesFilters = [
+    {attribute: 'customMinDate', type: FilterType.MIN_DATE},
+    {attribute: 'customMaxDate', type: FilterType.MAX_DATE}
+];
 
-    function getDateFilterText(filterType, dateString) {
-        const textPrefixKey = filterType === FilterType.MAX_DATE
-            ? 'app.until'
-            : 'app.from';
-        return i18n[textPrefixKey] + ': ' + dateString;
-    }
+function getDateFilterText(filterType, dateString) {
+    const textPrefixKey = filterType === FilterType.MAX_DATE
+        ? 'app.until'
+        : 'app.from';
+    return i18n[textPrefixKey] + ': ' + dateString;
+}
 
-    // Get the filter model id for a given parametric field name
-    function parametricFilterId(fieldName) {
-        return 'param-' + fieldName;
-    }
+// Get the filter model id for a given parametric field name
+function parametricFilterId(fieldName) {
+    return 'param-' + fieldName;
+}
 
-    // Get the filter model id for a given location field name
-    function locationFilterId(locationId) {
-        return 'loc-' + locationId;
-    }
+// Get the filter model id for a given location field name
+function locationFilterId(locationId) {
+    return 'loc-' + locationId;
+}
 
-    function formatDate(autnDate, format) {
-        return moment(autnDate).format(format);
-    }
+function formatDate(autnDate, format) {
+    return moment(autnDate).format(format);
+}
 
-    // Get the display text for the given parametric field name and array of selected parametric values
-    function parametricFilterText(displayValues, ranges, type) {
-        let values;
+// Get the display text for the given parametric field name and array of selected parametric values
+function parametricFilterText(displayValues, ranges, type) {
+    let values;
 
-        if(type === 'Parametric') {
-            values = displayValues;
-        } else if(type === 'Numeric') {
-            values = ranges.map(function(range) {
-                const round = rounder().round;
-                return round(range[0], range[0], range[1]) + ' \u2013 ' + round(range[1], range[0], range[1]);
-            });
-        } else if(type === 'NumericDate') {
-            values = ranges.map(function(range) {
-                //Discard time of day if range greater than 1 week
-                return range[1] - range[0] > DATE_SHORTEN_CUTOFF
-                    ? formatDate(range[0], SHORT_DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], SHORT_DATE_FORMAT)
-                    : formatDate(range[0], DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], DATE_FORMAT);
-            });
-        }
-
-        return values.join(', ');
-    }
-
-    // Get an array of filter model attributes from the selected parametric values collection
-    function extractParametricFilters(selectedParametricValues) {
-        return _.map(selectedParametricValues.toFieldsAndValues(), function(data, field) {
-            return {
-                id: parametricFilterId(field),
-                field: field,
-                heading: data.displayName,
-                text: parametricFilterText(
-                    data.displayValues,
-                    data.range
-                        ? [data.range]
-                        : [],
-                    data.type),
-                type: FilterType.PARAMETRIC
-            };
+    if(type === 'Parametric') {
+        values = displayValues;
+    } else if(type === 'Numeric') {
+        values = ranges.map(function(range) {
+            const round = rounder().round;
+            return round(range[0], range[0], range[1]) + ' \u2013 ' + round(range[1], range[0], range[1]);
+        });
+    } else if(type === 'NumericDate') {
+        values = ranges.map(function(range) {
+            //Discard time of day if range greater than 1 week
+            return range[1] - range[0] > DATE_SHORTEN_CUTOFF
+                ? formatDate(range[0], SHORT_DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], SHORT_DATE_FORMAT)
+                : formatDate(range[0], DATE_FORMAT) + ' \u2013 ' + formatDate(range[1], DATE_FORMAT);
         });
     }
 
-    // This collection backs the search filters display view. It monitors the query state models and collections and
-    // creates/removes it's own models when they change.
-    // When a dates filter model is removed, it updates the appropriate request model attribute with a null value. However,
-    // this currently can't be done for the selected databases because the databases view isn't backed by a collection.
-    return Backbone.Collection.extend({
+    return values.join(', ');
+}
+
+// Get an array of filter model attributes from the selected parametric values collection
+function extractParametricFilters(selectedParametricValues) {
+    return _.map(selectedParametricValues.toFieldsAndValues(), function(data, field) {
+        return {
+            id: parametricFilterId(field),
+            field: field,
+            heading: data.displayName,
+            text: parametricFilterText(
+                data.displayValues,
+                data.range
+                    ? [data.range]
+                    : [],
+                data.type),
+            type: FilterType.PARAMETRIC
+        };
+    });
+}
+
+// This collection backs the search filters display view. It monitors the query state models and collections and
+// creates/removes it's own models when they change.
+// When a dates filter model is removed, it updates the appropriate request model attribute with a null value. However,
+// this currently can't be done for the selected databases because the databases view isn't backed by a collection.
+
+module.exports = Backbone.Collection.extend({
         initialize: function(models, options) {
             this.indexesCollection = options.indexesCollection;
 
@@ -381,4 +378,4 @@ define([
     }, {
         FilterType: FilterType
     });
-});
+

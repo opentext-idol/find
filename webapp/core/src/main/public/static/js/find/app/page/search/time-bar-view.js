@@ -12,29 +12,26 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/nls/bundle',
-    'find/app/page/search/filters/parametric/numeric-parametric-field-view',
-    'text!find/templates/app/page/search/time-bar-view.html'
-], function(_, Backbone, i18n, NumericParametricFieldView, timeBarTemplate) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const NumericParametricFieldView = require('find/app/page/search/filters/parametric/numeric-parametric-field-view');
+const timeBarTemplate = require('find/templates/app/page/search/time-bar-view.html');
 
-    const PIXELS_PER_BUCKET = 20;
+const PIXELS_PER_BUCKET = 20;
 
-    const graphConfiguration = {
-        NumericDate: {
-            template: NumericParametricFieldView.dateInputTemplate,
-            formatting: NumericParametricFieldView.dateFormatting
-        },
-        Numeric: {
-            template: NumericParametricFieldView.numericInputTemplate,
-            formatting: NumericParametricFieldView.defaultFormatting
-        }
-    };
+const graphConfiguration = {
+    NumericDate: {
+        template: NumericParametricFieldView.dateInputTemplate,
+        formatting: NumericParametricFieldView.dateFormatting
+    },
+    Numeric: {
+        template: NumericParametricFieldView.numericInputTemplate,
+        formatting: NumericParametricFieldView.defaultFormatting
+    }
+};
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         className: 'middle-container-time-bar',
         template: _.template(timeBarTemplate),
 
@@ -87,4 +84,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

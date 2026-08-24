@@ -11,18 +11,16 @@
  * liable for technical or editorial errors or omissions contained herein. The
  * information contained herein is subject to change without notice.
  */
-define([
-    'underscore',
-    'settings/js/widgets/answer-server-widget',
-    'find/app/page/settings/enable-view',
-    'settings/js/controls/aci-widget-dropdown-view-no-op',
-    'text!find/templates/app/page/settings/answer-server-widget-extensions.html',
-    'text!find/templates/app/page/settings/widget.html',
-    'text!find/templates/app/page/settings/server-widget.html',
-    'text!find/templates/app/page/settings/aci-widget.html'
-], function (_, AnswerServerWidget, EnableView, DropdownViewNoOp, extensionsTemplate, widgetTemplate, serverTemplate, aciTemplate) {
+const _ = require('underscore');
+const AnswerServerWidget = require('settings/js/widgets/answer-server-widget');
+const EnableView = require('find/app/page/settings/enable-view');
+const DropdownViewNoOp = require('settings/js/controls/aci-widget-dropdown-view-no-op');
+const extensionsTemplate = require('find/templates/app/page/settings/answer-server-widget-extensions.html');
+const widgetTemplate = require('find/templates/app/page/settings/widget.html');
+const serverTemplate = require('find/templates/app/page/settings/server-widget.html');
+const aciTemplate = require('find/templates/app/page/settings/aci-widget.html');
 
-    return AnswerServerWidget.extend({
+module.exports = AnswerServerWidget.extend({
         className: 'panel-group',
 
         formControlClass: 'form-control',
@@ -77,4 +75,4 @@ define([
             }
         },
     });
-});
+

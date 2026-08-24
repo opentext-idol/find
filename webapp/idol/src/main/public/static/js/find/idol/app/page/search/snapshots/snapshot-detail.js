@@ -12,20 +12,19 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'find/nls/bundle',
-    'find/idol/nls/snapshots',
-    'find/app/configuration',
-    'moment'
-], function(_, i18n, snapshotsI18n, configuration, moment) {
+const _ = require('underscore');
+const i18n = require('find/nls/bundle');
+const snapshotsI18n = require('find/idol/nls/snapshots');
+const configuration = require('find/app/configuration');
+const moment = require('moment');
 
-    var DATE_FORMAT = 'L LT';
+var DATE_FORMAT = 'L LT';
 
-    /**
-     * Target attributes and an attributes processor for the "Snapshot" {@link DataPanelView}.
-     */
-    return {
+/**
+ * Target attributes and an attributes processor for the "Snapshot" {@link DataPanelView}.
+ */
+
+module.exports = {
         targetAttributes: [
             'resultCount',
             'dateCreated',
@@ -63,4 +62,3 @@ define([
         }
     };
 
-});

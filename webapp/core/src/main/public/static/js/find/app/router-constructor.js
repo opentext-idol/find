@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'jquery',
-    'underscore',
-    'backbone',
-    'qs',
-], function($, _, Backbone, qs) {
-    'use strict';
+const $ = require('jquery');
+const _ = require('underscore');
+const Backbone = require('backbone');
+const qs = require('qs');
 
-    return Backbone.Router.extend({
+module.exports = Backbone.Router.extend({
         // Abstract function which can be overridden in the children.
         parseEncodedDatabases: undefined,
 
@@ -97,4 +94,4 @@ define([
             this.trigger('route:savedSearch', tab, resultsView, others);
         }
     });
-});
+

@@ -12,59 +12,55 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'jquery',
-    'find/app/util/array-equality',
-    'find/app/page/search/saved-searches/search-title-input',
-    'find/app/model/saved-searches/saved-search-model',
-    'find/app/util/confirm-view',
-    'find/app/util/csv-field-selection-view',
-    'find/app/util/policy-selection-view',
-    'find/app/util/sharing-options',
-    'find/app/util/modal',
-    'text!find/templates/app/page/search/saved-searches/saved-search-control-view.html',
-    'find/nls/bundle',
-    'find/app/configuration',
-    'find/app/util/popover',
-    'underscore'
-], function(Backbone, $, arrayEquality, SearchTitleInput, SavedSearchModel, Confirm, CsvFieldSelectView, PolicySelectionView, SharingOptions,
-            Modal, template, i18n, configuration, popover, _) {
-    'use strict';
+const Backbone = require('backbone');
+const $ = require('jquery');
+const arrayEquality = require('find/app/util/array-equality');
+const SearchTitleInput = require('find/app/page/search/saved-searches/search-title-input');
+const SavedSearchModel = require('find/app/model/saved-searches/saved-search-model');
+const Confirm = require('find/app/util/confirm-view');
+const CsvFieldSelectView = require('find/app/util/csv-field-selection-view');
+const PolicySelectionView = require('find/app/util/policy-selection-view');
+const SharingOptions = require('find/app/util/sharing-options');
+const Modal = require('find/app/util/modal');
+const template = require('find/templates/app/page/search/saved-searches/saved-search-control-view.html');
+const i18n = require('find/nls/bundle');
+const configuration = require('find/app/configuration');
+const popover = require('find/app/util/popover');
+const _ = require('underscore');
 
-    var SavedState = {
-        NEW: 'NEW',
-        MODIFIED: 'MODIFIED',
-        SAVED: 'SAVED'
-    };
+var SavedState = {
+    NEW: 'NEW',
+    MODIFIED: 'MODIFIED',
+    SAVED: 'SAVED'
+};
 
-    var TitleEditState = {
-        OFF: 'OFF',
-        RENAME: 'RENAME',
-        SAVE_AS: 'SAVE_AS'
-    };
+var TitleEditState = {
+    OFF: 'OFF',
+    RENAME: 'RENAME',
+    SAVE_AS: 'SAVE_AS'
+};
 
-    function resolveSavedState(queryState, savedSearchModel) {
-        if(savedSearchModel.isNew()) {
-            return SavedState.NEW;
-        } else {
-            return savedSearchModel.equalsQueryState(queryState) ? SavedState.SAVED : SavedState.MODIFIED;
-        }
+function resolveSavedState(queryState, savedSearchModel) {
+    if(savedSearchModel.isNew()) {
+        return SavedState.NEW;
+    } else {
+        return savedSearchModel.equalsQueryState(queryState) ? SavedState.SAVED : SavedState.MODIFIED;
     }
+}
 
-    function toggleTitleEditState(titleEditState, searchType) {
-        return function() {
-            var isCurrentMethod = this.model.get('titleEditState') === titleEditState;
+function toggleTitleEditState(titleEditState, searchType) {
+    return function() {
+        var isCurrentMethod = this.model.get('titleEditState') === titleEditState;
 
-            this.model.set({
-                error: null,
-                searchType: searchType,
-                titleEditState: isCurrentMethod ? TitleEditState.OFF : titleEditState
-            });
-        };
-    }
+        this.model.set({
+            error: null,
+            searchType: searchType,
+            titleEditState: isCurrentMethod ? TitleEditState.OFF : titleEditState
+        });
+    };
+}
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
         titleInput: null,
 
@@ -484,4 +480,4 @@ define([
             this.findSearch.closeCurrentSearch();
         }
     });
-});
+

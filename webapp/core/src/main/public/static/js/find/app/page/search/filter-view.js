@@ -12,41 +12,36 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/app/model/geography-model',
-    'find/app/page/search/abstract-section-view',
-    'find/app/page/search/filters/date/dates-filter-view',
-    'find/app/page/search/filters/geography/geography-view',
-    'find/app/page/search/filters/documentselection/document-selection-view',
-    'find/app/page/search/filters/parametric/filtered-parametric-fields-collection',
-    'find/app/page/search/filters/parametric/parametric-view',
-    'find/app/page/search/filters/parametric/numeric-parametric-field-view',
-    'find/app/util/text-input',
-    'find/app/util/collapsible',
-    'find/app/util/filtering-collection',
-    'find/app/configuration',
-    'find/nls/bundle',
-    'find/nls/indexes',
-    'text!find/templates/app/page/search/filters/filter-separator.html'
-], function(_, $, Backbone, GeographyModel, AbstractSectionView, DateView, GeographyView, DocumentSelectionFilterView, FilteredParametricFieldsCollection,
-            ParametricView, NumericParametricFieldView, TextInput, Collapsible, FilteringCollection,
-            configuration, i18n, i18nIndexes, filterSeparator) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const GeographyModel = require('find/app/model/geography-model');
+const AbstractSectionView = require('find/app/page/search/abstract-section-view');
+const DateView = require('find/app/page/search/filters/date/dates-filter-view');
+const GeographyView = require('find/app/page/search/filters/geography/geography-view');
+const DocumentSelectionFilterView = require('find/app/page/search/filters/documentselection/document-selection-view');
+const FilteredParametricFieldsCollection = require('find/app/page/search/filters/parametric/filtered-parametric-fields-collection');
+const ParametricView = require('find/app/page/search/filters/parametric/parametric-view');
+const NumericParametricFieldView = require('find/app/page/search/filters/parametric/numeric-parametric-field-view');
+const TextInput = require('find/app/util/text-input');
+const Collapsible = require('find/app/util/collapsible');
+const FilteringCollection = require('find/app/util/filtering-collection');
+const configuration = require('find/app/configuration');
+const i18n = require('find/nls/bundle');
+const i18nIndexes = require('find/nls/indexes');
+const filterSeparator = require('find/templates/app/page/search/filters/filter-separator.html');
 
-    const datesTitle = i18n['search.dates'];
-    const geographyTitle = i18n['search.geography'];
-    const LIST_RESULTS_VIEW_ID = 'list';
+const datesTitle = i18n['search.dates'];
+const geographyTitle = i18n['search.geography'];
+const LIST_RESULTS_VIEW_ID = 'list';
 
-    function searchMatches(text, search) {
-        return text.toLowerCase().indexOf(search.toLowerCase()) > -1;
-    }
+function searchMatches(text, search) {
+    return text.toLowerCase().indexOf(search.toLowerCase()) > -1;
+}
 
-    const showGeographyFilter = GeographyModel.LocationFields.length > 0;
+const showGeographyFilter = GeographyModel.LocationFields.length > 0;
 
-    return AbstractSectionView.extend({
+module.exports = AbstractSectionView.extend({
         initialize: function(options) {
             AbstractSectionView.prototype.initialize.apply(this, arguments);
 
@@ -414,4 +409,4 @@ define([
             return !this.filteredParametricFieldsCollection || this.filteredParametricFieldsCollection.isEmpty();
         }
     });
-});
+

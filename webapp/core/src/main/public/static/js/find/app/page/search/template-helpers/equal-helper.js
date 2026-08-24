@@ -12,8 +12,7 @@
  * information contained herein is subject to change without notice.
  */
 
-define(function() {
-    return function(a, b) {
+module.exports = function(a, b) {
         let match = a === b;
 
         const numToCompare = arguments.length - 1;
@@ -30,4 +29,4 @@ define(function() {
 
         return match ? options.fn(this) : options.inverse(this);
     };
-});
+

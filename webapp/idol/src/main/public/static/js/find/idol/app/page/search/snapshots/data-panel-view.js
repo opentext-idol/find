@@ -11,36 +11,34 @@
  * liable for technical or editorial errors or omissions contained herein. The
  * information contained herein is subject to change without notice.
  */
-define([
-    'backbone',
-    'underscore',
-    'js-whatever/js/model-any-changed-attribute-listener',
-    'text!find/templates/app/page/search/snapshots/data-panel-item.html'
-], function(Backbone, _, addChangeListener, itemTemplate) {
-    'use strict';
+const Backbone = require('backbone');
+const _ = require('underscore');
+const addChangeListener = require('js-whatever/js/model-any-changed-attribute-listener');
+const itemTemplate = require('find/templates/app/page/search/snapshots/data-panel-item.html');
 
-    var itemTemplateFunction = _.template(itemTemplate);
+var itemTemplateFunction = _.template(itemTemplate);
 
-    /**
-     * Given a hash of model attributes, return a list of title-content pairs to be rendered. There need not be a one to
-     * one mapping between the target attributes and the output title-content pairs. Null values will be ignored.
-     * @callback DataPanelAttributesProcessor
-     * @parameter {Backbone.Model} model
-     * @parameter {Object} attributes
-     * @returns {?{title: String, content: String}[]}
-     */
-    /**
-     * @typedef {Object} DataPanelViewOptions
-     * @property {DataPanelAttributesProcessor} processAttributes
-     * @property {String[]} targetAttributes Model attributes to listen to and pass to the processAttributes function
-     */
-    /**
-     * View for rendering a list of title-content pairs derived from model attributes.
-     * @name DataPanelView
-     * @constructor
-     * @param {DataPanelViewOptions} options
-     */
-    return Backbone.View.extend({
+/**
+ * Given a hash of model attributes, return a list of title-content pairs to be rendered. There need not be a one to
+ * one mapping between the target attributes and the output title-content pairs. Null values will be ignored.
+ * @callback DataPanelAttributesProcessor
+ * @parameter {Backbone.Model} model
+ * @parameter {Object} attributes
+ * @returns {?{title: String, content: String}[]}
+ */
+/**
+ * @typedef {Object} DataPanelViewOptions
+ * @property {DataPanelAttributesProcessor} processAttributes
+ * @property {String[]} targetAttributes Model attributes to listen to and pass to the processAttributes function
+ */
+/**
+ * View for rendering a list of title-content pairs derived from model attributes.
+ * @name DataPanelView
+ * @constructor
+ * @param {DataPanelViewOptions} options
+ */
+
+module.exports = Backbone.View.extend({
         className: 'p-l-sm p-b-sm',
 
         initialize: function(options) {
@@ -55,4 +53,4 @@ define([
             this.$el.html(html);
         }
     });
-});
+

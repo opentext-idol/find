@@ -12,43 +12,41 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/app/configuration',
-    'find/app/util/topic-map-view',
-    'find/app/util/range-input',
-    'find/app/model/entity-collection',
-    'find/nls/bundle',
-    'find/app/util/generate-error-support-message',
-    'text!find/templates/app/page/search/results/entity-topic-map-view.html',
-    'text!find/templates/app/page/loading-spinner.html',
-    'iCheck'
-], function(_, $, Backbone, configuration, TopicMapView, RangeInput, EntityCollection,
-            i18n, generateErrorHtml, template, loadingTemplate) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const configuration = require('find/app/configuration');
+const TopicMapView = require('find/app/util/topic-map-view');
+const RangeInput = require('find/app/util/range-input');
+const EntityCollection = require('find/app/model/entity-collection');
+const i18n = require('find/nls/bundle');
+const generateErrorHtml = require('find/app/util/generate-error-support-message');
+const template = require('find/templates/app/page/search/results/entity-topic-map-view.html');
+const loadingTemplate = require('find/templates/app/page/loading-spinner.html');
 
-    const config = configuration();
-    const FETCH_ON_DEMAND = config.uiCustomization && config.uiCustomization.fetchOnDemand || false;
+// Loaded for side effects only - do not remove.
+require('iCheck');
 
-    const loadingHtml = _.template(loadingTemplate)({i18n: i18n, large: true});
+const config = configuration();
+const FETCH_ON_DEMAND = config.uiCustomization && config.uiCustomization.fetchOnDemand || false;
 
-    /**
-     * @readonly
-     * @enum {String}
-     */
-    const ViewState = {
-        LOADING: 'LOADING',
-        ERROR: 'ERROR',
-        EMPTY: 'EMPTY',
-        MAP: 'MAP'
-    };
+const loadingHtml = _.template(loadingTemplate)({i18n: i18n, large: true});
 
-    const SPEED_SLIDER_MIN = 50;
-    const DEFAULT_MAX_RESULTS = 300;
+/**
+ * @readonly
+ * @enum {String}
+ */
+const ViewState = {
+    LOADING: 'LOADING',
+    ERROR: 'ERROR',
+    EMPTY: 'EMPTY',
+    MAP: 'MAP'
+};
 
-    return Backbone.View.extend({
+const SPEED_SLIDER_MIN = 50;
+const DEFAULT_MAX_RESULTS = 300;
+
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         initialize: function(options) {
@@ -231,4 +229,4 @@ define([
             );
         }
     });
-});
+

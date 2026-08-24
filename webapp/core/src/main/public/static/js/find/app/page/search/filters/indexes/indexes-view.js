@@ -12,27 +12,24 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'databases-view/js/databases-view',
-    './index-item-view',
-    'find/nls/indexes',
-    'find/nls/bundle',
-    'text!find/templates/app/page/search/filters/indexes/index-list.html'
-], function(_, $, Backbone, DatabasesView, IndexItemView, i18nIndexes, i18n, listTemplate) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const DatabasesView = require('databases-view/js/databases-view');
+const IndexItemView = require('./index-item-view');
+const i18nIndexes = require('find/nls/indexes');
+const i18n = require('find/nls/bundle');
+const listTemplate = require('find/templates/app/page/search/filters/indexes/index-list.html');
 
-    const CHECKED_CLASS = 'hp-icon hp-fw hp-check';
-    const INDETERMINATE_CLASS = 'hp-icon hp-fw hp-minus';
-    const DISABLED_CLASS = 'disabled';
+const CHECKED_CLASS = 'hp-icon hp-fw hp-check';
+const INDETERMINATE_CLASS = 'hp-icon hp-fw hp-minus';
+const DISABLED_CLASS = 'disabled';
 
-    const ICON_SELECTOR = '> span > .database-icon';
+const ICON_SELECTOR = '> span > .database-icon';
 
-    const DEBOUNCE_TIMEOUT = 500;
+const DEBOUNCE_TIMEOUT = 500;
 
-    return DatabasesView.extend({
+module.exports = DatabasesView.extend({
         // will be overridden
         getIndexCategories: null,
         databaseHelper: null,
@@ -160,4 +157,4 @@ define([
             $input.find(ICON_SELECTOR).addClass(INDETERMINATE_CLASS);
         }
     });
-});
+

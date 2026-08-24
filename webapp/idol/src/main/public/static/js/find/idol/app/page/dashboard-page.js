@@ -12,58 +12,54 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'js-whatever/js/base-page',
-    'find/app/vent',
-    'find/idol/app/page/dashboard/widget-registry',
-    './dashboard/widgets/widget-not-found',
-    './dashboard/update-tracker-model',
-    'text!find/idol/templates/page/dashboards/dashboard-page.html',
-    'text!find/idol/templates/page/dashboards/powerpoint-export-form.html',
-    'find/nls/bundle'
-], function(_, $, BasePage, vent, widgetRegistry, WidgetNotFoundWidget, UpdateTrackerModel,
-            template, exportFormTemplate, i18n) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const BasePage = require('js-whatever/js/base-page');
+const vent = require('find/app/vent');
+const widgetRegistry = require('find/idol/app/page/dashboard/widget-registry');
+const WidgetNotFoundWidget = require('./dashboard/widgets/widget-not-found');
+const UpdateTrackerModel = require('./dashboard/update-tracker-model');
+const template = require('find/idol/templates/page/dashboards/dashboard-page.html');
+const exportFormTemplate = require('find/idol/templates/page/dashboards/powerpoint-export-form.html');
+const i18n = require('find/nls/bundle');
 
-    const FULLSCREEN_CLASS = 'fullscreen';
+const FULLSCREEN_CLASS = 'fullscreen';
 
-    const formTemplateFn = _.template(exportFormTemplate);
+const formTemplateFn = _.template(exportFormTemplate);
 
-    const emptyReport = {
-        data: {
-            text: [
-                {
-                    text: i18n['export.powerpoint.widgetEmpty'],
-                    fontSize: 12
-                }
-            ],
-        },
-        type: 'text'
-    };
+const emptyReport = {
+    data: {
+        text: [
+            {
+                text: i18n['export.powerpoint.widgetEmpty'],
+                fontSize: 12
+            }
+        ],
+    },
+    type: 'text'
+};
 
-    const errorReport = {
-        data: {
-            text: [
-                {
-                    text: i18n['export.powerpoint.widgetError'],
-                    fontSize: 12
-                }
-            ],
-        },
-        type: 'text'
-    };
+const errorReport = {
+    data: {
+        text: [
+            {
+                text: i18n['export.powerpoint.widgetError'],
+                fontSize: 12
+            }
+        ],
+    },
+    type: 'text'
+};
 
-    function fullscreenHandlerFactory(fullScreenElement) {
-        return function() {
-            this.toggleKeepAlive(!this.$widgets.hasClass(FULLSCREEN_CLASS));
-            this.$widgets.toggleClass(FULLSCREEN_CLASS, fullScreenElement);
-            this.onResize();
-        }.bind(this);
-    }
+function fullscreenHandlerFactory(fullScreenElement) {
+    return function() {
+        this.toggleKeepAlive(!this.$widgets.hasClass(FULLSCREEN_CLASS));
+        this.$widgets.toggleClass(FULLSCREEN_CLASS, fullScreenElement);
+        this.onResize();
+    }.bind(this);
+}
 
-    return BasePage.extend({
+module.exports = BasePage.extend({
         template: _.template(template),
 
         events: function() {
@@ -382,4 +378,4 @@ define([
             }
         }
     });
-});
+

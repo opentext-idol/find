@@ -12,17 +12,14 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'jquery',
-    'settings/js/widget',
-    'find/app/page/settings/enable-view',
-    'text!find/templates/app/page/settings/widget.html',
-    'text!find/templates/app/page/settings/saved-search-widget.html',
-    'underscore'
-], function($, Widget, EnableView, widgetTemplate, template, _) {
-    'use strict';
+const $ = require('jquery');
+const Widget = require('settings/js/widget');
+const EnableView = require('find/app/page/settings/enable-view');
+const widgetTemplate = require('find/templates/app/page/settings/widget.html');
+const template = require('find/templates/app/page/settings/saved-search-widget.html');
+const _ = require('underscore');
 
-    return Widget.extend({
+module.exports = Widget.extend({
         widgetTemplate: _.template(widgetTemplate),
         template: _.template(template),
 
@@ -68,4 +65,4 @@ define([
             this.$pollingInterval.val(config.pollingInterval);
         }
     });
-});
+

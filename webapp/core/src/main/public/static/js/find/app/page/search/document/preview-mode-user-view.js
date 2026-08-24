@@ -21,49 +21,46 @@
  *      - fields: array of UserDetailsFieldConfig determining which fields to display
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/nls/bundle',
-    'text!find/templates/app/page/search/document/preview-mode-user-view.html'
-], function(_, Backbone, i18n, template) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/search/document/preview-mode-user-view.html');
 
-    const getFieldDisplayName = function (name) {
-        return _.map(_.compact(name.split('_')), function (word) {
-            return word[0].toUpperCase() + word.substr(1);
-        }).join(' ');
-    };
+const getFieldDisplayName = function (name) {
+    return _.map(_.compact(name.split('_')), function (word) {
+        return word[0].toUpperCase() + word.substr(1);
+    }).join(' ');
+};
 
-    const getPreviewFields = function (userModel, configFields) {
-        const previewFields = [];
+const getPreviewFields = function (userModel, configFields) {
+    const previewFields = [];
 
-        if (userModel.get('emailaddress')) {
+    if (userModel.get('emailaddress')) {
+        previewFields.push({
+            name: i18n['search.preview.user.emailFieldName'],
+            value: userModel.get('emailaddress')
+        });
+    }
+
+    previewFields.push({
+        name: i18n['search.preview.user.uidFieldName'],
+        value: userModel.get('uid')
+    });
+
+    const userFields = userModel.get('fields') || {};
+    _.each(configFields, function (configField) {
+        if (userFields[configField.name]) {
             previewFields.push({
-                name: i18n['search.preview.user.emailFieldName'],
-                value: userModel.get('emailaddress')
+                name: getFieldDisplayName(configField.name),
+                value: userFields[configField.name]
             });
         }
+    });
 
-        previewFields.push({
-            name: i18n['search.preview.user.uidFieldName'],
-            value: userModel.get('uid')
-        });
+    return previewFields;
+};
 
-        const userFields = userModel.get('fields') || {};
-        _.each(configFields, function (configField) {
-            if (userFields[configField.name]) {
-                previewFields.push({
-                    name: getFieldDisplayName(configField.name),
-                    value: userFields[configField.name]
-                });
-            }
-        });
-
-        return previewFields;
-    };
-
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         className: 'well flex-column m-b-nil full-height preview-mode-user',
 
         template: _.template(template),
@@ -93,4 +90,3 @@ define([
 
     });
 
-});

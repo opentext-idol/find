@@ -12,80 +12,77 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/nls/bundle',
-    'js-whatever/js/list-view',
-    'find/app/util/collapsible',
-    'find/app/page/search/filters/parametric/parametric-select-modal',
-    'find/app/page/search/filters/parametric/parametric-value-view',
-    'text!find/templates/app/page/search/filters/parametric/parametric-field-footer.html',
-    'text!find/templates/app/page/search/filters/parametric/parametric-field-title.html'
-], function(_, Backbone, i18n, ListView, Collapsible, ParametricModal, ValueView, seeAllButtonTemplate, titleTemplate) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const ListView = require('js-whatever/js/list-view');
+const Collapsible = require('find/app/util/collapsible');
+const ParametricModal = require('find/app/page/search/filters/parametric/parametric-select-modal');
+const ValueView = require('find/app/page/search/filters/parametric/parametric-value-view');
+const seeAllButtonTemplate = require('find/templates/app/page/search/filters/parametric/parametric-field-footer.html');
+const titleTemplate = require('find/templates/app/page/search/filters/parametric/parametric-field-title.html');
 
-    const MAX_SIZE = 5;
+const MAX_SIZE = 5;
 
-    function mapSelectedValues(values) {
-        return values.map(function(value) {
-            return {id: value}
-        });
-    }
-
-    const STATES = {
-        PROCESSING: 'PROCESSING',
-        ERROR: 'ERROR',
-        SYNCED: 'SYNCED'
-    };
-
-    const ValuesView = Backbone.View.extend({
-        className: 'table parametric-fields-table',
-        tagName: 'table',
-
-        events: {
-            'click .show-all': function() {
-                new ParametricModal({
-                    initialField: this.model.id,
-                    queryModel: this.queryModel,
-                    parametricFieldsCollection: this.parametricFieldsCollection,
-                    selectedParametricValues: this.selectedParametricValues,
-                    indexesCollection: this.indexesCollection,
-                    parametricValuesSort: this.parametricValuesSort
-                });
-            }
-        },
-
-        initialize: function(options) {
-            this.selectedParametricValues = options.selectedParametricValues;
-            this.indexesCollection = options.indexesCollection;
-            this.parametricFieldsCollection = options.parametricFieldsCollection;
-            this.queryModel = options.queryModel;
-            this.parametricValuesSort = options.parametricValuesSort;
-
-            this.listView = new ListView({
-                collection: this.collection,
-                footerHtml: _.template(seeAllButtonTemplate)({i18n: i18n}),
-                ItemView: ValueView,
-                maxSize: MAX_SIZE,
-                tagName: 'tbody',
-                itemOptions: {
-                    selectedValuesCollection: options.selectedValuesCollection,
-                }
-            });
-        },
-
-        render: function() {
-            this.$el.html(this.listView.render().$el);
-        },
-
-        remove: function() {
-            this.listView.remove();
-            Backbone.View.prototype.remove.call(this);
-        }
+function mapSelectedValues(values) {
+    return values.map(function(value) {
+        return {id: value}
     });
+}
 
-    return Backbone.View.extend({
+const STATES = {
+    PROCESSING: 'PROCESSING',
+    ERROR: 'ERROR',
+    SYNCED: 'SYNCED'
+};
+
+const ValuesView = Backbone.View.extend({
+    className: 'table parametric-fields-table',
+    tagName: 'table',
+
+    events: {
+        'click .show-all': function() {
+            new ParametricModal({
+                initialField: this.model.id,
+                queryModel: this.queryModel,
+                parametricFieldsCollection: this.parametricFieldsCollection,
+                selectedParametricValues: this.selectedParametricValues,
+                indexesCollection: this.indexesCollection,
+                parametricValuesSort: this.parametricValuesSort
+            });
+        }
+    },
+
+    initialize: function(options) {
+        this.selectedParametricValues = options.selectedParametricValues;
+        this.indexesCollection = options.indexesCollection;
+        this.parametricFieldsCollection = options.parametricFieldsCollection;
+        this.queryModel = options.queryModel;
+        this.parametricValuesSort = options.parametricValuesSort;
+
+        this.listView = new ListView({
+            collection: this.collection,
+            footerHtml: _.template(seeAllButtonTemplate)({i18n: i18n}),
+            ItemView: ValueView,
+            maxSize: MAX_SIZE,
+            tagName: 'tbody',
+            itemOptions: {
+                selectedValuesCollection: options.selectedValuesCollection,
+            }
+        });
+    },
+
+    render: function() {
+        this.$el.html(this.listView.render().$el);
+    },
+
+    remove: function() {
+        this.listView.remove();
+        Backbone.View.prototype.remove.call(this);
+    }
+});
+
+module.exports = Backbone.View.extend({
         className: 'animated fadeIn',
 
         initialize: function(options) {
@@ -251,4 +248,4 @@ define([
             }
         },
     });
-});
+

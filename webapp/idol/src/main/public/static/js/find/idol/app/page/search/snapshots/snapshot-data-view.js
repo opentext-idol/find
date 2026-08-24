@@ -12,25 +12,22 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/nls/bundle',
-    'find/idol/nls/snapshots',
-    'find/app/util/collapsible',
-    './data-panel-view',
-    './snapshot-detail',
-    './snapshot-restrictions'
-], function(_, Backbone, i18n, snapshotsI18n, Collapsible, DataPanelView,
-            snapshotDetail, snapshotRestrictions) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const snapshotsI18n = require('find/idol/nls/snapshots');
+const Collapsible = require('find/app/util/collapsible');
+const DataPanelView = require('./data-panel-view');
+const snapshotDetail = require('./snapshot-detail');
+const snapshotRestrictions = require('./snapshot-restrictions');
 
-    /**
-     * Contents of the left side panel for a saved snapshot.
-     * @name SnapshotDataView
-     * @constructor
-     */
-    return Backbone.View.extend({
+/**
+ * Contents of the left side panel for a saved snapshot.
+ * @name SnapshotDataView
+ * @constructor
+ */
+
+module.exports = Backbone.View.extend({
         initialize: function(options) {
             this.collapsibles = [
                 new Collapsible({
@@ -62,4 +59,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

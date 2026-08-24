@@ -12,69 +12,68 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'd3',
-    'find/app/configuration',
-    'find/app/vent',
-    'leaflet',
-    'Leaflet.awesome-markers',
-    'leaflet.markercluster',
-    'leaflet.markercluster.layersupport',
-    'html2canvas'
-], function(_, $, Backbone, d3, configuration, vent, leaflet) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const d3 = require('d3');
+const configuration = require('find/app/configuration');
+const vent = require('find/app/vent');
+const leaflet = require('leaflet');
 
-    const INITIAL_ZOOM = 3;
+// Loaded for side effects only - do not remove.
+require('Leaflet.awesome-markers');
+require('leaflet.markercluster');
+require('leaflet.markercluster.layersupport');
+require('html2canvas');
 
-    const leafletMarkerColorMap = {
-        'red': '#d33d2a',
-        'orange': '#f0932f',
-        'green': '#70ad25',
-        'blue': '#37a8da',
-        'purple': '#c64daf',
-        'darkred': '#9f3235',
-        'darkblue': '#0066a2',
-        'darkgreen': '#6d7c22',
-        'darkpurple': '#543563',
-        'cadetblue': '#406471',
-        'lightred': '#ff8676',
-        'beige': '#ffbc74',
-        'lightgreen': '#b8f271',
-        'lightblue': '#7dd5ff',
-        'pink': '#f888e2',
-        'white': '#fbfbfb',
-        'lightgray': '#9e9e9e',
-        'gray': '#555555',
-        'black': '#2f2f2f',
-    };
+const INITIAL_ZOOM = 3;
 
-    function leftPadHex(str) {
-        return str.length < 2
-            ? '0' + str
-            : str;
+const leafletMarkerColorMap = {
+    'red': '#d33d2a',
+    'orange': '#f0932f',
+    'green': '#70ad25',
+    'blue': '#37a8da',
+    'purple': '#c64daf',
+    'darkred': '#9f3235',
+    'darkblue': '#0066a2',
+    'darkgreen': '#6d7c22',
+    'darkpurple': '#543563',
+    'cadetblue': '#406471',
+    'lightred': '#ff8676',
+    'beige': '#ffbc74',
+    'lightgreen': '#b8f271',
+    'lightblue': '#7dd5ff',
+    'pink': '#f888e2',
+    'white': '#fbfbfb',
+    'lightgray': '#9e9e9e',
+    'gray': '#555555',
+    'black': '#2f2f2f',
+};
+
+function leftPadHex(str) {
+    return str.length < 2
+        ? '0' + str
+        : str;
+}
+
+function leftPadMatch(match) {
+    return leftPadHex(Number(match[1]).toString(16))
+        + leftPadHex(Number(match[2]).toString(16))
+        + leftPadHex(Number(match[3]).toString(16));
+}
+
+function hexColor(str) {
+    let match;
+    if(match = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)/.exec(str)) {
+        return '#' + leftPadMatch(match);
+    } else if(match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(str)) {
+        return '#' + leftPadMatch(match);
+    } else {
+        return d3.rgb(str).toString();
     }
+}
 
-    function leftPadMatch(match) {
-        return leftPadHex(Number(match[1]).toString(16))
-            + leftPadHex(Number(match[2]).toString(16))
-            + leftPadHex(Number(match[3]).toString(16));
-    }
-
-    function hexColor(str) {
-        let match;
-        if(match = /rgba\((\d+),\s*(\d+),\s*(\d+),\s*([0-9.]+)\)/.exec(str)) {
-            return '#' + leftPadMatch(match);
-        } else if(match = /rgb\((\d+),\s*(\d+),\s*(\d+)\)/.exec(str)) {
-            return '#' + leftPadMatch(match);
-        } else {
-            return d3.rgb(str).toString();
-        }
-    }
-
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         initialize: function(options) {
             this.addControl = options.addControl || false;
 
@@ -383,4 +382,4 @@ define([
             return deferred.promise();
         }
     });
-});
+

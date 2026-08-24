@@ -12,14 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'find/app/model/find-base-collection',
-    'find/app/model/document-model'
-], function(_, FindBaseCollection, DocumentModel) {
-    'use strict';
+const _ = require('underscore');
+const FindBaseCollection = require('find/app/model/find-base-collection');
+const DocumentModel = require('find/app/model/document-model');
 
-    return FindBaseCollection.extend({
+module.exports = FindBaseCollection.extend({
         model: DocumentModel,
         url: 'api/public/entitysearch/search',
 
@@ -27,4 +24,4 @@ define([
             return response.results;
         }
     });
-});
+

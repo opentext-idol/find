@@ -12,22 +12,19 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/nls/bundle',
-    'find/app/model/geography-model',
-    'find/app/model/saved-searches/saved-search-model',
-    'find/app/page/search/filters/geography/geography-modal',
-    'text!find/templates/app/page/search/filters/geography/geography-view.html'
-], function(_, $, Backbone, i18n, GeographyModel, SavedSearchModel, GeographyModal, template) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const GeographyModel = require('find/app/model/geography-model');
+const SavedSearchModel = require('find/app/model/saved-searches/saved-search-model');
+const GeographyModal = require('find/app/page/search/filters/geography/geography-modal');
+const template = require('find/templates/app/page/search/filters/geography/geography-view.html');
 
-    const LocationFields = GeographyModel.LocationFields;
-    const LocationFieldsById = GeographyModel.LocationFieldsById;
+const LocationFields = GeographyModel.LocationFields;
+const LocationFieldsById = GeographyModel.LocationFieldsById;
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         events: {
             'click tr': function(evt) {
                 const locationId = $(evt.currentTarget).closest('tr').data('locationId');
@@ -103,4 +100,4 @@ define([
             });
         }
     });
-});
+

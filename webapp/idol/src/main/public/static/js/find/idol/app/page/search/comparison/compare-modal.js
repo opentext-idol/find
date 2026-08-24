@@ -12,38 +12,34 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'find/app/util/modal',
-    'find/idol/app/page/search/comparison/search-to-compare-view',
-    'find/idol/app/model/comparison/comparison-model',
-    'find/app/model/saved-searches/saved-search-model',
-    'text!find/idol/templates/comparison/compare-modal-footer.html',
-    'text!find/templates/app/page/loading-spinner.html',
-    'find/idol/nls/comparisons',
-    'find/nls/bundle'
-], function(_, $, Modal, SearchToCompare, ComparisonModel, SavedSearchModel, compareModalFooter,
-            loadingSpinnerTemplate, comparisonsI18n, i18n) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Modal = require('find/app/util/modal');
+const SearchToCompare = require('find/idol/app/page/search/comparison/search-to-compare-view');
+const ComparisonModel = require('find/idol/app/model/comparison/comparison-model');
+const SavedSearchModel = require('find/app/model/saved-searches/saved-search-model');
+const compareModalFooter = require('find/idol/templates/comparison/compare-modal-footer.html');
+const loadingSpinnerTemplate = require('find/templates/app/page/loading-spinner.html');
+const comparisonsI18n = require('find/idol/nls/comparisons');
+const i18n = require('find/nls/bundle');
 
-    function getSearchModelWithDefault(savedSearchCollection, sharedSavedSearchCollection, queryStates) {
-        return function(cid) {
-            let search = savedSearchCollection.get(cid) || sharedSavedSearchCollection.get(cid);
+function getSearchModelWithDefault(savedSearchCollection, sharedSavedSearchCollection, queryStates) {
+    return function(cid) {
+        let search = savedSearchCollection.get(cid) || sharedSavedSearchCollection.get(cid);
 
-            const queryState = queryStates.get(cid);
-            if (search.isNew() || queryState && !search.equalsQueryState(queryState)) {
-                search = new SavedSearchModel(_.extend({},
-                    search.pick('type', 'title', 'queryStateTokens', 'promotionsStateTokens'),
-                    SavedSearchModel.attributesFromQueryState(queryState)
-                ));
-            }
+        const queryState = queryStates.get(cid);
+        if (search.isNew() || queryState && !search.equalsQueryState(queryState)) {
+            search = new SavedSearchModel(_.extend({},
+                search.pick('type', 'title', 'queryStateTokens', 'promotionsStateTokens'),
+                SavedSearchModel.attributesFromQueryState(queryState)
+            ));
+        }
 
-            return search;
-        };
-    }
+        return search;
+    };
+}
 
-    return Modal.extend({
+module.exports = Modal.extend({
         footerTemplate: _.template(compareModalFooter),
         loadingTemplate: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false}),
 
@@ -130,4 +126,4 @@ define([
             Modal.prototype.remove.call(this);
         }
     });
-});
+

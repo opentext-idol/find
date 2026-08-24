@@ -12,10 +12,7 @@
  * information contained herein is subject to change without notice.
  */
 
-define(function() {
-    'use strict';
-
-    return [
+module.exports = [
         {
             name: 'backbone',
             url: 'http://backbonejs.org',
@@ -381,4 +378,4 @@ define(function() {
             edited: false
         },
     ];
-});
+

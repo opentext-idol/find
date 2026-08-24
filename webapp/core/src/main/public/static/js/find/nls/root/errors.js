@@ -12,14 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'js-whatever/js/substitution'
-], function(substitution) {
-    'use strict';
+const substitution = require('js-whatever/js/substitution');
 
-    return substitution({
+module.exports = substitution({
         // Do not use this file: it will be overwritten by its analogue from the hod or idol modules.
         // Its presence here is required by tests.
         'error.code.DUMMYERRORCODE123': 'Prettified dummy error message'// Dummy error for jasmine tests
     });
-});
+

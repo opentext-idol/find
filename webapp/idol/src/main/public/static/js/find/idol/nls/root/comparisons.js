@@ -12,11 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'js-whatever/js/substitution'
-], function(substitution) {
+const substitution = require('js-whatever/js/substitution');
 
-    return substitution({
+module.exports = substitution({
         'compare': 'Compare',
         'compareSaved': 'Compare saved searches',
         'error.default': 'An error occurred fetching comparison',
@@ -27,4 +25,3 @@ define([
         'selectSearchToCompare': 'Choose another search to compare'
     });
 
-});

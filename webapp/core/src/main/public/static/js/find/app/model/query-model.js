@@ -12,31 +12,28 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/app/configuration',
-    'find/app/util/search-data-util'
-], function(_, Backbone, config, searchDataUtil) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const config = require('find/app/configuration');
+const searchDataUtil = require('find/app/util/search-data-util');
 
-    const DEBOUNCE_WAIT_MILLISECONDS = 500;
+const DEBOUNCE_WAIT_MILLISECONDS = 500;
 
-    const collectionBuildIndexes = function(collection) {
-        return searchDataUtil.buildIndexes(collection.map(function(model) {
-            return model.pick('domain', 'name');
-        }));
-    };
+const collectionBuildIndexes = function(collection) {
+    return searchDataUtil.buildIndexes(collection.map(function(model) {
+        return model.pick('domain', 'name');
+    }));
+};
 
-    function makeQueryText(queryState) {
-        return searchDataUtil.makeQueryText(queryState.conceptGroups.pluck('concepts'));
-    }
+function makeQueryText(queryState) {
+    return searchDataUtil.makeQueryText(queryState.conceptGroups.pluck('concepts'));
+}
 
-    function makeQuestionText(queryState) {
-        return searchDataUtil.makeQuestionText(queryState.conceptGroups.pluck('concepts'));
-    }
+function makeQuestionText(queryState) {
+    return searchDataUtil.makeQuestionText(queryState.conceptGroups.pluck('concepts'));
+}
 
-    return Backbone.Model.extend({
+module.exports = Backbone.Model.extend({
         defaults: {
             autoCorrect: true,
             queryText: '',
@@ -138,4 +135,4 @@ define([
                 : null;
         }
     });
-});
+

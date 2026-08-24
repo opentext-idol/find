@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore'
-], function(_) {
+const _ = require('underscore');
 
-    return function(fieldId, options) {
+module.exports = function(fieldId, options) {
         const fn = options && options.fn || _.identity;
         const inverse = options && options.inverse;
         const field = _.findWhere(this.fields, {id: fieldId});
         return field ? fn(field.values[0]) : inverse ? inverse(this) : undefined;
     };
 
-});

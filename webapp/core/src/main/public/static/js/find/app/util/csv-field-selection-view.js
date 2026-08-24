@@ -12,18 +12,15 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'js-whatever/js/list-view',
-    'find/app/util/csv-field-selection-list-item',
-    'find/app/configuration',
-    'text!find/templates/app/util/csv-export-form-template.html'
-], function(_, $, Backbone, ListView, ItemView, configuration, exportFormTemplate) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const ListView = require('js-whatever/js/list-view');
+const ItemView = require('find/app/util/csv-field-selection-list-item');
+const configuration = require('find/app/configuration');
+const exportFormTemplate = require('find/templates/app/util/csv-export-form-template.html');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         formTemplate: _.template(exportFormTemplate),
 
         events: {
@@ -111,4 +108,4 @@ define([
                 .appendTo('body').submit().remove();
         }
     });
-});
+

@@ -12,25 +12,22 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'find/app/model/find-base-collection'
-], function(_, $, FindBaseCollection) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const FindBaseCollection = require('find/app/model/find-base-collection');
 
-    const CLUSTER_MODE = 'docsWithPhrase';
+const CLUSTER_MODE = 'docsWithPhrase';
 
-    function sum(a, b) {
-        return a + b;
-    }
+function sum(a, b) {
+    return a + b;
+}
 
-    const Type = {
-        QUERY: 'QUERY',
-        STATE_TOKEN: 'STATE_TOKEN'
-    };
+const Type = {
+    QUERY: 'QUERY',
+    STATE_TOKEN: 'STATE_TOKEN'
+};
 
-    return FindBaseCollection.extend({
+module.exports = FindBaseCollection.extend({
         url: 'api/public/search/find-related-concepts',
 
         initialize: function(models, options) {
@@ -141,4 +138,4 @@ define([
                 : $.when();
         }
     });
-});
+

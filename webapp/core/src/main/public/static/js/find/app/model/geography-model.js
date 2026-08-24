@@ -1,90 +1,88 @@
-define([
-    'backbone',
-    'underscore',
-    'fieldtext/js/field-text-parser',
-    'find/app/configuration'
-], function(Backbone, _, parser, configuration) {
+const Backbone = require('backbone');
+const _ = require('underscore');
+const parser = require('fieldtext/js/field-text-parser');
+const configuration = require('find/app/configuration');
 
-    function MapLatLonFields(id, name, latLonFieldPairs, cfg) {
-        this.id = id;
-        this.displayName = name;
-        this.fields = latLonFieldPairs;
-        this.iconName = cfg.iconName;
-        this.iconColor = cfg.iconColor;
-        this.markerColor = cfg.markerColor;
-        this.geospatialUnified = !!cfg.geoindexField;
+function MapLatLonFields(id, name, latLonFieldPairs, cfg) {
+    this.id = id;
+    this.displayName = name;
+    this.fields = latLonFieldPairs;
+    this.iconName = cfg.iconName;
+    this.iconColor = cfg.iconColor;
+    this.markerColor = cfg.markerColor;
+    this.geospatialUnified = !!cfg.geoindexField;
+}
+
+function toWkt(points) {
+    let str = 'POLYGON ((';
+
+    for (let ii = 0, max = points.length; ii < max; ii += 2) {
+        if (ii) {
+            str += ', '
+        }
+        str += points[ii] + ' ' + points[ii + 1];
     }
 
-    function toWkt(points) {
-        let str = 'POLYGON ((';
+    return str + '))';
+}
 
-        for (let ii = 0, max = points.length; ii < max; ii += 2) {
-            if (ii) {
-                str += ', '
+const locationFields = [];
+const locationFieldsById = {};
+
+parseConfiguration(configuration());
+
+function parseConfiguration(config) {
+    locationFields.length = 0;
+    _.each(locationFieldsById, function(val, key){
+        delete locationFieldsById[key];
+    });
+
+    if (config && config.map && config.map.enabled && config.map.locationFields && config.fieldsInfo) {
+        const fieldsInfo = config.fieldsInfo;
+
+        function getFieldNames(fieldName) {
+            const fieldMeta = fieldsInfo[fieldName];
+            if (fieldMeta && fieldMeta.names && fieldMeta.names.length) {
+                return fieldMeta.names;
             }
-            str += points[ii] + ' ' + points[ii + 1];
         }
 
-        return str + '))';
-    }
+        _.each(config.map.locationFields, function(field){
+            const latLonFields = [];
 
-    const locationFields = [];
-    const locationFieldsById = {};
-
-    parseConfiguration(configuration());
-
-    function parseConfiguration(config) {
-        locationFields.length = 0;
-        _.each(locationFieldsById, function(val, key){
-            delete locationFieldsById[key];
-        });
-
-        if (config && config.map && config.map.enabled && config.map.locationFields && config.fieldsInfo) {
-            const fieldsInfo = config.fieldsInfo;
-
-            function getFieldNames(fieldName) {
-                const fieldMeta = fieldsInfo[fieldName];
-                if (fieldMeta && fieldMeta.names && fieldMeta.names.length) {
-                    return fieldMeta.names;
+            if (field.geoindexField) {
+                const latLonField = getFieldNames(field.geoindexField);
+                if (latLonField && latLonField.length) {
+                    latLonFields.push([latLonField]);
+                }
+            }
+            else {
+                const latFields = getFieldNames(field.latitudeField);
+                const lonFields = getFieldNames(field.longitudeField);
+                if (latFields && lonFields) {
+                    for (let ii = 0, max = Math.min(latFields.length, lonFields.length); ii < max; ++ii) {
+                        latLonFields.push([latFields[ii], lonFields[ii]])
+                    }
                 }
             }
 
-            _.each(config.map.locationFields, function(field){
-                const latLonFields = [];
 
-                if (field.geoindexField) {
-                    const latLonField = getFieldNames(field.geoindexField);
-                    if (latLonField && latLonField.length) {
-                        latLonFields.push([latLonField]);
-                    }
+            if (latLonFields.length) {
+                const name = field.displayName;
+                const id = field.id || name;
+                const newField = new MapLatLonFields(id, name, latLonFields, field);
+
+                // We avoid having any two fields with the same id.
+                if (!locationFieldsById.hasOwnProperty(id)) {
+                    locationFields.push(newField);
+                    locationFieldsById[id] = newField;
                 }
-                else {
-                    const latFields = getFieldNames(field.latitudeField);
-                    const lonFields = getFieldNames(field.longitudeField);
-                    if (latFields && lonFields) {
-                        for (let ii = 0, max = Math.min(latFields.length, lonFields.length); ii < max; ++ii) {
-                            latLonFields.push([latFields[ii], lonFields[ii]])
-                        }
-                    }
-                }
-
-
-                if (latLonFields.length) {
-                    const name = field.displayName;
-                    const id = field.id || name;
-                    const newField = new MapLatLonFields(id, name, latLonFields, field);
-
-                    // We avoid having any two fields with the same id.
-                    if (!locationFieldsById.hasOwnProperty(id)) {
-                        locationFields.push(newField);
-                        locationFieldsById[id] = newField;
-                    }
-                }
-            })
-        }
+            }
+        })
     }
+}
 
-    return Backbone.Model.extend({
+module.exports = Backbone.Model.extend({
         /**
          * @typedef {Object} GeographyModelAttributes
          * This is a attribute-value map of location field IDs to shape lists.
@@ -184,4 +182,3 @@ define([
         parseConfiguration: parseConfiguration
     });
 
-});

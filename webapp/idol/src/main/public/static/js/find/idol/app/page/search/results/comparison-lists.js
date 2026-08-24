@@ -12,22 +12,18 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/idol/app/model/comparison/comparison-documents-collection',
-    'find/idol/app/page/search/results/idol-results-view',
-    'find/app/page/search/results/state-token-strategy',
-    'text!find/idol/templates/comparison/comparison-list-container.html',
-    'find/app/util/search-data-util',
-    'find/nls/bundle',
-    'find/idol/nls/comparisons'
-], function(_, $, Backbone, ComparisonDocumentsCollection, ResultsView, stateTokenStrategy,
-            comparisonListContainer, searchDataUtil, i18n, comparisonsI18n) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const ComparisonDocumentsCollection = require('find/idol/app/model/comparison/comparison-documents-collection');
+const ResultsView = require('find/idol/app/page/search/results/idol-results-view');
+const stateTokenStrategy = require('find/app/page/search/results/state-token-strategy');
+const comparisonListContainer = require('find/idol/templates/comparison/comparison-list-container.html');
+const searchDataUtil = require('find/app/util/search-data-util');
+const i18n = require('find/nls/bundle');
+const comparisonsI18n = require('find/idol/nls/comparisons');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         className: 'service-view-container container-fluid',
         comparisonListContainer: _.template(comparisonListContainer, {variable: 'data'}),
 
@@ -105,4 +101,4 @@ define([
             });
         }
     });
-});
+

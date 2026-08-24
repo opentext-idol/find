@@ -1,19 +1,19 @@
-define([
-    'backbone',
-    'jquery',
-    'underscore',
-    'find/app/util/database-name-resolver',
-    'find/app/util/string-blank',
-    'text!find/templates/app/page/search/input-view.html',
-    'typeahead',
-    'bootstrap'
-], function (Backbone, $, _, databaseNameResolver, stringBlank, template) {
-    // don't send typeahead query unless search string is at least this long
-    const QUERY_MIN_CHARS = 2;
-    // don't send typeahead query unless user hasn't typed anything for this long
-    const QUERY_DEBOUNCE_MS = 400;
+const Backbone = require('backbone');
+const $ = require('jquery');
+const _ = require('underscore');
+const databaseNameResolver = require('find/app/util/database-name-resolver');
+const stringBlank = require('find/app/util/string-blank');
+const template = require('find/templates/app/page/search/input-view.html');
 
-    return Backbone.View.extend({
+// Loaded for side effects only - do not remove.
+require('typeahead');
+require('bootstrap');
+
+const QUERY_MIN_CHARS = 2;
+// don't send typeahead query unless user hasn't typed anything for this long
+const QUERY_DEBOUNCE_MS = 400;
+
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         events: {
@@ -128,4 +128,3 @@ define([
         }
     });
 
-});

@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'js-whatever/js/base-page',
-    'text!find/templates/app/page/default/default-page.html',
-    'find/nls/bundle',
-    'underscore'
-], function(BasePage, template, i18n, _) {
-    'use strict';
+const BasePage = require('js-whatever/js/base-page');
+const template = require('find/templates/app/page/default/default-page.html');
+const i18n = require('find/nls/bundle');
+const _ = require('underscore');
 
-    return BasePage.extend({
+module.exports = BasePage.extend({
         template: _.template(template),
 
         initialize: function(options) {
@@ -31,4 +28,4 @@ define([
             this.$el.html(this.template({i18n: i18n}));
         }
     });
-});
+

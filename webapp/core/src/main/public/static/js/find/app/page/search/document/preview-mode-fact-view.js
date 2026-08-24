@@ -21,15 +21,12 @@
  *  - documentRenderer
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/nls/bundle',
-    'text!find/templates/app/page/search/document/preview-mode-fact-view.html'
-], function(_, Backbone, i18n, template) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/search/document/preview-mode-fact-view.html');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         className: 'well flex-column m-b-nil full-height preview-mode-fact',
 
         template: _.template(template),
@@ -67,4 +64,4 @@ define([
         }
 
     });
-});
+

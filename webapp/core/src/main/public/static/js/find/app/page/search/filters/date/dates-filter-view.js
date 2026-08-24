@@ -12,35 +12,33 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'moment',
-    'find/nls/bundle',
-    'find/app/model/dates-filter-model',
-    'find/app/model/saved-searches/saved-search-model',
-    'find/app/util/date-picker',
-    'js-whatever/js/list-view',
-    'text!find/templates/app/page/search/filters/date/dates-filter-view.html',
-    'bootstrap-datetimepicker'
-], function(_, $, Backbone, moment, i18n, DatesFilterModel, SavedSearchModel,
-            datePicker, ListView, template) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const moment = require('moment');
+const i18n = require('find/nls/bundle');
+const DatesFilterModel = require('find/app/model/dates-filter-model');
+const SavedSearchModel = require('find/app/model/saved-searches/saved-search-model');
+const datePicker = require('find/app/util/date-picker');
+const ListView = require('js-whatever/js/list-view');
+const template = require('find/templates/app/page/search/filters/date/dates-filter-view.html');
 
-    function dateUpdater(attribute) {
-        return function() {
-            const value = this.datesFilterModel.get(attribute);
-            const display = value
-                ? value.format(datePicker.DATE_WIDGET_FORMAT)
-                : '';
+// Loaded for side effects only - do not remove.
+require('bootstrap-datetimepicker');
 
-            this.$('[data-date-attribute="' + attribute + '"] input')
-                .val(display);
-        };
-    }
+function dateUpdater(attribute) {
+    return function() {
+        const value = this.datesFilterModel.get(attribute);
+        const display = value
+            ? value.format(datePicker.DATE_WIDGET_FORMAT)
+            : '';
 
-    return Backbone.View.extend({
+        this.$('[data-date-attribute="' + attribute + '"] input')
+            .val(display);
+    };
+}
+
+module.exports = Backbone.View.extend({
         events: {
             'click tr': function(event) {
                 const $targetRow = $(event.currentTarget);
@@ -146,4 +144,4 @@ define([
             return filters;
         }
     });
-});
+

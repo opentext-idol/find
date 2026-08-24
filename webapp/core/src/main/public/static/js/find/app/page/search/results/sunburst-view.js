@@ -12,127 +12,124 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'd3',
-    'find/app/configuration',
-    'sunburst/js/sunburst',
-    'find/app/page/search/results/parametric-results-view',
-    'find/nls/bundle',
-    'text!find/templates/app/page/search/results/sunburst/sunburst-label.html',
-    'find/app/vent'
-], function(_, $, d3, configuration, Sunburst, ParametricResultsView, i18n, labelTemplate, vent) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const d3 = require('d3');
+const configuration = require('find/app/configuration');
+const Sunburst = require('sunburst/js/sunburst');
+const ParametricResultsView = require('find/app/page/search/results/parametric-results-view');
+const i18n = require('find/nls/bundle');
+const labelTemplate = require('find/templates/app/page/search/results/sunburst/sunburst-label.html');
+const vent = require('find/app/vent');
 
-    const HIDDEN_COLOR = '#f0f0f0';
+const HIDDEN_COLOR = '#f0f0f0';
 
-    const sunburstLabelIcon = '<i class="icon-zoom-out"></i>';
-    const sunburstLabelTemplate = _.template(labelTemplate);
+const sunburstLabelIcon = '<i class="icon-zoom-out"></i>';
+const sunburstLabelTemplate = _.template(labelTemplate);
 
-    function generateDataRoot(data) {
-        return {
-            text: i18n['search.sunburst.title'],
-            children: data,
-            count: _.reduce(_.pluck(data, 'count'), function(a, b) {
-                return a + b;
-            })
-        }
+function generateDataRoot(data) {
+    return {
+        text: i18n['search.sunburst.title'],
+        children: data,
+        count: _.reduce(_.pluck(data, 'count'), function(a, b) {
+            return a + b;
+        })
     }
+}
 
-    function drawSunburst($el, data, onClick) {
-        const color = d3.scale.category20c();
-        $el.empty();
+function drawSunburst($el, data, onClick) {
+    const color = d3.scale.category20c();
+    $el.empty();
 
-        return new Sunburst($el, {
-            animate: false,
-            nameAttr: 'text',
-            sizeAttr: 'count',
-            comparator: function(x, y) {
-                const hiddenComparison = x.hidden - y.hidden;
-                if(hiddenComparison !== 0) {
-                    return hiddenComparison;
-                }
-
-                const valueComparison = y.value - x.value;
-                if(valueComparison !== 0) {
-                    return valueComparison;
-                }
-
-                return d3.ascending(x, y);
-            },
-            clickCallback: onClick,
-            outerRingAnimateSize: 15,
-            data: data,
-            fillColorFn: function(datum) {
-                if(!datum.parent) {
-                    // Set the centre of the Sunburst to a fixed color
-                    return 'white';
-                }
-
-                if(datum.hidden || datum.parent.hidden) {
-                    return HIDDEN_COLOR;
-                }
-
-                // First tier sector
-                if(datum.parent.parent) {
-                    // Second tier sector
-                    datum.color = color(datum.text);
-                } else {
-                    datum.color = datum.count
-                        ? color(datum.parent.children.indexOf(datum))
-                        : 'black';
-                }
-
-                return datum.color;
-            },
-            labelFormatter: function(datum, prevClicked) {
-                const zoomedOnRoot = !prevClicked || prevClicked.depth === 0;
-                const hoveringCenter = prevClicked
-                    ? datum === prevClicked.parent
-                    : datum.depth === 0;
-                const textIsEmpty = datum.text === '';
-
-                const templateArguments = {
-                    size: datum.count,
-                    icon: !zoomedOnRoot && hoveringCenter
-                        ? sunburstLabelIcon
-                        : '',
-                    hasValue: !textIsEmpty,
-                    italic: textIsEmpty
-                };
-
-                const hiddenFilterCount = datum.hiddenFilterCount;
-                if(hiddenFilterCount > 0) {
-                    // Child comprises values hidden by dependentParametricCollection
-                    templateArguments.name = i18n['search.sunburst.tooSmall'](hiddenFilterCount);
-                } else {
-                    templateArguments.name = hiddenFilterCount === 0
-                        // Child comprises results with no values for secondary parametric field
-                        ? i18n['search.sunburst.missingValues'](datum.count, this.fieldsCollection.at(1).get('displayName'))
-                        : datum.text;
-                }
-
-                return sunburstLabelTemplate(templateArguments);
-            }.bind(this),
-            hoverCallback: function(hoveredDatum, arc, outerRingAnimateSize, arcEls, arcData, svg) {
-                const maxDepth = _.max(arcData, 'depth').depth
-                svg.selectAll('path')
-                    .filter(function(d) {
-                        // We want to expand the outermost layer on hover.
-                        return d.text !== '' && d.depth === maxDepth && d.text === hoveredDatum.text;
-                    })
-                    .each(function(d) {
-                        d3.select(this)
-                            .transition()
-                            .duration(100)
-                            .attr('d', arc(outerRingAnimateSize));
-                    });
+    return new Sunburst($el, {
+        animate: false,
+        nameAttr: 'text',
+        sizeAttr: 'count',
+        comparator: function(x, y) {
+            const hiddenComparison = x.hidden - y.hidden;
+            if(hiddenComparison !== 0) {
+                return hiddenComparison;
             }
-        });
-    }
 
-    return ParametricResultsView.extend({
+            const valueComparison = y.value - x.value;
+            if(valueComparison !== 0) {
+                return valueComparison;
+            }
+
+            return d3.ascending(x, y);
+        },
+        clickCallback: onClick,
+        outerRingAnimateSize: 15,
+        data: data,
+        fillColorFn: function(datum) {
+            if(!datum.parent) {
+                // Set the centre of the Sunburst to a fixed color
+                return 'white';
+            }
+
+            if(datum.hidden || datum.parent.hidden) {
+                return HIDDEN_COLOR;
+            }
+
+            // First tier sector
+            if(datum.parent.parent) {
+                // Second tier sector
+                datum.color = color(datum.text);
+            } else {
+                datum.color = datum.count
+                    ? color(datum.parent.children.indexOf(datum))
+                    : 'black';
+            }
+
+            return datum.color;
+        },
+        labelFormatter: function(datum, prevClicked) {
+            const zoomedOnRoot = !prevClicked || prevClicked.depth === 0;
+            const hoveringCenter = prevClicked
+                ? datum === prevClicked.parent
+                : datum.depth === 0;
+            const textIsEmpty = datum.text === '';
+
+            const templateArguments = {
+                size: datum.count,
+                icon: !zoomedOnRoot && hoveringCenter
+                    ? sunburstLabelIcon
+                    : '',
+                hasValue: !textIsEmpty,
+                italic: textIsEmpty
+            };
+
+            const hiddenFilterCount = datum.hiddenFilterCount;
+            if(hiddenFilterCount > 0) {
+                // Child comprises values hidden by dependentParametricCollection
+                templateArguments.name = i18n['search.sunburst.tooSmall'](hiddenFilterCount);
+            } else {
+                templateArguments.name = hiddenFilterCount === 0
+                    // Child comprises results with no values for secondary parametric field
+                    ? i18n['search.sunburst.missingValues'](datum.count, this.fieldsCollection.at(1).get('displayName'))
+                    : datum.text;
+            }
+
+            return sunburstLabelTemplate(templateArguments);
+        }.bind(this),
+        hoverCallback: function(hoveredDatum, arc, outerRingAnimateSize, arcEls, arcData, svg) {
+            const maxDepth = _.max(arcData, 'depth').depth
+            svg.selectAll('path')
+                .filter(function(d) {
+                    // We want to expand the outermost layer on hover.
+                    return d.text !== '' && d.depth === maxDepth && d.text === hoveredDatum.text;
+                })
+                .each(function(d) {
+                    d3.select(this)
+                        .transition()
+                        .duration(100)
+                        .attr('d', arc(outerRingAnimateSize));
+                });
+        }
+    });
+}
+
+module.exports = ParametricResultsView.extend({
         initialize: function(options) {
             this.queryModel = options.queryModel;
             const config = configuration();
@@ -199,4 +196,4 @@ define([
             }
         }
     });
-});
+

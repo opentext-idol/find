@@ -12,13 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/nls/bundle',
-    'jquery'
-], function(i18n, $) {
-    'use strict';
+const i18n = require('find/nls/bundle');
+const $ = require('jquery');
 
-    return function(model) {
+module.exports = function(model) {
         return {
             inputClass: 'search-controls',
             placeholder: i18n['app.searchPlaceholder'],
@@ -35,5 +32,5 @@ define([
             inFocus: $.noop,
             onBlur: $.noop
         }
-    }
-});
+    };
+

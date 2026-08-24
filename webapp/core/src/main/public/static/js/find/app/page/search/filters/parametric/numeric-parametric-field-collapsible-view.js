@@ -12,41 +12,40 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/nls/bundle',
-    'find/app/page/search/filters/parametric/numeric-parametric-field-view',
-    'find/app/page/search/filters/parametric/numeric-range-rounder',
-    'find/app/util/collapsible',
-    'find/app/vent'
-], function(_, Backbone, i18n, NumericParametricFieldView, rounder, Collapsible) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const NumericParametricFieldView = require('find/app/page/search/filters/parametric/numeric-parametric-field-view');
+const rounder = require('find/app/page/search/filters/parametric/numeric-range-rounder');
+const Collapsible = require('find/app/util/collapsible');
 
-    function getSubtitle() {
-        const model = this.selectedParametricValues.findWhere({field: this.model.id});
+// Loaded for side effects only - do not remove.
+require('find/app/vent');
 
-        if(model) {
-            let range;
-            const rangeArray = model.get('range');
-            if(this.type === 'Numeric') {
-                range = _.map(rangeArray, function(entry) {
-                    return rounder().round(entry, rangeArray[0], rangeArray[1]);
-                });
-            } else if(this.type === 'NumericDate') {
-                range = _.map(rangeArray, function(entry) {
-                    return NumericParametricFieldView.dateFormatting.format(entry);
-                });
-            }
+function getSubtitle() {
+    const model = this.selectedParametricValues.findWhere({field: this.model.id});
 
-            // en-dash
-            return range.join(' \u2013 ');
-        } else {
-            return i18n['app.unfiltered'];
+    if(model) {
+        let range;
+        const rangeArray = model.get('range');
+        if(this.type === 'Numeric') {
+            range = _.map(rangeArray, function(entry) {
+                return rounder().round(entry, rangeArray[0], rangeArray[1]);
+            });
+        } else if(this.type === 'NumericDate') {
+            range = _.map(rangeArray, function(entry) {
+                return NumericParametricFieldView.dateFormatting.format(entry);
+            });
         }
-    }
 
-    return Backbone.View.extend({
+        // en-dash
+        return range.join(' \u2013 ');
+    } else {
+        return i18n['app.unfiltered'];
+    }
+}
+
+module.exports = Backbone.View.extend({
         initialize: function(options) {
             this.selectedParametricValues = options.selectedParametricValues;
             this.type = this.model.get('type');
@@ -159,4 +158,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

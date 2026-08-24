@@ -8,6 +8,7 @@
     "npm": ">=10"
   },
   "scripts": {
+    "prebuild": "node build/check-side-effect-requires.js",
     "build": "webpack --mode production",
     "watch": "webpack --mode development --watch"
   },

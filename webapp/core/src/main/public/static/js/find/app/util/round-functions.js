@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore'
-], function(_) {
+const _ = require('underscore');
 
-    return function(roundSettings) {
+module.exports = function(roundSettings) {
         return roundSettings === false ? _.identity
             : roundSettings in Math ? Math[roundSettings]
             : roundSettings >= 0 ? function(v){ return Number(v).toFixed(roundSettings) }
             : Math.round
     };
 
-});

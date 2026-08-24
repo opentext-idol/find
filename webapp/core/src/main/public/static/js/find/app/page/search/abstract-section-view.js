@@ -12,14 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'text!find/templates/app/page/search/abstract-section-view.html'
-], function(_, Backbone, template) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const template = require('find/templates/app/page/search/abstract-section-view.html');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         baseTemplate: _.template(template),
 
         initialize: function(options) {
@@ -50,4 +47,4 @@ define([
             return this.$('.section-controls');
         }
     });
-});
+

@@ -12,11 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore'
-], function(_) {
+const _ = require('underscore');
 
-    return function(value, size) {
+module.exports = function(value, size) {
     // https://www.mediawiki.org/wiki/Common_thumbnail_sizes
     const allowedSizes = [20, 40, 60, 120, 250, 330, 500, 960, 1280, 1920, 3840]
     const defaultedSize = (size || 300)
@@ -34,4 +32,3 @@ define([
     });
 };
 
-});

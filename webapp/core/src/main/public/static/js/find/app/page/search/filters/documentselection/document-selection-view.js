@@ -12,18 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/nls/bundle',
-    'text!find/templates/app/page/search/filters/documentselection/document-selection-view.html'
-], function (_, Backbone, i18n, template) {
+const _ = require('underscore');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/search/filters/documentselection/document-selection-view.html');
 
-    /**
-     * View representing the document selection filter.  Includes a button to toggle selection for
-     * all documents.
-     */
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         events: {
@@ -63,4 +57,4 @@ define([
         }
 
     });
-});
+

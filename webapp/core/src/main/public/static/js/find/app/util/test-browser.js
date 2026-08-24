@@ -12,22 +12,19 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/nls/bundle',
-    'text!find/templates/app/old-browser-modal.html',
-    'underscore',
-    'bowser',
-    'jquery'
-], function(i18n, oldBrowserModal, _, bowser, $) {
-    'use strict';
+const i18n = require('find/nls/bundle');
+const oldBrowserModal = require('find/templates/app/old-browser-modal.html');
+const _ = require('underscore');
+const bowser = require('bowser');
+const $ = require('jquery');
 
-    // do any required feature detection for your app config page here
-    // you may wish to update the template to state which features are missing
-    function testBrowser() {
-        return !(bowser.msie && bowser.version <= 10);
-    }
+// do any required feature detection for your app config page here
+// you may wish to update the template to state which features are missing
+function testBrowser() {
+    return !(bowser.msie && bowser.version <= 10);
+}
 
-    return function() {
+module.exports = function() {
         var deferred = $.Deferred();
 
         if(!testBrowser()) {
@@ -50,5 +47,5 @@ define([
         }
 
         return deferred.promise();
-    }
-});
+    };
+

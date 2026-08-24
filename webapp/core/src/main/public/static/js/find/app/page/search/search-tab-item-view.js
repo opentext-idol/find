@@ -12,20 +12,19 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'js-whatever/js/list-item-view',
-    'find/nls/bundle',
-    'find/app/model/saved-searches/saved-search-model',
-    'text!find/templates/app/page/search/search-tab-item-view.html',
-    'bootstrap'
-], function(_, ListItemView, i18n, SavedSearchModel, template) {
-    'use strict';
+const _ = require('underscore');
+const ListItemView = require('js-whatever/js/list-item-view');
+const i18n = require('find/nls/bundle');
+const SavedSearchModel = require('find/app/model/saved-searches/saved-search-model');
+const template = require('find/templates/app/page/search/search-tab-item-view.html');
 
-    const templateFunction = _.template(template);
-    const NEW_DOCS_LIMIT = 1000;
+// Loaded for side effects only - do not remove.
+require('bootstrap');
 
-    return ListItemView.extend({
+const templateFunction = _.template(template);
+const NEW_DOCS_LIMIT = 1000;
+
+module.exports = ListItemView.extend({
         className: 'search-tab',
         tagName: 'li',
         queryState: null,
@@ -123,4 +122,4 @@ define([
             }
         }
     });
-});
+

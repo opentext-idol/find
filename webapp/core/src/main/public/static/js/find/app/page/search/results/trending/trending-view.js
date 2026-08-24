@@ -12,76 +12,71 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'moment',
-    'd3',
-    'backbone',
-    'find/nls/bundle',
-    'find/app/configuration',
-    'find/app/vent',
-    'find/app/util/range-input',
-    'find/app/util/generate-error-support-message',
-    'find/app/util/date-picker',
-    'find/app/page/search/results/parametric-results-view',
-    'find/app/page/search/results/field-selection-view',
-    'find/app/page/search/filters/parametric/calibrate-buckets',
-    'find/app/model/parametric-collection',
-    'find/app/page/search/results/trending/trending',
-    'find/app/page/search/results/trending/trending-strategy',
-    'text!find/templates/app/page/loading-spinner.html',
-    'text!find/templates/app/page/search/results/trending/trending-results-view.html',
-    'text!find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-date-input.html'
-], function(_, $, moment, d3, Backbone, i18n, configuration, vent, RangeInput, generateErrorHtml,
-            datePicker, ParametricResultsView, FieldSelectionView, calibrateBuckets, ParametricCollection,
-            Trending, trendingStrategy, loadingSpinnerHtml, template, dateInputTemplate) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const moment = require('moment');
+const d3 = require('d3');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const configuration = require('find/app/configuration');
+const vent = require('find/app/vent');
+const RangeInput = require('find/app/util/range-input');
+const generateErrorHtml = require('find/app/util/generate-error-support-message');
+const datePicker = require('find/app/util/date-picker');
+const ParametricResultsView = require('find/app/page/search/results/parametric-results-view');
+const FieldSelectionView = require('find/app/page/search/results/field-selection-view');
+const calibrateBuckets = require('find/app/page/search/filters/parametric/calibrate-buckets');
+const ParametricCollection = require('find/app/model/parametric-collection');
+const Trending = require('find/app/page/search/results/trending/trending');
+const trendingStrategy = require('find/app/page/search/results/trending/trending-strategy');
+const loadingSpinnerHtml = require('find/templates/app/page/loading-spinner.html');
+const template = require('find/templates/app/page/search/results/trending/trending-results-view.html');
+const dateInputTemplate = require('find/templates/app/page/search/filters/parametric/numeric-parametric-field-view-date-input.html');
 
-    const DEBOUNCE_TIME = 500;
-    const ERROR_MESSAGE_ARGUMENTS = {messageToUser: i18n['search.resultsView.trending.error.query']};
+const DEBOUNCE_TIME = 500;
+const ERROR_MESSAGE_ARGUMENTS = {messageToUser: i18n['search.resultsView.trending.error.query']};
 
-    const renderState = {
-        RENDERING_NEW_DATA: 'RENDERING NEW DATA',
-        ZOOMING: 'ZOOMING',
-        DRAGGING: 'DRAGGING'
-    };
+const renderState = {
+    RENDERING_NEW_DATA: 'RENDERING NEW DATA',
+    ZOOMING: 'ZOOMING',
+    DRAGGING: 'DRAGGING'
+};
 
-    const dataState = {
-        LOADING: 'LOADING',
-        EMPTY: 'EMPTY',
-        ERROR: 'ERROR',
-        OK: 'OK'
-    };
+const dataState = {
+    LOADING: 'LOADING',
+    EMPTY: 'EMPTY',
+    ERROR: 'ERROR',
+    OK: 'OK'
+};
 
-    const fetchState = {
-        FETCHING_BUCKETS: 'FETCHING_BUCKETS',
-        NOT_FETCHING: 'NOT_FETCHING'
-    };
+const fetchState = {
+    FETCHING_BUCKETS: 'FETCHING_BUCKETS',
+    NOT_FETCHING: 'NOT_FETCHING'
+};
 
-    function zoomCallback(min, max) {
-        if (isNaN(min) || isNaN(max) || min === max) {
-            return;
-        }
-        this.setMinMax(moment.unix(min), moment.unix(max));
-        this.viewStateModel.set('currentState', renderState.ZOOMING);
-        this.updateChart();
-        this.debouncedFetchBucketedData();
+function zoomCallback(min, max) {
+    if (isNaN(min) || isNaN(max) || min === max) {
+        return;
     }
+    this.setMinMax(moment.unix(min), moment.unix(max));
+    this.viewStateModel.set('currentState', renderState.ZOOMING);
+    this.updateChart();
+    this.debouncedFetchBucketedData();
+}
 
-    function dragMoveCallback(min, max) {
-        this.setMinMax(moment.unix(min), moment.unix(max));
-        this.viewStateModel.set('currentState', renderState.DRAGGING);
-        this.updateChart();
-    }
+function dragMoveCallback(min, max) {
+    this.setMinMax(moment.unix(min), moment.unix(max));
+    this.viewStateModel.set('currentState', renderState.DRAGGING);
+    this.updateChart();
+}
 
-    function dragEndCallback(min, max) {
-        this.setMinMax(moment.unix(min), moment.unix(max));
-        this.viewStateModel.set('currentState', renderState.DRAGGING);
-        this.debouncedFetchBucketedData();
-    }
+function dragEndCallback(min, max) {
+    this.setMinMax(moment.unix(min), moment.unix(max));
+    this.viewStateModel.set('currentState', renderState.DRAGGING);
+    this.debouncedFetchBucketedData();
+}
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         events: {
@@ -555,4 +550,4 @@ define([
             }
         }
     });
-});
+

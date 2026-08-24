@@ -12,96 +12,93 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'find/app/model/dependent-parametric-collection',
-], function(_, DependentParametricCollection) {
-    'use strict';
+const _ = require('underscore');
+const DependentParametricCollection = require('find/app/model/dependent-parametric-collection');
 
-    // Based chiefly on d3.scale.category20b() and d3.scale.category20c()
-    const defaultPalette = [
-        '#3182bd',
-        '#31a354',
-        '#fd8d3c',
-        '#fdd0a2',
-        '#636363',
-        '#6baed6',
-        '#74c476',
-        '#756bb1',
-        '#969696',
-        '#9ecae1',
-        '#a1d99b',
-        '#9e9ac8',
-        '#bcbddc',
-        '#c7e9c0',
-        '#8ca252',
-        '#b5cf6b',
-        '#ce6dbd',
-        '#de9ed6',
-        '#e6550d',
-        '#fdae6b'
-    ];
+// Based chiefly on d3.scale.category20b() and d3.scale.category20c()
+const defaultPalette = [
+    '#3182bd',
+    '#31a354',
+    '#fd8d3c',
+    '#fdd0a2',
+    '#636363',
+    '#6baed6',
+    '#74c476',
+    '#756bb1',
+    '#969696',
+    '#9ecae1',
+    '#a1d99b',
+    '#9e9ac8',
+    '#bcbddc',
+    '#c7e9c0',
+    '#8ca252',
+    '#b5cf6b',
+    '#ce6dbd',
+    '#de9ed6',
+    '#e6550d',
+    '#fdae6b'
+];
 
-    function initializePalette(palette) {
-        return _.map(palette, function(color) {
-            return {color: color, text: null};
-        });
-    }
+function initializePalette(palette) {
+    return _.map(palette, function(color) {
+        return {color: color, text: null};
+    });
+}
 
-    // Sets default colour for each new result
-    function initializeResults(results, defaultColor) {
-        return _.map(results, function(result) {
-            const children = result.children;
-            if(children) {
-                result.children = initializeResults(children, defaultColor);
-            }
-
-            return _.extend(result,
-                {color: defaultColor}
-            );
-        });
-    }
-
-    function extractTiersFromData(tiers, data, tierDepth) {
-        const depth = tierDepth === undefined || tierDepth === null
-            ? 0
-            : tierDepth;
-
-        if(!_.isArray(tiers[depth])) {
-            tiers[depth] = [];
+// Sets default colour for each new result
+function initializeResults(results, defaultColor) {
+    return _.map(results, function(result) {
+        const children = result.children;
+        if(children) {
+            result.children = initializeResults(children, defaultColor);
         }
 
-        _.each(data, function(d) {
-            const children = d.children;
-            if(children && children.length > 0) {
-                extractTiersFromData(tiers, children, depth + 1)
-            }
-            tiers[depth].push(_.pick(d, 'count', 'text', 'hidden'));
-        });
+        return _.extend(result,
+            {color: defaultColor}
+        );
+    });
+}
+
+function extractTiersFromData(tiers, data, tierDepth) {
+    const depth = tierDepth === undefined || tierDepth === null
+        ? 0
+        : tierDepth;
+
+    if(!_.isArray(tiers[depth])) {
+        tiers[depth] = [];
     }
 
-    function reuseColors(palette, datum) {
-        const datumIndex = _.findIndex(palette, function(paletteEntry) {
-            return paletteEntry.text === datum.text;
-        });
-        const nullIndex = _.findIndex(palette, function(paletteEntry) {
-            return paletteEntry.text === null;
-        });
+    _.each(data, function(d) {
+        const children = d.children;
+        if(children && children.length > 0) {
+            extractTiersFromData(tiers, children, depth + 1)
+        }
+        tiers[depth].push(_.pick(d, 'count', 'text', 'hidden'));
+    });
+}
 
-        let entry = datumIndex === -1 // Queue has no colour assigned for current datum
-            ? (nullIndex === -1 // No more unassigned colours
-                ? palette.pop() // Grab colour to reassign: least recently used
-                : palette.splice(nullIndex, 1)[0]) // Take first available unassigned colour
-            : palette.splice(datumIndex, 1)[0]; // Pull out cached colour for datum
+function reuseColors(palette, datum) {
+    const datumIndex = _.findIndex(palette, function(paletteEntry) {
+        return paletteEntry.text === datum.text;
+    });
+    const nullIndex = _.findIndex(palette, function(paletteEntry) {
+        return paletteEntry.text === null;
+    });
 
-        entry = _.extend(entry, datum);
-        // Place (re)used colour at beginning of queue
-        palette.unshift(_.pick(entry, 'text', 'color'));
+    let entry = datumIndex === -1 // Queue has no colour assigned for current datum
+        ? (nullIndex === -1 // No more unassigned colours
+            ? palette.pop() // Grab colour to reassign: least recently used
+            : palette.splice(nullIndex, 1)[0]) // Take first available unassigned colour
+        : palette.splice(datumIndex, 1)[0]; // Pull out cached colour for datum
 
-        return entry;
-    }
+    entry = _.extend(entry, datum);
+    // Place (re)used colour at beginning of queue
+    palette.unshift(_.pick(entry, 'text', 'color'));
 
-    return DependentParametricCollection.extend({
+    return entry;
+}
+
+module.exports = DependentParametricCollection.extend({
         initialize: function(models, options) {
             DependentParametricCollection.prototype.initialize.apply(this, arguments);
 
@@ -210,4 +207,4 @@ define([
             return initializeResults(uncoloredResults, this.hiddenColor);
         }
     });
-});
+

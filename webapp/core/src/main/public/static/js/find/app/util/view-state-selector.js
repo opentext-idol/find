@@ -1,7 +1,6 @@
-define([
-    'underscore'
-], function(_) {
-    return function(viewStates) {
+const _ = require('underscore');
+
+module.exports = function(viewStates) {
         return function(showStates) {
             // Hide all the states
             _.each(viewStates, function (value, key) {
@@ -13,5 +12,4 @@ define([
                 viewStates[stateKey].removeClass('hide');
             }, this)
         }
-    }
-});
+    };

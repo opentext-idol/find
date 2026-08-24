@@ -12,20 +12,19 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/app/vent',
-    'find/app/configuration',
-    'find/nls/bundle',
-    'text!find/templates/app/navigation.html',
-    'chosen',
-    'metisMenu'
-], function(_, $, Backbone, vent, configuration, i18n, template) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const vent = require('find/app/vent');
+const configuration = require('find/app/configuration');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/navigation.html');
 
-    return Backbone.View.extend({
+// Loaded for side effects only - do not remove.
+require('chosen');
+require('metisMenu');
+
+module.exports = Backbone.View.extend({
         events: {
             'click .nav-menu-toggle-btn': function(event) {
                 event.preventDefault();
@@ -125,4 +124,4 @@ define([
                 .addClass('active');
         }
     });
-});
+

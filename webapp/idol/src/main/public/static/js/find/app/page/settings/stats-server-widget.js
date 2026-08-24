@@ -12,23 +12,20 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'find/app/page/settings/aci-widget',
-    'find/app/page/settings/enable-view',
-    'find/nls/bundle'
-], function(_, AciWidget, EnableView, i18n) {
-    'use strict';
+const _ = require('underscore');
+const AciWidget = require('find/app/page/settings/aci-widget');
+const EnableView = require('find/app/page/settings/enable-view');
+const i18n = require('find/nls/bundle');
 
-    var getMessageFromKey = function(key) {
-        if(_.isString(key)) {
-            return i18n['settings.statsserver.validation.' + key];
-        }
+var getMessageFromKey = function(key) {
+    if(_.isString(key)) {
+        return i18n['settings.statsserver.validation.' + key];
+    }
 
-        return null;
-    };
+    return null;
+};
 
-    return AciWidget.extend({
+module.exports = AciWidget.extend({
         initialize: function(options) {
             AciWidget.prototype.initialize.apply(this, arguments);
 
@@ -70,4 +67,4 @@ define([
             return getMessageFromKey(response.data) || AciWidget.prototype.getValidationSuccessMessage.call(this, response);
         }
     });
-});
+

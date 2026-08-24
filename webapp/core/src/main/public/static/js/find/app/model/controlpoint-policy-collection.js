@@ -16,16 +16,13 @@
  * @see com.hp.autonomy.frontend.find.idol.controlpoint.ControlPointPolicy
  */
 
-define([
-    'find/app/model/find-base-collection'
-], function(FindBaseCollection) {
-    'use strict';
+const FindBaseCollection = require('find/app/model/find-base-collection');
 
-    return FindBaseCollection.extend({
+module.exports = FindBaseCollection.extend({
         url: 'api/public/controlpoint/policy',
 
         parse: function(response) {
             return response.policies;
         }
     });
-});
+

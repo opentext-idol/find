@@ -12,14 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-], function() {
-
-    // Regex match conditional block
-    return function(pattern, value, options) {
+module.exports = function(pattern, value, options) {
         let matches = value == null ? false : new RegExp(pattern, options.hash.flags || '').test(value);
 
         return matches ? options.fn(this) : options.inverse(this);
     };
 
-});

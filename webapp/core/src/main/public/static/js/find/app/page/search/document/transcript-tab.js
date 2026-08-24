@@ -12,13 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'underscore'
-], function (Backbone, _) {
-    'use strict';
+const Backbone = require('backbone');
+const _ = require('underscore');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template("<p><%-transcript%></p>"),
 
         render: function () {
@@ -35,4 +32,4 @@ define([
             );
         }
     });
-});
+

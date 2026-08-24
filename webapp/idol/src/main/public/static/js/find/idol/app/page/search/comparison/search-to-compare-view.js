@@ -12,16 +12,13 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/idol/nls/comparisons',
-    'text!find/idol/templates/comparison/search-to-compare-view.html'
-], function(_, $, Backbone, comparisonsI18n, template) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const comparisonsI18n = require('find/idol/nls/comparisons');
+const template = require('find/idol/templates/comparison/search-to-compare-view.html');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         events: {
@@ -51,4 +48,4 @@ define([
             }));
         }
     });
-});
+

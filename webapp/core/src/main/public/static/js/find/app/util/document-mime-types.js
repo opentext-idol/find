@@ -1,6 +1,4 @@
-define(
-    function() {
-        return [
+module.exports = [
             {
                 typeRegex: [
                     function() {
@@ -102,5 +100,3 @@ define(
                 className: 'general'
             }
         ];
-    }
-);

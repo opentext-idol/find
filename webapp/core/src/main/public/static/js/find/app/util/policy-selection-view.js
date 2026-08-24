@@ -20,33 +20,27 @@
  *  - savedSearchModel
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/app/configuration',
-    'find/nls/bundle',
-    'text!find/templates/app/page/loading-spinner.html',
-    'find/app/util/generate-error-support-message',
-    'find/app/page/search/results/field-selection-view',
-    'find/app/util/text-input',
-    'find/app/model/saved-searches/saved-search-model',
-    'find/app/model/controlpoint-policy-collection',
-    'find/app/model/nifi-action-collection',
-    'text!find/templates/app/page/search/saved-searches/policy-empty.html'
-], function(
-    _, $, Backbone, configuration, i18n,
-    loadingTemplate, generateErrorHtml, FieldSelectionView, TextInput,
-    SavedSearchModel, CPPolicyCollection, NifiActionCollection, emptyTemplate
-) {
-    'use strict';
-    // policy implementations
-    const IMPL = {
-        nifi: 'nifi',
-        cp: 'controlpoint'
-    }
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const configuration = require('find/app/configuration');
+const i18n = require('find/nls/bundle');
+const loadingTemplate = require('find/templates/app/page/loading-spinner.html');
+const generateErrorHtml = require('find/app/util/generate-error-support-message');
+const FieldSelectionView = require('find/app/page/search/results/field-selection-view');
+const TextInput = require('find/app/util/text-input');
+const SavedSearchModel = require('find/app/model/saved-searches/saved-search-model');
+const CPPolicyCollection = require('find/app/model/controlpoint-policy-collection');
+const NifiActionCollection = require('find/app/model/nifi-action-collection');
+const emptyTemplate = require('find/templates/app/page/search/saved-searches/policy-empty.html');
 
-    return Backbone.View.extend({
+// policy implementations
+const IMPL = {
+    nifi: 'nifi',
+    cp: 'controlpoint'
+}
+
+module.exports = Backbone.View.extend({
         loadingTemplate: _.template(loadingTemplate),
         emptyTemplate: _.template(emptyTemplate),
 
@@ -249,4 +243,3 @@ define([
 
     });
 
-});

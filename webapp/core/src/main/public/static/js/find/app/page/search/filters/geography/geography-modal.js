@@ -12,16 +12,13 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'find/app/util/modal',
-    'find/app/page/search/filters/geography/geography-editor-view',
-    'find/nls/bundle',
-    'underscore'
-], function(Backbone, Modal, GeographyEditorView, i18n, _) {
-    'use strict';
+const Backbone = require('backbone');
+const Modal = require('find/app/util/modal');
+const GeographyEditorView = require('find/app/page/search/filters/geography/geography-editor-view');
+const i18n = require('find/nls/bundle');
+const _ = require('underscore');
 
-    return Modal.extend({
+module.exports = Modal.extend({
         className: Modal.prototype.className + ' fixed-height-modal geography-modal',
 
         initialize: function(options) {
@@ -54,4 +51,4 @@ define([
             Modal.prototype.remove.call(this);
         }
     });
-});
+

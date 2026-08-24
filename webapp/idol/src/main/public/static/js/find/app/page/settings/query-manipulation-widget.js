@@ -12,18 +12,15 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'settings/js/widgets/query-manipulation-widget',
-    'find/app/page/settings/enable-view',
-    'text!find/templates/app/page/settings/query-manipulation-widget-extensions.html',
-    'text!find/templates/app/page/settings/widget.html',
-    'text!find/templates/app/page/settings/server-widget.html',
-    'text!find/templates/app/page/settings/aci-widget.html'
-], function(_, QueryManipulationWidget, EnableView, extensionsTemplate, widgetTemplate, serverTemplate, aciTemplate) {
-    'use strict';
+const _ = require('underscore');
+const QueryManipulationWidget = require('settings/js/widgets/query-manipulation-widget');
+const EnableView = require('find/app/page/settings/enable-view');
+const extensionsTemplate = require('find/templates/app/page/settings/query-manipulation-widget-extensions.html');
+const widgetTemplate = require('find/templates/app/page/settings/widget.html');
+const serverTemplate = require('find/templates/app/page/settings/server-widget.html');
+const aciTemplate = require('find/templates/app/page/settings/aci-widget.html');
 
-    return QueryManipulationWidget.extend({
+module.exports = QueryManipulationWidget.extend({
         className: 'panel-group',
         controlGroupClass: 'form-group',
         formControlClass: 'form-control',
@@ -91,4 +88,4 @@ define([
             return this.enableView.getConfig();
         }
     });
-});
+

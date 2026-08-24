@@ -12,48 +12,45 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    './updating-widget',
-    'find/idol/app/model/idol-indexes-collection',
-    'find/app/configuration',
-    'find/app/model/saved-searches/saved-search-model',
-    'find/app/vent',
-    'text!find/idol/templates/page/dashboards/saved-search-widget-error.html',
-    'find/nls/bundle'
-], function(_, $, UpdatingWidget, IdolIndexesCollection, configuration, SavedSearchModel, vent, errorTemplate, i18n) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const UpdatingWidget = require('./updating-widget');
+const IdolIndexesCollection = require('find/idol/app/model/idol-indexes-collection');
+const configuration = require('find/app/configuration');
+const SavedSearchModel = require('find/app/model/saved-searches/saved-search-model');
+const vent = require('find/app/vent');
+const errorTemplate = require('find/idol/templates/page/dashboards/saved-search-widget-error.html');
+const i18n = require('find/nls/bundle');
 
-    const DashboardSearchModel = SavedSearchModel.extend({
-        urlRoot: function() {
-            return 'api/bi/' +
-                (this.get('type') === 'QUERY'
-                    ? 'saved-query'
-                    : 'saved-snapshot');
-        }
-    });
-
-    const errorTemplateFn = _.template(errorTemplate);
-
-    function toggleEmptyMessage(isEmpty) {
-        this.$empty.toggleClass('hide', !isEmpty);
+const DashboardSearchModel = SavedSearchModel.extend({
+    urlRoot: function() {
+        return 'api/bi/' +
+            (this.get('type') === 'QUERY'
+                ? 'saved-query'
+                : 'saved-snapshot');
     }
+});
 
-    function toggleErrorMessage(msg) {
-        this.$error.toggleClass('hide', !this.hasErrorState);
+const errorTemplateFn = _.template(errorTemplate);
 
-        this.$error.html(this.hasErrorState
-            ? errorTemplateFn({
-                i18n: i18n,
-                errorMessage: msg
-                    ? _.escape(msg)
-                    : ''
-            })
-            : '');
-    }
+function toggleEmptyMessage(isEmpty) {
+    this.$empty.toggleClass('hide', !isEmpty);
+}
 
-    return UpdatingWidget.extend({
+function toggleErrorMessage(msg) {
+    this.$error.toggleClass('hide', !this.hasErrorState);
+
+    this.$error.html(this.hasErrorState
+        ? errorTemplateFn({
+            i18n: i18n,
+            errorMessage: msg
+                ? _.escape(msg)
+                : ''
+        })
+        : '');
+}
+
+module.exports = UpdatingWidget.extend({
         viewType: '', // determines which results view is loaded when navigating to the saved search on click
         clickable: true,
 
@@ -183,4 +180,4 @@ define([
             }
         }
     });
-});
+

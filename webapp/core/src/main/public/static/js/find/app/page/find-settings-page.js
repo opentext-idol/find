@@ -13,4 +13,5 @@
  */
 
 // this file needs to exist to keep the tests happy but is never used
-define({});
+module.exports = {};
+

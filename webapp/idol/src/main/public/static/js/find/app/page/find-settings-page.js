@@ -12,28 +12,24 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'find/app/page/abstract-find-settings-page',
-    'find/app/page/settings/aci-widget',
-    'find/app/page/settings/answer-server-widget',
-    'find/app/page/settings/community-widget',
-    'find/app/page/settings/optional-aci-widget',
-    'find/app/page/settings/map-widget',
-    'find/app/page/settings/motd-widget',
-    'find/app/page/settings/mmap-widget',
-    'find/app/page/settings/query-manipulation-widget',
-    'find/app/page/settings/saved-search-widget',
-    'find/app/page/settings/stats-server-widget',
-    'find/app/page/settings/view-widget',
-    'find/app/page/settings/control-point-widget',
-    'find/nls/bundle',
-    'text!find/templates/app/page/settings/community-widget.html'
-], function (_, SettingsPage, AciWidget, AnswerServerWidget, CommunityWidget, OptionalAciWidget,
-             MapWidget, MotdWidget, MmapWidget, QueryManipulationWidget, SavedSearchWidget,
-             StatsServerWidget, ViewWidget, ControlPointWidget, i18n, dropdownTemplate) {
+const _ = require('underscore');
+const SettingsPage = require('find/app/page/abstract-find-settings-page');
+const AciWidget = require('find/app/page/settings/aci-widget');
+const AnswerServerWidget = require('find/app/page/settings/answer-server-widget');
+const CommunityWidget = require('find/app/page/settings/community-widget');
+const OptionalAciWidget = require('find/app/page/settings/optional-aci-widget');
+const MapWidget = require('find/app/page/settings/map-widget');
+const MotdWidget = require('find/app/page/settings/motd-widget');
+const MmapWidget = require('find/app/page/settings/mmap-widget');
+const QueryManipulationWidget = require('find/app/page/settings/query-manipulation-widget');
+const SavedSearchWidget = require('find/app/page/settings/saved-search-widget');
+const StatsServerWidget = require('find/app/page/settings/stats-server-widget');
+const ViewWidget = require('find/app/page/settings/view-widget');
+const ControlPointWidget = require('find/app/page/settings/control-point-widget');
+const i18n = require('find/nls/bundle');
+const dropdownTemplate = require('find/templates/app/page/settings/community-widget.html');
 
-    return SettingsPage.extend({
+module.exports = SettingsPage.extend({
         initializeWidgets: function () {
             this.widgetGroups = [
                 [
@@ -225,4 +221,3 @@ define([
         }
     });
 
-});

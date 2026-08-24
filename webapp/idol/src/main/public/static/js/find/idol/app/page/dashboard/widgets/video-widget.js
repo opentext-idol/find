@@ -12,17 +12,14 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    './saved-search-widget',
-    'find/app/configuration',
-    'find/app/model/documents-collection',
-    'find/nls/bundle'
-], function(_, $, SavedSearchWidget, configuration, DocumentsCollection, i18n) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const SavedSearchWidget = require('./saved-search-widget');
+const configuration = require('find/app/configuration');
+const DocumentsCollection = require('find/app/model/documents-collection');
+const i18n = require('find/nls/bundle');
 
-    return SavedSearchWidget.extend({
+module.exports = SavedSearchWidget.extend({
         viewType: 'list',
 
         initialize: function(options) {
@@ -150,4 +147,4 @@ define([
             };
         }
     });
-});
+

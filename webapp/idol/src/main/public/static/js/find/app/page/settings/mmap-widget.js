@@ -12,16 +12,13 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'settings/js/widget',
-    'find/app/page/settings/enable-view',
-    'text!find/templates/app/page/settings/widget.html',
-    'text!find/templates/app/page/settings/mmap-widget.html'
-], function(_, Widget, EnableView, widgetTemplate, template) {
-    'use strict';
+const _ = require('underscore');
+const Widget = require('settings/js/widget');
+const EnableView = require('find/app/page/settings/enable-view');
+const widgetTemplate = require('find/templates/app/page/settings/widget.html');
+const template = require('find/templates/app/page/settings/mmap-widget.html');
 
-    return Widget.extend({
+module.exports = Widget.extend({
         widgetTemplate: _.template(widgetTemplate),
         template: _.template(template),
 
@@ -62,4 +59,4 @@ define([
             this.$url.val(config.baseUrl);
         }
     });
-});
+

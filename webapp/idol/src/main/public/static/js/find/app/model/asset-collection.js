@@ -12,13 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone'
-], function(_, Backbone) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
 
-    return Backbone.Collection.extend({
+module.exports = Backbone.Collection.extend({
         comparator: 'id',
 
         url: function() {
@@ -41,4 +38,4 @@ define([
             }
         })
     });
-});
+

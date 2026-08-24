@@ -12,46 +12,44 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'find/app/router-constructor',
-    'find/app/configuration'
-], function (_, RouterConstructor, configuration) {
+const _ = require('underscore');
+const RouterConstructor = require('find/app/router-constructor');
+const configuration = require('find/app/configuration');
 
-    const Router = RouterConstructor.extend({
-        routes: function () {
-            const routes = _.extend({
-                'search/document/:database/:reference': 'documentDetail',
-                'search/suggest/:database/:reference(/databases/:suggestDatabase)': 'suggest'
-            }, RouterConstructor.prototype.routes);
+const Router = RouterConstructor.extend({
+    routes: function () {
+        const routes = _.extend({
+            'search/document/:database/:reference': 'documentDetail',
+            'search/suggest/:database/:reference(/databases/:suggestDatabase)': 'suggest'
+        }, RouterConstructor.prototype.routes);
 
-            if (configuration().enableSavedSearch) {
-                routes['search/tab/:id(/view/:view)(/*splat)'] = 'savedSearch';
-            }
-
-            if (configuration().enableDashboards) {
-                routes['dashboards/:dashboardName'] = 'dashboards';
-            }
-
-            return routes;
-        },
-
-        // Implements abstract method in superclass.
-        parseEncodedDatabases: function(optionalEncodedDatabases){
-            try {
-                return optionalEncodedDatabases.split(',').map(function(str){
-                    const parsed = decodeURIComponent(str);
-
-                    return {
-                        name: parsed
-                    }
-                });
-            }
-            catch(e) {
-                // we'll ignore the databases
-            }
+        if (configuration().enableSavedSearch) {
+            routes['search/tab/:id(/view/:view)(/*splat)'] = 'savedSearch';
         }
-    });
 
-    return new Router();
+        if (configuration().enableDashboards) {
+            routes['dashboards/:dashboardName'] = 'dashboards';
+        }
+
+        return routes;
+    },
+
+    // Implements abstract method in superclass.
+    parseEncodedDatabases: function(optionalEncodedDatabases){
+        try {
+            return optionalEncodedDatabases.split(',').map(function(str){
+                const parsed = decodeURIComponent(str);
+
+                return {
+                    name: parsed
+                }
+            });
+        }
+        catch(e) {
+            // we'll ignore the databases
+        }
+    }
 });
+
+module.exports = new Router();
+

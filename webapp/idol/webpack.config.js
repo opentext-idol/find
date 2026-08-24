@@ -118,6 +118,22 @@ module.exports = (env, argv) => {
             {
                 test: /\.(html|handlebars)$/,
                 loader: path.resolve(__dirname, 'build/loaders/raw-text-loader.js')
+            },
+            // The codemod (Phase 7) has converted every one of Find's own AMD sources to
+            // plain CommonJS; the only surviving `define()` under our own tree is the
+            // deliberate UMD wrapper in themetracker/themetracker.js, which also has a
+            // `typeof exports === 'object'` CommonJS branch that works identically once
+            // AMD parsing is turned off. Disabling it (only for our own MERGED_JS tree -
+            // NOT globally, since the vendor library track's hp-autonomy-* packages and
+            // raphael are still genuinely AMD and rely on webpack's AMD support) makes any
+            // *future* stray `define()` in Find's own sources a hard build error instead
+            // of a silent revert to AMD semantics.
+            {
+                test: /\.js$/,
+                include: MERGED_JS,
+                parser: {
+                    amd: false
+                }
             }
         ]
     },

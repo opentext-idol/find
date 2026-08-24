@@ -12,13 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'underscore'
-], function(Backbone, _) {
-    'use strict';
+const Backbone = require('backbone');
+const _ = require('underscore');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         initialize: function(options) {
             this.viewTypes = options.viewTypes;
             this.typeAttribute = options.typeAttribute || 'type';
@@ -46,5 +43,5 @@ define([
             this.childView.remove();
             Backbone.View.prototype.remove.call(this);
         }
-    })
-});
+    });
+

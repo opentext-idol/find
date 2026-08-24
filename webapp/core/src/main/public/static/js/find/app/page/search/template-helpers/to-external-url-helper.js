@@ -12,11 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore'
-], function(_) {
+const _ = require('underscore');
 
-    return function(value, options) {
+module.exports = function(value, options) {
         if (!value || /^(\w+:)?\/\//.test(value)) {
             return value;
         }
@@ -24,4 +22,3 @@ define([
         return (options.hash.defaultProtocol || 'http://') + value;
     };
 
-});

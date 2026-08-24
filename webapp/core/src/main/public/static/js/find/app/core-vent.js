@@ -12,45 +12,41 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'js-whatever/js/vent-constructor',
-    'find/app/configuration'
-], function(_, VentConstructor, configuration) {
-    'use strict';
+const _ = require('underscore');
+const VentConstructor = require('js-whatever/js/vent-constructor');
+const configuration = require('find/app/configuration');
 
-    function CoreVent(router) {
-        VentConstructor.call(this, router);
-    }
+function CoreVent(router) {
+    VentConstructor.call(this, router);
+}
 
-    function stripLeadingSlash(string) {
-        return string.indexOf('/') === 0 ? string.substring(1) : string;
-    }
+function stripLeadingSlash(string) {
+    return string.indexOf('/') === 0 ? string.substring(1) : string;
+}
 
-    CoreVent.prototype = Object.create(VentConstructor.prototype);
+CoreVent.prototype = Object.create(VentConstructor.prototype);
 
-    _.extend(CoreVent.prototype, {
-        constructor: CoreVent,
+_.extend(CoreVent.prototype, {
+    constructor: CoreVent,
 
-        navigateToDetailRoute: function(model) {
-            this.navigate('search/document/' + this.addSuffixForDocument(model));
-        },
+    navigateToDetailRoute: function(model) {
+        this.navigate('search/document/' + this.addSuffixForDocument(model));
+    },
 
-        suggestRouteForDocument: function(model, databases) {
-            let url = '/search/suggest/' + this.addSuffixForDocument(model);
+    suggestRouteForDocument: function(model, databases) {
+        let url = '/search/suggest/' + this.addSuffixForDocument(model);
 
-            if (databases) {
-                url += '/databases/' + databases;
-            }
-
-            return url;
-        },
-
-        suggestUrlForDocument: function(model, databases) {
-            return stripLeadingSlash(configuration().applicationPath) + this.suggestRouteForDocument(model, databases);
+        if (databases) {
+            url += '/databases/' + databases;
         }
-    });
 
-    return CoreVent;
+        return url;
+    },
 
+    suggestUrlForDocument: function(model, databases) {
+        return stripLeadingSlash(configuration().applicationPath) + this.suggestRouteForDocument(model, databases);
+    }
 });
+
+module.exports = CoreVent;
+

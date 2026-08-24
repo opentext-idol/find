@@ -12,17 +12,16 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'underscore',
-    'jquery',
-    'find/nls/bundle',
-    'text!find/templates/app/util/shared-with-users-item-view.html',
-    'iCheck'
-], function(Backbone, _, $, i18n, sharedWithUsersTemplate) {
-    'use strict';
+const Backbone = require('backbone');
+const _ = require('underscore');
+const $ = require('jquery');
+const i18n = require('find/nls/bundle');
+const sharedWithUsersTemplate = require('find/templates/app/util/shared-with-users-item-view.html');
 
-    return Backbone.View.extend({
+// Loaded for side effects only - do not remove.
+require('iCheck');
+
+module.exports = Backbone.View.extend({
         template: _.template(sharedWithUsersTemplate),
         tagName: 'li',
         className: 'flex',
@@ -50,4 +49,4 @@ define([
             this.$('.js-can-edit-checkbox').iCheck(this.model.get('canEdit') ? 'check' : 'uncheck');
         }
     });
-});
+

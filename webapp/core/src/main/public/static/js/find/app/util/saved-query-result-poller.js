@@ -12,47 +12,44 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery'
-], function(_, $) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
 
-    function SavedQueryResultPoller(options) {
-        this.config = options.config;
-        this.savedQueryCollection = options.savedQueryCollection;
-        this.queryStates = options.queryStates;
-        this.onSuccess = options.onSuccess;
+function SavedQueryResultPoller(options) {
+    this.config = options.config;
+    this.savedQueryCollection = options.savedQueryCollection;
+    this.queryStates = options.queryStates;
+    this.onSuccess = options.onSuccess;
 
-        this.savedQueryIntervalId = setInterval(
-            _.bind(this.pollForUpdates, this),
-            this.config.pollingInterval * 60 * 1000
-        );
-        this.pollForUpdates();
+    this.savedQueryIntervalId = setInterval(
+        _.bind(this.pollForUpdates, this),
+        this.config.pollingInterval * 60 * 1000
+    );
+    this.pollForUpdates();
+}
+
+SavedQueryResultPoller.prototype.pollForUpdates = function() {
+    this.savedQueryCollection.each(_.bind(this.pollSingleForUpdates, this));
+};
+
+SavedQueryResultPoller.prototype.pollSingleForUpdates = function(savedQueryModel) {
+    if(isPollable(savedQueryModel, this.queryStates)) {
+        $.get('api/bi/saved-query/new-results/' + savedQueryModel.id)
+            .done(_.partial(this.onSuccess, savedQueryModel.id));
     }
+};
 
-    SavedQueryResultPoller.prototype.pollForUpdates = function() {
-        this.savedQueryCollection.each(_.bind(this.pollSingleForUpdates, this));
-    };
+SavedQueryResultPoller.prototype.destroy = function() {
+    clearInterval(this.savedQueryIntervalId);
+};
 
-    SavedQueryResultPoller.prototype.pollSingleForUpdates = function(savedQueryModel) {
-        if(isPollable(savedQueryModel, this.queryStates)) {
-            $.get('api/bi/saved-query/new-results/' + savedQueryModel.id)
-                .done(_.partial(this.onSuccess, savedQueryModel.id));
-        }
-    };
+function isPollable(savedQueryModel, queryStates) {
+    const queryState = queryStates.get(savedQueryModel.cid);
 
-    SavedQueryResultPoller.prototype.destroy = function() {
-        clearInterval(this.savedQueryIntervalId);
-    };
+    // To be pollable the model must be saved and either unmodified or have no query state (tab not yet selected)
+    return !savedQueryModel.isNew() &&
+        (!queryState || savedQueryModel.equalsQueryState(queryState));
+}
 
-    function isPollable(savedQueryModel, queryStates) {
-        const queryState = queryStates.get(savedQueryModel.cid);
+module.exports = SavedQueryResultPoller;
 
-        // To be pollable the model must be saved and either unmodified or have no query state (tab not yet selected)
-        return !savedQueryModel.isNew() &&
-            (!queryState || savedQueryModel.equalsQueryState(queryState));
-    }
-
-    return SavedQueryResultPoller;
-});

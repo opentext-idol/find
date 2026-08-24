@@ -12,26 +12,23 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'find/app/page/search/abstract-section-view',
-    './concept-cluster-view',
-    'find/app/page/search/input-view',
-    'find/app/page/search/input-view-concept-strategy',
-    'find/app/util/filtering-collection',
-    'find/nls/bundle',
-    'js-whatever/js/list-view',
-    'text!find/templates/app/page/search/concept-view.html'
-], function(_, $, AbstractSectionView, ConceptClusterView, InputView, conceptStrategy, FilteringCollection,
-            i18n, ListView, template) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const AbstractSectionView = require('find/app/page/search/abstract-section-view');
+const ConceptClusterView = require('./concept-cluster-view');
+const InputView = require('find/app/page/search/input-view');
+const conceptStrategy = require('find/app/page/search/input-view-concept-strategy');
+const FilteringCollection = require('find/app/util/filtering-collection');
+const i18n = require('find/nls/bundle');
+const ListView = require('js-whatever/js/list-view');
+const template = require('find/templates/app/page/search/concept-view.html');
 
-    /**
-     * View for displaying the selected concept groups eg in the left side panel.
-     * Expects to be given the queryState on construction.
-     */
-    return AbstractSectionView.extend({
+/**
+ * View for displaying the selected concept groups eg in the left side panel.
+ * Expects to be given the queryState on construction.
+ */
+
+module.exports = AbstractSectionView.extend({
         html: _.template(template)({i18n: i18n}),
 
         events: {
@@ -110,4 +107,4 @@ define([
             AbstractSectionView.prototype.remove.call(this);
         }
     });
-});
+

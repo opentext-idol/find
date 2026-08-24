@@ -1,22 +1,21 @@
-define([
-    'backbone',
-    'jquery',
-    'underscore',
-    'js-whatever/js/list-view',
-    'find/app/vent',
-    'find/nls/bundle',
-    'find/app/page/search/filters/parametric/parametric-select-modal-item-view',
-    'find/app/util/generate-error-support-message',
-    'text!find/templates/app/page/loading-spinner.html',
-    'text!find/templates/app/page/search/filters/parametric/parametric-select-modal-list-view.html',
-    'iCheck'
-], function (Backbone, $, _, ListView, vent, i18n, ItemView, generateErrorHtml, loadingTemplate, template) {
-    'use strict';
+const Backbone = require('backbone');
+const $ = require('jquery');
+const _ = require('underscore');
+const ListView = require('js-whatever/js/list-view');
+const vent = require('find/app/vent');
+const i18n = require('find/nls/bundle');
+const ItemView = require('find/app/page/search/filters/parametric/parametric-select-modal-item-view');
+const generateErrorHtml = require('find/app/util/generate-error-support-message');
+const loadingTemplate = require('find/templates/app/page/loading-spinner.html');
+const template = require('find/templates/app/page/search/filters/parametric/parametric-select-modal-list-view.html');
 
-    // Height above the bottom of the element at which infinite scroll occurs in pixels
-    const INFINITE_SCROLL_OFFSET = 30;
+// Loaded for side effects only - do not remove.
+require('iCheck');
 
-    return Backbone.View.extend({
+// Height above the bottom of the element at which infinite scroll occurs in pixels
+const INFINITE_SCROLL_OFFSET = 30;
+
+module.exports = Backbone.View.extend({
         className: 'full-height tab-pane',
 
         html: _.template(template)({
@@ -155,4 +154,4 @@ define([
             }
         }
     });
-});
+

@@ -12,13 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone'
-], function(Backbone) {
+const Backbone = require('backbone');
 
-    'use strict';
-
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         // abstract
         TabSubContentConstructor: null,
 
@@ -52,4 +48,3 @@ define([
         }
     });
 
-});

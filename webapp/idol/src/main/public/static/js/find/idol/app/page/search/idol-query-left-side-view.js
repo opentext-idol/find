@@ -12,13 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/page/search/abstract-query-left-side-view',
-    'find/idol/app/page/search/filters/indexes/idol-indexes-view'
-], function(AbstractQueryLeftSideView, IdolIndexesView) {
-    'use strict';
+const AbstractQueryLeftSideView = require('find/app/page/search/abstract-query-left-side-view');
+const IdolIndexesView = require('find/idol/app/page/search/filters/indexes/idol-indexes-view');
 
-    return AbstractQueryLeftSideView.extend({
+module.exports = AbstractQueryLeftSideView.extend({
         IndexesView: IdolIndexesView
     });
-});
+

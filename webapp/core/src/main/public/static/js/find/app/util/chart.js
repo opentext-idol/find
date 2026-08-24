@@ -12,13 +12,14 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'flot',
-    'flot.time'
-], function(_, $){
-    return function($container){
+const _ = require('underscore');
+const $ = require('jquery');
+
+// Loaded for side effects only - do not remove.
+require('flot');
+require('flot.time');
+
+module.exports = function($container){
         $container.find('chart').map(function(idx, el){
             var $el = $(el);
             var label = $el.attr('label');
@@ -90,5 +91,5 @@ define([
                 $tooltip.finish().hide()
             })
         });
-    }
-});
+    };
+

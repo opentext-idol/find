@@ -12,13 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone'
-], function(_, Backbone) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         initialize: function (options) {
             this.documentRenderer = options.documentRenderer
         },
@@ -28,4 +25,3 @@ define([
         }
     });
 
-});

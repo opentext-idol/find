@@ -12,14 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'find/app/model/find-base-collection',
-    'underscore'
-], function(Backbone, FindBaseCollection, _) {
-    'use strict';
+const Backbone = require('backbone');
+const FindBaseCollection = require('find/app/model/find-base-collection');
+const _ = require('underscore');
 
-    return FindBaseCollection.extend({
+module.exports = FindBaseCollection.extend({
         url: 'api/public/user/search',
         parse: function(response) {
             return _.map(response.usernames, function (username) {
@@ -31,4 +28,4 @@ define([
             idAttribute: 'username'
         })
     });
-});
+

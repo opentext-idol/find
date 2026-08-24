@@ -12,13 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'find/app/model/find-base-collection'
-], function(_, FindBaseCollection) {
-    'use strict';
+const _ = require('underscore');
+const FindBaseCollection = require('find/app/model/find-base-collection');
 
-    return FindBaseCollection.extend({
+module.exports = FindBaseCollection.extend({
         url: 'api/public/answer/ask',
 
         parse: function(response) {
@@ -32,4 +29,4 @@ define([
             });
         }
     });
-});
+

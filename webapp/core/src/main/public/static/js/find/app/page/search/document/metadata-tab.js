@@ -12,18 +12,15 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/app/util/database-name-resolver',
-    'find/nls/bundle',
-    'find/nls/indexes',
-    'find/app/model/document-model',
-    'text!find/templates/app/page/search/document/metadata-tab.html'
-], function(_, Backbone, databaseNameResolver, i18n, i18nIndexes, DocumentModel, template) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const databaseNameResolver = require('find/app/util/database-name-resolver');
+const i18n = require('find/nls/bundle');
+const i18nIndexes = require('find/nls/indexes');
+const DocumentModel = require('find/app/model/document-model');
+const template = require('find/templates/app/page/search/document/metadata-tab.html');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         events: {
@@ -105,4 +102,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

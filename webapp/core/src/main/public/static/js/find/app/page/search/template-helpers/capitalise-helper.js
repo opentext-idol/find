@@ -15,8 +15,7 @@
 /**
  * Returns the string with the first letter capitalised.
  */
-define(function () {
-    return function (s) {
+module.exports = function (s) {
         return s.charAt(0).toUpperCase() + s.substring(1);
     };
-});
+

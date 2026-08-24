@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    './saved-search-widget',
-    'find/app/util/topic-map-view',
-    'find/app/model/entity-collection',
-], function(_, SavedSearchWidget, TopicMapView, EntityCollection) {
-    'use strict';
+const _ = require('underscore');
+const SavedSearchWidget = require('./saved-search-widget');
+const TopicMapView = require('find/app/util/topic-map-view');
+const EntityCollection = require('find/app/model/entity-collection');
 
-    return SavedSearchWidget.extend({
+module.exports = SavedSearchWidget.extend({
         viewType: 'topic-map',
 
         initialize: function(options) {
@@ -81,4 +78,4 @@ define([
             return null;
         }
     });
-});
+

@@ -12,21 +12,16 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'settings/js/widgets/aci-widget',
-    'find/app/page/settings/enable-view',
-    'settings/js/controls/password-view',
-    'text!find/templates/app/page/settings/widget.html',
-    'text!find/templates/app/page/settings/server-widget.html',
-    'text!find/templates/app/page/settings/aci-widget.html',
-    'text!find/templates/app/page/settings/control-point-widget.html',
-], function (
-    _, AciWidget, EnableView, PasswordView,
-    widgetTemplate, serverTemplate, aciTemplate, controlPointTemplate
-) {
+const _ = require('underscore');
+const AciWidget = require('settings/js/widgets/aci-widget');
+const EnableView = require('find/app/page/settings/enable-view');
+const PasswordView = require('settings/js/controls/password-view');
+const widgetTemplate = require('find/templates/app/page/settings/widget.html');
+const serverTemplate = require('find/templates/app/page/settings/server-widget.html');
+const aciTemplate = require('find/templates/app/page/settings/aci-widget.html');
+const controlPointTemplate = require('find/templates/app/page/settings/control-point-widget.html');
 
-    return AciWidget.extend({
+module.exports = AciWidget.extend({
         className: 'panel-group',
         controlGroupClass: 'form-group',
         formControlClass: 'form-control',
@@ -128,4 +123,3 @@ define([
 
     });
 
-});

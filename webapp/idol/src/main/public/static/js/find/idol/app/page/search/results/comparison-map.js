@@ -12,32 +12,29 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/idol/app/model/comparison/comparison-documents-collection',
-    'find/app/page/search/results/map-results-view-strategy',
-    'find/app/page/search/results/map-view',
-    'find/app/configuration',
-    'find/nls/bundle',
-    'find/idol/nls/comparisons',
-    'find/app/util/search-data-util',
-    'text!find/templates/app/page/loading-spinner.html',
-    'text!find/idol/templates/comparison/map-comparison-view.html',
-    'text!find/templates/app/page/search/results/map-popover.html',
-    'find/app/vent',
-    'find/app/util/generate-error-support-message',
-    'iCheck'
-], function(_, $, Backbone, ComparisonDocumentsCollection, mapResultsViewStrategy, MapView,
-            configuration, i18n, comparisonsI18n, searchDataUtil, loadingSpinnerTemplate,
-            template, popoverTemplate, vent, generateErrorHtml) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const ComparisonDocumentsCollection = require('find/idol/app/model/comparison/comparison-documents-collection');
+const mapResultsViewStrategy = require('find/app/page/search/results/map-results-view-strategy');
+const MapView = require('find/app/page/search/results/map-view');
+const configuration = require('find/app/configuration');
+const i18n = require('find/nls/bundle');
+const comparisonsI18n = require('find/idol/nls/comparisons');
+const searchDataUtil = require('find/app/util/search-data-util');
+const loadingSpinnerTemplate = require('find/templates/app/page/loading-spinner.html');
+const template = require('find/idol/templates/comparison/map-comparison-view.html');
+const popoverTemplate = require('find/templates/app/page/search/results/map-popover.html');
+const vent = require('find/app/vent');
+const generateErrorHtml = require('find/app/util/generate-error-support-message');
 
-    const popoverTemplateFn = _.template(popoverTemplate);
-    const loadingHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
+// Loaded for side effects only - do not remove.
+require('iCheck');
 
-    return Backbone.View.extend({
+const popoverTemplateFn = _.template(popoverTemplate);
+const loadingHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
+
+module.exports = Backbone.View.extend({
         className: 'service-view-container',
         template: _.template(template),
 
@@ -166,4 +163,4 @@ define([
             );
         }
     });
-});
+

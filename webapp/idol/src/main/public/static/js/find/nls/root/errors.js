@@ -12,13 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'js-whatever/js/substitution'
-], function(substitution) {
-    'use strict';
+const substitution = require('js-whatever/js/substitution');
 
-    // Caution: only use this file for errors that the user can understand and solve. If an error is listed here, by default the app will not advise the user to contact support.
-    return substitution({
+// Caution: only use this file for errors that the user can understand and solve. If an error is listed here, by default the app will not advise the user to contact support.
+
+module.exports = substitution({
         // TODO: Copypasted from userErrors in IdolGlobalExceptionHandler.java to enable lookup by
         // generate-error-support-message.js. This is used on the frontend to decide if it is
         // a user error and if a 'contact support' message should be displayed. Establish what these errors mean and
@@ -67,4 +65,4 @@ define([
         'error.code.DAHQUERY512': 'Find did not understand your search text',
         'error.code.AXEQUERY512': 'Find did not understand your search text'
     });
-});
+

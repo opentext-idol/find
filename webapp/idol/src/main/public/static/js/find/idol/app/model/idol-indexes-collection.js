@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'databases-view/js/idol-databases-collection'
-], function(_, DatabasesCollection) {
-    'use strict';
+const _ = require('underscore');
+const DatabasesCollection = require('databases-view/js/idol-databases-collection');
 
-    const DatabaseModel = DatabasesCollection.prototype.model;
+const DatabaseModel = DatabasesCollection.prototype.model;
 
-    return DatabasesCollection.extend({
+module.exports = DatabasesCollection.extend({
         url: 'api/public/search/list-indexes',
 
         fetch: function() {
@@ -42,4 +39,4 @@ define([
             }, DatabaseModel.prototype.defaults)
         })
     });
-});
+

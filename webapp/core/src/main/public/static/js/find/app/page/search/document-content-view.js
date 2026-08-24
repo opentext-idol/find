@@ -12,29 +12,27 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'underscore',
-    'find/app/vent',
-    'find/nls/bundle',
-    'find/app/model/document-model',
-    'find/app/configuration',
-    'find/app/util/generate-error-support-message',
-    'text!find/templates/app/page/loading-spinner.html',
-    'text!find/templates/app/page/search/document-content-view.html'
-], function(Backbone, _, vent, i18n, DocumentModel, configuration, generateErrorMessage, loadingTemplate, template) {
-    'use strict';
+const Backbone = require('backbone');
+const _ = require('underscore');
+const vent = require('find/app/vent');
+const i18n = require('find/nls/bundle');
+const DocumentModel = require('find/app/model/document-model');
+const configuration = require('find/app/configuration');
+const generateErrorMessage = require('find/app/util/generate-error-support-message');
+const loadingTemplate = require('find/templates/app/page/loading-spinner.html');
+const template = require('find/templates/app/page/search/document-content-view.html');
 
-    const ViewState = {
-        LOADING: 'LOADING',
-        ERROR: 'ERROR',
-        OK: 'OK'
-    };
+const ViewState = {
+    LOADING: 'LOADING',
+    ERROR: 'ERROR',
+    OK: 'OK'
+};
 
-    /**
-     * Fetches a document model for the given reference and index, then renders the given ContentView.
-     */
-    return Backbone.View.extend({
+/**
+ * Fetches a document model for the given reference and index, then renders the given ContentView.
+ */
+
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         loadingHtml: _.template(loadingTemplate)({
@@ -145,4 +143,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

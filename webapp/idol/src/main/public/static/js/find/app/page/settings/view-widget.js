@@ -12,17 +12,14 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'settings/js/widgets/view-widget',
-    'text!find/templates/app/page/settings/widget.html',
-    'text!find/templates/app/page/settings/server-widget.html',
-    'text!find/templates/app/page/settings/aci-widget.html',
-    'text!find/templates/app/page/settings/view-widget.html',
-    'underscore'
-], function(ViewWidget, widgetTemplate, serverTemplate, aciTemplate, template, _) {
-    'use strict';
+const ViewWidget = require('settings/js/widgets/view-widget');
+const widgetTemplate = require('find/templates/app/page/settings/widget.html');
+const serverTemplate = require('find/templates/app/page/settings/server-widget.html');
+const aciTemplate = require('find/templates/app/page/settings/aci-widget.html');
+const template = require('find/templates/app/page/settings/view-widget.html');
+const _ = require('underscore');
 
-    return ViewWidget.extend({
+module.exports = ViewWidget.extend({
         viewTemplate: _.template(template),
 
         className: 'panel-group',
@@ -35,4 +32,4 @@ define([
         serverTemplate: _.template(serverTemplate),
         widgetTemplate: _.template(widgetTemplate)
     });
-});
+

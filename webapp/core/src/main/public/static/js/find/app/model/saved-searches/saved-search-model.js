@@ -12,183 +12,179 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'moment',
-    'find/app/util/array-equality',
-    'find/app/model/query-model',
-    'parametric-refinement/selected-values-collection',
-    'find/app/util/database-name-resolver',
-    'find/app/model/dates-filter-model',
-    'find/app/model/geography-model',
-    'find/app/model/document-selection-model'
-], function(_, Backbone, moment, arraysEqual, QueryModel, SelectedParametricValuesCollection,
-            databaseNameResolver, DatesFilterModel, GeographyModel, DocumentSelectionModel) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const moment = require('moment');
+const arraysEqual = require('find/app/util/array-equality');
+const QueryModel = require('find/app/model/query-model');
+const SelectedParametricValuesCollection = require('parametric-refinement/selected-values-collection');
+const databaseNameResolver = require('find/app/util/database-name-resolver');
+const DatesFilterModel = require('find/app/model/dates-filter-model');
+const GeographyModel = require('find/app/model/geography-model');
+const DocumentSelectionModel = require('find/app/model/document-selection-model');
 
-    /**
-     * Models representing the state of a search.
-     * @typedef {Object} QueryState
-     * @property {DatesFilterModel} datesFilterModel Contains the date restrictions
-     * @property {Backbone.Collection} conceptGroups
-     * @property {Backbone.Collection} selectedIndexes
-     * @property {Backbone.Collection} selectedParametricValues
-     */
+/**
+ * Models representing the state of a search.
+ * @typedef {Object} QueryState
+ * @property {DatesFilterModel} datesFilterModel Contains the date restrictions
+ * @property {Backbone.Collection} conceptGroups
+ * @property {Backbone.Collection} selectedIndexes
+ * @property {Backbone.Collection} selectedParametricValues
+ */
 
-    /**
-     * The attributes saved on a saved search model.
-     * @typedef {Object} SavedSearchModelAttributes
-     * @property {String} title
-     * @property {String[][]} relatedConcepts
-     * @property {{name: String, domain: String}[]} indexes
-     * @property {boolean} documentSelectionIsWhitelist
-     * @property {{reference: String}[]} documentSelection
-     * @property {{field: String, value: String}[]} parametricValues
-     * @property {{field: String, min: Number, max: Number, type: String}[]} parametricRanges
-     * @property {Integer} minScore
-     * @property {Moment} minDate
-     * @property {Moment} maxDate
-     * @property {Moment} dateModified
-     * @property {Moment} dateCreated
-     * @property {DateRange} dateRange
-     * @property
-     */
-    const DATE_FIELDS = [
-        'minDate',
-        'maxDate',
-        'dateCreated',
-        'dateModified',
-        'dateNewDocsLastFetched'
-    ];
+/**
+ * The attributes saved on a saved search model.
+ * @typedef {Object} SavedSearchModelAttributes
+ * @property {String} title
+ * @property {String[][]} relatedConcepts
+ * @property {{name: String, domain: String}[]} indexes
+ * @property {boolean} documentSelectionIsWhitelist
+ * @property {{reference: String}[]} documentSelection
+ * @property {{field: String, value: String}[]} parametricValues
+ * @property {{field: String, min: Number, max: Number, type: String}[]} parametricRanges
+ * @property {Integer} minScore
+ * @property {Moment} minDate
+ * @property {Moment} maxDate
+ * @property {Moment} dateModified
+ * @property {Moment} dateCreated
+ * @property {DateRange} dateRange
+ * @property
+ */
+const DATE_FIELDS = [
+    'minDate',
+    'maxDate',
+    'dateCreated',
+    'dateModified',
+    'dateNewDocsLastFetched'
+];
 
-    /**
-     * @readonly
-     * @enum {String}
-     */
-    const Type = {
-        QUERY: 'QUERY',
-        READ_ONLY_QUERY: 'READ_ONLY_QUERY',
-        READ_ONLY_SNAPSHOT: 'READ_ONLY_SNAPSHOT',
-        SHARED_QUERY: 'SHARED_QUERY',
-        SHARED_READ_ONLY_QUERY: 'SHARED_READ_ONLY_QUERY',
-        SHARED_READ_ONLY_SNAPSHOT: 'SHARED_READ_ONLY_SNAPSHOT',
-        SHARED_SNAPSHOT: 'SHARED_SNAPSHOT',
-        SNAPSHOT: 'SNAPSHOT'
+/**
+ * @readonly
+ * @enum {String}
+ */
+const Type = {
+    QUERY: 'QUERY',
+    READ_ONLY_QUERY: 'READ_ONLY_QUERY',
+    READ_ONLY_SNAPSHOT: 'READ_ONLY_SNAPSHOT',
+    SHARED_QUERY: 'SHARED_QUERY',
+    SHARED_READ_ONLY_QUERY: 'SHARED_READ_ONLY_QUERY',
+    SHARED_READ_ONLY_SNAPSHOT: 'SHARED_READ_ONLY_SNAPSHOT',
+    SHARED_SNAPSHOT: 'SHARED_SNAPSHOT',
+    SNAPSHOT: 'SNAPSHOT'
+};
+
+function parseParametricRestrictions(models) {
+    const parametricValues = [];
+    const parametricRanges = [];
+
+    models.forEach(function(model) {
+        if(model.has('value')) {
+            parametricValues.push({
+                field: model.get('field'),
+                displayName: model.get('displayName'),
+                value: model.get('value'),
+                displayValue: model.get('displayValue')
+            });
+        } else if(model.has('range')) {
+            parametricRanges.push({
+                field: model.get('field'),
+                displayName: model.get('displayName'),
+                min: model.get('type') === 'Numeric' ? model.get('range')[0] : moment(model.get('range')[0]),
+                max: model.get('type') === 'Numeric' ? model.get('range')[1] : moment(model.get('range')[1]),
+                type: model.get('type') === 'Numeric' ? 'Numeric' : 'NumericDate'
+            });
+        }
+    });
+
+    return {
+        parametricValues: parametricValues,
+        parametricRanges: parametricRanges
     };
+}
 
-    function parseParametricRestrictions(models) {
-        const parametricValues = [];
-        const parametricRanges = [];
+function parseGeographyModel(model) {
+    const parsed = [];
 
-        models.forEach(function(model) {
-            if(model.has('value')) {
-                parametricValues.push({
-                    field: model.get('field'),
-                    displayName: model.get('displayName'),
-                    value: model.get('value'),
-                    displayValue: model.get('displayValue')
-                });
-            } else if(model.has('range')) {
-                parametricRanges.push({
-                    field: model.get('field'),
-                    displayName: model.get('displayName'),
-                    min: model.get('type') === 'Numeric' ? model.get('range')[0] : moment(model.get('range')[0]),
-                    max: model.get('type') === 'Numeric' ? model.get('range')[1] : moment(model.get('range')[1]),
-                    type: model.get('type') === 'Numeric' ? 'Numeric' : 'NumericDate'
-                });
-            }
-        });
-
-        return {
-            parametricValues: parametricValues,
-            parametricRanges: parametricRanges
-        };
-    }
-
-    function parseGeographyModel(model) {
-        const parsed = [];
-
-        if (model) {
-            _.each(model.toJSON(), function(filters, locationField){
-                _.each(filters, function(filter){
-                    parsed.push({ field: locationField, json: JSON.stringify(filter) });
-                })
+    if (model) {
+        _.each(model.toJSON(), function(filters, locationField){
+            _.each(filters, function(filter){
+                parsed.push({ field: locationField, json: JSON.stringify(filter) });
             })
-        }
-
-        return parsed;
+        })
     }
 
-    /**
-     * Determine SavedSearchModel attributes corresponding to a DocumentSelectionModel.
-     */
-    function parseDocumentSelectionModel(model) {
-        return {
-            documentSelectionIsWhitelist: model.get('isWhitelist'),
-            documentSelection: _.map(model.getReferences(), function (ref) {
-                return { reference: ref };
-            })
-        };
-    }
+    return parsed;
+}
 
-    function compareWithoutDisplayNames(x, y) {
-        return _.isEqual(_.omit(x, ['displayName', 'displayValue']), _.omit(y, 'displayName', 'displayValue'));
-    }
+/**
+ * Determine SavedSearchModel attributes corresponding to a DocumentSelectionModel.
+ */
+function parseDocumentSelectionModel(model) {
+    return {
+        documentSelectionIsWhitelist: model.get('isWhitelist'),
+        documentSelection: _.map(model.getReferences(), function (ref) {
+            return { reference: ref };
+        })
+    };
+}
 
-    function compareParametricRanges(x, y) {
-        if (x.type === 'NumericDate' && y.type === 'NumericDate') {
-            return compareWithoutDisplayNames(
-                _.defaults({ min: x.min.valueOf(), max: x.max.valueOf() }, x),
-                _.defaults({ min: y.min.valueOf(), max: y.max.valueOf() }, y)
-            );
+function compareWithoutDisplayNames(x, y) {
+    return _.isEqual(_.omit(x, ['displayName', 'displayValue']), _.omit(y, 'displayName', 'displayValue'));
+}
+
+function compareParametricRanges(x, y) {
+    if (x.type === 'NumericDate' && y.type === 'NumericDate') {
+        return compareWithoutDisplayNames(
+            _.defaults({ min: x.min.valueOf(), max: x.max.valueOf() }, x),
+            _.defaults({ min: y.min.valueOf(), max: y.max.valueOf() }, y)
+        );
+    } else {
+        return compareWithoutDisplayNames(x, y);
+    }
+}
+
+function nullOrUndefined(input) {
+    return input === null || input === undefined;
+}
+
+const optionalMomentsEqual = optionalEqual(function(optionalMoment1, optionalMoment2) {
+    return optionalMoment1.isSame(optionalMoment2);
+});
+
+const optionalExactlyEqual = optionalEqual(function(optionalItem1, optionalItem2) {
+    return optionalItem1 === optionalItem2;
+});
+
+// Treat as equal if they are both either null or undefined, or pass a regular equality test
+function optionalEqual(equalityTest) {
+    return function(optionalItem1, optionalItem2) {
+        if(nullOrUndefined(optionalItem1)) {
+            return nullOrUndefined(optionalItem2);
+        } else if(nullOrUndefined(optionalItem2)) {
+            return false;
         } else {
-            return compareWithoutDisplayNames(x, y);
+            return equalityTest(optionalItem1, optionalItem2);
         }
+    };
+}
+
+const arrayEqualityPredicate = _.partial(arraysEqual, _, _, _.isEqual);
+
+function relatedConceptsToClusterModel(relatedConcepts, clusterId) {
+    if(!relatedConcepts.length) {
+        return null;
     }
 
-    function nullOrUndefined(input) {
-        return input === null || input === undefined;
-    }
-
-    const optionalMomentsEqual = optionalEqual(function(optionalMoment1, optionalMoment2) {
-        return optionalMoment1.isSame(optionalMoment2);
-    });
-
-    const optionalExactlyEqual = optionalEqual(function(optionalItem1, optionalItem2) {
-        return optionalItem1 === optionalItem2;
-    });
-
-    // Treat as equal if they are both either null or undefined, or pass a regular equality test
-    function optionalEqual(equalityTest) {
-        return function(optionalItem1, optionalItem2) {
-            if(nullOrUndefined(optionalItem1)) {
-                return nullOrUndefined(optionalItem2);
-            } else if(nullOrUndefined(optionalItem2)) {
-                return false;
-            } else {
-                return equalityTest(optionalItem1, optionalItem2);
-            }
+    return _.map(relatedConcepts, function(concept, index) {
+        return {
+            clusterId: clusterId,
+            phrase: concept,
+            primary: index === 0
         };
-    }
+    });
+}
 
-    const arrayEqualityPredicate = _.partial(arraysEqual, _, _, _.isEqual);
-
-    function relatedConceptsToClusterModel(relatedConcepts, clusterId) {
-        if(!relatedConcepts.length) {
-            return null;
-        }
-
-        return _.map(relatedConcepts, function(concept, index) {
-            return {
-                clusterId: clusterId,
-                phrase: concept,
-                primary: index === 0
-            };
-        });
-    }
-
-    return Backbone.Model.extend({
+module.exports = Backbone.Model.extend({
         defaults: {
             title: null,
             indexes: [],
@@ -431,4 +427,4 @@ define([
             );
         }
     });
-});
+

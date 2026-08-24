@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'about-page/js/about-page',
-    'find/idol/app/page/about/lib-list',
-    'find/app/configuration',
-    'find/nls/bundle'
-], function(AboutPage, libList, configuration, i18n) {
-    'use strict';
+const AboutPage = require('about-page/js/about-page');
+const libList = require('find/idol/app/page/about/lib-list');
+const configuration = require('find/app/configuration');
+const i18n = require('find/nls/bundle');
 
-    return AboutPage.extend({
+module.exports = AboutPage.extend({
         className: 'container-fluid',
 
         initialize: function() {
@@ -43,4 +40,4 @@ define([
             });
         }
     });
-});
+

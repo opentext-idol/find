@@ -12,21 +12,17 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/app/page/search/document/document-detail-tabs',
-    'find/app/util/events',
-    'find/app/util/url-manipulator',
-    'find/app/util/view-server-client',
-    'find/app/page/search/document/document-preview-helper',
-    'find/nls/bundle',
-    'text!find/templates/app/page/search/document/document-detail-content-view.html'
-], function(_, Backbone, tabs, events, urlManipulator, viewClient, DocumentPreviewHelper, i18n,
-            template) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const tabs = require('find/app/page/search/document/document-detail-tabs');
+const events = require('find/app/util/events');
+const urlManipulator = require('find/app/util/url-manipulator');
+const viewClient = require('find/app/util/view-server-client');
+const DocumentPreviewHelper = require('find/app/page/search/document/document-preview-helper');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/search/document/document-detail-content-view.html');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         events: {
@@ -123,4 +119,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

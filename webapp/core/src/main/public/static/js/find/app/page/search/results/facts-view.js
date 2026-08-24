@@ -28,31 +28,23 @@
  * that a document preview should be opened).
  */
 
-define([
-    'underscore',
-    'backbone',
-    'jquery',
-    'find/app/configuration',
-    'find/nls/bundle',
-    'find/app/model/document-model',
-    'find/app/model/parametric-collection',
-    'find/app/model/entity-fact-collection',
-    'find/app/page/search/results/field-selection-view',
-    'find/app/util/generate-error-support-message',
-    'text!find/templates/app/page/search/results/facts-view.html'
-], function(
-    _, Backbone, $, configuration, i18n,
-    DocumentModel, ParametricCollection, EntityFactCollection,
-    FieldSelectionView, generateErrorHtml,
-    template
-) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const $ = require('jquery');
+const configuration = require('find/app/configuration');
+const i18n = require('find/nls/bundle');
+const DocumentModel = require('find/app/model/document-model');
+const ParametricCollection = require('find/app/model/parametric-collection');
+const EntityFactCollection = require('find/app/model/entity-fact-collection');
+const FieldSelectionView = require('find/app/page/search/results/field-selection-view');
+const generateErrorHtml = require('find/app/util/generate-error-support-message');
+const template = require('find/templates/app/page/search/results/facts-view.html');
 
-    const FACT_ENTITY_FIELD = 'FACTS/FACT_EXTRACT_/ENTITIES/VALUE';
-    const MAX_ENTITIES = 100;
-    const MAX_FACTS = 30;
+const FACT_ENTITY_FIELD = 'FACTS/FACT_EXTRACT_/ENTITIES/VALUE';
+const MAX_ENTITIES = 100;
+const MAX_FACTS = 30;
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         initialize: function (options) {
@@ -328,4 +320,3 @@ define([
 
     });
 
-});

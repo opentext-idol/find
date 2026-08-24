@@ -12,18 +12,16 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'find/nls/bundle',
-    'find/app/model/documents-collection',
-    'find/app/page/search/document/similar-abstract-tab',
-    'text!find/templates/app/page/search/document/similar-dates-tab.html',
-    'slider/bootstrap-slider'
+const _ = require('underscore');
+const i18n = require('find/nls/bundle');
+const DocumentsCollection = require('find/app/model/documents-collection');
+const SimilarAbstractTab = require('find/app/page/search/document/similar-abstract-tab');
+const template = require('find/templates/app/page/search/document/similar-dates-tab.html');
 
-], function (_, i18n, DocumentsCollection, SimilarAbstractTab, template) {
-    'use strict';
+// Loaded for side effects only - do not remove.
+require('slider/bootstrap-slider');
 
-    return SimilarAbstractTab.extend({
+module.exports = SimilarAbstractTab.extend({
 
         template: _.template(template),
 
@@ -169,4 +167,4 @@ define([
             this.getSimilarDocuments();
         }
     });
-});
+

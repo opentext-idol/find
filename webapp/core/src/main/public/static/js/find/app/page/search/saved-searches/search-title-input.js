@@ -12,23 +12,20 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'underscore',
-    'jquery',
-    'text!find/templates/app/page/search/saved-searches/search-title-input.html',
-    'find/app/model/saved-searches/saved-search-model',
-    'find/nls/bundle'
-], function(Backbone, _, $, template, SavedSearchModel, i18n) {
-    'use strict';
+const Backbone = require('backbone');
+const _ = require('underscore');
+const $ = require('jquery');
+const template = require('find/templates/app/page/search/saved-searches/search-title-input.html');
+const SavedSearchModel = require('find/app/model/saved-searches/saved-search-model');
+const i18n = require('find/nls/bundle');
 
-    // The initial title for an unsaved search should be blank, not "New Title"
-    function resolveCurrentTitle(savedSearchModel) {
-        var modelTitle = savedSearchModel.get('title');
-        return savedSearchModel.isNew() || !modelTitle ? '' : modelTitle;
-    }
+// The initial title for an unsaved search should be blank, not "New Title"
+function resolveCurrentTitle(savedSearchModel) {
+    var modelTitle = savedSearchModel.get('title');
+    return savedSearchModel.isNew() || !modelTitle ? '' : modelTitle;
+}
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         className: 'search-title-form',
         tagName: 'form',
         template: _.template(template),
@@ -149,4 +146,4 @@ define([
             this.$confirmButton.toggleClass('disabled not-clickable', disabled).prop('disabled', disabled);
         }
     });
-});
+

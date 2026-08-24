@@ -1,10 +1,8 @@
-define([
-    'backbone',
-    'underscore',
-    'text!find/templates/app/util/text-input.html'
-], function(Backbone, _, template) {
+const Backbone = require('backbone');
+const _ = require('underscore');
+const template = require('find/templates/app/util/text-input.html');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         events: {
@@ -29,4 +27,4 @@ define([
             this.$input = this.$('.js-text-input');
         }
     });
-});
+

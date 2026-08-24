@@ -12,12 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/configuration'
-], function(configuration) {
-    'use strict';
+const configuration = require('find/app/configuration');
 
-    return {
+module.exports = {
         addSpecialUrlPrefix: function(contentType, url) {
             //noinspection JSUnresolvedVariable
             const uiCustomization = configuration().uiCustomization;
@@ -41,4 +38,4 @@ define([
             }
         }
     };
-});
+

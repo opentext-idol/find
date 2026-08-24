@@ -12,13 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'find/app/configuration'
-], function(_, configuration) {
-    'use strict';
+const _ = require('underscore');
+const configuration = require('find/app/configuration');
 
-    return {
+module.exports = {
         answers: _.constant(false),
         promotions: _.constant(false),
 
@@ -47,4 +44,4 @@ define([
             return !_.isEmpty(queryModel.get('indexes'));
         }
     };
-});
+

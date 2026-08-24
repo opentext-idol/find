@@ -12,12 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'find/app/util/round-functions'
-], function(_, roundFunctions) {
+const _ = require('underscore');
+const roundFunctions = require('find/app/util/round-functions');
 
-    return function(value, options) {
+module.exports = function(value, options) {
         if (isFinite(value)) {
             const delimiter = options.hash.delimiter || ',';
 
@@ -39,4 +37,3 @@ define([
         return value;
     };
 
-});

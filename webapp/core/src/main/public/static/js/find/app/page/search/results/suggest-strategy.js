@@ -12,12 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore'
-], function(_) {
-    'use strict';
+const _ = require('underscore');
 
-    return {
+module.exports = {
         answers: _.constant(false),
         promotions: _.constant(false),
 
@@ -42,4 +39,4 @@ define([
             return Boolean(queryModel.get('reference'));
         }
     };
-});
+

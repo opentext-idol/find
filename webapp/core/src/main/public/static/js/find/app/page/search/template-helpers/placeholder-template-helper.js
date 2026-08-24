@@ -12,15 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'js-whatever/js/escape-regex'
-], function(_, escapeRegex) {
+const _ = require('underscore');
+const escapeRegex = require('js-whatever/js/escape-regex');
 
-    // Utility to allow filling in a template containing placeholders with variables from a hash, array, or split from a string,
-    // e.g. 'hello $username$, welcome to $site$' or 'hello $0$, welcome to $1$'.
-    // We allow repeating the placeholder, so you can do e.g. '$$100 dollars' to represent '$100 dollars'.
-    return function(value, template, options) {
+module.exports = function(value, template, options) {
         if (value) {
             const values = (value instanceof Array || value instanceof Object) ? value : String(value).split(options.hash.delimiter || ',');
             const placeholder = options.hash.placeholder || '$';
@@ -42,4 +37,3 @@ define([
         return template;
     };
 
-});

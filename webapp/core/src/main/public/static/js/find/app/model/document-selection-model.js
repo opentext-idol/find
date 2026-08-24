@@ -12,45 +12,41 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'uuidjs',
-    'find/nls/bundle',
-    'find/app/configuration',
-    'fieldtext/js/field-text-parser'
-], function (_, Backbone, UUID, i18n, configuration, fieldTextParser) {
+const _ = require('underscore');
+const Backbone = require('backbone');
+const UUID = require('uuidjs');
+const i18n = require('find/nls/bundle');
+const configuration = require('find/app/configuration');
+const fieldTextParser = require('fieldtext/js/field-text-parser');
 
-    /**
-     * Convert array references to object with `true` values.  Return a copy if already an object.
-     */
-    const normaliseRefs = function (references) {
-        if (_.isArray(references)) {
-            const referencesObj = {};
-            _.each(references, function (reference) {
-                referencesObj[reference] = true;
-            });
-            return referencesObj;
-        } else {
-            // ensure modifications don't affect provided objects
-            return _.clone(references);
-        }
+const normaliseRefs = function (references) {
+    if (_.isArray(references)) {
+        const referencesObj = {};
+        _.each(references, function (reference) {
+            referencesObj[reference] = true;
+        });
+        return referencesObj;
+    } else {
+        // ensure modifications don't affect provided objects
+        return _.clone(references);
     }
+}
 
-    /**
-     * Select documents to form a whitelist or blacklist.  Attributes should not be changed via
-     * `set` - use a specific method instead.
-     *
-     * @property changedReferences An object whose properties are document references and values are
-     *           `true`, for documents which changed since the last change to this model.  Can be
-     *           `null`, which should be treated as every document having changed.
-     *
-     * Attributes:
-     *   - isWhitelist: whether this is a whitelist (else a blacklist)
-     *   - references: object where properties are document references and values are `true`.
-     *                 Initial value provided may be an array of references.
-     */
-    return Backbone.Model.extend({
+/**
+ * Select documents to form a whitelist or blacklist.  Attributes should not be changed via
+ * `set` - use a specific method instead.
+ *
+ * @property changedReferences An object whose properties are document references and values are
+ *           `true`, for documents which changed since the last change to this model.  Can be
+ *           `null`, which should be treated as every document having changed.
+ *
+ * Attributes:
+ *   - isWhitelist: whether this is a whitelist (else a blacklist)
+ *   - references: object where properties are document references and values are `true`.
+ *                 Initial value provided may be an array of references.
+ */
+
+module.exports = Backbone.Model.extend({
         // function to ensure modifications don't affect the default references object
         defaults: function () {
             return { isWhitelist: false, references: {} };
@@ -211,4 +207,3 @@ define([
 
     });
 
-});

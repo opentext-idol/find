@@ -12,13 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone'
-], function(_, Backbone) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
 
-    return Backbone.Collection.extend({
+module.exports = Backbone.Collection.extend({
         initialize: function(models, options) {
             this.filterModel = options.filterModel;
             this.collection = options.collection;
@@ -96,5 +93,5 @@ define([
         isProcessing: function() {
             return Boolean(this.collection.currentRequest);
         }
-    })
-});
+    });
+

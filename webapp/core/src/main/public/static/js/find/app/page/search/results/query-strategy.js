@@ -12,10 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define(['underscore'], function(_) {
-    'use strict';
+const _ = require('underscore');
 
-    return {
+module.exports = {
         answers: _.constant(true),
         promotions: _.constant(true),
         canEditDocumentSelection: true,
@@ -65,4 +64,3 @@ define(['underscore'], function(_) {
         }
     };
 
-});

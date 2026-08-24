@@ -12,14 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/page/search/results/results-view',
-    'find/app/configuration',
-    'find/idol/app/page/search/results/idol-questions-view'
-], function(ResultsView, configuration, QuestionsView) {
-    'use strict';
+const ResultsView = require('find/app/page/search/results/results-view');
+const configuration = require('find/app/configuration');
+const QuestionsView = require('find/idol/app/page/search/results/idol-questions-view');
 
-    return ResultsView.extend({
+module.exports = ResultsView.extend({
         getQuestionsViewConstructor: function() {
             if(configuration().answerServerEnabled === true) {
                 return QuestionsView;
@@ -32,4 +29,4 @@ define([
             return 'search/suggest/' + database + '/' + reference;
         }
     });
-});
+

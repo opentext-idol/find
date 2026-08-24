@@ -12,17 +12,14 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/app/configuration',
-    'text!find/templates/app/page/search/intent-based-ranking-view.html',
-    'find/nls/bundle'
-], function(_, $, Backbone, config, template, i18n) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const config = require('find/app/configuration');
+const template = require('find/templates/app/page/search/intent-based-ranking-view.html');
+const i18n = require('find/nls/bundle');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         events: {
@@ -53,4 +50,4 @@ define([
             }
         }
     });
-});
+

@@ -12,19 +12,16 @@
  * information contained herein is subject to change without notice.
  */
 
-define(function() {
+var REGEX = /\S/;
 
-    var REGEX = /\S/;
+/**
+ * Returns true if the string only contains whitespace characters.
+ * @param input The string to test
+ * @return {boolean} True if the string is blank
+ */
+function stringBlank(input) {
+    return !REGEX.test(input);
+}
 
-    /**
-     * Returns true if the string only contains whitespace characters.
-     * @param input The string to test
-     * @return {boolean} True if the string is blank
-     */
-    function stringBlank(input) {
-        return !REGEX.test(input);
-    }
+module.exports = stringBlank;
 
-    return stringBlank;
-
-});

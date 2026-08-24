@@ -12,12 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'js-whatever/js/substitution'
-], function(substitution) {
-    'use strict';
+const substitution = require('js-whatever/js/substitution');
 
-    return substitution({
+module.exports = substitution({
         'about.app.version': 'Version',
         'about.copyright': "Copyright 2014-2026 Open Text.",
         'about.foss': 'FOSS Acknowledgements',
@@ -656,4 +653,4 @@ define([
         'wizard.welcome.step2': "On the Users page, create initial user accounts, then click Logout",
         'wizard.welcome.finish': 'After you complete the configuration wizard, you can start using Find'
     });
-});
+

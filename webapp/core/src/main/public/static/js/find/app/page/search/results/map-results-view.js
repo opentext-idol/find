@@ -12,27 +12,23 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/app/page/search/results/map-results-view-strategy',
-    'find/app/page/search/results/map-view',
-    'find/nls/bundle',
-    'find/app/model/documents-collection',
-    'text!find/templates/app/page/search/results/map-results-view.html',
-    'text!find/templates/app/page/search/results/map-popover.html',
-    'text!find/templates/app/page/loading-spinner.html',
-    'find/app/vent',
-    'find/app/util/generate-error-support-message',
-], function(_, $, Backbone, mapResultsViewStrategy, MapView, i18n, DocumentsCollection,
-            template, popoverTemplate, loadingSpinnerTemplate, vent, generateErrorHtml) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const mapResultsViewStrategy = require('find/app/page/search/results/map-results-view-strategy');
+const MapView = require('find/app/page/search/results/map-view');
+const i18n = require('find/nls/bundle');
+const DocumentsCollection = require('find/app/model/documents-collection');
+const template = require('find/templates/app/page/search/results/map-results-view.html');
+const popoverTemplate = require('find/templates/app/page/search/results/map-popover.html');
+const loadingSpinnerTemplate = require('find/templates/app/page/loading-spinner.html');
+const vent = require('find/app/vent');
+const generateErrorHtml = require('find/app/util/generate-error-support-message');
 
-    const popoverTemplateFn = _.template(popoverTemplate);
-    const loadingHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
+const popoverTemplateFn = _.template(popoverTemplate);
+const loadingHtml = _.template(loadingSpinnerTemplate)({i18n: i18n, large: false});
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         events: {
@@ -129,4 +125,4 @@ define([
                 this.errorModel.get('hasError')));
         }
     });
-});
+

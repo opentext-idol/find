@@ -12,14 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone'
-], function(Backbone) {
-    'use strict';
+const Backbone = require('backbone');
 
-    return Backbone.Model.extend({
+module.exports = Backbone.Model.extend({
         defaults: {
             inputText: ''
         }
     });
-});
+

@@ -12,12 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/model/find-base-collection'
-], function (FindBaseCollection) {
-    'use strict';
+const FindBaseCollection = require('find/app/model/find-base-collection');
 
-    return FindBaseCollection.Model.extend({
+module.exports = FindBaseCollection.Model.extend({
         url: 'api/public/parametric/date/value-details'
     });
-});
+

@@ -15,8 +15,7 @@
 /**
  * Return a compact JSON representation of a value.
  */
-define(function () {
-    return function (obj) {
+module.exports = function (obj) {
         return JSON.stringify(obj);
     };
-});
+

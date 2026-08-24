@@ -12,23 +12,20 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'find/app/util/modal',
-    'find/app/page/search/filters/parametric/parametric-select-modal-view',
-    'parametric-refinement/selected-values-collection',
-    'text!find/templates/app/page/loading-spinner.html',
-    'find/nls/bundle',
-    'underscore'
-], function(Backbone, Modal, ParametricSelectView, SelectedValuesCollection, loadingSpinnerTemplate, i18n, _) {
-    'use strict';
+const Backbone = require('backbone');
+const Modal = require('find/app/util/modal');
+const ParametricSelectView = require('find/app/page/search/filters/parametric/parametric-select-modal-view');
+const SelectedValuesCollection = require('parametric-refinement/selected-values-collection');
+const loadingSpinnerTemplate = require('find/templates/app/page/loading-spinner.html');
+const i18n = require('find/nls/bundle');
+const _ = require('underscore');
 
-    // Convert a selected value model to a field value pair
-    function toAttributes(model) {
-        return model.pick('field', 'displayName', 'value', 'displayValue', 'type', 'range');
-    }
+// Convert a selected value model to a field value pair
+function toAttributes(model) {
+    return model.pick('field', 'displayName', 'value', 'displayValue', 'type', 'range');
+}
 
-    return Modal.extend({
+module.exports = Modal.extend({
         className: Modal.prototype.className + ' fixed-height-modal wide-modal',
 
         events: _.defaults({
@@ -73,4 +70,4 @@ define([
             Modal.prototype.remove.call(this);
         }
     });
-});
+

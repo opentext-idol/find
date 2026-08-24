@@ -11,12 +11,10 @@
  * liable for technical or editorial errors or omissions contained herein. The
  * information contained herein is subject to change without notice.
  */
-define([
-    'backbone',
-    'find/app/page/search/spellcheck-view'
-], function(Backbone, SpellCheckView) {
+const Backbone = require('backbone');
+const SpellCheckView = require('find/app/page/search/spellcheck-view');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         initialize: function(options) {
             if (!options.configuration.hasBiRole) {
                 this.spellCheckView = new SpellCheckView({
@@ -43,4 +41,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

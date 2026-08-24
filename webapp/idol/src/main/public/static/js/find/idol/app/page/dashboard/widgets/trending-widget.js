@@ -12,22 +12,19 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'moment',
-    'backbone',
-    'find/nls/bundle',
-    './saved-search-widget',
-    'find/app/page/search/results/trending/trending-strategy',
-    'find/app/page/search/results/trending/trending'
-], function(_, $, moment, Backbone, i18n, SavedSearchWidget, trendingStrategy, Trending) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const moment = require('moment');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const SavedSearchWidget = require('./saved-search-widget');
+const trendingStrategy = require('find/app/page/search/results/trending/trending-strategy');
+const Trending = require('find/app/page/search/results/trending/trending');
 
-    const DEFAULT_NUMBER_OF_VALUES = 10;
-    const DEFAULT_NUMBER_OF_BUCKETS = 20;
+const DEFAULT_NUMBER_OF_VALUES = 10;
+const DEFAULT_NUMBER_OF_BUCKETS = 20;
 
-    return SavedSearchWidget.extend({
+module.exports = SavedSearchWidget.extend({
         viewType: 'trending',
 
         render: function() {
@@ -176,4 +173,4 @@ define([
             }
         }
     });
-});
+

@@ -12,16 +12,13 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/model/find-base-collection'
-], function(FindBaseCollection) {
-    'use strict';
+const FindBaseCollection = require('find/app/model/find-base-collection');
 
-    return FindBaseCollection.extend({
+module.exports = FindBaseCollection.extend({
         url: 'api/public/answer/entity-facts',
 
         parse: function(response) {
             return response.facts;
         }
     });
-});
+

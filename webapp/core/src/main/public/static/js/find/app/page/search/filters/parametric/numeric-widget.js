@@ -12,52 +12,49 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'd3',
-    'find/app/page/search/filters/parametric/numeric-widget-selection-rect',
-    'find/app/util/widget-zoom'
-], function(_, d3, SelectionRect, widgetZoom) {
-    'use strict';
+const _ = require('underscore');
+const d3 = require('d3');
+const SelectionRect = require('find/app/page/search/filters/parametric/numeric-widget-selection-rect');
+const widgetZoom = require('find/app/util/widget-zoom');
 
-    const BAR_GAP_SIZE = 1;
-    const EMPTY_BAR_HEIGHT = 1;
+const BAR_GAP_SIZE = 1;
+const EMPTY_BAR_HEIGHT = 1;
 
-    function dragStart(chart, height, selectionRect) {
-        return function() {
-            d3.event.sourceEvent.stopPropagation();
-            const p = d3.mouse(this);
-            selectionRect.init(chart, height, p[0]);
-        };
-    }
+function dragStart(chart, height, selectionRect) {
+    return function() {
+        d3.event.sourceEvent.stopPropagation();
+        const p = d3.mouse(this);
+        selectionRect.init(chart, height, p[0]);
+    };
+}
 
-    function dragMove(scale, updateCallback, selectionRect) {
-        return function() {
-            const p = d3.mouse(this);
-            selectionRect.update(p[0]);
-            const currentAttributes = selectionRect.getCurrentAttributes();
-            updateCallback(scale.invert(currentAttributes.x1), scale.invert(currentAttributes.x2));
-        };
-    }
+function dragMove(scale, updateCallback, selectionRect) {
+    return function() {
+        const p = d3.mouse(this);
+        selectionRect.update(p[0]);
+        const currentAttributes = selectionRect.getCurrentAttributes();
+        updateCallback(scale.invert(currentAttributes.x1), scale.invert(currentAttributes.x2));
+    };
+}
 
-    function dragEnd(scale, selectionCallback, deselectionCallback, selectionRect) {
-        return function() {
-            const finalAttributes = selectionRect.getCurrentAttributes();
+function dragEnd(scale, selectionCallback, deselectionCallback, selectionRect) {
+    return function() {
+        const finalAttributes = selectionRect.getCurrentAttributes();
 
-            if(finalAttributes.x2 - finalAttributes.x1 > 1) {
-                // range selected
-                d3.event.sourceEvent.preventDefault();
-                selectionRect.focus();
-                selectionCallback(scale.invert(finalAttributes.x1), scale.invert(finalAttributes.x2));
-            } else {
-                // single point selected
-                selectionRect.remove();
-                deselectionCallback();
-            }
-        };
-    }
+        if(finalAttributes.x2 - finalAttributes.x1 > 1) {
+            // range selected
+            d3.event.sourceEvent.preventDefault();
+            selectionRect.focus();
+            selectionCallback(scale.invert(finalAttributes.x1), scale.invert(finalAttributes.x2));
+        } else {
+            // single point selected
+            selectionRect.remove();
+            deselectionCallback();
+        }
+    };
+}
 
-    return function(options) {
+module.exports = function(options) {
         const barGapSize = options.barGapSize || BAR_GAP_SIZE;
         const emptyBarHeight = options.emptyBarHeight || EMPTY_BAR_HEIGHT;
         const formattingFn = options.formattingFn || _.identity;
@@ -172,4 +169,4 @@ define([
             }
         };
     };
-});
+

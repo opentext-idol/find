@@ -12,51 +12,47 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'd3',
-    'sunburst/js/sunburst',
-    './saved-search-widget',
-    'find/idol/app/page/dashboard/legend-color-collection',
-    'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend.html',
-    'text!find/idol/templates/page/dashboards/widgets/sunburst-widget-legend-entry.html',
-    'text!find/idol/templates/page/dashboards/widgets/sunburst-legend-other-entry.html',
-    'find/nls/bundle'
-], function(_, $, d3, Sunburst, SavedSearchWidget, LegendColorCollection, legendTemplate,
-            legendEntryTemplate, legendOtherEntryTemplate, i18n) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const d3 = require('d3');
+const Sunburst = require('sunburst/js/sunburst');
+const SavedSearchWidget = require('./saved-search-widget');
+const LegendColorCollection = require('find/idol/app/page/dashboard/legend-color-collection');
+const legendTemplate = require('find/idol/templates/page/dashboards/widgets/sunburst-widget-legend.html');
+const legendEntryTemplate = require('find/idol/templates/page/dashboards/widgets/sunburst-widget-legend-entry.html');
+const legendOtherEntryTemplate = require('find/idol/templates/page/dashboards/widgets/sunburst-legend-other-entry.html');
+const i18n = require('find/nls/bundle');
 
-    const otherHtml = _.template(legendOtherEntryTemplate)({i18n: i18n});
-    const legendEntryTemplateFn = _.template(legendEntryTemplate);
+const otherHtml = _.template(legendOtherEntryTemplate)({i18n: i18n});
+const legendEntryTemplateFn = _.template(legendEntryTemplate);
 
-    const HIDDEN_COLOR = '#ffffff';
-    const SUNBURST_CLASS = 'sunburst-widget';
+const HIDDEN_COLOR = '#ffffff';
+const SUNBURST_CLASS = 'sunburst-widget';
 
-    function composeLegendHtml(datum) {
-        return legendEntryTemplateFn({
-            text: datum.text,
-            color: datum.color
-        });
-    }
+function composeLegendHtml(datum) {
+    return legendEntryTemplateFn({
+        text: datum.text,
+        color: datum.color
+    });
+}
 
-    /**
-     * @desc If there are too many values to display in the Sunburst or in the legend, the
-     * legend's first entry should say there are too many entries. This function appends
-     * the requisite entry to the legend's HTML.
-     *
-     * @param {String[]} legendHtmlArray HTML strings representing the legend entries
-     * @param tooMany {Boolean} flag setting whether an 'Other' entry should be prepended
-     * @returns {String}
-     */
-    function buildLegendHtml(legendHtmlArray, tooMany) {
-        return legendHtmlArray.join('') +
-            (legendHtmlArray.length > 0 && tooMany
-                ? otherHtml
-                : '');
-    }
+/**
+ * @desc If there are too many values to display in the Sunburst or in the legend, the
+ * legend's first entry should say there are too many entries. This function appends
+ * the requisite entry to the legend's HTML.
+ *
+ * @param {String[]} legendHtmlArray HTML strings representing the legend entries
+ * @param tooMany {Boolean} flag setting whether an 'Other' entry should be prepended
+ * @returns {String}
+ */
+function buildLegendHtml(legendHtmlArray, tooMany) {
+    return legendHtmlArray.join('') +
+        (legendHtmlArray.length > 0 && tooMany
+            ? otherHtml
+            : '');
+}
 
-    return SavedSearchWidget.extend({
+module.exports = SavedSearchWidget.extend({
         viewType: 'sunburst',
         legendTemplate: _.template(legendTemplate),
 
@@ -262,4 +258,4 @@ define([
                 } : null;
         },
     });
-});
+

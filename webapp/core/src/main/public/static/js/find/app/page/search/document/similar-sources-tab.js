@@ -12,13 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/model/documents-collection',
-    'find/app/page/search/document/similar-abstract-tab'
-], function(DocumentsCollection, SimilarAbstractTab) {
-    'use strict';
+const DocumentsCollection = require('find/app/model/documents-collection');
+const SimilarAbstractTab = require('find/app/page/search/document/similar-abstract-tab');
 
-    return SimilarAbstractTab.extend({
+module.exports = SimilarAbstractTab.extend({
         createCollection: function() {
             return new DocumentsCollection([], {
                 indexes: this.indexesCollection.pluck('id')
@@ -37,4 +34,4 @@ define([
             }
         }
     });
-});
+

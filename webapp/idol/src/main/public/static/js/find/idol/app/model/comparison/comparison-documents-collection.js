@@ -12,12 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/model/find-base-collection',
-    'find/app/model/document-model'
-], function(FindBaseCollection, DocumentModel) {
+const FindBaseCollection = require('find/app/model/find-base-collection');
+const DocumentModel = require('find/app/model/document-model');
 
-    return FindBaseCollection.extend({
+module.exports = FindBaseCollection.extend({
         model: DocumentModel,
         url: 'api/bi/comparison/results',
         totalResults: 0,
@@ -28,4 +26,3 @@ define([
         }
     });
 
-});

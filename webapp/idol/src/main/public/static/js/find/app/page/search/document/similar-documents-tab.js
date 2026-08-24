@@ -12,13 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/page/search/document/abstract-similar-documents-tab'
-], function (AbstractSimilarDocumentsTab) {
+const AbstractSimilarDocumentsTab = require('find/app/page/search/document/abstract-similar-documents-tab');
 
-    return AbstractSimilarDocumentsTab.extend({
+module.exports = AbstractSimilarDocumentsTab.extend({
         getIndexes: function () {
             return  this.indexesCollection.pluck('id');
         }
     });
-});
+

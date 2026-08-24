@@ -12,22 +12,20 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'jquery',
-    'underscore',
-    'find/nls/bundle',
-    'find/idol/app/util/html',
-    'find/app/util/chart',
-    'find/app/util/url-manipulator',
-    'text!find/templates/app/util/conversation-button.html',
-    'text!find/templates/app/util/conversation-dialog.html'
-], function($, _, i18n, HtmlUtil, chart, urlManipulator, buttonTemplate, dialogTemplate) {
+const $ = require('jquery');
+const _ = require('underscore');
+const i18n = require('find/nls/bundle');
+const HtmlUtil = require('find/idol/app/util/html');
+const chart = require('find/app/util/chart');
+const urlManipulator = require('find/app/util/url-manipulator');
+const buttonTemplate = require('find/templates/app/util/conversation-button.html');
+const dialogTemplate = require('find/templates/app/util/conversation-dialog.html');
 
-    const chatUrl = 'api/public/answer/converse';
+const chatUrl = 'api/public/answer/converse';
 
-    let contextId, lastQuery;
+let contextId, lastQuery;
 
-    return function(target) {
+module.exports = function(target) {
         const $button = $(buttonTemplate);
         const $dialog = $(_.template(dialogTemplate)({i18n: i18n}));
         const $messages = $dialog.find('.conversation-dialog-messages');
@@ -163,4 +161,4 @@ define([
 
         $(window).on('beforeunload', endConversation);
     };
-});
+

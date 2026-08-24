@@ -12,19 +12,16 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/app/configuration',
-    'find/app/page/search/results/add-links-to-summary',
-    'find/app/page/search/results/map-view',
-    'find/nls/bundle',
-    'leaflet'
-], function(_, $, Backbone, configuration, addLinksToSummary, MapView, i18n, leaflet) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const configuration = require('find/app/configuration');
+const addLinksToSummary = require('find/app/page/search/results/add-links-to-summary');
+const MapView = require('find/app/page/search/results/map-view');
+const i18n = require('find/nls/bundle');
+const leaflet = require('leaflet');
 
-    return function(options) {
+module.exports = function(options) {
         const allowIncrement = options.allowIncrement;
         const resultsStep = options.resultsStep;
         const clusterMarkers = options.clusterMarkers;
@@ -248,5 +245,5 @@ define([
                 return null;
             }
         };
-    }
-});
+    };
+

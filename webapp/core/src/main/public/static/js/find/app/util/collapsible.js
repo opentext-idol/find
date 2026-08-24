@@ -12,15 +12,14 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'text!find/templates/app/util/collapsible.html',
-    'underscore',
-    'bootstrap'
-], function (Backbone, collapsibleTemplate, _) {
-    'use strict';
+const Backbone = require('backbone');
+const collapsibleTemplate = require('find/templates/app/util/collapsible.html');
+const _ = require('underscore');
 
-    return Backbone.View.extend({
+// Loaded for side effects only - do not remove.
+require('bootstrap');
+
+module.exports = Backbone.View.extend({
         template: _.template(collapsibleTemplate, {variable: 'data'}),
 
         events: {
@@ -126,4 +125,4 @@ define([
             }
         }
     });
-});
+

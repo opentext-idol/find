@@ -12,87 +12,84 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'underscore',
-    'moment',
-    'find/app/configuration',
-    'idol-wkt/js/parser'
-], function(Backbone, _, moment, configuration, idolWktParser) {
-    
-    'use strict';
+const Backbone = require('backbone');
+const _ = require('underscore');
+const moment = require('moment');
+const configuration = require('find/app/configuration');
+const idolWktParser = require('idol-wkt/js/parser');
 
-    const MEDIA_TYPES = ['audio', 'image', 'video'];
-    const WEB_TYPES = ['text/html', 'text/xhtml'];
-    const isUrlRegex = /^(?:https?|ftp):\/\/|\\\\\S+/;
+const MEDIA_TYPES = ['audio', 'image', 'video'];
+const WEB_TYPES = ['text/html', 'text/xhtml'];
+const isUrlRegex = /^(?:https?|ftp):\/\/|\\\\\S+/;
 
-    function isURL(reference) {
-        return isUrlRegex.test(reference);
-    }
+function isURL(reference) {
+    return isUrlRegex.test(reference);
+}
 
-    let patterns = null;
+let patterns = null;
 
-    function getPreviewWhitelistPatterns() {
-        if (!patterns) {
-            patterns = [];
+function getPreviewWhitelistPatterns() {
+    if (!patterns) {
+        patterns = [];
 
-            const config = configuration();
-            if (config && config.uiCustomization && config.uiCustomization.previewWhitelistUrls) {
+        const config = configuration();
+        if (config && config.uiCustomization && config.uiCustomization.previewWhitelistUrls) {
 
-                _.each(config.uiCustomization.previewWhitelistUrls, function(value, key){
-                    patterns.push({
-                        regex: new RegExp(key, 'i'),
-                        template: _.template(value)
-                    })
+            _.each(config.uiCustomization.previewWhitelistUrls, function(value, key){
+                patterns.push({
+                    regex: new RegExp(key, 'i'),
+                    template: _.template(value)
                 })
-            }
+            })
         }
-
-        return patterns;
     }
 
-    const fieldTypeParsers = {
-        STRING: function (valueWrapper) {
-            return valueWrapper.displayValue
-        },
-        NUMBER: function (valueWrapper) {
-            return valueWrapper.value
-        },
-        GEOINDEX: function (valueWrapper) {
-            return valueWrapper.value
-        },
-        /**
-         * @return {boolean}
-         */
-        BOOLEAN: function (valueWrapper) {
-            return valueWrapper.value.toLowerCase() === 'true';
-        },
-        DATE: function (valueWrapper) {
-            return moment(valueWrapper.value).format('LLLL');
-        },
-        RECORD: function (valueWrapper) {
-            return valueWrapper.value;
-        }
-    };
+    return patterns;
+}
 
-    function getMediaType(contentType) {
-        return contentType && _.find(MEDIA_TYPES, function(mediaType) {
-            return contentType.indexOf(mediaType) === 0;
-        });
+const fieldTypeParsers = {
+    STRING: function (valueWrapper) {
+        return valueWrapper.displayValue
+    },
+    NUMBER: function (valueWrapper) {
+        return valueWrapper.value
+    },
+    GEOINDEX: function (valueWrapper) {
+        return valueWrapper.value
+    },
+    /**
+     * @return {boolean}
+     */
+    BOOLEAN: function (valueWrapper) {
+        return valueWrapper.value.toLowerCase() === 'true';
+    },
+    DATE: function (valueWrapper) {
+        return moment(valueWrapper.value).format('LLLL');
+    },
+    RECORD: function (valueWrapper) {
+        return valueWrapper.value;
+    }
+};
+
+function getMediaType(contentType) {
+    return contentType && _.find(MEDIA_TYPES, function(mediaType) {
+        return contentType.indexOf(mediaType) === 0;
+    });
+}
+
+function getFieldValues(fieldData) {
+    if (fieldData && fieldData.values.length) {
+        return _.map(fieldData.values, fieldTypeParsers[fieldData.type]);
     }
 
-    function getFieldValues(fieldData) {
-        if (fieldData && fieldData.values.length) {
-            return _.map(fieldData.values, fieldTypeParsers[fieldData.type]);
-        }
+    return [];
+}
 
-        return [];
-    }
+const getFieldValue = _.compose(_.first, getFieldValues);
 
-    const getFieldValue = _.compose(_.first, getFieldValues);
+// Model representing a document in an HOD text index
 
-    // Model representing a document in an HOD text index
-    return Backbone.Model.extend({
+module.exports = Backbone.Model.extend({
         url: 'api/public/search/get-document-content',
 
         defaults: {
@@ -234,4 +231,3 @@ define([
         }
     });
 
-});

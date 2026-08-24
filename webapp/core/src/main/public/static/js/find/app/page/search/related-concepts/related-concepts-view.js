@@ -12,111 +12,107 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'jquery',
-    'underscore',
-    'find/nls/bundle',
-    'find/app/model/documents-collection',
-    'find/app/util/popover',
-    'find/app/util/search-data-util',
-    'find/app/util/view-state-selector',
-    'find/app/page/search/results/add-links-to-summary',
-    'text!find/templates/app/page/search/related-concepts/related-concepts-view.html',
-    'text!find/templates/app/page/search/related-concepts/related-concept-cluster.html',
-    'text!find/templates/app/page/search/popover-message.html',
-    'text!find/templates/app/page/search/results-popover.html',
-    'text!find/templates/app/page/loading-spinner.html'
-], function(Backbone, $, _, i18n, DocumentsCollection, popover, searchDataUtil, viewStateSelector, addLinksToSummary, viewTemplate, clusterTemplate,
-            popoverMessageTemplate, popoverTemplate, loadingSpinnerTemplate) {
-    'use strict';
+const Backbone = require('backbone');
+const $ = require('jquery');
+const _ = require('underscore');
+const i18n = require('find/nls/bundle');
+const DocumentsCollection = require('find/app/model/documents-collection');
+const popover = require('find/app/util/popover');
+const searchDataUtil = require('find/app/util/search-data-util');
+const viewStateSelector = require('find/app/util/view-state-selector');
+const addLinksToSummary = require('find/app/page/search/results/add-links-to-summary');
+const viewTemplate = require('find/templates/app/page/search/related-concepts/related-concepts-view.html');
+const clusterTemplate = require('find/templates/app/page/search/related-concepts/related-concept-cluster.html');
+const popoverMessageTemplate = require('find/templates/app/page/search/popover-message.html');
+const popoverTemplate = require('find/templates/app/page/search/results-popover.html');
+const loadingSpinnerTemplate = require('find/templates/app/page/loading-spinner.html');
 
-    var html = _.template(viewTemplate)({
-        i18n: i18n,
-        loadingSpinnerHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false})
+var html = _.template(viewTemplate)({
+    i18n: i18n,
+    loadingSpinnerHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: false})
+});
+
+var clusterTemplateFunction = _.template(clusterTemplate);
+var popoverTemplateFunction = _.template(popoverTemplate);
+var popoverMessageTemplateFunction = _.template(popoverMessageTemplate);
+
+/**
+ * @readonly
+ * @enum {String}
+ */
+var ViewState = {
+    LIST: 'LIST',
+    PROCESSING: 'PROCESSING',
+    ERROR: 'ERROR',
+    NONE: 'NONE',
+    NOT_LOADING: 'NOT_LOADING'
+};
+
+function updateForViewState() {
+    this.selectViewState([this.model.get('viewState')]);
+}
+
+function popoverHandler($content, $target) {
+    var entityCluster = $target.data('entityCluster');
+    var clusterEntities = _.isUndefined(entityCluster) ? [$target.data('entityText')] : _.flatten(this.entityCollection.getClusterEntities(entityCluster)).map(function(concept) {
+        return '"' + concept + '"';
+    });
+    var relatedConcepts = _.union(this.conceptGroups.pluck('concepts'), [clusterEntities]);
+
+    var queryText = searchDataUtil.makeQueryText(relatedConcepts);
+
+    var topResultsCollection = new DocumentsCollection([], {
+        indexesCollection: this.indexesCollection
     });
 
-    var clusterTemplateFunction = _.template(clusterTemplate);
-    var popoverTemplateFunction = _.template(popoverTemplate);
-    var popoverMessageTemplateFunction = _.template(popoverMessageTemplate);
+    topResultsCollection.fetch({
+        reset: true,
+        data: {
+            field_text: this.queryModel.get('fieldText'),
+            min_date: this.queryModel.getIsoDate('minDate'),
+            max_date: this.queryModel.getIsoDate('maxDate'),
+            text: queryText,
+            max_results: 3,
+            summary: 'context',
+            indexes: this.queryModel.get('indexes'),
+            queryType: 'MODIFIED'
+        },
+        error: _.bind(function() {
+            $content.html(popoverMessageTemplateFunction({message: i18n['search.relatedConcepts.topResults.error']}));
+        }, this),
+        success: _.bind(function() {
+            if(topResultsCollection.isEmpty()) {
+                $content.html(popoverMessageTemplateFunction({message: i18n['search.relatedConcepts.topResults.none']}));
+            } else {
+                var oldHeight = $content.height();
 
-    /**
-     * @readonly
-     * @enum {String}
-     */
-    var ViewState = {
-        LIST: 'LIST',
-        PROCESSING: 'PROCESSING',
-        ERROR: 'ERROR',
-        NONE: 'NONE',
-        NOT_LOADING: 'NOT_LOADING'
-    };
+                $content.html('<ul class="list-unstyled"></ul>');
+                _.each(topResultsCollection.models, function(model) {
+                    var listItem = $(popoverTemplateFunction({
+                        title: model.get('title'),
+                        summary: addLinksToSummary(model.get('summary')).trim().substring(0, 200) + '\u2026'
+                    }));
 
-    function updateForViewState() {
-        this.selectViewState([this.model.get('viewState')]);
-    }
+                    $content.find('ul').append(listItem);
+                }, this);
 
-    function popoverHandler($content, $target) {
-        var entityCluster = $target.data('entityCluster');
-        var clusterEntities = _.isUndefined(entityCluster) ? [$target.data('entityText')] : _.flatten(this.entityCollection.getClusterEntities(entityCluster)).map(function(concept) {
-            return '"' + concept + '"';
-        });
-        var relatedConcepts = _.union(this.conceptGroups.pluck('concepts'), [clusterEntities]);
+                var $popover = $content.closest('.popover');
 
-        var queryText = searchDataUtil.makeQueryText(relatedConcepts);
+                if($popover.hasClass('top')) {
+                    // we've changed the content, so the Bootstrap provided position is wrong for top positioning
+                    // we need to adjust the top by the difference between the old height and the new height
+                    var newHeight = $content.height();
+                    var top = $popover.position().top;
+                    var newTop = top - (newHeight - oldHeight);
 
-        var topResultsCollection = new DocumentsCollection([], {
-            indexesCollection: this.indexesCollection
-        });
-
-        topResultsCollection.fetch({
-            reset: true,
-            data: {
-                field_text: this.queryModel.get('fieldText'),
-                min_date: this.queryModel.getIsoDate('minDate'),
-                max_date: this.queryModel.getIsoDate('maxDate'),
-                text: queryText,
-                max_results: 3,
-                summary: 'context',
-                indexes: this.queryModel.get('indexes'),
-                queryType: 'MODIFIED'
-            },
-            error: _.bind(function() {
-                $content.html(popoverMessageTemplateFunction({message: i18n['search.relatedConcepts.topResults.error']}));
-            }, this),
-            success: _.bind(function() {
-                if(topResultsCollection.isEmpty()) {
-                    $content.html(popoverMessageTemplateFunction({message: i18n['search.relatedConcepts.topResults.none']}));
-                } else {
-                    var oldHeight = $content.height();
-
-                    $content.html('<ul class="list-unstyled"></ul>');
-                    _.each(topResultsCollection.models, function(model) {
-                        var listItem = $(popoverTemplateFunction({
-                            title: model.get('title'),
-                            summary: addLinksToSummary(model.get('summary')).trim().substring(0, 200) + '\u2026'
-                        }));
-
-                        $content.find('ul').append(listItem);
-                    }, this);
-
-                    var $popover = $content.closest('.popover');
-
-                    if($popover.hasClass('top')) {
-                        // we've changed the content, so the Bootstrap provided position is wrong for top positioning
-                        // we need to adjust the top by the difference between the old height and the new height
-                        var newHeight = $content.height();
-                        var top = $popover.position().top;
-                        var newTop = top - (newHeight - oldHeight);
-
-                        $popover.css('top', newTop + 'px');
-                    }
+                    $popover.css('top', newTop + 'px');
                 }
-            }, this)
-        });
-    }
+            }
+        }, this)
+    });
+}
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         className: 'p-l-sm suggestions-content',
         selectViewState: _.noop,
 
@@ -214,4 +210,4 @@ define([
             updateForViewState.call(this);
         }
     });
-});
+

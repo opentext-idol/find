@@ -11,35 +11,31 @@
  * liable for technical or editorial errors or omissions contained herein. The
  * information contained herein is subject to change without notice.
  */
-define([
-    'find/app/model/saved-searches/saved-search-model',
-    'find/nls/bundle',
-    'underscore'
-], function(SavedSearchModel, i18n, _) {
+const SavedSearchModel = require('find/app/model/saved-searches/saved-search-model');
+const i18n = require('find/nls/bundle');
+const _ = require('underscore');
 
-    'use strict';
+/**
+ * @callback RelatedConceptsClickHandler
+ * @param {String[]} newConcepts
+ */
 
-    /**
-     * @callback RelatedConceptsClickHandler
-     * @param {String[]} newConcepts
-     */
+/**
+ * Clone an array of arrays of strings, _.clone does NOT do this.
+ * @param {Array.<Array.<string>>} conceptGroups
+ * @return {Array.<Array.<string>>}
+ */
+function cloneConceptGroups(conceptGroups) {
+    return conceptGroups.map(function(concepts) {
+        return concepts.map(_.identity);
+    });
+}
 
-    /**
-     * Clone an array of arrays of strings, _.clone does NOT do this.
-     * @param {Array.<Array.<string>>} conceptGroups
-     * @return {Array.<Array.<string>>}
-     */
-    function cloneConceptGroups(conceptGroups) {
-        return conceptGroups.map(function(concepts) {
-            return concepts.map(_.identity);
-        });
-    }
+function wrapQuotes(concept) {
+    return concept ? '"' + concept + '"' : concept;
+}
 
-    function wrapQuotes(concept) {
-        return concept ? '"' + concept + '"' : concept;
-    }
-
-    return {
+module.exports = {
         /**
          * Create a click handler which updates the related concept collection
          * @param {{conceptGroups: Backbone.Collection}} options
@@ -72,4 +68,4 @@ define([
             };
         }
     };
-});
+

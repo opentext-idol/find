@@ -12,16 +12,13 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    './saved-search-widget',
-    'find/app/page/search/results/map-results-view-strategy',
-    'find/app/model/documents-collection'
-], function(_, $, SavedSearchWidget, mapResultsViewStrategy, DocumentsCollection) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const SavedSearchWidget = require('./saved-search-widget');
+const mapResultsViewStrategy = require('find/app/page/search/results/map-results-view-strategy');
+const DocumentsCollection = require('find/app/model/documents-collection');
 
-    return SavedSearchWidget.extend({
+module.exports = SavedSearchWidget.extend({
         viewType: 'map',
 
         initialize: function(options) {
@@ -85,4 +82,4 @@ define([
                 });
         }
     });
-});
+

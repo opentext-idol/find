@@ -12,18 +12,15 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/nls/bundle',
-    'text!find/templates/app/util/selector.html'
-], function(_, $, Backbone, i18n, selectorTemplate) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const selectorTemplate = require('find/templates/app/util/selector.html');
 
-    const LIST_RESULTS_VIEW_ID = 'list';
+const LIST_RESULTS_VIEW_ID = 'list';
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         selectorTemplate: _.template(selectorTemplate, {variable: 'data'}),
 
         events: {
@@ -91,4 +88,4 @@ define([
         }
 
     });
-});
+

@@ -12,32 +12,27 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'find/app/page/find-search',
-    'find/nls/bundle',
-    'find/idol/nls/root/snapshots',
-    'find/app/model/saved-searches/saved-search-model',
-    'find/idol/app/model/idol-indexes-collection',
-    'find/idol/app/page/search/idol-service-view',
-    'find/idol/app/page/search/suggest/idol-suggest-view',
-    'find/idol/app/page/search/snapshots/snapshot-data-view',
-    'find/idol/app/page/search/comparison/comparison-view',
-    'find/app/page/search/results/state-token-strategy',
-    'find/app/page/search/results/query-strategy',
-    'find/idol/app/model/comparison/comparison-documents-collection',
-    'find/app/model/documents-collection',
-    'find/app/page/search/related-concepts/related-concepts-click-handlers',
-    'find/idol/app/page/search/idol-query-left-side-view',
-    'find/idol/app/page/search/comparison/compare-modal',
-    'find/idol/app/util/selection-entity-search',
-    'find/app/configuration'
-], function(_, FindSearch, i18n, snapshotsI18n, SavedSearchModel, IndexesCollection, ServiceView, SuggestView,
-            SnapshotDataView, ComparisonView, stateTokenStrategy, queryStrategy, ComparisonDocumentsCollection,
-            DocumentsCollection, relatedConceptsClickHandlers, IdolQueryLeftSideView, CompareModal, SelectionEntitySearch, configuration) {
-    'use strict';
+const _ = require('underscore');
+const FindSearch = require('find/app/page/find-search');
+const i18n = require('find/nls/bundle');
+const snapshotsI18n = require('find/idol/nls/root/snapshots');
+const SavedSearchModel = require('find/app/model/saved-searches/saved-search-model');
+const IndexesCollection = require('find/idol/app/model/idol-indexes-collection');
+const ServiceView = require('find/idol/app/page/search/idol-service-view');
+const SuggestView = require('find/idol/app/page/search/suggest/idol-suggest-view');
+const SnapshotDataView = require('find/idol/app/page/search/snapshots/snapshot-data-view');
+const ComparisonView = require('find/idol/app/page/search/comparison/comparison-view');
+const stateTokenStrategy = require('find/app/page/search/results/state-token-strategy');
+const queryStrategy = require('find/app/page/search/results/query-strategy');
+const ComparisonDocumentsCollection = require('find/idol/app/model/comparison/comparison-documents-collection');
+const DocumentsCollection = require('find/app/model/documents-collection');
+const relatedConceptsClickHandlers = require('find/app/page/search/related-concepts/related-concepts-click-handlers');
+const IdolQueryLeftSideView = require('find/idol/app/page/search/idol-query-left-side-view');
+const CompareModal = require('find/idol/app/page/search/comparison/compare-modal');
+const SelectionEntitySearch = require('find/idol/app/util/selection-entity-search');
+const configuration = require('find/app/configuration');
 
-    return FindSearch.extend({
+module.exports = FindSearch.extend({
         IndexesCollection: IndexesCollection,
         ServiceView: ServiceView,
         SuggestView: SuggestView,
@@ -273,4 +268,4 @@ define([
             FindSearch.prototype.remove.call(this);
         }
     });
-});
+

@@ -12,27 +12,22 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/idol/app/model/comparison/comparison-documents-collection',
-    'find/idol/app/page/search/results/comparison-lists',
-    'find/idol/app/page/search/results/comparison-map',
-    'find/idol/app/page/search/results/comparison-topic-map',
-    'find/app/page/search/results/state-token-strategy',
-    'find/app/util/results-view-container',
-    'find/app/util/results-view-selection',
-    'find/app/configuration',
-    'text!find/idol/templates/comparison/comparison-view.html',
-    'find/nls/bundle'
-], function(_, Backbone, ComparisonDocumentsCollection, ResultsLists, ComparisonMap,
-            ComparisonTopicMap, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection,
-            configuration, template, i18n) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const ComparisonDocumentsCollection = require('find/idol/app/model/comparison/comparison-documents-collection');
+const ResultsLists = require('find/idol/app/page/search/results/comparison-lists');
+const ComparisonMap = require('find/idol/app/page/search/results/comparison-map');
+const ComparisonTopicMap = require('find/idol/app/page/search/results/comparison-topic-map');
+const stateTokenStrategy = require('find/app/page/search/results/state-token-strategy');
+const ResultsViewContainer = require('find/app/util/results-view-container');
+const ResultsViewSelection = require('find/app/util/results-view-selection');
+const configuration = require('find/app/configuration');
+const template = require('find/idol/templates/comparison/comparison-view.html');
+const i18n = require('find/nls/bundle');
 
-    const html = _.template(template)({i18n: i18n});
+const html = _.template(template)({i18n: i18n});
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         className: 'service-view-container',
 
         events: {
@@ -124,4 +119,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

@@ -12,25 +12,22 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'moment'
-], function(Backbone, moment) {
-    'use strict';
+const Backbone = require('backbone');
+const moment = require('moment');
 
-    /**
-     * @enum {String}
-     * @readonly
-     */
-    const DateRange = {
-        CUSTOM: 'CUSTOM',
-        YEAR: 'YEAR',
-        MONTH: 'MONTH',
-        WEEK: 'WEEK',
-        NEW: 'NEW'
-    };
+/**
+ * @enum {String}
+ * @readonly
+ */
+const DateRange = {
+    CUSTOM: 'CUSTOM',
+    YEAR: 'YEAR',
+    MONTH: 'MONTH',
+    WEEK: 'WEEK',
+    NEW: 'NEW'
+};
 
-    return Backbone.Model.extend({
+module.exports = Backbone.Model.extend({
         /**
          * @typedef {Object} DateFilterModelAttributes
          * @property {?DateRange} dateRange
@@ -101,4 +98,4 @@ define([
     }, {
         DateRange: DateRange
     });
-});
+

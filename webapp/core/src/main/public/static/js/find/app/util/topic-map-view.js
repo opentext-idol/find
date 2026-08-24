@@ -12,20 +12,20 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/app/vent',
-    'find/nls/bundle',
-    'topicmap/js/topicmap'
-], function(_, Backbone, vent, i18n) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const vent = require('find/app/vent');
+const i18n = require('find/nls/bundle');
 
-    /**
-     * Wraps the topic map in a resize-aware Backbone view. If the view element is not visible when resized, draw must be
-     * called when the view is visible to update the SVG size.
-     */
-    return Backbone.View.extend({
+// Loaded for side effects only - do not remove.
+require('topicmap/js/topicmap');
+
+/**
+ * Wraps the topic map in a resize-aware Backbone view. If the view element is not visible when resized, draw must be
+ * called when the view is visible to update the SVG size.
+ */
+
+module.exports = Backbone.View.extend({
         initialize: function(options) {
             this.data = options.data || [];
             this.clickHandler = options.clickHandler;
@@ -112,4 +112,4 @@ define([
                 : null;
         }
     });
-});
+

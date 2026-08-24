@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    './widget',
-    'text!find/idol/templates/page/dashboards/widgets/current-time-widget.html',
-    'moment-timezone-with-data'
-], function(_, Widget, template, moment) {
-    'use strict';
+const _ = require('underscore');
+const Widget = require('./widget');
+const template = require('find/idol/templates/page/dashboards/widgets/current-time-widget.html');
+const moment = require('moment-timezone-with-data');
 
-    return Widget.extend({
+module.exports = Widget.extend({
         currentTimeTemplate: _.template(template),
 
         initialize: function(options) {
@@ -69,4 +66,4 @@ define([
             };
         }
     });
-});
+

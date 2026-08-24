@@ -12,64 +12,56 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'moment',
-    'find/app/model/dates-filter-model',
-    'find/app/model/entity-collection',
-    'find/app/model/query-model',
-    'find/app/model/saved-searches/saved-search-model',
-    'find/app/model/parametric-collection',
-    'find/app/model/parametric-fields-collection',
-    'find/app/model/recommend-documents-collection',
-    'find/app/page/search/results/query-strategy',
-    'find/app/page/search/results/recommend-strategy',
-    'find/app/page/search/results/state-token-strategy',
-    'find/app/util/results-view-container',
-    'find/app/util/results-view-selection',
-    'find/app/page/search/related-concepts/related-concepts-view',
-    'js-whatever/js/model-any-changed-attribute-listener',
-    'find/app/page/search/saved-searches/saved-search-control-view',
-    'find/app/page/search/results/entity-topic-map-view',
-    'find/app/page/search/results/sunburst-view',
-    'find/app/page/search/results/map-results-view',
-    'find/app/page/search/results/table/table-view',
-    'find/app/page/search/results/trending/trending-view',
-    'find/app/page/search/results/facts-view',
-    'find/app/page/search/results/related-users-view',
-    'find/app/page/search/time-bar-view',
-    'find/app/configuration',
-    'find/nls/bundle',
-    'text!find/templates/app/page/search/service-view.html'
-], function(_, $, Backbone, moment, DatesFilterModel, EntityCollection, QueryModel,
-            SavedSearchModel, ParametricCollection, ParametricFieldsCollection, RecommendDocumentsCollection, queryStrategy,
-            recommendStrategy, stateTokenStrategy, ResultsViewContainer, ResultsViewSelection, RelatedConceptsView,
-            addChangeListener, SavedSearchControlView, TopicMapView, SunburstView, MapResultsView,
-            TableView, TrendingView, FactsView, RelatedUsersView,
-            TimeBarView, configuration, i18n, templateString) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const moment = require('moment');
+const DatesFilterModel = require('find/app/model/dates-filter-model');
+const EntityCollection = require('find/app/model/entity-collection');
+const QueryModel = require('find/app/model/query-model');
+const SavedSearchModel = require('find/app/model/saved-searches/saved-search-model');
+const ParametricCollection = require('find/app/model/parametric-collection');
+const ParametricFieldsCollection = require('find/app/model/parametric-fields-collection');
+const RecommendDocumentsCollection = require('find/app/model/recommend-documents-collection');
+const queryStrategy = require('find/app/page/search/results/query-strategy');
+const recommendStrategy = require('find/app/page/search/results/recommend-strategy');
+const stateTokenStrategy = require('find/app/page/search/results/state-token-strategy');
+const ResultsViewContainer = require('find/app/util/results-view-container');
+const ResultsViewSelection = require('find/app/util/results-view-selection');
+const RelatedConceptsView = require('find/app/page/search/related-concepts/related-concepts-view');
+const addChangeListener = require('js-whatever/js/model-any-changed-attribute-listener');
+const SavedSearchControlView = require('find/app/page/search/saved-searches/saved-search-control-view');
+const TopicMapView = require('find/app/page/search/results/entity-topic-map-view');
+const SunburstView = require('find/app/page/search/results/sunburst-view');
+const MapResultsView = require('find/app/page/search/results/map-results-view');
+const TableView = require('find/app/page/search/results/table/table-view');
+const TrendingView = require('find/app/page/search/results/trending/trending-view');
+const FactsView = require('find/app/page/search/results/facts-view');
+const RelatedUsersView = require('find/app/page/search/results/related-users-view');
+const TimeBarView = require('find/app/page/search/time-bar-view');
+const configuration = require('find/app/configuration');
+const i18n = require('find/nls/bundle');
+const templateString = require('find/templates/app/page/search/service-view.html');
 
-    const $window = $(window);
-    const template = _.template(templateString);
+const $window = $(window);
+const template = _.template(templateString);
 
-    // TODO add SHARED_QUERY when supported
-    const SEARCH_TYPES_WITH_LAST_FETCH_TIME = [SavedSearchModel.Type.QUERY];
+// TODO add SHARED_QUERY when supported
+const SEARCH_TYPES_WITH_LAST_FETCH_TIME = [SavedSearchModel.Type.QUERY];
 
-    function updateScrollParameters() {
-        if(this.$middleContainerContents) {
-            this.middleColumnScrollModel.set({
-                innerHeight: this.$middleContainerContents.innerHeight(),
-                scrollTop: this.$middleContainerContents.scrollTop(),
-                scrollHeight: this.$middleContainerContents.prop('scrollHeight'),
-                top: this.$middleContainerContents.get(0).getBoundingClientRect().top,
-                bottom: this.$middleContainerContents.get(0).getBoundingClientRect().bottom
-            });
-        }
+function updateScrollParameters() {
+    if(this.$middleContainerContents) {
+        this.middleColumnScrollModel.set({
+            innerHeight: this.$middleContainerContents.innerHeight(),
+            scrollTop: this.$middleContainerContents.scrollTop(),
+            scrollHeight: this.$middleContainerContents.prop('scrollHeight'),
+            top: this.$middleContainerContents.get(0).getBoundingClientRect().top,
+            bottom: this.$middleContainerContents.get(0).getBoundingClientRect().bottom
+        });
     }
+}
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         // Can be overridden
         displayDependentParametricViews: true,
 
@@ -595,4 +587,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

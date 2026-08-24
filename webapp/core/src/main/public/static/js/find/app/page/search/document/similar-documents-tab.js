@@ -13,10 +13,7 @@
  */
 
 // this file needs to exist to keep the tests happy but is never used
-define([
-    'find/app/page/search/document/abstract-similar-documents-tab'
-], function(AbstractSimilarDocumentTab) {
+const AbstractSimilarDocumentTab = require('find/app/page/search/document/abstract-similar-documents-tab');
 
-    return AbstractSimilarDocumentTab;
+module.exports = AbstractSimilarDocumentTab;
 
-});

@@ -12,45 +12,41 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/app/model/dependent-parametric-collection',
-    'find/nls/bundle',
-    'find/app/page/search/results/field-selection-view',
-    'text!find/templates/app/page/search/results/parametric-results-view.html',
-    'find/app/util/generate-error-support-message',
-    'text!find/templates/app/page/loading-spinner.html'
-], function(_, Backbone, DependentParametricCollection, i18n, FieldSelectionView,
-            template, generateErrorHtml, loadingSpinnerTemplate) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const DependentParametricCollection = require('find/app/model/dependent-parametric-collection');
+const i18n = require('find/nls/bundle');
+const FieldSelectionView = require('find/app/page/search/results/field-selection-view');
+const template = require('find/templates/app/page/search/results/parametric-results-view.html');
+const generateErrorHtml = require('find/app/util/generate-error-support-message');
+const loadingSpinnerTemplate = require('find/templates/app/page/loading-spinner.html');
 
-    function fieldIsValid(field, fields) {
-        return field && _.contains(fields, field);
-    }
+function fieldIsValid(field, fields) {
+    return field && _.contains(fields, field);
+}
 
-    function getClickedParameters(data, fields, selectedParameters) {
-        if(data.depth !== 0) {
-            const parameter = {
-                field: fields[data.depth - 1].field,
-                displayName: fields[data.depth - 1].displayName,
-                value: data.underlyingValue,
-                displayValue: data.text,
-                type: 'Parametric'
-            };
-            selectedParameters.push(parameter);
+function getClickedParameters(data, fields, selectedParameters) {
+    if(data.depth !== 0) {
+        const parameter = {
+            field: fields[data.depth - 1].field,
+            displayName: fields[data.depth - 1].displayName,
+            value: data.underlyingValue,
+            displayValue: data.text,
+            type: 'Parametric'
+        };
+        selectedParameters.push(parameter);
 
-            if(data.parent && data.parent.depth !== 0) {
-                getClickedParameters(data.parent, fields, selectedParameters)
-            }
+        if(data.parent && data.parent.depth !== 0) {
+            getClickedParameters(data.parent, fields, selectedParameters)
         }
-
-        return selectedParameters;
     }
 
-    const SNAPSHOT = 'SNAPSHOT';
+    return selectedParameters;
+}
 
-    return Backbone.View.extend({
+const SNAPSHOT = 'SNAPSHOT';
+
+module.exports = Backbone.View.extend({
         template: _.template(template),
         loadingHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
 
@@ -346,4 +342,4 @@ define([
             }
         }
     });
-});
+

@@ -12,14 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    './widget'
-], function(_, $, Widget) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Widget = require('./widget');
 
-    return Widget.extend({
+module.exports = Widget.extend({
         initialize: function(options) {
             Widget.prototype.initialize.apply(this, arguments);
             this.html = this.widgetSettings.html;
@@ -80,4 +77,4 @@ define([
             };
         }
     });
-});
+

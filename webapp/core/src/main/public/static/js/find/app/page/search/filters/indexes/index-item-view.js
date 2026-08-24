@@ -12,18 +12,17 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'js-whatever/js/list-item-view',
-    'find/nls/indexes',
-    'text!find/templates/app/page/search/filters/indexes/index-item-view.html',
-    'bootstrap'
-], function(_, ListItemView, i18n, template) {
-    'use strict';
+const _ = require('underscore');
+const ListItemView = require('js-whatever/js/list-item-view');
+const i18n = require('find/nls/indexes');
+const template = require('find/templates/app/page/search/filters/indexes/index-item-view.html');
 
-    const templateFunction = _.template(template);
+// Loaded for side effects only - do not remove.
+require('bootstrap');
 
-    return ListItemView.extend({
+const templateFunction = _.template(template);
+
+module.exports = ListItemView.extend({
         initialize: function(options) {
             this.parametricCollection = options.parametricCollection;
             ListItemView.prototype.initialize.call(this, {template: templateFunction});
@@ -65,4 +64,4 @@ define([
             this.$('.database-doc-count').text(' (' + (db ? db.count : 0 ) + ')');
         }
     });
-});
+

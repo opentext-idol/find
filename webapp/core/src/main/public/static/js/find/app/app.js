@@ -12,46 +12,42 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'dropzone',
-    'find/app/util/test-browser',
-    'find/app/model/window-scroll-model',
-    'find/app/model/saved-searches/saved-query-collection',
-    'find/app/model/saved-searches/shared-saved-query-collection',
-    'find/app/util/parse-url',
-    './model-registry',
-    'find/app/navigation',
-    'find/app/configuration',
-    'find/app/pages',
-    'find/app/util/logout',
-    'find/app/vent',
-    'find/app/router',
-    'find/app/util/conversation',
-    'js-whatever/js/escape-regex',
-    'text!find/templates/app/app.html'
-], function(_, $, Backbone, Dropzone, testBrowser, WindowScrollModel, SavedQueryCollection, SharedSavedQueryCollection, parseUrl, ModelRegistry,
-            Navigation, configuration, Pages, logout, vent, router, conversation, escapeRegex, template) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const Dropzone = require('dropzone');
+const testBrowser = require('find/app/util/test-browser');
+const WindowScrollModel = require('find/app/model/window-scroll-model');
+const SavedQueryCollection = require('find/app/model/saved-searches/saved-query-collection');
+const SharedSavedQueryCollection = require('find/app/model/saved-searches/shared-saved-query-collection');
+const parseUrl = require('find/app/util/parse-url');
+const ModelRegistry = require('./model-registry');
+const Navigation = require('find/app/navigation');
+const configuration = require('find/app/configuration');
+const Pages = require('find/app/pages');
+const logout = require('find/app/util/logout');
+const vent = require('find/app/vent');
+const router = require('find/app/router');
+const conversation = require('find/app/util/conversation');
+const escapeRegex = require('js-whatever/js/escape-regex');
+const template = require('find/templates/app/app.html');
 
-    function removeTrailingSlash(string) {
-        return string.replace(/\/$/, '');
-    }
+function removeTrailingSlash(string) {
+    return string.replace(/\/$/, '');
+}
 
-    /**
-     * Determine the current document's base URI.
-     * @return {string} A fully qualified URI
-     */
-    function determineBaseURI() {
-        return document.body.baseURI
-            ? document.body.baseURI
-            // IE11 does not have Node.baseURI so parse the <base> element's href directly
-            : $('base').prop('href');
-    }
+/**
+ * Determine the current document's base URI.
+ * @return {string} A fully qualified URI
+ */
+function determineBaseURI() {
+    return document.body.baseURI
+        ? document.body.baseURI
+        // IE11 does not have Node.baseURI so parse the <base> element's href directly
+        : $('base').prop('href');
+}
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         el: '.page',
         template: _.template(template),
 
@@ -189,4 +185,4 @@ define([
             };
         }
     });
-});
+

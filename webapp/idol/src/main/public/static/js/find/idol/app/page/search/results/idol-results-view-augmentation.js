@@ -12,13 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/page/search/results/results-view-augmentation',
-    'find/idol/app/page/search/document/idol-preview-mode-summary-view'
-], function(ResultsViewAugmentation, PreviewModeSummaryView) {
-    'use strict';
+const ResultsViewAugmentation = require('find/app/page/search/results/results-view-augmentation');
+const PreviewModeSummaryView = require('find/idol/app/page/search/document/idol-preview-mode-summary-view');
 
-    return ResultsViewAugmentation.extend({
+module.exports = ResultsViewAugmentation.extend({
         PreviewModeSummaryView: PreviewModeSummaryView
     });
-});
+

@@ -1,10 +1,8 @@
-define([
-    'jquery',
-    'underscore',
-    'find/app/util/database-name-resolver'
-], function($, _, databaseNameResolver) {
+const $ = require('jquery');
+const _ = require('underscore');
+const databaseNameResolver = require('find/app/util/database-name-resolver');
 
-    return {
+module.exports = {
         /**
          * Get the view document URL for a document in a text index.
          * @param {String} model
@@ -40,4 +38,3 @@ define([
         }
     };
 
-});

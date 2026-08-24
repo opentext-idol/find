@@ -12,17 +12,14 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/page/search/filters/indexes/indexes-view',
-    'databases-view/js/idol-database-helper'
-], function(IndexesView, databaseHelper) {
-    'use strict';
+const IndexesView = require('find/app/page/search/filters/indexes/indexes-view');
+const databaseHelper = require('databases-view/js/idol-database-helper');
 
-    return IndexesView.extend({
+module.exports = IndexesView.extend({
         databaseHelper: databaseHelper,
 
         getIndexCategories: function() {
             return [];
         }
     });
-});
+

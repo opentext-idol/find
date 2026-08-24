@@ -12,11 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore'
-], function(_) {
+const _ = require('underscore');
 
-    return function(fieldId, options) {
+module.exports = function(fieldId, options) {
         function transform(list){
             return options.fn ? _.map(list, options.fn) : list;
         }
@@ -43,4 +41,3 @@ define([
         return transform(values).join(delimiter) + ellipsis;
     };
 
-});

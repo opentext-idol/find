@@ -12,18 +12,15 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/nls/bundle',
-    'find/app/vent',
-    'find/app/page/search/results/add-links-to-summary',
-    'text!find/templates/app/page/search/document/similar-documents-tab.html'
-], function(_, $, Backbone, i18n, vent, addLinksToSummary, template) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const vent = require('find/app/vent');
+const addLinksToSummary = require('find/app/page/search/results/add-links-to-summary');
+const template = require('find/templates/app/page/search/document/similar-documents-tab.html');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         similarDocumentTemplate: _.template('<li data-cid="<%-cid%>" class="clickable"><h4><%-model.get("title")%></h4><p><%= addLinksToSummary(model.get("summary").trim()) + "\u2026"%></p></li>'),
         template: _.template(template),
 
@@ -104,4 +101,4 @@ define([
         fetchData: null,
         postRender: _.noop
     });
-});
+

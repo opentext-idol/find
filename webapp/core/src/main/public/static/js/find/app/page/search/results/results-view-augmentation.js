@@ -12,20 +12,17 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/app/page/search/document/preview-mode-fact-view',
-    'find/app/page/search/document/preview-mode-user-view',
-    'text!find/templates/app/page/search/results/results-view-augmentation.html'
-], function(_, $, Backbone, PreviewModeFactView, PreviewModeUserView, viewHtml) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const PreviewModeFactView = require('find/app/page/search/document/preview-mode-fact-view');
+const PreviewModeUserView = require('find/app/page/search/document/preview-mode-user-view');
+const viewHtml = require('find/templates/app/page/search/results/results-view-augmentation.html');
 
-    // We always want a gap between the preview well and the container
-    const PREVIEW_MARGIN_PIXELS = 10;
+// We always want a gap between the preview well and the container
+const PREVIEW_MARGIN_PIXELS = 10;
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         // abstract
         PreviewModeSummaryView: null,
 
@@ -150,4 +147,4 @@ define([
             }
         }
     });
-});
+

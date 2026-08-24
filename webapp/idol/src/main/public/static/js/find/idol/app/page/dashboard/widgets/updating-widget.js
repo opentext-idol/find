@@ -12,39 +12,36 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    './widget'
-], function(_, $, Widget) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Widget = require('./widget');
 
-    const loadingHtml = '<i class="widget-update-spinner fa fa-spinner fa-spin"></i>';
+const loadingHtml = '<i class="widget-update-spinner fa fa-spinner fa-spin"></i>';
 
-    function beginInitialization() {
-        // display initialisation loading spinner
-        this.toggleContent(false);
-        this.$loadingSpinner = this.$('.widget-init-spinner').removeClass('hide');
+function beginInitialization() {
+    // display initialisation loading spinner
+    this.toggleContent(false);
+    this.$loadingSpinner = this.$('.widget-init-spinner').removeClass('hide');
+}
+
+function completeInitialization() {
+    this.toggleContent(true);
+    // Need a loading spinner in order to show that an update is ongoing -- put it in
+    // title bar if one is shown, or in the corner of the widget if it is hidden.
+    // The new spinner replaces central initialisation loading spinner, which may be removed.
+    this.$loadingSpinner.remove();
+    const loadingEl = $(loadingHtml);
+    if(this.widgetHasTitleBar) {
+        this.$loadingSpinner = loadingEl.addClass('pull-right', 'hide');
+        this.$('.title').append(this.$loadingSpinner);
+    } else {
+        this.$loadingSpinner = $('<div class="widget-spinner-container hide"></div>')
+            .append(loadingEl);
+        this.$content.after(this.$loadingSpinner);
     }
+}
 
-    function completeInitialization() {
-        this.toggleContent(true);
-        // Need a loading spinner in order to show that an update is ongoing -- put it in
-        // title bar if one is shown, or in the corner of the widget if it is hidden.
-        // The new spinner replaces central initialisation loading spinner, which may be removed.
-        this.$loadingSpinner.remove();
-        const loadingEl = $(loadingHtml);
-        if(this.widgetHasTitleBar) {
-            this.$loadingSpinner = loadingEl.addClass('pull-right', 'hide');
-            this.$('.title').append(this.$loadingSpinner);
-        } else {
-            this.$loadingSpinner = $('<div class="widget-spinner-container hide"></div>')
-                .append(loadingEl);
-            this.$content.after(this.$loadingSpinner);
-        }
-    }
-
-    return Widget.extend({
+module.exports = Widget.extend({
         isUpdating: _.constant(true),
         onComplete: _.noop,
         onIncrement: _.noop,
@@ -95,4 +92,4 @@ define([
             done();
         }
     });
-});
+

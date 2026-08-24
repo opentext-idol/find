@@ -12,17 +12,14 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'underscore',
-    'jquery',
-    'find/app/util/global-key-listener',
-    'text!find/templates/app/page/search/selected-concepts/edit-concept-view.html',
-    'find/nls/bundle'
-], function(Backbone, _, $, globalKeyListener, template, i18n) {
-    'use strict';
+const Backbone = require('backbone');
+const _ = require('underscore');
+const $ = require('jquery');
+const globalKeyListener = require('find/app/util/global-key-listener');
+const template = require('find/templates/app/page/search/selected-concepts/edit-concept-view.html');
+const i18n = require('find/nls/bundle');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         className: 'edit-concept-form',
         tagName: 'form',
         template: _.template(template),
@@ -86,4 +83,4 @@ define([
             this.$confirmButton.toggleClass('disabled not-clickable', disabled).prop('disabled', disabled);
         }
     });
-});
+

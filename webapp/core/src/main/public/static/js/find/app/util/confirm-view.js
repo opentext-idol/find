@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'js-whatever/js/confirm-view',
-    'find/app/util/global-key-listener',
-    'text!find/templates/app/page/settings/confirm-modal.html',
-    'underscore'
-], function(Confirm, globalKeyListener, confirmTemplate, _) {
-    'use strict';
+const Confirm = require('js-whatever/js/confirm-view');
+const globalKeyListener = require('find/app/util/global-key-listener');
+const confirmTemplate = require('find/templates/app/page/settings/confirm-modal.html');
+const _ = require('underscore');
 
-    return Confirm.extend({
+module.exports = Confirm.extend({
         className: 'modal fade',
         template: _.template(confirmTemplate),
 
@@ -34,4 +31,4 @@ define([
             }
         }
     });
-});
+

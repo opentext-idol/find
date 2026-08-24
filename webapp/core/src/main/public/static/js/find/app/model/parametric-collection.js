@@ -12,14 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/app/model/find-base-collection'
-], function(_, Backbone, FindBaseCollection) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const FindBaseCollection = require('find/app/model/find-base-collection');
 
-    return FindBaseCollection.extend({
+module.exports = FindBaseCollection.extend({
         model: Backbone.Model.extend({
             defaults: {
                 values: [],
@@ -51,4 +48,4 @@ define([
             }, options));
         }
     });
-});
+

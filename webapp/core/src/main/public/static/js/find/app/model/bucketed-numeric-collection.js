@@ -12,39 +12,36 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/model/find-base-collection'
-], function(FindBaseCollection) {
-    'use strict';
+const FindBaseCollection = require('find/app/model/find-base-collection');
 
-    const URL_ROOT = 'api/public/parametric/numeric/buckets';
+const URL_ROOT = 'api/public/parametric/numeric/buckets';
 
-    const Model = FindBaseCollection.Model.extend({
-        urlRoot: URL_ROOT,
+const Model = FindBaseCollection.Model.extend({
+    urlRoot: URL_ROOT,
 
-        url: function() {
-            const base = this.collection
-                ? this.collection.url()
-                : URL_ROOT;
-            // Double encode since Spring doesn't like %2F in URLs
-            return this.isNew()
-                ? base
-                : base.replace(/[^\/]$/, '$&/') + encodeURIComponent(encodeURIComponent(this.id));
-        },
+    url: function() {
+        const base = this.collection
+            ? this.collection.url()
+            : URL_ROOT;
+        // Double encode since Spring doesn't like %2F in URLs
+        return this.isNew()
+            ? base
+            : base.replace(/[^\/]$/, '$&/') + encodeURIComponent(encodeURIComponent(this.id));
+    },
 
-        set: function() {
-            FindBaseCollection.Model.prototype.set.apply(this, arguments);
-        },
+    set: function() {
+        FindBaseCollection.Model.prototype.set.apply(this, arguments);
+    },
 
-        defaults: {
-            values: []
-        }
-    });
+    defaults: {
+        values: []
+    }
+});
 
-    return FindBaseCollection.extend({
+module.exports = FindBaseCollection.extend({
         url: URL_ROOT,
         model: Model
     }, {
         Model: Model
     });
-});
+

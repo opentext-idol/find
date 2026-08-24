@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'settings/js/validate-on-save-modal',
-    'text!find/templates/app/page/settings/validate-on-save-modal.html',
-    'text!find/templates/app/page/settings/validation-error-message.html',
-    'underscore'
-], function(SaveModal, template, errorTemplate, _) {
-    'use strict';
+const SaveModal = require('settings/js/validate-on-save-modal');
+const template = require('find/templates/app/page/settings/validate-on-save-modal.html');
+const errorTemplate = require('find/templates/app/page/settings/validation-error-message.html');
+const _ = require('underscore');
 
-    return SaveModal.extend({
+module.exports = SaveModal.extend({
         className: 'modal fade',
         template: _.template(template),
 
@@ -30,4 +27,4 @@ define([
             this.errorTemplate = _.template(errorTemplate, undefined, {variable: 'ctx'});
         }
     });
-});
+

@@ -12,12 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'js-whatever/js/substitution'
-], function(substitution) {
-    'use strict';
+const substitution = require('js-whatever/js/substitution');
 
-    return substitution({
+module.exports = substitution({
         'search.error.noIndexes': 'The list of databases has not yet been retrieved',
         'search.indexes': 'Databases',
         'search.indexes.all': 'All',
@@ -25,4 +22,4 @@ define([
         'search.indexes.invalidIndex': 'This database no longer exists',
         'search.document.index': 'Database'
     });
-});
+

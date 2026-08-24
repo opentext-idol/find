@@ -12,12 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([], function() {
-    'use strict';
+const SIGNIFICANT_FIGURES = 3;
 
-    const SIGNIFICANT_FIGURES = 3;
-
-    return function(numberOfSignificantFigures) {
+module.exports = function(numberOfSignificantFigures) {
         const significantFigures = numberOfSignificantFigures || SIGNIFICANT_FIGURES;
         return {
             round: function(value, min, max) {
@@ -29,5 +26,5 @@ define([], function() {
                     : Math.round(value * Math.pow(10, significantFigures - exponent - 1)) / Math.pow(10, significantFigures - exponent - 1);
             }
         }
-    }
-});
+    };
+

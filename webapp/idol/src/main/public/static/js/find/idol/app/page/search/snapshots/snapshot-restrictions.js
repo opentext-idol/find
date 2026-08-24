@@ -11,46 +11,45 @@
  * liable for technical or editorial errors or omissions contained herein. The
  * information contained herein is subject to change without notice.
  */
-define([
-    'find/app/page/search/filters/parametric/numeric-range-rounder',
-    'find/nls/bundle',
-    'find/nls/indexes',
-    'find/idol/nls/snapshots',
-    'underscore',
-    'moment',
-    'find/app/model/document-selection-model'
-], function(rounder, i18n, indexesI18n, snapshotsI18n, _, moment, DocumentSelectionModel) {
+const rounder = require('find/app/page/search/filters/parametric/numeric-range-rounder');
+const i18n = require('find/nls/bundle');
+const indexesI18n = require('find/nls/indexes');
+const snapshotsI18n = require('find/idol/nls/snapshots');
+const _ = require('underscore');
+const moment = require('moment');
+const DocumentSelectionModel = require('find/app/model/document-selection-model');
 
-    const DATE_FORMAT = 'L LT';
+const DATE_FORMAT = 'L LT';
 
-    function dateRestriction(title, date) {
-        return date ? {title: title, content: date.format(DATE_FORMAT)} : null;
-    }
+function dateRestriction(title, date) {
+    return date ? {title: title, content: date.format(DATE_FORMAT)} : null;
+}
 
-    function formatEpoch(x) {
-        return moment(x).format(DATE_FORMAT);
-    }
+function formatEpoch(x) {
+    return moment(x).format(DATE_FORMAT);
+}
 
-    function relatedConcepts(concepts) {
-        return concepts.length ? {
-            title: snapshotsI18n['restrictions.relatedConcepts'],
-            content: concepts.join(', ')
-        } : null;
-    }
+function relatedConcepts(concepts) {
+    return concepts.length ? {
+        title: snapshotsI18n['restrictions.relatedConcepts'],
+        content: concepts.join(', ')
+    } : null;
+}
 
-    function documentSelection (savedSearchModel) {
-        const documentSelectionModel =
-            new DocumentSelectionModel(savedSearchModel.toDocumentSelectionModelAttributes());
-        return documentSelectionModel.isDefault() ? null : {
-            title: snapshotsI18n['restrictions.documentSelection'],
-            content: documentSelectionModel.describe()
-        };
-    }
+function documentSelection (savedSearchModel) {
+    const documentSelectionModel =
+        new DocumentSelectionModel(savedSearchModel.toDocumentSelectionModelAttributes());
+    return documentSelectionModel.isDefault() ? null : {
+        title: snapshotsI18n['restrictions.documentSelection'],
+        content: documentSelectionModel.describe()
+    };
+}
 
-    /**
-     * Target attributes and an attributes processor for the "Query Restrictions" {@link DataPanelView}.
-     */
-    return {
+/**
+ * Target attributes and an attributes processor for the "Query Restrictions" {@link DataPanelView}.
+ */
+
+module.exports = {
         targetAttributes: [
             'queryText',
             'relatedConcepts',
@@ -99,4 +98,4 @@ define([
                 numericRestrictions);
         }
     };
-});
+

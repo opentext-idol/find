@@ -12,12 +12,9 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/page/search/results/results-view'
-], function(ResultsView) {
-    'use strict';
+const ResultsView = require('find/app/page/search/results/results-view');
 
-    return ResultsView.extend({
+module.exports = ResultsView.extend({
         getQuestionsViewConstructor: function() {
         },
 
@@ -34,4 +31,4 @@ define([
             return 'search/suggest/' + database + '/' + reference;
         }
     });
-});
+

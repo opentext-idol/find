@@ -12,55 +12,51 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    './widgets/static-content-widget',
-    './widgets/static-image-widget',
-    './widgets/map-widget',
-    './widgets/sunburst-widget',
-    './widgets/topic-map-widget',
-    './widgets/time-last-refreshed-widget',
-    './widgets/current-time-widget',
-    './widgets/results-list-widget',
-    './widgets/video-widget',
-    './widgets/trending-widget'
-], function(StaticContentWidget, StaticImageWidget, MapWidget, SunburstWidget, TopicMapWidget,
-            TimeLastRefreshedWidget, CurrentTimeWidget, ResultsListWidget, VideoWidget, TrendingWidget) {
-    'use strict';
+const StaticContentWidget = require('./widgets/static-content-widget');
+const StaticImageWidget = require('./widgets/static-image-widget');
+const MapWidget = require('./widgets/map-widget');
+const SunburstWidget = require('./widgets/sunburst-widget');
+const TopicMapWidget = require('./widgets/topic-map-widget');
+const TimeLastRefreshedWidget = require('./widgets/time-last-refreshed-widget');
+const CurrentTimeWidget = require('./widgets/current-time-widget');
+const ResultsListWidget = require('./widgets/results-list-widget');
+const VideoWidget = require('./widgets/video-widget');
+const TrendingWidget = require('./widgets/trending-widget');
 
-    const registry = {
-        StaticContentWidget: {
-            Constructor: StaticContentWidget
-        },
-        StaticImageWidget: {
-            Constructor: StaticImageWidget
-        },
-        MapWidget: {
-            Constructor: MapWidget
-        },
-        SunburstWidget: {
-            Constructor: SunburstWidget
-        },
-        TopicMapWidget: {
-            Constructor: TopicMapWidget
-        },
-        TimeLastRefreshedWidget: {
-            Constructor: TimeLastRefreshedWidget
-        },
-        CurrentTimeWidget: {
-            Constructor: CurrentTimeWidget
-        },
-        ResultsListWidget: {
-            Constructor: ResultsListWidget
-        },
-        VideoWidget: {
-            Constructor: VideoWidget
-        },
-        TrendingWidget: {
-            Constructor: TrendingWidget
-        }
+const registry = {
+    StaticContentWidget: {
+        Constructor: StaticContentWidget
+    },
+    StaticImageWidget: {
+        Constructor: StaticImageWidget
+    },
+    MapWidget: {
+        Constructor: MapWidget
+    },
+    SunburstWidget: {
+        Constructor: SunburstWidget
+    },
+    TopicMapWidget: {
+        Constructor: TopicMapWidget
+    },
+    TimeLastRefreshedWidget: {
+        Constructor: TimeLastRefreshedWidget
+    },
+    CurrentTimeWidget: {
+        Constructor: CurrentTimeWidget
+    },
+    ResultsListWidget: {
+        Constructor: ResultsListWidget
+    },
+    VideoWidget: {
+        Constructor: VideoWidget
+    },
+    TrendingWidget: {
+        Constructor: TrendingWidget
+    }
+};
+
+module.exports = function(widget) {
+        return registry[widget];
     };
 
-    return function(widget) {
-        return registry[widget];
-    }
-});

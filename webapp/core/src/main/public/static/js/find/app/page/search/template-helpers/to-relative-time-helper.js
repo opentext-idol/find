@@ -12,13 +12,11 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'moment',
-    'find/app/util/round-functions'
-], function(_, moment, roundFunctions) {
+const _ = require('underscore');
+const moment = require('moment');
+const roundFunctions = require('find/app/util/round-functions');
 
-    return function(value, options) {
+module.exports = function(value, options) {
         if (!value) {
             return value;
         }
@@ -47,4 +45,3 @@ define([
         }
     };
 
-});

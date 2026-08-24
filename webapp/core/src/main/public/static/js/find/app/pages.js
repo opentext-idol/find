@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'backbone',
-    'find/app/vent',
-    'find/app/mmap-tab'
-], function(_, Backbone, vent, mmapTab) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const vent = require('find/app/vent');
+const mmapTab = require('find/app/mmap-tab');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         initialize: function(options) {
             this.pages = _.mapObject(options.pageData, function(data) {
                 const viewOptions = {router: options.router, mmapTab: mmapTab(options.configuration)};
@@ -67,4 +64,4 @@ define([
             }, this);
         }
     });
-});
+

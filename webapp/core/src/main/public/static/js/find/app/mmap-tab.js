@@ -12,29 +12,26 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'js-whatever/js/location'
-], function(_, location) {
-    'use strict';
+const _ = require('underscore');
+const location = require('js-whatever/js/location');
 
-    function supported(configuration, attributes) {
-        return configuration.mmapBaseUrl
-            && attributes.mmapUrl
-            && attributes.mmapEventSourceType
-            && attributes.mmapEventSourceName
-            && attributes.mmapEventTime;
-    }
+function supported(configuration, attributes) {
+    return configuration.mmapBaseUrl
+        && attributes.mmapUrl
+        && attributes.mmapEventSourceType
+        && attributes.mmapEventSourceName
+        && attributes.mmapEventTime;
+}
 
-    const baseUrlRegex = /(?:\w+:\/\/)?([^:/]+(?::\d+)?)(?:\/[^/]+)*/;
+const baseUrlRegex = /(?:\w+:\/\/)?([^:/]+(?::\d+)?)(?:\/[^/]+)*/;
 
-    function canBeReused(configuration) {
-        return configuration.mmapBaseUrl
-            && location.host()
-            && baseUrlRegex.exec(configuration.mmapBaseUrl)[1] === baseUrlRegex.exec(location.host())[1];
-    }
+function canBeReused(configuration) {
+    return configuration.mmapBaseUrl
+        && location.host()
+        && baseUrlRegex.exec(configuration.mmapBaseUrl)[1] === baseUrlRegex.exec(location.host())[1];
+}
 
-    return function(configuration) {
+module.exports = function(configuration) {
         let childWindow;
 
         return {
@@ -60,5 +57,5 @@ define([
                 }
             }
         }
-    }
-});
+    };
+

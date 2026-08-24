@@ -12,30 +12,29 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'find/app/page/search/results/parametric-results-view',
-    'find/app/page/search/results/table/table-collection',
-    'find/nls/bundle',
-    'text!find/templates/app/page/search/results/table/table-view.html',
-    'datatables.net-bs',
-    'datatables.net-fixedColumns'
-], function(_, ParametricResultsView, TableCollection, i18n, tableTemplate) {
-    'use strict';
+const _ = require('underscore');
+const ParametricResultsView = require('find/app/page/search/results/parametric-results-view');
+const TableCollection = require('find/app/page/search/results/table/table-collection');
+const i18n = require('find/nls/bundle');
+const tableTemplate = require('find/templates/app/page/search/results/table/table-view.html');
 
-    const strings = {
-        info: i18n['search.resultsView.table.info'],
-        infoFiltered: i18n['search.resultsView.table.infoFiltered'],
-        lengthMenu: i18n['search.resultsView.table.lengthMenu'],
-        search: i18n['search.resultsView.table.searchInResults'],
-        zeroRecords: i18n['search.resultsView.table.zeroRecords'],
-        paginate: {
-            next: i18n['search.resultsView.table.next'],
-            previous: i18n['search.resultsView.table.previous']
-        }
-    };
+// Loaded for side effects only - do not remove.
+require('datatables.net-bs');
+require('datatables.net-fixedColumns');
 
-    return ParametricResultsView.extend({
+const strings = {
+    info: i18n['search.resultsView.table.info'],
+    infoFiltered: i18n['search.resultsView.table.infoFiltered'],
+    lengthMenu: i18n['search.resultsView.table.lengthMenu'],
+    search: i18n['search.resultsView.table.searchInResults'],
+    zeroRecords: i18n['search.resultsView.table.zeroRecords'],
+    paginate: {
+        next: i18n['search.resultsView.table.next'],
+        previous: i18n['search.resultsView.table.previous']
+    }
+};
+
+module.exports = ParametricResultsView.extend({
         tableTemplate: _.template(tableTemplate),
 
         initialize: function(options) {
@@ -120,5 +119,5 @@ define([
 
             ParametricResultsView.prototype.remove.apply(this);
         }
-    })
-});
+    });
+

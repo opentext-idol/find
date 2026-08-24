@@ -12,21 +12,18 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'underscore',
-    'jquery'
-], function(Backbone, _, $) {
-    'use strict';
+const Backbone = require('backbone');
+const _ = require('underscore');
+const $ = require('jquery');
 
-    const dispatcher = _.clone(Backbone.Events);
+const dispatcher = _.clone(Backbone.Events);
 
-    $(document).on('keydown', function(evt){
-        if (evt.keyCode === 27) {
-            // evt.key is 'Escape' in Chrome but 'Esc' in IE11, easier to just work with keycodes.
-            dispatcher.trigger('escape', evt);
-        }
-    })
-
-    return dispatcher;
+$(document).on('keydown', function(evt){
+    if (evt.keyCode === 27) {
+        // evt.key is 'Escape' in Chrome but 'Esc' in IE11, easier to just work with keycodes.
+        dispatcher.trigger('escape', evt);
+    }
 })
+
+module.exports = dispatcher;
+

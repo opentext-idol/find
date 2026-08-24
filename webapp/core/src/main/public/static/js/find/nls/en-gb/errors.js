@@ -12,4 +12,5 @@
  * information contained herein is subject to change without notice.
  */
 
-define({});
+module.exports = {};
+

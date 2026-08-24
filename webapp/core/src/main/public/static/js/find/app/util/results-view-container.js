@@ -12,16 +12,13 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/nls/bundle',
-    'text!find/templates/app/util/content-container.html'
-], function(_, $, Backbone, i18n, contentContainerTemplate) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const contentContainerTemplate = require('find/templates/app/util/content-container.html');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         contentContainerTemplate: _.template(contentContainerTemplate, {variable: 'data'}),
 
         initialize: function(options) {
@@ -89,4 +86,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

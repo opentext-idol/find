@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'find/app/vent',
-    'find/app/model/similar-documents-collection',
-    'find/app/page/search/document/similar-abstract-tab'
-], function(_, vent, SimilarDocumentsCollection, SimilarAbstractTab) {
-    'use strict';
+const _ = require('underscore');
+const vent = require('find/app/vent');
+const SimilarDocumentsCollection = require('find/app/model/similar-documents-collection');
+const SimilarAbstractTab = require('find/app/page/search/document/similar-abstract-tab');
 
-    return SimilarAbstractTab.extend({
+module.exports = SimilarAbstractTab.extend({
         events: _.extend({
             'click .similar-documents-tab-see-more': function() {
                 vent.navigate(vent.suggestRouteForDocument(this.model));
@@ -46,4 +43,4 @@ define([
         }
 
     });
-});
+

@@ -12,22 +12,19 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'settings/js/settings-page',
-    'find/app/page/settings/validate-on-save-modal',
-    'find/app/util/confirm-view',
-    'find/app/model/config',
-    'find/app/vent',
-    'find/app/router',
-    'find/nls/bundle',
-    'text!find/templates/app/page/settings-page.html',
-    'underscore'
-], function(SettingsPage, ValidateOnSaveModal, Confirm, configModel, vent, router, i18n, template, _) {
-    'use strict';
+const SettingsPage = require('settings/js/settings-page');
+const ValidateOnSaveModal = require('find/app/page/settings/validate-on-save-modal');
+const Confirm = require('find/app/util/confirm-view');
+const configModel = require('find/app/model/config');
+const vent = require('find/app/vent');
+const router = require('find/app/router');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/settings-page.html');
+const _ = require('underscore');
 
-    var urlRoot = /\bconfig$/.test(window.location.pathname) ? 'api/config/config/' : 'api/admin/config/';
+var urlRoot = /\bconfig$/.test(window.location.pathname) ? 'api/config/config/' : 'api/admin/config/';
 
-    return SettingsPage.extend({
+module.exports = SettingsPage.extend({
         className: 'container-fluid',
         SaveModalConstructor: ValidateOnSaveModal,
         configModel: configModel,
@@ -159,4 +156,4 @@ define([
             }
         }
     });
-});
+

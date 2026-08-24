@@ -12,19 +12,16 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    './updating-widget',
-    'find/nls/bundle',
-    'text!find/idol/templates/page/dashboards/widgets/time-last-refreshed-widget.html',
-    'moment-timezone-with-data'
-], function(_, UpdatingWidget, i18n, template, moment) {
-    'use strict';
+const _ = require('underscore');
+const UpdatingWidget = require('./updating-widget');
+const i18n = require('find/nls/bundle');
+const template = require('find/idol/templates/page/dashboards/widgets/time-last-refreshed-widget.html');
+const moment = require('moment-timezone-with-data');
 
-    const EXPORT_FONT_SIZE = 10;
-    const EXPORT_TIME_FONT_SIZE = 15;
+const EXPORT_FONT_SIZE = 10;
+const EXPORT_TIME_FONT_SIZE = 15;
 
-    return UpdatingWidget.extend({
+module.exports = UpdatingWidget.extend({
         lastRefreshTemplate: _.template(template),
 
         initialize: function(options) {
@@ -126,4 +123,4 @@ define([
             };
         }
     });
-});
+

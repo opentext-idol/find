@@ -12,19 +12,15 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/configuration',
-    'find/app/page/search/service-view',
-    'find/idol/app/page/search/results/idol-recommend-view',
-    'find/idol/app/page/search/results/idol-results-view-augmentation',
-    'find/idol/app/page/search/results/idol-results-view',
-    'js-whatever/js/model-any-changed-attribute-listener',
-    'find/app/model/parametric-fields-collection'
-], function(configuration, ServiceView, RecommendView, ResultsViewAugmentation, ResultsView, addChangeListener,
-            ParametricFieldsCollection) {
-    'use strict';
+const configuration = require('find/app/configuration');
+const ServiceView = require('find/app/page/search/service-view');
+const RecommendView = require('find/idol/app/page/search/results/idol-recommend-view');
+const ResultsViewAugmentation = require('find/idol/app/page/search/results/idol-results-view-augmentation');
+const ResultsView = require('find/idol/app/page/search/results/idol-results-view');
+const addChangeListener = require('js-whatever/js/model-any-changed-attribute-listener');
+const ParametricFieldsCollection = require('find/app/model/parametric-fields-collection');
 
-    return ServiceView.extend({
+module.exports = ServiceView.extend({
         RecommendView: RecommendView,
         ResultsViewAugmentation: ResultsViewAugmentation,
         ResultsView: ResultsView,
@@ -74,4 +70,4 @@ define([
             };
         }
     });
-});
+

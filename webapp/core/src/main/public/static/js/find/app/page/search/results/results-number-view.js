@@ -12,16 +12,13 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'jquery',
-    'backbone',
-    'text!find/templates/app/page/search/results/results-number-view.html',
-    'find/nls/bundle',
-    'underscore'
-], function($, Backbone, template, i18n, _) {
-    'use strict';
+const $ = require('jquery');
+const Backbone = require('backbone');
+const template = require('find/templates/app/page/search/results/results-number-view.html');
+const i18n = require('find/nls/bundle');
+const _ = require('underscore');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         initialize: function(options) {
@@ -50,4 +47,4 @@ define([
             }
         }
     });
-});
+

@@ -12,16 +12,13 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'jquery',
-    'backbone',
-    'find/nls/bundle',
-    'text!find/templates/app/page/search/spellcheck-view.html',
-    'underscore'
-], function($, Backbone, i18n, template, _) {
-    'use strict';
+const $ = require('jquery');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/search/spellcheck-view.html');
+const _ = require('underscore');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         events: {
@@ -60,4 +57,4 @@ define([
             this.$el.toggleClass('hidden', !autoCorrection);
         }
     });
-});
+

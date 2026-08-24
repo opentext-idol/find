@@ -12,15 +12,12 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'find/app/model/find-base-collection',
-    'find/app/model/saved-searches/saved-search-model',
-    'underscore'
-], function(Backbone, FindBaseCollection, SavedSearchModel, _) {
-    'use strict';
+const Backbone = require('backbone');
+const FindBaseCollection = require('find/app/model/find-base-collection');
+const SavedSearchModel = require('find/app/model/saved-searches/saved-search-model');
+const _ = require('underscore');
 
-    return FindBaseCollection.extend({
+module.exports = FindBaseCollection.extend({
         url: 'api/bi/saved-query',
 
         parse: function(response) {
@@ -33,4 +30,4 @@ define([
             }, SavedSearchModel.prototype.defaults)
         })
     });
-});
+

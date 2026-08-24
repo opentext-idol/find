@@ -11,16 +11,11 @@
  * liable for technical or editorial errors or omissions contained herein. The
  * information contained herein is subject to change without notice.
  */
-// Locales resolve at BUILD time. To add one, create the directory and add a line here.
-define([
-    'find/nls/select-locale',
-    'find/nls/root/bundle',
-    'find/nls/en-gb/bundle'
-], function(selectLocale, root, enGb) {
-    'use strict';
 
-    return selectLocale({
-        root: root,
-        'en-gb': enGb
-    });
+const selectLocale = require('find/nls/select-locale');
+
+// Locales resolve at BUILD time. To add one, create the directory and add a line here.
+module.exports = selectLocale({
+    root: require('find/nls/root/bundle'),
+    'en-gb': require('find/nls/en-gb/bundle')
 });

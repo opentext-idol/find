@@ -12,39 +12,17 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore'
-], function(_) {
+const _ = require('underscore');
 
-    // TODO: Replace with window.URL when browser support is better
-    /**
-     * @typedef {Object} URLComponents
-     * @property {string} hash
-     * @property {string} host
-     * @property {string} hostname
-     * @property {string} href
-     * @property {string} origin
-     * @property {string} pathname
-     * @property {number} port
-     * @property {string} protocol
-     * @property {string} search
-     */
-    /**
-     * Parse the given URL into an object of URL components. If a relative URL is given, the components will be relative
-     * to the current document URI.
-     * @param {string} url
-     * @return {URLComponents}
-     */
-    function parseUrl(url) {
-        const anchor = document.createElement('a');
-        anchor.setAttribute('href', url);
+function parseUrl(url) {
+    const anchor = document.createElement('a');
+    anchor.setAttribute('href', url);
 
-        return _.extend(
-            {port: parseInt(anchor.port, 10)},
-            _.pick(anchor, ['hash', 'host', 'hostname', 'href', 'origin', 'pathname', 'protocol', 'search'])
-        );
-    }
+    return _.extend(
+        {port: parseInt(anchor.port, 10)},
+        _.pick(anchor, ['hash', 'host', 'hostname', 'href', 'origin', 'pathname', 'protocol', 'search'])
+    );
+}
 
-    return parseUrl;
+module.exports = parseUrl;
 
-});

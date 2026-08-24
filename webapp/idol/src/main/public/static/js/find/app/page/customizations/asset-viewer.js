@@ -12,34 +12,31 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/app/util/confirm-view',
-    'js-whatever/js/list-view',
-    'find/app/configuration',
-    'find/nls/bundle',
-    'text!find/templates/app/page/customizations/asset-viewer.html',
-    'text!find/templates/app/page/customizations/asset.html'
-], function(_, $, Backbone, Confirm, ListView, configuration, i18n, template, assetTemplate) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const Confirm = require('find/app/util/confirm-view');
+const ListView = require('js-whatever/js/list-view');
+const configuration = require('find/app/configuration');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/customizations/asset-viewer.html');
+const assetTemplate = require('find/templates/app/page/customizations/asset.html');
 
-    const MESSAGE_CLASSES = {
-        error: 'text-error',
-        success: 'text-success'
-    };
+const MESSAGE_CLASSES = {
+    error: 'text-error',
+    success: 'text-success'
+};
 
-    const PAGE_SIZE = 5;
+const PAGE_SIZE = 5;
 
-    const defaultAssetTemplate = _.template('<div class="asset">' + assetTemplate + '</div>');
+const defaultAssetTemplate = _.template('<div class="asset">' + assetTemplate + '</div>');
 
-    function getFile(e) {
-        // use null over undefined as it's easier to send null to the server
-        return $(e.target).closest('.asset').attr('data-id') || null;
-    }
+function getFile(e) {
+    // use null over undefined as it's easier to send null to the server
+    return $(e.target).closest('.asset').attr('data-id') || null;
+}
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
         assetTemplate: _.template(assetTemplate),
 
@@ -211,4 +208,4 @@ define([
             $el.find('.apply-asset').toggleClass('disabled', active);
         }
     });
-});
+

@@ -1,71 +1,70 @@
-define([
-    'backbone',
-    'jquery',
-    'underscore',
-    'leaflet',
-    'find/app/configuration',
-    'find/nls/bundle',
-    'text!find/templates/app/page/search/filters/geography/geography-editor-view.html',
-    'leaflet.draw.i18n'
-], function (Backbone, $, _, leaflet, configuration, i18n, template) {
-    'use strict';
+const Backbone = require('backbone');
+const $ = require('jquery');
+const _ = require('underscore');
+const leaflet = require('leaflet');
+const configuration = require('find/app/configuration');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/search/filters/geography/geography-editor-view.html');
 
-    const INITIAL_ZOOM = 3;
+// Loaded for side effects only - do not remove.
+require('leaflet.draw.i18n');
 
-    const colorMapping = {
-        'within': ['#01a982', '#ff0000'],
-        'intersect': ['#e4ff00', '#fa8800'],
-        'contains': ['#0066ff', '#a106ba']
+const INITIAL_ZOOM = 3;
+
+const colorMapping = {
+    'within': ['#01a982', '#ff0000'],
+    'intersect': ['#e4ff00', '#fa8800'],
+    'contains': ['#0066ff', '#a106ba']
+}
+
+const intersectionTypes = _.keys(colorMapping);
+
+function shapeColor(shape) {
+    const colorMap = shape && shape.spatial && colorMapping[shape.spatial];
+    const color = (colorMap || colorMapping.within)[shape && shape.negated ? 1 : 0];
+    return { color: color, fillColor: color };
+}
+
+function bindTooltipOnAdd(layer) {
+    if (layer instanceof leaflet.Polygon || layer instanceof leaflet.Circle) {
+        layer.bindTooltip(layerTooltip, {direction: 'top', sticky: true, offset: [0, -10]});
+        // We have to call this explicitly, otherwise the tooltip doesn't update till the next time the user
+        //  hovers out of the shape, then moves the mouse back onto it.
+        layer.on('polygonSpatialChange negated', updateTooltipContent)
+    }
+}
+
+function updateTooltipContent(layer) {
+    const tooltip = layer.getTooltip();
+    if (tooltip) {
+        layer.setTooltipContent(layerTooltip);
+    }
+}
+
+function layerTooltip(shape) {
+    if (shape instanceof leaflet.Circle) {
+        return shape.negated ? i18n['search.geography.shape.tooltip.circle.negated']
+            : i18n['search.geography.shape.tooltip.circle']
     }
 
-    const intersectionTypes = _.keys(colorMapping);
-
-    function shapeColor(shape) {
-        const colorMap = shape && shape.spatial && colorMapping[shape.spatial];
-        const color = (colorMap || colorMapping.within)[shape && shape.negated ? 1 : 0];
-        return { color: color, fillColor: color };
-    }
-
-    function bindTooltipOnAdd(layer) {
-        if (layer instanceof leaflet.Polygon || layer instanceof leaflet.Circle) {
-            layer.bindTooltip(layerTooltip, {direction: 'top', sticky: true, offset: [0, -10]});
-            // We have to call this explicitly, otherwise the tooltip doesn't update till the next time the user
-            //  hovers out of the shape, then moves the mouse back onto it.
-            layer.on('polygonSpatialChange negated', updateTooltipContent)
-        }
-    }
-
-    function updateTooltipContent(layer) {
-        const tooltip = layer.getTooltip();
-        if (tooltip) {
-            layer.setTooltipContent(layerTooltip);
-        }
-    }
-
-    function layerTooltip(shape) {
-        if (shape instanceof leaflet.Circle) {
-            return shape.negated ? i18n['search.geography.shape.tooltip.circle.negated']
-                : i18n['search.geography.shape.tooltip.circle']
-        }
-
-        if (shape instanceof leaflet.Polygon) {
-            switch (shape.spatial) {
-                case 'intersect':
-                    return shape.negated ? i18n['search.geography.shape.tooltip.polygon.intersect.negated']
-                        : i18n['search.geography.shape.tooltip.polygon.intersect']
-                case 'contains':
-                    return shape.negated ? i18n['search.geography.shape.tooltip.polygon.contain.negated']
-                        : i18n['search.geography.shape.tooltip.polygon.contain']
-            }
-
-            return shape.negated ? i18n['search.geography.shape.tooltip.polygon.within.negated']
-                : i18n['search.geography.shape.tooltip.polygon.within']
+    if (shape instanceof leaflet.Polygon) {
+        switch (shape.spatial) {
+            case 'intersect':
+                return shape.negated ? i18n['search.geography.shape.tooltip.polygon.intersect.negated']
+                    : i18n['search.geography.shape.tooltip.polygon.intersect']
+            case 'contains':
+                return shape.negated ? i18n['search.geography.shape.tooltip.polygon.contain.negated']
+                    : i18n['search.geography.shape.tooltip.polygon.contain']
         }
 
-        return '';
+        return shape.negated ? i18n['search.geography.shape.tooltip.polygon.within.negated']
+            : i18n['search.geography.shape.tooltip.polygon.within']
     }
 
-    return Backbone.View.extend({
+    return '';
+}
+
+module.exports = Backbone.View.extend({
         template: _.template(template),
         className: 'full-height',
 
@@ -340,4 +339,4 @@ define([
             }
         }
     });
-});
+

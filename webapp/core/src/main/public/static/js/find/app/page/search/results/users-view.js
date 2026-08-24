@@ -26,20 +26,15 @@
  * that a user preview should be opened).
  */
 
-define([
-    'underscore',
-    'backbone',
-    'jquery',
-    'find/nls/bundle',
-    'find/app/util/generate-error-support-message',
-    'text!find/templates/app/page/search/results/users-view.html',
-    'text!find/templates/app/page/search/results/users-view-user.html'
-], function(
-    _, Backbone, $, i18n, generateErrorHtml, template, userTemplate
-) {
-    'use strict';
+const _ = require('underscore');
+const Backbone = require('backbone');
+const $ = require('jquery');
+const i18n = require('find/nls/bundle');
+const generateErrorHtml = require('find/app/util/generate-error-support-message');
+const template = require('find/templates/app/page/search/results/users-view.html');
+const userTemplate = require('find/templates/app/page/search/results/users-view-user.html');
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
         userTemplate: _.template(userTemplate),
 
@@ -180,4 +175,3 @@ define([
 
     });
 
-});

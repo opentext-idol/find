@@ -1,23 +1,22 @@
-define([
-    'backbone',
-    'jquery'
-], function(Backbone, $) {
+const Backbone = require('backbone');
+const $ = require('jquery');
 
-    var $body = $(document.body);
-    var $window = $(window);
+var $body = $(document.body);
+var $window = $(window);
 
-    function updateCallback() {
-        this.set({
-            innerHeight: $body.innerHeight(),
-            scrollTop: $body.scrollTop(),
-            scrollHeight: $body.prop('scrollHeight'),
-            top: 0,
-            bottom: $window.innerHeight()
-        });
-    }
+function updateCallback() {
+    this.set({
+        innerHeight: $body.innerHeight(),
+        scrollTop: $body.scrollTop(),
+        scrollHeight: $body.prop('scrollHeight'),
+        top: 0,
+        bottom: $window.innerHeight()
+    });
+}
 
-    // Tracks window scroll parameters
-    return Backbone.Model.extend({
+// Tracks window scroll parameters
+
+module.exports = Backbone.Model.extend({
         initialize: function() {
             this.updateCallback = updateCallback.bind(this);
 
@@ -35,4 +34,3 @@ define([
         }
     });
 
-});

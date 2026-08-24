@@ -12,28 +12,25 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'js-whatever/js/list-view',
-    'find/app/page/search/filters/parametric/parametric-field-view',
-    'find/app/page/search/filters/parametric/proxy-view',
-    'find/app/page/search/filters/parametric/numeric-parametric-field-collapsible-view',
-    'find/nls/bundle',
-    'text!find/templates/app/page/search/filters/parametric/parametric-view.html'
-], function(_, $, Backbone, ListView, FieldView, ProxyView, CollapsibleNumericFieldView, i18n, template) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const ListView = require('js-whatever/js/list-view');
+const FieldView = require('find/app/page/search/filters/parametric/parametric-field-view');
+const ProxyView = require('find/app/page/search/filters/parametric/proxy-view');
+const CollapsibleNumericFieldView = require('find/app/page/search/filters/parametric/numeric-parametric-field-collapsible-view');
+const i18n = require('find/nls/bundle');
+const template = require('find/templates/app/page/search/filters/parametric/parametric-view.html');
 
-    const TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
+const TARGET_NUMBER_OF_PIXELS_PER_BUCKET = 10;
 
-    const STATES = {
-        PROCESSING: 'PROCESSING',
-        ERROR: 'ERROR',
-        SYNCED: 'SYNCED'
-    };
+const STATES = {
+    PROCESSING: 'PROCESSING',
+    ERROR: 'ERROR',
+    SYNCED: 'SYNCED'
+};
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template)({i18n: i18n}),
 
         events: {
@@ -211,4 +208,4 @@ define([
             }
         },
     });
-});
+

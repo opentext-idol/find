@@ -12,19 +12,16 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'text!find/templates/app/util/range-input.html'
-], function(_, $, Backbone, template) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const template = require('find/templates/app/util/range-input.html');
 
-    function destroyTooltip() {
-        this.$('.range-input-slider').tooltip('destroy');
-    }
+function destroyTooltip() {
+    this.$('.range-input-slider').tooltip('destroy');
+}
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         template: _.template(template),
 
         events: {
@@ -77,4 +74,4 @@ define([
             Backbone.View.prototype.remove.call(this);
         }
     });
-});
+

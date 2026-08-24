@@ -12,45 +12,41 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'underscore',
-    'jquery',
-    'backbone',
-    'find/nls/bundle',
-    'find/app/vent',
-    'find/app/util/view-server-client',
-    'find/app/configuration',
-    'find/app/util/database-name-resolver',
-    'find/app/util/events',
-    'find/app/util/url-manipulator',
-    'find/app/page/search/document/document-preview-helper',
-    'text!find/templates/app/page/search/document/preview-mode-summary-view.html'
-], function(_, $, Backbone, i18n, vent, viewClient, configuration, databaseNameResolver, events,
-            urlManipulator, DocumentPreviewHelper, template) {
-    'use strict';
+const _ = require('underscore');
+const $ = require('jquery');
+const Backbone = require('backbone');
+const i18n = require('find/nls/bundle');
+const vent = require('find/app/vent');
+const viewClient = require('find/app/util/view-server-client');
+const configuration = require('find/app/configuration');
+const databaseNameResolver = require('find/app/util/database-name-resolver');
+const events = require('find/app/util/events');
+const urlManipulator = require('find/app/util/url-manipulator');
+const DocumentPreviewHelper = require('find/app/page/search/document/document-preview-helper');
+const template = require('find/templates/app/page/search/document/preview-mode-summary-view.html');
 
-    const highlightRuleTemplate = _.template('body.haven-search-view-document-highlighting-on .haven-search-view-document-highlighting { \n' +
-        'font-weight: bold; \n' +
-        '<% if (color) { %>color: <%-color%>; \n<% } %>' +
-        '<% if (background) { %>background: <%-background%>; \n<% } %>' +
-    '}')
+const highlightRuleTemplate = _.template('body.haven-search-view-document-highlighting-on .haven-search-view-document-highlighting { \n' +
+    'font-weight: bold; \n' +
+    '<% if (color) { %>color: <%-color%>; \n<% } %>' +
+    '<% if (background) { %>background: <%-background%>; \n<% } %>' +
+'}')
 
-    function highlighting(innerWindow) {
-        const config = configuration();
+function highlighting(innerWindow) {
+    const config = configuration();
 
-        const styleEl = innerWindow.createElement('style');
+    const styleEl = innerWindow.createElement('style');
 
-        // Append style element to iframe document head
-        innerWindow.head.appendChild(styleEl);
+    // Append style element to iframe document head
+    innerWindow.head.appendChild(styleEl);
 
-        const highlightingRule = highlightRuleTemplate({
-            color: config.termHighlightColor,
-            background: config.termHighlightBackground
-        })
-        styleEl.sheet.insertRule(highlightingRule, 0);
-    }
+    const highlightingRule = highlightRuleTemplate({
+        color: config.termHighlightColor,
+        background: config.termHighlightBackground
+    })
+    styleEl.sheet.insertRule(highlightingRule, 0);
+}
 
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         className: 'well flex-column m-b-nil full-height',
 
         template: _.template(template),
@@ -164,4 +160,4 @@ define([
                 this.highlightingModel.get('highlighting'));
         }
     });
-});
+

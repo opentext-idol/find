@@ -1,16 +1,14 @@
-define([
-    'underscore',
-    'find/app/page/settings/aci-widget',
-    'find/app/page/settings/enable-view',
-    'find/nls/bundle'
-], function (_, AciWidget, EnableView, i18n) {
-    'use strict';
+const _ = require('underscore');
+const AciWidget = require('find/app/page/settings/aci-widget');
+const EnableView = require('find/app/page/settings/enable-view');
+const i18n = require('find/nls/bundle');
 
-    /**
-     * Like `AciWidget`, but can be enabled and disabled.  Config has `enabled` and `server`
-     * properties.  Requires strings required by `EnableView`.
-     */
-    return AciWidget.extend({
+/**
+ * Like `AciWidget`, but can be enabled and disabled.  Config has `enabled` and `server`
+ * properties.  Requires strings required by `EnableView`.
+ */
+
+module.exports = AciWidget.extend({
         initialize: function (options) {
             AciWidget.prototype.initialize.apply(this, arguments);
 
@@ -44,4 +42,3 @@ define([
         }
     });
 
-});

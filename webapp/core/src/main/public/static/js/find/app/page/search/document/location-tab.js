@@ -12,21 +12,17 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'backbone',
-    'underscore',
-    'find/app/configuration',
-    'find/app/page/search/results/map-view',
-    'find/app/page/search/results/add-links-to-summary',
-    'text!find/templates/app/page/search/document/location-tab.html',
-    'text!find/templates/app/page/search/results/map-popover.html',
-    'find/nls/bundle',
-    'find/app/vent'
-], function(Backbone, _, configuration, MapView, addLinksToSummary, templateString, popoverTemplate, i18n, vent) {
+const Backbone = require('backbone');
+const _ = require('underscore');
+const configuration = require('find/app/configuration');
+const MapView = require('find/app/page/search/results/map-view');
+const addLinksToSummary = require('find/app/page/search/results/add-links-to-summary');
+const templateString = require('find/templates/app/page/search/document/location-tab.html');
+const popoverTemplate = require('find/templates/app/page/search/results/map-popover.html');
+const i18n = require('find/nls/bundle');
+const vent = require('find/app/vent');
 
-    'use strict';
-
-    return Backbone.View.extend({
+module.exports = Backbone.View.extend({
         map: null,
         template: _.template(templateString),
         popoverTemplate: _.template(popoverTemplate),
@@ -79,4 +75,3 @@ define([
         }
     });
 
-});

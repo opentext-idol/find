@@ -12,19 +12,16 @@
  * information contained herein is subject to change without notice.
  */
 
-define([
-    'find/app/navigation',
-    'text!find/idol/templates/navigation-menu-items.html',
-    'find/idol/app/util/selection-entity-search',
-    'underscore'
-], function(Navigation, menuItems, SelectionEntitySearch, _) {
-    'use strict';
+const Navigation = require('find/app/navigation');
+const menuItems = require('find/idol/templates/navigation-menu-items.html');
+const SelectionEntitySearch = require('find/idol/app/util/selection-entity-search');
+const _ = require('underscore');
 
-    return Navigation.extend({
+module.exports = Navigation.extend({
         menuItems: _.template(menuItems),
 
         onEntitySearchSelect: function(group){
             SelectionEntitySearch.setUserSelectedDatabaseGroup(group);
         }
     });
-});
+

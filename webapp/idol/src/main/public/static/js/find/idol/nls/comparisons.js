@@ -12,16 +12,10 @@
  * information contained herein is subject to change without notice.
  */
 
-// Locales resolve at BUILD time. To add one, create the directory and add a line here.
-define([
-    'find/nls/select-locale',
-    'find/idol/nls/root/comparisons',
-    'find/idol/nls/en-gb/comparisons'
-], function(selectLocale, root, enGb) {
-    'use strict';
+const selectLocale = require('find/nls/select-locale');
 
-    return selectLocale({
-        root: root,
-        'en-gb': enGb
-    });
+// Locales resolve at BUILD time. To add one, create the directory and add a line here.
+module.exports = selectLocale({
+    root: require('find/idol/nls/root/comparisons'),
+    'en-gb': require('find/idol/nls/en-gb/comparisons')
 });
