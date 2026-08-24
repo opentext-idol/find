@@ -21,3 +21,7 @@ Find consists of three modules:
 # Maven Profiles
 
 By default, `mvn install` runs webpack in `development` mode. Running with the `production` profile builds webpack in `production` mode, which minifies the JavaScript and CSS.
+
+# Frontend Development Loop
+
+Running `npm run watch` from the `idol` module runs webpack in watch mode, recompiling the JavaScript bundles as source files change, and copying non-JS static assets straight into `target/classes/static`. See [[Running-a-Development-Copy-of-Find]] for the full dev-loop workflow, including the caveats around LESS compilation and `.mustache` templates.

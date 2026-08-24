@@ -16,7 +16,7 @@ For the purposes of this guide, we're assuming that you've already cloned Find f
 
 - `mvn install`
 
-It's important to run the `install` step, as this "installs" the modules to your local Maven repository.  This makes the `core` module available for `idol` and `hod` to use as a dependency.
+It's important to run the `install` step, as this "installs" the modules to your local Maven repository.  This makes the `core` module available for `idol` and `hod` to use as a dependency.  This step also runs `npm ci` and webpack (in `development` mode), producing the JavaScript/CSS bundles.
 
 ## Step Two: Use Spring Boot to run a local server
 
@@ -25,18 +25,25 @@ It's important to run the `install` step, as this "installs" the modules to your
 
 Any changes you make to Java files will be recompiled and redeployed automatically.
 
-## Step Three: Use Grunt to keep HTML, CSS, and JavaScript files up to date
+## Step Three: Keep JavaScript, CSS, and other static files up to date
 
-From your `hod` or `idol` folder (as appropriate), run the following command:
+From your `idol` folder, run:
 
-- `grunt copy-resources`
+- `npm run watch`
 
-This will take any changes you make to static files (HTML, CSS, JavaScript, images, etc) in `core` and deploy them into your running Spring Boot server from step two.
+This runs webpack in watch mode, which recompiles the JavaScript bundles (`public.js`, `config.js`, `login.js`, `themetracker.js`) as soon as you save a change to any source file, and copies non-JS static assets (fonts, images, favicon) straight into `target/classes/static`. Keep this running in a terminal alongside `mvn spring-boot:run`.
+
+If you're editing files in the `core` module rather than `idol`, run `mvn install -pl core` first so `idol`'s webpack build picks up the change (webpack watches idol's own merged `target/classes/static/js` tree, which is repopulated from `core`'s jar).
+
+**Two things `npm run watch` does *not* cover:**
+
+- **LESS/CSS**: LESS is compiled once, on server startup (`@PostConstruct`), and cached for the life of the process.  If you edit a `.less` file, you'll need to restart `mvn spring-boot:run` to see the change (webpack's dev-mode asset copy only handles already-compiled `.css`, not `.less` compilation).
+- **`.mustache` templates**: these live in `core` and are not watched or auto-copied by webpack.  After editing one, run `mvn install -pl core` and restart `mvn spring-boot:run`.
 
 ## Step Four: Open Find in your web browser
 
 - Navigate to http://localhost:8080 and you should see Find.  A config file has been generated in the Find home directory that you specified on the command line in step two.
 
-Any code changes you make will appear after a short delay (should be less than a couple of seconds) - refresh your browser to pick up client side changes.
+JavaScript/CSS/static-asset changes will appear after a short delay (usually less than a couple of seconds while `npm run watch` recompiles) - refresh your browser to pick up client side changes.
 
 You now want to read either [[Configuring Find for IDOL]] or [[Configuring Find for Haven OnDemand]] to get Find configured.

@@ -102,50 +102,14 @@ module.exports = (grunt) ->
       test:
         files: testWatchFiles
         tasks: ['test']
-      copyResources:
-        files: [
-          '../core/src/main/public/static/**/*'
-          '../core/frontend/node_modules/**/*'
-          '../core/src/main/resources/less/**/*.less'
-          'src/main/public/static/**/*'
-        ]
-        spawn: false
-        tasks: ['sync:devResources']
-    sync:
-      devResources:
-        files: [
-          {
-            cwd: '../core/src/main/resources/less'
-            src: '**/*'
-            dest: '../core/target/classes/less'
-          }
-          {
-            cwd: '../core/src/main/public/static'
-            src: '**/*'
-            dest: 'target/classes/static'
-          }
-          {
-            cwd: '../core/frontend/node_modules'
-            src: '**/*'
-            dest: 'target/classes/static/bower_components'
-          }
-          {
-            cwd: 'src/main/public/static/'
-            src: '**/*'
-            dest: 'target/classes/static'
-          }
-        ]
-        verbose: true
 
   grunt.loadNpmTasks 'grunt-babel'
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-connect'
   grunt.loadNpmTasks 'grunt-contrib-jasmine'
   grunt.loadNpmTasks 'grunt-contrib-watch'
-  grunt.loadNpmTasks 'grunt-sync'
 
   grunt.registerTask 'default', ['test']
   grunt.registerTask 'test', ['babel:transform', 'jasmine:test']
   grunt.registerTask 'browser-test', ['jasmine:browser-test:build', 'connect:server', 'watch:buildBrowserTest']
   grunt.registerTask 'watch-test', ['babel:transform', 'jasmine:test', 'watch:test']
-  grunt.registerTask 'copy-resources', ['sync:devResources', 'watch:copyResources']

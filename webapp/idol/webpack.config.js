@@ -8,21 +8,26 @@
  *
  * It runs against the *merged* static/js tree that Maven's unpack-dependencies execution
  * produces at target/classes/static/js (core's config.js/login.js copied in alongside
- * idol's public.js/themetracker.js) - see idol/pom.xml's overWriteIfNewer bug (Phase 6).
+ * idol's public.js/themetracker.js) - core's overWriteIfNewer is now `true`, so a plain
+ * `mvn install -pl core` (no idol `clean`) is enough to propagate core JS changes here.
  * Vendor libraries resolve directly from core/frontend/node_modules rather than the
  * bower_components copies, since those copies are just an npm->bower_components sync of
  * the same packages (see docs/_building/Understanding-the-Code-Structure.md).
  */
 
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const MERGED_JS = path.resolve(__dirname, 'target/classes/static/js');
 const VENDOR_MODULES = path.resolve(__dirname, '../core/frontend/node_modules');
 const SHIMS = path.resolve(__dirname, 'build/vendor-shims');
 
-module.exports = (env, argv) => ({
-    mode: argv.mode === 'production' ? 'production' : 'development',
-    devtool: argv.mode === 'production' ? 'source-map' : 'eval-source-map',
+module.exports = (env, argv) => {
+    const isProduction = argv.mode === 'production';
+
+    return {
+    mode: isProduction ? 'production' : 'development',
+    devtool: isProduction ? 'source-map' : 'eval-source-map',
     entry: {
         public: path.resolve(MERGED_JS, 'public.js'),
         config: path.resolve(MERGED_JS, 'config.js'),
@@ -132,7 +137,34 @@ module.exports = (env, argv) => ({
         }),
         new (require('webpack').NormalModuleReplacementPlugin)(/^i18n!/, (resource) => {
             resource.request = resource.request.replace(/^i18n!/, '');
-        })
+        }),
+        // Dev-mode-only: keep idol's own non-JS static assets (and core's, which used to be
+        // kept live by grunt-sync/watch) refreshed under target/classes/static without a
+        // full `mvn install`. Skipped in production mode, where the real Maven
+        // resource/unpack executions already populate these directories as part of a full
+        // build.
+        ...(isProduction ? [] : [
+            new CopyWebpackPlugin({
+                patterns: [
+                    { from: '../core/src/main/public/static/find-favicon.ico', to: 'find-favicon.ico' },
+                    { from: '../core/src/main/public/static/fonts', to: 'fonts' },
+                    { from: '../core/src/main/public/static/img', to: 'img' },
+                    { from: 'src/main/public/static/img', to: 'img' },
+                    { from: 'src/main/public/static/css', to: 'css' },
+                    { from: 'src/main/public/static/html', to: 'html' },
+                    // idol's own JS tree, copied straight on top of the merged tree from the
+                    // last `mvn install`/`compile` (which is what the `entry`/`resolve` above
+                    // read from). This is what lets editing idol's own JS take effect on the
+                    // next `npm run watch` recompile without a `mvn compile` in between -
+                    // core's files aren't touched here, so a plain `mvn install -pl core` is
+                    // still required to pick up core-side JS edits. Safe even where an
+                    // idol-owned file (e.g. find/app/vent.js) sits alongside a core-owned
+                    // sibling it `require()`s by relative path (e.g. find/app/core-vent.js) -
+                    // this only overlays idol's own files, it never deletes core's.
+                    { from: 'src/main/public/static/js', to: MERGED_JS }
+                ].map((pattern) => ({ ...pattern, context: __dirname, noErrorOnMissing: true }))
+            })
+        ])
     ],
     optimization: {
         splitChunks: false,
@@ -151,4 +183,5 @@ module.exports = (env, argv) => ({
     stats: {
         errorDetails: true
     }
-});
+    };
+};

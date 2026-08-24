@@ -128,7 +128,12 @@
                             <includeClassifiers>full</includeClassifiers>
                             <includes>static/**/*</includes>
                             <outputDirectory>${static-resources-dir}</outputDirectory>
-                            <overWriteIfNewer>false</overWriteIfNewer>
+                            <!--
+                                Must be true: this is what lets `mvn install -pl core` alone
+                                propagate a rebuilt core's static resources into idol/target
+                                without an idol `clean` first (amd-to-cjs-find.md Phase 6).
+                            -->
+                            <overWriteIfNewer>true</overWriteIfNewer>
                         </configuration>
                     </execution>
                 </executions>
