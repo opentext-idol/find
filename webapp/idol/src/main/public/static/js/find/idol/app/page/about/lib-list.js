@@ -308,27 +308,6 @@ module.exports = [
             edited: false
         },
         {
-            name: 'i18n',
-            url: 'https://github.com/requirejs/i18n',
-            version: '2.0.6',
-            license: 'BSD or MIT',
-            edited: false
-        },
-        {
-            name: 'requirejs',
-            url: 'http://github.com/jrburke/r.js',
-            version: '2.3.3',
-            license: 'MIT',
-            edited: false
-        },
-        {
-            name: 'requirejs-text',
-            url: 'https://www.npmjs.com/package/requirejs-text',
-            version: '2.0.15',
-            license: 'MIT',
-            edited: false
-        },
-        {
             name: 'side-channel',
             url: 'https://github.com/ljharb/side-channel#readme',
             version: '1.0.4',
