@@ -18,8 +18,11 @@
         <artifactName>${project.parent.artifactId}</artifactName>
 
         <frontend.docker.content.skip>false</frontend.docker.content.skip>
+        <frontend.docker.view.skip>false</frontend.docker.view.skip>
+        <frontend.docker.answerserver.skip>false</frontend.docker.answerserver.skip>
         <frontend.docker.community.skip>false</frontend.docker.community.skip>
         <frontend.docker.agentstore.skip>false</frontend.docker.agentstore.skip>
+        <frontend.docker.answerbankAgentstore.skip>false</frontend.docker.answerbankAgentstore.skip>
     </properties>
 
     <build>
