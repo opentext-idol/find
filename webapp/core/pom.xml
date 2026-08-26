@@ -78,16 +78,7 @@
                             <resources>
                                 <resource>
                                     <directory>${project.basedir}/frontend/node_modules</directory>
-                                    <!--
-                                        node_modules/.bin/* are CLI-tool symlinks (e.g. r.js,
-                                        jasmine, uglifyjs) - never needed as a browser static
-                                        resource, and re-unpacking an existing symlink here on
-                                        a later `mvn install -pl core` trips maven-dependency-
-                                        plugin's zip-slip protection in idol's unpack-
-                                        dependencies execution (amd-to-cjs-find.md Phase 6:
-                                        "Entry is outside of the target directory
-                                        (static/bower_components/.bin/...)").
-                                    -->
+                                    <!-- not needed and can include symlinks which fails some security checks -->
                                     <excludes>
                                         <exclude>**/.bin/**</exclude>
                                     </excludes>

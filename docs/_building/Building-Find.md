@@ -11,8 +11,8 @@ Building Find requires the following to be installed:
 
 * [Git](https://git-scm.com/) | [Alternative for Windows only](https://git-for-windows.github.io/)
 * [Apache Maven 3](http://maven.apache.org) (Hint: make sure the `mvn` executable is in your `PATH` environment variable)
-* [NodeJS](http://nodejs.org) >= 20, with npm >= 10 (enforced by `engine-strict=true` in each module's `.npmrc`)
-* [Java 17 JDK](https://adoptium.net/) or later
+* [NodeJS](http://nodejs.org) >= 20, with NPM >= 10
+* [Java 17 JDK](https://openjdk.org/) or later
 
 Get the code
 ------------
@@ -59,7 +59,7 @@ You should see lots of scrolling text, followed by a large `BUILD SUCCESS` messa
 If this doesn't work, check that you've installed everything correctly:
 - `mvn -version` should give you a version higher than 3 (e.g. "3.2.3")
 - `java -version` should give you at least 17 (e.g. "17.0.9")
-- `node -v` should give you at least 20 (e.g. "v20.11.0") - `npm ci` fails outright on older versions since each module enforces `engine-strict=true`
+- `node -v` should give you at least 20 (e.g. "v20.11.0")
 
 Output Files
 ------------

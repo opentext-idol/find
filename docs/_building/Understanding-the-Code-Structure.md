@@ -8,7 +8,7 @@ title: Understanding the Code Structure
 
 - [Maven](https://maven.apache.org/) is used for Java compilation and constructing the .war files
 - [webpack](https://webpack.js.org/) bundles the frontend's JavaScript and CSS, run automatically as part of the Maven `compile` phase (see `idol/webpack.config.js`).
-- [NPM](https://www.npmjs.com/) is used to manage frontend dependencies (i.e. JavaScript libraries, mostly). There is no Bower - `bower.json` was retired along with RequireJS/AMD.
+- [NPM](https://www.npmjs.com/) is used to manage frontend dependencies (i.e. JavaScript libraries, mostly).
 
 # Maven Modules
 
@@ -21,7 +21,3 @@ Find consists of three modules:
 # Maven Profiles
 
 By default, `mvn install` runs webpack in `development` mode. Running with the `production` profile builds webpack in `production` mode, which minifies the JavaScript and CSS.
-
-# Frontend Development Loop
-
-Running `npm run watch` from the `idol` module runs webpack in watch mode, recompiling the JavaScript bundles as source files change, and copying non-JS static assets straight into `target/classes/static`. See [[Running-a-Development-Copy-of-Find]] for the full dev-loop workflow, including the caveats around LESS compilation and `.mustache` templates.

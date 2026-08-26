@@ -18,9 +18,8 @@
  * load()/addPart()/mixin(), but statically: all locale parts are already loaded (as build-time
  * requires), so this just has to pick the right ones and merge them.
  */
-// Mixes properties from source into target, but only fills in properties target does not
-// already own - the earlier (more specific) values written during the backwards merge in
-// selectLocale always win. Recurses into plain objects so nested string tables merge too.
+
+// Mix properties from source into target.
 function mixin(target, source) {
     for(var prop in source) {
         if(!source.hasOwnProperty(prop)) {
@@ -43,11 +42,11 @@ function mixin(target, source) {
  * @alias module:find/nls/select-locale
  * @desc Merges the locale bundles declared on a master bundle object, picking the browser's
  * locale at call time. There is no _ -> - normalisation and no build-time lookup of which
- * locales exist beyond the keys of the master object passed in - locales resolve entirely
+ * locales exist beyond the keys of the master object passed in.  Locales resolve entirely
  * at build time; to add one, create the directory and add it to the master bundle's require
  * list.
  * @param {Object} bundles Map from locale tag (e.g. 'root', 'en-gb') to that locale's already
- * resolved bundle object
+ *                         resolved bundle object
  * @returns {Object} The merged bundle for the current browser locale
  */
 function selectLocale(bundles) {

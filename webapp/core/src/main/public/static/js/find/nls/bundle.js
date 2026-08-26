@@ -14,7 +14,7 @@
 
 const selectLocale = require('find/nls/select-locale');
 
-// Locales resolve at BUILD time. To add one, create the directory and add a line here.
+// Locales resolve at build time. To add one, create the directory and add a line here.
 module.exports = selectLocale({
     root: require('find/nls/root/bundle'),
     'en-gb': require('find/nls/en-gb/bundle')

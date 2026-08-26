@@ -23,10 +23,6 @@
         <frontend.docker.community.skip>false</frontend.docker.community.skip>
         <frontend.docker.agentstore.skip>false</frontend.docker.agentstore.skip>
         <frontend.docker.answerbankAgentstore.skip>false</frontend.docker.answerbankAgentstore.skip>
-
-        <!-- Terser is the bulk of webpack's cost; default to the much faster development
-             mode for everyday `mvn install`, and pass -Dwebpack.mode=production for a real,
-             minified deployable build. -->
         <webpack.mode>development</webpack.mode>
         <skip.webpack>false</skip.webpack>
     </properties>
@@ -84,16 +80,6 @@
                             <skip>true</skip>
                         </configuration>
                     </execution>
-                    <!--
-                        webpack must always run here, not just under some "production" mode:
-                        under a bundler there is no unbundled mode the browser can consume, so
-                        skipping it would leave a white screen. Kept at phase `compile` (not
-                        e.g. prepare-package) because `spring-boot:run` is
-                        @Execute(phase = "test-compile") and so forks through `compile` -
-                        binding later would break `mvn spring-boot:run`. Defaults to the much
-                        faster development mode; pass -Dwebpack.mode=production for a minified
-                        build, or -Dskip.webpack=true to skip entirely.
-                    -->
                     <execution>
                         <id>webpack-build</id>
                         <phase>compile</phase>
@@ -128,11 +114,7 @@
                             <includeClassifiers>full</includeClassifiers>
                             <includes>static/**/*</includes>
                             <outputDirectory>${static-resources-dir}</outputDirectory>
-                            <!--
-                                Must be true: this is what lets `mvn install -pl core` alone
-                                propagate a rebuilt core's static resources into idol/target
-                                without an idol `clean` first (amd-to-cjs-find.md Phase 6).
-                            -->
+                            <!-- don't require `clean` to pull in a newer core build -->
                             <overWriteIfNewer>true</overWriteIfNewer>
                         </configuration>
                     </execution>

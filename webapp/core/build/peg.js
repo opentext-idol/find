@@ -1,14 +1,5 @@
 'use strict';
 
-// Replaces grunt-peg (dead upstream, only ever installed from a GitHub fork). Uses the
-// pegjs *API*, not the CLI, because the CLI's `-o` does not create parent directories and
-// `mkdir -p` isn't portable to cmd.exe.
-//
-// format: 'umd' (not 'commonjs') so the generated parsers load under both RequireJS and
-// webpack - this keeps the require.js rollback viable through the webpack migration's
-// intermediate phases. trackLineAndColumn is a PEG.js 0.8 option that 0.10 silently ignores,
-// so it is dropped rather than carried forward as dead configuration.
-
 const fs = require('fs');
 const path = require('path');
 const peg = require('pegjs');
@@ -29,7 +20,7 @@ targets.forEach(({src, dest}) => {
 
     const source = peg.generate(grammar, {
         output: 'source',
-        format: 'umd'
+        format: 'umd' // support both RequireJS and Webpack
     });
 
     fs.mkdirSync(path.dirname(dest), {recursive: true});
