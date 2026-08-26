@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.hp.autonomy</groupId>
         <artifactId>foss-spring-boot-master-pom</artifactId>
-        <version>3.13.0</version>
+        <version>3.14.0</version>
     </parent>
 
     <inceptionYear>2014</inceptionYear>
@@ -165,7 +165,7 @@
             <dependency>
                 <groupId>com.hp.autonomy.frontend.reports.powerpoint</groupId>
                 <artifactId>powerpoint-report</artifactId>
-                <version>2.10.0</version>
+                <version>2.11.0</version>
             </dependency>
             <dependency>
                 <groupId>com.hp.autonomy.frontend.user</groupId>
@@ -206,28 +206,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-csv</artifactId>
                 <version>1.10.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents.client5</groupId>
-                <artifactId>httpclient5</artifactId>
-                <version>5.4.4</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents.core5</groupId>
-                <artifactId>httpcore5</artifactId>
-                <version>5.3.2</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.poi</groupId>
