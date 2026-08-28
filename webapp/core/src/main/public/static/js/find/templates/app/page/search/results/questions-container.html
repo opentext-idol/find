@@ -24,16 +24,10 @@
                 <span title="<%-model.get('source') || ''%>"><%- i18n['search.answeredQuestion.question'] %><%- model.get('question') %></span>
                 <% } %>
             </h4>
-            <div class="result-summary summary-text m-t-xs m-b-xs">
-                <span><%- i18n['search.answeredQuestion.answer'] %><%= sanitiseHTML(croppedAnswer) %></span>
-                <% if (showMoreButton) { %>
-                    <span class="ellipsis">...</span>
-                <% } %>
-                <span class="extended-answer hide"><%= sanitiseHTML(extendedAnswer) %></span>
+            <div class="answer-summary summary-text m-t-xs m-b-xs">
+                <span><%- i18n['search.answeredQuestion.answer'] %><%= answer %></span>
             </div>
-            <% if (showMoreButton) { %>
-                <a class="hyperlink read-more m-b-xs"><%- i18n['app.more'] %></a>
-            <% } %>
+            <a class="hyperlink read-more m-b-xs"><%- i18n['app.more'] %></a>
         </div>
     </div>
 </div>

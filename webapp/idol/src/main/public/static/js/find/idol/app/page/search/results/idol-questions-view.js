@@ -25,7 +25,6 @@ define([
     'use strict';
 
     const MAX_SIZE = 1;
-    const CROPPED_SUMMARY_CHAR_LENGTH = 300;
 
     function isLink(value) {
         return value && /^\s*https?:\/\/.+/.exec(value);
@@ -36,15 +35,10 @@ define([
             'click .read-more': function(e) {
                 const $target = $(e.currentTarget);
                 const $summary = $target.siblings('.summary-text');
-                $summary.toggleClass('result-summary');
+                $summary.toggleClass('answer-summary');
 
-                const isResultSummary = $summary.hasClass('result-summary');
+                const isResultSummary = $summary.hasClass('answer-summary');
                 $target.text(isResultSummary ? i18n['app.more'] : i18n['app.less']);
-                $summary.children('.extended-answer')
-                    .toggleClass('hide', isResultSummary);
-                $target.siblings('.summary-text')
-                    .children('.ellipsis')
-                    .toggleClass('hide', !isResultSummary);
             }
         },
 
@@ -61,16 +55,11 @@ define([
             this.$('[data-toggle="tooltip"]').tooltip('destroy');
 
             const html = this.answeredQuestionsCollection.map(function(answeredQuestion) {
-                const croppedAnswer = answeredQuestion.get('answer').slice(0, CROPPED_SUMMARY_CHAR_LENGTH);
-                const extendedAnswer = answeredQuestion.get('answer').slice(CROPPED_SUMMARY_CHAR_LENGTH);
-
+                const answer = answeredQuestion.get('answer');
                 return this.template({
                     i18n: i18n,
                     model: answeredQuestion,
-                    croppedAnswer: croppedAnswer,
-                    extendedAnswer: extendedAnswer,
-                    showMoreButton: answeredQuestion.get('answer').length > CROPPED_SUMMARY_CHAR_LENGTH,
-                    sanitiseHTML: HtmlUtil.sanitiseHTML,
+                    answer: HtmlUtil.sanitiseHTML(answer),
                     isLink: isLink
                 });
             }, this).join('');
@@ -80,6 +69,11 @@ define([
                 container: 'body',
                 placement: 'top'
             });
+
+            const $answer = this.$('.summary-text');
+            if ($answer[0] && $answer[0].scrollHeight <= $answer[0].clientHeight) {
+                this.$('.read-more').addClass('hide');
+            }
 
             return this;
         },
