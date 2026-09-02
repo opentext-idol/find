@@ -196,7 +196,7 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db"));
+            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
 
         final ArgumentCaptor<ActionParameters> paramsCaptor =
             ArgumentCaptor.forClass(ActionParameters.class);
@@ -229,7 +229,7 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db"));
+            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
 
         Assert.assertEquals("should return both facts", 2, response.size());
         Assert.assertEquals("should return first fact", "1", response.get(0).fact.getSource());
@@ -252,7 +252,7 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db"));
+            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
 
         Assert.assertEquals("should return both facts", 2, response.size());
         Assert.assertEquals("should return first fact", "1", response.get(0).fact.getSource());
@@ -272,7 +272,7 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db"));
+            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
 
         Assert.assertEquals("should return the fact", 1, response.size());
         Assert.assertEquals("fact should include the document twice",
@@ -298,7 +298,7 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db"));
+            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
 
         Assert.assertEquals("should return both facts", 2, response.size());
         Assert.assertEquals("should return first fact", "1", response.get(0).fact.getSource());
@@ -324,7 +324,7 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db"));
+            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
 
         Assert.assertEquals("should return the fact", 1, response.size());
         Assert.assertEquals("fact should include both documents",
@@ -348,7 +348,7 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db"));
+            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
 
         Assert.assertEquals("should return both facts", 2, response.size());
         Assert.assertEquals("should return first fact", "1", response.get(0).fact.getSource());
@@ -367,7 +367,7 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db"));
+            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
 
         Assert.assertEquals("should return the fact only once", 1, response.size());
         Assert.assertEquals("should return first fact", "1", response.get(0).fact.getSource());
@@ -378,7 +378,7 @@ public class AnswerServerControllerTest {
         // no ReportItems - different from empty ReportItems
         when(aciService.executeAction(any(), any(), any())).thenReturn(new ReportResponsedata());
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db"));
+            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
 
         Assert.assertEquals("should return empty list", Collections.emptyList(), response);
     }
@@ -386,7 +386,7 @@ public class AnswerServerControllerTest {
     @Test
     public void getEntityFacts_noMaxResults() {
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", null, Collections.singletonList("db"));
+            controller.getEntityFacts("space", null, Collections.singletonList("db")).facts();
 
         final ArgumentCaptor<ActionParameters> paramsCaptor =
             ArgumentCaptor.forClass(ActionParameters.class);
@@ -399,7 +399,7 @@ public class AnswerServerControllerTest {
     @Test
     public void getEntityFacts_lowMaxResults() {
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 2, Collections.singletonList("db"));
+            controller.getEntityFacts("space", 2, Collections.singletonList("db")).facts();
         Assert.assertEquals("should limit results", 2, response.size());
         Assert.assertEquals("should return first fact", "1",
             response.get(0).fact.getSource());

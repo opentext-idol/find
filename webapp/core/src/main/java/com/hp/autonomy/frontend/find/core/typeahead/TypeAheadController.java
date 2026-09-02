@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 public class TypeAheadController<E extends Exception> {
     public static final String URL = "/api/public/typeahead";
@@ -36,7 +34,7 @@ public class TypeAheadController<E extends Exception> {
     }
 
     @RequestMapping(URL)
-    public List<String> getSuggestions(@RequestParam(TEXT_PARAMETER) final String text) throws E {
-        return typeAheadService.getSuggestions(text);
+    public SuggestionsResponse getSuggestions(@RequestParam(TEXT_PARAMETER) final String text) throws E {
+        return new SuggestionsResponse(typeAheadService.getSuggestions(text));
     }
 }

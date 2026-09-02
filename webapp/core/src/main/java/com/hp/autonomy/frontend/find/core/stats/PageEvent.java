@@ -17,10 +17,10 @@ package com.hp.autonomy.frontend.find.core.stats;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)

@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -60,16 +59,16 @@ public class IdolUserController {
      */
     @RequestMapping(value = SEARCH_PATH, method= RequestMethod.GET)
     @ResponseBody
-    public List<String> searchUsers(@RequestParam(PARAMETER_SEARCH_TEXT) final String searchText, @RequestParam(PARAMETER_START_USER) final int startUser, @RequestParam(PARAMETER_MAX_USERS) final int maxUsers) {
+    public UsernamesResponse searchUsers(@RequestParam(PARAMETER_SEARCH_TEXT) final String searchText, @RequestParam(PARAMETER_START_USER) final int startUser, @RequestParam(PARAMETER_MAX_USERS) final int maxUsers) {
         // this is an important check for security reasons
         if (!configService.getConfig().getSavedSearchConfig().getSharingEnabled()) {
             throw new IllegalArgumentException("Saved search sharing is disabled");
         }
         final UserDetails details =
             idolUserSearchService.searchUser(searchText, startUser, maxUsers);
-        return details.getUser().stream()
+        return new UsernamesResponse(details.getUser().stream()
             .map(user -> user.getUsername())
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()));
     }
 
     /**
@@ -114,7 +113,7 @@ public class IdolUserController {
      */
     @RequestMapping(value = RELATED_PATH, method= RequestMethod.GET)
     @ResponseBody
-    public List<RelatedUser> getRelatedToSearch(
+    public RelatedUsersResponse getRelatedToSearch(
         @RequestParam(PARAMETER_SEARCH_TEXT) final String searchText,
         @RequestParam(PARAMETER_MAX_USERS) final int maxUsers
     ) {
@@ -123,9 +122,9 @@ public class IdolUserController {
         if (!config.getEnabled()) {
             throw new IllegalArgumentException("The related users feature is disabled");
         }
-        return idolUserSearchService.getRelatedToSearch(config, searchText, maxUsers).stream()
+        return new RelatedUsersResponse(idolUserSearchService.getRelatedToSearch(config, searchText, maxUsers).stream()
             .map(relatedUser -> restrictUserRelatedToSearch(relatedUser, config))
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()));
     }
 
 }

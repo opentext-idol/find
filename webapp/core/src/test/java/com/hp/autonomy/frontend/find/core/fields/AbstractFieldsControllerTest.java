@@ -232,7 +232,8 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
                 .build());
 
         final List<FieldAndValueDetails<?>> fields = getParametricFields(FieldTypeParam.Parametric);
-        assertThat(fields, hasSize(2));
+        assertThat(fields, hasSize(3));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("AUTN_DATABASE").getNormalisedPath()))));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField1").getNormalisedPath()))));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField2").getNormalisedPath()))));
     }
@@ -263,7 +264,8 @@ public abstract class AbstractFieldsControllerTest<C extends FieldsController<R,
                 .build());
 
         final List<FieldAndValueDetails<?>> fields = getParametricFields(FieldTypeParam.Parametric);
-        assertThat(fields, hasSize(1));
+        assertThat(fields, hasSize(2));
+        assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("AUTN_DATABASE").getNormalisedPath()))));
         assertThat(fields, hasItem(hasProperty("id", is(tagNameFactory.getFieldPath("ParametricField2").getNormalisedPath()))));
     }
 

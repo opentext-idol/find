@@ -26,7 +26,7 @@ define([
                 return false;
             }
             const searchText = filterModel && filterModel.get('text');
-            return !searchText || searchMatches(model.get('displayName'), filterModel.get('text'));
+            return !searchText || searchMatches(model.get('displayName'), searchText);
         }
     }
 

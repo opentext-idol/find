@@ -14,18 +14,18 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.configuration.AbstractAuthenticatingConfigFileService;
 import com.hp.autonomy.types.requests.idol.actions.tags.FieldPath;
-import java.util.Collections;
 import org.jasypt.util.text.TextEncryptor;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.ser.FilterProvider;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -39,15 +39,15 @@ public abstract class FindConfigFileService<C extends FindConfig<C, B>, B extend
 
     protected FindConfigFileService(final FilterProvider filterProvider,
                                     final TextEncryptor textEncryptor,
-                                    final JsonSerializer<FieldPath> fieldPathSerializer,
-                                    final JsonDeserializer<FieldPath> fieldPathDeserializer) {
+                                    final ValueSerializer<FieldPath> fieldPathSerializer,
+                                    final ValueDeserializer<FieldPath> fieldPathDeserializer) {
 
-        final ObjectMapper objectMapper = new Jackson2ObjectMapperBuilder()
-            .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
-            .mixIns(customMixins())
-            .serializersByType(ImmutableMap.of(FieldPath.class, fieldPathSerializer))
-            .deserializersByType(ImmutableMap.of(FieldPath.class, fieldPathDeserializer))
-            .createXmlMapper(false)
+        final ObjectMapper objectMapper = JsonMapper.builder()
+            .enable(SerializationFeature.INDENT_OUTPUT)
+            .addMixIns(customMixins())
+            .addModule(new SimpleModule()
+                    .addSerializer(FieldPath.class, fieldPathSerializer)
+                    .addDeserializer(FieldPath.class, fieldPathDeserializer))
             .build();
 
         setConfigFileLocation(CONFIG_FILE_LOCATION);

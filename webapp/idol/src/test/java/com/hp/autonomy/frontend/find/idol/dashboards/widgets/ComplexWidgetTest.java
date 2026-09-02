@@ -1,9 +1,5 @@
 package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasourceMixins;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
@@ -17,6 +13,9 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.core.ResolvableType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
@@ -28,16 +27,18 @@ public abstract class ComplexWidgetTest<W extends Widget<W, WS> & DatasourceDepe
     TagNameFactory tagNameFactory;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper objectMapper;
 
     @Override
     public void setUp() {
         final SimpleModule simpleModule = new SimpleModule();
         simpleModule.addSerializer(TagName.class, new TagNameSerializer());
-        objectMapper.registerModule(simpleModule);
-        objectMapper.addMixIn(WidgetDatasource.class, WidgetDatasourceMixins.class);
-        objectMapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper = objectMapper.rebuild()
+                .addModule(simpleModule)
+                .addMixIn(WidgetDatasource.class, WidgetDatasourceMixins.class)
+                .disable(DateTimeFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+                .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .build();
 
         json = new JacksonTester<>(getClass(), ResolvableType.forClass(getType()), objectMapper);
     }

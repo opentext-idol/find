@@ -14,8 +14,6 @@
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearch;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import jakarta.persistence.Column;
@@ -26,6 +24,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 import java.time.ZonedDateTime;
 
@@ -37,10 +37,10 @@ import java.time.ZonedDateTime;
 @JsonDeserialize(builder = SavedQuery.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SavedQuery extends SavedSearch<SavedQuery, SavedQuery.Builder> {
-    @Column(name = "last_fetched_new_date", columnDefinition = "DATETIME")
+    @Column(name = "last_fetched_new_date")
     private ZonedDateTime dateNewDocsLastFetched;
 
-    @Column(name = "last_fetched_date", columnDefinition = "DATETIME")
+    @Column(name = "last_fetched_date")
     private ZonedDateTime dateDocsLastFetched;
 
     private SavedQuery(final Builder builder) {

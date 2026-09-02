@@ -68,9 +68,10 @@ define([
 
                         return $.ajax({url: 'api/public/parametric/values', traditional: true, data: data})
                             .then(function(response) {
+                                const fields = response.parametricValues;
                                 return {
-                                    totalValues: response[0] ? response[0].totalValues : 0,
-                                    values: response[0] ? response[0].values : []
+                                    totalValues: fields[0] ? fields[0].totalValues : 0,
+                                    values: fields[0] ? fields[0].values : []
                                 };
                             });
                     }

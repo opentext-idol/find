@@ -1,7 +1,5 @@
 package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
@@ -12,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,8 +26,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class SavedSnapshotIT extends AbstractFindIT {
-    private static final TypeReference<Set<SavedSnapshot>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedSnapshot>>() {
-    };
     private static final String QUERY_TEXT = "orange";
 
     @Autowired
@@ -79,9 +76,9 @@ public class SavedSnapshotIT extends AbstractFindIT {
         listSnapshots()
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id", is(createdEntity.getId().intValue())))
-                .andExpect(jsonPath("$[0].resultCount", not(nullValue())))
-                .andExpect(jsonPath("$[0].stateTokens", not(empty())));
+                .andExpect(jsonPath("$.savedSnapshots[0].id", is(createdEntity.getId().intValue())))
+                .andExpect(jsonPath("$.savedSnapshots[0].resultCount", not(nullValue())))
+                .andExpect(jsonPath("$.savedSnapshots[0].stateTokens", not(empty())));
     }
 
     @Test
@@ -127,7 +124,8 @@ public class SavedSnapshotIT extends AbstractFindIT {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        return mapper.readValue(listResult.getResponse().getContentAsString(), LIST_TYPE_REFERENCE);
+        return mapper.readValue(listResult.getResponse().getContentAsString(), SavedSnapshotsResponse.class)
+                .savedSnapshots();
     }
 
     private SavedSnapshot getBaseSavedSnapshot() {

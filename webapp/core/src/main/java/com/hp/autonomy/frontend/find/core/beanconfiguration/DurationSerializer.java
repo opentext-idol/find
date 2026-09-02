@@ -1,20 +1,19 @@
 package com.hp.autonomy.frontend.find.core.beanconfiguration;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import org.springframework.boot.jackson.JsonComponent;
+import org.springframework.boot.jackson.JacksonComponent;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
-import java.io.IOException;
 import java.time.Duration;
 
 /**
  * TODO: this shouldn't be necessary but {@link com.fasterxml.jackson.databind.SerializationFeature#WRITE_DURATIONS_AS_TIMESTAMPS} doesn't appear to work
  */
-@JsonComponent
-public class DurationSerializer extends JsonSerializer<Duration> {
+@JacksonComponent
+public class DurationSerializer extends ValueSerializer<Duration> {
     @Override
-    public void serialize(final Duration duration, final JsonGenerator generator, final SerializerProvider provider) throws IOException {
+    public void serialize(final Duration duration, final JsonGenerator generator, final SerializationContext context) {
         generator.writeNumber(duration.getSeconds());
     }
 }

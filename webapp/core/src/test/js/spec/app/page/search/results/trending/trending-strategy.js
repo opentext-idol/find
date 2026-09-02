@@ -154,7 +154,7 @@ define([
 
             describe('when the fetch returns empty', function() {
                 beforeEach(function() {
-                    ParametricCollection.fetchPromises[0].resolve([]);
+                    ParametricCollection.fetchPromises[0].resolve({ parametricValues: [] });
                 });
 
                 it('has returned a promise that contains the correct information', function() {
@@ -168,7 +168,7 @@ define([
 
             describe('when the fetch returns an array', function() {
                 beforeEach(function() {
-                    ParametricCollection.fetchPromises[0].resolve(this.fetchData);
+                    ParametricCollection.fetchPromises[0].resolve({ parametricValues: this.fetchData });
                 });
 
                 it('has returned a promise that contains the correct information', function() {

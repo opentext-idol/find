@@ -17,16 +17,21 @@ define([
 ], function(_) {
 
     return function(value, size) {
-        return value && String(value).replace(/(\/wikipedia\/(?:commons|\w{2})\/)([^/]+\/[^/]+\/([^/]+\.(jpg|jpeg|gif|png|svg)))/i, function(all, first, second, filename, extension){
-            const url = first + 'thumb/' + second + '/' + (size||300) + 'px-' + filename;
+    // https://www.mediawiki.org/wiki/Common_thumbnail_sizes
+    const allowedSizes = [20, 40, 60, 120, 250, 330, 500, 960, 1280, 1920, 3840]
+    const defaultedSize = (size || 300)
+    const resolvedSize = _.find(allowedSizes, s => s >= defaultedSize) || _.last(allowedSizes)
 
-            if (extension && extension.toLowerCase() === 'svg') {
-                // The thumbnailer only can raster bitmap outputs, so if we have a svg, we need to convert to e.g. png.
-                return url + '.png';
-            }
+    return value && String(value).replace(/(\/wikipedia\/(?:commons|\w{2})\/)([^/]+\/[^/]+\/([^/]+\.(jpg|jpeg|gif|png|svg)))/i, function(all, first, second, filename, extension){
+        const url = first + 'thumb/' + second + '/' + resolvedSize + 'px-' + filename;
 
-            return url;
-        });
-    };
+        if (extension && extension.toLowerCase() === 'svg') {
+            // The thumbnailer only can raster bitmap outputs, so if we have a svg, we need to convert to e.g. png.
+            return url + '.png';
+        }
+
+        return url;
+    });
+};
 
 });

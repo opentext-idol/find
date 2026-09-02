@@ -26,8 +26,10 @@ import com.hp.autonomy.frontend.find.idol.configuration.EntitySearchConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.MMAP;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.flyway.autoconfigure.FlywayMigrationInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -68,6 +70,8 @@ public class IdolFindMockConfigConfiguration {
         // The rest of the fields are mocked in the haven-search-components IdolTestConfiguration class
         when(config.getLogin()).thenReturn(loginConfig);
         when(config.getAuthentication()).thenReturn((Authentication) loginConfig);
+        final AnswerServerConfig answerServerConfig = mock(AnswerServerConfig.class);
+        when(config.getAnswerServer()).thenReturn(answerServerConfig);
         when(config.getCommunityDetails()).thenReturn(new AciServerDetails(
                 getProperty(COMMUNITY_HOST_PROPERTY, COMMUNITY_HOST),
                 getIntProperty(COMMUNITY_PORT_PROPERTY, COMMUNITY_PORT)
@@ -75,9 +79,8 @@ public class IdolFindMockConfigConfiguration {
         when(config.getMap()).thenReturn(new MapConfiguration("", false, "", null, 2, null));
         when(config.getMmap()).thenReturn(mmapConfig);
         final EntitySearchConfig entitySearchConfig = mock(EntitySearchConfig.class);
-        final AnswerServerConfig entitySearchAnswerServerConfig = mock(AnswerServerConfig.class);
         when(entitySearchConfig.getEnabled()).thenReturn(false);
-        when(entitySearchConfig.getAnswerServer()).thenReturn(entitySearchAnswerServerConfig);
+        when(entitySearchConfig.getAnswerServer()).thenReturn(answerServerConfig);
         when(config.getEntitySearch()).thenReturn(entitySearchConfig);
         when(config.getUsers()).thenReturn(UsersConfig.builder().build());
         when(config.getSavedSearchConfig()).thenReturn(new SavedSearchConfig.Builder().build());
@@ -91,6 +94,12 @@ public class IdolFindMockConfigConfiguration {
         final BaseConfigFileService<IdolFindConfig> configService = mock(BaseConfigFileService.class);
         when(configService.getConfig()).thenReturn(config);
         return configService;
+    }
+
+    @Primary
+    @Bean
+    public FlywayMigrationInitializer flywayMigrationInitializer(final Flyway flyway) {
+        return new FlywayMigrationInitializer(flyway);
     }
 
     private String getProperty(final String property, final String defaultValue) {

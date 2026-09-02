@@ -17,7 +17,6 @@ package com.hp.autonomy.frontend.find.idol.fields;
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
-import com.hp.autonomy.frontend.find.core.fields.FieldAndValueDetails;
 import com.hp.autonomy.frontend.find.core.fields.FieldComparatorFactory;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
@@ -40,7 +39,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Collection;
-import java.util.List;
 
 @Controller
 class IdolFieldsController extends FieldsController<IdolFieldsRequest, AciErrorException, IdolQueryRestrictions, IdolParametricRequest> {
@@ -66,13 +64,13 @@ class IdolFieldsController extends FieldsController<IdolFieldsRequest, AciErrorE
 
     @RequestMapping(value = GET_PARAMETRIC_FIELDS_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public List<FieldAndValueDetails<?>> getParametricFields(
+    public ParametricFieldsResponse getParametricFields(
         @RequestParam(FIELD_TYPES_PARAM) final Collection<@NotNull FieldTypeParam> fieldTypes)
         throws AciErrorException
     {
-        return getParametricFields(fieldsRequestBuilderFactory.getObject()
+        return new ParametricFieldsResponse(getParametricFields(fieldsRequestBuilderFactory.getObject()
                                        .fieldTypes(fieldTypes)
-                                       .build());
+                                       .build()));
     }
 
     @Override

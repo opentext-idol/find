@@ -22,6 +22,10 @@ define([
     'use strict';
 
     return FindBaseCollection.extend({
-        url: 'api/public/nifi/actions'
+        url: 'api/public/nifi/actions',
+
+        parse: function(response) {
+            return response.actions;
+        }
     });
 });

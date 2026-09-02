@@ -22,7 +22,7 @@ define([
     return FindBaseCollection.extend({
         url: 'api/public/user/search',
         parse: function(response) {
-            return _.map(response, function (username) {
+            return _.map(response.usernames, function (username) {
                 return { username: username };
             });
         },

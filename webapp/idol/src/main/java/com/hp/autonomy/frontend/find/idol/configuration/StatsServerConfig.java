@@ -19,8 +19,6 @@ import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.AciServiceException;
 import com.autonomy.aci.client.services.ProcessorException;
 import com.autonomy.aci.client.util.ActionParameters;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.server.ServerConfig;
 import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
@@ -34,6 +32,8 @@ import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 import java.util.Collection;
 import java.util.Set;

@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -37,8 +38,8 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyLong;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 @RunWith(SpringRunner.class)
@@ -62,6 +63,7 @@ public abstract class ExportControllerTest<R extends QueryRequest<?>, E extends 
 
     @Before
     public void setUp() throws IOException {
+        MockitoAnnotations.initMocks(this); // to be removed in favour of MockitoExtension with junit 5
         when(exportServiceFactory.getPlatformDataExportService(any())).thenReturn(Optional.of(platformDataExportService));
         when(exportServiceFactory.getVisualDataExportService(any())).thenReturn(Optional.of(visualDataExportService));
 

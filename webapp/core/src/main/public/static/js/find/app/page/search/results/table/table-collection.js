@@ -22,7 +22,9 @@ define([
     const NONE_COLUMN = 'defaultColumn';
 
     return DependentParametricCollection.extend({
-        parse: function (data) {
+        parse: function (response) {
+            const data = response.fields;
+
             this.columnNames = _.chain(data)
                 // take all the field arrays
                 .pluck('subFields')

@@ -23,7 +23,6 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.idol.configuration.EntitySearchConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.searchcomponents.idol.search.QueryResponseParser;
 import com.hp.autonomy.types.requests.idol.actions.query.QueryActions;
 import com.hp.autonomy.types.requests.idol.actions.query.params.QueryParams;
@@ -70,7 +69,7 @@ class EntitySearchController {
     }
 
     @RequestMapping(value = SEARCH_PATH, method = RequestMethod.GET)
-    public List<IdolSearchResult> search(
+    public IdolSearchResultsResponse search(
             @RequestParam(TEXT_PARAM) final String text,
             @RequestParam(value = DATABASE_GROUP_PARAM, required = false) final String databaseGroup
     ) {
@@ -102,6 +101,6 @@ class EntitySearchController {
         this.parameterHandler.addSecurityInfo(aciParameters);
 
         final QueryResponseData resp = this.entitySearchAciService.executeAction(aciParameters, this.queryResponseProcessor);
-        return this.queryResponseParser.parseQueryHits(resp.getHits(), null);
+        return new IdolSearchResultsResponse(this.queryResponseParser.parseQueryHits(resp.getHits(), null));
     }
 }

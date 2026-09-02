@@ -73,7 +73,7 @@ public class ControlPointPolicyControllerTest {
 
         Mockito.when(cpService.getPolicies("sec info"))
             .thenReturn(new ControlPointPolicies(policies));
-        final List<ControlPointPolicy> result = controller.getPolicies();
+        final List<ControlPointPolicy> result = controller.getPolicies().policies();
         Mockito.verify(cpService).getPolicies("sec info");
         Assert.assertEquals("should return active, published policies", Arrays.asList(
             new ControlPointPolicy("1", "archive", true, true),

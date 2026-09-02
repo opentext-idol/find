@@ -69,7 +69,7 @@ public class SharedToUserControllerTest {
     @Test
     public void getPermittedUsersForSearch() {
         when(sharedToUserRepository.findBySavedSearch_Id(anyLong())).thenReturn(Collections.singleton(mock(SharedToUser.class)));
-        assertThat(controller.getPermissionsForSearch(1L, null), not(empty()));
+        assertThat(controller.getPermissionsForSearch(1L, null).users(), not(empty()));
     }
 
     @Test

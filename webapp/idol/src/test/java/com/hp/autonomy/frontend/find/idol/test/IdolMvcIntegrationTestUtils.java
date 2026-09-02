@@ -14,8 +14,6 @@
 
 package com.hp.autonomy.frontend.find.idol.test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
@@ -28,6 +26,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -52,7 +52,7 @@ public class IdolMvcIntegrationTestUtils extends MvcIntegrationTestUtils {
     }
 
     @Override
-    public String getDatabasesAsJson() throws JsonProcessingException {
+    public String getDatabasesAsJson() throws JacksonException {
         return new ObjectMapper().writeValueAsString(getDatabases());
     }
 

@@ -80,7 +80,7 @@ class ThemeTrackerController {
 
     @RequestMapping(value="/terms")
     @ResponseBody
-    public List<String> terms(
+    public TermsResponse terms(
             @RequestBody final Cluster cluster) throws AciServiceException {
         final ActionParameters params = new ActionParameters("ClusterSGDocsServe");
         params.add("startdate", cluster.fromDate);
@@ -89,7 +89,7 @@ class ThemeTrackerController {
         params.add("cluster", cluster.id);
         params.add("NumResults", 0);
 
-        return themeTrackerAciService.executeAction(params, new TermsProcessor());
+        return new TermsResponse(themeTrackerAciService.executeAction(params, new TermsProcessor()));
     }
 
     @RequestMapping(value="/image")

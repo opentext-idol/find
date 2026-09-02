@@ -15,8 +15,6 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,6 +24,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 import java.time.ZonedDateTime;
 
@@ -57,11 +57,11 @@ public class SharedToEveryone {
     private SavedSearch<?, ?> savedSearch;
 
     @CreationTimestamp
-    @Column(name = Table.Column.SHARED_DATE, columnDefinition = "DATETIME")
+    @Column(name = Table.Column.SHARED_DATE)
     private ZonedDateTime sharedDate;
 
     @UpdateTimestamp
-    @Column(name = Table.Column.MODIFIED_DATE, columnDefinition = "DATETIME")
+    @Column(name = Table.Column.MODIFIED_DATE)
     private ZonedDateTime modifiedDate;
 
     @SuppressWarnings({"WeakerAccess", "unused"})

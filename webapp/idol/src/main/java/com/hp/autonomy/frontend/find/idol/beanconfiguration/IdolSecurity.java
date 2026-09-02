@@ -35,11 +35,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.AnyRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcherEntry;
 
-import java.util.LinkedHashMap;
+import java.util.List;
 
 import static com.hp.autonomy.frontend.find.core.beanconfiguration.SecurityConfiguration.firewallAllowingUrlEncodedCharacters;
 
@@ -76,10 +75,13 @@ public class IdolSecurity {
 
     @Bean
     protected SecurityFilterChain idolFilterChain(final HttpSecurity http) throws Exception {
-        final LinkedHashMap<RequestMatcher, AuthenticationEntryPoint> entryPoints = new LinkedHashMap<>();
-        entryPoints.put(new AntPathRequestMatcher("/api/**"), new Http403ForbiddenEntryPoint());
-        entryPoints.put(AnyRequestMatcher.INSTANCE, new LoginUrlAuthenticationEntryPoint(FindController.DEFAULT_LOGIN_PAGE));
-        final AuthenticationEntryPoint authenticationEntryPoint = new DelegatingAuthenticationEntryPoint(entryPoints);
+        final AuthenticationEntryPoint authenticationEntryPoint = new DelegatingAuthenticationEntryPoint(
+                new LoginUrlAuthenticationEntryPoint(FindController.DEFAULT_LOGIN_PAGE),
+                List.of(
+                        new RequestMatcherEntry<>(
+                                PathPatternRequestMatcher.withDefaults().matcher("/api/**"),
+                                new Http403ForbiddenEntryPoint())
+                ));
 
         http
             .csrf(c -> c.disable())

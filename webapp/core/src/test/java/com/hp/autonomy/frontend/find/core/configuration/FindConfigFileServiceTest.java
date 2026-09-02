@@ -14,9 +14,6 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.ConfigFileConfiguration;
 import com.hp.autonomy.searchcomponents.core.fields.FieldPathNormaliser;
 import com.hp.autonomy.searchcomponents.core.test.CoreTestContext;
@@ -32,6 +29,9 @@ import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.ser.FilterProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,9 +52,9 @@ public abstract class FindConfigFileServiceTest<C extends FindConfig<C, B>, B ex
     @Autowired
     protected FieldPathNormaliser fieldPathNormaliser;
     @Autowired
-    protected JsonSerializer<FieldPath> fieldPathSerializer;
+    protected ValueSerializer<FieldPath> fieldPathSerializer;
     @Autowired
-    protected JsonDeserializer<FieldPath> fieldPathDeserializer;
+    protected ValueDeserializer<FieldPath> fieldPathDeserializer;
     @Mock
     protected TextEncryptor textEncryptor;
     protected FilterProvider filterProvider;

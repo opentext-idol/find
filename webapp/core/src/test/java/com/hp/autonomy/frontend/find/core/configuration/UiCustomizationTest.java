@@ -14,7 +14,6 @@
 
 package com.hp.autonomy.frontend.find.core.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
@@ -29,6 +28,7 @@ import org.springframework.boot.test.json.JsonContent;
 import org.springframework.boot.test.json.ObjectContent;
 import org.springframework.core.ResolvableType;
 import org.springframework.test.context.junit4.SpringRunner;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 
@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = CoreTestContext.class, properties = CORE_CLASSES_PROPERTY)
 public class UiCustomizationTest extends ConfigurationComponentTest<UiCustomization> {
     @Autowired
-    private ObjectMapper objectMapper;
+    private JsonMapper objectMapper;
     @Autowired
     private TagNameFactory tagNameFactory;
 

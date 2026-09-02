@@ -14,8 +14,6 @@
 
 package com.hp.autonomy.frontend.find.core.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
@@ -28,6 +26,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
+import tools.jackson.databind.ObjectMapper;
 
 import java.net.URI;
 import java.util.Locale;
@@ -65,7 +64,7 @@ public class ControllerUtilsTest<C extends FindConfig<?, ?>> {
     }
 
     @Test
-    public void convertToJson() throws JsonProcessingException {
+    public void convertToJson() {
         final String json = controllerUtils.convertToJson(new Object() {
             private final String field = "</close_tag>";
 

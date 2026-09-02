@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -65,6 +66,7 @@ public class CsvExportStrategyTest {
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this); // to be removed in favour of MockitoExtension with junit 5
         when(configService.getConfig()).thenReturn(config);
         authorInfo = FieldInfo.<String>builder()
                 .id("authors")

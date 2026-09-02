@@ -30,6 +30,6 @@ public abstract class AbstractDatabasesControllerIT extends AbstractFindIT {
         mockMvc.perform(get(DatabasesController.GET_DATABASES_PATH).with(authentication(userAuth())))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$", not(empty())));
+            .andExpect(jsonPath("$.databases", not(empty())));
     }
 }

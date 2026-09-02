@@ -1,8 +1,6 @@
 package com.hp.autonomy.frontend.find.core.configuration;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.AbstractConfig;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigurationUtils;
@@ -11,6 +9,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Singular;
 import org.apache.commons.lang3.StringUtils;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 import java.util.Collection;
 import java.util.List;

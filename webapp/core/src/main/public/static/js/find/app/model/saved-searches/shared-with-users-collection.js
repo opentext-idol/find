@@ -28,6 +28,10 @@ define([
             this.searchId = options.searchId;
         },
 
+        parse: function(response) {
+            return response.users;
+        },
+
         model: Backbone.Model.extend({
 
             idAttribute: 'username',

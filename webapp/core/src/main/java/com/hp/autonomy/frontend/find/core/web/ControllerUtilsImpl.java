@@ -14,8 +14,6 @@
 
 package com.hp.autonomy.frontend.find.core.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.AppConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
@@ -27,6 +25,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -61,7 +61,7 @@ class ControllerUtilsImpl implements ControllerUtils {
     }
 
     @Override
-    public String convertToJson(final Object object) throws JsonProcessingException {
+    public String convertToJson(final Object object) throws JacksonException {
         // As we are inserting into a script tag escape </ to prevent injection
         return JSON_ESCAPE_PATTERN.matcher(objectMapper.writeValueAsString(object)).replaceAll("<\\\\/");
     }

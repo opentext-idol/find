@@ -14,8 +14,6 @@
 
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
@@ -25,6 +23,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -42,7 +42,7 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
         mockMvc.perform(parametricValuesRequest())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", not(empty())));
+                .andExpect(jsonPath("$.parametricValues", not(empty())));
     }
 
     @Test
@@ -91,7 +91,7 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
         final List<String> fields = new LinkedList<>();
 
         // Only ask for dependent parametric values in fields which have values
-        for (final JsonNode fieldNode : contentTree) {
+        for (final JsonNode fieldNode : contentTree.get("parametricValues")) {
             if (fieldNode.get("totalValues").asInt() > 0) {
                 fields.add(fieldNode.get("id").asText());
             }
@@ -111,7 +111,7 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", not(empty())));
+                .andExpect(jsonPath("$.fields", not(empty())));
     }
 
     @Test

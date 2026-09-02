@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -61,6 +62,7 @@ public class ExportQueryResponseProcessorTest {
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this); // to be removed in favour of MockitoExtension with junit 5
         outputStream = new ByteArrayOutputStream();
         final List<FieldInfo<?>> fieldNames = Stream.of("Reference", "Database", "Summary", "Date", "categories")
             .map(s -> FieldInfo.builder().id(s).displayName(s).build())

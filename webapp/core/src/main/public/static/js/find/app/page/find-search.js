@@ -578,10 +578,14 @@ define([
                 } else {
                     const documentsCollection = new this.searchTypes[searchType].DocumentsCollection();
 
+                    // respect database selection from nav; this is a function for later evaluation because nav events
+                    // can come through delayed
                     const allIndexes = selectInitialIndexes(this.indexesCollection);
                     this.delayedGetIndexes = savedSearchModel.id ? selectInitialIndexes :
                             collection => filterInitialIndexes(selectInitialIndexes(collection));
-                    savedSearchModel.set('indexes', this.delayedGetIndexes(this.indexesCollection));
+                    if (savedSearchModel.isNew() && !savedSearchModel.get('indexes')) {
+                        savedSearchModel.set('indexes', this.delayedGetIndexes(this.indexesCollection));
+                    }
                     const queryState = savedSearchModel
                         .toQueryModel(this.IndexesCollection, false).queryState;
                     this.queryStates.set(cid, queryState);

@@ -18,10 +18,10 @@ import com.google.common.collect.ImmutableMap;
 import com.hp.autonomy.frontend.find.core.configuration.CustomizationConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.TemplatesConfig;
 import com.hp.autonomy.frontend.find.core.customization.ReloadableCustomizationComponent;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

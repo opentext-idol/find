@@ -14,14 +14,14 @@ package com.hp.autonomy.frontend.find.idol.configuration;
  * information contained herein is subject to change without notice.
  */
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.validation.OptionalConfigurationComponent;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 @Data
 @JsonDeserialize(builder = MMAP.Builder.class)

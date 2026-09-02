@@ -68,7 +68,7 @@ class EntitySearchAnswerServerController {
     }
 
     @RequestMapping(value = "entity-search-ask", method = RequestMethod.GET)
-    public List<AskAnswer> ask(
+    public AskAnswersResponse ask(
             @RequestParam(TEXT_PARAM) final String text,
             @RequestParam(value = MAX_RESULTS_PARAM, required = false)
             final Integer maxResults,
@@ -77,7 +77,7 @@ class EntitySearchAnswerServerController {
         final ArrayList<AskAnswer> toReturn = new ArrayList<>();
 
         if (maxResults != null && maxResults == 0) {
-            return toReturn;
+            return new AskAnswersResponse(toReturn);
         }
 
         final IdolFindConfig config = configService.getConfig();
@@ -125,12 +125,12 @@ class EntitySearchAnswerServerController {
                     toReturn.add(answer);
 
                     if (maxResults != null && toReturn.size() >= maxResults) {
-                        return toReturn;
+                        return new AskAnswersResponse(toReturn);
                     }
                 }
             }
         }
 
-        return toReturn;
+        return new AskAnswersResponse(toReturn);
     }
 }

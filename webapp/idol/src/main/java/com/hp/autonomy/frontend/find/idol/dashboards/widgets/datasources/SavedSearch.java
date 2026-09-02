@@ -14,12 +14,12 @@
 
 package com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Getter

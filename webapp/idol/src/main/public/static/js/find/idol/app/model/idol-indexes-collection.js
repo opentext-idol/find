@@ -30,7 +30,7 @@ define([
         },
 
         parse: function(response) {
-            return _.map(response, function(responseItem) {
+            return _.map(response.databases, function(responseItem) {
                 responseItem.id = responseItem.name;
                 return responseItem;
             });

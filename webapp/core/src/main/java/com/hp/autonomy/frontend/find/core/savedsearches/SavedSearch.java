@@ -91,18 +91,18 @@ public abstract class SavedSearch<T extends SavedSearch<T, B>, B extends SavedSe
         joinColumns = @JoinColumn(name = DocumentSelectionTable.Column.SEARCH_ID))
     private Set<DocumentSelection> documentSelection;
 
-    @Column(name = Table.Column.START_DATE, columnDefinition = "DATETIME")
+    @Column(name = Table.Column.START_DATE)
     private ZonedDateTime minDate;
 
-    @Column(name = Table.Column.END_DATE, columnDefinition = "DATETIME")
+    @Column(name = Table.Column.END_DATE)
     private ZonedDateTime maxDate;
 
     @CreationTimestamp
-    @Column(name = Table.Column.CREATED_DATE, columnDefinition = "DATETIME")
+    @Column(name = Table.Column.CREATED_DATE)
     private ZonedDateTime dateCreated;
 
     @UpdateTimestamp
-    @Column(name = Table.Column.MODIFIED_DATE, columnDefinition = "DATETIME")
+    @Column(name = Table.Column.MODIFIED_DATE)
     private ZonedDateTime dateModified;
 
     @Transient

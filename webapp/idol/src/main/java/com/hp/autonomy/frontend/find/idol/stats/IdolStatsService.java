@@ -16,8 +16,6 @@ package com.hp.autonomy.frontend.find.idol.stats;
 
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.util.ActionParameters;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.stats.Event;
 import com.hp.autonomy.frontend.find.core.stats.StatsService;
@@ -30,6 +28,8 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import tools.jackson.core.JacksonException;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +87,7 @@ class IdolStatsService implements StatsService {
                 parameters.put(EventParams.Data.name(), xml);
 
                 statsServerAciService.executeAction(parameters, processorFactory.getVoidProcessor());
-            } catch (final JsonProcessingException e) {
+            } catch (final JacksonException e) {
                 // includes XML errors which should only occur during development
                 // throwing won't result in the exception going anywhere useful anyway
                 log.error("Error constructing XML: ", e);

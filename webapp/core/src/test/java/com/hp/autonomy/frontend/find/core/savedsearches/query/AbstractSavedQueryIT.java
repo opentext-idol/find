@@ -13,14 +13,12 @@
  */
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import com.hp.autonomy.frontend.find.core.test.MvcIntegrationTestUtils;
+import jakarta.annotation.PostConstruct;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -34,8 +32,9 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoZonedDateTime;
@@ -59,9 +58,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SuppressWarnings("SpringJavaAutowiringInspection")
 public abstract class AbstractSavedQueryIT extends AbstractFindIT {
-    private static final TypeReference<Set<SavedQuery>> LIST_TYPE_REFERENCE = new TypeReference<Set<SavedQuery>>() {
-    };
-
     private static final String TITLE = "Any old saved search";
     private static final String PRIMARY_PHRASE = "manhattan";
     private static final String OTHER_PHRASE = "mid-town";
@@ -150,33 +146,33 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         listSavedQueries()
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id", is(id)))
-                .andExpect(jsonPath("$[0].title", is("\u30e2\u30f3\u30ad\u30fc")))
-                .andExpect(jsonPath("$[0].minDate", new ZonedDateTimeMatcher("2017-05-17T15:51:20Z")))
-                .andExpect(jsonPath("$[0].maxDate", new ZonedDateTimeMatcher("2017-05-17T15:51:40Z")))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases", hasSize(3)))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[*].phrase", containsInAnyOrder("characters", "faces", "animals")))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='characters')].primary", contains(true)))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='characters')].clusterId", contains(1)))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='faces')].primary", contains(false)))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='faces')].clusterId", contains(1)))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='animals')].primary", contains(true)))
-                .andExpect(jsonPath("$[0].conceptClusterPhrases[?(@.phrase=='animals')].clusterId", contains(2)))
-                .andExpect(jsonPath("$[0].parametricValues", hasSize(1)))
-                .andExpect(jsonPath("$[0].parametricValues[0].field", is("CATEGORY")))
-                .andExpect(jsonPath("$[0].parametricValues[0].value", is("COMPUTING")))
-                .andExpect(jsonPath("$[0].numericRangeRestrictions", hasSize(1)))
-                .andExpect(jsonPath("$[0].numericRangeRestrictions[0].field", is("SOME_NUMBER")))
-                .andExpect(jsonPath("$[0].numericRangeRestrictions[0].min", is(123.5)))
-                .andExpect(jsonPath("$[0].numericRangeRestrictions[0].max", is(124.5)))
-                .andExpect(jsonPath("$[0].dateRangeRestrictions", hasSize(1)))
-                .andExpect(jsonPath("$[0].dateRangeRestrictions[0].field", is("SOME_DATE")))
-                .andExpect(jsonPath("$[0].dateRangeRestrictions[0].min", new ZonedDateTimeMatcher("2017-05-17T15:51:20Z")))
-                .andExpect(jsonPath("$[0].dateRangeRestrictions[0].max", new ZonedDateTimeMatcher("2017-05-17T15:51:40Z")))
-                .andExpect(jsonPath("$[0].indexes", hasSize(2)))
-                .andExpect(jsonPath("$[0].indexes[*].name", containsInAnyOrder("English Wikipedia", "\u65e5\u672c\u8a9e Wikipedia")))
-                .andExpect(jsonPath("$[0].indexes[?(@.name=='English Wikipedia')].domain", contains("MY_DOMAIN")))
-                .andExpect(jsonPath("$[0].indexes[?(@.name=='\u65e5\u672c\u8a9e Wikipedia')].domain", contains("MY_DOMAIN")));
+                .andExpect(jsonPath("$.savedQueries[0].id", is(id)))
+                .andExpect(jsonPath("$.savedQueries[0].title", is("\u30e2\u30f3\u30ad\u30fc")))
+                .andExpect(jsonPath("$.savedQueries[0].minDate", new ZonedDateTimeMatcher("2017-05-17T15:51:20Z")))
+                .andExpect(jsonPath("$.savedQueries[0].maxDate", new ZonedDateTimeMatcher("2017-05-17T15:51:40Z")))
+                .andExpect(jsonPath("$.savedQueries[0].conceptClusterPhrases", hasSize(3)))
+                .andExpect(jsonPath("$.savedQueries[0].conceptClusterPhrases[*].phrase", containsInAnyOrder("characters", "faces", "animals")))
+                .andExpect(jsonPath("$.savedQueries[0].conceptClusterPhrases[?(@.phrase=='characters')].primary", contains(true)))
+                .andExpect(jsonPath("$.savedQueries[0].conceptClusterPhrases[?(@.phrase=='characters')].clusterId", contains(1)))
+                .andExpect(jsonPath("$.savedQueries[0].conceptClusterPhrases[?(@.phrase=='faces')].primary", contains(false)))
+                .andExpect(jsonPath("$.savedQueries[0].conceptClusterPhrases[?(@.phrase=='faces')].clusterId", contains(1)))
+                .andExpect(jsonPath("$.savedQueries[0].conceptClusterPhrases[?(@.phrase=='animals')].primary", contains(true)))
+                .andExpect(jsonPath("$.savedQueries[0].conceptClusterPhrases[?(@.phrase=='animals')].clusterId", contains(2)))
+                .andExpect(jsonPath("$.savedQueries[0].parametricValues", hasSize(1)))
+                .andExpect(jsonPath("$.savedQueries[0].parametricValues[0].field", is("CATEGORY")))
+                .andExpect(jsonPath("$.savedQueries[0].parametricValues[0].value", is("COMPUTING")))
+                .andExpect(jsonPath("$.savedQueries[0].numericRangeRestrictions", hasSize(1)))
+                .andExpect(jsonPath("$.savedQueries[0].numericRangeRestrictions[0].field", is("SOME_NUMBER")))
+                .andExpect(jsonPath("$.savedQueries[0].numericRangeRestrictions[0].min", is(123.5)))
+                .andExpect(jsonPath("$.savedQueries[0].numericRangeRestrictions[0].max", is(124.5)))
+                .andExpect(jsonPath("$.savedQueries[0].dateRangeRestrictions", hasSize(1)))
+                .andExpect(jsonPath("$.savedQueries[0].dateRangeRestrictions[0].field", is("SOME_DATE")))
+                .andExpect(jsonPath("$.savedQueries[0].dateRangeRestrictions[0].min", new ZonedDateTimeMatcher("2017-05-17T15:51:20Z")))
+                .andExpect(jsonPath("$.savedQueries[0].dateRangeRestrictions[0].max", new ZonedDateTimeMatcher("2017-05-17T15:51:40Z")))
+                .andExpect(jsonPath("$.savedQueries[0].indexes", hasSize(2)))
+                .andExpect(jsonPath("$.savedQueries[0].indexes[*].name", containsInAnyOrder("English Wikipedia", "\u65e5\u672c\u8a9e Wikipedia")))
+                .andExpect(jsonPath("$.savedQueries[0].indexes[?(@.name=='English Wikipedia')].domain", contains("MY_DOMAIN")))
+                .andExpect(jsonPath("$.savedQueries[0].indexes[?(@.name=='\u65e5\u672c\u8a9e Wikipedia')].domain", contains("MY_DOMAIN")));
     }
 
     @Test
@@ -323,11 +319,12 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     }
 
     private Set<SavedQuery> listAndParseSavedQueries() throws Exception {
-        final MvcResult listResult = listSavedQueries()
+        final MvcResult response = listSavedQueries()
                 .andExpect(status().isOk())
                 .andReturn();
 
-        return objectMapper.readValue(listResult.getResponse().getContentAsString(), LIST_TYPE_REFERENCE);
+        return objectMapper.readValue(response.getResponse().getContentAsString(), SavedQueriesResponse.class)
+                .savedQueries();
     }
 
     private Set<ConceptClusterPhrase> getBaseConceptClusterPhrases() {

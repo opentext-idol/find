@@ -14,8 +14,6 @@
 
 package com.hp.autonomy.frontend.find.idol.configuration;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.hp.autonomy.frontend.configuration.SimpleComponent;
 import com.hp.autonomy.frontend.configuration.passwords.PasswordsConfig;
 import lombok.Builder;
@@ -23,6 +21,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import org.jasypt.util.text.TextEncryptor;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
 
 /**
  * Configuration for username and password, where the password is stored encrypted, and is omitted

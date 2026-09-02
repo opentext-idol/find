@@ -129,7 +129,7 @@ public abstract class AbstractParametricValuesControllerTest<
                 null,
                 null,
                 SortParam.DocumentCount
-        ), not(empty()));
+        ).parametricValues(), not(empty()));
     }
 
     @Test
@@ -144,7 +144,7 @@ public abstract class AbstractParametricValuesControllerTest<
                 null,
                 0,
                 null
-        ), not(empty()));
+        ).fields(), not(empty()));
     }
 
     @Test

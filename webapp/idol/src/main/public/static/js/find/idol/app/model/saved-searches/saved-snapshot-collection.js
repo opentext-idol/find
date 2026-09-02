@@ -23,6 +23,10 @@ define([
     return FindBaseCollection.extend({
         url: 'api/bi/saved-snapshot',
 
+        parse: function(response) {
+            return response.savedSnapshots;
+        },
+
         model: SavedSearchModel.extend({
             defaults: _.defaults({
                 type: SavedSearchModel.Type.SNAPSHOT

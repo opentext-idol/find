@@ -14,7 +14,6 @@
 
 package com.hp.autonomy.frontend.find.idol.dashboards.widgets;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.configuration.ConfigException;
 import com.hp.autonomy.frontend.configuration.ConfigurationComponentTest;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetDatasource;
@@ -22,6 +21,7 @@ import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.WidgetD
 import org.junit.Test;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.core.ResolvableType;
+import tools.jackson.databind.json.JsonMapper;
 
 import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,8 +30,9 @@ import static org.hamcrest.Matchers.containsString;
 public abstract class DatasourceDependentWidgetTest<W extends Widget<W, WS> & DatasourceDependentWidget, WS extends WidgetSettings<WS>> extends ConfigurationComponentTest<W> {
     @Override
     public void setUp() {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.addMixIn(WidgetDatasource.class, WidgetDatasourceMixins.class);
+        final JsonMapper objectMapper = JsonMapper.builder()
+                .addMixIn(WidgetDatasource.class, WidgetDatasourceMixins.class)
+                .build();
         json = new JacksonTester<>(getClass(), ResolvableType.forClass(getType()), objectMapper);
     }
 

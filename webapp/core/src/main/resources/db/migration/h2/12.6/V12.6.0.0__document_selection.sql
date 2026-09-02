@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS search_document_selection
 (
   search_document_selection_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   search_id BIGINT NOT NULL,
-  reference NVARCHAR(1000) NOT NULL
+  reference VARCHAR(1000) NOT NULL
 );
 
 CREATE INDEX ix__search_document_selection__search_id ON search_document_selection (search_id);

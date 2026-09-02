@@ -12,7 +12,7 @@ CREATE TABLE search_parametric_ranges
 (
   search_parametric_ranges_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   search_id BIGINT NOT NULL,
-  field NVARCHAR(21844) NOT NULL,
+  field VARCHAR(21844) NOT NULL,
   min BIGINT NOT NULL,
   max BIGINT NOT NULL,
   type INT NOT NULL

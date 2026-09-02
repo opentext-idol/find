@@ -25,7 +25,7 @@ define([
         describe('parse method', function() {
             describe('when only one field is wanted', function() {
                 beforeEach(function() {
-                    this.result = this.collection.parse([
+                    this.result = this.collection.parse({ fields: [
                         {
                             count: 42,
                             subFields: [],
@@ -38,7 +38,7 @@ define([
                             value: 'cheese',
                             displayValue: 'cheese'
                         }
-                    ])
+                    ] })
                 });
 
                 it('should have an empty array of column names', function() {
@@ -63,7 +63,7 @@ define([
             describe('when two fields are wanted', function() {
                 describe('and the empty string is not returned', function() {
                     beforeEach(function() {
-                        this.result = this.collection.parse([
+                        this.result = this.collection.parse({ fields: [
                             {
                                 count: 42,
                                 value: 'wine',
@@ -98,7 +98,7 @@ define([
                                     }
                                 ]
                             }
-                        ])
+                        ] })
                     });
 
                     it('should have the correct array of column names', function() {
@@ -124,7 +124,7 @@ define([
 
                 describe('and the empty string is returned', function() {
                     beforeEach(function() {
-                        this.result = this.collection.parse([
+                        this.result = this.collection.parse({ fields: [
                             {
                                 count: 47,
                                 value: 'wine',
@@ -169,7 +169,7 @@ define([
                                     }
                                 ]
                             }
-                        ])
+                        ] })
                     });
 
                     it('should have the correct array of column names', function() {

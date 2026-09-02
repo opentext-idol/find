@@ -7,15 +7,15 @@ CREATE TABLE searches
   search_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   user_id BIGINT NOT NULL,
   search_type INT NOT NULL,
-  title NVARCHAR(1000) NOT NULL,
-  query_text NVARCHAR(21844) NOT NULL,
-  start_date DATETIME,
-  end_date DATETIME,
+  title VARCHAR(1000) NOT NULL,
+  query_text VARCHAR(21844) NOT NULL,
+  start_date TIMESTAMP,
+  end_date TIMESTAMP,
   total_results INT,
-  created_date DATETIME NOT NULL,
-  modified_date DATETIME NOT NULL,
+  created_date TIMESTAMP NOT NULL,
+  modified_date TIMESTAMP NOT NULL,
   date_range_type INT,
-  last_fetched_new_date DATETIME,
+  last_fetched_new_date TIMESTAMP,
   active BIT NOT NULL
 );
 
@@ -37,10 +37,10 @@ CREATE TABLE search_parametric_values
 (
   search_parametric_values_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   search_id BIGINT NOT NULL,
-  field NVARCHAR(21844) NOT NULL,
+  field VARCHAR(21844) NOT NULL,
   /* Must be quoted because 'value' is a keyword.  Must be uppercase because quoted identifiers are case-sensitive in
      h2, and past Find versions have always created the column in uppercase. */
-  "VALUE" NVARCHAR(21844) NOT NULL
+  "VALUE" VARCHAR(21844) NOT NULL
 );
 
 CREATE INDEX ix__search_parametric_values__search_id ON search_parametric_values (search_id);
@@ -50,7 +50,7 @@ CREATE TABLE search_indexes
 (
   search_index_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   search_id BIGINT NOT NULL,
-  name NVARCHAR(21844) NOT NULL,
+  name VARCHAR(21844) NOT NULL,
   domain VARCHAR(255)
 );
 
@@ -71,7 +71,7 @@ CREATE TABLE search_concept_cluster_phrases
 (
   search_concept_cluster_phrase_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   search_id BIGINT NOT NULL,
-  phrase NVARCHAR(21844) NOT NULL,
+  phrase VARCHAR(21844) NOT NULL,
   primary_phrase BIT NOT NULL,
   cluster_id INT NOT NULL
 );

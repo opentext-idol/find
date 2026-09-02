@@ -34,7 +34,7 @@ define([
         url: 'api/public/user/related-to-search',
 
         parse: function (res) {
-            return _.map(res, relatedUser => _.defaults(
+            return _.map(res.users, relatedUser => _.defaults(
                 { expert: relatedUser.expert },
                 relatedUser.user
             ));

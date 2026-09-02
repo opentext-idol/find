@@ -22,7 +22,6 @@ import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandl
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -63,11 +62,11 @@ class ControlPointPolicyController {
      * Retrieve active policies.
      */
     @RequestMapping(method = RequestMethod.GET)
-    public List<ControlPointPolicy> getPolicies() throws ControlPointApiException {
+    public ControlPointPoliciesResponse getPolicies() throws ControlPointApiException {
         checkEnabled();
-        return controlPointService.getPolicies(aciParameterHandler.getSecurityInfo()).stream()
+        return new ControlPointPoliciesResponse(controlPointService.getPolicies(aciParameterHandler.getSecurityInfo()).stream()
             .filter(policy -> policy.isActive() && policy.isPublished())
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()));
     }
 
     /**

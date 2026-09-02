@@ -16,8 +16,6 @@ package com.hp.autonomy.frontend.find.idol.stats;
 
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.util.ActionParameters;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.stats.*;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
@@ -34,6 +32,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.xmlunit.builder.Input;
 import org.xmlunit.input.WhitespaceStrippedSource;
 import org.xmlunit.matchers.HasXPathMatcher;
+import tools.jackson.dataformat.xml.XmlMapper;
+import tools.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 import javax.xml.transform.Source;
 import java.io.IOException;

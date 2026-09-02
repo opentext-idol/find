@@ -102,11 +102,11 @@ define([
                 }
                 const queryXhr = this.queryXhr = $.get('api/public/typeahead', {
                     text: query
-                }, function (results) {
+                }, function (response) {
                     if (this.queryXhr === queryXhr) {
                         this.queryXhr = null;
                     }
-                    async(results);
+                    async(response.suggestions);
                 });
             }
         },

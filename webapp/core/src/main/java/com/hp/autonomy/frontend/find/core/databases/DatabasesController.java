@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Set;
-
 @Controller
 public abstract class DatabasesController<D extends IdolDatabase, R extends DatabasesRequest, E extends Exception> {
     public static final String GET_DATABASES_PATH = "/api/public/search/list-indexes";
@@ -36,8 +34,8 @@ public abstract class DatabasesController<D extends IdolDatabase, R extends Data
 
     @RequestMapping(value = GET_DATABASES_PATH, method = RequestMethod.GET)
     @ResponseBody
-    public Set<D> getDatabases() throws E {
-        return databasesService.getDatabases(buildDatabasesRequest());
+    public DatabasesResponse<D> getDatabases() throws E {
+        return new DatabasesResponse<>(databasesService.getDatabases(buildDatabasesRequest()));
     }
 
     protected abstract R buildDatabasesRequest();

@@ -23,6 +23,10 @@ define([
     return FindBaseCollection.extend({
         url: 'api/bi/saved-snapshot/shared',
 
+        parse: function(response) {
+            return response.savedSnapshots;
+        },
+
         model: SavedSearchModel.extend({
             parse: function(response) {
                 const parsedResponse = SavedSearchModel.prototype.parse.call(this, response);

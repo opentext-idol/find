@@ -30,7 +30,7 @@ define([
         },
 
         parse: function(data) {
-            return _.map(data, function(datum) {
+            return _.map(data.assetNames, function(datum) {
                 return {id: datum};
             });
         },

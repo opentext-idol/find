@@ -75,7 +75,7 @@ public class NifiActionsControllerTest {
 
         Mockito.when(nifiService.getActions("the user", Arrays.asList("role1", "role2")))
             .thenReturn(actions);
-        Assert.assertEquals(actions, controller.getActions());
+        Assert.assertEquals(actions, controller.getActions().actions());
     }
 
     @Test

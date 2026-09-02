@@ -14,11 +14,11 @@
 
 package com.hp.autonomy.frontend.find.core.web;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 
@@ -27,12 +27,10 @@ public abstract class AbstractRequestMapper<R extends QueryRequest<?>> implement
 
     protected AbstractRequestMapper(final QueryRestrictionsBuilder<?, ?, ?> queryRestrictionsBuilder,
                                     final QueryRequestBuilder<?, ?, ?> queryRequestBuilder) {
-        objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        addCustomMixins(objectMapper, queryRestrictionsBuilder, queryRequestBuilder);
+        objectMapper = withCustomMixins(JsonMapper.builder(), queryRestrictionsBuilder, queryRequestBuilder).build();
     }
 
-    protected abstract void addCustomMixins(final ObjectMapper objectMapper, final QueryRestrictionsBuilder<?, ?, ?> queryRestrictionsBuilder, final QueryRequestBuilder<?, ?, ?> queryRequestBuilder);
+    protected abstract JsonMapper.Builder withCustomMixins(final JsonMapper.Builder builder, final QueryRestrictionsBuilder<?, ?, ?> queryRestrictionsBuilder, final QueryRequestBuilder<?, ?, ?> queryRequestBuilder);
 
     protected abstract Class<R> getType();
 

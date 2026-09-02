@@ -98,7 +98,7 @@ public class IdolUserControllerTest {
         Mockito.doReturn(mockUsers).when(idolUserSearchService)
             .getRelatedToSearch(relatedUsersConfig, "term1 term2", 33);
 
-        final List<RelatedUser> users = controller.getRelatedToSearch("term1 term2", 33);
+        final List<RelatedUser> users = controller.getRelatedToSearch("term1 term2", 33).users();
         Assert.assertEquals(2, users.size());
 
         Assert.assertTrue(users.get(0).isExpert());
@@ -147,7 +147,7 @@ public class IdolUserControllerTest {
         Mockito.doReturn(mockUsers).when(idolUserSearchService)
                 .getRelatedToSearch(relatedUsersConfig, "term1 term2", 33);
 
-        final List<RelatedUser> users = controller.getRelatedToSearch("term1 term2", 33);
+        final List<RelatedUser> users = controller.getRelatedToSearch("term1 term2", 33).users();
         Assert.assertEquals(2, users.size());
     }
 

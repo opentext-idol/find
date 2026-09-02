@@ -81,13 +81,15 @@ define([
             beforeEach(function() {
                 this.indexesCollection.set([{name: 'Wikipedia'}]);
 
-                this.entityCollection.set([
-                    {cluster: 0, text: 'fruit'},
-                    {cluster: 0, text: 'juice'},
-                    {cluster: 1, text: 'red'},
-                    {cluster: 1, text: 'blood'},
-                    {cluster: 2, text: 'orange'}
-                ], {parse: true});
+                this.entityCollection.set({
+                    concepts: [
+                        {cluster: 0, text: 'fruit'},
+                        {cluster: 0, text: 'juice'},
+                        {cluster: 1, text: 'red'},
+                        {cluster: 1, text: 'blood'},
+                        {cluster: 2, text: 'orange'}
+                    ]
+                }, {parse: true});
 
                 createView.call(this);
             });

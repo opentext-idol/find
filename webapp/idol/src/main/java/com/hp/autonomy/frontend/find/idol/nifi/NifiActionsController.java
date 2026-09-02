@@ -68,11 +68,11 @@ class NifiActionsController {
      * Retrieve actions.
      */
     @RequestMapping(method = RequestMethod.GET)
-    public List<NifiAction> getActions() {
+    public NifiActionsResponse getActions() {
         final String username = authenticationInformationRetriever.getPrincipal().getName();
         final List<String> roles =
             userConfiguration.getCommunityRoles(authenticationInformationRetriever);
-        return nifiService.getActions(username, roles);
+        return new NifiActionsResponse(nifiService.getActions(username, roles));
     }
 
     /**

@@ -85,7 +85,8 @@ define([
             this.minShownResults = options.minShownResults;
         },
 
-        parse: function(results) {
+        parse: function(response) {
+            const results = response.fields;
             return parseResult(results, getArrayTotal(results), this.minShownResults);
         },
 

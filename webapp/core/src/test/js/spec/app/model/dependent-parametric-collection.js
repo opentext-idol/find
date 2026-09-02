@@ -24,17 +24,17 @@ define([
     describe('DependentParametricCollection', function () {
         describe('parse method', function () {
             it('should split values into segments with correct padding', function () {
-                const output = DependentParametricCollection.prototype.parse(inputData1);
+                const output = DependentParametricCollection.prototype.parse({fields: inputData1});
                 expect(output).toEqual(outputData1);
             });
 
             it('should split values and children into segments with correct padding', function () {
-                const output = DependentParametricCollection.prototype.parse(inputData2);
+                const output = DependentParametricCollection.prototype.parse({fields: inputData2});
                 expect(output).toEqual(outputData2);
             });
 
             it('returns an empty array when given an empty array', function () {
-                expect(DependentParametricCollection.prototype.parse([])).toEqual([]);
+                expect(DependentParametricCollection.prototype.parse({fields: []})).toEqual([]);
             });
         });
     });

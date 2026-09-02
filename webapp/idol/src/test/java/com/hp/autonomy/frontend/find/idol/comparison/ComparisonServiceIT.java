@@ -16,7 +16,6 @@ package com.hp.autonomy.frontend.find.idol.comparison;
 
 
 import com.autonomy.aci.client.services.AciErrorException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.requests.IdolQueryRestrictionsMixin;
@@ -28,6 +27,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.*;
@@ -39,7 +40,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SuppressWarnings({"SpringJavaAutowiringInspection", "SpringJavaAutowiredMembersInspection"})
 public class ComparisonServiceIT extends AbstractFindIT {
     private static final String EMPTY_RESULT_SET_TOKEN = "NULL-0";
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = JsonMapper.builder()
+            .addMixIn(IdolQueryRestrictions.class, IdolQueryRestrictionsMixin.class)
+            .build();
 
     private IdolQueryRestrictions queryRestrictions;
 
@@ -53,8 +56,6 @@ public class ComparisonServiceIT extends AbstractFindIT {
 
     @Before
     public void createStateTokens() throws AciErrorException {
-        mapper.addMixIn(IdolQueryRestrictions.class, IdolQueryRestrictionsMixin.class);
-
         queryRestrictions = idolQueryRestrictionsBuilder
                 .queryText("*")
                 .fieldText("")

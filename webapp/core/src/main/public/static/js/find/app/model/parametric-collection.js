@@ -31,6 +31,10 @@ define([
             this.url = options.url;
         },
 
+        parse: function(response) {
+            return response.parametricValues;
+        },
+
         fetchFromQueryModel: function (queryModel, data, options) {
             return this.fetch(_.defaults({
                 data: _.extend({

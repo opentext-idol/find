@@ -49,10 +49,10 @@ public abstract class SharedToUserControllerIT extends AbstractFindIT {
 
         mockMvc.perform(getRequestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].id.searchId", is(1)))
-                .andExpect(jsonPath("$[1].id.searchId", is(1)))
-                .andExpect(jsonPath("$[2].id.searchId", is(1)))
+                .andExpect(jsonPath("$.users", hasSize(3)))
+                .andExpect(jsonPath("$.users[0].id.searchId", is(1)))
+                .andExpect(jsonPath("$.users[1].id.searchId", is(1)))
+                .andExpect(jsonPath("$.users[2].id.searchId", is(1)))
                 .andReturn();
     }
 

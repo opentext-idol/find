@@ -19,7 +19,7 @@ import org.apache.catalina.connector.Connector;
 import org.apache.catalina.webresources.StandardRoot;
 import org.apache.coyote.ajp.AbstractAjpProtocol;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +42,7 @@ public class TomcatConfig {
     public WebServerFactoryCustomizer<TomcatServletWebServerFactory> connectorCustomizer() {
         return (tomcat) -> {
             if(useReverseProxy) {
-                tomcat.addAdditionalTomcatConnectors(createAjpConnector());
+                tomcat.addAdditionalConnectors(createAjpConnector());
             }
 
             // Set the web resources cache size (this defaults to 10MB but that is too small for Find)

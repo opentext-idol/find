@@ -18,28 +18,19 @@ import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearch;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
-import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
-import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.core.search.*;
 import com.hp.autonomy.types.requests.Documents;
-import java.util.LinkedHashSet;
-import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
-import org.springframework.web.bind.annotation.RequestParam;
+import java.util.stream.Collectors;
 
 @RequestMapping(SavedQueryController.PATH)
 public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends Serializable, Q extends QueryRestrictions<S>, D extends SearchResult, E extends Exception> {
@@ -72,7 +63,7 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
     protected abstract void addParams(QueryRequestBuilder<RQ, Q, ?> queryRequestBuilder);
 
     @RequestMapping(method = RequestMethod.GET)
-    public Set<SavedQuery> getAll(
+    public SavedQueriesResponse getAll(
         @RequestParam(name="shared", defaultValue = "false") boolean shared
     ) {
         if (shared) {
@@ -85,15 +76,15 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
                 }
             }
 
-            return toReturn;
+            return new SavedQueriesResponse(toReturn);
         }
 
-        return service.getOwned();
+        return new SavedQueriesResponse(service.getOwned());
     }
 
     @RequestMapping(value = GET_SHARED, method = RequestMethod.GET)
-    public Set<SavedQuery> getShared() {
-        return service.getShared();
+    public SavedQueriesResponse getShared() {
+        return new SavedQueriesResponse(service.getShared());
     }
 
     @RequestMapping(method = RequestMethod.POST)
