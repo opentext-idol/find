@@ -594,7 +594,7 @@ module.exports = substitution({
         'settings.controlPoint.disable': 'Disable ControlPoint',
         'settings.controlPoint.disabled': 'ControlPoint is disabled',
         'settings.controlPoint.usernameLabel': 'Username',
-        'settings.controlPoint.validateUsernameBlank': 'Username',
+        'settings.controlPoint.validateUsernameBlank': 'Username must not be blank',
         'settings.controlPoint.validation.CONNECTION_ERROR': 'An error occurred while contacting ControlPoint',
         'settings.nifi.description': 'Enable applying policies to saved snapshots using a NiFi flow',
         'settings.nifi.title': 'NiFi',
