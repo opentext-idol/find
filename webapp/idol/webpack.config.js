@@ -4,7 +4,7 @@ const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const MERGED_JS = path.resolve(__dirname, 'target/classes/static/js');
-const VENDOR_MODULES = path.resolve(__dirname, '../core/frontend/node_modules');
+const LIB = path.resolve(__dirname, 'target/classes/static/lib');
 const SHIMS = path.resolve(__dirname, 'build/vendor-shims');
 
 module.exports = (env, argv) => {
@@ -25,12 +25,11 @@ module.exports = (env, argv) => {
             clean: true
         },
         resolve: {
-            modules: [MERGED_JS, VENDOR_MODULES, 'node_modules'],
+            modules: [MERGED_JS, LIB],
             extensions: ['.js'],
             mainFields: ['browser', 'main'],
             alias: {
                 // PEG.js-generated parsers (built by core/build/peg.js).
-                'fieldtext/js/parser$': path.resolve(MERGED_JS, 'pegjs/fieldtext/parser'),
                 'idol-wkt/js/parser$': path.resolve(MERGED_JS, 'pegjs/idol-wkt/parser'),
 
                 // leaflet plugin files that live in a same-named directory with no index.js/package.json, so plain
@@ -56,30 +55,30 @@ module.exports = (env, argv) => {
                 'leaflet.markercluster$': path.resolve(SHIMS, 'leaflet.markercluster.js'),
 
                 // subdirectories
-                'about-page': path.resolve(VENDOR_MODULES, 'hp-autonomy-about-page/src'),
-                'databases-view': path.resolve(VENDOR_MODULES, 'hp-autonomy-js-databases-view/src'),
-                'fieldtext': path.resolve(VENDOR_MODULES, 'hp-autonomy-fieldtext-js/src'),
-                'parametric-refinement': path.resolve(VENDOR_MODULES, 'hp-autonomy-js-parametric-refinement/src'),
-                'js-whatever': path.resolve(VENDOR_MODULES, 'hp-autonomy-js-whatever/src'),
-                'login-page': path.resolve(VENDOR_MODULES, 'hp-autonomy-login-page/src'),
-                'settings': path.resolve(VENDOR_MODULES, 'hp-autonomy-settings-page/src'),
-                'slider': path.resolve(VENDOR_MODULES, 'bootstrap-slider/dist'),
-                'sunburst': path.resolve(VENDOR_MODULES, 'hp-autonomy-sunburst/src'),
-                'topicmap': path.resolve(VENDOR_MODULES, 'hp-autonomy-topic-map/src'),
+                'about-page': path.resolve(LIB, 'hp-autonomy-about-page/src'),
+                'databases-view': path.resolve(LIB, 'hp-autonomy-js-databases-view/src'),
+                'fieldtext': path.resolve(LIB, 'hp-autonomy-fieldtext-js/src'),
+                'parametric-refinement': path.resolve(LIB, 'hp-autonomy-js-parametric-refinement/src'),
+                'js-whatever': path.resolve(LIB, 'hp-autonomy-js-whatever/src'),
+                'login-page': path.resolve(LIB, 'hp-autonomy-login-page/src'),
+                'settings': path.resolve(LIB, 'hp-autonomy-settings-page/src'),
+                'slider': path.resolve(LIB, 'bootstrap-slider/dist'),
+                'sunburst': path.resolve(LIB, 'hp-autonomy-sunburst/src'),
+                'topicmap': path.resolve(LIB, 'hp-autonomy-topic-map/src'),
 
                 // renames
-                'bootstrap-datetimepicker$': path.resolve(VENDOR_MODULES, 'eonasdan-bootstrap-datetimepicker'),
-                'datatables.net-fixedColumns$': path.resolve(VENDOR_MODULES, 'datatables.net-fixedcolumns'),
-                'dropzone$': path.resolve(VENDOR_MODULES, 'dropzone/dist/dropzone-amd-module'),
-                'handlebars$': path.resolve(VENDOR_MODULES, 'handlebars/dist/handlebars.js'),
-                'qs$': path.resolve(VENDOR_MODULES, 'qs/dist/qs'),
-                'metisMenu$': path.resolve(VENDOR_MODULES, 'metismenu'),
-                'moment$': path.resolve(VENDOR_MODULES, 'moment/min/moment-with-locales'),
-                'moment-timezone-with-data$': path.resolve(VENDOR_MODULES, 'moment-timezone/builds/moment-timezone-with-data'),
-                'Raphael$': path.resolve(VENDOR_MODULES, 'raphael/raphael.js'),
-                'typeahead$': path.resolve(VENDOR_MODULES, 'corejs-typeahead/dist/typeahead.jquery'),
+                'bootstrap-datetimepicker$': path.resolve(LIB, 'eonasdan-bootstrap-datetimepicker'),
+                'datatables.net-fixedColumns$': path.resolve(LIB, 'datatables.net-fixedcolumns'),
+                'dropzone$': path.resolve(LIB, 'dropzone/dist/dropzone-amd-module'),
+                'handlebars$': path.resolve(LIB, 'handlebars/dist/handlebars.js'),
+                'qs$': path.resolve(LIB, 'qs/dist/qs'),
+                'metisMenu$': path.resolve(LIB, 'metismenu'),
+                'moment$': path.resolve(LIB, 'moment/min/moment-with-locales'),
+                'moment-timezone-with-data$': path.resolve(LIB, 'moment-timezone/builds/moment-timezone-with-data'),
+                'Raphael$': path.resolve(LIB, 'raphael/raphael.js'),
+                'typeahead$': path.resolve(LIB, 'corejs-typeahead/dist/typeahead.jquery'),
                 // this fixes `_.partial(fn, _, x)`
-                'underscore$': path.resolve(VENDOR_MODULES, 'underscore/underscore.js')
+                'underscore$': path.resolve(LIB, 'underscore/underscore.js')
             }
         },
         module: {

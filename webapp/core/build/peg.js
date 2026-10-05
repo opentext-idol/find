@@ -6,10 +6,6 @@ const peg = require('pegjs');
 
 const targets = [
     {
-        src: path.resolve(__dirname, '../frontend/node_modules/hp-autonomy-fieldtext-js/src/js/field-text.pegjs'),
-        dest: path.resolve(__dirname, '../target/classes/static/js/pegjs/fieldtext/parser.js')
-    },
-    {
         src: path.resolve(__dirname, '../src/main/public/static/js/find/app/util/geoindex/idol-wkt.pegjs'),
         dest: path.resolve(__dirname, '../target/classes/static/js/pegjs/idol-wkt/parser.js')
     }

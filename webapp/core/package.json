@@ -7,6 +7,56 @@
     "node": ">=20",
     "npm": ">=10"
   },
+  "scripts": {
+    "COMMENT": "# `npm ci` + git source has known issues with sometimes not running `prepare`",
+    "postinstall": "npm run prepare --prefix node_modules/hp-autonomy-fieldtext-js",
+    "peg": "node build/peg.js"
+  },
+  "dependencies": {
+    "backbone": "1.2.3",
+    "bootstrap": "3.4.1",
+    "bootstrap-slider": "6.1.7",
+    "bowser": "1.0.0",
+    "chosen-js": "1.5.1",
+    "corejs-typeahead": "1.0.1",
+    "d3": "3.5.17",
+    "datatables.net-fixedcolumns": "5.0.5",
+    "datatables.net-fixedcolumns-bs": "5.0.5",
+    "datatables.net-plugins": "2.3.6",
+    "dropzone": "4.3.0",
+    "eonasdan-bootstrap-datetimepicker": "4.17.49",
+    "flot": "0.8.3",
+    "font-awesome": "4.5.0",
+    "handlebars": "4.7.9",
+    "hp-autonomy-about-page": "github:opentext-idol/js-about-page#1.0.0",
+    "hp-autonomy-fieldtext-js": "github:opentext-idol/fieldtext-js#2.0.3",
+    "hp-autonomy-js-databases-view": "github:opentext-idol/js-databases-view#1.1.0",
+    "hp-autonomy-js-parametric-refinement": "github:opentext-idol/js-parametric-refinement#3.0.0",
+    "hp-autonomy-js-whatever": "github:opentext-idol/jsWhatever#3.2.0",
+    "hp-autonomy-login-page": "github:opentext-idol/login-page#2.0.0",
+    "hp-autonomy-settings-page": "github:opentext-idol/settings-page#1.0.0",
+    "hp-autonomy-sunburst": "github:opentext-idol/sunburst#3.0.0",
+    "hp-autonomy-topic-map": "github:opentext-idol/topic-map#2.0.0",
+    "html2canvas": "niklasvh/html2canvas#0.4.1",
+    "icheck": "1.0.2",
+    "jquery": "3.7.1",
+    "leaflet": "1.0.3",
+    "leaflet-draw": "0.4.9",
+    "leaflet.awesome-markers": "2.0.5",
+    "leaflet.markercluster": "1.0.4",
+    "leaflet.markercluster.layersupport": "1.0.3",
+    "metismenu": "2.5.2",
+    "moment": "2.29.4",
+    "moment-timezone": "0.5.43",
+    "open-sans-fontface": "1.4.0",
+    "qs": "^6.15.2",
+    "raphael": "2.3.0",
+    "requirejs": "2.3.7",
+    "requirejs-i18n": "requirejs/i18n#2.0.6",
+    "requirejs-text": "2.0.15",
+    "underscore": "1.13.8",
+    "uuidjs": "4.2.6"
+  },
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/plugin-transform-block-scoping": "^7.12.1",
@@ -21,7 +71,7 @@
     "grunt-template-jasmine-requirejs": "https://github.com/cloudchen/grunt-template-jasmine-requirejs#e5770cd8a75f88e5e09a5f2d4f389ec23bb2dad2",
     "pegjs": "^0.10.0"
   },
-  "scripts": {
-    "peg": "node build/peg.js"
+  "overrides": {
+    "moment-timezone": "0.5.43"
   }
 }

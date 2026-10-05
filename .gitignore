@@ -11,41 +11,20 @@
 *.iws
 *.ids
 
-# Archetype
-filter-dev.properties
-
 # Libraries
-webapp/core/src/main/public/static/bower_components/
-webapp/core/node_modules/
-webapp/core/frontend/node_modules/
-webapp/idol/node_modules/
-webapp/core/.grunt/
-webapp/core/spec-runner.html
-webapp/idol/.grunt/
-webapp/idol/spec-runner.html
-
-# Vagrant
-.vagrant/
-cookbooks/
-tmp/
-vagrant/packagecache/
-vagrant/scriptcache/
+node_modules/
+.grunt/
+spec-runner.html
 
 # Database
 *.db
 
 # Selenium
-webapp/selenium-tests/integration-tests/.output/
-webapp/.output/
+/webapp/selenium-tests/integration-tests/.output/
+/webapp/.output/
 
 # Maven
-log/ #webapp?
-webapp/core/target/
-webapp/idol/target/
-webapp/selenium-tests/integration-tests/target/
-webapp/selenium-tests/mockui/target/
-webapp/hsod-dist/target/
-webapp/on-prem-dist/target/
+target/
 
 maven.debricked.lock
 debricked.fingerprints.txt

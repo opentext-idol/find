@@ -3,7 +3,7 @@
 cd "$(dirname "$0")"
 npm ci --omit=dev >&2
 
-for f in node_modules/*/package.json; do
+for f in webapp/core/node_modules/*/package.json; do
     { read name; read version; read license; read licenses; read url; read url2; } < <(
         jshon -CQ \
             -e name -u -p \

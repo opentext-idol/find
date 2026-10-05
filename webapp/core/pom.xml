@@ -93,23 +93,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>npm-install-frontend</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>npm</executable>
-                            <workingDirectory>${basedir}/frontend</workingDirectory>
-                            <arguments>
-                                <argument>ci</argument>
-                                <argument>--no-audit</argument>
-                                <argument>--allow-git=all</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>npm-install-grunt</id>
+                        <id>npm-install</id>
                         <phase>process-sources</phase>
                         <goals>
                             <goal>exec</goal>
@@ -166,6 +150,10 @@
             </resource>
             <resource>
                 <directory>src/main/public</directory>
+            </resource>
+            <resource>
+                <directory>node_modules</directory>
+                <targetPath>static/lib</targetPath>
             </resource>
         </resources>
     </build>
