@@ -24,7 +24,7 @@ const vent = require('find/app/vent');
 
 const HIDDEN_COLOR = '#f0f0f0';
 
-const sunburstLabelIcon = '<i class="icon-zoom-out"></i>';
+const sunburstLabelIcon = '<i class="fa fa-search-minus"></i>';
 const sunburstLabelTemplate = _.template(labelTemplate);
 
 function generateDataRoot(data) {
