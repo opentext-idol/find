@@ -25,7 +25,7 @@ module.exports = (env, argv) => {
             clean: true
         },
         resolve: {
-            modules: [MERGED_JS, LIB],
+            modules: ['node_modules', LIB, MERGED_JS],
             extensions: ['.js'],
             mainFields: ['browser', 'main'],
             alias: {
