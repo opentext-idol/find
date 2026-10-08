@@ -38,6 +38,7 @@ public abstract class ViewController<R extends ViewRequest<S>, S extends Seriali
     public static final String VIEW_PATH = "/api/public/view";
     public static final String VIEW_DOCUMENT_PATH = "/viewDocument";
     public static final String REFERENCE_PARAM = "reference";
+    public static final String FILEPATH_PARAM = "filepath";
     public static final String DATABASE_PARAM = "index";
     private static final String VIEW_STATIC_CONTENT_PROMOTION_PATH = "/viewStaticContentPromotion";
     protected static final String HIGHLIGHT_PARAM = "highlightExpressions";
@@ -57,22 +58,29 @@ public abstract class ViewController<R extends ViewRequest<S>, S extends Seriali
     /**
      * Determine a filename for a document reference for downloading.
      */
-    private static String extractFilename(final String reference) {
+    private static String extractFilename(final String filepath) {
         String path;
         try {
-            path = new URI(reference).getPath();
+            path = new URI(filepath).getPath();
         } catch (final URISyntaxException e) {
-            path = reference;
+            path = filepath;
         }
 
-        // if there are no path separators, this will just use the whole reference
-        final String name = Paths.get(path).getFileName().toString();
-        return name.isEmpty() ? reference : name;
+        String name;
+        try {
+            name = Paths.get(path).getFileName().toString();
+        } catch(NullPointerException e) {
+            name = "";
+        }
+
+        // if there are no path separators, this will just use the whole field
+        return name.isEmpty() ? filepath : name;
     }
 
     @RequestMapping(value = VIEW_DOCUMENT_PATH, method = RequestMethod.GET)
     public void viewDocument(
             @RequestParam(value = REFERENCE_PARAM, required = false) final String reference,
+            @RequestParam(value = FILEPATH_PARAM, required = false) final String filepath,
             @RequestParam(DATABASE_PARAM) final S database,
             @RequestParam(value = HIGHLIGHT_PARAM, required = false) final String highlightExpression,
             @RequestParam(PART_PARAM) final ViewingPart part,
@@ -83,7 +91,7 @@ public abstract class ViewController<R extends ViewRequest<S>, S extends Seriali
         if (part == ViewingPart.ORIGINAL) {
             // if View fails, this will still get overridden by text/html in the error handler
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-            RequestUtils.setFilenameHeader(response, extractFilename(reference));
+            RequestUtils.setFilenameHeader(response, extractFilename(filepath));
         } else {
             response.setContentType(MediaType.TEXT_HTML_VALUE);
         }
@@ -100,6 +108,18 @@ public abstract class ViewController<R extends ViewRequest<S>, S extends Seriali
                 .subDocRef(subDocRef)
                 .build();
         viewServerService.viewDocument(request, response.getOutputStream());
+    }
+
+    public void viewDocument(
+            final String reference,
+            final S database,
+            final String highlightExpression,
+            final ViewingPart part,
+            final String urlPrefix,
+            final String subDocRef,
+            final HttpServletResponse response
+    ) throws E, IOException {
+      viewDocument(reference, reference, database, highlightExpression, part, urlPrefix, subDocRef, response);
     }
 
     @RequestMapping(value = VIEW_STATIC_CONTENT_PROMOTION_PATH, method = RequestMethod.GET)

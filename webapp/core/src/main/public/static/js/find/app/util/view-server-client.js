@@ -18,6 +18,7 @@ module.exports = {
 
             return 'api/public/view/viewDocument?' + $.param(_.defaults({
                 reference: model.get('reference'),
+                filepath: this.getFilename(model),
                 part: original ? 'ORIGINAL' : 'DOCUMENT',
                 // relative to DOCUMENT API call
                 urlPrefix: 'viewDocument?' + $.param(_.defaults({
@@ -35,6 +36,38 @@ module.exports = {
             return 'api/public/view/viewStaticContentPromotion?' + $.param({
                     reference: reference
                 });
-        }
-    };
+        },
 
+          /**
+           * Get the filename of a document from its model. If the title isn't already a filename, uses
+           * the content-type to extract the file extension to use.
+           * @param {String} model
+           * @return {String}
+           */
+          getFilename: function (model) {
+            let title = model.get('title');
+
+            // Heuristic: if the title already looks like it has a file extension, return it as-is.
+            const fileExtensionRegex = /[a-zA-z0-9]{1,5}/;
+            let title_split = title.split('.');
+            if (
+              title_split.length > 1 &&
+              fileExtensionRegex.test(title_split[title_split.length - 1])
+            ) {
+              return title;
+            }
+
+            // Otherwise, guess file extension based on MIME type
+            let media_type = model.get('contentType');
+            let extension;
+            if (media_type == 'text/plain') {
+              extension = '.txt';
+            } else {
+              // Dirty heuristic but works for most common file types,
+              // and better than not putting any file extension at all
+              extension = '.' + media_type.split('/')[1];
+            }
+
+            return title + extension;
+        },
+};
