@@ -16,7 +16,7 @@
 
 const _ = require('underscore');
 const Login = require('login-page/js/login');
-const template = require('text!find/templates/app/page/login/login.html');
+const template = require('find/templates/app/page/login/login.html');
 const i18n = require('find/nls/bundle');
 
 const FindLogin = Login.extend({

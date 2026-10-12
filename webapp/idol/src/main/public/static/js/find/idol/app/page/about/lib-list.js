@@ -72,28 +72,28 @@ module.exports = [
         {
             name: 'datatables.net-bs',
             url: 'https://datatables.net',
-            version: '1.13.6',
+            version: '1.13.11',
             license: 'MIT',
             edited: false
         },
         {
             name: 'datatables.net-fixedcolumns-bs',
             url: 'https://datatables.net',
-            version: '3.3.3',
+            version: '4.3.1',
             license: 'MIT',
             edited: false
         },
         {
             name: 'datatables.net-fixedcolumns',
             url: 'https://datatables.net',
-            version: '3.3.3',
+            version: '4.3.1',
             license: 'MIT',
             edited: false
         },
         {
             name: 'datatables.net',
             url: 'https://datatables.net',
-            version: '1.13.6',
+            version: '1.13.11',
             license: 'MIT',
             edited: false
         },

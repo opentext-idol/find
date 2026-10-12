@@ -13,7 +13,7 @@
  */
 
 const _ = require('underscore');
-const CoreVent = require('./core-vent');
+const CoreVent = require('find/app/core-vent');
 const configuration = require('find/app/configuration');
 const router = require('find/app/router');
 

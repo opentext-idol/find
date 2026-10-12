@@ -66,7 +66,7 @@ module.exports = Backbone.View.extend({
 
         loadingHtml: _.template(loadingSpinnerTemplate)({i18n: i18n, large: true}),
         template: _.template(template),
-        messageTemplate: _.template('<div class="result-message span10"><%-message%></div>'),
+        messageTemplate: _.template('<div class="result-message"><%-message%></div>'),
         resultTemplate: _.template(resultTemplate),
 
         events: {

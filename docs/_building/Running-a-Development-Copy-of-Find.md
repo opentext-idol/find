@@ -27,11 +27,13 @@ Any changes you make to Java files will be recompiled and redeployed automatical
 
 ## Step Three: Keep JavaScript, CSS, and other static files up to date
 
-From your `idol` folder, run `npm run watch`. This runs webpack in watch mode, which recompiles the JavaScript bundles (`public.js`, `config.js`, `login.js`, `themetracker.js`) as soon as you save a change to any source file, and copies non-JS static assets (fonts, images, favicon) straight into `target/classes/static`.
+From your `idol` folder, run `npm run watch`. This runs webpack in watch mode, which recompiles the JavaScript bundles (`public.js`, `config.js`, `login.js`, `themetracker.js`) as soon as you save a change to any source file in `idol`.
 
-When modifying files in the `core` module, run `mvn install -pl core`.
+When modifying JavaScript or templates in the `core` module, run `mvn install -pl core` and then `mvn generate-resources -pl idol` to refresh webpack's inputs.
 
-When modifying LESS/CSS files or Mustache templates, restart `mvn spring-boot:run`.
+When modifying other static files (images, fonts, HTML, `themetracker.css`), run `mvn process-resources` in the module that owns them.
+
+When modifying LESS files, Mustache templates, or `frontend/package.json`, restart `mvn spring-boot:run`.
 
 ## Step Four: Open Find in your web browser
 

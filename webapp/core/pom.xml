@@ -15,19 +15,54 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <phase>clean</phase>
+                        <!-- The only parts of node_modules needed at runtime (tested by StyleSheetServiceImplTest) -->
+                        <id>unpack-runtime-libraries</id>
+                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>clean</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
-                            <filesets>
-                                <fileset>
-                                    <directory>${project.basedir}/src/main/public/static/bower_components</directory>
-                                </fileset>
-                            </filesets>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.hp.autonomy.frontend.find</groupId>
+                                    <artifactId>frontend</artifactId>
+                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                                        <includes>
+                                            <!-- imported by src/main/resources/less/ -->
+                                            static/lib/bootstrap/less/**,
+                                            static/lib/bootstrap-slider/dist/css/bootstrap-slider.css,
+                                            static/lib/datatables.net-bs/css/dataTables.bootstrap.css,
+                                            static/lib/datatables.net-fixedcolumns-bs/css/fixedColumns.bootstrap.css,
+                                            static/lib/eonasdan-bootstrap-datetimepicker/src/less/**,
+                                            static/lib/font-awesome/less/**,
+                                            static/lib/hp-autonomy-about-page/src/css/**,
+                                            static/lib/hp-autonomy-js-whatever/src/css/**,
+                                            static/lib/hp-autonomy-settings-page/src/css/**,
+                                            static/lib/leaflet/dist/leaflet.css,
+                                            static/lib/leaflet-draw/dist/leaflet.draw.css,
+                                            static/lib/leaflet.awesome-markers/dist/leaflet.awesome-markers.css,
+                                            static/lib/leaflet.markercluster/dist/MarkerCluster.css,
+                                            static/lib/leaflet.markercluster/dist/MarkerCluster.Default.css,
+                                            static/lib/metismenu/dist/metisMenu.css,
+                                            <!-- reached by url() in CSS -->
+                                            static/lib/font-awesome/fonts/**,
+                                            static/lib/leaflet/dist/images/**,
+                                            static/lib/leaflet-draw/dist/images/**,
+                                            static/lib/leaflet.awesome-markers/dist/images/**,
+                                            <!-- linked from themetracker.html -->
+                                            static/lib/bootstrap/dist/css/bootstrap.min.css,
+                                            static/lib/bootstrap/dist/fonts/**,
+                                            static/lib/open-sans-fontface/open-sans.css,
+                                            static/lib/open-sans-fontface/fonts/**
+                                        </includes>
+                                    <!-- don't require `clean` to pull in a newer `frontend` build -->
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                            </artifactItems>
                         </configuration>
                     </execution>
                 </executions>
@@ -37,23 +72,16 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>default-jar</id>
+                        <id>jar-frontend</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <excludes>
-                                <exclude>static/**/*</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>jar-full</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>full</classifier>
+                            <classifier>frontend</classifier>
+                            <classesDirectory>${basedir}/src/main/public</classesDirectory>
+                            <includes>
+                                <include>static/js/**</include>
+                            </includes>
                         </configuration>
                     </execution>
                     <execution>
@@ -61,85 +89,6 @@
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.basedir}/src/main/public/static/bower_components</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.basedir}/frontend/node_modules</directory>
-                                    <!-- not needed and can include symlinks which fails some security checks -->
-                                    <excludes>
-                                        <exclude>**/.bin/**</exclude>
-                                    </excludes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>npm-install</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>npm</executable>
-                            <workingDirectory>${basedir}</workingDirectory>
-                            <arguments>
-                                <argument>ci</argument>
-                                <argument>--no-audit</argument>
-                                <argument>--omit=dev</argument>
-                                <argument>--allow-git=all</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>pegjs</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>node</executable>
-                            <workingDirectory>${basedir}</workingDirectory>
-                            <arguments>
-                                <argument>build/peg.js</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>jasmine</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>${project.basedir}/node_modules/.bin/grunt${npm.binExtension}</executable>
-                            <workingDirectory>${basedir}</workingDirectory>
-                            <arguments>
-                                <argument>test</argument>
-                            </arguments>
-                            <successCodes>
-                                <successCode>3</successCode>
-                            </successCodes>
-                            <skip>true</skip>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -151,10 +100,10 @@
             </resource>
             <resource>
                 <directory>src/main/public</directory>
-            </resource>
-            <resource>
-                <directory>node_modules</directory>
-                <targetPath>static/lib</targetPath>
+                <excludes>
+                    <!-- included in the `classifier=frontend` jar instead -->
+                    <exclude>static/js/**</exclude>
+                </excludes>
             </resource>
         </resources>
     </build>
@@ -398,6 +347,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.hp.autonomy.frontend.find</groupId>
+            <artifactId>frontend</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.hp.autonomy.frontend</groupId>
             <artifactId>haven-search-components-core</artifactId>
             <type>test-jar</type>
@@ -504,10 +459,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>production</id>
-        </profile>
-    </profiles>
 </project>

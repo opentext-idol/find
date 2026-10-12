@@ -6,7 +6,7 @@ const peg = require('pegjs');
 
 const targets = [
     {
-        src: path.resolve(__dirname, '../src/main/public/static/js/find/app/util/geoindex/idol-wkt.pegjs'),
+        src: path.resolve(__dirname, '../src/main/grammar/idol-wkt.pegjs'),
         dest: path.resolve(__dirname, '../target/classes/static/js/pegjs/idol-wkt/parser.js')
     }
 ];

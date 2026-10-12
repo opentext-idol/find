@@ -51,12 +51,15 @@ public class StyleSheetServiceImpl implements StyleSheetService {
     // Provides configured custom LESS variables
     private final ConfigService<StyleConfiguration> configService;
 
-    @Value(AppConfiguration.GIT_COMMIT_PROPERTY)
-    private String gitCommitHash;
+    private final String gitCommitHash;
 
     @Autowired
-    public StyleSheetServiceImpl(final ConfigService<StyleConfiguration> configService) {
+    public StyleSheetServiceImpl(
+        final ConfigService<StyleConfiguration> configService,
+        @Value(AppConfiguration.GIT_COMMIT_PROPERTY) final String gitCommitHash)
+    {
         this.configService = configService;
+        this.gitCommitHash = gitCommitHash;
     }
 
     @Override

@@ -48,10 +48,4 @@
             <type>war</type>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>production</id>
-        </profile>
-    </profiles>
 </project>

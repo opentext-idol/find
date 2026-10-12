@@ -1,43 +1,46 @@
 'use strict';
 
 const path = require('path');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const MERGED_JS = path.resolve(__dirname, 'target/classes/static/js');
-const LIB = path.resolve(__dirname, 'target/classes/static/lib');
+const INPUTS = path.resolve(__dirname, 'target/frontend/static');
+const LIB = path.resolve(INPUTS, 'lib');
+const CORE_JS = path.resolve(INPUTS, 'js');
+// listed ahead of CORE_JS below, so idol's modules override core's same-named ones
+const IDOL_JS = path.resolve(__dirname, 'src/main/public/static/js');
 const SHIMS = path.resolve(__dirname, 'build/vendor-shims');
+const BUNDLE = path.resolve(__dirname, 'target/classes/static/js/bundle');
 
 module.exports = (env, argv) => {
-    const isProduction = argv.mode === 'production';
+    const production = argv.mode === 'production';
 
     return {
-        mode: isProduction ? 'production' : 'development',
-        devtool: isProduction ? 'source-map' : 'eval-source-map',
+        mode: production ? 'production' : 'development',
+        devtool: production ? false : 'eval-source-map',
         entry: {
-            public: path.resolve(MERGED_JS, 'public.js'),
-            config: path.resolve(MERGED_JS, 'config.js'),
-            login: path.resolve(MERGED_JS, 'login.js'),
-            themetracker: path.resolve(MERGED_JS, 'themetracker.js')
+            public: path.resolve(IDOL_JS, 'public.js'),
+            config: path.resolve(CORE_JS, 'config.js'),
+            login: path.resolve(CORE_JS, 'login.js'),
+            themetracker: path.resolve(IDOL_JS, 'themetracker.js')
         },
         output: {
-            path: path.resolve(MERGED_JS, 'bundle'),
+            path: BUNDLE,
             filename: '[name].js',
             clean: true
         },
         resolve: {
-            modules: ['node_modules', LIB, MERGED_JS],
+            modules: ['node_modules', LIB, IDOL_JS, CORE_JS],
             extensions: ['.js'],
             mainFields: ['browser', 'main'],
             alias: {
-                // PEG.js-generated parsers (built by core/build/peg.js).
-                'idol-wkt/js/parser$': path.resolve(MERGED_JS, 'pegjs/idol-wkt/parser'),
+                // PEG.js-generated parsers (built by frontend/build/peg.js).
+                'idol-wkt/js/parser$': path.resolve(CORE_JS, 'pegjs/idol-wkt/parser'),
 
                 // leaflet plugin files that live in a same-named directory with no index.js/package.json, so plain
                 // directory resolution would fail.
-                'leaflet.draw.i18n$': path.resolve(MERGED_JS, 'leaflet.draw.i18n/leaflet.draw.i18n'),
-                'leaflet.draw.negate$': path.resolve(MERGED_JS, 'leaflet.draw.negate/leaflet.draw.negate'),
-                'leaflet.draw.polygonSpatial$': path.resolve(MERGED_JS, 'leaflet.draw.polygonSpatial/leaflet.draw.polygonSpatial'),
-                'leaflet.notransform$': path.resolve(MERGED_JS, 'leaflet.notransform/leaflet.notransform'),
+                'leaflet.draw.i18n$': path.resolve(CORE_JS, 'leaflet.draw.i18n/leaflet.draw.i18n'),
+                'leaflet.draw.negate$': path.resolve(CORE_JS, 'leaflet.draw.negate/leaflet.draw.negate'),
+                'leaflet.draw.polygonSpatial$': path.resolve(CORE_JS, 'leaflet.draw.polygonSpatial/leaflet.draw.polygonSpatial'),
+                'leaflet.notransform$': path.resolve(CORE_JS, 'leaflet.notransform/leaflet.notransform'),
 
                 // shims, for libraries that don't ship their own UMD/CJS wrapper
                 'jquery$': path.resolve(SHIMS, 'jquery.js'),
@@ -85,11 +88,12 @@ module.exports = (env, argv) => {
             rules: [
                 {
                     test: /\.(html|handlebars)$/,
+                    type: 'javascript/auto',
                     loader: path.resolve(__dirname, 'build/loaders/raw-text-loader.js')
                 },
                 {
                     test: /\.js$/,
-                    include: MERGED_JS,
+                    include: [IDOL_JS, CORE_JS],
                     parser: {
                         amd: false
                     }
@@ -100,26 +104,7 @@ module.exports = (env, argv) => {
             new (require('webpack').IgnorePlugin)({
                 resourceRegExp: /^\.\/locale$/,
                 contextRegExp: /moment[/\\]min$/
-            }),
-            new (require('webpack').NormalModuleReplacementPlugin)(/^text!/, (resource) => {
-                resource.request = resource.request.replace(/^text!/, '');
-            }),
-            new (require('webpack').NormalModuleReplacementPlugin)(/^i18n!/, (resource) => {
-                resource.request = resource.request.replace(/^i18n!/, '');
-            }),
-            ...(isProduction ? [] : [
-                new CopyWebpackPlugin({
-                    patterns: [
-                        { from: '../core/src/main/public/static/find-favicon.ico', to: 'find-favicon.ico' },
-                        { from: '../core/src/main/public/static/fonts', to: 'fonts' },
-                        { from: '../core/src/main/public/static/img', to: 'img' },
-                        { from: 'src/main/public/static/img', to: 'img' },
-                        { from: 'src/main/public/static/css', to: 'css' },
-                        { from: 'src/main/public/static/html', to: 'html' },
-                        { from: 'src/main/public/static/js', to: MERGED_JS }
-                    ].map((pattern) => ({ ...pattern, context: __dirname, noErrorOnMissing: true }))
-                })
-            ])
+            })
         ],
         optimization: {
             splitChunks: false,

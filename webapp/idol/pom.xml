@@ -23,6 +23,7 @@
         <frontend.docker.community.skip>false</frontend.docker.community.skip>
         <frontend.docker.agentstore.skip>false</frontend.docker.agentstore.skip>
         <frontend.docker.answerbankAgentstore.skip>false</frontend.docker.answerbankAgentstore.skip>
+        <webpack-inputs-dir>${project.build.directory}/frontend</webpack-inputs-dir>
         <webpack.mode>development</webpack.mode>
         <skip.webpack>false</skip.webpack>
     </properties>
@@ -103,29 +104,29 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy</id>
+                        <id>unpack-webpack-inputs</id>
                         <phase>generate-resources</phase>
                         <goals>
-                            <goal>unpack-dependencies</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>core</includeArtifactIds>
-                            <includeTypes>jar</includeTypes>
-                            <includeClassifiers>full</includeClassifiers>
-                            <includes>static/**/*</includes>
-                            <outputDirectory>${static-resources-dir}</outputDirectory>
-                            <!-- don't require `clean` to pull in a newer core build -->
-                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <outputDirectory>${webpack-inputs-dir}</outputDirectory>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.hp.autonomy.frontend.find</groupId>
+                                    <artifactId>frontend</artifactId>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.hp.autonomy.frontend.find</groupId>
+                                    <artifactId>core</artifactId>
+                                    <classifier>frontend</classifier>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                            </artifactItems>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <configuration>
-                    <overwrite>true</overwrite>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -139,6 +140,18 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <finalName>${artifactName}</finalName>
+                    <excludes>
+                        <!-- exclude dependencies only needed as Webpack inputs -->
+                        <exclude>
+                            <groupId>com.hp.autonomy.frontend.find</groupId>
+                            <artifactId>frontend</artifactId>
+                        </exclude>
+                        <exclude>
+                            <groupId>com.hp.autonomy.frontend.find</groupId>
+                            <artifactId>core</artifactId>
+                            <classifier>frontend</classifier>
+                        </exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
@@ -156,6 +169,10 @@
             </resource>
             <resource>
                 <directory>src/main/public</directory>
+                <excludes>
+                    <!-- bundled by Webpack -->
+                    <exclude>static/js/**</exclude>
+                </excludes>
             </resource>
         </resources>
     </build>
@@ -184,7 +201,12 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend.find</groupId>
             <artifactId>core</artifactId>
-            <classifier>full</classifier>
+            <classifier>frontend</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.find</groupId>
+            <artifactId>frontend</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -482,6 +504,9 @@
     <profiles>
         <profile>
             <id>production</id>
+            <properties>
+                <webpack.mode>production</webpack.mode>
+            </properties>
         </profile>
     </profiles>
 </project>
