@@ -16,6 +16,7 @@ package com.hp.autonomy.frontend.find.idol.users;
 
 import com.hp.autonomy.frontend.find.core.configuration.RelatedUsersConfig;
 import com.hp.autonomy.frontend.find.core.configuration.RelatedUsersSourceConfig;
+import com.hp.autonomy.frontend.find.idol.api.model.RelatedUser;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.searchcomponents.idol.search.QueryResponseParser;

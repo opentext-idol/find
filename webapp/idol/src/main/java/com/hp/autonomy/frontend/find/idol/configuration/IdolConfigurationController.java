@@ -22,23 +22,23 @@ import com.hp.autonomy.frontend.configuration.aci.CommunityService;
 import com.hp.autonomy.frontend.configuration.validation.ConfigValidationException;
 import com.hp.autonomy.frontend.configuration.validation.ValidationResult;
 import com.hp.autonomy.frontend.configuration.validation.ValidationResults;
+import com.hp.autonomy.frontend.find.idol.api.ConfigurationApi;
+import com.hp.autonomy.frontend.find.idol.api.model.SecurityTypesResponse;
 import com.hp.autonomy.frontend.logging.Markers;
 import com.opentext.idol.types.responses.SecurityType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
-@RequestMapping({"/api/admin/config", "/api/config/config"})
-public class IdolConfigurationController {
+public class IdolConfigurationController implements ConfigurationApi {
     private final CommunityService communityService;
     private final ConfigFileService<IdolFindConfig> configService;
 
@@ -48,14 +48,18 @@ public class IdolConfigurationController {
         this.configService = configService;
     }
 
-    @RequestMapping(value = "/config", method = RequestMethod.GET)
-    public Object config() {
-        return configService.getConfigResponse();
+    @Override
+    public ResponseEntity<Object> getConfig() {
+        return ResponseEntity.ok(configService.getConfigResponse());
     }
 
-    @SuppressWarnings("ProhibitedExceptionDeclared")
-    @RequestMapping(value = "/config", method = {RequestMethod.POST, RequestMethod.PUT})
-    public ResponseEntity<?> saveConfig(@RequestBody final IdolFindConfigWrapper configResponse) throws Exception {
+    @Override
+    public ResponseEntity<Object> replaceConfig(final IdolFindConfigWrapper configResponse) {
+        return saveConfig(configResponse);
+    }
+
+    @Override
+    public ResponseEntity<Object> saveConfig(final IdolFindConfigWrapper configResponse) {
         log.info(Markers.AUDIT, "REQUESTED UPDATE CONFIGURATION");
 
         //TODO: move this to CommunityAuthentication validator once FIND-1254 is complete
@@ -75,11 +79,13 @@ public class IdolConfigurationController {
             return new ResponseEntity<>(Collections.singletonMap("exception", ce.getMessage()), HttpStatus.NOT_ACCEPTABLE);
         } catch (final ConfigValidationException cve) {
             return new ResponseEntity<>(Collections.singletonMap("validation", cve.getValidationErrors()), HttpStatus.NOT_ACCEPTABLE);
+        } catch (final Exception e) {
+            throw new IllegalStateException(e.getMessage(), e);
         }
     }
 
-    @RequestMapping(value = "/securitytypes", method = RequestMethod.GET)
-    public Map<String, List<String>> getSecurityTypes(@RequestParam final int port, @RequestParam final String host, @RequestParam final AciServerDetails.TransportProtocol protocol) {
+    @Override
+    public ResponseEntity<SecurityTypesResponse> getSecurityTypes(final String host, final Integer port, final AciServerDetails.TransportProtocol protocol) {
         if (port <= 0 || host == null || protocol == null) {
             throw new IllegalArgumentException("Host, port and protocol must be supplied.");
         }
@@ -87,7 +93,7 @@ public class IdolConfigurationController {
         final List<SecurityType> types = communityService.getSecurityTypes(new AciServerDetails(protocol, host, port));
         final List<String> typeNames = types.stream().map(SecurityType::getName).collect(Collectors.toList());
 
-        return Collections.singletonMap("securityTypes", typeNames);
+        return ResponseEntity.ok(new SecurityTypesResponse(typeNames));
     }
 
     private enum CommunityAuthenticationValidation {

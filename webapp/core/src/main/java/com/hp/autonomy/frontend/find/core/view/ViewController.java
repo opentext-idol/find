@@ -19,10 +19,6 @@ import com.hp.autonomy.searchcomponents.core.view.*;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -32,19 +28,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 
-@Controller
-@RequestMapping(ViewController.VIEW_PATH)
 public abstract class ViewController<R extends ViewRequest<S>, S extends Serializable, E extends Exception> {
-    public static final String VIEW_PATH = "/api/public/view";
-    public static final String VIEW_DOCUMENT_PATH = "/viewDocument";
-    public static final String REFERENCE_PARAM = "reference";
-    public static final String DATABASE_PARAM = "index";
-    private static final String VIEW_STATIC_CONTENT_PROMOTION_PATH = "/viewStaticContentPromotion";
-    protected static final String HIGHLIGHT_PARAM = "highlightExpressions";
-    public static final String PART_PARAM = "part";
-    public static final String URL_PREFIX_PARAM = "urlPrefix";
-    public static final String SUB_DOC_REF_PARAM = "subDocRef";
-
     private final ViewServerService<R, S, E> viewServerService;
     private final ObjectFactory<? extends ViewRequestBuilder<R, S, ?>> viewRequestBuilderFactory;
 
@@ -70,14 +54,13 @@ public abstract class ViewController<R extends ViewRequest<S>, S extends Seriali
         return name.isEmpty() ? reference : name;
     }
 
-    @RequestMapping(value = VIEW_DOCUMENT_PATH, method = RequestMethod.GET)
-    public void viewDocument(
-            @RequestParam(value = REFERENCE_PARAM, required = false) final String reference,
-            @RequestParam(DATABASE_PARAM) final S database,
-            @RequestParam(value = HIGHLIGHT_PARAM, required = false) final String highlightExpression,
-            @RequestParam(PART_PARAM) final ViewingPart part,
-            @RequestParam(value = URL_PREFIX_PARAM, required = false) final String urlPrefix,
-            @RequestParam(value = SUB_DOC_REF_PARAM, required = false) final String subDocRef,
+    protected void viewDocument(
+            final String reference,
+            final S database,
+            final String highlightExpression,
+            final ViewingPart part,
+            final String urlPrefix,
+            final String subDocRef,
             final HttpServletResponse response
     ) throws E, IOException {
         if (part == ViewingPart.ORIGINAL) {
@@ -102,9 +85,8 @@ public abstract class ViewController<R extends ViewRequest<S>, S extends Seriali
         viewServerService.viewDocument(request, response.getOutputStream());
     }
 
-    @RequestMapping(value = VIEW_STATIC_CONTENT_PROMOTION_PATH, method = RequestMethod.GET)
-    public void viewStaticContentPromotion(
-            @RequestParam(REFERENCE_PARAM) final String reference,
+    protected void viewStaticContentPromotion(
+            final String reference,
             final HttpServletResponse response
     ) throws IOException, E {
         response.setContentType(MediaType.TEXT_HTML_VALUE);

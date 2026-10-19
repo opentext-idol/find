@@ -15,7 +15,7 @@
 package com.hp.autonomy.frontend.find.idol.view;
 
 import com.hp.autonomy.frontend.find.core.view.AbstractViewControllerIT;
-import com.hp.autonomy.frontend.find.core.view.ViewController;
+import com.hp.autonomy.frontend.find.idol.api.ViewApi;
 import org.junit.Test;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
@@ -26,10 +26,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class IdolViewControllerIT extends AbstractViewControllerIT {
     @Test
     public void viewNonExistentDocument() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(ViewController.VIEW_PATH + ViewController.VIEW_DOCUMENT_PATH)
-                .param(ViewController.REFERENCE_PARAM, "bad document")
-                .param(ViewController.DATABASE_PARAM, mvcIntegrationTestUtils.getDatabases()[0])
-                .param(ViewController.PART_PARAM, "DOCUMENT")
+        final MockHttpServletRequestBuilder requestBuilder = get(ViewApi.PATH_VIEW_DOCUMENT)
+                .param("reference", "bad document")
+                .param("index", mvcIntegrationTestUtils.getDatabases()[0])
+                .param("part", "DOCUMENT")
                 .with(authentication(userAuth()));
 
         mockMvc.perform(

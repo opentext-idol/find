@@ -1,0 +1,86 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  profileTerms:
+    get:
+      summary: Get the profile terms for the current user
+      description: |
+        Returns the agent profiles IDOL Community holds for the authenticated user.
+      operationId: getProfileTerms
+      tags:
+        - profile
+      responses:
+        '200':
+          description: The user's profiles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profiles"
+
+components:
+
+  schemas:
+
+    Profiles:
+      description: An IDOL Community `ProfileRead` response
+      type: object
+      properties:
+        numprofiles:
+          type: integer
+          format: int32
+        totalprofiles:
+          type: integer
+          format: int32
+        profile:
+          type: array
+          items:
+            $ref: "#/components/schemas/Profile"
+
+    Profile:
+      description: One interest profile
+      type: object
+      properties:
+        pid:
+          type: string
+        namedarea:
+          type: string
+        parent:
+          type: string
+        parentusername:
+          type: string
+        numterms:
+          type: integer
+          format: int32
+        score:
+          type: integer
+          format: int32
+        created:
+          type: string
+          format: date-time
+        term:
+          type: array
+          items:
+            $ref: "#/components/schemas/Term"
+
+    Term:
+      description: One weighted term of an interest profile
+      type: object
+      properties:
+        value:
+          type: string
+        weight:
+          type: integer
+          format: int32

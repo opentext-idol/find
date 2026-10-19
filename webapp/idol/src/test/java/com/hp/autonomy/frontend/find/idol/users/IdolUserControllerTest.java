@@ -20,6 +20,7 @@ import com.hp.autonomy.frontend.find.core.configuration.RelatedUsersConfig;
 import com.hp.autonomy.frontend.find.core.configuration.RelatedUsersSourceConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UserDetailsFieldConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UsersConfig;
+import com.hp.autonomy.frontend.find.idol.api.model.RelatedUser;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.opentext.idol.types.responses.User;
 import org.junit.Assert;
@@ -67,7 +68,7 @@ public class IdolUserControllerTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetRelatedToSearch_disabled() {
         Mockito.when(relatedUsersConfig.getEnabled()).thenReturn(false);
-        controller.getRelatedToSearch("term1 term2", 33);
+        controller.getUsersRelatedToSearch("term1 term2", 33);
     }
 
     @Test
@@ -98,10 +99,10 @@ public class IdolUserControllerTest {
         Mockito.doReturn(mockUsers).when(idolUserSearchService)
             .getRelatedToSearch(relatedUsersConfig, "term1 term2", 33);
 
-        final List<RelatedUser> users = controller.getRelatedToSearch("term1 term2", 33).users();
+        final List<RelatedUser> users = controller.getUsersRelatedToSearch("term1 term2", 33).getBody().getUsers();
         Assert.assertEquals(2, users.size());
 
-        Assert.assertTrue(users.get(0).isExpert());
+        Assert.assertTrue(users.get(0).getExpert());
         final User user1 = users.get(0).getUser();
         Assert.assertEquals("should include uid", 123, user1.getUid());
         Assert.assertEquals("should include username", "user1", user1.getUsername());
@@ -114,7 +115,7 @@ public class IdolUserControllerTest {
             user1.getFields().get("int_display_1"));
         Assert.assertNull("should not include unconfigured field", user1.getFields().get("hidden"));
 
-        Assert.assertFalse(users.get(1).isExpert());
+        Assert.assertFalse(users.get(1).getExpert());
         final User user2 = users.get(1).getUser();
         Assert.assertEquals("should include uid", 7, user2.getUid());
         Assert.assertEquals("should include username", "user2", user2.getUsername());
@@ -147,7 +148,7 @@ public class IdolUserControllerTest {
         Mockito.doReturn(mockUsers).when(idolUserSearchService)
                 .getRelatedToSearch(relatedUsersConfig, "term1 term2", 33);
 
-        final List<RelatedUser> users = controller.getRelatedToSearch("term1 term2", 33).users();
+        final List<RelatedUser> users = controller.getUsersRelatedToSearch("term1 term2", 33).getBody().getUsers();
         Assert.assertEquals(2, users.size());
     }
 

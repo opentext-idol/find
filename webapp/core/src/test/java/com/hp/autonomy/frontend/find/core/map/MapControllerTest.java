@@ -59,13 +59,13 @@ public class MapControllerTest {
 
     @Test
     public void getMapData() {
-        assertTrue(EXPECTED_SUCCESS_PATTERN.matcher(controller.getMapData(URL, "fn")).matches());
+        assertTrue(EXPECTED_SUCCESS_PATTERN.matcher(controller.proxyMapTile(URL, "fn").getBody()).matches());
     }
 
     @Test
     public void getMapDataInvalidCallback() {
         try {
-            controller.getMapData(URL, "0 BAD 0");
+            controller.proxyMapTile(URL, "0 BAD 0");
             fail("Exception should have been thrown");
         } catch(final IllegalArgumentException e) {
             assertThat("Exception has the correct message",
@@ -77,7 +77,7 @@ public class MapControllerTest {
     @Test
     public void getMapDataInvalidUrl() {
         try {
-            controller.getMapData("http://bad", "fn");
+            controller.proxyMapTile("http://bad", "fn");
             fail("Exception should have been thrown");
         } catch(final IllegalArgumentException e) {
             assertThat("Exception has the correct message",
@@ -90,6 +90,6 @@ public class MapControllerTest {
     public void onError() {
         final String badUrl = "htp://bad";
         when(config.getMap()).thenReturn(new MapConfiguration(badUrl, false, null, null, null, null));
-        assertEquals("fn(\"error:Application error\")", controller.getMapData(badUrl, "fn"));
+        assertEquals("fn(\"error:Application error\")", controller.proxyMapTile(badUrl, "fn").getBody());
     }
 }

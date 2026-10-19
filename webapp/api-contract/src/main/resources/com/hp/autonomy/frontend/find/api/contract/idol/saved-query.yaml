@@ -1,0 +1,204 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  savedQueries:
+    get:
+      summary: List the current user's saved queries
+      operationId: getSavedQueries
+      tags:
+        - savedQuery
+      parameters:
+        - name: shared
+          in: query
+          description: Also include queries shared with the user by others
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: The user's saved queries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedQueriesResponse"
+    post:
+      summary: Create a saved query
+      x-codegen-request-body-name: query
+      operationId: createSavedQuery
+      tags:
+        - savedQuery
+      requestBody:
+        description: The query to save
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SavedQuery"
+      responses:
+        '200':
+          description: The stored query, with its assigned ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedQuery"
+
+  sharedSavedQueries:
+    get:
+      summary: List the saved queries shared with the current user
+      operationId: getSharedSavedQueries
+      tags:
+        - savedQuery
+      responses:
+        '200':
+          description: Saved queries shared with the user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedQueriesResponse"
+
+  savedQuery:
+    get:
+      summary: Get a saved query used by a dashboard
+      description: Fails unless the ID appears in the dashboards configuration file
+      operationId: getSavedQuery
+      tags:
+        - savedQuery
+      parameters:
+        - $ref: "#/components/parameters/SavedSearchId"
+      responses:
+        '200':
+          description: The saved query
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedQuery"
+    put:
+      summary: Update one of the current user's saved queries
+      x-codegen-request-body-name: query
+      operationId: updateSavedQuery
+      tags:
+        - savedQuery
+      parameters:
+        - $ref: "#/components/parameters/SavedSearchId"
+      requestBody:
+        description: The query to store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SavedQuery"
+      responses:
+        '200':
+          description: The stored query
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedQuery"
+    delete:
+      summary: Delete one of the current user's saved queries
+      operationId: deleteSavedQuery
+      tags:
+        - savedQuery
+      parameters:
+        - $ref: "#/components/parameters/SavedSearchId"
+      responses:
+        '200':
+          description: Query deleted
+
+  sharedSavedQuery:
+    put:
+      summary: Update a saved query that was shared with the current user
+      x-codegen-request-body-name: query
+      operationId: updateSharedSavedQuery
+      tags:
+        - savedQuery
+      parameters:
+        - $ref: "#/components/parameters/SavedSearchId"
+      requestBody:
+        description: The query to store; its ID is taken from the path
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SavedQuery"
+      responses:
+        '200':
+          description: The stored query
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedQuery"
+
+  savedQueryNewResults:
+    get:
+      summary: Count results added since a saved query was last run
+      operationId: countNewSavedQueryResults
+      tags:
+        - savedQuery
+      parameters:
+        - $ref: "#/components/parameters/SavedSearchId"
+      responses:
+        '200':
+          description: Number of new results
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+
+components:
+
+  parameters:
+
+    SavedSearchId:
+      name: id
+      in: path
+      description: ID of the saved search
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+  schemas:
+
+    SavedQueriesResponse:
+      description: A set of saved queries
+      type: object
+      required:
+        - savedQueries
+      properties:
+        savedQueries:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/SavedQuery"
+
+    SavedQuery:
+      description: A saved search
+      allOf:
+        - $ref: "../common/saved-search-types.yaml#/components/schemas/SavedSearch"
+        - type: object
+          properties:
+            dateDocsLastFetched:
+              description: When the result count was last refreshed
+              type: string
+              format: date-time
+            dateNewDocsLastFetched:
+              description: When the new-results count was last refreshed
+              type: string
+              format: date-time
+

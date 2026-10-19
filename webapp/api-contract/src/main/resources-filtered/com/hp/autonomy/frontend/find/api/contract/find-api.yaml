@@ -1,0 +1,195 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+openapi: "3.0.3"
+
+info:
+  version: ${project.version}
+  title: Find API
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  description: |
+    HTTP API of the Find web application, consumed by the Find frontend.
+    
+    URLs are relative to the servlet context path.  Tags are one per Spring controller.
+
+    Common error responses:
+     - 400 Bad Request: a request parameter was missing, malformed or rejected by validation
+     - 403 Forbidden: not authenticated, the session has expired, or the caller has insufficient privileges
+     - 500 Internal Server Error: unexpected server error, or an IDOL component returned an error
+
+    Error bodies are `ErrorResponse` objects carrying a `uuid` that correlates with the server log.
+
+servers:
+  - url: /
+
+security:
+  - sessionCookie: []
+
+paths:
+
+  # ---- core ---------------------------------------------------------------
+  /api/public/typeahead:
+    $ref: "core/typeahead.yaml#/pathItems/typeahead"
+  /api/public/stats:
+    $ref: "core/stats.yaml#/pathItems/stats"
+  /api/public/map/proxy:
+    $ref: "core/map.yaml#/pathItems/mapProxy"
+  /customization/result-templates:
+    $ref: "core/templates.yaml#/pathItems/resultTemplates"
+  /customization/style/{fileName}:
+    $ref: "core/style.yaml#/pathItems/styleSheet"
+  /api/public/search/shared-searches/permissions/{searchId}:
+    $ref: "core/shared-searches.yaml#/pathItems/searchUserPermissions"
+  /api/public/search/shared-searches/permissions/{searchId}/{userId}:
+    $ref: "core/shared-searches.yaml#/pathItems/searchUserPermission"
+  /api/public/search/shared-searches/everyone/permissions/{searchId}:
+    $ref: "core/shared-searches.yaml#/pathItems/searchEveryonePermissions"
+
+  # ---- idol ---------------------------------------------------------------
+  /api/public/view/viewDocument:
+    $ref: "idol/view.yaml#/pathItems/viewDocument"
+  /api/public/view/viewStaticContentPromotion:
+    $ref: "idol/view.yaml#/pathItems/viewStaticContentPromotion"
+  /api/public/profile/terms:
+    $ref: "idol/profile.yaml#/pathItems/profileTerms"
+  /api/public/user/search:
+    $ref: "idol/users.yaml#/pathItems/searchUsers"
+  /api/public/user/related-to-search:
+    $ref: "idol/users.yaml#/pathItems/relatedUsers"
+  /api/public/nifi/actions:
+    $ref: "idol/nifi.yaml#/pathItems/nifiActions"
+  /api/public/nifi/actions/execute:
+    $ref: "idol/nifi.yaml#/pathItems/executeNifiAction"
+  /api/public/controlpoint/policy:
+    $ref: "idol/controlpoint.yaml#/pathItems/controlPointPolicies"
+  /api/public/controlpoint/policy/apply:
+    $ref: "idol/controlpoint.yaml#/pathItems/applyControlPointPolicy"
+  /api/public/search/query-text-index/results:
+    $ref: "idol/search.yaml#/pathItems/queryTextIndexResults"
+  /api/public/search/similar-documents:
+    $ref: "idol/search.yaml#/pathItems/similarDocuments"
+  /api/public/search/get-document-content:
+    $ref: "idol/search.yaml#/pathItems/getDocumentContent"
+  /api/public/search/recommend-documents:
+    $ref: "idol/search.yaml#/pathItems/recommendDocuments"
+  /api/public/search/find-related-concepts:
+    $ref: "idol/search.yaml#/pathItems/findRelatedConcepts"
+  /api/public/search/list-indexes:
+    $ref: "idol/search.yaml#/pathItems/listIndexes"
+  /api/public/parametric/values:
+    $ref: "idol/parametric.yaml#/pathItems/parametricValues"
+  /api/public/parametric/numeric/buckets/{encodedField}:
+    $ref: "idol/parametric.yaml#/pathItems/numericParametricBuckets"
+  /api/public/parametric/date/buckets/{encodedField}:
+    $ref: "idol/parametric.yaml#/pathItems/dateParametricBuckets"
+  /api/public/parametric/numeric/value-details:
+    $ref: "idol/parametric.yaml#/pathItems/numericValueDetails"
+  /api/public/parametric/date/value-details:
+    $ref: "idol/parametric.yaml#/pathItems/dateValueDetails"
+  /api/public/parametric/dependent-values:
+    $ref: "idol/parametric.yaml#/pathItems/dependentParametricValues"
+  /api/public/fields/parametric:
+    $ref: "idol/fields.yaml#/pathItems/parametricFields"
+  /api/public/answer/ask:
+    $ref: "idol/answer.yaml#/pathItems/ask"
+  /api/public/answer/entity-facts:
+    $ref: "idol/answer.yaml#/pathItems/entityFacts"
+  /api/public/answer/entity-search-ask:
+    $ref: "idol/answer.yaml#/pathItems/entitySearchAsk"
+  /api/public/answer/converse:
+    $ref: "idol/answer.yaml#/pathItems/converse"
+  /api/public/answer/converse/{sessionId}/end:
+    $ref: "idol/answer.yaml#/pathItems/converseEnd"
+  /api/public/entitysearch/search:
+    $ref: "idol/entitysearch.yaml#/pathItems/entitySearch"
+  /api/bi/comparison/compare:
+    $ref: "idol/comparison.yaml#/pathItems/compare"
+  /api/bi/comparison/results:
+    $ref: "idol/comparison.yaml#/pathItems/comparisonResults"
+  /api/admin/config/config:
+    $ref: "idol/configuration.yaml#/pathItems/config"
+  /api/admin/config/securitytypes:
+    $ref: "idol/configuration.yaml#/pathItems/securityTypes"
+  /api/admin/config/config-validation:
+    $ref: "idol/configuration.yaml#/pathItems/configValidation"
+  /api/admin/customization/config/reload:
+    $ref: "idol/configuration.yaml#/pathItems/customizationConfigReload"
+  /api/public/customization/logo/{type}/current:
+    $ref: "idol/customization.yaml#/pathItems/currentLogo"
+  /api/admin/customization/assets/{type}:
+    $ref: "idol/customization.yaml#/pathItems/assets"
+  /api/admin/customization/assets/{type}/{name}:
+    $ref: "idol/customization.yaml#/pathItems/asset"
+  /api/admin/customization/config:
+    $ref: "idol/customization.yaml#/pathItems/customizationConfig"
+  /api/public/themetracker/clusters:
+    $ref: "idol/themetracker.yaml#/pathItems/themeClusters"
+  /api/public/themetracker/terms:
+    $ref: "idol/themetracker.yaml#/pathItems/themeTerms"
+  /api/public/themetracker/image:
+    $ref: "idol/themetracker.yaml#/pathItems/themeImage"
+  /api/bi/export/csv:
+    $ref: "idol/export.yaml#/pathItems/exportCsv"
+  /api/bi/export/pptx/topic-map:
+    $ref: "idol/export.yaml#/pathItems/exportPptxTopicMap"
+  /api/bi/export/pptx/sunburst:
+    $ref: "idol/export.yaml#/pathItems/exportPptxSunburst"
+  /api/bi/export/pptx/table:
+    $ref: "idol/export.yaml#/pathItems/exportPptxTable"
+  /api/bi/export/pptx/map:
+    $ref: "idol/export.yaml#/pathItems/exportPptxMap"
+  /api/bi/export/pptx/list:
+    $ref: "idol/export.yaml#/pathItems/exportPptxList"
+  /api/bi/export/pptx/date-graph:
+    $ref: "idol/export.yaml#/pathItems/exportPptxDateGraph"
+  /api/bi/export/pptx/report:
+    $ref: "idol/export.yaml#/pathItems/exportPptxReport"
+  /api/bi/saved-query:
+    $ref: "idol/saved-query.yaml#/pathItems/savedQueries"
+  /api/bi/saved-query/shared:
+    $ref: "idol/saved-query.yaml#/pathItems/sharedSavedQueries"
+  /api/bi/saved-query/{id}:
+    $ref: "idol/saved-query.yaml#/pathItems/savedQuery"
+  /api/bi/saved-query/shared/{id}:
+    $ref: "idol/saved-query.yaml#/pathItems/sharedSavedQuery"
+  /api/bi/saved-query/new-results/{id}:
+    $ref: "idol/saved-query.yaml#/pathItems/savedQueryNewResults"
+  /api/bi/saved-snapshot:
+    $ref: "idol/saved-snapshot.yaml#/pathItems/savedSnapshots"
+  /api/bi/saved-snapshot/shared:
+    $ref: "idol/saved-snapshot.yaml#/pathItems/sharedSavedSnapshots"
+  /api/bi/saved-snapshot/{id}:
+    $ref: "idol/saved-snapshot.yaml#/pathItems/savedSnapshot"
+  /api/bi/saved-snapshot/shared/{id}:
+    $ref: "idol/saved-snapshot.yaml#/pathItems/sharedSavedSnapshot"
+  /api/bi/dashboards/keep-alive:
+    $ref: "idol/dashboards.yaml#/pathItems/dashboardKeepAlive"
+
+components:
+
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: FINDSESSIONID
+      description: |
+        Find authenticates browser sessions with a session cookie established by its own login API.  Access is managed
+        by request path: `/api/public/` requires the `FindUser` role, `/api/bi/` the `FindBI` role, and `/api/admin/`
+        the `FindAdmin` role.  Requests to `/customization/` need no credentials.  A first-time setup user also has
+        access to `/api/admin/config/`.
+
+        A deployment may instead be configured for reverse-proxy pre-authentication, in which case the proxy supplies
+        the identity and no cookie is involved.

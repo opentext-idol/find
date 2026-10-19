@@ -1,0 +1,56 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  mapProxy:
+    get:
+      summary: Proxy a map tile request as JSONP
+      description: |
+        Proxies a single tile request to the configured tile server and returns it as a JSONP
+        payload: the value of `callback`, followed by a parenthesised, quoted `data:` URI
+        containing the base64-encoded tile, for example
+
+            myCallback("data:image/png;base64,iVBORw0...")
+
+        If the tile cannot be fetched, the same shape is returned with the body
+        `"error:Application error"` and status 200.
+      operationId: proxyMapTile
+      tags:
+        - map
+      parameters:
+        - name: url
+          in: query
+          description: |
+            Absolute URL of the tile to fetch.  Its scheme, host and port must match the
+            configured `map.tileUrlTemplate`; anything else causes an error.
+          required: true
+          schema:
+            type: string
+        - name: callback
+          in: query
+          description: JSONP callback function name
+          required: true
+          schema:
+            type: string
+            pattern: '^\w+$'
+      responses:
+        '200':
+          description: JSONP wrapping a base64 data URI
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: 'invalid parameters'

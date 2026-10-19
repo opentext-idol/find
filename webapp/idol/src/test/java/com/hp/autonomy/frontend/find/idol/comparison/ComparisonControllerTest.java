@@ -44,7 +44,7 @@ public class ComparisonControllerTest {
     @Mock
     private IdolDocumentsService documentsService;
 
-    private ComparisonController<IdolQueryRestrictions, IdolSearchResult, AciErrorException> comparisonController;
+    private ComparisonController comparisonController;
 
     @Mock
     private IdolQueryRestrictions queryRestrictions;
@@ -52,7 +52,7 @@ public class ComparisonControllerTest {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
-        comparisonController = new ComparisonController<>(comparisonService, documentsService);
+        comparisonController = new ComparisonController(comparisonService, documentsService);
         when(documentsService.getStateToken(any(), anyInt(), eq(QueryRequest.QueryType.MODIFIED), anyBoolean()))
                 .thenReturn(MOCK_STATE_TOKEN_1);
     }
@@ -64,7 +64,7 @@ public class ComparisonControllerTest {
                 .setSecondQueryStateToken(MOCK_STATE_TOKEN_2)
                 .build();
 
-        comparisonController.getCompareStateTokens(comparisonRequest);
+        comparisonController.compare(comparisonRequest);
         verify(comparisonService).getCompareStateTokens(eq(MOCK_STATE_TOKEN_1), eq(MOCK_STATE_TOKEN_2));
     }
 
@@ -75,7 +75,7 @@ public class ComparisonControllerTest {
                 .setSecondRestrictions(queryRestrictions)
                 .build();
 
-        comparisonController.getCompareStateTokens(comparisonRequest);
+        comparisonController.compare(comparisonRequest);
         verify(comparisonService).getCompareStateTokens(eq(MOCK_STATE_TOKEN_1), eq(MOCK_STATE_TOKEN_1));
     }
 
@@ -86,7 +86,7 @@ public class ComparisonControllerTest {
                 .setSecondQueryStateToken(MOCK_STATE_TOKEN_2)
                 .build();
 
-        comparisonController.getCompareStateTokens(comparisonRequest);
+        comparisonController.compare(comparisonRequest);
         verify(comparisonService).getCompareStateTokens(eq(MOCK_STATE_TOKEN_1), eq(MOCK_STATE_TOKEN_2));
     }
 
@@ -97,7 +97,7 @@ public class ComparisonControllerTest {
                 .setSecondRestrictions(queryRestrictions)
                 .build();
 
-        comparisonController.getCompareStateTokens(comparisonRequest);
+        comparisonController.compare(comparisonRequest);
         verify(comparisonService).getCompareStateTokens(eq(MOCK_STATE_TOKEN_1), eq(MOCK_STATE_TOKEN_1));
     }
 
@@ -113,7 +113,7 @@ public class ComparisonControllerTest {
         final String sort = "relevance";
         final boolean highlight = true;
 
-        comparisonController.getResults(stateMatchIds, stateDontMatchIds, text, fieldText, start, maxResults, summary, sort, highlight, false);
+        comparisonController.getComparisonResults(stateMatchIds, maxResults, summary, stateDontMatchIds, text, fieldText, start, sort, highlight, false);
         verify(comparisonService).getResults(eq(stateMatchIds), eq(stateDontMatchIds), eq(text), eq(fieldText), eq(start), eq(maxResults), eq(summary), eq(sort), eq(highlight));
     }
 }

@@ -6,24 +6,16 @@ import com.hp.autonomy.frontend.find.core.export.service.ExportFormat;
 import com.hp.autonomy.frontend.find.core.export.service.ExportServiceFactory;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.RequestMapper;
+import com.hp.autonomy.frontend.find.idol.api.PowerpointExportApi;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
-import com.hp.autonomy.frontend.reports.powerpoint.TemplateLoadException;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-
-import static com.hp.autonomy.frontend.find.core.export.ExportController.EXPORT_PATH;
-import static com.hp.autonomy.frontend.find.idol.export.IdolPowerPointExportController.PPTX_PATH;
-
-@Controller
-@RequestMapping(EXPORT_PATH + PPTX_PATH)
-public class IdolPowerPointExportController extends IdolExportController {
+@RestController
+public class IdolPowerPointExportController extends IdolExportController implements PowerpointExportApi {
     public IdolPowerPointExportController(final RequestMapper<IdolQueryRequest> requestMapper,
                                           final ControllerUtils controllerUtils,
                                           final ExportServiceFactory<IdolQueryRequest, AciErrorException> exportServiceFactory,
@@ -38,49 +30,37 @@ public class IdolPowerPointExportController extends IdolExportController {
     }
 
     @Override
-    @RequestMapping(value = TOPIC_MAP_PATH, method = RequestMethod.POST)
-    public ResponseEntity<byte[]> topicMap(@RequestParam(DATA_PARAM) final String rawData) throws IOException, TemplateLoadException, AciErrorException {
-        return super.topicMap(rawData);
+    public ResponseEntity<Resource> exportPptxTopicMap(final String data) {
+        return super.topicMap(data);
     }
 
     @Override
-    @RequestMapping(value = SUNBURST_PATH, method = RequestMethod.POST)
-    public ResponseEntity<byte[]> sunburst(@RequestParam(DATA_PARAM) final String rawData) throws IOException, TemplateLoadException, AciErrorException {
-        return super.sunburst(rawData);
+    public ResponseEntity<Resource> exportPptxSunburst(final String data) {
+        return super.sunburst(data);
     }
 
     @Override
-    @RequestMapping(value = TABLE_PATH, method = RequestMethod.POST)
-    public ResponseEntity<byte[]> table(@RequestParam(DATA_PARAM) final String rawData,
-                                        @RequestParam(TITLE_PARAM) final String title) throws IOException, TemplateLoadException, AciErrorException {
-        return super.table(rawData, title);
+    public ResponseEntity<Resource> exportPptxTable(final String data, final String title) {
+        return super.table(data, title);
     }
 
     @Override
-    @RequestMapping(value = MAP_PATH, method = RequestMethod.POST)
-    public ResponseEntity<byte[]> map(@RequestParam(DATA_PARAM) final String rawData,
-                                      @RequestParam(TITLE_PARAM) final String title) throws IOException, TemplateLoadException, AciErrorException {
-        return super.map(rawData, title);
+    public ResponseEntity<Resource> exportPptxMap(final String data, final String title) {
+        return super.map(data, title);
     }
 
     @Override
-    @RequestMapping(value = LIST_PATH, method = RequestMethod.POST)
-    public ResponseEntity<byte[]> list(@RequestParam(DATA_PARAM) final String rawData,
-                                       @RequestParam(RESULTS_PARAM) final String results,
-                                       @RequestParam(SORT_BY_PARAM) final String sortBy) throws IOException, TemplateLoadException, AciErrorException {
-        return super.list(rawData, results, sortBy);
+    public ResponseEntity<Resource> exportPptxList(final String data, final String results, final String sortBy) {
+        return super.list(data, results, sortBy);
     }
 
     @Override
-    @RequestMapping(value = DATE_GRAPH_PATH, method = RequestMethod.POST)
-    public ResponseEntity<byte[]> dateGraph(@RequestParam(DATA_PARAM) final String rawData) throws IOException, TemplateLoadException, AciErrorException {
-        return super.dateGraph(rawData);
+    public ResponseEntity<Resource> exportPptxDateGraph(final String data) {
+        return super.dateGraph(data);
     }
 
     @Override
-    @RequestMapping(value = REPORT_PATH, method = RequestMethod.POST)
-    public ResponseEntity<byte[]> report(@RequestParam(DATA_PARAM) final String rawData,
-                                         @RequestParam(value = MULTI_PAGE_PARAM, defaultValue = MULTI_PAGE_PARAM_DEFAULT) final boolean multiPage) throws IOException, TemplateLoadException, AciErrorException {
-        return super.report(rawData, multiPage);
+    public ResponseEntity<Resource> exportPptxReport(final String data, final Boolean multiPage) {
+        return super.report(data, multiPage);
     }
 }

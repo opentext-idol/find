@@ -14,21 +14,16 @@
 
 package com.hp.autonomy.frontend.find.core.customization.templates;
 
+import com.hp.autonomy.frontend.find.core.api.TemplatesApi;
 import com.hp.autonomy.frontend.find.core.customization.CustomizationCachingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-@Controller
-public class TemplatesController {
-    public static final String TEMPLATES_PATH = "/customization/result-templates";
-
+@RestController
+public class TemplatesController implements TemplatesApi {
     private final TemplatesService service;
     private final CustomizationCachingStrategy cachingStrategy;
 
@@ -38,9 +33,8 @@ public class TemplatesController {
         this.cachingStrategy = cachingStrategy;
     }
 
-    @RequestMapping(value = TEMPLATES_PATH, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Map<String, String>> getTemplates() {
+    @Override
+    public ResponseEntity<Map<String, String>> getResultTemplates() {
         final Templates templates = service.getTemplates();
         return cachingStrategy.addCacheHeaders(templates.getTemplates(), templates.getLastModified());
     }

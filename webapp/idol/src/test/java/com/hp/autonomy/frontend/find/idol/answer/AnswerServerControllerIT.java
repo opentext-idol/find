@@ -28,10 +28,9 @@ public class AnswerServerControllerIT extends AbstractFindIT {
     @Test
     public void ask() throws Exception {
         final MockHttpServletRequestBuilder requestBuilder = get(
-                AnswerServerController.BASE_PATH +
-                        '/' + AnswerServerController.ASK_PATH)
-                .param(AnswerServerController.TEXT_PARAM, "GPU")
-                .param(AnswerServerController.MAX_RESULTS_PARAM, "5")
+                "/api/public/answer/ask")
+                .param("text", "GPU")
+                .param("maxResults", "5")
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
 

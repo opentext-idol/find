@@ -14,7 +14,6 @@
 
 package com.hp.autonomy.frontend.find.idol.customization.templates;
 
-import com.hp.autonomy.frontend.find.core.customization.templates.TemplatesController;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.junit.Test;
 import org.springframework.http.MediaType;
@@ -25,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class IdolTemplatesControllerIT extends AbstractFindIT {
     @Test
     public void getTemplates() throws Exception {
-        mockMvc.perform(get(TemplatesController.TEMPLATES_PATH))
+        mockMvc.perform(get("/customization/result-templates"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isMap());

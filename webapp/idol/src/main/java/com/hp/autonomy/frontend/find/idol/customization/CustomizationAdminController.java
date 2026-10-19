@@ -16,27 +16,23 @@ package com.hp.autonomy.frontend.find.idol.customization;
 
 import com.hp.autonomy.frontend.configuration.WriteableConfigService;
 import com.hp.autonomy.frontend.configuration.validation.ConfigValidationException;
+import com.hp.autonomy.frontend.find.idol.api.CustomizationAdminApi;
+import com.hp.autonomy.frontend.find.idol.api.model.AssetsResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
+import java.util.Map;
 
 @RestController
 @Slf4j
-@RequestMapping({CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH})
-class CustomizationAdminController extends AbstractCustomizationController {
-    static final String ASSETS_PATH = "/assets";
-    static final String CONFIG_PATH = "/config";
-    private static final String TYPED_ASSETS_PATH = ASSETS_PATH + "/{type}";
-
-    private static final String ASSET_ID_PATH = TYPED_ASSETS_PATH + "/{name:.+}";
-
+class CustomizationAdminController extends AbstractCustomizationController implements CustomizationAdminApi {
     private static final MediaType IMAGE_MEDIA_TYPE = new MediaType("image");
     private final CustomizationService customizationService;
     private final WriteableConfigService<AssetConfig> assetConfigService;
@@ -51,58 +47,43 @@ class CustomizationAdminController extends AbstractCustomizationController {
         this.assetConfigService = assetConfigService;
     }
 
-    @RequestMapping(value = TYPED_ASSETS_PATH, method = RequestMethod.POST)
-    public ResponseEntity<Status> postLogo(
-        @PathVariable("type") final AssetType assetType,
-        @RequestPart("file") final MultipartFile file
-    ) throws CustomizationException {
-        return saveLogo(assetType, file, false);
-    }
-
-    @RequestMapping(value = TYPED_ASSETS_PATH, method = RequestMethod.PUT)
-    public ResponseEntity<Status> putLogo(
-        @PathVariable("type") final AssetType assetType,
-        @RequestPart("file") final MultipartFile file
-    ) throws CustomizationException {
-        return saveLogo(assetType, file, true);
-    }
-
-    @RequestMapping(value = TYPED_ASSETS_PATH, method = RequestMethod.GET)
-    public AssetsResponse logos(
-        @PathVariable("type") final AssetType assetType
-    ) throws CustomizationException {
-        return new AssetsResponse(customizationService.getAssets(assetType));
+    @Override
+    public ResponseEntity<Status> createAsset(final AssetType type, final MultipartFile file) {
+        return saveLogo(type, file, false);
     }
 
     @Override
-    @RequestMapping(value = ASSET_ID_PATH, method = RequestMethod.GET)
-    public ResponseEntity<Resource> logo(
-        @PathVariable("type") final AssetType assetType,
-        @PathVariable("name") final String name
-    ) {
-        return super.logo(assetType, name);
+    public ResponseEntity<Status> replaceAsset(final AssetType type, final MultipartFile file) {
+        return saveLogo(type, file, true);
     }
 
-    @RequestMapping(value = ASSET_ID_PATH, method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteLogo(
-        @PathVariable("type") final AssetType assetType,
-        @PathVariable("name") final String name
-    ) {
-        customizationService.deleteAsset(assetType, name);
+    @Override
+    public ResponseEntity<AssetsResponse> getAssets(final AssetType type) {
+        return ResponseEntity.ok(new AssetsResponse(customizationService.getAssets(type)));
     }
 
-    @RequestMapping(value = CONFIG_PATH, method = RequestMethod.POST)
-    public ResponseEntity<?> updateConfig(
-        @RequestBody final AssetConfig assetConfig
-    ) throws Exception {
+    @Override
+    public ResponseEntity<Resource> getAsset(final AssetType type, final String name) {
+        return super.logo(type, name);
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteAsset(final AssetType type, final String name) {
+        customizationService.deleteAsset(type, name);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> updateCustomizationConfig(final AssetConfig assetConfig) {
         try {
             assetConfigService.updateConfig(assetConfig);
-
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch(final ConfigValidationException cve) {
-            return new ResponseEntity<>(Collections.singletonMap("validation", cve.getValidationErrors()), HttpStatus.NOT_ACCEPTABLE);
+            throw new ConfigValidationRuntimeException(cve);
+        } catch(final Exception e) {
+            throw new IllegalStateException(e.getMessage(), e);
         }
+
+        return ResponseEntity.noContent().build();
     }
 
     @ExceptionHandler(CustomizationException.class)
@@ -110,7 +91,14 @@ class CustomizationAdminController extends AbstractCustomizationController {
         return new ResponseEntity<>(e.getStatus(), e.getStatus().getHttpStatus());
     }
 
-    private ResponseEntity<Status> saveLogo(final AssetType assetType, final MultipartFile file, final boolean overwrite) throws CustomizationException {
+    @ExceptionHandler(ConfigValidationRuntimeException.class)
+    public ResponseEntity<Object> handleConfigValidationException(final ConfigValidationRuntimeException e) {
+        return new ResponseEntity<>(
+            Map.of("validation", e.getValidationException().getValidationErrors()),
+            HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    private ResponseEntity<Status> saveLogo(final AssetType assetType, final MultipartFile file, final boolean overwrite) {
         if(file == null) {
             return new ResponseEntity<>(Status.INVALID_FILE, Status.INVALID_FILE.getHttpStatus());
         }

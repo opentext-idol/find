@@ -15,7 +15,6 @@
 package com.hp.autonomy.frontend.find.idol.search;
 
 import com.hp.autonomy.frontend.find.core.search.AbstractRelatedConceptsServiceIT;
-import com.hp.autonomy.frontend.find.core.search.RelatedConceptsController;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
@@ -53,11 +52,11 @@ public class IdolRelatedConceptsServiceIT extends AbstractRelatedConceptsService
 
         final String stateToken = documentsService.getStateToken(queryRestrictions, Integer.MAX_VALUE, QueryRequest.QueryType.RAW, false);
 
-        final MockHttpServletRequestBuilder request = get(RelatedConceptsController.RELATED_CONCEPTS_PATH)
-                .param(RelatedConceptsController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                .param(RelatedConceptsController.QUERY_TEXT_PARAM, "*")
-                .param(RelatedConceptsController.FIELD_TEXT_PARAM, "")
-                .param(RelatedConceptsController.STATE_MATCH_TOKEN_PARAM, stateToken)
+        final MockHttpServletRequestBuilder request = get("/api/public/search/find-related-concepts")
+                .param("databases", mvcIntegrationTestUtils.getDatabases())
+                .param("queryText", "*")
+                .param("fieldText", "")
+                .param("stateMatchTokens", stateToken)
                 .with(authentication(userAuth()));
 
         mockMvc

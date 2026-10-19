@@ -13,6 +13,7 @@
  */
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
+import com.hp.autonomy.frontend.find.core.api.model.SavedQueriesResponse;
 import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.UserEntity;
@@ -43,7 +44,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController.NEW_RESULTS_PATH;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -112,7 +112,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .setConceptClusterPhrases(conceptClusterPhrases)
                 .build();
 
-        final MockHttpServletRequestBuilder requestBuilder = put(SavedQueryController.PATH + '/' + createdEntity.getId())
+        final MockHttpServletRequestBuilder requestBuilder = put("/api/bi/saved-query/" + createdEntity.getId())
                 .with(authentication(biAuth()))
                 .content(objectMapper.writeValueAsString(updatedQuery))
                 .contentType(MediaType.APPLICATION_JSON);
@@ -132,7 +132,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     public void createAndFetch() throws Exception {
         final byte[] requestBytes = IOUtils.toByteArray(saveQueryRequestResource.getInputStream());
 
-        final MockHttpServletRequestBuilder requestBuilder = post(SavedQueryController.PATH)
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/saved-query")
                 .content(requestBytes)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
@@ -179,7 +179,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     public void deleteById() throws Exception {
         final SavedQuery createdEntity = createAndParseSavedQuery(getBaseSavedQuery());
 
-        final MockHttpServletRequestBuilder requestBuilder = delete(SavedQueryController.PATH + '/' + createdEntity.getId())
+        final MockHttpServletRequestBuilder requestBuilder = delete("/api/bi/saved-query/" + createdEntity.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
 
@@ -196,7 +196,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
 
     @Test
     public void basicUserNotAuthorised() throws Exception {
-        mockMvc.perform(get(SavedQueryController.PATH).with(authentication(userAuth())))
+        mockMvc.perform(get("/api/bi/saved-query").with(authentication(userAuth())))
                 .andExpect(status().is(403));
     }
 
@@ -277,19 +277,19 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
         final SavedQuery savedQuery2 = createAndParseSavedQuery(saveRequest2);
         final long id2 = savedQuery2.getId();
 
-        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + '/' + id1).with(authentication(biAuth())))
+        mockMvc.perform(get("/api/bi/saved-query/new-results/" + id1).with(authentication(biAuth())))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", greaterThan(0)));
 
-        mockMvc.perform(get(SavedQueryController.PATH + NEW_RESULTS_PATH + '/' + id2).with(authentication(biAuth())))
+        mockMvc.perform(get("/api/bi/saved-query/new-results/" + id2).with(authentication(biAuth())))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", is(0))); // likely to work though not foolproof
     }
 
     private ResultActions createSavedQuery(final SavedQuery savedQuery) throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = post(SavedQueryController.PATH)
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/saved-query")
                 .content(objectMapper.writeValueAsString(savedQuery))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
@@ -304,7 +304,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     }
 
     private SavedQuery updateAndParseSavedQuery(final SavedQuery update) throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = put(SavedQueryController.PATH + '/' + update.getId())
+        final MockHttpServletRequestBuilder requestBuilder = put("/api/bi/saved-query/" + update.getId())
                 .content(objectMapper.writeValueAsString(update))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
@@ -315,7 +315,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
     }
 
     private ResultActions listSavedQueries() throws Exception {
-        return mockMvc.perform(get(SavedQueryController.PATH).with(authentication(biAuth())));
+        return mockMvc.perform(get("/api/bi/saved-query").with(authentication(biAuth())));
     }
 
     private Set<SavedQuery> listAndParseSavedQueries() throws Exception {
@@ -324,7 +324,7 @@ public abstract class AbstractSavedQueryIT extends AbstractFindIT {
                 .andReturn();
 
         return objectMapper.readValue(response.getResponse().getContentAsString(), SavedQueriesResponse.class)
-                .savedQueries();
+                .getSavedQueries();
     }
 
     private Set<ConceptClusterPhrase> getBaseConceptClusterPhrases() {

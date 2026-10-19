@@ -19,7 +19,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-enum AssetType {
+public enum AssetType {
     BIG_LOGO("big-logo", "/static/img/Find_Logo_lge.png"),
     SMALL_LOGO("small-logo", "/static/img/Find_Logo_sml.png");
 

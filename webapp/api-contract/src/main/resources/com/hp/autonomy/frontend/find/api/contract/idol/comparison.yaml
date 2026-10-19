@@ -1,0 +1,199 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  compare:
+    post:
+      summary: Get the state tokens describing how two queries differ
+      x-codegen-request-body-name: body
+      operationId: compare
+      tags:
+        - comparison
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComparisonRequest"
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComparisonStateTokens"
+
+  comparisonResults:
+    get:
+      summary: Get the documents for a comparison state token
+      operationId: getComparisonResults
+      tags:
+        - comparison
+      parameters:
+        - name: state_match_ids
+          in: query
+          description: State tokens the documents must appear in
+          required: true
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: max_results
+          in: query
+          description: Maximum number of results to return
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: summary
+          in: query
+          description: IDOL summary type, for example `context` or `concept`
+          required: true
+          schema:
+            type: string
+        - name: state_dont_match_ids
+          in: query
+          description: State tokens the documents must not appear in
+          required: false
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: text
+          in: query
+          description: IDOL query text to restrict the comparison to
+          required: false
+          schema:
+            type: string
+            default: "*"
+        - name: field_text
+          in: query
+          description: IDOL field text restriction
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: start
+          in: query
+          description: Index of the first result to return, 1-based
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: sort
+          in: query
+          description: IDOL sort specification
+          required: false
+          schema:
+            type: string
+        - name: highlight
+          in: query
+          description: Whether to wrap query terms in the result summaries with highlight markup
+          required: false
+          schema:
+            type: boolean
+            default: true
+        - name: promotions
+          in: query
+          description: |
+            Accepted for symmetry with the search endpoints but currently ignored by the API.
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: The documents resulting from the comparison
+          content:
+            application/json:
+              schema:
+                $ref: "search.yaml#/components/schemas/Documents"
+
+components:
+
+  schemas:
+
+    ComparisonRequest:
+      description: Two queries to compare, each as a state token or as query restrictions
+      type: object
+      properties:
+        firstQueryStateToken:
+          description: State token for the first query
+          type: string
+        secondQueryStateToken:
+          description: State token for the second query
+          type: string
+        firstRestrictions:
+          $ref: "#/components/schemas/QueryRestrictions"
+        secondRestrictions:
+          $ref: "#/components/schemas/QueryRestrictions"
+
+    QueryRestrictions:
+      description: Restrictions defining a query for documents
+      type: object
+      properties:
+        queryText:
+          type: string
+        fieldText:
+          description: IDOL field text expression restricting the results
+          type: string
+        databases:
+          type: array
+          items:
+            type: string
+        minDate:
+          type: string
+          format: date-time
+        maxDate:
+          type: string
+          format: date-time
+        minScore:
+          type: integer
+          format: int32
+        anyLanguage:
+          type: boolean
+        languageType:
+          type: string
+        stateMatchIds:
+          description: State tokens the results must appear in
+          type: array
+          items:
+            type: string
+        stateDontMatchIds:
+          description: State tokens the results must not appear in
+          type: array
+          items:
+            type: string
+
+    ComparisonStateTokens:
+      description: Query comparison result
+      type: object
+      properties:
+        firstQueryStateToken:
+          description: State token for the first query
+          type: string
+        secondQueryStateToken:
+          description: State token for the second query
+          type: string
+        documentsOnlyInFirstStateToken:
+          description: State token for the documents matched only by the first query
+          type: string
+        documentsOnlyInSecondStateToken:
+          description: State token for the documents matched only by the second query
+          type: string

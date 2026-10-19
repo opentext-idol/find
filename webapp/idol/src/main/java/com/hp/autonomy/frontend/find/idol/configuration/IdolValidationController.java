@@ -14,9 +14,23 @@
 
 package com.hp.autonomy.frontend.find.idol.configuration;
 
+import com.hp.autonomy.frontend.configuration.validation.ValidationResults;
 import com.hp.autonomy.frontend.find.core.configuration.ValidationController;
-import org.springframework.stereotype.Controller;
+import com.hp.autonomy.frontend.find.idol.api.ConfigValidationApi;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-public class IdolValidationController extends ValidationController<IdolFindConfig> {
+@RestController
+public class IdolValidationController extends ValidationController<IdolFindConfig> implements ConfigValidationApi {
+
+    @Override
+    public ResponseEntity<ValidationResults> validateConfig(final IdolFindConfig config) {
+        return ResponseEntity.ok(super.validConfig(config));
+    }
+
+    @Override
+    public ResponseEntity<ValidationResults> validateConfigPut(final IdolFindConfig config) {
+        return validateConfig(config);
+    }
+
 }

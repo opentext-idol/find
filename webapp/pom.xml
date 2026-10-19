@@ -18,6 +18,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>api-contract</module>
         <module>frontend</module>
         <module>core</module>
         <module>idol</module>
@@ -27,6 +28,7 @@
     <properties>
         <application.buildNumber>HEAD</application.buildNumber>
         <haven.search.components.version>1.12.0-SNAPSHOT</haven.search.components.version>
+        <openapiGeneratorVersion>7.23.0</openapiGeneratorVersion>
         <maven.javadoc.skip>true</maven.javadoc.skip>
     </properties>
 
@@ -37,6 +39,63 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
                     <version>3.4.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>${openapiGeneratorVersion}</version>
+                    <executions>
+                        <execution>
+                            <id>generate-server-stub-code</id>
+                            <phase>none</phase>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                            <configuration>
+                                <inputSpec>${project.build.directory}/api-contract/com/hp/autonomy/frontend/find/api/contract/find-api.yaml</inputSpec>
+                                <generatorName>spring</generatorName>
+                                <output>${project.build.directory}/swagger-codegen</output>
+                                <addCompileSourceRoot>false</addCompileSourceRoot>
+                                <generateApis>true</generateApis>
+                                <generateSupportingFiles>false</generateSupportingFiles>
+                                <generateApiTests>false</generateApiTests>
+                                <generateApiDocumentation>false</generateApiDocumentation>
+                                <generateModelTests>false</generateModelTests>
+                                <generateModelDocumentation>false</generateModelDocumentation>
+                                <!-- synthesised examples would reference ApiUtil, a supporting file -->
+                                <skipOperationExample>true</skipOperationExample>
+                                <typeMappings>
+                                    <typeMapping>OffsetDateTime=java.time.ZonedDateTime</typeMapping>
+                                </typeMappings>
+                                <!-- documentation: https://openapi-generator.tech/docs/generators/spring -->
+                                <configOptions>
+                                    <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                    <!-- without this, operations group by first path segment - all "api" -->
+                                    <useTags>true</useTags>
+                                    <interfaceOnly>true</interfaceOnly>
+                                    <skipDefaultInterface>true</skipDefaultInterface>
+                                    <!-- the spec path is the whole URL -->
+                                    <requestMappingMode>none</requestMappingMode>
+                                    <documentationProvider>none</documentationProvider>
+                                    <annotationLibrary>none</annotationLibrary>
+                                    <dateLibrary>java8</dateLibrary>
+                                    <!-- generates invalid code with nullable collections -->
+                                    <openApiNullable>false</openApiNullable>
+                                    <useBeanValidation>true</useBeanValidation>
+                                    <useJakartaEe>true</useJakartaEe>
+                                    <springBootVersion>${springBootVersion}</springBootVersion>
+                                    <useSealed>true</useSealed>
+                                    <useSpringBoot4>true</useSpringBoot4>
+                                    <useJackson3>true</useJackson3>
+                                </configOptions>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.sonatype.central</groupId>
@@ -69,6 +128,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.hp.autonomy.frontend.find</groupId>
+                <artifactId>api-contract</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>

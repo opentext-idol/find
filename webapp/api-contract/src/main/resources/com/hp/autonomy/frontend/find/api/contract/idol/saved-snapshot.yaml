@@ -1,0 +1,183 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  savedSnapshots:
+    get:
+      summary: List the current user's saved snapshots
+      operationId: getSavedSnapshots
+      tags:
+        - savedSnapshot
+      responses:
+        '200':
+          description: The user's saved snapshots
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedSnapshotsResponse"
+    post:
+      summary: Snapshot the results of a query
+      x-codegen-request-body-name: query
+      operationId: createSavedSnapshot
+      tags:
+        - savedSnapshot
+      requestBody:
+        description: The query to snapshot
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "saved-query.yaml#/components/schemas/SavedQuery"
+      responses:
+        '200':
+          description: The stored snapshot, with its assigned ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedSnapshot"
+
+  sharedSavedSnapshots:
+    get:
+      summary: List the saved snapshots shared with the current user
+      operationId: getSharedSavedSnapshots
+      tags:
+        - savedSnapshot
+      responses:
+        '200':
+          description: Saved snapshots shared with the user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedSnapshotsResponse"
+
+  savedSnapshot:
+    get:
+      summary: Get a saved snapshot used by a dashboard
+      description: Fails unless the ID appears in the dashboards configuration file
+      operationId: getSavedSnapshot
+      tags:
+        - savedSnapshot
+      parameters:
+        - $ref: "#/components/parameters/SavedSearchId"
+      responses:
+        '200':
+          description: The saved snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedSnapshot"
+    put:
+      summary: Rename one of the current user's saved snapshots
+      description: |
+        Only the title is updated; every other field of the body is ignored.
+      x-codegen-request-body-name: snapshot
+      operationId: updateSavedSnapshot
+      tags:
+        - savedSnapshot
+      parameters:
+        - $ref: "#/components/parameters/SavedSearchId"
+      requestBody:
+        description: The snapshot whose title to change
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SavedSnapshot"
+      responses:
+        '200':
+          description: The stored snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedSnapshot"
+    delete:
+      summary: Delete one of the current user's saved snapshots
+      operationId: deleteSavedSnapshot
+      tags:
+        - savedSnapshot
+      parameters:
+        - $ref: "#/components/parameters/SavedSearchId"
+      responses:
+        '200':
+          description: Snapshot deleted
+
+  sharedSavedSnapshot:
+    put:
+      summary: Rename a saved snapshot that was shared with the current user
+      description: |
+        Only the title is updated; every other field of the body is ignored.
+      x-codegen-request-body-name: snapshot
+      operationId: updateSharedSavedSnapshot
+      tags:
+        - savedSnapshot
+      parameters:
+        - $ref: "#/components/parameters/SavedSearchId"
+      requestBody:
+        description: The snapshot whose title to change
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SavedSnapshot"
+      responses:
+        '200':
+          description: The stored snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SavedSnapshot"
+
+components:
+
+  parameters:
+
+    SavedSearchId:
+      name: id
+      in: path
+      description: ID of the saved search
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+  schemas:
+
+    SavedSnapshotsResponse:
+      description: A set of saved snapshots
+      type: object
+      required:
+        - savedSnapshots
+      properties:
+        savedSnapshots:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/SavedSnapshot"
+
+    SavedSnapshot:
+      description: A stored snapshot of a query's results
+      allOf:
+        - $ref: "../common/saved-search-types.yaml#/components/schemas/SavedSearch"
+        - type: object
+          properties:
+            resultCount:
+              description: Number of documents captured when the snapshot was taken
+              type: integer
+              format: int64
+            stateTokens:
+              type: array
+              items:
+                $ref: "../common/saved-search-types.yaml#/components/schemas/TypedStateToken"
+

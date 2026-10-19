@@ -72,7 +72,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .setSecondQueryStateToken(sixDocStateToken)
                 .build();
 
-        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH)
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/comparison/compare")
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(userAuth()));
@@ -88,7 +88,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .setSecondQueryStateToken(sixDocStateToken)
                 .build();
 
-        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH)
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/comparison/compare")
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
@@ -107,7 +107,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .setSecondQueryStateToken(sixDocStateToken)
                 .build();
 
-        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH)
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/comparison/compare")
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
@@ -126,7 +126,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .setSecondRestrictions(queryRestrictions)
                 .build();
 
-        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH)
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/comparison/compare")
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
@@ -145,7 +145,7 @@ public class ComparisonServiceIT extends AbstractFindIT {
                 .setSecondRestrictions(queryRestrictions)
                 .build();
 
-        final MockHttpServletRequestBuilder requestBuilder = post(ComparisonController.BASE_PATH + '/' + ComparisonController.COMPARE_PATH)
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/comparison/compare")
                 .content(mapper.writeValueAsString(comparisonRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
@@ -162,14 +162,14 @@ public class ComparisonServiceIT extends AbstractFindIT {
         final String[] stateMatchIds = {sixDocStateToken};
         final String[] stateDontMatchIds = {twoDocStateToken};
 
-        final MockHttpServletRequestBuilder requestBuilder = get(ComparisonController.BASE_PATH + '/' + ComparisonController.RESULTS_PATH)
-                .param(ComparisonController.STATE_MATCH_PARAM, stateMatchIds)
-                .param(ComparisonController.STATE_DONT_MATCH_PARAM, stateDontMatchIds)
-                .param(ComparisonController.RESULTS_START_PARAM, "1")
-                .param(ComparisonController.MAX_RESULTS_PARAM, "6")
-                .param(ComparisonController.SUMMARY_PARAM, "context")
-                .param(ComparisonController.SORT_PARAM, "Relevance")
-                .param(ComparisonController.HIGHLIGHT_PARAM, "false")
+        final MockHttpServletRequestBuilder requestBuilder = get("/api/bi/comparison/results")
+                .param("state_match_ids", stateMatchIds)
+                .param("state_dont_match_ids", stateDontMatchIds)
+                .param("start", "1")
+                .param("max_results", "6")
+                .param("summary", "context")
+                .param("sort", "Relevance")
+                .param("highlight", "false")
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
 

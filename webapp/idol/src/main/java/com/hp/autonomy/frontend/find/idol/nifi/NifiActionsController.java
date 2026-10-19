@@ -17,12 +17,15 @@ package com.hp.autonomy.frontend.find.idol.nifi;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
+import com.hp.autonomy.frontend.find.idol.api.NifiApi;
+import com.hp.autonomy.frontend.find.idol.api.model.NifiActionsResponse;
 import com.hp.autonomy.frontend.find.idol.beanconfiguration.UserConfiguration;
 import com.hp.autonomy.frontend.find.idol.savedsearches.snapshot.SavedSnapshotService;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.List;
@@ -32,15 +35,7 @@ import java.util.List;
  * ({@link com.hp.autonomy.frontend.find.core.web.MvcConstants.NIFI_ENABLED}).
  */
 @RestController
-@RequestMapping(NifiActionsController.BASE_PATH)
-class NifiActionsController {
-    static final String BASE_PATH = "/api/public/nifi/actions";
-    static final String EXECUTE_PATH = "execute";
-    private static final String ACTION_PARAM = "action";
-    private static final String SAVED_SNAPSHOT_ID_PARAM = "savedSnapshotId";
-    private static final String SEARCH_NAME_PARAM = "searchName";
-    private static final String LABEL_PARAM = "label";
-
+class NifiActionsController implements NifiApi {
     private final NifiService nifiService;
     private final SavedSearchService<SavedSnapshot, SavedSnapshot.Builder> savedSnapshotService;
     private final HavenSearchAciParameterHandler aciParameterHandler;
@@ -67,12 +62,12 @@ class NifiActionsController {
     /**
      * Retrieve actions.
      */
-    @RequestMapping(method = RequestMethod.GET)
-    public NifiActionsResponse getActions() {
+    @Override
+    public ResponseEntity<NifiActionsResponse> getNifiActions() {
         final String username = authenticationInformationRetriever.getPrincipal().getName();
         final List<String> roles =
             userConfiguration.getCommunityRoles(authenticationInformationRetriever);
-        return new NifiActionsResponse(nifiService.getActions(username, roles));
+        return ResponseEntity.ok(new NifiActionsResponse(nifiService.getActions(username, roles)));
     }
 
     /**
@@ -86,13 +81,13 @@ class NifiActionsController {
      *                   metadata
      * @param label Optional label to save with the execution as metadata
      */
-    @RequestMapping(value = EXECUTE_PATH, method = RequestMethod.POST)
-    public void executeAction(
-        @RequestParam(value = ACTION_PARAM) final String action,
-        @RequestParam(value = SAVED_SNAPSHOT_ID_PARAM, required = false) final Long snapshotId,
-        @RequestBody(required = false) final SavedQuery query,
-        @RequestParam(value = SEARCH_NAME_PARAM, required = false) final String searchName,
-        @RequestParam(value = LABEL_PARAM, required = false) final String label
+    @Override
+    public ResponseEntity<Void> executeNifiAction(
+        final String action,
+        final Long snapshotId,
+        final String searchName,
+        final String label,
+        final SavedQuery query
     ) {
         final String stateToken = SavedSnapshotService
             .toSnapshotToken(savedSnapshotService, snapshotId, query)
@@ -103,6 +98,7 @@ class NifiActionsController {
         nifiService.executeAction(
             action, stateToken, aciParameterHandler.getSecurityInfo(), username, roles,
             searchName, label);
+        return ResponseEntity.ok().build();
     }
 
 }

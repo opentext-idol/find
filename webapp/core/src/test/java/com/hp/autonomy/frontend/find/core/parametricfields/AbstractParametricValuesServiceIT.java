@@ -14,7 +14,6 @@
 
 package com.hp.autonomy.frontend.find.core.parametricfields;
 
-import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import com.hp.autonomy.searchcomponents.core.parametricvalues.ParametricValuesService;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
@@ -47,14 +46,14 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
 
     @Test
     public void getNumericParametricValuesInBuckets() throws Exception {
-        final String[] fields = mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_FIELDS_PATH, FieldTypeParam.Numeric.name());
+        final String[] fields = mvcIntegrationTestUtils.getFields(mockMvc, "/parametric", FieldTypeParam.Numeric.name());
 
-        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_PATH + ParametricValuesController.NUMERIC_PATH + ParametricValuesController.BUCKET_PARAMETRIC_PATH + '/' + fields[0])
-                .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
-                .param(ParametricValuesController.TARGET_NUMBER_OF_BUCKETS_PARAM, "35")
-                .param(ParametricValuesController.BUCKET_MIN_PARAM, "0")
-                .param(ParametricValuesController.BUCKET_MAX_PARAM, String.valueOf(Integer.MAX_VALUE))
+        final MockHttpServletRequestBuilder requestBuilder = get("/api/public/parametric/numeric/buckets/" + fields[0])
+                .param("databases", mvcIntegrationTestUtils.getDatabases())
+                .param("queryText", "*")
+                .param("targetNumberOfBuckets", "35")
+                .param("bucketMin", "0")
+                .param("bucketMax", String.valueOf(Integer.MAX_VALUE))
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)
@@ -66,14 +65,14 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
     @Test
     public void getDateParametricValuesInBuckets() throws Exception {
         // Note: this requires content 11.4 GA or above due to changes in parametric range support.
-        final String url = ParametricValuesController.PARAMETRIC_PATH + ParametricValuesController.DATE_PATH + ParametricValuesController.BUCKET_PARAMETRIC_PATH + '/' + ParametricValuesService.AUTN_DATE_FIELD;
+        final String url = "/api/public/parametric/date/buckets/" + ParametricValuesService.AUTN_DATE_FIELD;
 
         final MockHttpServletRequestBuilder requestBuilder = get(url)
-                .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
-                .param(ParametricValuesController.TARGET_NUMBER_OF_BUCKETS_PARAM, "35")
-                .param(ParametricValuesController.BUCKET_MIN_PARAM, "1970-01-01T00:00:00Z")
-                .param(ParametricValuesController.BUCKET_MAX_PARAM, "2038-01-01T00:00:00Z")
+                .param("databases", mvcIntegrationTestUtils.getDatabases())
+                .param("queryText", "*")
+                .param("targetNumberOfBuckets", "35")
+                .param("bucketMin", "1970-01-01T00:00:00Z")
+                .param("bucketMax", "2038-01-01T00:00:00Z")
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)
@@ -101,11 +100,11 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
             throw new IllegalStateException("No parametric fields have values");
         }
 
-        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_PATH + ParametricValuesController.DEPENDENT_VALUES_PATH)
-                .param(ParametricValuesController.FIELD_NAMES_PARAM, fields.toArray(new String[]{}))
-                .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
-                .param(ParametricValuesController.FIELD_TEXT_PARAM, "")
+        final MockHttpServletRequestBuilder requestBuilder = get("/api/public/parametric/dependent-values")
+                .param("fieldNames", fields.toArray(new String[]{}))
+                .param("databases", mvcIntegrationTestUtils.getDatabases())
+                .param("queryText", "*")
+                .param("fieldText", "")
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)
@@ -116,13 +115,13 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
 
     @Test
     public void getNumericValueDetails() throws Exception {
-        final String[] fields = mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_FIELDS_PATH, FieldTypeParam.Numeric.name());
+        final String[] fields = mvcIntegrationTestUtils.getFields(mockMvc, "/parametric", FieldTypeParam.Numeric.name());
 
-        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_PATH + ParametricValuesController.NUMERIC_PATH + ParametricValuesController.VALUE_DETAILS_PATH)
-                .param(ParametricValuesController.FIELD_NAME_PARAM, fields[0])
-                .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
-                .param(ParametricValuesController.FIELD_TEXT_PARAM, "")
+        final MockHttpServletRequestBuilder requestBuilder = get("/api/public/parametric/numeric/value-details")
+                .param("fieldName", fields[0])
+                .param("databases", mvcIntegrationTestUtils.getDatabases())
+                .param("queryText", "*")
+                .param("fieldText", "")
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)
@@ -133,11 +132,11 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
 
     @Test
     public void getDateValueDetails() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(ParametricValuesController.PARAMETRIC_PATH + ParametricValuesController.DATE_PATH + ParametricValuesController.VALUE_DETAILS_PATH)
-                .param(ParametricValuesController.FIELD_NAME_PARAM, ParametricValuesService.AUTN_DATE_FIELD)
-                .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
-                .param(ParametricValuesController.FIELD_TEXT_PARAM, "")
+        final MockHttpServletRequestBuilder requestBuilder = get("/api/public/parametric/date/value-details")
+                .param("fieldName", ParametricValuesService.AUTN_DATE_FIELD)
+                .param("databases", mvcIntegrationTestUtils.getDatabases())
+                .param("queryText", "*")
+                .param("fieldText", "")
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)
@@ -147,11 +146,11 @@ public abstract class AbstractParametricValuesServiceIT extends AbstractFindIT {
     }
 
     private RequestBuilder parametricValuesRequest() throws Exception {
-        return get(ParametricValuesController.PARAMETRIC_PATH + ParametricValuesController.VALUES_PATH)
-                .param(ParametricValuesController.FIELD_NAMES_PARAM, mvcIntegrationTestUtils.getFields(mockMvc, FieldsController.GET_PARAMETRIC_FIELDS_PATH, FieldTypeParam.Parametric.name()))
-                .param(ParametricValuesController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                .param(ParametricValuesController.QUERY_TEXT_PARAM, "*")
-                .param(ParametricValuesController.FIELD_TEXT_PARAM, "")
+        return get("/api/public/parametric/values")
+                .param("fieldNames", mvcIntegrationTestUtils.getFields(mockMvc, "/parametric", FieldTypeParam.Parametric.name()))
+                .param("databases", mvcIntegrationTestUtils.getDatabases())
+                .param("queryText", "*")
+                .param("fieldText", "")
                 .with(authentication(userAuth()));
     }
 }

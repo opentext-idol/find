@@ -20,6 +20,7 @@ import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.view.AbstractViewControllerTest;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
+import com.hp.autonomy.searchcomponents.core.view.ViewingPart;
 import com.hp.autonomy.searchcomponents.idol.view.*;
 import com.hp.autonomy.user.UserService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
@@ -32,8 +33,11 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import static org.junit.Assert.assertNotNull;
+import java.io.OutputStream;
+
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -62,15 +66,32 @@ public class IdolViewControllerTest extends AbstractViewControllerTest<IdolViewC
         when(viewRequestBuilder.urlPrefix(any())).thenReturn(viewRequestBuilder);
         when(viewRequestBuilder.subDocRef(any())).thenReturn(viewRequestBuilder);
 
-        viewController = new IdolViewController(idolViewServerService, viewRequestBuilderFactory, controllerUtils, userService, authenticationInformationRetriever, configService);
-        viewServerService = idolViewServerService;
         response = new MockHttpServletResponse();
+        viewController = new IdolViewController(idolViewServerService, viewRequestBuilderFactory, controllerUtils, userService, authenticationInformationRetriever, configService, response);
+        viewServerService = idolViewServerService;
         super.setUp();
     }
 
     @Override
     protected String getSampleDatabase() {
         return "SomeDatabase";
+    }
+
+    @Test
+    public void testViewDocument() throws Exception {
+        assertNull(viewController.viewDocument(getSampleDatabase(), ViewingPart.DOCUMENT,
+            "SomeReference", null, null, null));
+
+        verify(idolViewServerService).viewDocument(any(), any(OutputStream.class));
+        assertEquals("text/html", response.getContentType());
+    }
+
+    @Test
+    public void testViewStaticContentPromotion() throws Exception {
+        assertNull(viewController.viewStaticContentPromotion("SomeReference"));
+
+        verify(idolViewServerService).viewStaticContentPromotion(any(), any(OutputStream.class));
+        assertEquals("text/html", response.getContentType());
     }
 
     @Test

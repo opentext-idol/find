@@ -1,0 +1,223 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+
+components:
+
+  schemas:
+
+    SavedSearch:
+      description: Fields common to every kind of saved search
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        canEdit:
+          description: Whether the current user may modify this search
+          type: boolean
+        dateCreated:
+          type: string
+          format: date-time
+        dateModified:
+          type: string
+          format: date-time
+        minDate:
+          description: Earliest document date the search is restricted to
+          type: string
+          format: date-time
+        maxDate:
+          description: Latest document date the search is restricted to
+          type: string
+          format: date-time
+        minScore:
+          type: integer
+          format: int32
+        documentSelectionIsWhitelist:
+          description: |
+            When true, `documentSelection` lists the only documents included; when false, it
+            lists documents excluded from the results.
+          type: boolean
+        user:
+          $ref: "#/components/schemas/UserEntity"
+        dateRange:
+          $ref: "#/components/schemas/DateRange"
+        indexes:
+          type: array
+          items:
+            $ref: "#/components/schemas/EmbeddableIndex"
+        conceptClusterPhrases:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConceptClusterPhrase"
+        parametricValues:
+          type: array
+          items:
+            $ref: "#/components/schemas/FieldAndValue"
+        numericRangeRestrictions:
+          type: array
+          items:
+            $ref: "#/components/schemas/NumericRangeRestriction"
+        dateRangeRestrictions:
+          type: array
+          items:
+            $ref: "#/components/schemas/DateRangeRestriction"
+        geographyFilters:
+          type: array
+          items:
+            $ref: "#/components/schemas/GeographyFilter"
+        documentSelection:
+          type: array
+          items:
+            $ref: "#/components/schemas/DocumentSelection"
+
+    UserEntity:
+      description: A user who owns or is shared a saved search
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+        username:
+          type: string
+
+    DateRange:
+      description: Named relative date range the search is restricted to
+      type: string
+      enum:
+        - CUSTOM
+        - YEAR
+        - MONTH
+        - WEEK
+        - NEW
+
+    EmbeddableIndex:
+      description: One database to search
+      type: object
+      properties:
+        name:
+          type: string
+        domain:
+          description: Legacy property, no longer used
+          type: string
+
+    ConceptClusterPhrase:
+      description: One concept of the search
+      type: object
+      properties:
+        phrase:
+          type: string
+        primary:
+          description: Whether this is the leading phrase of its cluster
+          type: boolean
+        clusterId:
+          type: integer
+          format: int32
+
+    FieldAndValue:
+      description: A parametric field restricted to a value
+      type: object
+      properties:
+        field:
+          type: string
+        displayName:
+          type: string
+        value:
+          type: string
+        displayValue:
+          type: string
+
+    NumericRangeRestriction:
+      description: A numeric field restricted to a range
+      type: object
+      properties:
+        field:
+          type: string
+        displayName:
+          type: string
+        min:
+          type: number
+          format: double
+        max:
+          type: number
+          format: double
+
+    DateRangeRestriction:
+      description: A date field restricted to a range
+      type: object
+      properties:
+        field:
+          type: string
+        displayName:
+          type: string
+        min:
+          type: string
+          format: date-time
+        max:
+          type: string
+          format: date-time
+
+    GeographyFilter:
+      description: A geographic restriction on a field
+      type: object
+      properties:
+        field:
+          type: string
+        json:
+          description: The shape definition, as a JSON string
+          type: string
+
+    DocumentSelection:
+      description: One document individually included in or excluded from the results
+      type: object
+      properties:
+        reference:
+          type: string
+
+    TypedStateToken:
+      description: An IDOL state token together with what it holds
+      type: object
+      properties:
+        stateToken:
+          type: string
+        type:
+          $ref: "#/components/schemas/StateTokenType"
+
+    StateTokenType:
+      description: What the state token holds
+      type: string
+      enum:
+        - PROMOTIONS
+        - QUERY
+
+    SharedToUserPK:
+      description: Composite key of a user share
+      type: object
+      properties:
+        searchId:
+          type: integer
+          format: int64
+        userId:
+          type: integer
+          format: int64
+
+    SharedToEveryonePK:
+      description: Composite key of an everyone-share
+      type: object
+      properties:
+        searchId:
+          type: integer
+          format: int64

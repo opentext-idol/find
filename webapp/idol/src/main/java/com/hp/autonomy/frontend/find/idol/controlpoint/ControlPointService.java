@@ -100,19 +100,19 @@ public class ControlPointService {
      *
      * @param userSecurityInfo Used to determine which policies are visible
      */
-    public ControlPointPolicies getPolicies(final String userSecurityInfo)
+    public ControlPointApiPolicies getPolicies(final String userSecurityInfo)
         throws ControlPointApiException
     {
         return getApiClient().get("policies/foridolfind", Arrays.asList(
             new BasicNameValuePair("api-version", "1.0"),
             new BasicNameValuePair("securityInfo", userSecurityInfo)
-        ), ControlPointPolicies.class);
+        ), ControlPointApiPolicies.class);
     }
 
     /**
      * Apply a policy to a set of documents.
      *
-     * @param policy {@link ControlPointPolicy#id}
+     * @param policy {@link ControlPointApiPolicy#id}
      * @param documentsStateToken Defines the document set
      * @param documentsSecurityInfo Used to access the documents, to ensure they're all visible
      */

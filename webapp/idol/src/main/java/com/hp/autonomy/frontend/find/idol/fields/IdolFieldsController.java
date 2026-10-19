@@ -19,6 +19,7 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import com.hp.autonomy.frontend.find.core.fields.FieldComparatorFactory;
 import com.hp.autonomy.frontend.find.core.fields.FieldsController;
+import com.hp.autonomy.frontend.find.idol.api.FieldsApi;
 import com.hp.autonomy.searchcomponents.core.fields.TagNameFactory;
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsRequest;
 import com.hp.autonomy.searchcomponents.idol.fields.IdolFieldsRequestBuilder;
@@ -29,19 +30,15 @@ import com.hp.autonomy.searchcomponents.idol.parametricvalues.IdolParametricValu
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
 import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collection;
+import java.util.List;
 
-@Controller
-class IdolFieldsController extends FieldsController<IdolFieldsRequest, AciErrorException, IdolQueryRestrictions, IdolParametricRequest> {
+@RestController
+class IdolFieldsController extends FieldsController<IdolFieldsRequest, AciErrorException, IdolQueryRestrictions, IdolParametricRequest> implements FieldsApi {
     private final ObjectFactory<IdolFieldsRequestBuilder> fieldsRequestBuilderFactory;
     private final ObjectFactory<IdolQueryRestrictionsBuilder> queryRestrictionsBuilderFactory;
 
@@ -62,15 +59,12 @@ class IdolFieldsController extends FieldsController<IdolFieldsRequest, AciErrorE
         this.queryRestrictionsBuilderFactory = queryRestrictionsBuilderFactory;
     }
 
-    @RequestMapping(value = GET_PARAMETRIC_FIELDS_PATH, method = RequestMethod.GET)
-    @ResponseBody
-    public ParametricFieldsResponse getParametricFields(
-        @RequestParam(FIELD_TYPES_PARAM) final Collection<@NotNull FieldTypeParam> fieldTypes)
-        throws AciErrorException
-    {
-        return new ParametricFieldsResponse(getParametricFields(fieldsRequestBuilderFactory.getObject()
-                                       .fieldTypes(fieldTypes)
-                                       .build()));
+    @Override
+    public ResponseEntity<ParametricFieldsResponse> getParametricFields(final List<FieldTypeParam> fieldTypes) {
+        return ResponseEntity.ok(new ParametricFieldsResponse(getParametricFields(
+            fieldsRequestBuilderFactory.getObject()
+                .fieldTypes(fieldTypes)
+                .build())));
     }
 
     @Override

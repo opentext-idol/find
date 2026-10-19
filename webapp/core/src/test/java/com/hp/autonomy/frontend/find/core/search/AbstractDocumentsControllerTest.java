@@ -41,19 +41,19 @@ public abstract class AbstractDocumentsControllerTest<RQ extends QueryRequest<Q>
 
     @Test
     public void query() throws E {
-        documentsController.query("Some query text", 1, 30, "context", Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.MODIFIED.name());
+        documentsController.query("Some query text", 1, 30, "context", Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.MODIFIED);
         verify(documentsService).queryTextIndex(any());
     }
 
     @Test
     public void queryForPromotions() throws E {
-        documentsController.query("Some query text", 1, 30, "context", Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.PROMOTIONS.name());
+        documentsController.query("Some query text", 1, 30, "context", Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.PROMOTIONS);
         verify(documentsService).queryTextIndex(any());
     }
 
     @Test
     public void queryPaginationTest() throws E {
-        documentsController.query("Some query text", 30, 60, "context", Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.MODIFIED.name());
+        documentsController.query("Some query text", 30, 60, "context", Collections.emptyList(), null, null, null, null, true, 0, false, false, QueryRequest.QueryType.MODIFIED);
         verify(documentsService).queryTextIndex(any());
     }
 
@@ -68,7 +68,7 @@ public abstract class AbstractDocumentsControllerTest<RQ extends QueryRequest<Q>
     public void getDocumentContent() throws E {
         when(documentsService.getDocumentContent(any())).thenReturn(Collections.singletonList(sampleResult()));
         final String reference = "SomeReference";
-        assertNotNull(documentsController.getDocumentContent(reference, null));
+        assertNotNull(documentsController.fetchDocumentContent(reference, null));
     }
 
     protected <SR extends SearchRequest<Q>, B extends SearchRequestBuilder<SR, Q, B>> void mockSearchRequestBuilder(final B builder) {

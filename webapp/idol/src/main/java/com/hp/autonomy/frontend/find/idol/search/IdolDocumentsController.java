@@ -20,6 +20,7 @@ import com.hp.autonomy.frontend.configuration.ConfigResponse;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.search.DocumentsController;
+import com.hp.autonomy.frontend.find.idol.api.SearchApi;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.search.GetContentRequestBuilder;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
@@ -31,24 +32,18 @@ import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationR
 import com.opentext.idol.types.responses.Profile;
 import com.opentext.idol.types.responses.Profiles;
 import com.opentext.idol.types.responses.Term;
-import jakarta.validation.constraints.NotNull;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Controller
-@RequestMapping(DocumentsController.SEARCH_PATH)
-class IdolDocumentsController extends DocumentsController<IdolQueryRequest, IdolSuggestRequest, IdolGetContentRequest, String, IdolQueryRestrictions, IdolGetContentRequestIndex, IdolSearchResult, AciErrorException> {
+@RestController
+class IdolDocumentsController extends DocumentsController<IdolQueryRequest, IdolSuggestRequest, IdolGetContentRequest, String, IdolQueryRestrictions, IdolGetContentRequestIndex, IdolSearchResult, AciErrorException> implements SearchApi {
 
     private final ConfigService<IdolFindConfig> configService;
     private final Integer documentSummaryMaxLength;
@@ -78,20 +73,19 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
-    @RequestMapping(value = "recommend-documents", method = RequestMethod.GET)
-    @ResponseBody
-    public Documents<IdolSearchResult> recommendDocuments(
-            @RequestParam(value = "maxResultsPerProfile", defaultValue = "2") final int maxResultsPerProfile,
-            @RequestParam(value = "maxTerms", defaultValue = "30") final int maxTerms,
-            @RequestParam(value = "maxProfiles", defaultValue = "3") final int maxProfiles,
-            @RequestParam(SUMMARY_PARAM) final String summary,
-            @RequestParam(value = INDEXES_PARAM, required = false) final List<@NotNull String> databases,
-            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-            @RequestParam(value = MIN_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime minDate,
-            @RequestParam(value = MAX_DATE_PARAM, required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final ZonedDateTime maxDate,
-            @RequestParam(value = HIGHLIGHT_PARAM, defaultValue = "true") final boolean highlight,
-            @RequestParam(value = MIN_SCORE_PARAM, defaultValue = "0") final int minScore
-    ) throws AciErrorException {
+    @Override
+    public ResponseEntity<Documents<IdolSearchResult>> recommendDocuments(
+            final String summary,
+            final Integer maxResultsPerProfile,
+            final Integer maxTerms,
+            final Integer maxProfiles,
+            final List<String> databases,
+            final String fieldText,
+            final ZonedDateTime minDate,
+            final ZonedDateTime maxDate,
+            final Boolean highlight,
+            final Integer minScore
+    ) {
         // Use top M terms, from N profiles, taking top X results.
 
         final Profiles profiles = userService.profileRead(authenticationInformationRetriever.getPrincipal().getName());
@@ -149,7 +143,55 @@ class IdolDocumentsController extends DocumentsController<IdolQueryRequest, Idol
             }
         }
 
-        return new Documents<>(results, results.size(), null, null, null, null);
+        return ResponseEntity.ok(new Documents<>(results, results.size(), null, null, null, null));
+    }
+
+    @Override
+    public ResponseEntity<Documents<IdolSearchResult>> queryTextIndex(
+            final String text,
+            final Integer maxResults,
+            final String summary,
+            final Integer start,
+            final List<String> indexes,
+            final String fieldText,
+            final ZonedDateTime minDate,
+            final ZonedDateTime maxDate,
+            final Boolean highlight,
+            final Integer minScore,
+            final String sort,
+            final Boolean autoCorrect,
+            final Boolean intentBasedRanking,
+            final QueryRequest.QueryType queryType
+    ) {
+        return ResponseEntity.ok(super.query(text, start, maxResults, summary, indexes, fieldText,
+                sort, minDate, maxDate, highlight, minScore, autoCorrect, intentBasedRanking,
+                queryType));
+    }
+
+    @Override
+    public ResponseEntity<Documents<IdolSearchResult>> findSimilarDocuments(
+            final String reference,
+            final Integer maxResults,
+            final String summary,
+            final Integer start,
+            final List<String> indexes,
+            final String fieldText,
+            final ZonedDateTime minDate,
+            final ZonedDateTime maxDate,
+            final Boolean highlight,
+            final Integer minScore,
+            final String sort
+    ) {
+        return ResponseEntity.ok(super.findSimilar(reference, start, maxResults, summary, indexes,
+                fieldText, sort, minDate, maxDate, highlight, minScore));
+    }
+
+    @Override
+    public ResponseEntity<IdolSearchResult> getDocumentContent(
+            final String reference,
+            final String database
+    ) {
+        return ResponseEntity.ok(super.fetchDocumentContent(reference, database));
     }
 
     @Override

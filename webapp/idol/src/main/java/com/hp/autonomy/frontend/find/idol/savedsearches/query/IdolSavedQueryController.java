@@ -16,6 +16,7 @@ package com.hp.autonomy.frontend.find.idol.savedsearches.query;
 
 import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.api.model.SavedQueriesResponse;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
@@ -24,23 +25,17 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery.Builder;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQueryController;
+import com.hp.autonomy.frontend.find.idol.api.SavedQueryApi;
 import com.hp.autonomy.frontend.find.idol.dashboards.DashboardConfig;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.DatasourceDependentWidget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchDatasource;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequestBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequest;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRequestBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
-import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictionsBuilder;
-import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
+import com.hp.autonomy.searchcomponents.idol.search.*;
 import com.hp.autonomy.types.requests.idol.actions.query.params.PrintParam;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
@@ -49,7 +44,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @ConditionalOnExpression(BiConfiguration.BI_PROPERTY_SPEL)
-class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> {
+class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, String, IdolQueryRestrictions, IdolSearchResult, AciErrorException> implements SavedQueryApi {
     private final ConfigService<DashboardConfig> dashboardConfigService;
 
     @SuppressWarnings({"TypeMayBeWeakened", "ConstructorWithTooManyParameters"})
@@ -74,14 +69,50 @@ class IdolSavedQueryController extends SavedQueryController<IdolQueryRequest, St
         queryRequestBuilder.print(PrintParam.NoResults.name());
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
-    public SavedQuery get(@PathVariable("id") final long id) {
+    @Override
+    public ResponseEntity<SavedQuery> getSavedQuery(final Long id) {
         if(getValidIds().contains(id)) {
-            return Optional.ofNullable(service.getDashboardSearch(id))
-                .orElseThrow(() -> new IllegalArgumentException("Configured ID " + id + " does not match any known Saved Query"));
+            return ResponseEntity.ok(Optional.ofNullable(service.getDashboardSearch(id))
+                .orElseThrow(() -> new IllegalArgumentException("Configured ID " + id + " does not match any known Saved Query")));
         } else {
             throw new IllegalArgumentException("Saved Query ID " + id + " is not in the dashboards configuration file");
         }
+    }
+
+    @Override
+    public ResponseEntity<SavedQueriesResponse> getSavedQueries(final Boolean shared) {
+        return ResponseEntity.ok(super.getAll(shared));
+    }
+
+    @Override
+    public ResponseEntity<SavedQueriesResponse> getSharedSavedQueries() {
+        return ResponseEntity.ok(super.getShared());
+    }
+
+    @Override
+    public ResponseEntity<SavedQuery> createSavedQuery(final SavedQuery query) {
+        return ResponseEntity.ok(super.create(query));
+    }
+
+    @Override
+    public ResponseEntity<SavedQuery> updateSavedQuery(final Long id, final SavedQuery query) {
+        return ResponseEntity.ok(super.update(id, query));
+    }
+
+    @Override
+    public ResponseEntity<SavedQuery> updateSharedSavedQuery(final Long id, final SavedQuery query) {
+        return ResponseEntity.ok(super.updateShared(id, query));
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteSavedQuery(final Long id) {
+        super.delete(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Integer> countNewSavedQueryResults(final Long id) {
+        return ResponseEntity.ok(super.checkForNewQueryResults(id));
     }
 
     private Collection<Long> getValidIds() {

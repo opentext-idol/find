@@ -29,10 +29,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public abstract class AbstractRelatedConceptsServiceIT extends AbstractFindIT {
     @Test
     public void findRelatedConcepts() throws Exception {
-        final MockHttpServletRequestBuilder request = get(RelatedConceptsController.RELATED_CONCEPTS_PATH)
-                .param(RelatedConceptsController.DATABASES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                .param(RelatedConceptsController.QUERY_TEXT_PARAM, "*")
-                .param(RelatedConceptsController.FIELD_TEXT_PARAM, "")
+        final MockHttpServletRequestBuilder request = get("/api/public/search/find-related-concepts")
+                .param("databases", mvcIntegrationTestUtils.getDatabases())
+                .param("queryText", "*")
+                .param("fieldText", "")
                 .with(authentication(userAuth()));
 
         mockMvc

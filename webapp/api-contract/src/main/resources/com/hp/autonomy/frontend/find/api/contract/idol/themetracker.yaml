@@ -1,0 +1,161 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  themeClusters:
+    get:
+      summary: Get Theme Tracker clusters for a time window
+      operationId: getThemeClusters
+      tags:
+        - themeTracker
+      parameters:
+        - $ref: "#/components/parameters/ThemeStartDate"
+        - $ref: "#/components/parameters/ThemeInterval"
+        - $ref: "#/components/parameters/ThemeJobName"
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ThemeClustersResponse"
+
+  themeTerms:
+    post:
+      summary: Get the terms of a single Theme Tracker cluster
+      x-codegen-request-body-name: cluster
+      operationId: getThemeTerms
+      tags:
+        - themeTracker
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cluster"
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TermsResponse"
+
+  themeImage:
+    get:
+      summary: Get a Theme Tracker spectrograph image
+      operationId: getThemeImage
+      tags:
+        - themeTracker
+      parameters:
+        - $ref: "#/components/parameters/ThemeStartDate"
+        - $ref: "#/components/parameters/ThemeInterval"
+        - $ref: "#/components/parameters/ThemeJobName"
+      responses:
+        '200':
+          description: Spectrograph image bytes; in practice, the media type is a raster image type
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+
+components:
+
+  parameters:
+
+    ThemeStartDate:
+      name: startDate
+      in: query
+      description: Start of the time window, as epoch seconds
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    ThemeInterval:
+      name: interval
+      in: query
+      description: Length of the time window in seconds
+      required: false
+      schema:
+        type: integer
+        format: int64
+        default: 604800
+
+    ThemeJobName:
+      name: jobName
+      in: query
+      description: Theme Tracker job to read; omit to use the configured default
+      required: false
+      schema:
+        type: string
+
+  schemas:
+
+    ThemeClustersResponse:
+      description: Theme Tracker clusters within a time window
+      type: object
+      required:
+        - clusters
+      properties:
+        clusters:
+          type: array
+          items:
+            $ref: "#/components/schemas/Cluster"
+
+    Cluster:
+      description: A single Theme Tracker cluster
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        title:
+          type: string
+        jobName:
+          type: string
+        numDocs:
+          type: integer
+          format: int32
+        fromDate:
+          description: Start of the cluster's time span, as epoch seconds
+          type: integer
+          format: int64
+        toDate:
+          description: End of the cluster's time span, as epoch seconds
+          type: integer
+          format: int64
+        x1:
+          type: integer
+          format: int32
+        x2:
+          type: integer
+          format: int32
+        y1:
+          type: integer
+          format: int32
+        y2:
+          type: integer
+          format: int32
+
+    TermsResponse:
+      description: Terms of a Theme Tracker cluster, most significant first
+      type: object
+      required:
+        - terms
+      properties:
+        terms:
+          type: array
+          items:
+            type: string

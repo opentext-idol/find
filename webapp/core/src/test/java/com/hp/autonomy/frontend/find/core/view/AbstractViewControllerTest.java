@@ -46,7 +46,6 @@ public abstract class AbstractViewControllerTest<C extends ViewController<R, S, 
 
     @Before
     public void setUp() {
-        response = new MockHttpServletResponse();
         when(controllerUtils.buildErrorModelAndView(any(ErrorModelAndViewInfo.class))).thenReturn(mock(ModelAndView.class));
     }
 

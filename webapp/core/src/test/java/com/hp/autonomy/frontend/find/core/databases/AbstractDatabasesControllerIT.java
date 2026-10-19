@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public abstract class AbstractDatabasesControllerIT extends AbstractFindIT {
     @Test
     public void noExcludedIndexes() throws Exception {
-        mockMvc.perform(get(DatabasesController.GET_DATABASES_PATH).with(authentication(userAuth())))
+        mockMvc.perform(get("/api/public/search/list-indexes").with(authentication(userAuth())))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.databases", not(empty())));

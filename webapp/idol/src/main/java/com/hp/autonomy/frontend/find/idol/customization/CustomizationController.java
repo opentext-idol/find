@@ -15,20 +15,16 @@
 package com.hp.autonomy.frontend.find.idol.customization;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.idol.api.CustomizationApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(CustomizationController.PUBLIC_CUSTOMIZATION_PATH)
-public class CustomizationController extends AbstractCustomizationController {
-    static final String PUBLIC_CUSTOMIZATION_PATH = "/api/public/customization";
+public class CustomizationController extends AbstractCustomizationController implements CustomizationApi {
     private final ConfigService<AssetConfig> configService;
 
     @Autowired
@@ -40,8 +36,8 @@ public class CustomizationController extends AbstractCustomizationController {
         this.configService = configService;
     }
 
-    @RequestMapping(value = "/logo/{type}/current", method = RequestMethod.GET)
-    public ResponseEntity<Resource> logo(@PathVariable("type") final AssetType type) {
+    @Override
+    public ResponseEntity<Resource> getCurrentLogo(final AssetType type) {
         ResponseEntity<Resource> logo = super.logo(type, configService.getConfig().getAssetPath(type));
 
         if(logo.getStatusCode() == HttpStatus.NOT_FOUND) {

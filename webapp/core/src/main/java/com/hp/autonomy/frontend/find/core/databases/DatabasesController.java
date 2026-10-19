@@ -17,24 +17,14 @@ package com.hp.autonomy.frontend.find.core.databases;
 import com.hp.autonomy.searchcomponents.core.databases.DatabasesRequest;
 import com.hp.autonomy.searchcomponents.core.databases.DatabasesService;
 import com.hp.autonomy.types.IdolDatabase;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-@Controller
 public abstract class DatabasesController<D extends IdolDatabase, R extends DatabasesRequest, E extends Exception> {
-    public static final String GET_DATABASES_PATH = "/api/public/search/list-indexes";
-
     private final DatabasesService<D, R, E> databasesService;
 
     protected DatabasesController(final DatabasesService<D, R, E> databasesService) {
         this.databasesService = databasesService;
     }
 
-    @RequestMapping(value = GET_DATABASES_PATH, method = RequestMethod.GET)
-    @ResponseBody
-    public DatabasesResponse<D> getDatabases() throws E {
+    protected DatabasesResponse<D> getDatabases() throws E {
         return new DatabasesResponse<>(databasesService.getDatabases(buildDatabasesRequest()));
     }
 

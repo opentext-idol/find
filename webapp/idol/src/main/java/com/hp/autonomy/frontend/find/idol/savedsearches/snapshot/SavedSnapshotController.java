@@ -14,7 +14,6 @@
 
 package com.hp.autonomy.frontend.find.idol.savedsearches.snapshot;
 
-import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
@@ -22,24 +21,23 @@ import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchType;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot.Builder;
+import com.hp.autonomy.frontend.find.idol.api.SavedSnapshotApi;
+import com.hp.autonomy.frontend.find.idol.api.model.SavedSnapshotsResponse;
 import com.hp.autonomy.frontend.find.idol.dashboards.DashboardConfig;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.DatasourceDependentWidget;
 import com.hp.autonomy.frontend.find.idol.dashboards.widgets.datasources.SavedSearchDatasource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(SavedSnapshotController.PATH)
 @ConditionalOnExpression(BiConfiguration.BI_PROPERTY_SPEL)
-class SavedSnapshotController {
-    static final String PATH = "/api/bi/saved-snapshot";
-    private static final String GET_SHARED = "/shared";
-
+class SavedSnapshotController implements SavedSnapshotApi {
     private final SavedSearchService<SavedSnapshot, Builder> service;
     private final ConfigService<DashboardConfig> dashboardConfigService;
 
@@ -63,63 +61,60 @@ class SavedSnapshotController {
                 .collect(Collectors.toSet());
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public SavedSnapshotsResponse getAll() {
-        return new SavedSnapshotsResponse(service.getOwned());
+    @Override
+    public ResponseEntity<SavedSnapshotsResponse> getSavedSnapshots() {
+        return ResponseEntity.ok(new SavedSnapshotsResponse(service.getOwned()));
     }
 
-    @RequestMapping(value = GET_SHARED, method = RequestMethod.GET)
-    public SavedSnapshotsResponse getShared() {
-        return new SavedSnapshotsResponse(service.getShared());
+    @Override
+    public ResponseEntity<SavedSnapshotsResponse> getSharedSavedSnapshots() {
+        return ResponseEntity.ok(new SavedSnapshotsResponse(service.getShared()));
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public SavedSnapshot create(
-            @RequestBody final SavedQuery query
-    ) throws AciErrorException {
-        return service.create(service.build(query));
+    @Override
+    public ResponseEntity<SavedSnapshot> createSavedSnapshot(final SavedQuery query) {
+        return ResponseEntity.ok(service.create(service.build(query)));
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public SavedSnapshot update(
-            @PathVariable("id") final long id,
-            @RequestBody final SavedSnapshot snapshot
-    ) throws AciErrorException {
-        // It is only possible to update a snapshot's title
-        return service.update(
-                new Builder()
-                        .setId(id)
-                        .setTitle(snapshot.getTitle())
-                        .build()
-        );
-    }
-
-    @RequestMapping(value = "shared/{id}", method = RequestMethod.PUT)
-    public SavedSnapshot updateShared(
-            @PathVariable("id") final long id,
-            @RequestBody final SavedSnapshot snapshot
-    ) throws AciErrorException {
-        // It is only possible to update a snapshot's title
-        return service.update(
-                new Builder()
-                        .setId(id)
-                        .setTitle(snapshot.getTitle())
-                        .build()
-        );
-    }
-
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    public void delete(
-            @PathVariable("id") final long id
+    @Override
+    public ResponseEntity<SavedSnapshot> updateSavedSnapshot(
+            final Long id,
+            final SavedSnapshot snapshot
     ) {
-        service.deleteById(id);
+        // It is only possible to update a snapshot's title
+        return ResponseEntity.ok(service.update(
+                new Builder()
+                        .setId(id)
+                        .setTitle(snapshot.getTitle())
+                        .build()
+        ));
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
-    public SavedSnapshot get(@PathVariable("id") final long id) {
+    @Override
+    public ResponseEntity<SavedSnapshot> updateSharedSavedSnapshot(
+            final Long id,
+            final SavedSnapshot snapshot
+    ) {
+        // It is only possible to update a snapshot's title
+        return ResponseEntity.ok(service.update(
+                new Builder()
+                        .setId(id)
+                        .setTitle(snapshot.getTitle())
+                        .build()
+        ));
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteSavedSnapshot(final Long id) {
+        service.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<SavedSnapshot> getSavedSnapshot(final Long id) {
         if(getValidIds().contains(id)) {
-            return Optional.ofNullable(service.getDashboardSearch(id))
-                    .orElseThrow(() -> new IllegalArgumentException("Configured ID " + id + " does not match any known Saved Snapshot"));
+            return ResponseEntity.ok(Optional.ofNullable(service.getDashboardSearch(id))
+                    .orElseThrow(() -> new IllegalArgumentException("Configured ID " + id + " does not match any known Saved Snapshot")));
         } else {
             throw new IllegalArgumentException("Saved Snapshot ID " + id + " is not in the dashboards configuration file");
         }

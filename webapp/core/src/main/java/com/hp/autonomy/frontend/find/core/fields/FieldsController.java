@@ -29,7 +29,6 @@ import com.hp.autonomy.types.requests.idol.actions.tags.TagName;
 import com.hp.autonomy.types.requests.idol.actions.tags.ValueDetails;
 import com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam;
 import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -37,11 +36,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@RequestMapping(FieldsController.FIELDS_PATH)
 public abstract class FieldsController<R extends FieldsRequest, E extends Exception, Q extends QueryRestrictions<?>, P extends ParametricRequest<Q>> {
-    public static final String FIELDS_PATH = "/api/public/fields";
-    public static final String GET_PARAMETRIC_FIELDS_PATH = "/parametric";
-    public static final String FIELD_TYPES_PARAM = "fieldTypes";
     private final FieldsService<R, E> fieldsService;
     private final ParametricValuesService<P, Q, E> parametricValuesService;
     private final ObjectFactory<? extends ParametricRequestBuilder<P, Q, ?>> parametricRequestBuilderFactory;

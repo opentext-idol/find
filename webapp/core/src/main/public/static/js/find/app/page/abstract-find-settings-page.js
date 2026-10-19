@@ -22,7 +22,7 @@ const i18n = require('find/nls/bundle');
 const template = require('find/templates/app/page/settings-page.html');
 const _ = require('underscore');
 
-var urlRoot = /\bconfig$/.test(window.location.pathname) ? 'api/config/config/' : 'api/admin/config/';
+var urlRoot = 'api/admin/config/';
 
 module.exports = SettingsPage.extend({
         className: 'container-fluid',

@@ -1,0 +1,118 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  stats:
+    post:
+      summary: Record a user interaction event into the statistics backend
+      operationId: recordStatsEvent
+      tags:
+        - stats
+      x-codegen-request-body-name: event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Event"
+      responses:
+        '204':
+          description: Event recorded
+
+components:
+
+  schemas:
+
+    ClickType:
+      description: |
+        What type of result the user opened.
+
+        - `preview`: the inline result preview
+        - `full_preview`: the expanded preview
+        - `original`: the original document
+      type: string
+      enum:
+        - preview
+        - full_preview
+        - original
+
+    Event:
+      description: |
+        A UI interaction event, discriminated by its `type` property.
+      oneOf:
+        - $ref: "#/components/schemas/PageEvent"
+        - $ref: "#/components/schemas/AbandonmentEvent"
+        - $ref: "#/components/schemas/ClickThroughEvent"
+      discriminator:
+        propertyName: type
+        mapping:
+          page: "#/components/schemas/PageEvent"
+          abandonment: "#/components/schemas/AbandonmentEvent"
+          clickthrough: "#/components/schemas/ClickThroughEvent"
+
+    PageEvent:
+      description: The user moved to a different page of results
+      type: object
+      required:
+        - type
+        - search
+        - page
+      properties:
+        type:
+          type: string
+        search:
+          description: Name of the search the event occurred in
+          type: string
+        page:
+          description: The results page the user moved to, 1-based
+          type: integer
+          format: int32
+
+    AbandonmentEvent:
+      description: The user left the search without opening a result of this click type
+      type: object
+      required:
+        - type
+        - search
+        - click-type
+      properties:
+        type:
+          type: string
+        search:
+          description: Name of the search the event occurred in
+          type: string
+        click-type:
+          $ref: "#/components/schemas/ClickType"
+
+    ClickThroughEvent:
+      description: The user opened a result
+      type: object
+      required:
+        - type
+        - search
+        - click-type
+        - position
+      properties:
+        type:
+          type: string
+        search:
+          description: Name of the search the event occurred in
+          type: string
+        click-type:
+          $ref: "#/components/schemas/ClickType"
+        position:
+          description: 1-based rank of the opened result, or -1 if not known
+          type: integer
+          format: int32

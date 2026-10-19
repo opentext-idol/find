@@ -97,7 +97,7 @@ public class SavedSnapshotControllerTest {
     public void create() throws Exception {
         when(savedSnapshotService.build(any())).thenReturn(new SavedSnapshot());
 
-        savedSnapshotController.create(savedQuery);
+        savedSnapshotController.createSavedSnapshot(savedQuery);
         verify(savedSnapshotService).build(savedQuery);
         verify(savedSnapshotService).create(any(SavedSnapshot.class));
     }
@@ -106,20 +106,20 @@ public class SavedSnapshotControllerTest {
     public void update() throws AciErrorException {
         when(savedSnapshotService.update(any(SavedSnapshot.class))).then(returnsFirstArg());
 
-        final SavedSnapshot updatedQuery = savedSnapshotController.update(42, savedSnapshot);
+        final SavedSnapshot updatedQuery = savedSnapshotController.updateSavedSnapshot(42L, savedSnapshot).getBody();
         verify(savedSnapshotService).update(isA(SavedSnapshot.class));
         assertEquals(Long.valueOf(42L), updatedQuery.getId());
     }
 
     @Test
     public void getAll() {
-        savedSnapshotController.getAll();
+        savedSnapshotController.getSavedSnapshots();
         verify(savedSnapshotService).getOwned();
     }
 
     @Test
     public void delete() {
-        savedSnapshotController.delete(42L);
+        savedSnapshotController.deleteSavedSnapshot(42L);
         verify(savedSnapshotService).deleteById(eq(42L));
     }
 
@@ -129,7 +129,7 @@ public class SavedSnapshotControllerTest {
 
         when(savedSnapshotService.getDashboardSearch(any(long.class))).thenReturn(savedSnapshot);
 
-        savedSnapshotController.get(savedSnapshot.getId());
+        savedSnapshotController.getSavedSnapshot(savedSnapshot.getId());
         verify(savedSnapshotService).getDashboardSearch(savedSnapshot.getId());
     }
 
@@ -140,7 +140,7 @@ public class SavedSnapshotControllerTest {
         when(savedSnapshotService.getDashboardSearch(any(long.class))).thenReturn(null);
 
         try {
-            savedSnapshotController.get(savedSnapshot.getId());
+            savedSnapshotController.getSavedSnapshot(savedSnapshot.getId());
             fail("Call to get() was expected to throw exception");
         } catch (final IllegalArgumentException e) {
             verify(savedSnapshotService).getDashboardSearch(savedSnapshot.getId());

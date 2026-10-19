@@ -42,7 +42,7 @@ public abstract class SharedToUserControllerIT extends AbstractFindIT {
 
     @Test
     public void getPermissionsForSearch() throws Exception {
-        final String url = SharedToUserController.SHARED_SEARCHES_PATH + SharedToUserController.PERMISSIONS_PATH + "/1";
+        final String url = "/api/public/search/shared-searches/permissions" + "/1";
 
         final MockHttpServletRequestBuilder getRequestBuilder = get(url)
                 .with(authentication(biAuth()));
@@ -58,13 +58,13 @@ public abstract class SharedToUserControllerIT extends AbstractFindIT {
 
     @Test
     public void save() throws Exception {
-        final String url = SharedToUserController.SHARED_SEARCHES_PATH + SharedToUserController.PERMISSIONS_PATH + "/3";
+        final String url = "/api/public/search/shared-searches/permissions" + "/3";
 
         final MockHttpServletRequestBuilder saveRequestBuilder = post(url)
                 .with(authentication(biAuth()))
                 .content(saveJson)
                 .contentType(MediaType.APPLICATION_JSON)
-                .param(SharedToUserController.SEARCH_ID_PARAM, "3");
+                .param("searchId", "3");
 
         mockMvc.perform(saveRequestBuilder)
                 .andExpect(status().isOk())
@@ -74,13 +74,13 @@ public abstract class SharedToUserControllerIT extends AbstractFindIT {
 
     @Test
     public void tryToSaveExistingPermission() throws Exception {
-        final String url = SharedToUserController.SHARED_SEARCHES_PATH + SharedToUserController.PERMISSIONS_PATH + "/3";
+        final String url = "/api/public/search/shared-searches/permissions" + "/3";
 
         final MockHttpServletRequestBuilder saveRequestBuilder = post(url)
                 .with(authentication(biAuth()))
                 .content(saveJson)
                 .contentType(MediaType.APPLICATION_JSON)
-                .param(SharedToUserController.SEARCH_ID_PARAM, "3");
+                .param("searchId", "3");
 
         mockMvc.perform(saveRequestBuilder)
                 .andExpect(status().isOk())
@@ -94,7 +94,7 @@ public abstract class SharedToUserControllerIT extends AbstractFindIT {
 
     @Test
     public void deleteExistingPermission() throws Exception {
-        final String url = SharedToUserController.SHARED_SEARCHES_PATH + SharedToUserController.PERMISSIONS_PATH + "/3/4";
+        final String url = "/api/public/search/shared-searches/permissions" + "/3/4";
 
         final MockHttpServletRequestBuilder deleteRequestBuilder = delete(url)
                 .with(authentication(biAuth()));

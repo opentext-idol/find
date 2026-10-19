@@ -104,6 +104,25 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
+                        <!-- must unpack contract so relative $refs work -->
+                        <id>unpack-api-contract</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/api-contract</outputDirectory>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.hp.autonomy.frontend.find</groupId>
+                                    <artifactId>api-contract</artifactId>
+                                    <includes>com/hp/autonomy/frontend/find/api/contract/**</includes>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>unpack-webpack-inputs</id>
                         <phase>generate-resources</phase>
                         <goals>
@@ -124,6 +143,107 @@
                                     <overWrite>true</overWrite>
                                 </artifactItem>
                             </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- shared configuration is managed in the parent pom -->
+                        <id>generate-server-stub-code</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <apiPackage>com.hp.autonomy.frontend.find.idol.api</apiPackage>
+                            <modelPackage>com.hp.autonomy.frontend.find.idol.api.model</modelPackage>
+                            <!-- the tags whose implementing controller lives in this module -->
+                            <apisToGenerate>View,Profile,Users,Nifi,ControlPoint,Dashboards,Parametric,Fields,Search,RelatedConcepts,Databases,CsvExport,PowerpointExport,ThemeTracker,Customization,CustomizationAdmin,SavedQuery,SavedSnapshot,Answer,Conversation,EntitySearchAnswer,EntitySearch,Comparison,Configuration,ConfigValidation,CustomizationReload</apisToGenerate>
+                            <generateModels>true</generateModels>
+                            <modelsToGenerate>UsernamesResponse,RelatedUsersResponse,RelatedUser,NifiActionsResponse,ControlPointPoliciesResponse,ControlPointPolicy,ThemeClustersResponse,TermsResponse,AssetsResponse,SavedSnapshotsResponse,SecurityTypesResponse,ComparisonStateTokens,IdolSearchResultsResponse,AskAnswersResponse,EntityFactsResponse,SourcedFact,DocumentFact,Conversation</modelsToGenerate>
+                            <!-- schemas documented in the contract but served by existing classes -->
+                            <schemaMappings>
+                                <schemaMapping>ViewingPart=com.hp.autonomy.searchcomponents.core.view.ViewingPart</schemaMapping>
+                                <schemaMapping>Profiles=com.opentext.idol.types.responses.Profiles</schemaMapping>
+                                <schemaMapping>User=com.opentext.idol.types.responses.User</schemaMapping>
+                                <schemaMapping>NifiAction=com.hp.autonomy.frontend.find.idol.nifi.NifiAction</schemaMapping>
+                                <schemaMapping>SavedQuery=com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery</schemaMapping>
+                                <schemaMapping>SavedSnapshot=com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot</schemaMapping>
+                                <schemaMapping>AssetType=com.hp.autonomy.frontend.find.idol.customization.AssetType</schemaMapping>
+                                <schemaMapping>Status=com.hp.autonomy.frontend.find.idol.customization.Status</schemaMapping>
+                                <schemaMapping>AssetConfig=com.hp.autonomy.frontend.find.idol.customization.AssetConfig</schemaMapping>
+                                <schemaMapping>Cluster=com.hp.autonomy.frontend.find.idol.themetracker.Cluster</schemaMapping>
+                                <schemaMapping>FieldPath=com.hp.autonomy.types.requests.idol.actions.tags.FieldPath</schemaMapping>
+                                <schemaMapping>SortParam=com.hp.autonomy.types.requests.idol.actions.tags.params.SortParam</schemaMapping>
+                                <schemaMapping>FieldTypeParam=com.hp.autonomy.types.requests.idol.actions.tags.params.FieldTypeParam</schemaMapping>
+                                <schemaMapping>QueryTagInfo=com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo</schemaMapping>
+                                <schemaMapping>NumericRangeInfo=com.hp.autonomy.types.requests.idol.actions.tags.NumericRangeInfo</schemaMapping>
+                                <schemaMapping>DateRangeInfo=com.hp.autonomy.types.requests.idol.actions.tags.DateRangeInfo</schemaMapping>
+                                <schemaMapping>NumericValueDetails=com.hp.autonomy.types.requests.idol.actions.tags.NumericValueDetails</schemaMapping>
+                                <schemaMapping>DateValueDetails=com.hp.autonomy.types.requests.idol.actions.tags.DateValueDetails</schemaMapping>
+                                <schemaMapping>DependentParametricField=com.hp.autonomy.searchcomponents.core.parametricvalues.DependentParametricField</schemaMapping>
+                                <schemaMapping>ParametricFieldsResponse=com.hp.autonomy.frontend.find.idol.fields.ParametricFieldsResponse</schemaMapping>
+                                <schemaMapping>QueryType=com.hp.autonomy.searchcomponents.core.search.QueryRequest.QueryType</schemaMapping>
+                                <schemaMapping>SearchResult=com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult</schemaMapping>
+                                <schemaMapping>AskAnswer=com.opentext.idol.types.responses.answer.AskAnswer</schemaMapping>
+                                <schemaMapping>ReportFact=com.opentext.idol.types.responses.answer.ReportFact</schemaMapping>
+                                <schemaMapping>ConversePrompt=com.opentext.idol.types.responses.conversation.ConversePrompt</schemaMapping>
+                                <schemaMapping>Documents=com.hp.autonomy.types.requests.Documents&lt;com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult&gt;</schemaMapping>
+                                <schemaMapping>RelatedConceptsResponse=com.hp.autonomy.frontend.find.core.search.RelatedConceptsResponse&lt;com.opentext.idol.types.responses.QsElement&gt;</schemaMapping>
+                                <schemaMapping>DatabasesResponse=com.hp.autonomy.frontend.find.core.databases.DatabasesResponse&lt;com.opentext.idol.types.responses.Database&gt;</schemaMapping>
+                                <schemaMapping>ComparisonRequest=com.hp.autonomy.frontend.find.idol.comparison.ComparisonRequest&lt;com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions&gt;</schemaMapping>
+                                <schemaMapping>ConfigResponseBody=java.lang.Object</schemaMapping>
+                                <schemaMapping>FindConfig=com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig</schemaMapping>
+                                <schemaMapping>FindConfigWrapper=com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfigWrapper</schemaMapping>
+                                <schemaMapping>ValidationResults=com.hp.autonomy.frontend.configuration.validation.ValidationResults</schemaMapping>
+                                <schemaMapping>TransportProtocol=com.autonomy.aci.client.transport.AciServerDetails.TransportProtocol</schemaMapping>
+                            </schemaMappings>
+                            <!-- generated once in core, shared with this module -->
+                            <importMappings>
+                                <importMapping>QueryTagInfoResponse=com.hp.autonomy.frontend.find.core.api.model.QueryTagInfoResponse</importMapping>
+                                <importMapping>DependentParametricFieldsResponse=com.hp.autonomy.frontend.find.core.api.model.DependentParametricFieldsResponse</importMapping>
+                                <importMapping>SavedQueriesResponse=com.hp.autonomy.frontend.find.core.api.model.SavedQueriesResponse</importMapping>
+                            </importMappings>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-swagger-codegen-files</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/swagger-codegen-src</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <targetPath>swagger-main</targetPath>
+                                    <directory>${project.build.directory}/swagger-codegen/src/main/java</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/swagger-codegen-src/swagger-main</source>
+                            </sources>
                         </configuration>
                     </execution>
                 </executions>
@@ -196,6 +316,11 @@
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.find</groupId>
+            <artifactId>api-contract</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.find</groupId>
             <artifactId>core</artifactId>
         </dependency>
         <dependency>
@@ -244,10 +369,6 @@
         <dependency>
             <groupId>com.hp.autonomy.frontend.configuration</groupId>
             <artifactId>configuration-idol</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hp.autonomy.frontend.reports.powerpoint</groupId>
-            <artifactId>powerpoint-report</artifactId>
         </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.user</groupId>

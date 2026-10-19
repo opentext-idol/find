@@ -95,7 +95,7 @@ public class IdolSecurity {
                 .requestMatchers(FindController.CONFIG_PATH).hasRole(FindRole.CONFIG.name())
                 .requestMatchers("/api/public/**").hasRole(FindRole.USER.name())
                 .requestMatchers("/api/bi/**").hasRole(FindRole.BI.name())
-                .requestMatchers("/api/config/**").hasRole(FindRole.CONFIG.name())
+                .requestMatchers("/api/admin/config/**").hasAnyRole(FindRole.ADMIN.name(), FindRole.CONFIG.name())
                 .requestMatchers("/api/admin/**").hasRole(FindRole.ADMIN.name())
                 .requestMatchers(FindController.DEFAULT_LOGIN_PAGE).permitAll()
                 .requestMatchers(FindController.LOGIN_PATH).permitAll()

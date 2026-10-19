@@ -84,6 +84,10 @@ public abstract class AbstractFindIT {
         return mvcIntegrationTestUtils.biAuth();
     }
 
+    protected Authentication configAuth() {
+        return mvcIntegrationTestUtils.configAuth();
+    }
+
     protected Authentication adminAuth() {
         return mvcIntegrationTestUtils.adminAuth();
     }

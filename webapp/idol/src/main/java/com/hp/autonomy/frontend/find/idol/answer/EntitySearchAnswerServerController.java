@@ -20,6 +20,8 @@ import com.autonomy.aci.client.transport.AciServerDetails;
 import com.autonomy.aci.client.util.ActionParameters;
 import com.hp.autonomy.aci.content.fieldtext.Specifier;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.idol.api.EntitySearchAnswerApi;
+import com.hp.autonomy.frontend.find.idol.api.model.AskAnswersResponse;
 import com.hp.autonomy.frontend.find.idol.configuration.EntitySearchConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.answer.configuration.AnswerServerConfig;
@@ -34,21 +36,15 @@ import com.opentext.idol.types.responses.answer.AskResponsedata;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.xml.xpath.XPathExpressionException;
 import java.util.*;
 
-import static com.hp.autonomy.frontend.find.idol.answer.AnswerServerController.MAX_RESULTS_PARAM;
-import static com.hp.autonomy.frontend.find.idol.answer.AnswerServerController.TEXT_PARAM;
 
 // Answer server controller variant used by the entity-search question-answer UI.
 @RestController
-@RequestMapping(AnswerServerController.BASE_PATH)
-class EntitySearchAnswerServerController {
+class EntitySearchAnswerServerController implements EntitySearchAnswerApi {
 
     private final AciService aciService;
     private final HavenSearchAciParameterHandler parameterHandler;
@@ -67,17 +63,16 @@ class EntitySearchAnswerServerController {
         processor = processorFactory.getResponseDataProcessor(AskResponsedata.class);
     }
 
-    @RequestMapping(value = "entity-search-ask", method = RequestMethod.GET)
-    public AskAnswersResponse ask(
-            @RequestParam(TEXT_PARAM) final String text,
-            @RequestParam(value = MAX_RESULTS_PARAM, required = false)
+    @Override
+    public ResponseEntity<AskAnswersResponse> entitySearchAsk(
+            final String text,
             final Integer maxResults,
-            @RequestParam(value = "context", required = false) final String context
-    ) throws XPathExpressionException {
+            final String context
+    ) {
         final ArrayList<AskAnswer> toReturn = new ArrayList<>();
 
         if (maxResults != null && maxResults == 0) {
-            return new AskAnswersResponse(toReturn);
+            return ResponseEntity.ok(new AskAnswersResponse(toReturn));
         }
 
         final IdolFindConfig config = configService.getConfig();
@@ -125,12 +120,12 @@ class EntitySearchAnswerServerController {
                     toReturn.add(answer);
 
                     if (maxResults != null && toReturn.size() >= maxResults) {
-                        return new AskAnswersResponse(toReturn);
+                        return ResponseEntity.ok(new AskAnswersResponse(toReturn));
                     }
                 }
             }
         }
 
-        return new AskAnswersResponse(toReturn);
+        return ResponseEntity.ok(new AskAnswersResponse(toReturn));
     }
 }

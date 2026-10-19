@@ -1,0 +1,84 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+components:
+
+  schemas:
+
+    FieldPath:
+      description: IDOL field path, for example `DOCUMENT/AUTHOR`
+      type: string
+
+    SortParam:
+      description: How to order documents by field value
+      type: string
+      enum:
+        - "Off"
+        - Alphabetical
+        - Date
+        - DocumentCount
+        - NumberDecreasing
+        - NumberIncreasing
+        - ReverseAlphabetical
+        - ReverseDate
+        - ReverseDocumentCount
+
+    FieldTypeParam:
+      description: IDOL field type
+      type: string
+      enum:
+        - ACL
+        - All
+        - AlwaysMatch
+        - AutnRank
+        - BitField
+        - DataBase
+        - Date
+        - DocumentTracking
+        - ExpireDate
+        - FieldCheck
+        - FlattenIndex
+        - GeospatialUnified
+        - GeospatialX
+        - GeospatialY
+        - Highlight
+        - Index
+        - IndexWeight
+        - InvertedAgent
+        - Language
+        - Match
+        - NumericDate
+        - Numeric
+        - Parametric
+        - Print
+        - Reference
+        - SectionBreak
+        - Security
+        - Sort
+        - Source
+        - Synonym
+        - Title
+
+    QueryType:
+      description: |
+        How IDOL should interpret the query text.
+
+        - `RAW`: query Content directly
+        - `MODIFIED`: send the query to QMS
+        - `PROMOTIONS`: send the query to QMS, and also ask for promotions
+      type: string
+      enum:
+        - RAW
+        - MODIFIED
+        - PROMOTIONS

@@ -1,0 +1,165 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  searchUsers:
+    get:
+      summary: Search for users by name
+      description: Fails if saved search sharing is disabled
+      operationId: searchUsers
+      tags:
+        - users
+      parameters:
+        - name: searchText
+          in: query
+          description: Text to match against usernames
+          required: true
+          schema:
+            type: string
+        - name: startUser
+          in: query
+          description: Index of the first user to return, 1-based
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: maxUsers
+          in: query
+          description: Maximum number of users to return
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Matching usernames
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsernamesResponse"
+
+  relatedUsers:
+    get:
+      summary: Get users whose expertise or interests relate to a search
+      description: |
+        Fails if the related users feature is disabled.
+        
+        Only the user fields named in the `relatedUsers` configuration are returned.
+      operationId: getUsersRelatedToSearch
+      tags:
+        - users
+      parameters:
+        - name: searchText
+          in: query
+          description: The search text to relate users to
+          required: true
+          schema:
+            type: string
+        - name: maxUsers
+          in: query
+          description: Maximum number of users to return
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RelatedUsersResponse"
+
+components:
+
+  schemas:
+
+    UsernamesResponse:
+      description: Usernames matching a search
+      type: object
+      required:
+        - usernames
+      properties:
+        usernames:
+          type: array
+          items:
+            type: string
+
+    RelatedUsersResponse:
+      description: Users related to a search, most relevant first
+      type: object
+      required:
+        - users
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/RelatedUser"
+
+    RelatedUser:
+      description: A user related to a search
+      type: object
+      required:
+        - user
+        - expert
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        expert:
+          description: |
+            Whether the user is explicitly tagged as a relevant expert, rather than just
+            having an interest in the topic.
+          type: boolean
+
+    User:
+      description: |
+        Details of a Community user.  Which fields are populated depends on the
+        `relatedUsers` configuration.
+      type: object
+      properties:
+        uid:
+          type: integer
+          format: int64
+        username:
+          type: string
+        emailaddress:
+          type: string
+        securityinfo:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        fields:
+          description: User fields, keyed by field name
+          type: object
+          additionalProperties:
+            type: string
+        numfields:
+          type: integer
+          format: int32
+        numagents:
+          type: integer
+          format: int32
+        maxagents:
+          type: integer
+          format: int32
+        locked:
+          type: boolean
+        lastloggedin:
+          type: string
+          format: date-time
+        lockedlasttime:
+          type: string
+          format: date-time

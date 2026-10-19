@@ -18,11 +18,7 @@ var Config = Autoload.extend({
 
     autoload: false,
 
-    url: function(){
-        return /\bconfig$/.test(window.location.pathname)
-            ? 'api/config/config/config'
-            : 'api/admin/config/config';
-    }
+    url: 'api/admin/config/config'
 });
 
 module.exports = new Config();

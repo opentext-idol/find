@@ -14,6 +14,7 @@
 
 package com.hp.autonomy.frontend.find.idol.comparison;
 
+import com.hp.autonomy.frontend.find.idol.api.model.ComparisonStateTokens;
 import com.hp.autonomy.searchcomponents.core.search.SearchResult;
 import com.hp.autonomy.types.requests.Documents;
 

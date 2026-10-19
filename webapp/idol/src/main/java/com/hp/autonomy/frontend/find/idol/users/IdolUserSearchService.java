@@ -1,6 +1,7 @@
 package com.hp.autonomy.frontend.find.idol.users;
 
 import com.hp.autonomy.frontend.find.core.configuration.RelatedUsersConfig;
+import com.hp.autonomy.frontend.find.idol.api.model.RelatedUser;
 import com.opentext.idol.types.responses.User;
 import com.opentext.idol.types.responses.UserDetails;
 

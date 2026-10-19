@@ -14,14 +14,14 @@
 
 package com.hp.autonomy.frontend.find.idol.dashboards;
 
+import com.hp.autonomy.frontend.find.idol.api.DashboardsApi;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -29,14 +29,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @Slf4j
-@Controller
-public class DashboardController {
-    private static final String DASHBOARD_KEEP_ALIVE = "/api/bi/dashboards/keep-alive";
+@RestController
+@AllArgsConstructor
+public class DashboardController implements DashboardsApi {
+    private final HttpServletRequest request;
 
-    // Endpoint for fullscreen dashboards to poll when they want to extend the session [FIND-983].
-    @RequestMapping(method = RequestMethod.POST, value = DASHBOARD_KEEP_ALIVE)
-    @ResponseBody
-    public int keepAlive(final HttpServletRequest request, final HttpSession session) {
+    @Override
+    public ResponseEntity<Integer> keepDashboardAlive() {
+        final HttpSession session = request.getSession();
+
         final String logMessage = Optional
             // "referer" will be null if the config was reloaded by typing the endpoint URL
             // into the browser, rather than by clicking the reload button
@@ -47,7 +48,7 @@ public class DashboardController {
 
         log.info(logMessage);
 
-        return session.getMaxInactiveInterval();
+        return ResponseEntity.ok(session.getMaxInactiveInterval());
     }
 
     private Optional<String> getDecodedDashboardNameFromUrl(final String url) {

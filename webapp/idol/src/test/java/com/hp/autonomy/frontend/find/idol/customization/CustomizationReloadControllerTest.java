@@ -53,19 +53,19 @@ public class CustomizationReloadControllerTest {
         Collection<ReloadableCustomizationComponent> reloadableCustomizationComponents = new ArrayList<>();
         reloadableCustomizationComponents.add(reloadable1);
         reloadableCustomizationComponents.add(reloadable2);
-        controller = new CustomizationReloadController("/", reloadableCustomizationComponents, controllerUtils);
+        controller = new CustomizationReloadController("/", reloadableCustomizationComponents, controllerUtils, response);
     }
 
     @Test
     public void testReloadConfigCallsThroughToReloadMethods() throws Exception {
-        controller.reloadConfig(response);
+        controller.reloadCustomizationConfig();
         verify(reloadable1, times(1)).reload();
         verify(reloadable2, times(1)).reload();
     }
 
     @Test
     public void testReloadConfigRedirectsToApplicationRoot() throws Exception {
-        controller.reloadConfig(response);
+        controller.reloadCustomizationConfig();
         verify(response, times(1)).sendRedirect(FindController.APP_PATH);
     }
 
@@ -73,9 +73,9 @@ public class CustomizationReloadControllerTest {
     public void testReloadConfigHandlesExceptions() throws Exception {
         doThrow(new CssGenerationException("ouch!")).when(reloadable1).reload();
         try {
-            controller.reloadConfig(response);
+            controller.reloadCustomizationConfig();
             fail("Expected exception to have been thrown");
-        } catch(final CssGenerationException e) {
+        } catch(final IllegalStateException e) {
             assertThat("Propagated exception has the correct message",
                        e.getMessage(),
                        containsString("ouch!"));

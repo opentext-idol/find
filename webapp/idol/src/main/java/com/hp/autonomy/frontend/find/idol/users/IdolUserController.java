@@ -18,30 +18,24 @@ import com.hp.autonomy.frontend.configuration.ConfigService;
 import com.hp.autonomy.frontend.find.core.configuration.RelatedUsersConfig;
 import com.hp.autonomy.frontend.find.core.configuration.RelatedUsersSourceConfig;
 import com.hp.autonomy.frontend.find.core.configuration.UserDetailsFieldConfig;
+import com.hp.autonomy.frontend.find.idol.api.UsersApi;
+import com.hp.autonomy.frontend.find.idol.api.model.RelatedUser;
+import com.hp.autonomy.frontend.find.idol.api.model.RelatedUsersResponse;
+import com.hp.autonomy.frontend.find.idol.api.model.UsernamesResponse;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.opentext.idol.types.responses.User;
 import com.opentext.idol.types.responses.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Controller
-@RequestMapping(IdolUserController.BASE_PATH)
-public class IdolUserController {
+@RestController
+public class IdolUserController implements UsersApi {
 
-    static final String BASE_PATH = "/api/public/user";
-    static final String SEARCH_PATH = "/search";
-    static final String RELATED_PATH = "/related-to-search";
-    static final String PARAMETER_SEARCH_TEXT = "searchText";
-    static final String PARAMETER_START_USER = "startUser";
-    static final String PARAMETER_MAX_USERS = "maxUsers";
     private final ConfigService<IdolFindConfig> configService;
     private final IdolUserSearchService idolUserSearchService;
 
@@ -57,18 +51,17 @@ public class IdolUserController {
     /**
      * Get a list of usernames matching with names matching the search text.
      */
-    @RequestMapping(value = SEARCH_PATH, method= RequestMethod.GET)
-    @ResponseBody
-    public UsernamesResponse searchUsers(@RequestParam(PARAMETER_SEARCH_TEXT) final String searchText, @RequestParam(PARAMETER_START_USER) final int startUser, @RequestParam(PARAMETER_MAX_USERS) final int maxUsers) {
+    @Override
+    public ResponseEntity<UsernamesResponse> searchUsers(final String searchText, final Integer startUser, final Integer maxUsers) {
         // this is an important check for security reasons
         if (!configService.getConfig().getSavedSearchConfig().getSharingEnabled()) {
             throw new IllegalArgumentException("Saved search sharing is disabled");
         }
         final UserDetails details =
             idolUserSearchService.searchUser(searchText, startUser, maxUsers);
-        return new UsernamesResponse(details.getUser().stream()
+        return ResponseEntity.ok(new UsernamesResponse(details.getUser().stream()
             .map(user -> user.getUsername())
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList())));
     }
 
     /**
@@ -91,7 +84,7 @@ public class IdolUserController {
         final Map<String, String> fields = user.getFields();
         final Map<String, String> restrictedFields = new HashMap<>();
         final RelatedUsersSourceConfig sourceConfig =
-            relatedUser.isExpert() ? config.getExpertise() : config.getInterests();
+            relatedUser.getExpert() ? config.getExpertise() : config.getInterests();
         for (final UserDetailsFieldConfig allowedField :
             sourceConfig.getUserDetailsFields()
         ) {
@@ -102,7 +95,7 @@ public class IdolUserController {
         }
         restricted.setFields(restrictedFields);
 
-        return new RelatedUser(restricted, relatedUser.isExpert());
+        return new RelatedUser(restricted, relatedUser.getExpert());
     }
 
     /**
@@ -111,20 +104,19 @@ public class IdolUserController {
      * @return Users with only the following {@link User} fields filled in: uid, username,
      *         emailaddress, fields (restricted to configured display fields)
      */
-    @RequestMapping(value = RELATED_PATH, method= RequestMethod.GET)
-    @ResponseBody
-    public RelatedUsersResponse getRelatedToSearch(
-        @RequestParam(PARAMETER_SEARCH_TEXT) final String searchText,
-        @RequestParam(PARAMETER_MAX_USERS) final int maxUsers
+    @Override
+    public ResponseEntity<RelatedUsersResponse> getUsersRelatedToSearch(
+        final String searchText,
+        final Integer maxUsers
     ) {
         final RelatedUsersConfig config = configService.getConfig().getUsers().getRelatedUsers();
         // this is an important check for security reasons
         if (!config.getEnabled()) {
             throw new IllegalArgumentException("The related users feature is disabled");
         }
-        return new RelatedUsersResponse(idolUserSearchService.getRelatedToSearch(config, searchText, maxUsers).stream()
+        return ResponseEntity.ok(new RelatedUsersResponse(idolUserSearchService.getRelatedToSearch(config, searchText, maxUsers).stream()
             .map(relatedUser -> restrictUserRelatedToSearch(relatedUser, config))
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList())));
     }
 
 }

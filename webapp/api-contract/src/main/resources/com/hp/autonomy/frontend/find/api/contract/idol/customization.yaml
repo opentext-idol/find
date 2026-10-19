@@ -1,0 +1,273 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  currentLogo:
+    get:
+      summary: Get the currently configured logo of a given type
+      description: |
+        Returns the configured asset, or a bundled default image if nothing is configured or
+        the configured file is missing.
+
+        This operation needs no credentials.
+      operationId: getCurrentLogo
+      tags:
+        - customization
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/AssetTypePath"
+      responses:
+        '200':
+          description: Logo image; the media type is guessed from the asset file name
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+
+  assets:
+    get:
+      summary: List the stored assets of a given type
+      operationId: getAssets
+      tags:
+        - customizationAdmin
+      parameters:
+        - $ref: "#/components/parameters/AssetTypePath"
+      responses:
+        '200':
+          description: Names of the stored assets
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssetsResponse"
+    post:
+      summary: Upload a new customization asset
+      description: Fails if an asset with the same name already exists
+      operationId: createAsset
+      tags:
+        - customizationAdmin
+      parameters:
+        - $ref: "#/components/parameters/AssetTypePath"
+      requestBody:
+        description: The image file to store
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  description: Image file; its content type must be an `image/*` type
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Asset stored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+        '409':
+          description: An asset with that name already exists; use PUT to overwrite
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+        '415':
+          description: The uploaded file is missing, or is not an image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+        '500':
+          description: The asset could not be written to disk
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+    put:
+      summary: Upload a customization asset, overwriting any existing one
+      operationId: replaceAsset
+      tags:
+        - customizationAdmin
+      parameters:
+        - $ref: "#/components/parameters/AssetTypePath"
+      requestBody:
+        description: The image file to store
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  description: Image file; its content type must be an `image/*` type
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Asset stored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+        '409':
+          description: An asset with that name already exists; use PUT to overwrite
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+        '415':
+          description: The uploaded file is missing, or is not an image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+        '500':
+          description: The asset could not be written to disk
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+
+  asset:
+    get:
+      summary: Get a stored customization asset
+      operationId: getAsset
+      tags:
+        - customizationAdmin
+      parameters:
+        - $ref: "#/components/parameters/AssetTypePath"
+        - $ref: "#/components/parameters/AssetName"
+      responses:
+        '200':
+          description: Asset bytes; the media type is guessed from the asset file name
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: No asset of that type and name is stored
+    delete:
+      summary: Delete a stored customization asset
+      operationId: deleteAsset
+      tags:
+        - customizationAdmin
+      parameters:
+        - $ref: "#/components/parameters/AssetTypePath"
+        - $ref: "#/components/parameters/AssetName"
+      responses:
+        '204':
+          description: Asset deleted
+
+  customizationConfig:
+    post:
+      summary: Replace the customization configuration
+      x-codegen-request-body-name: assetConfig
+      operationId: updateCustomizationConfig
+      tags:
+        - customizationAdmin
+      requestBody:
+        description: The configuration to store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssetConfig"
+      responses:
+        '204':
+          description: Configuration stored
+        '406':
+          description: The configuration failed validation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigValidationErrors"
+
+components:
+
+  parameters:
+
+    AssetTypePath:
+      name: type
+      in: path
+      description: Which customization asset slot to operate on
+      required: true
+      schema:
+        $ref: "#/components/schemas/AssetType"
+
+    AssetName:
+      name: name
+      in: path
+      description: Asset file name, including its extension, for example `logo.png`
+      required: true
+      schema:
+        type: string
+
+  schemas:
+
+    AssetType:
+      description: |
+        Which customization asset slot an asset belongs to.
+
+        - `BIG_LOGO`: the logo shown on the login and splash pages
+        - `SMALL_LOGO`: the logo shown in the application header
+      type: string
+      enum:
+        - BIG_LOGO
+        - SMALL_LOGO
+
+    Status:
+      description: The outcome of an asset operation
+      type: string
+      enum:
+        - DIRECTORY_ERROR
+        - FILE_EXISTS
+        - IO_ERROR
+        - INVALID_FILE
+        - SUCCESS
+
+    AssetsResponse:
+      description: The stored assets of one type
+      type: object
+      required:
+        - assetNames
+      properties:
+        assetNames:
+          type: array
+          items:
+            type: string
+
+    AssetConfig:
+      description: Which asset is configured for each slot
+      type: object
+      properties:
+        assets:
+          description: Path of the configured asset for each slot, keyed by asset type
+          type: object
+          additionalProperties:
+            type: string
+
+    ConfigValidationErrors:
+      description: |
+        Validation errors, under a single `validation` key whose value is a map from configuration section name to
+        a result carrying `valid` and, when invalid, component-specific `data`.
+      type: object
+      additionalProperties: true

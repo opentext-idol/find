@@ -18,6 +18,7 @@ import com.autonomy.aci.client.services.AciErrorException;
 import com.hp.autonomy.frontend.configuration.ConfigFileService;
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
 import com.hp.autonomy.frontend.find.core.search.AbstractDocumentsControllerTest;
+import com.hp.autonomy.frontend.find.idol.api.SearchApi;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.search.*;
 import com.hp.autonomy.user.UserService;
@@ -139,7 +140,7 @@ public class IdolDocumentsControllerTest extends AbstractDocumentsControllerTest
     public void getDocumentContentNotFound() throws AciErrorException {
         final String reference = "Some Reference";
         try {
-            documentsController.getDocumentContent(reference, null);
+            ((SearchApi) documentsController).getDocumentContent(reference, null);
             fail("Exception should have been thrown");
         } catch(final AciErrorException e) {
             assertThat("Exception has the correct message",

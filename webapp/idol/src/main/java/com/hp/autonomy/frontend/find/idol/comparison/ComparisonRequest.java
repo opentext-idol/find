@@ -28,7 +28,7 @@ import java.io.Serializable;
 @Data
 @JsonDeserialize(builder = ComparisonRequest.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-class ComparisonRequest<Q extends QueryRestrictions<?>> implements Serializable {
+public class ComparisonRequest<Q extends QueryRestrictions<?>> implements Serializable {
     private static final long serialVersionUID = -604283886267152277L;
 
     private final Q firstRestrictions;

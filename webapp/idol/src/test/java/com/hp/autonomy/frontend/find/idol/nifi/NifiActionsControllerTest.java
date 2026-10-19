@@ -75,12 +75,12 @@ public class NifiActionsControllerTest {
 
         Mockito.when(nifiService.getActions("the user", Arrays.asList("role1", "role2")))
             .thenReturn(actions);
-        Assert.assertEquals(actions, controller.getActions().actions());
+        Assert.assertEquals(actions, controller.getNifiActions().getBody().getActions());
     }
 
     @Test
     public void testExecuteAction() throws ControlPointApiException {
-        controller.executeAction("the action", 123L, null, "the search", "the label");
+        controller.executeNifiAction("the action", 123L, "the search", "the label", null);
         Mockito.verify(savedSnapshotService).getDashboardSearch(123L);
         Mockito.verify(nifiService).executeAction(
             "the action", "token", "sec info", "the user", Arrays.asList("role1", "role2"),

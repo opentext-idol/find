@@ -1,0 +1,96 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  controlPointPolicies:
+    get:
+      summary: List the ControlPoint policies that can be applied
+      description: |
+        Only policies which are both active and published are returned.  Fails if ControlPoint integration is disabled.
+      operationId: getControlPointPolicies
+      tags:
+        - controlPoint
+      responses:
+        '200':
+          description: Applicable policies
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ControlPointPoliciesResponse"
+
+  applyControlPointPolicy:
+    post:
+      summary: Apply a ControlPoint policy to the results of a saved search
+      description: |
+        The documents to act on come from either `savedSnapshotId` or the request body, not both.
+
+        Rejected with an error if ControlPoint integration is disabled.
+      x-codegen-request-body-name: query
+      operationId: applyControlPointPolicy
+      tags:
+        - controlPoint
+      parameters:
+        - name: policy
+          in: query
+          description: ID of the policy to apply
+          required: true
+          schema:
+            type: string
+        - name: savedSnapshotId
+          in: query
+          description: ID of a saved snapshot to act on, instead of posting a query
+          required: false
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: A query to snapshot and act on, when no `savedSnapshotId` is given
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "saved-query.yaml#/components/schemas/SavedQuery"
+      responses:
+        '200':
+          description: Policy applied
+
+components:
+
+  schemas:
+
+    ControlPointPoliciesResponse:
+      description: ControlPoint policies that can be applied
+      type: object
+      required:
+        - policies
+      properties:
+        policies:
+          type: array
+          items:
+            $ref: "#/components/schemas/ControlPointPolicy"
+
+    ControlPointPolicy:
+      description: A ControlPoint policy.
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          description: Identifier to pass back when applying the policy
+          type: string
+        name:
+          description: Name of the policy, for display
+          type: string

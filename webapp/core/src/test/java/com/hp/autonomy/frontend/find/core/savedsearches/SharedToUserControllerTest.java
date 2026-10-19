@@ -69,7 +69,7 @@ public class SharedToUserControllerTest {
     @Test
     public void getPermittedUsersForSearch() {
         when(sharedToUserRepository.findBySavedSearch_Id(anyLong())).thenReturn(Collections.singleton(mock(SharedToUser.class)));
-        assertThat(controller.getPermissionsForSearch(1L, null).users(), not(empty()));
+        assertThat(controller.getSearchUserPermissions(1L, null).getBody().getUsers(), not(empty()));
     }
 
     @Test
@@ -81,13 +81,13 @@ public class SharedToUserControllerTest {
         final SharedToUser join = new SharedToUser();
         join.setUser(user);
 
-        controller.save(join, 3);
+        controller.updateSearchUserShare(3L, join);
         verify(sharedToUserService).save(ArgumentMatchers.<SharedToUser>any());
     }
 
     @Test
     public void delete() throws IOException {
-        controller.delete(2L, 3L);
+        controller.removeSearchUserShare(2L, 3L);
         verify(sharedToUserRepository).deleteById(ArgumentMatchers.<SharedToUserPK>any());
     }
 }

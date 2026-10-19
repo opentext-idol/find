@@ -25,15 +25,14 @@ import com.hp.autonomy.frontend.reports.powerpoint.dto.*;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.NotNull;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import tools.jackson.databind.ObjectMapper;
@@ -41,29 +40,10 @@ import tools.jackson.databind.ObjectMapper;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.util.Collection;
 
 public abstract class ExportController<R extends QueryRequest<?>, E extends Exception> {
-    public static final String EXPORT_PATH = "/api/bi/export";
-    public static final String PPTX_PATH = "/pptx";
-    protected static final String CSV_PATH = "/csv";
-    protected static final String TOPIC_MAP_PATH = "/topic-map";
-    protected static final String SUNBURST_PATH = "/sunburst";
-    protected static final String TABLE_PATH = "/table";
-    protected static final String MAP_PATH = "/map";
-    protected static final String LIST_PATH = "/list";
-    protected static final String DATE_GRAPH_PATH = "/date-graph";
-    protected static final String REPORT_PATH = "/report";
-
-    protected static final String SELECTED_EXPORT_FIELDS_PARAM = "selectedFieldIds";
-    protected static final String QUERY_REQUEST_PARAM = "queryRequest";
-    protected static final String DATA_PARAM = "data";
-    protected static final String TITLE_PARAM = "title";
-    protected static final String RESULTS_PARAM = "results";
-    protected static final String SORT_BY_PARAM = "sortBy";
-    protected static final String MULTI_PAGE_PARAM = "multiPage";
-    protected static final String MULTI_PAGE_PARAM_DEFAULT = "false";
-
     private static final String QUERY_RESULT_EXPORT_FILE_NAME = "query-results";
     private static final String TOPIC_MAP_EXPORT_FILE_NAME = "topic-map";
     private static final String SUNBURST_EXPORT_FILE_NAME = "sunburst";
@@ -88,14 +68,16 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
 
     protected abstract ExportFormat getExportFormat();
 
-    @ResponseBody
-    public ResponseEntity<byte[]> exportQueryResults(
-            @RequestParam(QUERY_REQUEST_PARAM) final String queryRequestJSON,
-            // required = false to prevent Spring errors if the user asks for a CSV with no fields marked for exportQueryResults.
-            // The UI should not allow the User to send a request for a CSV with nothing in it.
-            @RequestParam(value = SELECTED_EXPORT_FIELDS_PARAM, required = false) final Collection<@NotNull String> selectedFieldNames
-    ) throws IOException, E {
-        final R queryRequest = requestMapper.parseQueryRequest(queryRequestJSON);
+    protected ResponseEntity<Resource> exportQueryResults(
+            final String queryRequestJSON,
+            final Collection<String> selectedFieldNames
+    ) throws E {
+        final R queryRequest;
+        try {
+            queryRequest = requestMapper.parseQueryRequest(queryRequestJSON);
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
+        }
         return writeDataToOutputStream(outputStream -> export(outputStream, queryRequest, selectedFieldNames), QUERY_RESULT_EXPORT_FILE_NAME);
     }
 
@@ -126,56 +108,56 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         );
     }
 
-    public ResponseEntity<byte[]> topicMap(
-            @RequestParam(DATA_PARAM) final String rawData
-    ) throws IOException, TemplateLoadException, E {
+    protected ResponseEntity<Resource> topicMap(
+            final String rawData
+    ) throws E {
         final TopicMapData data = objectMapper.readValue(rawData, TopicMapData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().topicMap(outputStream, data), TOPIC_MAP_EXPORT_FILE_NAME);
     }
 
-    public ResponseEntity<byte[]> sunburst(
-            @RequestParam(DATA_PARAM) final String rawData
-    ) throws IOException, TemplateLoadException, E {
+    protected ResponseEntity<Resource> sunburst(
+            final String rawData
+    ) throws E {
         final SunburstData data = objectMapper.readValue(rawData, SunburstData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().sunburst(outputStream, data), SUNBURST_EXPORT_FILE_NAME);
     }
 
-    public ResponseEntity<byte[]> table(
-            @RequestParam(DATA_PARAM) final String rawData,
-            @RequestParam(TITLE_PARAM) final String title
-    ) throws IOException, TemplateLoadException, E {
+    protected ResponseEntity<Resource> table(
+            final String rawData,
+            final String title
+    ) throws E {
         final TableData data = objectMapper.readValue(rawData, TableData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().table(outputStream, data, title), TABLE_EXPORT_FILE_NAME);
     }
 
-    public ResponseEntity<byte[]> map(
-            @RequestParam(DATA_PARAM) final String rawData,
-            @RequestParam(TITLE_PARAM) final String title
-    ) throws IOException, TemplateLoadException, E {
+    protected ResponseEntity<Resource> map(
+            final String rawData,
+            final String title
+    ) throws E {
         final MapData data = objectMapper.readValue(rawData, MapData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().map(outputStream, data, title), MAP_EXPORT_FILE_NAME);
     }
 
-    public ResponseEntity<byte[]> list(
-            @RequestParam(DATA_PARAM) final String rawData,
-            @RequestParam(RESULTS_PARAM) final String results,
-            @RequestParam(SORT_BY_PARAM) final String sortBy
-    ) throws IOException, TemplateLoadException, E {
+    protected ResponseEntity<Resource> list(
+            final String rawData,
+            final String results,
+            final String sortBy
+    ) throws E {
         final ListData data = objectMapper.readValue(rawData, ListData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().list(outputStream, data, results, sortBy), LIST_EXPORT_FILE_NAME);
     }
 
-    public ResponseEntity<byte[]> dateGraph(
-            @RequestParam(DATA_PARAM) final String rawData
-    ) throws IOException, TemplateLoadException, E {
+    protected ResponseEntity<Resource> dateGraph(
+            final String rawData
+    ) throws E {
         final DategraphData data = objectMapper.readValue(rawData, DategraphData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().dateGraph(outputStream, data), DATE_GRAPH_EXPORT_FILE_NAME);
     }
 
-    public ResponseEntity<byte[]> report(
-            @RequestParam(DATA_PARAM) final String rawData,
-            @RequestParam(value = MULTI_PAGE_PARAM, defaultValue = "false") final boolean multiPage
-    ) throws IOException, TemplateLoadException, E {
+    protected ResponseEntity<Resource> report(
+            final String rawData,
+            final boolean multiPage
+    ) throws E {
         final ReportData data = objectMapper.readValue(rawData, ReportData.class);
         return writeDataToOutputStream(outputStream -> getVisualDataExportService().report(outputStream, data, multiPage), REPORT_EXPORT_FILE_NAME);
     }
@@ -184,10 +166,16 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         return exportServiceFactory.getVisualDataExportService(getExportFormat()).orElseThrow(() -> new UnsupportedOperationException("Visual data export operation not supported for format: " + getExportFormat().name()));
     }
 
-    private ResponseEntity<byte[]> writeDataToOutputStream(final Operation<E> operation,
-                                                           final String fileNameWithoutExtension) throws IOException, E {
+    private ResponseEntity<Resource> writeDataToOutputStream(final Operation<E> operation,
+                                                             final String fileNameWithoutExtension) throws E {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        operation.accept(outputStream);
+        try {
+            operation.accept(outputStream);
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
+        } catch (final TemplateLoadException e) {
+            throw new ExportRenderingException(e);
+        }
         final byte[] output = outputStream.toByteArray();
 
         final HttpHeaders headers = new HttpHeaders();
@@ -196,11 +184,11 @@ public abstract class ExportController<R extends QueryRequest<?>, E extends Exce
         final String fileName = fileNameWithoutExtension + FilenameUtils.EXTENSION_SEPARATOR + exportFormat.getExtension();
         headers.setContentDispositionFormData(fileName, fileName);
 
-        return new ResponseEntity<>(output, headers, HttpStatus.OK);
+        return new ResponseEntity<>(new ByteArrayResource(output), headers, HttpStatus.OK);
     }
 
     @FunctionalInterface
     private interface Operation<E extends Exception> {
-        void accept(OutputStream outputStream) throws IOException, E;
+        void accept(OutputStream outputStream) throws IOException, TemplateLoadException, E;
     }
 }

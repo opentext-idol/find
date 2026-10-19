@@ -17,10 +17,14 @@ package com.hp.autonomy.frontend.find.idol.controlpoint;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
+import com.hp.autonomy.frontend.find.idol.api.ControlPointApi;
+import com.hp.autonomy.frontend.find.idol.api.model.ControlPointPoliciesResponse;
+import com.hp.autonomy.frontend.find.idol.api.model.ControlPointPolicy;
 import com.hp.autonomy.frontend.find.idol.savedsearches.snapshot.SavedSnapshotService;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.stream.Collectors;
 
@@ -29,12 +33,7 @@ import java.util.stream.Collectors;
  * ({@link com.hp.autonomy.frontend.find.core.web.MvcConstants.CONTROL_POINT_ENABLED}).
  */
 @RestController
-@RequestMapping(ControlPointPolicyController.BASE_PATH)
-class ControlPointPolicyController {
-    static final String BASE_PATH = "/api/public/controlpoint/policy";
-    static final String APPLY_PATH = "apply";
-    private static final String POLICY_PARAM = "policy";
-    private static final String SAVED_SNAPSHOT_ID_PARAM = "savedSnapshotId";
+class ControlPointPolicyController implements ControlPointApi {
     private static final int DEFAULT_MAX_POLICIES = 30;
 
     private final ControlPointService controlPointService;
@@ -61,12 +60,18 @@ class ControlPointPolicyController {
     /**
      * Retrieve active policies.
      */
-    @RequestMapping(method = RequestMethod.GET)
-    public ControlPointPoliciesResponse getPolicies() throws ControlPointApiException {
+    @Override
+    public ResponseEntity<ControlPointPoliciesResponse> getControlPointPolicies() {
         checkEnabled();
-        return new ControlPointPoliciesResponse(controlPointService.getPolicies(aciParameterHandler.getSecurityInfo()).stream()
-            .filter(policy -> policy.isActive() && policy.isPublished())
-            .collect(Collectors.toList()));
+        try {
+            return ResponseEntity.ok(new ControlPointPoliciesResponse(
+                controlPointService.getPolicies(aciParameterHandler.getSecurityInfo()).stream()
+                    .filter(policy -> policy.isActive() && policy.isPublished())
+                    .map(policy -> new ControlPointPolicy(policy.getId(), policy.getName()))
+                    .collect(Collectors.toList())));
+        } catch (final ControlPointApiException e) {
+            throw new ControlPointApiRuntimeException(e);
+        }
     }
 
     /**
@@ -77,18 +82,23 @@ class ControlPointPolicyController {
      * @param snapshotId Apply the policy to the documents in the saved snapshot with this ID
      * @param query Apply the policy to the documents returned by this query
      */
-    @RequestMapping(value = APPLY_PATH, method = RequestMethod.POST)
-    public void applyPolicy(
-        @RequestParam(value = POLICY_PARAM) final String policy,
-        @RequestParam(value = SAVED_SNAPSHOT_ID_PARAM, required = false) final Long snapshotId,
-        @RequestBody(required = false) final SavedQuery query
-    ) throws ControlPointApiException {
+    @Override
+    public ResponseEntity<Void> applyControlPointPolicy(
+        final String policy,
+        final Long snapshotId,
+        final SavedQuery query
+    ) {
         checkEnabled();
         final String stateToken = SavedSnapshotService
             .toSnapshotToken(savedSnapshotService, snapshotId, query)
             .getStateToken();
-        controlPointService.applyPolicy(
-            policy, stateToken, aciParameterHandler.getSecurityInfo());
+        try {
+            controlPointService.applyPolicy(
+                policy, stateToken, aciParameterHandler.getSecurityInfo());
+        } catch (final ControlPointApiException e) {
+            throw new ControlPointApiRuntimeException(e);
+        }
+        return ResponseEntity.ok().build();
     }
 
 }

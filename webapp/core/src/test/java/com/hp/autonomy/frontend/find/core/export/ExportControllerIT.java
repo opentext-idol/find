@@ -44,12 +44,12 @@ public abstract class ExportControllerIT extends AbstractFindIT {
                 "\"max_results\": 5," +
                 "\"summary\": \"off\"}";
 
-        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.CSV_PATH).with(authentication(biAuth()));
-        requestBuilder.param(ExportController.QUERY_REQUEST_PARAM, json);
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/export/csv").with(authentication(biAuth()));
+        requestBuilder.param("queryRequest", json);
         final String selectedField1 = "dateCreated";
-        requestBuilder.param(ExportController.SELECTED_EXPORT_FIELDS_PARAM, selectedField1);
+        requestBuilder.param("selectedFieldIds", selectedField1);
         final String selectedField2 = "WEIGHT";
-        requestBuilder.param(ExportController.SELECTED_EXPORT_FIELDS_PARAM, selectedField2);
+        requestBuilder.param("selectedFieldIds", selectedField2);
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -59,8 +59,8 @@ public abstract class ExportControllerIT extends AbstractFindIT {
 
     @Test
     public void exportTopicMapToPptx() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.TOPIC_MAP_PATH).with(authentication(biAuth()));
-        requestBuilder.param(ExportController.DATA_PARAM, getData(TOPIC_MAP_DATA));
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/export/pptx/topic-map").with(authentication(biAuth()));
+        requestBuilder.param("data", getData(TOPIC_MAP_DATA));
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -70,8 +70,8 @@ public abstract class ExportControllerIT extends AbstractFindIT {
 
     @Test
     public void exportSunburstToPptx() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.SUNBURST_PATH).with(authentication(biAuth()));
-        requestBuilder.param(ExportController.DATA_PARAM, getData(SUNBURST_DATA));
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/export/pptx/sunburst").with(authentication(biAuth()));
+        requestBuilder.param("data", getData(SUNBURST_DATA));
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -82,10 +82,10 @@ public abstract class ExportControllerIT extends AbstractFindIT {
     @Ignore
     @Test
     public void exportTableToPptx() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.TABLE_PATH).with(authentication(biAuth()));
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/export/pptx/table").with(authentication(biAuth()));
         //TODO determine good test data
-        requestBuilder.param(ExportController.DATA_PARAM, "{}");
-        requestBuilder.param(ExportController.TITLE_PARAM, "");
+        requestBuilder.param("data", "{}");
+        requestBuilder.param("title", "");
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -95,9 +95,9 @@ public abstract class ExportControllerIT extends AbstractFindIT {
 
     @Test
     public void exportMapToPptx() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.MAP_PATH).with(authentication(biAuth()));
-        requestBuilder.param(ExportController.DATA_PARAM, getData(MAP_DATA));
-        requestBuilder.param(ExportController.TITLE_PARAM, "Test");
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/export/pptx/map").with(authentication(biAuth()));
+        requestBuilder.param("data", getData(MAP_DATA));
+        requestBuilder.param("title", "Test");
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -107,10 +107,10 @@ public abstract class ExportControllerIT extends AbstractFindIT {
 
     @Test
     public void exportListToPptx() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.LIST_PATH).with(authentication(biAuth()));
-        requestBuilder.param(ExportController.DATA_PARAM, getData(LIST_DATA));
-        requestBuilder.param(ExportController.RESULTS_PARAM, "");
-        requestBuilder.param(ExportController.SORT_BY_PARAM, "");
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/export/pptx/list").with(authentication(biAuth()));
+        requestBuilder.param("data", getData(LIST_DATA));
+        requestBuilder.param("results", "");
+        requestBuilder.param("sortBy", "");
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -120,8 +120,8 @@ public abstract class ExportControllerIT extends AbstractFindIT {
 
     @Test
     public void exportDateGraphToPptx() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.DATE_GRAPH_PATH).with(authentication(biAuth()));
-        requestBuilder.param(ExportController.DATA_PARAM, getData(DATE_GRAPH_DATA));
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/export/pptx/date-graph").with(authentication(biAuth()));
+        requestBuilder.param("data", getData(DATE_GRAPH_DATA));
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -131,9 +131,9 @@ public abstract class ExportControllerIT extends AbstractFindIT {
 
     @Test
     public void exportReportToPptx() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.REPORT_PATH).with(authentication(biAuth()));
-        requestBuilder.param(ExportController.DATA_PARAM, getData(REPORT_DATA));
-        requestBuilder.param(ExportController.MULTI_PAGE_PARAM, "false");
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/export/pptx/report").with(authentication(biAuth()));
+        requestBuilder.param("data", getData(REPORT_DATA));
+        requestBuilder.param("multiPage", "false");
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
@@ -143,9 +143,9 @@ public abstract class ExportControllerIT extends AbstractFindIT {
 
     @Test
     public void exportReportToPptxMultiPage() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = post(ExportController.EXPORT_PATH + ExportController.PPTX_PATH + ExportController.REPORT_PATH).with(authentication(biAuth()));
-        requestBuilder.param(ExportController.DATA_PARAM, getData(REPORT_DATA));
-        requestBuilder.param(ExportController.MULTI_PAGE_PARAM, "true");
+        final MockHttpServletRequestBuilder requestBuilder = post("/api/bi/export/pptx/report").with(authentication(biAuth()));
+        requestBuilder.param("data", getData(REPORT_DATA));
+        requestBuilder.param("multiPage", "true");
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())

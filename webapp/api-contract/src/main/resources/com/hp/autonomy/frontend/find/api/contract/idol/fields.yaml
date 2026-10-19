@@ -1,0 +1,73 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  parametricFields:
+    get:
+      summary: List the fields that can be used in parametric filters
+      description: |
+        Honours the `alwaysShow` / `neverShow` configuration.  `autn:date` and `autn:database` are included.
+      operationId: getParametricFields
+      tags:
+        - fields
+      parameters:
+        - name: fieldTypes
+          in: query
+          description: Which IDOL field types to return
+          required: true
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              $ref: "../common/types.yaml#/components/schemas/FieldTypeParam"
+      responses:
+        '200':
+          description: Parametric fields, with value details where available
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ParametricFieldsResponse"
+
+components:
+
+  schemas:
+
+    ParametricFieldsResponse:
+      description: Fields usable as parametric filters
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/FieldAndValueDetails"
+
+    FieldAndValueDetails:
+      description: One parametric field with summary statistics over its values
+      type: object
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        type:
+          $ref: "../common/types.yaml#/components/schemas/FieldTypeParam"
+        totalValues:
+          type: integer
+          format: int64
+        min:
+          description: Lowest value; a number for numeric fields, a date-time for date fields
+        max:
+          description: Highest value; a number for numeric fields, a date-time for date fields

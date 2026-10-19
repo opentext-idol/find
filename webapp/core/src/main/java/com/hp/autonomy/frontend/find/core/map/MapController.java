@@ -1,16 +1,14 @@
 package com.hp.autonomy.frontend.find.core.map;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.api.MapApi;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,13 +18,8 @@ import java.net.URLConnection;
 import java.util.regex.Pattern;
 
 @Slf4j
-@Controller
-@RequestMapping(MapController.MAP_PATH)
-class MapController {
-    static final String MAP_PATH = "/api/public/map";
-    private static final String PROXY_PATH = "/proxy";
-    private static final String URL_PARAM = "url";
-    private static final String CALLBACK_PARAM = "callback";
+@RestController
+class MapController implements MapApi {
     private static final Pattern CALLBACK_FUNCTION_NAME_PATTERN = Pattern.compile("\\w+");
 
     private final ConfigService<? extends FindConfig<?, ?>> configService;
@@ -37,12 +30,8 @@ class MapController {
     }
 
     @SuppressWarnings("OverlyBroadCatchBlock")
-    @RequestMapping(value = PROXY_PATH, method = RequestMethod.GET)
-    @ResponseBody
-    public String getMapData(
-            @RequestParam(URL_PARAM) final String url,
-            @RequestParam(CALLBACK_PARAM) final String callback
-    ) {
+    @Override
+    public ResponseEntity<String> proxyMapTile(final String url, final String callback) {
         if (!CALLBACK_FUNCTION_NAME_PATTERN.matcher(callback).matches()) {
             throw new IllegalArgumentException("Invalid callback function name");
         }
@@ -59,10 +48,10 @@ class MapController {
 
             final URLConnection urlConnection = targetURL.openConnection();
             final String contentType = urlConnection.getContentType();
-            return getMapData(callback, urlConnection, contentType);
+            return ResponseEntity.ok(getMapData(callback, urlConnection, contentType));
         } catch (final IOException e) {
             log.error("Error retrieving map data", e);
-            return callback + "(\"error:Application error\")";
+            return ResponseEntity.ok(callback + "(\"error:Application error\")");
         }
     }
 

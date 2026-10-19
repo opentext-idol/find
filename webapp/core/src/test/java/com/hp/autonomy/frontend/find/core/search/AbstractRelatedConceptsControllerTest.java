@@ -14,6 +14,7 @@
 
 package com.hp.autonomy.frontend.find.core.search;
 
+import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
 import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsRequest;
 import com.hp.autonomy.searchcomponents.core.search.RelatedConceptsService;
@@ -46,7 +47,7 @@ public abstract class AbstractRelatedConceptsControllerTest<T extends QuerySumma
 
     @Test
     public void query() throws E {
-        relatedConceptsController.findRelatedConcepts("Some query text", "field text", Collections.emptyList(), null, null, 0, null, null, null, "MODIFIED");
+        relatedConceptsController.findRelatedConcepts("Some query text", "field text", Collections.emptyList(), null, null, 0, null, null, null, QueryRequest.QueryType.MODIFIED);
         verify(relatedConceptsService).findRelatedConcepts(ArgumentMatchers.any());
     }
 }

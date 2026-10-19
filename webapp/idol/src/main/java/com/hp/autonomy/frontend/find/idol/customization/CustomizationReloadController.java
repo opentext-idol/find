@@ -19,51 +19,58 @@ import com.hp.autonomy.frontend.find.core.customization.ReloadableCustomizationC
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
 import com.hp.autonomy.frontend.find.core.web.FindController;
+import com.hp.autonomy.frontend.find.idol.api.CustomizationReloadApi;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.hp.autonomy.frontend.find.idol.customization.CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH;
-
 @Controller
 @Slf4j
-@RequestMapping(ADMIN_CUSTOMIZATION_PATH)
-public class CustomizationReloadController {
-    public final static String ADMIN_CUSTOMIZATION_PATH = "/api/admin/customization";
-    public final static String CONFIG_RELOAD_PATH = "/config/reload";
+public class CustomizationReloadController implements CustomizationReloadApi {
     private final ControllerUtils controllerUtils;
     private final Collection<ReloadableCustomizationComponent> reloadableCustomizationComponents;
     private final String contextPath;
+    private final HttpServletResponse response;
 
     @Autowired
     public CustomizationReloadController(
         @Value(AppConfiguration.SERVER_CONTEXT_PATH) String contextPath,
         final Collection<ReloadableCustomizationComponent> reloadableCustomizationComponents,
-        final ControllerUtils controllerUtils)
+        final ControllerUtils controllerUtils,
+        final HttpServletResponse response)
     {
         this.reloadableCustomizationComponents = reloadableCustomizationComponents;
         this.controllerUtils = controllerUtils;
         this.contextPath = contextPath;
+        this.response = response;
     }
 
-    @RequestMapping(CONFIG_RELOAD_PATH)
-    public void reloadConfig(final HttpServletResponse response) throws Exception {
+    @Override
+    public ResponseEntity<Void> reloadCustomizationConfig() {
         for(final ReloadableCustomizationComponent component : reloadableCustomizationComponents) {
             log.info("Reloading customization component: " + component.getClass().getSimpleName());
-            component.reload();
+            try {
+                component.reload();
+            } catch (final RuntimeException e) {
+                throw e;
+            } catch (final Exception e) {
+                throw new IllegalStateException(e.getMessage(), e);
+            }
         }
 
         // Prevents a situation where we could have two adjacent slashes in a URL contcatenated
@@ -73,7 +80,13 @@ public class CustomizationReloadController {
         ).filter(s -> !s.isEmpty()).collect(Collectors.toList());
 
         final String redirect = "/" + String.join("/", pathElements);
-        response.sendRedirect(redirect);
+        try {
+            response.sendRedirect(redirect);
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        // tell Spring the request has already been handled
+        return null;
     }
 
     @ExceptionHandler(Exception.class)

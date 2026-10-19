@@ -31,12 +31,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
     @Test
     public void query() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH)
-                .param(DocumentsController.TEXT_PARAM, "*")
-                .param(DocumentsController.RESULTS_START_PARAM, "1")
-                .param(DocumentsController.MAX_RESULTS_PARAM, "50")
-                .param(DocumentsController.SUMMARY_PARAM, "context")
-                .param(DocumentsController.INDEXES_PARAM, mvcIntegrationTestUtils.getDatabases())
+        final MockHttpServletRequestBuilder requestBuilder = get("/api/public/search/query-text-index/results")
+                .param("text", "*")
+                .param("start", "1")
+                .param("max_results", "50")
+                .param("summary", "context")
+                .param("indexes", mvcIntegrationTestUtils.getDatabases())
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)
@@ -47,14 +47,14 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
 
     @Test
     public void queryWithPagination() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH)
-                .param(DocumentsController.TEXT_PARAM, "*")
-                .param(DocumentsController.RESULTS_START_PARAM, "10")
-                .param(DocumentsController.MAX_RESULTS_PARAM, "20")
-                .param(DocumentsController.AUTO_CORRECT_PARAM, "false")
-                .param(DocumentsController.SUMMARY_PARAM, "context")
-                .param(DocumentsController.INDEXES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                .param(DocumentsController.QUERY_TYPE_PARAM, QueryRequest.QueryType.MODIFIED.name())
+        final MockHttpServletRequestBuilder requestBuilder = get("/api/public/search/query-text-index/results")
+                .param("text", "*")
+                .param("start", "10")
+                .param("max_results", "20")
+                .param("auto_correct", "false")
+                .param("summary", "context")
+                .param("indexes", mvcIntegrationTestUtils.getDatabases())
+                .param("queryType", QueryRequest.QueryType.MODIFIED.name())
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)
@@ -65,13 +65,13 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
 
     @Test
     public void queryForPromotions() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH)
-                .param(DocumentsController.TEXT_PARAM, "*")
-                .param(DocumentsController.RESULTS_START_PARAM, "1")
-                .param(DocumentsController.MAX_RESULTS_PARAM, "50")
-                .param(DocumentsController.SUMMARY_PARAM, "context")
-                .param(DocumentsController.INDEXES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                .param(DocumentsController.QUERY_TYPE_PARAM, QueryRequest.QueryType.PROMOTIONS.name())
+        final MockHttpServletRequestBuilder requestBuilder = get("/api/public/search/query-text-index/results")
+                .param("text", "*")
+                .param("start", "1")
+                .param("max_results", "50")
+                .param("summary", "context")
+                .param("indexes", mvcIntegrationTestUtils.getDatabases())
+                .param("queryType", QueryRequest.QueryType.PROMOTIONS.name())
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)
@@ -84,11 +84,11 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
     public void findSimilar() throws Exception {
         final String reference = mvcIntegrationTestUtils.getValidReference(mockMvc);
 
-        final MockHttpServletRequestBuilder requestBuilder = get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.SIMILAR_DOCUMENTS_PATH)
-                .param(DocumentsController.REFERENCE_PARAM, reference)
-                .param(DocumentsController.INDEXES_PARAM, mvcIntegrationTestUtils.getDatabases())
-                .param(DocumentsController.MAX_RESULTS_PARAM, "50")
-                .param(DocumentsController.SUMMARY_PARAM, "context")
+        final MockHttpServletRequestBuilder requestBuilder = get("/api/public/search/similar-documents")
+                .param("reference", reference)
+                .param("indexes", mvcIntegrationTestUtils.getDatabases())
+                .param("max_results", "50")
+                .param("summary", "context")
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)
@@ -101,9 +101,9 @@ public abstract class AbstractDocumentServiceIT extends AbstractFindIT {
     public void getDocumentContent() throws Exception {
         final String reference = mvcIntegrationTestUtils.getValidReference(mockMvc);
 
-        final MockHttpServletRequestBuilder requestBuilder = get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.GET_DOCUMENT_CONTENT_PATH)
-                .param(DocumentsController.REFERENCE_PARAM, reference)
-                .param(DocumentsController.DATABASE_PARAM, mvcIntegrationTestUtils.getDatabases()[0])
+        final MockHttpServletRequestBuilder requestBuilder = get("/api/public/search/get-document-content")
+                .param("reference", reference)
+                .param("database", mvcIntegrationTestUtils.getDatabases()[0])
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)

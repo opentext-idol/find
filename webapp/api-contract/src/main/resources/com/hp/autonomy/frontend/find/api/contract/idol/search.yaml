@@ -1,0 +1,645 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  queryTextIndexResults:
+    get:
+      summary: Search for documents matching query text
+      operationId: queryTextIndex
+      tags:
+        - search
+      parameters:
+        - name: text
+          in: query
+          description: The query text to search for
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          description: Maximum number of results to return
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: summary
+          in: query
+          description: IDOL summary type, for example `context` or `concept`
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: Index of the first result to return, 1-based
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: indexes
+          in: query
+          description: Names of the IDOL databases to search; omit to search all
+          required: false
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: field_text
+          in: query
+          description: IDOL field text restriction
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: min_date
+          in: query
+          description: Only return documents with a date at or after this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: max_date
+          in: query
+          description: Only return documents with a date at or before this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: highlight
+          in: query
+          description: Whether to wrap query terms in the result summaries with highlight markup
+          required: false
+          schema:
+            type: boolean
+            default: true
+        - name: min_score
+          in: query
+          description: Minimum IDOL relevance score a document must have to be returned
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: sort
+          in: query
+          description: IDOL sort specification, for example `relevance` or `date`
+          required: false
+          schema:
+            type: string
+        - name: auto_correct
+          in: query
+          description: Whether to retry with a spelling-corrected query when there are no results
+          required: false
+          schema:
+            type: boolean
+            default: true
+        - name: intentBasedRanking
+          in: query
+          description: Whether to re-rank results using intent-based ranking
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: queryType
+          in: query
+          description: How IDOL should interpret the query text
+          required: false
+          schema:
+            allOf:
+              - $ref: "../common/types.yaml#/components/schemas/QueryType"
+            default: MODIFIED
+      responses:
+        '200':
+          description: Matching documents, most relevant first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Documents"
+
+  similarDocuments:
+    get:
+      summary: Find documents similar to a given document
+      operationId: findSimilarDocuments
+      tags:
+        - search
+      parameters:
+        - name: reference
+          in: query
+          description: Reference of the document to find similar documents to
+          required: true
+          schema:
+            type: string
+        - name: max_results
+          in: query
+          description: Maximum number of results to return
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: summary
+          in: query
+          description: IDOL summary type, for example `context` or `concept`
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: Index of the first result to return, 1-based
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: indexes
+          in: query
+          description: Names of the IDOL databases to search; omit to search all
+          required: false
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: field_text
+          in: query
+          description: IDOL field text restriction
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: min_date
+          in: query
+          description: Only return documents with a date at or after this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: max_date
+          in: query
+          description: Only return documents with a date at or before this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: highlight
+          in: query
+          description: Whether to wrap query terms in the result summaries with highlight markup
+          required: false
+          schema:
+            type: boolean
+            default: true
+        - name: min_score
+          in: query
+          description: Minimum IDOL relevance score a document must have to be returned
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: sort
+          in: query
+          description: IDOL sort specification, for example `relevance` or `date`
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Similar documents, most similar first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Documents"
+
+  getDocumentContent:
+    get:
+      summary: Get the full stored content of a single document
+      description: Fails if no document has that reference in that database
+      operationId: getDocumentContent
+      tags:
+        - search
+      parameters:
+        - name: reference
+          in: query
+          description: Reference of the document
+          required: true
+          schema:
+            type: string
+        - name: database
+          in: query
+          description: Name of the IDOL database containing the document
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResult"
+
+  recommendDocuments:
+    get:
+      summary: Recommend documents based on the current user's profiles
+      operationId: recommendDocuments
+      tags:
+        - search
+      parameters:
+        - name: summary
+          in: query
+          description: IDOL summary type, for example `context` or `concept`
+          required: true
+          schema:
+            type: string
+        - name: maxResultsPerProfile
+          in: query
+          description: Maximum number of results to take from each profile
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 2
+        - name: maxTerms
+          in: query
+          description: Maximum number of profile terms to query with
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 30
+        - name: maxProfiles
+          in: query
+          description: Maximum number of the user's profiles to draw on
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 3
+        - name: indexes
+          in: query
+          description: Names of the IDOL databases to search; omit to search all
+          required: false
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: field_text
+          in: query
+          description: IDOL field text restriction
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: min_date
+          in: query
+          description: Only return documents with a date at or after this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: max_date
+          in: query
+          description: Only return documents with a date at or before this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: highlight
+          in: query
+          description: Whether to wrap query terms in the result summaries with highlight markup
+          required: false
+          schema:
+            type: boolean
+            default: true
+        - name: min_score
+          in: query
+          description: Minimum IDOL relevance score a document must have to be returned
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+      responses:
+        '200':
+          description: Recommended documents
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Documents"
+
+  findRelatedConcepts:
+    get:
+      summary: Get concepts related to a query
+      operationId: findRelatedConcepts
+      tags:
+        - relatedConcepts
+      parameters:
+        - name: queryText
+          in: query
+          description: The query text to find related concepts for
+          required: true
+          schema:
+            type: string
+        - name: databases
+          in: query
+          description: Names of the IDOL databases to search
+          required: true
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: fieldText
+          in: query
+          description: IDOL field text restriction
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: minDate
+          in: query
+          description: Only consider documents with a date at or after this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: maxDate
+          in: query
+          description: Only consider documents with a date at or before this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: minScore
+          in: query
+          description: Minimum IDOL relevance score a document must have to be considered
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: stateMatchTokens
+          in: query
+          description: IDOL state tokens the documents must appear in
+          required: false
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: stateDontMatchTokens
+          in: query
+          description: IDOL state tokens the documents must not appear in
+          required: false
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: maxResults
+          in: query
+          description: Maximum number of concepts to return
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: queryType
+          in: query
+          description: How IDOL should interpret the query text
+          required: false
+          schema:
+            allOf:
+              - $ref: "../common/types.yaml#/components/schemas/QueryType"
+            default: MODIFIED
+      responses:
+        '200':
+          description: Related concepts, most significant first
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RelatedConceptsResponse"
+
+  listIndexes:
+    get:
+      summary: List the available IDOL databases
+      operationId: listIndexes
+      tags:
+        - databases
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DatabasesResponse"
+
+components:
+
+  schemas:
+
+    Documents:
+      description: A page of search results
+      type: object
+      properties:
+        documents:
+          type: array
+          items:
+            $ref: "#/components/schemas/SearchResult"
+        totalResults:
+          description: Total matches found, or null if the count was not requested
+          type: integer
+          format: int32
+        expandedQuery:
+          description: The query after profile expansion, or null if no profile was used
+          type: string
+        suggestion:
+          $ref: "#/components/schemas/Spelling"
+        autoCorrection:
+          $ref: "#/components/schemas/Spelling"
+        warnings:
+          $ref: "#/components/schemas/Warnings"
+        expansionOrder:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExpansionRule"
+
+    Spelling:
+      description: A spelling correction for the query
+      type: object
+      properties:
+        corrections:
+          type: array
+          items:
+            type: string
+        correctedQuery:
+          type: string
+        originalQuery:
+          type: string
+
+    Warnings:
+      description: Warnings resulting from a document query
+      type: object
+      properties:
+        invalidDatabases:
+          description: Names of requested databases that do not exist
+          type: array
+          items:
+            type: string
+
+    ExpansionRule:
+      description: An expansion rule applied to the query
+      type: object
+      properties:
+        reference:
+          type: string
+        type:
+          type: string
+
+    SearchResult:
+      description: A single document
+      type: object
+      properties:
+        reference:
+          description: Value of the Find-configured reference field
+          type: string
+        index:
+          description: Database containing the document
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+        date:
+          type: string
+          format: date-time
+        weight:
+          type: number
+          format: double
+        qmsId:
+          description: Identifier of the QMS promotion that produced this result
+          type: string
+        promotionName:
+          type: string
+        promotionCategory:
+          $ref: "#/components/schemas/PromotionCategory"
+        intentRankedHit:
+          type: boolean
+        fieldMap:
+          description: Fields of the document, keyed by field identifier
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/FieldInfo"
+
+    PromotionCategory:
+      description: How the result was promoted, if at all
+      type: string
+      enum:
+        - CARDINAL_PLACEMENT
+        - STATIC_CONTENT_PROMOTION
+        - SPOTLIGHT
+        - NONE
+
+    FieldInfo:
+      description: A document field and values
+      type: object
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        type:
+          $ref: "../common/types.yaml#/components/schemas/FieldTypeParam"
+        advanced:
+          type: boolean
+        values:
+          type: array
+          items:
+            $ref: "#/components/schemas/FieldValue"
+
+    FieldValue:
+      description: One value of a document field
+      type: object
+      properties:
+        value:
+          description: The value; a string, number or date-time string according to the field's type
+        displayValue:
+          description: The value as it should be shown to the user
+          type: string
+
+    RelatedConceptsResponse:
+      description: Concepts related to a query
+      type: object
+      properties:
+        concepts:
+          type: array
+          items:
+            $ref: "#/components/schemas/QsElement"
+
+    QsElement:
+      description: One concept related to a query
+      type: object
+      properties:
+        text:
+          type: string
+        occurrences:
+          type: integer
+          format: int32
+        docsWithPhrase:
+          type: integer
+          format: int32
+        docsWithAllTerms:
+          type: integer
+          format: int32
+        cluster:
+          type: integer
+          format: int32
+        ids:
+          type: string
+
+    DatabasesResponse:
+      description: Available IDOL databases
+      type: object
+      properties:
+        databases:
+          type: array
+          items:
+            $ref: "#/components/schemas/Database"
+
+    Database:
+      description: An IDOL database
+      type: object
+      properties:
+        name:
+          type: string
+        documents:
+          type: integer
+          format: int64
+        sections:
+          type: integer
+          format: int64
+        internal:
+          type: boolean
+        readonly:
+          type: boolean
+        expiryAction:
+          type: string
+        expiryHours:
+          type: string

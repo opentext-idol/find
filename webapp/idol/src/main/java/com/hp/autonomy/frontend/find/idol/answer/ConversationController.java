@@ -15,32 +15,26 @@
 package com.hp.autonomy.frontend.find.idol.answer;
 
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
+import com.hp.autonomy.frontend.find.idol.api.ConversationApi;
+import com.hp.autonomy.frontend.find.idol.api.model.Conversation;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.ConversationAnswerServerService;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.ConversationRequest;
 import com.hp.autonomy.searchcomponents.idol.answer.ask.ConversationRequestBuilder;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
-import com.opentext.idol.types.responses.conversation.ConversePrompt;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping(AnswerServerController.BASE_PATH)
-class ConversationController {
-    static final String CONVERSE_PATH = "converse";
-    static final String TEXT_PARAM = "text";
-    static final String SESSION_ID_PARAM = "sessionId";
-    static final String CONVERSE_END_PATH = "converse/{"+SESSION_ID_PARAM+"}/end";
-
+class ConversationController implements ConversationApi {
     private final ConversationAnswerServerService conversationService;
     private final ObjectFactory<ConversationRequestBuilder> requestBuilderFactory;
     private final AuthenticationInformationRetriever<?, ? extends Principal> authenticationInformationRetriever;
@@ -57,11 +51,8 @@ class ConversationController {
         this.contexts = contexts;
     }
 
-    @RequestMapping(value = CONVERSE_PATH, method = RequestMethod.POST)
-    public Conversation converse(@RequestParam(TEXT_PARAM)
-                               final String text,
-                                 @RequestParam(value = SESSION_ID_PARAM, required = false)
-                               String sessionId) {
+    @Override
+    public ResponseEntity<Conversation> converse(final String text, String sessionId) {
         final boolean illegalSessionId = sessionId != null && !contexts.containsKey(sessionId);
         if (illegalSessionId) {
             // The user is trying to use a dialog ID which doesn't belong to their session.
@@ -95,28 +86,22 @@ class ConversationController {
                 .sessionId(sessionId)
                 .build();
 
-        return new Conversation(conversationService.converse(request), sessionId);
+        return ResponseEntity.ok(new Conversation(conversationService.converse(request), sessionId));
     }
 
-    @RequestMapping(value = CONVERSE_END_PATH, method = RequestMethod.POST)
-    public boolean converseEnd(
-            @PathVariable(SESSION_ID_PARAM) final String sessionId) {
+    @Override
+    public ResponseEntity<Boolean> converseEnd(final String sessionId) {
         final ConversationContexts.ConversationContext context = contexts.get(sessionId);
 
         if (context == null || context.isTerminated()) {
-            return false;
+            return ResponseEntity.ok(false);
         }
 
         conversationService.conversationEnd(sessionId);
         context.setTerminated(true);
         contexts.remove(sessionId);
 
-        return true;
+        return ResponseEntity.ok(true);
     }
 
-    @Data
-    public static class Conversation {
-        final List<ConversePrompt> prompts;
-        final String sessionId;
-    }
 }

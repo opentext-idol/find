@@ -15,24 +15,19 @@
 package com.hp.autonomy.frontend.find.core.savedsearches;
 
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.core.api.SharedToEveryoneApi;
 import com.hp.autonomy.frontend.find.core.beanconfiguration.BiConfiguration;
 import com.hp.autonomy.frontend.find.core.configuration.FindConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-import static com.hp.autonomy.frontend.find.core.savedsearches.SharedToUserController.SEARCH_ID_PARAM;
-
-@Controller
+@RestController
 @ConditionalOnExpression(BiConfiguration.BI_PROPERTY_SPEL)
-@RequestMapping(SharedToUserController.SHARED_SEARCHES_PATH)
-class SharedToEveryoneController {
-    static final String PERMISSIONS_PATH = "/everyone/permissions";
-
+class SharedToEveryoneController implements SharedToEveryoneApi {
     @Autowired private ConfigService<? extends FindConfig<?, ?>> configService;
     @Autowired private SharedToEveryoneRepository sharedToEveryoneRepository;
 
@@ -42,20 +37,24 @@ class SharedToEveryoneController {
         }
     }
 
-    @RequestMapping(value = PERMISSIONS_PATH + "/{"+SEARCH_ID_PARAM+"}", method = RequestMethod.GET)
-    @ResponseBody
-    public SharedToEveryone getPermissionsForSearch(
-            @PathVariable(SEARCH_ID_PARAM) final Long searchId
-    ) {
+    @Override
+    public ResponseEntity<SharedToEveryone> getSearchEveryonePermissions(final Long searchId) {
         checkEnabled();
-        return sharedToEveryoneRepository.findOneBySavedSearch_Id(searchId);
+        return ResponseEntity.ok(sharedToEveryoneRepository.findOneBySavedSearch_Id(searchId));
     }
 
-    @RequestMapping(value = PERMISSIONS_PATH + "/{"+SEARCH_ID_PARAM+"}", method = {RequestMethod.PUT, RequestMethod.POST})
-    @ResponseBody
-    public SharedToEveryone save(
-            @RequestBody final SharedToEveryone sharedToEveryone,
-            @PathVariable(SEARCH_ID_PARAM) final long searchId
+    @Override
+    public ResponseEntity<SharedToEveryone> shareSearchWithEveryone(
+            final Long searchId,
+            final SharedToEveryone sharedToEveryone
+    ) {
+        return updateSearchEveryoneShare(searchId, sharedToEveryone);
+    }
+
+    @Override
+    public ResponseEntity<SharedToEveryone> updateSearchEveryoneShare(
+            final Long searchId,
+            final SharedToEveryone sharedToEveryone
     ) {
         checkEnabled();
         sharedToEveryone.setId(new SharedToEveryonePK(searchId));
@@ -63,17 +62,14 @@ class SharedToEveryoneController {
         final Optional<SharedToEveryone> existing = sharedToEveryoneRepository.findById(sharedToEveryone.getId());
         sharedToEveryone.merge(existing.orElse(null));
 
-        return sharedToEveryoneRepository.save(sharedToEveryone);
+        return ResponseEntity.ok(sharedToEveryoneRepository.save(sharedToEveryone));
     }
 
-    @RequestMapping(value = PERMISSIONS_PATH + "/{"+SEARCH_ID_PARAM+"}", method = RequestMethod.DELETE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(
-            @PathVariable(SEARCH_ID_PARAM) final long searchId
-    ) {
+    @Override
+    public ResponseEntity<Void> removeSearchEveryoneShare(final Long searchId) {
         checkEnabled();
         sharedToEveryoneRepository.deleteById(new SharedToEveryonePK(searchId));
+        return ResponseEntity.noContent().build();
     }
 
 }

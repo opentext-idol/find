@@ -1,0 +1,137 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  viewDocument:
+    get:
+      summary: View a document
+      description: |
+        Retrieve a document or HTML render for a document.
+
+        The response media type is chosen at request time::
+
+          - `part=DOCUMENT` and `part=SUBDOCUMENT` return `text/html`
+          - `part=ORIGINAL` returns `application/octet-stream` together with a
+            `Content-Disposition` header whose filename is derived from the document reference
+
+        Appropriate `Content-Security-Policy` is set on this API.
+
+        Errors are rendered as an HTML error page rather than a JSON error.
+      operationId: viewDocument
+      tags:
+        - view
+      parameters:
+        - name: reference
+          in: query
+          description: |
+            Reference of the document to view.  Optional because it's not needed with `part=SUBDOCUMENT`.
+          required: false
+          schema:
+            type: string
+        - name: index
+          in: query
+          description: Name of the IDOL database containing the document
+          required: true
+          schema:
+            type: string
+        - name: highlightExpressions
+          in: query
+          description: IDOL highlight expression applied to the rendered HTML
+          required: false
+          schema:
+            type: string
+        - name: part
+          in: query
+          description: Which representation of the document to return
+          required: true
+          schema:
+            $ref: "#/components/schemas/ViewingPart"
+        - name: urlPrefix
+          in: query
+          description: For HTML viewing, a prefix to apply to embedded links
+          required: false
+          schema:
+            type: string
+        - name: subDocRef
+          in: query
+          description: Reference of a sub-document within the document
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Document content
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: No document exists with that reference; an HTML error page is rendered
+          content:
+            text/html:
+              schema:
+                type: string
+        '500':
+          description: Viewing backend returned an error; an HTML error page is rendered
+          content:
+            text/html:
+              schema:
+                type: string
+
+  viewStaticContentPromotion:
+    get:
+      summary: View a static content promotion
+      operationId: viewStaticContentPromotion
+      tags:
+        - view
+      parameters:
+        - name: reference
+          in: query
+          description: Reference of the static content promotion
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Static content promotion body
+          content:
+            text/html:
+              schema:
+                type: string
+                format: binary
+        '500':
+          description: ViewServer returned an error; an HTML error page is rendered
+          content:
+            text/html:
+              schema:
+                type: string
+
+components:
+
+  schemas:
+
+    ViewingPart:
+      description: |
+        Which representation of a document to return.
+
+        - `DOCUMENT`: the whole document, rendered as HTML
+        - `SUBDOCUMENT`: part of the document as HTML, requested by links embedded in the `DOCUMENT` rendering
+        - `ORIGINAL`: the original file, in its original format
+      type: string
+      enum:
+        - DOCUMENT
+        - SUBDOCUMENT
+        - ORIGINAL

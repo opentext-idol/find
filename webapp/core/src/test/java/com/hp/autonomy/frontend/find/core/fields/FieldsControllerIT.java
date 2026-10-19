@@ -31,8 +31,8 @@ public abstract class FieldsControllerIT extends AbstractFindIT {
 
     @Test
     public void getParametricFields() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(FieldsController.FIELDS_PATH + FieldsController.GET_PARAMETRIC_FIELDS_PATH).with(authentication(userAuth()));
-        requestBuilder.param(FieldsController.FIELD_TYPES_PARAM, FieldTypeParam.Parametric.name(), FieldTypeParam.Numeric.name(), FieldTypeParam.NumericDate.name());
+        final MockHttpServletRequestBuilder requestBuilder = get("/api/public/fields/parametric").with(authentication(userAuth()));
+        requestBuilder.param("fieldTypes", FieldTypeParam.Parametric.name(), FieldTypeParam.Numeric.name(), FieldTypeParam.NumericDate.name());
         addParams(requestBuilder);
 
         mockMvc.perform(requestBuilder)

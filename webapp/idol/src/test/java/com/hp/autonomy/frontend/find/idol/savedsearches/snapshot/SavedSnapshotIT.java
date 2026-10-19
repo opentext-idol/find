@@ -4,6 +4,7 @@ import com.hp.autonomy.frontend.find.core.savedsearches.ConceptClusterPhrase;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
+import com.hp.autonomy.frontend.find.idol.api.model.SavedSnapshotsResponse;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -33,7 +34,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
 
     @Test
     public void basicUserNotAuthorised() throws Exception {
-        mockMvc.perform(get(SavedSnapshotController.PATH).with(authentication(userAuth())))
+        mockMvc.perform(get("/api/bi/saved-snapshot").with(authentication(userAuth())))
                 .andExpect(status().is(403));
     }
 
@@ -57,7 +58,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
                 .setTitle(updatedTitle)
                 .build();
 
-        final MockHttpServletRequestBuilder requestBuilder = put(SavedSnapshotController.PATH + '/' + createdEntity.getId())
+        final MockHttpServletRequestBuilder requestBuilder = put("/api/bi/saved-snapshot" + '/' + createdEntity.getId())
                 .content(mapper.writeValueAsString(updatedSnapshot))
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
@@ -85,7 +86,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
     public void deleteById() throws Exception {
         final SavedSnapshot createdEntity = createAndParseSnapshot(getBaseSavedSnapshot());
 
-        final MockHttpServletRequestBuilder requestBuilder = delete(SavedSnapshotController.PATH + '/' + createdEntity.getId())
+        final MockHttpServletRequestBuilder requestBuilder = delete("/api/bi/saved-snapshot" + '/' + createdEntity.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
 
@@ -102,7 +103,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
 
     private ResultActions createSnapshot(final SavedSnapshot snapshot) throws Exception {
         return mockMvc.perform(
-                post(SavedSnapshotController.PATH)
+                post("/api/bi/saved-snapshot")
                         .content(mapper.writeValueAsString(snapshot))
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(authentication(biAuth()))
@@ -116,7 +117,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
     }
 
     private ResultActions listSnapshots() throws Exception {
-        return mockMvc.perform(get(SavedSnapshotController.PATH).with(authentication(biAuth())));
+        return mockMvc.perform(get("/api/bi/saved-snapshot").with(authentication(biAuth())));
     }
 
     private Set<SavedSnapshot> listAndParseSnapshots() throws Exception {
@@ -125,7 +126,7 @@ public class SavedSnapshotIT extends AbstractFindIT {
                 .andReturn();
 
         return mapper.readValue(listResult.getResponse().getContentAsString(), SavedSnapshotsResponse.class)
-                .savedSnapshots();
+                .getSavedSnapshots();
     }
 
     private SavedSnapshot getBaseSavedSnapshot() {

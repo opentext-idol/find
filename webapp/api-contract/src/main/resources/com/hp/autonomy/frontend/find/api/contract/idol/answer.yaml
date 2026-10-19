@@ -1,0 +1,391 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  ask:
+    get:
+      summary: Ask a question
+      operationId: ask
+      tags:
+        - answer
+      parameters:
+        - name: text
+          in: query
+          description: The question to ask
+          required: true
+          schema:
+            type: string
+        - name: fieldText
+          in: query
+          description: IDOL field text restriction applied to the answer sources
+          required: false
+          schema:
+            type: string
+        - name: maxResults
+          in: query
+          description: Maximum number of answers to return; zero returns no answers
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: indexes
+          in: query
+          description: Names of the IDOL databases to draw answers from
+          required: false
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AskAnswersResponse"
+
+  entityFacts:
+    get:
+      summary: Get the extracted facts about an entity
+      operationId: getEntityFacts
+      tags:
+        - answer
+      parameters:
+        - name: entity
+          in: query
+          description: The entity to return facts about
+          required: true
+          schema:
+            type: string
+        - name: indexes
+          in: query
+          description: Names of the IDOL databases to draw facts from
+          required: true
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: maxResults
+          in: query
+          description: Maximum number of facts to return
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntityFactsResponse"
+
+  entitySearchAsk:
+    get:
+      summary: Ask a question in the context of an entity
+      operationId: entitySearchAsk
+      tags:
+        - entitySearchAnswer
+      parameters:
+        - name: text
+          in: query
+          description: The question to ask
+          required: true
+          schema:
+            type: string
+        - name: maxResults
+          in: query
+          description: Maximum number of answers to return; zero returns no answers
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: context
+          in: query
+          description: Entity text used to restrict the documents answers are drawn from
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AskAnswersResponse"
+
+  converse:
+    post:
+      summary: Send a message to a conversation
+      operationId: converse
+      tags:
+        - conversation
+      parameters:
+        - name: text
+          in: query
+          description: The message to send
+          required: true
+          schema:
+            type: string
+        - name: sessionId
+          in: query
+          description: Session of an existing conversation to continue; if omitted, a new conversation is started
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conversation"
+
+  converseEnd:
+    post:
+      summary: End a conversation
+      operationId: converseEnd
+      tags:
+        - conversation
+      parameters:
+        - name: sessionId
+          in: path
+          description: Session of the conversation to end
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: |
+            `true` if the conversation was ended, `false` if it was already over or unknown.
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+components:
+
+  schemas:
+
+    AskAnswersResponse:
+      description: Answers to a question, most confident first
+      type: object
+      required:
+        - answers
+      properties:
+        answers:
+          type: array
+          items:
+            $ref: "#/components/schemas/AskAnswer"
+
+    AskAnswer:
+      description: A single answer to a question
+      type: object
+      properties:
+        text:
+          description: The answer itself
+          type: string
+        score:
+          description: Confidence score for the answer
+          type: number
+          format: double
+        source:
+          description: Document reference used to produce the answer
+          type: string
+        systemName:
+          description: Answer Server system that produced the answer
+          type: string
+        answerType:
+          type: string
+        interpretation:
+          type: string
+        metadata:
+          $ref: "#/components/schemas/AskMetadataMap"
+
+    AskMetadataMap:
+      description: |
+        Answer Server system-specific metadata, as a tree of named values.  Which keys appear
+        depends on the answering system.
+      type: object
+      properties:
+        values:
+          description: Scalar metadata at this level, keyed by name
+          type: object
+          additionalProperties:
+            type: string
+        sections:
+          description: Nested metadata sections, keyed by name
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/AskMetadataMap"
+
+    EntityFactsResponse:
+      description: Facts about an entity, each with its source documents
+      type: object
+      required:
+        - facts
+      properties:
+        facts:
+          type: array
+          items:
+            $ref: "#/components/schemas/SourcedFact"
+
+    SourcedFact:
+      description: A fact, along with the documents it was extracted from
+      type: object
+      required:
+        - fact
+        - documents
+      properties:
+        fact:
+          $ref: "#/components/schemas/ReportFact"
+        documents:
+          description: Non-empty list of documents which are sources for the fact
+          type: array
+          items:
+            $ref: "#/components/schemas/DocumentFact"
+
+    ReportFact:
+      description: A fact
+      type: object
+      properties:
+        source:
+          description: Identifier, matched against the `facts` document field
+          type: string
+        entityCode:
+          type: string
+        entityName:
+          type: string
+        sentence:
+          type: array
+          items:
+            type: string
+        property:
+          description: Properties asserted by the fact
+          type: array
+          items:
+            $ref: "#/components/schemas/ReportFactProperty"
+
+    ReportFactProperty:
+      description: A property asserted by a fact
+      type: object
+      properties:
+        name:
+          type: string
+        code:
+          description: Identifier of the property in the extraction schema
+          type: string
+        value:
+          type: string
+        valueCode:
+          description: Identifier of the value in the extraction schema
+          type: string
+        valueType:
+          type: string
+        qualifier:
+          description: Qualifiers narrowing the property, such as a time or place
+          type: array
+          items:
+            $ref: "#/components/schemas/ReportFactQualifier"
+
+    ReportFactQualifier:
+      description: A qualifier narrowing a fact property
+      type: object
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        value:
+          type: string
+        valueCode:
+          type: string
+        valueType:
+          type: string
+
+    DocumentFact:
+      description: Reference to a document which is a source for a fact
+      type: object
+      required:
+        - index
+        - reference
+        - sentence
+      properties:
+        index:
+          description: Database containing the document
+          type: string
+        reference:
+          description: The document reference
+          type: string
+        sentence:
+          description: Excerpt from the content that the fact was extracted from
+          type: string
+
+    Conversation:
+      description: Conversation response
+      type: object
+      required:
+        - prompts
+        - sessionId
+      properties:
+        prompts:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConversePrompt"
+        sessionId:
+          description: Session ID to used to continue the conversation
+          type: string
+
+    ConversePrompt:
+      description: Part of a conversation response
+      type: object
+      properties:
+        prompt:
+          description: Response text
+          type: string
+        suggestions:
+          $ref: "#/components/schemas/Suggestions"
+        validChoices:
+          $ref: "#/components/schemas/ValidChoices"
+        additionalMetadata:
+          $ref: "#/components/schemas/AdditionalMetadata"
+
+    Suggestions:
+      description: Suggested follow-ups
+      type: object
+      properties:
+        suggestion:
+          type: array
+          items:
+            type: string
+
+    ValidChoices:
+      description: A list of options for the user to choose from
+      type: object
+      properties:
+        validChoice:
+          type: array
+          items:
+            type: string
+
+    AdditionalMetadata:
+      description: |
+        Answer Server system-specific metadata, holding whatever elements the system returned
+      type: object
+      properties:
+        any:
+          type: array
+          items:
+            type: object

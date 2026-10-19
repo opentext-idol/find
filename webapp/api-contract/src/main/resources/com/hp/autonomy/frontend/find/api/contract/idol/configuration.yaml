@@ -1,0 +1,260 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  config:
+    get:
+      summary: Get the current server configuration
+      operationId: getConfig
+      tags:
+        - configuration
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigResponseBody"
+    post:
+      summary: Replace the server configuration
+      description: |
+        The config must not use the default login method.
+      x-codegen-request-body-name: configResponse
+      operationId: saveConfig
+      tags:
+        - configuration
+      requestBody:
+        description: The new configuration
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FindConfigWrapper"
+      responses:
+        '200':
+          description: The new configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigResponseBody"
+        '406':
+          description: |
+            The configuration was rejected.  The body has either a `validation` key with
+            the validation results, or an `exception` key with a message.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigResponseBody"
+    put:
+      summary: Replace the server configuration
+      description: |
+        The config must not use the default login method.
+      x-codegen-request-body-name: configResponse
+      operationId: replaceConfig
+      tags:
+        - configuration
+      requestBody:
+        description: The new configuration
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FindConfigWrapper"
+      responses:
+        '200':
+          description: The new configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigResponseBody"
+        '406':
+          description: |
+            The configuration was rejected.  The body has either a `validation` key with
+            the validation results, or an `exception` key with a message.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfigResponseBody"
+
+  securityTypes:
+    get:
+      summary: List the security types an IDOL Community server offers
+      operationId: getSecurityTypes
+      tags:
+        - configuration
+      parameters:
+        - name: host
+          in: query
+          description: Host name of the Community server
+          required: true
+          schema:
+            type: string
+        - name: port
+          in: query
+          description: ACI port of the Community server
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: protocol
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/TransportProtocol"
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SecurityTypesResponse"
+
+  configValidation:
+    post:
+      summary: Validate a configuration without storing it
+      x-codegen-request-body-name: config
+      operationId: validateConfig
+      tags:
+        - configValidation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FindConfig"
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationResults"
+    put:
+      summary: Validate a configuration without storing it
+      x-codegen-request-body-name: config
+      operationId: validateConfigPut
+      tags:
+        - configValidation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FindConfig"
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationResults"
+
+  customizationConfigReload:
+    get:
+      summary: Reload all customisations
+      description: |
+        Reloads configuration for dashboards, templates, applications, and style.
+      operationId: reloadCustomizationConfig
+      tags:
+        - customizationReload
+      responses:
+        '302':
+          description: Customisation reloaded; redirect to the application root
+        '500':
+          description: A component failed to reload; the response is an HTML error page
+          content:
+            text/html:
+              schema:
+                type: string
+
+components:
+
+  schemas:
+
+    ConfigResponseBody:
+      description: Configuration or an error
+      oneOf:
+        - $ref: "#/components/schemas/ConfigResponse"
+        - $ref: "#/components/schemas/ConfigValidationRejection"
+        - $ref: "#/components/schemas/ConfigExceptionRejection"
+
+    ConfigResponse:
+      description: The stored configuration and where it came from
+      type: object
+      properties:
+        config:
+          $ref: "#/components/schemas/FindConfig"
+        configPath:
+          description: Path the configuration file was loaded from
+          type: string
+        configEnvVariable:
+          description: Environment variable naming the configuration directory
+          type: string
+
+    ConfigValidationRejection:
+      description: The configuration failed validation
+      type: object
+      properties:
+        validation:
+          $ref: "#/components/schemas/ValidationResults"
+
+    ConfigExceptionRejection:
+      description: The configuration could not be stored
+      type: object
+      properties:
+        exception:
+          description: Message describing the failure
+          type: string
+
+    FindConfig:
+      description: A Find server configuration, i.e. config.json
+      type: object
+      additionalProperties: true
+
+    FindConfigWrapper:
+      description: Request to save a configuration
+      type: object
+      properties:
+        config:
+          $ref: "#/components/schemas/FindConfig"
+
+    ValidationResults:
+      description: One validation result per configuration section
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/ValidationResult"
+
+    ValidationResult:
+      description: Outcome of validating one configuration section
+      type: object
+      properties:
+        valid:
+          type: boolean
+        data:
+          description: Failure details, absent when valid
+
+    TransportProtocol:
+      description: Transport used to reach an ACI server
+      type: string
+      enum:
+        - HTTP
+        - HTTPS
+
+    SecurityTypesResponse:
+      description: The security types an IDOL Community server offers
+      type: object
+      required:
+        - securityTypes
+      properties:
+        securityTypes:
+          type: array
+          items:
+            type: string

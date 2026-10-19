@@ -13,7 +13,7 @@
  */
 
 /**
- * @see com.hp.autonomy.frontend.find.idol.controlpoint.ControlPointPolicy
+ * @see the `ControlPointPolicy` schema in the Find API contract
  */
 
 const FindBaseCollection = require('find/app/model/find-base-collection');

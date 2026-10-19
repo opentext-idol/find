@@ -19,6 +19,25 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
+                        <!-- must unpack contract so relative $refs work -->
+                        <id>unpack-api-contract</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/api-contract</outputDirectory>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.hp.autonomy.frontend.find</groupId>
+                                    <artifactId>api-contract</artifactId>
+                                    <includes>com/hp/autonomy/frontend/find/api/contract/**</includes>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <!-- The only parts of node_modules needed at runtime (tested by StyleSheetServiceImplTest) -->
                         <id>unpack-runtime-libraries</id>
                         <phase>generate-resources</phase>
@@ -89,6 +108,92 @@
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- shared configuration is managed in the parent pom -->
+                        <id>generate-server-stub-code</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <collapsedSpec>${project.build.directory}/openapi/find-api-combined</collapsedSpec>
+                            <apiPackage>com.hp.autonomy.frontend.find.core.api</apiPackage>
+                            <modelPackage>com.hp.autonomy.frontend.find.core.api.model</modelPackage>
+                            <!-- the tags whose implementing controller lives in this module -->
+                            <apisToGenerate>Typeahead,Stats,Map,SharedToUser,SharedToEveryone,Templates,Style</apisToGenerate>
+                            <generateModels>true</generateModels>
+                            <modelsToGenerate>SuggestionsResponse,QueryTagInfoResponse,DependentParametricFieldsResponse,SharedToUsersResponse,SavedQueriesResponse</modelsToGenerate>
+                            <!-- schemas documented in the contract but served by existing classes -->
+                            <schemaMappings>
+                                <schemaMapping>SharedToUser=com.hp.autonomy.frontend.find.core.savedsearches.SharedToUser</schemaMapping>
+                                <schemaMapping>SharedToEveryone=com.hp.autonomy.frontend.find.core.savedsearches.SharedToEveryone</schemaMapping>
+                                <schemaMapping>SavedQuery=com.hp.autonomy.frontend.find.core.savedsearches.query.SavedQuery</schemaMapping>
+                                <schemaMapping>Event=com.hp.autonomy.frontend.find.core.stats.Event</schemaMapping>
+                                <schemaMapping>QueryTagInfo=com.hp.autonomy.types.requests.idol.actions.tags.QueryTagInfo</schemaMapping>
+                                <schemaMapping>DependentParametricField=com.hp.autonomy.searchcomponents.core.parametricvalues.DependentParametricField</schemaMapping>
+                            </schemaMappings>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-swagger-codegen-files</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/swagger-codegen-src</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <targetPath>swagger-main</targetPath>
+                                    <directory>${project.build.directory}/swagger-codegen/src/main/java</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-generated-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/swagger-codegen-src/swagger-main</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <!-- produce a combined spec for ease of use by external consumers -->
+                    <execution>
+                        <id>package-combined-spec</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/openapi/find-api-combined.yaml</file>
+                                    <type>yaml</type>
+                                    <classifier>openapi</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -346,6 +451,11 @@
             <artifactId>less4j</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.hp.autonomy.frontend.find</groupId>
+            <artifactId>api-contract</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>com.hp.autonomy.frontend.find</groupId>
             <artifactId>frontend</artifactId>

@@ -14,70 +14,57 @@
 
 package com.hp.autonomy.frontend.find.idol.comparison;
 
-import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
+import com.autonomy.aci.client.services.AciErrorException;
+import com.hp.autonomy.frontend.find.idol.api.ComparisonApi;
+import com.hp.autonomy.frontend.find.idol.api.model.ComparisonStateTokens;
 import com.hp.autonomy.searchcomponents.core.search.QueryRequest;
-import com.hp.autonomy.searchcomponents.core.search.QueryRestrictions;
-import com.hp.autonomy.searchcomponents.core.search.SearchResult;
+import com.hp.autonomy.searchcomponents.idol.search.IdolDocumentsService;
+import com.hp.autonomy.searchcomponents.idol.search.IdolQueryRestrictions;
+import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
 import com.hp.autonomy.types.requests.Documents;
-import jakarta.validation.constraints.NotNull;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(ComparisonController.BASE_PATH)
-class ComparisonController<Q extends QueryRestrictions<?>, R extends SearchResult, E extends Exception> {
-    static final String BASE_PATH = "/api/bi/comparison";
-    static final String COMPARE_PATH = "compare";
-    static final String RESULTS_PATH = "results";
-
-    private static final String TEXT_PARAM = "text";
-    private static final String FIELD_TEXT_PARAM = "field_text";
-    static final String STATE_MATCH_PARAM = "state_match_ids";
-    static final String STATE_DONT_MATCH_PARAM = "state_dont_match_ids";
-    static final String RESULTS_START_PARAM = "start";
-    static final String MAX_RESULTS_PARAM = "max_results";
-    static final String SUMMARY_PARAM = "summary";
-    static final String SORT_PARAM = "sort";
-    static final String HIGHLIGHT_PARAM = "highlight";
-    private static final String PROMOTIONS = "promotions";
-
-    private final ComparisonService<R, E> comparisonService;
-    private final DocumentsService<?, ?, ?, Q, R, E> documentsService;
+class ComparisonController implements ComparisonApi {
+    private final ComparisonService<IdolSearchResult, AciErrorException> comparisonService;
+    private final IdolDocumentsService documentsService;
 
     @Autowired
-    public ComparisonController(final ComparisonService<R, E> comparisonService, final DocumentsService<?, ?, ?, Q, R, E> documentsService) {
+    public ComparisonController(final ComparisonService<IdolSearchResult, AciErrorException> comparisonService, final IdolDocumentsService documentsService) {
         this.comparisonService = comparisonService;
         this.documentsService = documentsService;
     }
 
-    @RequestMapping(value = COMPARE_PATH, method = RequestMethod.POST)
-    public ComparisonStateTokens getCompareStateTokens(@RequestBody final ComparisonRequest<Q> body) throws E {
+    @Override
+    public ResponseEntity<ComparisonStateTokens> compare(final ComparisonRequest<IdolQueryRestrictions> body) {
         final int STATE_TOKEN_MAX_RESULTS = comparisonService.getStateTokenMaxResults();
         // If either query state token is null then try and fetch one using the query restrictions
         final String firstStateToken = body.getFirstQueryStateToken() != null ? body.getFirstQueryStateToken() : documentsService.getStateToken(body.getFirstRestrictions(), STATE_TOKEN_MAX_RESULTS, QueryRequest.QueryType.MODIFIED, false);
         final String secondStateToken = body.getSecondQueryStateToken() != null ? body.getSecondQueryStateToken() : documentsService.getStateToken(body.getSecondRestrictions(), STATE_TOKEN_MAX_RESULTS, QueryRequest.QueryType.MODIFIED, false);
 
-        return comparisonService.getCompareStateTokens(firstStateToken, secondStateToken);
+        return ResponseEntity.ok(comparisonService.getCompareStateTokens(firstStateToken, secondStateToken));
     }
 
     @SuppressWarnings("MethodWithTooManyParameters")
-    @RequestMapping(value = RESULTS_PATH, method = RequestMethod.GET)
-    public Documents<R> getResults(
-            @RequestParam(STATE_MATCH_PARAM) final List<@NotNull String> stateMatchIds,
-            @RequestParam(value = STATE_DONT_MATCH_PARAM, required = false) final List<@NotNull String> stateDontMatchIds,
-            @RequestParam(value = TEXT_PARAM, required = false, defaultValue = "*") final String text,
-            @RequestParam(value = FIELD_TEXT_PARAM, defaultValue = "") final String fieldText,
-            @RequestParam(value = RESULTS_START_PARAM, required = false, defaultValue = "1") final int resultsStart,
-            @RequestParam(MAX_RESULTS_PARAM) final int maxResults,
-            @RequestParam(SUMMARY_PARAM) final String summary,
-            @RequestParam(value = SORT_PARAM, required = false) final String sort,
-            @RequestParam(value = HIGHLIGHT_PARAM, required = false, defaultValue = "true") final boolean highlight,
-            @RequestParam(value = PROMOTIONS, defaultValue = "false") final boolean promotions
-    ) throws E {
-        return comparisonService.getResults(
+    @Override
+    public ResponseEntity<Documents<IdolSearchResult>> getComparisonResults(
+            final List<String> stateMatchIds,
+            final Integer maxResults,
+            final String summary,
+            final List<String> stateDontMatchIds,
+            final String text,
+            final String fieldText,
+            final Integer resultsStart,
+            final String sort,
+            final Boolean highlight,
+            final Boolean promotions
+    ) {
+        return ResponseEntity.ok(comparisonService.getResults(
                 stateMatchIds,
                 ListUtils.emptyIfNull(stateDontMatchIds),
                 text,
@@ -87,6 +74,6 @@ class ComparisonController<Q extends QueryRestrictions<?>, R extends SearchResul
                 summary,
                 sort,
                 highlight
-        );
+        ));
     }
 }

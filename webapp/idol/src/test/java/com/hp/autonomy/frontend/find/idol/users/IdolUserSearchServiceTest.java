@@ -16,6 +16,7 @@ package com.hp.autonomy.frontend.find.idol.users;
 
 import com.hp.autonomy.frontend.find.core.configuration.RelatedUsersConfig;
 import com.hp.autonomy.frontend.find.core.configuration.RelatedUsersSourceConfig;
+import com.hp.autonomy.frontend.find.idol.api.model.RelatedUser;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldValue;
 import com.hp.autonomy.searchcomponents.idol.search.IdolSearchResult;
@@ -139,11 +140,11 @@ public class IdolUserSearchServiceTest {
         final List<RelatedUser> users = service.getRelatedToSearch(defaultConfig, "text", 30);
         Assert.assertEquals(3, users.size());
         Assert.assertEquals("u1", users.get(0).getUser().getUsername());
-        Assert.assertFalse("u1", users.get(0).isExpert());
+        Assert.assertFalse("u1", users.get(0).getExpert());
         Assert.assertEquals("u2", users.get(1).getUser().getUsername());
-        Assert.assertFalse("u2", users.get(1).isExpert());
+        Assert.assertFalse("u2", users.get(1).getExpert());
         Assert.assertEquals("u3", users.get(2).getUser().getUsername());
-        Assert.assertFalse("u3", users.get(2).isExpert());
+        Assert.assertFalse("u3", users.get(2).getExpert());
 
         Mockito.verify(userService)
             .getRelatedToSearch(eq("db-e"), eq("area-e"), eq("text"), anyInt(), anyInt());
@@ -162,11 +163,11 @@ public class IdolUserSearchServiceTest {
         final List<RelatedUser> users = service.getRelatedToSearch(defaultConfig, "text", 30);
         Assert.assertEquals(3, users.size());
         Assert.assertEquals("u1", users.get(0).getUser().getUsername());
-        Assert.assertTrue("u1", users.get(0).isExpert());
+        Assert.assertTrue("u1", users.get(0).getExpert());
         Assert.assertEquals("u2", users.get(1).getUser().getUsername());
-        Assert.assertTrue("u2", users.get(1).isExpert());
+        Assert.assertTrue("u2", users.get(1).getExpert());
         Assert.assertEquals("u3", users.get(2).getUser().getUsername());
-        Assert.assertTrue("u3", users.get(2).isExpert());
+        Assert.assertTrue("u3", users.get(2).getExpert());
 
         Mockito.verify(userService)
             .getRelatedToSearch(eq("db-e"), eq("area-e"), eq("text"), anyInt(), anyInt());
@@ -188,13 +189,13 @@ public class IdolUserSearchServiceTest {
         Assert.assertEquals(4, users.size());
         // should reorder based on relevance
         Assert.assertEquals("u3", users.get(0).getUser().getUsername());
-        Assert.assertTrue("u3", users.get(0).isExpert());
+        Assert.assertTrue("u3", users.get(0).getExpert());
         Assert.assertEquals("u1", users.get(1).getUser().getUsername());
-        Assert.assertFalse("u1", users.get(1).isExpert());
+        Assert.assertFalse("u1", users.get(1).getExpert());
         Assert.assertEquals("u2", users.get(2).getUser().getUsername());
-        Assert.assertFalse("u2", users.get(2).isExpert());
+        Assert.assertFalse("u2", users.get(2).getExpert());
         Assert.assertEquals("u4", users.get(3).getUser().getUsername());
-        Assert.assertTrue("u4", users.get(3).isExpert());
+        Assert.assertTrue("u4", users.get(3).getExpert());
     }
 
     @Test
@@ -210,9 +211,9 @@ public class IdolUserSearchServiceTest {
         Assert.assertEquals(2, users.size());
         // should use relevance from experts when reordering
         Assert.assertEquals("u2", users.get(0).getUser().getUsername());
-        Assert.assertTrue("u2", users.get(0).isExpert());
+        Assert.assertTrue("u2", users.get(0).getExpert());
         Assert.assertEquals("u1", users.get(1).getUser().getUsername());
-        Assert.assertFalse("u1", users.get(1).isExpert());
+        Assert.assertFalse("u1", users.get(1).getExpert());
     }
 
     @Test
@@ -375,9 +376,9 @@ public class IdolUserSearchServiceTest {
         Assert.assertEquals(
             "should discard users beyond maxUsers after combining", 2, users.size());
         Assert.assertEquals("u1", users.get(0).getUser().getUsername());
-        Assert.assertFalse(users.get(0).isExpert());
+        Assert.assertFalse(users.get(0).getExpert());
         Assert.assertEquals("u3", users.get(1).getUser().getUsername());
-        Assert.assertTrue(users.get(1).isExpert());
+        Assert.assertTrue(users.get(1).getExpert());
     }
 
 }

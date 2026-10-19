@@ -19,6 +19,8 @@ import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.util.ActionParameters;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.idol.api.model.DocumentFact;
+import com.hp.autonomy.frontend.find.idol.api.model.SourcedFact;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.config.FieldInfo;
 import com.hp.autonomy.searchcomponents.core.config.FieldValue;
@@ -46,8 +48,6 @@ import org.springframework.beans.factory.ObjectFactory;
 import java.io.Serializable;
 import java.util.*;
 
-import static com.hp.autonomy.frontend.find.idol.answer.AnswerServerController.DocumentFact;
-import static com.hp.autonomy.frontend.find.idol.answer.AnswerServerController.SourcedFact;
 import static com.hp.autonomy.types.requests.idol.actions.answer.AnswerServerActions.Report;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -196,7 +196,7 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
+            controller.getEntityFacts("space", Collections.singletonList("db"), 7).getBody().getFacts();
 
         final ArgumentCaptor<ActionParameters> paramsCaptor =
             ArgumentCaptor.forClass(ActionParameters.class);
@@ -211,13 +211,13 @@ public class AnswerServerControllerTest {
             paramsCaptor.getValue().get(ReportParams.Timeout.name()));
 
         Assert.assertEquals("should return matching fact", 1, response.size());
-        Assert.assertEquals("should return first fact", "1", response.get(0).fact.getSource());
+        Assert.assertEquals("should return first fact", "1", response.get(0).getFact().getSource());
         Assert.assertEquals("fact should include matching document",
-            1, response.get(0).documents.size());
-        final DocumentFact doc = response.get(0).documents.get(0);
-        Assert.assertEquals("should return document index", "db", doc.index);
-        Assert.assertEquals("should return document ref", "doc 1", doc.reference);
-        Assert.assertEquals("should return document sentence", "first fact", doc.sentence);
+            1, response.get(0).getDocuments().size());
+        final DocumentFact doc = response.get(0).getDocuments().get(0);
+        Assert.assertEquals("should return document index", "db", doc.getIndex());
+        Assert.assertEquals("should return document ref", "doc 1", doc.getReference());
+        Assert.assertEquals("should return document sentence", "first fact", doc.getSentence());
     }
 
     @Test
@@ -229,19 +229,19 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
+            controller.getEntityFacts("space", Collections.singletonList("db"), 7).getBody().getFacts();
 
         Assert.assertEquals("should return both facts", 2, response.size());
-        Assert.assertEquals("should return first fact", "1", response.get(0).fact.getSource());
+        Assert.assertEquals("should return first fact", "1", response.get(0).getFact().getSource());
         Assert.assertEquals("first fact should include document",
-            1, response.get(0).documents.size());
+            1, response.get(0).getDocuments().size());
         Assert.assertEquals("first fact document should be correct",
-            "doc 1", response.get(0).documents.get(0).reference);
-        Assert.assertEquals("should return second fact", "2", response.get(1).fact.getSource());
+            "doc 1", response.get(0).getDocuments().get(0).getReference());
+        Assert.assertEquals("should return second fact", "2", response.get(1).getFact().getSource());
         Assert.assertEquals("second fact should include document",
-            1, response.get(1).documents.size());
+            1, response.get(1).getDocuments().size());
         Assert.assertEquals("second fact document should be correct",
-            "doc 1", response.get(1).documents.get(0).reference);
+            "doc 1", response.get(1).getDocuments().get(0).getReference());
     }
 
     @Test
@@ -252,15 +252,15 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
+            controller.getEntityFacts("space", Collections.singletonList("db"), 7).getBody().getFacts();
 
         Assert.assertEquals("should return both facts", 2, response.size());
-        Assert.assertEquals("should return first fact", "1", response.get(0).fact.getSource());
+        Assert.assertEquals("should return first fact", "1", response.get(0).getFact().getSource());
         Assert.assertEquals("first fact should include document",
-            1, response.get(0).documents.size());
-        Assert.assertEquals("should return second fact", "2", response.get(1).fact.getSource());
+            1, response.get(0).getDocuments().size());
+        Assert.assertEquals("should return second fact", "2", response.get(1).getFact().getSource());
         Assert.assertEquals("second fact should include document",
-            1, response.get(1).documents.size());
+            1, response.get(1).getDocuments().size());
     }
 
     @Test
@@ -272,19 +272,19 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
+            controller.getEntityFacts("space", Collections.singletonList("db"), 7).getBody().getFacts();
 
         Assert.assertEquals("should return the fact", 1, response.size());
         Assert.assertEquals("fact should include the document twice",
-            2, response.get(0).documents.size());
+            2, response.get(0).getDocuments().size());
         Assert.assertEquals("first reference should be correct",
-            "doc 1", response.get(0).documents.get(0).reference);
+            "doc 1", response.get(0).getDocuments().get(0).getReference());
         Assert.assertEquals("first sentence should be correct",
-            "first fact", response.get(0).documents.get(0).sentence);
+            "first fact", response.get(0).getDocuments().get(0).getSentence());
         Assert.assertEquals("second reference should be correct",
-            "doc 1", response.get(0).documents.get(1).reference);
+            "doc 1", response.get(0).getDocuments().get(1).getReference());
         Assert.assertEquals("second sentence should be correct",
-            "first fact again", response.get(0).documents.get(1).sentence);
+            "first fact again", response.get(0).getDocuments().get(1).getSentence());
     }
 
     @Test
@@ -298,19 +298,19 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
+            controller.getEntityFacts("space", Collections.singletonList("db"), 7).getBody().getFacts();
 
         Assert.assertEquals("should return both facts", 2, response.size());
-        Assert.assertEquals("should return first fact", "1", response.get(0).fact.getSource());
+        Assert.assertEquals("should return first fact", "1", response.get(0).getFact().getSource());
         Assert.assertEquals("first fact should include document",
-            1, response.get(0).documents.size());
+            1, response.get(0).getDocuments().size());
         Assert.assertEquals("first fact document should be correct",
-            "doc 1", response.get(0).documents.get(0).reference);
-        Assert.assertEquals("should return second fact", "2", response.get(1).fact.getSource());
+            "doc 1", response.get(0).getDocuments().get(0).getReference());
+        Assert.assertEquals("should return second fact", "2", response.get(1).getFact().getSource());
         Assert.assertEquals("second fact should include document",
-            1, response.get(1).documents.size());
+            1, response.get(1).getDocuments().size());
         Assert.assertEquals("second fact document should be correct",
-            "doc 2", response.get(1).documents.get(0).reference);
+            "doc 2", response.get(1).getDocuments().get(0).getReference());
     }
 
     @Test
@@ -324,15 +324,15 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
+            controller.getEntityFacts("space", Collections.singletonList("db"), 7).getBody().getFacts();
 
         Assert.assertEquals("should return the fact", 1, response.size());
         Assert.assertEquals("fact should include both documents",
-            2, response.get(0).documents.size());
+            2, response.get(0).getDocuments().size());
         Assert.assertEquals("first document should be correct",
-            "doc 1", response.get(0).documents.get(0).reference);
+            "doc 1", response.get(0).getDocuments().get(0).getReference());
         Assert.assertEquals("second document should be correct",
-            "doc 2", response.get(0).documents.get(1).reference);
+            "doc 2", response.get(0).getDocuments().get(1).getReference());
     }
 
     @Test
@@ -348,11 +348,11 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
+            controller.getEntityFacts("space", Collections.singletonList("db"), 7).getBody().getFacts();
 
         Assert.assertEquals("should return both facts", 2, response.size());
-        Assert.assertEquals("should return first fact", "1", response.get(0).fact.getSource());
-        Assert.assertEquals("should return second fact", "2", response.get(1).fact.getSource());
+        Assert.assertEquals("should return first fact", "1", response.get(0).getFact().getSource());
+        Assert.assertEquals("should return second fact", "2", response.get(1).getFact().getSource());
     }
 
     @Test
@@ -367,10 +367,10 @@ public class AnswerServerControllerTest {
             ))
         ));
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
+            controller.getEntityFacts("space", Collections.singletonList("db"), 7).getBody().getFacts();
 
         Assert.assertEquals("should return the fact only once", 1, response.size());
-        Assert.assertEquals("should return first fact", "1", response.get(0).fact.getSource());
+        Assert.assertEquals("should return first fact", "1", response.get(0).getFact().getSource());
     }
 
     @Test
@@ -378,7 +378,7 @@ public class AnswerServerControllerTest {
         // no ReportItems - different from empty ReportItems
         when(aciService.executeAction(any(), any(), any())).thenReturn(new ReportResponsedata());
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 7, Collections.singletonList("db")).facts();
+            controller.getEntityFacts("space", Collections.singletonList("db"), 7).getBody().getFacts();
 
         Assert.assertEquals("should return empty list", Collections.emptyList(), response);
     }
@@ -386,7 +386,7 @@ public class AnswerServerControllerTest {
     @Test
     public void getEntityFacts_noMaxResults() {
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", null, Collections.singletonList("db")).facts();
+            controller.getEntityFacts("space", Collections.singletonList("db"), null).getBody().getFacts();
 
         final ArgumentCaptor<ActionParameters> paramsCaptor =
             ArgumentCaptor.forClass(ActionParameters.class);
@@ -399,12 +399,12 @@ public class AnswerServerControllerTest {
     @Test
     public void getEntityFacts_lowMaxResults() {
         final List<SourcedFact> response =
-            controller.getEntityFacts("space", 2, Collections.singletonList("db")).facts();
+            controller.getEntityFacts("space", Collections.singletonList("db"), 2).getBody().getFacts();
         Assert.assertEquals("should limit results", 2, response.size());
         Assert.assertEquals("should return first fact", "1",
-            response.get(0).fact.getSource());
+            response.get(0).getFact().getSource());
         Assert.assertEquals("should return second fact", "2",
-            response.get(1).fact.getSource());
+            response.get(1).getFact().getSource());
     }
 
     private GetStatusResponsedata buildGetStatus(final List<System> systems) {

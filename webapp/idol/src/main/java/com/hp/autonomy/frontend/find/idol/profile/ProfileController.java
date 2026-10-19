@@ -15,18 +15,16 @@
 package com.hp.autonomy.frontend.find.idol.profile;
 
 import com.hp.autonomy.frontend.configuration.authentication.CommunityPrincipal;
+import com.hp.autonomy.frontend.find.idol.api.ProfileApi;
 import com.hp.autonomy.user.UserService;
 import com.hpe.bigdata.frontend.spring.authentication.AuthenticationInformationRetriever;
 import com.opentext.idol.types.responses.Profiles;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@RequestMapping("/api/public/profile")
-public class ProfileController {
+@RestController
+public class ProfileController implements ProfileApi {
 
     private final UserService userService;
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
@@ -40,9 +38,9 @@ public class ProfileController {
         this.authenticationInformationRetriever = authenticationInformationRetriever;
     }
 
-    @RequestMapping(value = "terms", method = RequestMethod.GET)
-    @ResponseBody
-    public Profiles getTerms() {
-        return userService.profileRead(authenticationInformationRetriever.getPrincipal().getName());
+    @Override
+    public ResponseEntity<Profiles> getProfileTerms() {
+        return ResponseEntity.ok(
+                userService.profileRead(authenticationInformationRetriever.getPrincipal().getName()));
     }
 }

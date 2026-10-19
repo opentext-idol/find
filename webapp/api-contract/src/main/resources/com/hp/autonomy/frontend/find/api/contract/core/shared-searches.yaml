@@ -1,0 +1,278 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  searchUserPermissions:
+    get:
+      summary: Get the users a saved search is shared with
+      description: |
+        Fails if saved search sharing is disabled in configuration.
+      operationId: getSearchUserPermissions
+      tags:
+        - sharedToUser
+      parameters:
+        - $ref: "#/components/parameters/SearchId"
+        - name: username
+          in: query
+          description: Restrict to the share with this user, if any
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The users the search is shared with
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SharedToUsersResponse"
+    post:
+      summary: Share a saved search with a user
+      description: |
+        Fails if saved search sharing is disabled in configuration.
+
+        The user is created in the Find database the first time they are referenced.
+      x-codegen-request-body-name: sharedToUser
+      operationId: shareSearchWithUser
+      tags:
+        - sharedToUser
+      parameters:
+        - $ref: "#/components/parameters/SearchId"
+      requestBody:
+        description: The share to create, naming the user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SharedToUser"
+      responses:
+        '200':
+          description: The stored share
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SharedToUser"
+    put:
+      summary: Share a saved search with a user, replacing any existing share
+      description: |
+        Fails if saved search sharing is disabled in configuration.
+      x-codegen-request-body-name: sharedToUser
+      operationId: updateSearchUserShare
+      tags:
+        - sharedToUser
+      parameters:
+        - $ref: "#/components/parameters/SearchId"
+      requestBody:
+        description: The share to store, naming the user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SharedToUser"
+      responses:
+        '200':
+          description: The stored share
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SharedToUser"
+
+  searchUserPermission:
+    put:
+      summary: Set one user's permissions on a saved search
+      description: |
+        Fails if saved search sharing is disabled in configuration.
+      x-codegen-request-body-name: sharedToUser
+      operationId: setSearchUserPermissions
+      tags:
+        - sharedToUser
+      parameters:
+        - $ref: "#/components/parameters/SearchId"
+        - $ref: "#/components/parameters/UserId"
+      requestBody:
+        description: The permissions to store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SharedToUser"
+      responses:
+        '200':
+          description: The stored share
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SharedToUser"
+    delete:
+      summary: Stop sharing a saved search with a user
+      description: |
+        Fails if saved search sharing is disabled in configuration.
+      operationId: removeSearchUserShare
+      tags:
+        - sharedToUser
+      parameters:
+        - $ref: "#/components/parameters/SearchId"
+        - $ref: "#/components/parameters/UserId"
+      responses:
+        '204':
+          description: Share removed
+
+  searchEveryonePermissions:
+    get:
+      summary: Get whether a saved search is shared with everyone
+      description: |
+        Rejected with an error if saved search sharing is disabled in configuration.
+      operationId: getSearchEveryonePermissions
+      tags:
+        - sharedToEveryone
+      parameters:
+        - $ref: "#/components/parameters/SearchId"
+      responses:
+        '200':
+          description: The share, or null if the search is not shared with everyone
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SharedToEveryone"
+    post:
+      summary: Share a saved search with everyone
+      description: |
+        Rejected with an error if saved search sharing is disabled in configuration.
+      x-codegen-request-body-name: sharedToEveryone
+      operationId: shareSearchWithEveryone
+      tags:
+        - sharedToEveryone
+      parameters:
+        - $ref: "#/components/parameters/SearchId"
+      requestBody:
+        description: The share to store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SharedToEveryone"
+      responses:
+        '200':
+          description: The stored share
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SharedToEveryone"
+    put:
+      summary: Share a saved search with everyone, replacing any existing share
+      description: |
+        Rejected with an error if saved search sharing is disabled in configuration.
+      x-codegen-request-body-name: sharedToEveryone
+      operationId: updateSearchEveryoneShare
+      tags:
+        - sharedToEveryone
+      parameters:
+        - $ref: "#/components/parameters/SearchId"
+      requestBody:
+        description: The share to store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SharedToEveryone"
+      responses:
+        '200':
+          description: The stored share
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SharedToEveryone"
+    delete:
+      summary: Stop sharing a saved search with everyone
+      description: |
+        Rejected with an error if saved search sharing is disabled in configuration.
+      operationId: removeSearchEveryoneShare
+      tags:
+        - sharedToEveryone
+      parameters:
+        - $ref: "#/components/parameters/SearchId"
+      responses:
+        '204':
+          description: Share removed
+
+components:
+
+  parameters:
+
+    SearchId:
+      name: searchId
+      in: path
+      description: ID of the saved search
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    UserId:
+      name: userId
+      in: path
+      description: ID of the user in the Find database
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+  schemas:
+
+    SharedToUsersResponse:
+      description: The users a saved search is shared with
+      type: object
+      required:
+        - users
+      properties:
+        users:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/SharedToUser"
+
+    SharedToUser:
+      description: A saved search shared with one user
+      type: object
+      properties:
+        id:
+          $ref: "../common/saved-search-types.yaml#/components/schemas/SharedToUserPK"
+        user:
+          $ref: "../common/saved-search-types.yaml#/components/schemas/UserEntity"
+        savedSearch:
+          $ref: "../common/saved-search-types.yaml#/components/schemas/SavedSearch"
+        canEdit:
+          description: Whether the recipient may modify the search
+          type: boolean
+        sharedDate:
+          type: string
+          format: date-time
+        modifiedDate:
+          type: string
+          format: date-time
+
+    SharedToEveryone:
+      description: A saved search shared with every user
+      type: object
+      properties:
+        id:
+          $ref: "../common/saved-search-types.yaml#/components/schemas/SharedToEveryonePK"
+        savedSearch:
+          $ref: "../common/saved-search-types.yaml#/components/schemas/SavedSearch"
+        sharedDate:
+          type: string
+          format: date-time
+        modifiedDate:
+          type: string
+          format: date-time

@@ -16,6 +16,7 @@ package com.hp.autonomy.frontend.find.idol.controlpoint;
 
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearchService;
 import com.hp.autonomy.frontend.find.core.savedsearches.snapshot.SavedSnapshot;
+import com.hp.autonomy.frontend.find.idol.api.model.ControlPointPolicy;
 import com.hp.autonomy.searchcomponents.core.search.TypedStateToken;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
 import org.junit.Assert;
@@ -58,38 +59,38 @@ public class ControlPointPolicyControllerTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetPolicies_controlPointDisabled() throws ControlPointApiException {
         Mockito.when(cpService.isEnabled()).thenReturn(false);
-        controller.getPolicies();
+        controller.getControlPointPolicies();
     }
 
     @Test
     public void testGetPolicies() throws ControlPointApiException {
-        final List<ControlPointPolicy> policies = Arrays.asList(
-            new ControlPointPolicy("1", "archive", true, true),
-            new ControlPointPolicy("2", "delete", true, true),
-            new ControlPointPolicy("3", "preserve", false, true),
-            new ControlPointPolicy("4", "process", true, false),
-            new ControlPointPolicy("5", "redirect", false, false)
+        final List<ControlPointApiPolicy> policies = Arrays.asList(
+            new ControlPointApiPolicy("1", "archive", true, true),
+            new ControlPointApiPolicy("2", "delete", true, true),
+            new ControlPointApiPolicy("3", "preserve", false, true),
+            new ControlPointApiPolicy("4", "process", true, false),
+            new ControlPointApiPolicy("5", "redirect", false, false)
         );
 
         Mockito.when(cpService.getPolicies("sec info"))
-            .thenReturn(new ControlPointPolicies(policies));
-        final List<ControlPointPolicy> result = controller.getPolicies().policies();
+            .thenReturn(new ControlPointApiPolicies(policies));
+        final List<ControlPointPolicy> result = controller.getControlPointPolicies().getBody().getPolicies();
         Mockito.verify(cpService).getPolicies("sec info");
         Assert.assertEquals("should return active, published policies", Arrays.asList(
-            new ControlPointPolicy("1", "archive", true, true),
-            new ControlPointPolicy("2", "delete", true, true)
+            new ControlPointPolicy("1", "archive"),
+            new ControlPointPolicy("2", "delete")
         ), result);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testApplyPolicy_controlPointDisabled() throws ControlPointApiException {
         Mockito.when(cpService.isEnabled()).thenReturn(false);
-        controller.applyPolicy("the policy", 123L, null);
+        controller.applyControlPointPolicy("the policy", 123L, null);
     }
 
     @Test
     public void testApplyPolicy() throws ControlPointApiException {
-        controller.applyPolicy("the policy", 123L, null);
+        controller.applyControlPointPolicy("the policy", 123L, null);
         Mockito.verify(savedSnapshotService).getDashboardSearch(123L);
         Mockito.verify(cpService).applyPolicy("the policy", "token", "sec info");
     }

@@ -18,22 +18,14 @@ import com.hp.autonomy.frontend.configuration.Config;
 import com.hp.autonomy.frontend.configuration.validation.ValidationResults;
 import com.hp.autonomy.frontend.configuration.validation.ValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-@Controller
-@RequestMapping({"/api/admin/config", "/api/config/config"})
 public abstract class ValidationController<C extends Config<C>> {
 
     @Autowired
     private ValidationService<C> validationService;
 
-    @RequestMapping(value = "/config-validation", method = {RequestMethod.POST, RequestMethod.PUT})
-    @ResponseBody
-    public ValidationResults validConfig(@RequestBody final C config) {
+    protected ValidationResults validConfig(final C config) {
         return validationService.validateConfig(config);
     }
+
 }

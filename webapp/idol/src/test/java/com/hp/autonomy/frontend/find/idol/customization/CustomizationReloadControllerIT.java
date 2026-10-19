@@ -16,8 +16,6 @@ package com.hp.autonomy.frontend.find.idol.customization;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import com.hp.autonomy.frontend.find.core.web.FindController;
-import java.io.File;
-import java.io.FileNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -27,6 +25,8 @@ import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.RequestBuilder;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -124,8 +124,8 @@ public class CustomizationReloadControllerIT extends AbstractFindIT {
 
     private void triggerConfigReload() throws Exception {
         mockMvc.perform(
-            get(CustomizationReloadController.ADMIN_CUSTOMIZATION_PATH +
-                    CustomizationReloadController.CONFIG_RELOAD_PATH)
+            get("/api/admin/customization" +
+                    "/config/reload")
                 .with(authentication(adminAuth())))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl(FindController.APP_PATH));

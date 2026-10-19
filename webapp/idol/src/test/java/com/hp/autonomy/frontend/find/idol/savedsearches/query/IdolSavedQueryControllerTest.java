@@ -127,7 +127,7 @@ public class IdolSavedQueryControllerTest extends SavedQueryControllerTest<IdolQ
 
         when(savedQueryService.getDashboardSearch(savedQuery.getId())).thenReturn(savedQuery);
 
-        savedQueryController.get(savedQuery.getId());
+        savedQueryController.getSavedQuery(savedQuery.getId());
         verify(savedQueryService).getDashboardSearch(savedQuery.getId());
     }
 
@@ -138,7 +138,7 @@ public class IdolSavedQueryControllerTest extends SavedQueryControllerTest<IdolQ
         when(savedQueryService.getDashboardSearch(any(long.class))).thenReturn(null);
 
         try {
-            savedQueryController.get(savedQuery.getId());
+            savedQueryController.getSavedQuery(savedQuery.getId());
             fail("Call to get() was expected to throw exception");
         } catch (final IllegalArgumentException e) {
             verify(savedQueryService).getDashboardSearch(savedQuery.getId());

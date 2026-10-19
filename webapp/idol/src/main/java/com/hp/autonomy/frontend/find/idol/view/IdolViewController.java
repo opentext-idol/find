@@ -23,6 +23,7 @@ import com.hp.autonomy.frontend.find.core.configuration.UiCustomization;
 import com.hp.autonomy.frontend.find.core.view.ViewController;
 import com.hp.autonomy.frontend.find.core.web.ControllerUtils;
 import com.hp.autonomy.frontend.find.core.web.ErrorModelAndViewInfo;
+import com.hp.autonomy.frontend.find.idol.api.ViewApi;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.frontend.logging.Markers;
 import com.hp.autonomy.searchcomponents.core.view.ViewingPart;
@@ -35,24 +36,25 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Optional;
 
 @Controller
-@RequestMapping(IdolViewController.VIEW_PATH)
 @Slf4j
-class IdolViewController extends ViewController<IdolViewRequest, String, AciErrorException> {
+class IdolViewController extends ViewController<IdolViewRequest, String, AciErrorException> implements ViewApi {
     private final ControllerUtils controllerUtils;
     private final UserService userService;
     private final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever;
+    private final HttpServletResponse response;
 
     private final boolean updateProfileOnView;
 
@@ -64,13 +66,14 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
             final ControllerUtils controllerUtils,
             final UserService userService,
             final AuthenticationInformationRetriever<?, CommunityPrincipal> authenticationInformationRetriever,
-            final ConfigFileService<IdolFindConfig> configService
+            final ConfigFileService<IdolFindConfig> configService,
+            final HttpServletResponse response
     ) {
         super(viewServerService, viewRequestBuilder);
         this.controllerUtils = controllerUtils;
         this.userService = userService;
         this.authenticationInformationRetriever = authenticationInformationRetriever;
-
+        this.response = response;
 
         this.updateProfileOnView = Optional.ofNullable(configService.getConfigResponse()).map(ConfigResponse::getConfig).map(IdolFindConfig::getUiCustomization).map(UiCustomization::getProfile)
                 .map(ProfileOptions::getUpdateProfileOnView).orElse(false);
@@ -78,15 +81,14 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
     }
 
     @Override
-    public void viewDocument(
-        @RequestParam(value = REFERENCE_PARAM, required = false) final String reference,
-        @RequestParam(DATABASE_PARAM) final String database,
-        @RequestParam(value = HIGHLIGHT_PARAM, required = false) final String highlightExpression,
-        @RequestParam(PART_PARAM) final ViewingPart part,
-        @RequestParam(value = URL_PREFIX_PARAM, required = false) final String urlPrefix,
-        @RequestParam(value = SUB_DOC_REF_PARAM, required = false) final String subDocRef,
-        final HttpServletResponse response
-    ) throws AciErrorException, IOException {
+    public ResponseEntity<Resource> viewDocument(
+        final String index,
+        final ViewingPart part,
+        final String reference,
+        final String highlightExpressions,
+        final String urlPrefix,
+        final String subDocRef
+    ) {
         if (updateProfileOnView && part == ViewingPart.DOCUMENT) {
             final CommunityPrincipal principal = authenticationInformationRetriever.getPrincipal();
             if (principal != null) {
@@ -94,7 +96,27 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
             }
         }
 
-        super.viewDocument(reference, database, highlightExpression, part, urlPrefix, subDocRef, response);
+        try {
+            super.viewDocument(reference, index, highlightExpressions, part, urlPrefix, subDocRef,
+                    response);
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+        // tell Spring the request has already been handled
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Resource> viewStaticContentPromotion(final String reference) {
+        try {
+            super.viewStaticContentPromotion(reference, response);
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+        // tell Spring the request has already been handled
+        return null;
     }
 
     @SuppressWarnings("TypeMayBeWeakened")

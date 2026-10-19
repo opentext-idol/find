@@ -30,10 +30,10 @@ public abstract class AbstractViewControllerIT extends AbstractFindIT {
     public void viewDocument() throws Exception {
         final String reference = mvcIntegrationTestUtils.getValidReference(mockMvc);
 
-        final MockHttpServletRequestBuilder requestBuilder = get(ViewController.VIEW_PATH + ViewController.VIEW_DOCUMENT_PATH)
-                .param(ViewController.REFERENCE_PARAM, reference)
-                .param(ViewController.DATABASE_PARAM, mvcIntegrationTestUtils.getDatabases()[0])
-                .param(ViewController.PART_PARAM, "DOCUMENT")
+        final MockHttpServletRequestBuilder requestBuilder = get("/api/public/view/viewDocument")
+                .param("reference", reference)
+                .param("index", mvcIntegrationTestUtils.getDatabases()[0])
+                .param("part", "DOCUMENT")
                 .with(authentication(userAuth()));
 
         mockMvc.perform(requestBuilder)

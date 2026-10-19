@@ -14,17 +14,15 @@
 
 package com.hp.autonomy.frontend.find.core.typeahead;
 
+import com.hp.autonomy.frontend.find.core.api.TypeaheadApi;
+import com.hp.autonomy.frontend.find.core.api.model.SuggestionsResponse;
 import com.hp.autonomy.searchcomponents.core.typeahead.TypeAheadService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class TypeAheadController<E extends Exception> {
-    public static final String URL = "/api/public/typeahead";
-    static final String TEXT_PARAMETER = "text";
-
+public class TypeAheadController<E extends RuntimeException> implements TypeaheadApi {
     private final TypeAheadService<E> typeAheadService;
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
@@ -33,8 +31,8 @@ public class TypeAheadController<E extends Exception> {
         this.typeAheadService = typeAheadService;
     }
 
-    @RequestMapping(URL)
-    public SuggestionsResponse getSuggestions(@RequestParam(TEXT_PARAMETER) final String text) throws E {
-        return new SuggestionsResponse(typeAheadService.getSuggestions(text));
+    @Override
+    public ResponseEntity<SuggestionsResponse> getSuggestions(final String text) {
+        return ResponseEntity.ok(new SuggestionsResponse(typeAheadService.getSuggestions(text)));
     }
 }

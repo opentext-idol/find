@@ -15,6 +15,7 @@
 package com.hp.autonomy.frontend.find.idol.users;
 
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
+import com.hp.autonomy.frontend.find.idol.api.UsersApi;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -27,11 +28,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class IdolUserControllerIT extends AbstractFindIT {
     @Test
     public void searchUsers() throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(IdolUserController.BASE_PATH +
-                '/' + IdolUserController.SEARCH_PATH)
-                .param(IdolUserController.PARAMETER_SEARCH_TEXT, "*")
-                .param(IdolUserController.PARAMETER_START_USER, "0")
-                .param(IdolUserController.PARAMETER_MAX_USERS, "5")
+        final MockHttpServletRequestBuilder requestBuilder = get(UsersApi.PATH_SEARCH_USERS)
+                .param("searchText", "*")
+                .param("startUser", "0")
+                .param("maxUsers", "5")
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(authentication(biAuth()));
 

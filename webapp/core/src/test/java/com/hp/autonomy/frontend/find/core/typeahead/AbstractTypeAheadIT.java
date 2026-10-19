@@ -14,6 +14,8 @@
 
 package com.hp.autonomy.frontend.find.core.typeahead;
 
+import com.hp.autonomy.frontend.find.core.api.TypeaheadApi;
+import com.hp.autonomy.frontend.find.core.api.model.SuggestionsResponse;
 import com.hp.autonomy.frontend.find.core.test.AbstractFindIT;
 import org.junit.Test;
 import org.springframework.http.MediaType;
@@ -39,8 +41,8 @@ public abstract class AbstractTypeAheadIT extends AbstractFindIT {
 
     @Test
     public void getsSuggestions() throws Exception {
-        final RequestBuilder request = get(TypeAheadController.URL)
-                .param(TypeAheadController.TEXT_PARAMETER, inputText)
+        final RequestBuilder request = get(TypeaheadApi.PATH_GET_SUGGESTIONS)
+                .param("text", inputText)
                 .with(authentication(userAuth()));
 
         mockMvc.perform(request)
@@ -48,7 +50,7 @@ public abstract class AbstractTypeAheadIT extends AbstractFindIT {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> {
                     final SuggestionsResponse output = objectMapper.readValue(result.getResponse().getContentAsString(), SuggestionsResponse.class);
-                    assertThat(output.suggestions(), hasItem(expectedSuggestion));
+                    assertThat(output.getSuggestions(), hasItem(expectedSuggestion));
                 });
     }
 }

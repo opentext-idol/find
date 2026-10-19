@@ -1,0 +1,736 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  parametricValues:
+    get:
+      summary: Get the parametric field values and document counts
+      operationId: getParametricValues
+      tags:
+        - parametric
+      parameters:
+        - name: fieldNames
+          in: query
+          description: The parametric fields to return values for
+          required: true
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              $ref: "../common/types.yaml#/components/schemas/FieldPath"
+        - name: start
+          in: query
+          description: |
+            Index of the first value to return within each field, 1-based.  Omit to use the server default.
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: maxValues
+          in: query
+          description: |
+            Maximum number of values to return per field.  Omit to use the server default.
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: valueRestrictions
+          in: query
+          description: Only return these values, if present
+          required: false
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: queryText
+          in: query
+          description: Query text to restrict documents counted
+          required: false
+          schema:
+            type: string
+            default: "*"
+        - name: fieldText
+          in: query
+          description: Field text to restrict documents counted
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: databases
+          in: query
+          description: IDOL databases to restrict documents counted
+          required: true
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: minDate
+          in: query
+          description: Only count documents with a date at or after this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: maxDate
+          in: query
+          description: Only count documents with a date at or before this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: minScore
+          in: query
+          description: Minimum relevance score a document must have to be counted
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: stateTokens
+          in: query
+          description: State tokens restricting the set of documents counted
+          required: false
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: sort
+          in: query
+          description: How to order the values within each field
+          required: false
+          schema:
+            allOf:
+              - $ref: "../common/types.yaml#/components/schemas/SortParam"
+            default: DocumentCount
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueryTagInfoResponse"
+
+  numericParametricBuckets:
+    get:
+      summary: Get the distribution of a numeric parametric field as buckets
+      operationId: getNumericParametricBuckets
+      tags:
+        - parametric
+      parameters:
+        - name: encodedField
+          in: path
+          description: The parametric field to bucket
+          required: true
+          schema:
+            $ref: "../common/types.yaml#/components/schemas/FieldPath"
+        - name: targetNumberOfBuckets
+          in: query
+          description: Approximate number of buckets to divide the range into
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: bucketMin
+          in: query
+          description: Lower bound of the range to bucket
+          required: true
+          schema:
+            type: number
+            format: double
+        - name: bucketMax
+          in: query
+          description: Upper bound of the range to bucket
+          required: true
+          schema:
+            type: number
+            format: double
+        - name: queryText
+          in: query
+          description: Query text to restrict documents counted
+          required: true
+          schema:
+            type: string
+        - name: fieldText
+          in: query
+          description: Field text to restrict documents counted
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: databases
+          in: query
+          description: IDOL databases to restrict documents counted
+          required: true
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: minDate
+          in: query
+          description: Only count documents with a date at or after this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: maxDate
+          in: query
+          description: Only count documents with a date at or before this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: minScore
+          in: query
+          description: Minimum relevance score a document must have to be counted
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+      responses:
+        '200':
+          description: Document counts per bucket
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NumericRangeInfo"
+
+  dateParametricBuckets:
+    get:
+      summary: Get the distribution of a date parametric field as buckets
+      operationId: getDateParametricBuckets
+      tags:
+        - parametric
+      parameters:
+        - name: encodedField
+          in: path
+          description: The parametric field to bucket, as a field path
+          required: true
+          schema:
+            $ref: "../common/types.yaml#/components/schemas/FieldPath"
+        - name: targetNumberOfBuckets
+          in: query
+          description: Approximate number of buckets to divide the range into
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: bucketMin
+          in: query
+          description: Start of the range to bucket
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: bucketMax
+          in: query
+          description: End of the range to bucket
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: queryText
+          in: query
+          description: Query text to restrict documents counted
+          required: true
+          schema:
+            type: string
+        - name: fieldText
+          in: query
+          description: Field text to restrict documents counted
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: databases
+          in: query
+          description: IDOL databases to restrict documents counted
+          required: true
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: minDate
+          in: query
+          description: Only count documents with a date at or after this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: maxDate
+          in: query
+          description: Only count documents with a date at or before this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: minScore
+          in: query
+          description: Minimum relevance score a document must have to be counted
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+      responses:
+        '200':
+          description: Document counts per bucket
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DateRangeInfo"
+
+  numericValueDetails:
+    get:
+      summary: Get the range and count of a numeric parametric field
+      operationId: getNumericValueDetails
+      tags:
+        - parametric
+      parameters:
+        - name: fieldName
+          in: query
+          description: The parametric field to describe
+          required: true
+          schema:
+            $ref: "../common/types.yaml#/components/schemas/FieldPath"
+        - name: queryText
+          in: query
+          description: Query text to restrict documents counted
+          required: true
+          schema:
+            type: string
+        - name: fieldText
+          in: query
+          description: Field text to restrict documents counted
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: databases
+          in: query
+          description: IDOL databases to restrict documents counted
+          required: true
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: minDate
+          in: query
+          description: Only count documents with a date at or after this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: maxDate
+          in: query
+          description: Only count documents with a date at or before this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: minScore
+          in: query
+          description: Minimum relevance score a document must have to be counted
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: stateTokens
+          in: query
+          description: State tokens restricting the set of documents counted
+          required: false
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: Minimum, maximum, average and count for the field
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NumericValueDetails"
+
+  dateValueDetails:
+    get:
+      summary: Get the range and count of a date parametric field
+      operationId: getDateValueDetails
+      tags:
+        - parametric
+      parameters:
+        - name: fieldName
+          in: query
+          description: The parametric field to describe
+          required: true
+          schema:
+            $ref: "../common/types.yaml#/components/schemas/FieldPath"
+        - name: queryText
+          in: query
+          description: Query text to restrict documents counted
+          required: true
+          schema:
+            type: string
+        - name: fieldText
+          in: query
+          description: Field text to restrict documents counted
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: databases
+          in: query
+          description: IDOL databases to restrict documents counted
+          required: true
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: minDate
+          in: query
+          description: Only count documents with a date at or after this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: maxDate
+          in: query
+          description: Only count documents with a date at or before this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: minScore
+          in: query
+          description: Minimum relevance score a document must have to be counted
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: stateTokens
+          in: query
+          description: State tokens restricting the set of documents counted
+          required: false
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: Earliest, latest, average and count for the field
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DateValueDetails"
+
+  dependentParametricValues:
+    get:
+      summary: Get parametric values nested by field
+      operationId: getDependentParametricValues
+      tags:
+        - parametric
+      parameters:
+        - name: fieldNames
+          in: query
+          description: The parametric fields to nest
+          required: true
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              $ref: "../common/types.yaml#/components/schemas/FieldPath"
+        - name: queryText
+          in: query
+          description: Query text to restrict documents counted
+          required: true
+          schema:
+            type: string
+        - name: fieldText
+          in: query
+          description: Field text to restrict documents counted
+          required: false
+          schema:
+            type: string
+            default: ""
+        - name: databases
+          in: query
+          description: IDOL databases to restrict documents counted
+          required: true
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+        - name: minDate
+          in: query
+          description: Only count documents with a date at or after this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: maxDate
+          in: query
+          description: Only count documents with a date at or before this instant
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: minScore
+          in: query
+          description: Minimum relevance score a document must have to be counted
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: stateTokens
+          in: query
+          description: State tokens restricting the set of documents counted
+          required: false
+          explode: true
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: Nested values with document counts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DependentParametricFieldsResponse"
+
+components:
+
+  schemas:
+
+    QueryTagInfoResponse:
+      description: Values of each requested parametric field
+      type: object
+      required:
+        - parametricValues
+      properties:
+        parametricValues:
+          type: array
+          items:
+            $ref: "#/components/schemas/QueryTagInfo"
+
+    QueryTagCountInfo:
+      description: Parametric field value details
+      type: object
+      properties:
+        value:
+          type: string
+        displayValue:
+          type: string
+        count:
+          description: Matching document count
+          type: integer
+          format: int32
+
+    QueryTagInfo:
+      description: A parametric field and its values
+      type: object
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        totalValues:
+          type: integer
+          format: int32
+        values:
+          type: array
+          items:
+            $ref: "#/components/schemas/QueryTagCountInfo"
+
+    DependentParametricFieldsResponse:
+      description: Parametric values nested by field
+      type: object
+      required:
+        - fields
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/DependentParametricField"
+
+    DependentParametricField:
+      description: One parametric value and the values nested beneath it
+      type: object
+      properties:
+        value:
+          type: string
+        displayValue:
+          type: string
+        count:
+          type: integer
+          format: int32
+        subFields:
+          description: Values of the next field down, restricted to this value
+          type: array
+          items:
+            $ref: "#/components/schemas/DependentParametricField"
+
+    NumericRangeInfo:
+      description: Document counts per numeric bucket
+      type: object
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        count:
+          type: integer
+          format: int32
+        min:
+          type: number
+          format: double
+        max:
+          type: number
+          format: double
+        bucketSize:
+          type: number
+          format: double
+        values:
+          type: array
+          items:
+            $ref: "#/components/schemas/NumericRangeBucket"
+
+    DateRangeInfo:
+      description: Document counts per date bucket
+      type: object
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        count:
+          type: integer
+          format: int32
+        min:
+          type: string
+          format: date-time
+        max:
+          type: string
+          format: date-time
+        bucketSize:
+          description: Bucket width in seconds
+          type: number
+          format: double
+        values:
+          type: array
+          items:
+            $ref: "#/components/schemas/DateRangeBucket"
+
+    NumericRangeBucket:
+      description: One bucket of a numeric field's value distribution
+      type: object
+      properties:
+        min:
+          type: number
+          format: double
+        max:
+          type: number
+          format: double
+        bucketSize:
+          type: number
+          format: double
+        count:
+          description: Documents whose value falls in this bucket
+          type: integer
+          format: int32
+
+    DateRangeBucket:
+      description: One bucket of a date field's value distribution
+      type: object
+      properties:
+        min:
+          type: string
+          format: date-time
+        max:
+          type: string
+          format: date-time
+        bucketSize:
+          description: Bucket width in seconds
+          type: number
+          format: double
+        count:
+          description: Documents whose value falls in this bucket
+          type: integer
+          format: int32
+
+    NumericValueDetails:
+      description: Range and count for a numeric parametric field
+      type: object
+      properties:
+        min:
+          type: number
+          format: double
+        max:
+          type: number
+          format: double
+        average:
+          type: number
+          format: double
+        sum:
+          type: number
+          format: double
+        totalValues:
+          type: integer
+          format: int32
+
+    DateValueDetails:
+      description: Range and count for a date parametric field
+      type: object
+      properties:
+        min:
+          type: string
+          format: date-time
+        max:
+          type: string
+          format: date-time
+        average:
+          type: string
+          format: date-time
+        sum:
+          description: Sum of the values in epoch seconds
+          type: number
+          format: double
+        totalValues:
+          type: integer
+          format: int32

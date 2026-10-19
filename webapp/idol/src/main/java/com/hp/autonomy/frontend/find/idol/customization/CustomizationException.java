@@ -17,7 +17,7 @@ package com.hp.autonomy.frontend.find.idol.customization;
 import lombok.Getter;
 
 @Getter
-class CustomizationException extends Exception {
+class CustomizationException extends RuntimeException {
     private static final long serialVersionUID = -393590873895440300L;
 
     private final Status status;

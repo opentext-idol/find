@@ -20,6 +20,8 @@ import com.autonomy.aci.client.util.ActionParameters;
 import com.hp.autonomy.aci.content.database.Databases;
 import com.hp.autonomy.aci.content.printfields.PrintFields;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.idol.api.EntitySearchApi;
+import com.hp.autonomy.frontend.find.idol.api.model.IdolSearchResultsResponse;
 import com.hp.autonomy.frontend.find.idol.configuration.EntitySearchConfig;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.idol.search.HavenSearchAciParameterHandler;
@@ -31,23 +33,15 @@ import com.opentext.idol.types.responses.QueryResponseData;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 import java.util.List;
 
 @RestController
-@RequestMapping(EntitySearchController.BASE_PATH)
-class EntitySearchController {
-    static final String BASE_PATH = "/api/public/entitysearch";
-    static final String SEARCH_PATH = "search";
-    static final String TEXT_PARAM = "text";
-    static final String DATABASE_GROUP_PARAM = "databaseGroup";
-
+class EntitySearchController implements EntitySearchApi {
     private final HavenSearchAciParameterHandler parameterHandler;
     private final Processor<QueryResponseData> queryResponseProcessor;
     private final QueryResponseParser queryResponseParser;
@@ -68,10 +62,10 @@ class EntitySearchController {
         this.queryResponseParser = queryResponseParser;
     }
 
-    @RequestMapping(value = SEARCH_PATH, method = RequestMethod.GET)
-    public IdolSearchResultsResponse search(
-            @RequestParam(TEXT_PARAM) final String text,
-            @RequestParam(value = DATABASE_GROUP_PARAM, required = false) final String databaseGroup
+    @Override
+    public ResponseEntity<IdolSearchResultsResponse> searchEntities(
+            final String text,
+            final String databaseGroup
     ) {
         ActionParameters aciParameters = new ActionParameters(QueryActions.Query.name());
 
@@ -101,6 +95,7 @@ class EntitySearchController {
         this.parameterHandler.addSecurityInfo(aciParameters);
 
         final QueryResponseData resp = this.entitySearchAciService.executeAction(aciParameters, this.queryResponseProcessor);
-        return new IdolSearchResultsResponse(this.queryResponseParser.parseQueryHits(resp.getHits(), null));
+        return ResponseEntity.ok(
+                new IdolSearchResultsResponse(this.queryResponseParser.parseQueryHits(resp.getHits(), null)));
     }
 }

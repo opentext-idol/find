@@ -1,0 +1,100 @@
+#
+# Copyright 2026 Open Text.
+#
+# Licensed under the MIT License (the "License"); you may not use this file
+# except in compliance with the License.
+#
+# The only warranties for products and services of Open Text and its affiliates
+# and licensors ("Open Text") are as may be set forth in the express warranty
+# statements accompanying such products and services. Nothing herein should be
+# construed as constituting an additional warranty. Open Text shall not be
+# liable for technical or editorial errors or omissions contained herein. The
+# information contained herein is subject to change without notice.
+#
+
+pathItems:
+
+  nifiActions:
+    get:
+      summary: List the NiFi actions available to the current user
+      operationId: getNifiActions
+      tags:
+        - nifi
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NifiActionsResponse"
+
+  executeNifiAction:
+    post:
+      summary: Run a NiFi action on the results of a saved search
+      description: |
+        The documents to act on come from either `savedSnapshotId` or the request body, not both.
+      x-codegen-request-body-name: query
+      operationId: executeNifiAction
+      tags:
+        - nifi
+      parameters:
+        - name: action
+          in: query
+          description: ID of the action to run, as returned by the action list
+          required: true
+          schema:
+            type: string
+        - name: savedSnapshotId
+          in: query
+          description: ID of a saved snapshot to act on
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: searchName
+          in: query
+          description: Name of the search, for audit purposes
+          required: false
+          schema:
+            type: string
+        - name: label
+          in: query
+          description: Free-text label, for audit purposes
+          required: false
+          schema:
+            type: string
+      requestBody:
+        description: A query to snapshot and act on, when no `savedSnapshotId` is given
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "saved-query.yaml#/components/schemas/SavedQuery"
+      responses:
+        '200':
+          description: Action started
+
+components:
+
+  schemas:
+
+    NifiActionsResponse:
+      description: NiFi actions available to the current user
+      type: object
+      required:
+        - actions
+      properties:
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/NifiAction"
+
+    NifiAction:
+      description: A single NiFi action
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          description: Human-readable name
+          type: string
+

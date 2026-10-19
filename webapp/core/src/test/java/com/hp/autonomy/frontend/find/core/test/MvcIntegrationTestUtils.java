@@ -15,9 +15,7 @@
 package com.hp.autonomy.frontend.find.core.test;
 
 import com.hp.autonomy.frontend.find.core.beanconfiguration.FindRole;
-import com.hp.autonomy.frontend.find.core.fields.FieldsController;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
-import com.hp.autonomy.frontend.find.core.search.DocumentsController;
 import com.jayway.jsonpath.JsonPath;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,11 +48,11 @@ public abstract class MvcIntegrationTestUtils {
     protected abstract void addFieldRequestParams(MockHttpServletRequestBuilder requestBuilder);
 
     public String getValidReference(final MockMvc mockMvc) throws Exception {
-        final MockHttpServletRequestBuilder request = get(DocumentsController.SEARCH_PATH + '/' + DocumentsController.QUERY_PATH).param(DocumentsController.TEXT_PARAM, "*")
-                .param(DocumentsController.RESULTS_START_PARAM, "1")
-                .param(DocumentsController.MAX_RESULTS_PARAM, "50")
-                .param(DocumentsController.SUMMARY_PARAM, "context")
-                .param(DocumentsController.INDEXES_PARAM, getDatabases())
+        final MockHttpServletRequestBuilder request = get("/api/public/search/query-text-index/results").param("text", "*")
+                .param("start", "1")
+                .param("max_results", "50")
+                .param("summary", "context")
+                .param("indexes", getDatabases())
                 .with(authentication(userAuth()));
 
         final MvcResult mvcResult = mockMvc.perform(request)
@@ -70,9 +68,9 @@ public abstract class MvcIntegrationTestUtils {
     }
 
     public String[] getFields(final MockMvc mockMvc, final String subPath, final String... fieldTypes) throws Exception {
-        final MockHttpServletRequestBuilder requestBuilder = get(FieldsController.FIELDS_PATH + subPath)
+        final MockHttpServletRequestBuilder requestBuilder = get("/api/public/fields" + subPath)
                 .with(authentication(userAuth()));
-        requestBuilder.param(FieldsController.FIELD_TYPES_PARAM, fieldTypes);
+        requestBuilder.param("fieldTypes", fieldTypes);
         addFieldRequestParams(requestBuilder);
 
         final MvcResult mvcResult = mockMvc.perform(requestBuilder)
@@ -91,6 +89,12 @@ public abstract class MvcIntegrationTestUtils {
         final Collection<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority(FindRole.ADMIN.toString()));
         authorities.add(new SimpleGrantedAuthority(FindRole.USER.toString()));
+        return createAuthentication(authorities);
+    }
+
+    Authentication configAuth() {
+        final Collection<GrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority(FindRole.CONFIG.toString()));
         return createAuthentication(authorities);
     }
 

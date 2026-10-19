@@ -18,11 +18,15 @@ import com.autonomy.aci.client.services.AciErrorException;
 import com.autonomy.aci.client.services.AciService;
 import com.autonomy.aci.client.services.Processor;
 import com.autonomy.aci.client.util.ActionParameters;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hp.autonomy.aci.content.database.Databases;
 import com.hp.autonomy.aci.content.fieldtext.FieldText;
 import com.hp.autonomy.aci.content.fieldtext.MATCH;
 import com.hp.autonomy.frontend.configuration.ConfigService;
+import com.hp.autonomy.frontend.find.idol.api.AnswerApi;
+import com.hp.autonomy.frontend.find.idol.api.model.AskAnswersResponse;
+import com.hp.autonomy.frontend.find.idol.api.model.DocumentFact;
+import com.hp.autonomy.frontend.find.idol.api.model.EntityFactsResponse;
+import com.hp.autonomy.frontend.find.idol.api.model.SourcedFact;
 import com.hp.autonomy.frontend.find.idol.configuration.IdolFindConfig;
 import com.hp.autonomy.searchcomponents.core.config.FieldValue;
 import com.hp.autonomy.searchcomponents.core.search.DocumentsService;
@@ -45,13 +49,10 @@ import com.opentext.idol.types.marshalling.ProcessorFactory;
 import com.opentext.idol.types.responses.answer.ReportFact;
 import com.opentext.idol.types.responses.answer.ReportResponsedata;
 import com.opentext.idol.types.responses.answer.System;
-import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
@@ -61,21 +62,13 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.hp.autonomy.frontend.find.core.search.DocumentsController.INDEXES_PARAM;
 
 /**
  * These APIs should only be called when AnswerServer is enabled
  * ({@link com.hp.autonomy.frontend.find.core.web.MvcConstants.ANSWER_SERVER_ENABLED}).
  */
 @RestController
-@RequestMapping(AnswerServerController.BASE_PATH)
-class AnswerServerController {
-    static final String BASE_PATH = "/api/public/answer";
-    static final String ASK_PATH = "ask";
-    static final String TEXT_PARAM = "text";
-    static final String ENTITY_PARAM = "entity";
-    static final String FIELDTEXT_PARAM = "fieldText";
-    static final String MAX_RESULTS_PARAM = "maxResults";
+class AnswerServerController implements AnswerApi {
     private static final int DEFAULT_MAX_FACTS = 10;
     private static final String FACT_ID_FIELD = "FACTS/FACT_EXTRACT_/ID";
     private static final String FACT_SENTENCE_FIELD = "FACTS/FACT_EXTRACT_/SENTENCE";
@@ -118,12 +111,12 @@ class AnswerServerController {
         allSystems = getAllSystems();
     }
 
-    @RequestMapping(value = ASK_PATH, method = RequestMethod.GET)
-    public AskAnswersResponse ask(
-            @RequestParam(TEXT_PARAM) final String text,
-            @RequestParam(value = FIELDTEXT_PARAM, required = false) final String fieldText,
-            @RequestParam(value = MAX_RESULTS_PARAM, required = false) final Integer maxResults,
-            @RequestParam(value = INDEXES_PARAM, required = false) final Collection<@NotNull String> databases
+    @Override
+    public ResponseEntity<AskAnswersResponse> ask(
+            final String text,
+            final String fieldText,
+            final Integer maxResults,
+            final List<String> databases
     ) {
         final String customizationData;
         try {
@@ -162,17 +155,17 @@ class AnswerServerController {
                 .customizationData(customizationData)
                 .build();
 
-        return new AskAnswersResponse(askAnswerServerService.ask(request));
+        return ResponseEntity.ok(new AskAnswersResponse(askAnswerServerService.ask(request)));
     }
 
     /**
      * Retrieve facts involving a specific entity from AnswerServer.
      */
-    @RequestMapping(value = "entity-facts", method = RequestMethod.GET)
-    public EntityFactsResponse getEntityFacts(
-        @RequestParam(ENTITY_PARAM) final String entity,
-        @RequestParam(value = MAX_RESULTS_PARAM, required = false) final Integer maxResults,
-        @RequestParam(INDEXES_PARAM) final Collection<@NotNull String> databases
+    @Override
+    public ResponseEntity<EntityFactsResponse> getEntityFacts(
+        final String entity,
+        final List<String> databases,
+        final Integer maxResults
     ) {
         final ActionParameters params = new ActionParameters(AnswerServerActions.Report.name());
         params.add(ReportParams.Entity.name(), entity);
@@ -250,7 +243,7 @@ class AnswerServerController {
             }
         }
 
-        return new EntityFactsResponse(new ArrayList<>(sourcedFacts.values()));
+        return ResponseEntity.ok(new EntityFactsResponse(new ArrayList<>(sourcedFacts.values())));
     }
 
     private Map<String, System> getAllSystems() {
@@ -260,58 +253,6 @@ class AnswerServerController {
         } else {
             return Map.of();
         }
-    }
-
-
-    /**
-     * Reference to a document which is visible to the user and is a source for a fact.
-     */
-    public static class DocumentFact {
-        /**
-         * Database containing the document.
-         */
-        @JsonProperty
-        public final String index;
-        /**
-         * Value for the Find-configured reference field.
-         */
-        @JsonProperty
-        public final String reference;
-        /**
-         * Excerpt from the content that the fact was extracted from.
-         */
-        @JsonProperty
-        public final String sentence;
-
-        public DocumentFact(final String index, final String reference, final String sentence) {
-            this.index = index;
-            this.reference = reference;
-            this.sentence = sentence;
-        }
-
-    }
-
-
-    /**
-     * A fact, along with its sources.
-     */
-    public static class SourcedFact {
-        /**
-         * The fact.
-         */
-        @JsonProperty
-        public final ReportFact fact;
-        /**
-         * Non-empty list of documents which are sources for the fact.
-         */
-        @JsonProperty
-        public final List<DocumentFact> documents;
-
-        public SourcedFact(final ReportFact fact, final List<DocumentFact> documents) {
-            this.fact = fact;
-            this.documents = documents;
-        }
-
     }
 
 }

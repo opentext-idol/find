@@ -14,6 +14,7 @@
 
 package com.hp.autonomy.frontend.find.core.savedsearches.query;
 
+import com.hp.autonomy.frontend.find.core.api.model.SavedQueriesResponse;
 import com.hp.autonomy.frontend.find.core.savedsearches.EmbeddableIndex;
 import com.hp.autonomy.frontend.find.core.savedsearches.FieldTextParser;
 import com.hp.autonomy.frontend.find.core.savedsearches.SavedSearch;
@@ -22,7 +23,6 @@ import com.hp.autonomy.searchcomponents.core.search.*;
 import com.hp.autonomy.types.requests.Documents;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -32,12 +32,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@RequestMapping(SavedQueryController.PATH)
 public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends Serializable, Q extends QueryRestrictions<S>, D extends SearchResult, E extends Exception> {
-    static final String PATH = "/api/bi/saved-query";
-    static final String NEW_RESULTS_PATH = "/new-results";
-    private static final String GET_SHARED = "/shared";
-
     protected final SavedSearchService<SavedQuery, SavedQuery.Builder> service;
     private final DocumentsService<RQ, ?, ?, Q, D, E> documentsService;
     private final FieldTextParser fieldTextParser;
@@ -62,10 +57,7 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
 
     protected abstract void addParams(QueryRequestBuilder<RQ, Q, ?> queryRequestBuilder);
 
-    @RequestMapping(method = RequestMethod.GET)
-    public SavedQueriesResponse getAll(
-        @RequestParam(name="shared", defaultValue = "false") boolean shared
-    ) {
+    protected SavedQueriesResponse getAll(final boolean shared) {
         if (shared) {
             final LinkedHashSet<SavedQuery> toReturn = new LinkedHashSet<>(service.getOwned());
             final Set<Long> ids = toReturn.stream().map(SavedSearch::getId).collect(Collectors.toSet());
@@ -82,45 +74,31 @@ public abstract class SavedQueryController<RQ extends QueryRequest<Q>, S extends
         return new SavedQueriesResponse(service.getOwned());
     }
 
-    @RequestMapping(value = GET_SHARED, method = RequestMethod.GET)
-    public SavedQueriesResponse getShared() {
+    protected SavedQueriesResponse getShared() {
         return new SavedQueriesResponse(service.getShared());
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public SavedQuery create(
-        @RequestBody final SavedQuery query
-    ) {
+    protected SavedQuery create(final SavedQuery query) {
         return service.create(query);
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public SavedQuery update(
-        @PathVariable("id") final long id,
-        @RequestBody final SavedQuery query
-    ) {
+    protected SavedQuery update(final long id, final SavedQuery query) {
         return service.update(
             new SavedQuery.Builder(query).setId(id).build()
         );
     }
 
-    @RequestMapping(value = GET_SHARED + "/{id}", method = RequestMethod.PUT)
-    public SavedQuery updateShared(
-            @PathVariable("id") final long id,
-            @RequestBody final SavedQuery query
-    ) {
+    protected SavedQuery updateShared(final long id, final SavedQuery query) {
         return service.updateShared(
                 new SavedQuery.Builder(query).setId(id).build()
         );
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
-    public void delete(@SuppressWarnings("MVCPathVariableInspection") @PathVariable("id") final long id) {
+    protected void delete(final long id) {
         service.deleteById(id);
     }
 
-    @RequestMapping(value = NEW_RESULTS_PATH + "/{id}", method = RequestMethod.GET)
-    public int checkForNewQueryResults(@SuppressWarnings("MVCPathVariableInspection") @PathVariable("id") final long id) throws E {
+    protected int checkForNewQueryResults(final long id) throws E {
         int newResults = 0;
 
         final SavedQuery savedQuery = service.get(id);
