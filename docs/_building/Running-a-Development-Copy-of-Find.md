@@ -20,8 +20,7 @@ It's important to run the `install` step, as this "installs" the modules to your
 
 ## Step Two: Use Spring Boot to run a local server
 
-- `cd` into either `hod` or `idol`, depending on whether you want to run Find against Haven OnDemand or IDOL.
-- Run `mvn spring-boot:run -Dhp.find.home=<path_to_find_home_directory>`.  You will need to create a home directory for Find - have a look at [[Home-directory]].
+- Run `mvn -pl idol spring-boot:run -Dskip.webpack -Ddocker.skip -Dspring-boot.run.jvmArguments="-Didol.find.home=<path_to_find_home_directory>"`.  You will need to create a home directory for Find - have a look at [[Home-directory]].
 
 Any changes you make to Java files will be recompiled and redeployed automatically.
 
