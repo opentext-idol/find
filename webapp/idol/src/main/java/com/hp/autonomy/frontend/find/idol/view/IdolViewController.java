@@ -80,6 +80,7 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
     @Override
     public void viewDocument(
         @RequestParam(value = REFERENCE_PARAM, required = false) final String reference,
+        @RequestParam(value = FILEPATH_PARAM, required = false) final String filepath,
         @RequestParam(DATABASE_PARAM) final String database,
         @RequestParam(value = HIGHLIGHT_PARAM, required = false) final String highlightExpression,
         @RequestParam(PART_PARAM) final ViewingPart part,
@@ -94,7 +95,7 @@ class IdolViewController extends ViewController<IdolViewRequest, String, AciErro
             }
         }
 
-        super.viewDocument(reference, database, highlightExpression, part, urlPrefix, subDocRef, response);
+        super.viewDocument(reference, filepath, database, highlightExpression, part, urlPrefix, subDocRef, response);
     }
 
     @SuppressWarnings("TypeMayBeWeakened")
